@@ -33,18 +33,25 @@ O QUE PRECISA EXISTIR NO AMBIENTE
 
 2) Um arquivo `.env` na raiz do projeto (procurado a partir do diretório atual,
    subindo pastas — igual ao `git`). NUNCA versione esse arquivo: coloque
-   `.env` no `.gitignore`. Duas formas de preencher, escolha UMA:
+   `.env` no `.gitignore`.
+
+   Este backend assume o cenário corporativo: você acessa o Azure OpenAI por
+   um gateway/API management da sua organização, não um recurso Azure OpenAI
+   pessoal. Há duas formas de fornecer as credenciais desse gateway — use a
+   que combinar com como o seu time distribui acesso. As duas terminam no
+   mesmo lugar e podem ser misturadas (o que estiver definido diretamente no
+   `.env`/ambiente sempre vence o que estiver no `.ini`):
 
    ---------------------------------------------------------------------
-   OPÇÃO A — Azure OpenAI direto (recurso próprio, sem gateway)
+   FORMA 1 — direto no .env
    ---------------------------------------------------------------------
-       AZURE_OPENAI_ENDPOINT=https://SEU-RECURSO.openai.azure.com/
+       AZURE_OPENAI_ENDPOINT=https://seu-gateway.empresa.com/openai/v1
        AZURE_OPENAI_API_KEY=coloque-sua-chave-aqui
        AZURE_OPENAI_API_VERSION=2024-10-21
 
    ---------------------------------------------------------------------
-   OPÇÃO B — gateway corporativo (ex.: Petrobras): credenciais num .ini
-   e certificado próprio (.pem) para validar o TLS
+   FORMA 2 — credenciais num .ini (comum quando o time de infra/segurança
+   distribui um arquivo de configuração pronto) + certificado próprio (.pem)
    ---------------------------------------------------------------------
        AOAI_CONFIG_INI=config-v1.x.ini
        AOAI_CONFIG_SECTION=OPENAI
@@ -69,10 +76,13 @@ O QUE PRECISA EXISTIR NO AMBIENTE
    Rode `python azure_openai_backend.py --print-env-example > .env` para
    gerar esse template pronto para editar.
 
-3) O `.pem` (só na OPÇÃO B, gateway corporativo): é o certificado da CA do
-   gateway, necessário para o `httpx` validar o TLS. Peça ao time de
-   infra/segurança. Coloque o arquivo na raiz do projeto (ao lado do `.env`)
-   ou aponte um caminho absoluto em AOAI_CA_BUNDLE.
+3) O `.pem`: certificado da CA do gateway corporativo, necessário para o
+   `httpx` validar o TLS quando o gateway usa uma CA própria (comum em
+   ambiente corporativo). Peça ao time de infra/segurança. Coloque o arquivo
+   na raiz do projeto (ao lado do `.env`) ou aponte um caminho absoluto em
+   AOAI_CA_BUNDLE. Se o seu gateway usa um certificado público padrão, essa
+   variável pode ficar de fora do `.env` — o backend só a usa se ela estiver
+   definida.
 
 4) Nome do *deployment* (não é o nome do modelo!). Exemplos:
 
@@ -129,12 +139,11 @@ _ENV_LINE = re.compile(r"^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\
 #: "você esqueceu de editar o .env"
 PLACEHOLDERS = frozenset(
     {
-        "https://your-resource.openai.azure.com/",
-        "https://your-resource.openai.azure.com",
-        "https://seu-recurso.openai.azure.com/",
-        "https://seu-recurso.openai.azure.com",
+        "https://seu-gateway.empresa.com/openai/v1",
+        "https://seu-gateway.empresa.com",
         "your-resource",
         "seu-recurso",
+        "seu-gateway",
         "changeme",
         "xxx",
         "<your-key>",
@@ -152,6 +161,7 @@ def _is_placeholder(value: Optional[str]) -> bool:
         v in PLACEHOLDERS
         or "your-resource" in v
         or "seu-recurso" in v
+        or "seu-gateway" in v
         or v.lower() in {"changeme", "todo"}
     )
 
@@ -907,23 +917,27 @@ def parse_json_loose(text: str) -> Any:
 
 ENV_EXAMPLE = """\
 # ---------------------------------------------------------------------------
-# azure_openai_backend — configuração de runtime
+# azure_openai_backend — configuração de runtime (gateway corporativo)
 #
 #   cp .env.example .env      e preencha os valores abaixo.
 #   .env é gitignored; .env.example (se você criar um) nunca contém segredo.
+#
+# Credenciais do gateway corporativo — escolha UMA forma (dá pra misturar:
+# o que estiver aqui no .env sempre vence o que estiver no .ini).
 # ---------------------------------------------------------------------------
 
 # ===========================================================================
-# OPÇÃO A — Azure OpenAI direto
+# FORMA 1 — direto no .env
 # ===========================================================================
-AZURE_OPENAI_ENDPOINT=https://SEU-RECURSO.openai.azure.com/
+AZURE_OPENAI_ENDPOINT=https://seu-gateway.empresa.com/openai/v1
 AZURE_OPENAI_API_KEY=
 AZURE_OPENAI_API_VERSION=2024-10-21
 
 # ===========================================================================
-# OPÇÃO B — gateway corporativo (credenciais num .ini, CA própria)
+# FORMA 2 — credenciais num .ini (comum quando infra/segurança distribui um
+# arquivo de configuração pronto) + certificado próprio (.pem)
 #
-# Comente o bloco A acima e descomente estas linhas. O .ini é lido com
+# Comente o bloco acima e descomente estas linhas. O .ini é lido com
 # ConfigParser + ExtendedInterpolation; a seção padrão é [OPENAI].
 # ===========================================================================
 # AOAI_CONFIG_INI=config-v1.x.ini
