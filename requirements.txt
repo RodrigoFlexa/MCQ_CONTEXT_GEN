@@ -1,0 +1,39 @@
+# MCQ_CONTEXT_GEN — dependências do pipeline da fase 3
+#
+#     python -m venv venv
+#     venv\Scripts\activate          (Windows)   |   source venv/bin/activate
+#     pip install -r requirements.txt
+#
+# Testado em Python 3.10–3.12. O `setup_dataset.py` NÃO precisa de nada disto:
+# roda só com a biblioteca padrão, de propósito.
+
+# --- LLM: azure_openai_backend.py ------------------------------------------
+openai
+# httpx só é usado quando AOAI_CA_BUNDLE está definido no .env (gateway
+# corporativo com CA própria); o backend levanta erro claro se faltar.
+httpx
+
+# --- numérico e dados -------------------------------------------------------
+numpy
+pandas
+
+# --- embeddings e clusterização ---------------------------------------------
+# sentence-transformers puxa `torch` e `transformers` — é o download pesado da
+# instalação (~2 GB com o torch). O modelo default do pipeline
+# (paraphrase-multilingual-MiniLM-L12-v2, ~470 MB) é baixado do HuggingFace na
+# primeira execução do notebook e fica no cache local (~/.cache/huggingface).
+#
+# No Windows, o `torch` do PyPI já vem CPU-only, que é o suficiente aqui: a
+# varredura do corpus é CPU-bound e os embeddings são poucas dezenas de
+# milhares. Se tiver GPU e quiser usá-la, instale o torch pelo índice da NVIDIA
+# ANTES desta linha:
+#     pip install torch --index-url https://download.pytorch.org/whl/cu121
+sentence-transformers
+# KMeans do codebook de entropia (§12 do notebook)
+scikit-learn
+
+# --- notebook ---------------------------------------------------------------
+jupyterlab
+ipykernel
+# curvas de entropia (§14)
+matplotlib
