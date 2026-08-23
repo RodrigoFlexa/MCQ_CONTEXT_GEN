@@ -14,11 +14,15 @@ Papéis e modelos (definidos em `utils_fase3.Config`):
     refinador    gpt-5         corrige questões que o scorer de vícios reprovou
 
 Divisão de trabalho — o gerador escreve enunciado, alternativas e gabarito, e
-só isso. Não opina sobre dificuldade (é o judge quem atribui, com a rubrica na
-mão) nem redige justificativa da correta. A posição do gabarito também não é
-problema dele: é embaralhada deterministicamente no pós-processamento
-(`utils_fase3.embaralhar_posicao`), porque pedir distribuição a um modelo é
-gastar atenção dele com algo que uma linha de código resolve melhor.
+mais uma coisa: uma autoavaliação de dificuldade (`dificuldade_gerador`), com
+a MESMA rubrica do judge. Isso não duplica o trabalho do judge — a nota e o
+`difficulty` oficiais continuam vindo só dele — é um segundo sinal, barato de
+pedir (o gerador já está olhando pra questão inteira), que permite comparar as
+duas avaliações e mirar uma distribuição de dificuldade no lote. O gerador não
+redige justificativa da correta. A posição do gabarito também não é problema
+dele: é embaralhada deterministicamente no pós-processamento
+(`utils_fase3.embaralhar_posicao`), porque pedir distribuição de POSIÇÃO a um
+modelo é gastar atenção dele com algo que uma linha de código resolve melhor.
 
 Os critérios do judge são deliberadamente próximos do formulário aplicado aos
 especialistas na fase 2 ("Clareza do enunciado", "Qualidade das alternativas de
@@ -149,9 +153,9 @@ interesse e descartando o resto.
 # amostrado do banco de questões de alto score, e o documento consolidado como
 # única fonte factual.
 #
-# O escopo é estreito de propósito: enunciado, alternativas e gabarito. Tudo o
-# que pode ser resolvido depois — dificuldade, justificativa, posição da
-# correta — sai daqui, para o modelo gastar atenção no que só ele faz.
+# O escopo é estreito de propósito: enunciado, alternativas, gabarito e uma
+# autoavaliação de dificuldade. Justificativa e posição da correta continuam
+# saindo daqui, para o modelo gastar atenção no que só ele faz.
 
 SYS_GERADOR = """
 Você cria questões de múltipla escolha de alta qualidade em português brasileiro
@@ -183,6 +187,37 @@ CRITÉRIOS DE QUALIDADE (toda questão deve atender):
     documento em mãos: não escreva "segundo o texto", "conforme o documento",
     "no trecho apresentado". O documento é a fonte do conhecimento, não o
     objeto da pergunta. Não mencione o documento COMO FONTE no enunciado nem nas alternativas.
+7. Nenhum distrator se justifica minimizando o próprio ponto fraco DENTRO do
+   texto da alternativa — frases como "assumindo que...", "pressupondo
+   que...", "considerando que... tende a ser secundário/pequeno/irrelevante".
+   Esse padrão entrega a resposta a qualquer leitor treinado em prova de
+   múltipla escolha, mesmo sem nenhum conhecimento do domínio: o distrator
+   precisa errar pelo CONTEÚDO técnico, afirmado com a mesma confiança da
+   alternativa correta — nunca por uma ressalva que ele mesmo admite.
+
+DIFICULDADE (sua própria avaliação, para o campo `dificuldade_gerador`) —
+mesma régua usada depois por um avaliador independente (o judge), pensada
+para um profissional experiente do domínio:
+- "facil": exige compreensão do conceito, sem encadeamento;
+- "media": exige aplicar o conceito a um cenário, ou conectar dois conceitos;
+- "dificil": exige análise crítica, avaliação de trade-off ou síntese.
+Isso NÃO é a questão sendo julgada duas vezes por você: é uma segunda opinião,
+independente da nota e da avaliação final, que serve para comparar as duas
+avaliações depois.
+
+DISTRIBUIÇÃO ALVO no questionário:
+- ~30% questões mais fáceis (compreensão profunda, NÃO memorização)
+- ~40% questões médias (aplicação, conexão entre conceitos)
+- ~30% questões difíceis (análise crítica, avaliação, síntese)
+
+Confie no seu julgamento sobre como atingir esses critérios não há um processo
+rígido a seguir.
+
+Essa distribuição vale para o LOTE de questões que você está gerando agora
+(não para a faceta inteira nem para o banco todo — outras rodadas cobrem
+outros lotes). Com poucas questões por lote, nem sempre dá pra bater as
+proporções exatas: priorize a régua de dificuldade acima sobre a
+porcentagem exata.
 """.strip()
 
 
@@ -200,7 +235,8 @@ def _formatar_exemplo(q: dict, i: int) -> str:
 def prompt_geracao(subtopico: str, topico: str, faceta_foco: str,
                    documento: str, exemplos: Sequence[dict],
                    n_questoes: int, n_alternativas: int,
-                   marcador_rodada: str) -> tuple[str, str]:
+                   marcador_rodada: str,
+                   exemplo_externo: dict | None = None) -> tuple[str, str]:
     bloco_ex = ""
     if exemplos:
         corpo = "\n\n".join(_formatar_exemplo(q, i + 1) for i, q in enumerate(exemplos))
@@ -210,6 +246,18 @@ Use-as como calibração de estilo, profundidade e construção de distratores �
 NÃO como fonte de conteúdo e NÃO para copiar o assunto:
 
 {corpo}
+"""
+
+    bloco_externo = ""
+    if exemplo_externo:
+        bloco_externo = f"""
+EXEMPLO DE OUTRO DOMÍNIO (ciências gerais, não é óleo e gás — IGNORE o
+assunto). Sirva-se dele só pela LÓGICA de construção dos distratores: cada
+alternativa errada é uma posição plausível que erra por um motivo específico
+e identificável — nunca uma opção qualquer, e nunca uma opção tecnicamente
+verdadeira que simplesmente não responde à pergunta feita:
+
+{_formatar_exemplo(exemplo_externo, "externo")}
 """
 
     user = f"""
@@ -225,7 +273,7 @@ DOCUMENTO DE REFERÊNCIA (única fonte factual permitida):
 ```
 {documento.strip()}
 ```
-{bloco_ex}
+{bloco_ex}{bloco_externo}
 Gere {n_questoes} questões de múltipla escolha com {n_alternativas} alternativas
 cada, ancoradas no documento de referência e atendendo à instrução do
 especialista e aos critérios de qualidade.
@@ -237,7 +285,8 @@ Retorne apenas o JSON:
     {{
       "stem": "O texto da pergunta",
       "alternatives": ["Opção A", "Opção B", "Opção C", "Opção D"],
-      "correct_answer_index": 2
+      "correct_answer_index": 2,
+      "dificuldade_gerador": "media"
     }}
   ]
 }}
@@ -382,6 +431,13 @@ Como corrigir cada vício:
   ("apenas", "somente", "exclusivamente", "nunca", "sempre", "único"). Reescreva
   esses distratores como posições técnicas plausíveis e matizadas, erradas pelo
   conteúdo, com o mesmo tom e o mesmo nível de hedging da alternativa correta.
+- `racionalizacao`: o distrator se justifica DENTRO do próprio texto,
+  minimizando o seu ponto fraco ("assumindo que...", "pressupondo que...",
+  "...tende a ser secundário/pequeno/irrelevante"). Isso entrega a resposta a
+  qualquer leitor treinado em prova de múltipla escolha, mesmo sem
+  conhecimento do domínio. Reescreva-o como uma afirmação direta e confiante
+  — do mesmo jeito que a alternativa correta é redigida — errando pelo
+  CONTEÚDO técnico, nunca por uma ressalva que ele mesmo admite.
 
 Não comente a tarefa. Devolva apenas o JSON pedido.
 """.strip()

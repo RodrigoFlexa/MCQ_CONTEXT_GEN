@@ -21,7 +21,10 @@ Mapa do módulo (na ordem do pipeline):
 
 Convenção de questão (dict) em todo o pipeline:
 
-    do gerador:  {"id", "stem", "alternatives": [...], "correct_answer_index"}
+    do gerador:  {"id", "stem", "alternatives": [...], "correct_answer_index",
+                  "dificuldade_gerador": "facil|media|dificil" (opcional,
+                  autoavaliação do gerador — não confundir com "difficulty",
+                  que é do judge; ver prompts_fase3.py)}
     + do judge:  {"nota": float em [0,1], "difficulty": "facil|media|dificil"}
     + do scorer: {"vicios": {...}}
 """
@@ -44,6 +47,7 @@ from typing import Any, Callable, Iterable, Iterator, Sequence
 import numpy as np
 
 import prompts_fase3 as P
+from exemplos_externos_fase3 import EXEMPLOS_ARC
 
 # ===========================================================================
 # Config
@@ -107,11 +111,24 @@ class Config:
     # Pós-processamento: a posição do gabarito é sorteada aqui, não pedida ao
     # gerador. Desligue se o embaralhamento for feito fora do pipeline.
     embaralhar_alternativas: bool = True
+    # 1 exemplo de outro domínio (hoje: ARC-Challenge, ver
+    # exemplos_externos_fase3.py) sorteado a cada lote, além dos exemplos do
+    # próprio domínio — calibra a LÓGICA de construção de distrator sem
+    # herdar os vícios do banco seed/repositório. Desligue pra voltar ao
+    # comportamento anterior sem tocar no resto do pipeline.
+    usar_exemplos_externos: bool = True
 
     # ------------------------------------------------------------- vícios --
     tol_similaridade: float = 0.55   # limite do vício, em [0,1]
     tol_comprimento: float = 0.55
     tol_distratores: float = 0.50
+    # Vício 4 (racionalização): distrator que se justifica minimizando o
+    # próprio ponto fraco ("assumindo que...", "pressupondo que...", "...tende
+    # a ser secundário"). Tolerância zero de propósito: no banco da fase 3,
+    # esse padrão nunca apareceu na alternativa correta (0 de 102) — é um
+    # sinal específico de distrator e barato de corrigir no refinador, então
+    # não há motivo para tolerar nenhuma ocorrência.
+    tol_racionalizacao: float = 0.0
     tau_similaridade: float = 0.15   # delta de cosseno que satura o vício em 1
     tau_comprimento: float = 0.40    # desvio relativo de tamanho que satura
     # "distrator lixo" tem dois testes, ambos calibráveis em `calibrar_tolerancias`:
@@ -824,10 +841,17 @@ def consolidar_documento(llm_leve, doc: dict, faceta: Faceta,
 def _normalizar_questao(bruta: dict, cfg: Config) -> dict | None:
     """Valida a forma da questão. Devolve None se estiver quebrada.
 
-    Só os três campos que o gerador (e o refinador) produzem. `difficulty` é do
-    judge e `nota` também — não são inventados aqui, e não aparecem no dict
-    devolvido justamente para que `refinar_questao`, ao mesclar, não sobrescreva
-    o que o judge já decidiu.
+    Os campos que o gerador (e o refinador) produzem. `difficulty` é do judge e
+    `nota` também — não são inventados aqui, e não aparecem no dict devolvido
+    justamente para que `refinar_questao`, ao mesclar, não sobrescreva o que o
+    judge já decidiu.
+
+    `dificuldade_gerador` é a exceção: é uma autoavaliação do PRÓPRIO gerador
+    (ver SYS_GERADOR em prompts_fase3.py), então é legítimo ele produzir de
+    novo a cada refinamento — não pertence ao judge, não há o que proteger.
+    Fica de fora do dict se vier ausente ou fora do vocabulário esperado, em
+    vez de forçar um default: um valor ausente é mais honesto que "media"
+    inventado aqui.
     """
     try:
         stem = str(bruta["stem"]).strip()
@@ -839,7 +863,11 @@ def _normalizar_questao(bruta: dict, cfg: Config) -> dict | None:
         return None
     if any(not a for a in alts) or len(set(alts)) != len(alts):
         return None
-    return {"stem": stem, "alternatives": alts, "correct_answer_index": idx}
+    q = {"stem": stem, "alternatives": alts, "correct_answer_index": idx}
+    dif_ger = str(bruta.get("dificuldade_gerador", "")).strip().lower()
+    if dif_ger in ("facil", "media", "dificil"):
+        q["dificuldade_gerador"] = dif_ger
+    return q
 
 
 def embaralhar_posicao(questao: dict, rng: random.Random) -> dict:
@@ -860,11 +888,25 @@ def embaralhar_posicao(questao: dict, rng: random.Random) -> dict:
     return q
 
 
+def amostrar_exemplo_externo(rng: random.Random,
+                             pool: Sequence[dict] = EXEMPLOS_ARC) -> dict | None:
+    """1 exemplo de outro domínio, sorteado uniformemente do pool externo.
+
+    Hoje o pool é só o ARC-Challenge (5 itens, ver exemplos_externos_fase3.py).
+    Devolve None se o pool estiver vazio, para o chamador poder desligar sem
+    precisar checar `cfg.usar_exemplos_externos` de novo.
+    """
+    if not pool:
+        return None
+    return rng.choice(list(pool))
+
+
 def gerar_lote(llm_forte, doc: dict, faceta: Faceta, documento: str,
-               exemplos: Sequence[dict], rodada: int, cfg: Config) -> list[dict]:
+               exemplos: Sequence[dict], rodada: int, cfg: Config,
+               exemplo_externo: dict | None = None) -> list[dict]:
     sistema, user = P.prompt_geracao(
         subtopico=faceta.subtopico, topico=faceta.topico, faceta_foco=faceta.foco,
-        documento=documento, exemplos=exemplos,
+        documento=documento, exemplos=exemplos, exemplo_externo=exemplo_externo,
         n_questoes=cfg.n_questoes_por_lote, n_alternativas=cfg.n_alternativas,
         marcador_rodada=_marcador(rodada, doc["doc_id"], cfg.seed))
     dados = llm_forte.complete_json(user, system=sistema, max_tokens=12000,
@@ -944,19 +986,32 @@ def refinar_questao(llm_forte, questao: dict, diagnostico: dict,
 # ===========================================================================
 # §7 scorer de vícios (passo 5) — determinístico, sem LLM
 # ===========================================================================
-# Três vícios de construção que fazem a questão ser respondível sem saber o
+# Quatro vícios de construção que fazem a questão ser respondível sem saber o
 # conteúdo. Cada um é normalizado para [0,1] — 0 = sem vício, 1 = saturado —
 # para que a tolerância (passo 6) seja um número comparável entre eles.
 #
-#   similaridade  a correta se parece mais com o enunciado do que os distratores
-#                 (cosseno de embedding + sobreposição de palavras de conteúdo).
-#                 Mede-se a VANTAGEM da correta; distrator parecido demais não
-#                 é vício, é distrator bom.
-#   comprimento   a correta destoa em tamanho — mais longa (o caso comum, o
-#                 autor detalha a certa) ou mais curta. Desvio em módulo.
-#   distratores   distrator "lixo": ou sem relação semântica com o enunciado
-#                 (elimina-se de bate-pronto), ou carregado de linguagem
-#                 absolutista que a correta não tem (entrega por eliminação).
+#   similaridade   a correta se parece mais com o enunciado do que os
+#                  distratores (cosseno de embedding + sobreposição de
+#                  palavras de conteúdo). Mede-se a VANTAGEM da correta;
+#                  distrator parecido demais não é vício, é distrator bom.
+#   comprimento    a correta destoa em tamanho — mais longa (o caso comum, o
+#                  autor detalha a certa) ou mais curta. Desvio em módulo.
+#   distratores    distrator "lixo": ou sem relação semântica com o enunciado
+#                  (elimina-se de bate-pronto), ou carregado de linguagem
+#                  absolutista que a correta não tem (entrega por eliminação).
+#   racionalizacao distrator que se JUSTIFICA dentro do próprio texto,
+#                  minimizando o seu ponto fraco ("assumindo que...",
+#                  "pressupondo que...", "...tende a ser secundário/pequeno").
+#                  Achado ao analisar a rodada de 102 questões da fase 3: esse
+#                  padrão apareceu em 26 delas, sempre em distrator (nunca na
+#                  correta) e concentrado nas questões que 3 modelos Ollama
+#                  pequenos (qwen2.5:7b, phi4-mini, llama3.2:3b) acertaram sem
+#                  ver o gabarito — um "tell" de prova de múltipla escolha que
+#                  não depende de conhecimento de domínio (ver
+#                  analysis/avaliacao_dificuldade_ollama.ipynb). Os três
+#                  vícios acima não capturam isso: similaridade olha proximidade
+#                  com o enunciado, comprimento olha só caracteres, distratores
+#                  só pega irrelevância ou "sempre/nunca" literal.
 
 PALAVRAS_ARMADILHA = (
     "apenas", "somente", "exclusivamente", "unico", "unica", "exclusivo",
@@ -967,6 +1022,21 @@ PALAVRAS_ARMADILHA = (
 )
 _RE_ARMADILHA = re.compile(
     r"\b(" + "|".join(PALAVRAS_ARMADILHA) + r")\b")
+
+# Verbos de abertura de uma racionalização + o desfecho que ela costuma ter
+# (minimizar a própria falha). Testado contra as 102 questões da fase 3: 0
+# falsos positivos na alternativa correta, 36 ocorrências em distratores,
+# espalhadas por 26 questões.
+FRASES_RACIONALIZACAO = (
+    r"assumindo que", r"pressupondo que", r"supondo que", r"entendendo que",
+    r"por entender que", r"apostando que", r"acreditando que", r"avaliando que",
+    r"considerando que", r"partindo do principio",
+    r"tende(?:m)? a ser (?:pequen\w*|secundari\w*|irrelevant\w*|desprezivel\w*)",
+    r"nao (?:e relevante|influencia\w*|impacta\w*|afeta\w*)",
+    r"pouco relevante",
+)
+_RE_RACIONALIZACAO = re.compile(
+    r"\b(" + "|".join(FRASES_RACIONALIZACAO) + r")\b")
 
 
 def _jaccard(a: set[str], b: set[str]) -> float:
@@ -1021,6 +1091,15 @@ def pontuar_vicios(questao: dict, emb: Embedder, cfg: Config) -> dict:
         frac_arm = max(0.0, frac_arm - 1.0 / len(idx_d))
     v_dist = _clip01(max(frac_irr, frac_arm))
 
+    # -- vício 4: distrator que racionaliza o próprio ponto fraco -----------
+    racionalizantes = [chr(65 + i) for i in idx_d
+                        if _RE_RACIONALIZACAO.search(normalizar(alts[i]))]
+    correta_tem_racionalizacao = bool(_RE_RACIONALIZACAO.search(normalizar(alts[ic])))
+    frac_racio = len(racionalizantes) / len(idx_d)
+    if correta_tem_racionalizacao:     # mesma cortesia do vício 3: não pune se a correta também usa
+        frac_racio = max(0.0, frac_racio - 1.0 / len(idx_d))
+    v_racio = _clip01(frac_racio)
+
     diag = {
         "similaridade": {
             "valor": round(v_sim, 3), "limite": cfg.tol_similaridade,
@@ -1037,6 +1116,12 @@ def pontuar_vicios(questao: dict, emb: Embedder, cfg: Config) -> dict:
                         f"{irrelevantes or '—'}; "
                         f"linguagem absolutista: {armadilhas or '—'}"
                         + (" (a correta também tem)" if correta_tem_armadilha else ""))},
+        "racionalizacao": {
+            "valor": round(v_racio, 3), "limite": cfg.tol_racionalizacao,
+            "detalhe": (f"distrator se justifica minimizando o próprio ponto "
+                        f"fraco (\"assumindo que...\", \"pressupondo que...\", "
+                        f"\"...tende a ser secundário\"): {racionalizantes or '—'}"
+                        + (" (a correta também tem)" if correta_tem_racionalizacao else ""))},
     }
     for k, v in diag.items():
         v["excedeu"] = v["valor"] > v["limite"]
@@ -1346,6 +1431,7 @@ class Repositorio:
                 "subtopico": q.get("subtopico"), "faceta": q.get("faceta_titulo"),
                 "rodada": q.get("rodada"), "nota": q.get("nota"),
                 "dificuldade": q.get("difficulty"),
+                "dificuldade_gerador": q.get("dificuldade_gerador"),
                 "refinada": q.get("refinada", False),
                 **{f"vicio_{k}": v for k, v in (q.get("vicios") or {}).items()},
                 "stem": q["stem"],
@@ -1420,18 +1506,26 @@ def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
     log: dict[str, Any] = {"rodada": rodada, "doc_id": doc["doc_id"],
                            "faceta": faceta.titulo}
 
+    # Um rng só pra rodada inteira (sorteio do exemplo externo + embaralhamento
+    # da posição do gabarito, nessa ordem): reprodutível, sem precisar de dois
+    # objetos Random com offsets ad-hoc.
+    rng = random.Random(cfg.seed + rodada)
+
     # -- passo 3: geração ----------------------------------------------------
     exemplos = pool.amostrar(excluir_subtopico=faceta.subtopico)
-    geradas = gerar_lote(llm_forte, doc, faceta, documento, exemplos, rodada, cfg)
+    exemplo_externo = (amostrar_exemplo_externo(rng) if cfg.usar_exemplos_externos
+                        else None)
+    geradas = gerar_lote(llm_forte, doc, faceta, documento, exemplos, rodada, cfg,
+                         exemplo_externo=exemplo_externo)
     log["geradas"] = len(geradas)
     log["fewshot"] = [q["id"] for q in exemplos]
+    log["exemplo_externo"] = exemplo_externo["id"] if exemplo_externo else None
 
     # -- passo 4: judge ------------------------------------------------------
     aprovadas = julgar_lote(llm_judge, geradas, faceta.subtopico, cfg)
     log["aprovadas_judge"] = len(aprovadas)
 
     # -- passos 5 e 6: vícios e refinamento ---------------------------------
-    rng = random.Random(cfg.seed + rodada)      # embaralhamento reprodutível
     guardadas, descartadas, refinadas = [], 0, 0
     for q in aprovadas:
         diag = pontuar_vicios(q, emb, cfg)
@@ -1491,7 +1585,8 @@ def calibrar_tolerancias(questoes: Sequence[dict], emb: "Embedder", cfg: Config,
     Tolerância apertada demais manda todo lote para o refinador (caro, e o
     refinador vira o verdadeiro gerador); frouxa demais não filtra nada.
     """
-    valores = {"similaridade": [], "comprimento": [], "distratores": []}
+    valores = {"similaridade": [], "comprimento": [], "distratores": [],
+               "racionalizacao": []}
     for q in questoes:
         d = pontuar_vicios(q, emb, cfg)
         for k in valores:
@@ -1499,7 +1594,8 @@ def calibrar_tolerancias(questoes: Sequence[dict], emb: "Embedder", cfg: Config,
 
     atual = {"similaridade": cfg.tol_similaridade,
              "comprimento": cfg.tol_comprimento,
-             "distratores": cfg.tol_distratores}
+             "distratores": cfg.tol_distratores,
+             "racionalizacao": cfg.tol_racionalizacao}
     sugerido = {k: round(float(np.percentile(v, percentil)), 3)
                 for k, v in valores.items() if v}
 
@@ -1602,6 +1698,7 @@ __all__ = [
     "montar_documentos_faceta", "plano_de_documentos",
     "consolidar_documento", "gerar_lote", "julgar_lote", "refinar_questao",
     "pontuar_vicios", "tem_vicio", "resumo_vicios", "PALAVRAS_ARMADILHA",
+    "FRASES_RACIONALIZACAO",
     "embaralhar_posicao",
     "texto_para_embedding", "treinar_codebook", "codebook_do_subtopico",
     "entropia_normalizada",
