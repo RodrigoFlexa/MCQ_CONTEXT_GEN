@@ -1501,6 +1501,14 @@ def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
                     verbose: bool = True) -> dict:
     """Um ciclo dos passos 3–8 sobre um documento consolidado.
 
+    Ordem: geração -> vícios/refinamento -> judge -> armazenamento. O judge
+    roda por ÚLTIMO de propósito: seu papel é validar qualidade, dificuldade e
+    correção técnica da versão FINAL da questão, não de um rascunho que ainda
+    vai ser reescrito pelo refinador. Rodá-lo antes fazia o judge avaliar (e
+    gastar chamada de LLM em) texto que o passo de vícios podia jogar fora ou
+    reescrever logo em seguida — e a nota/dificuldade que ele atribuía ficava
+    presa à versão pré-refinamento, não à que de fato ia pro repositório.
+
     Devolve o relatório da rodada (contagens por etapa e as questões guardadas).
     """
     log: dict[str, Any] = {"rodada": rodada, "doc_id": doc["doc_id"],
@@ -1521,13 +1529,14 @@ def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
     log["fewshot"] = [q["id"] for q in exemplos]
     log["exemplo_externo"] = exemplo_externo["id"] if exemplo_externo else None
 
-    # -- passo 4: judge ------------------------------------------------------
-    aprovadas = julgar_lote(llm_judge, geradas, faceta.subtopico, cfg)
-    log["aprovadas_judge"] = len(aprovadas)
-
-    # -- passos 5 e 6: vícios e refinamento ---------------------------------
-    guardadas, descartadas, refinadas = [], 0, 0
-    for q in aprovadas:
+    # -- passos 5 e 6: vícios e refinamento (agora ANTES do judge) ----------
+    # Corre sobre todas as questões geradas, não só sobre um subconjunto
+    # pré-aprovado: métrica e refinamento preparam o texto que o judge vai
+    # avaliar por último.
+    candidatas: list[dict] = []
+    diagnosticos: dict[str, dict] = {}
+    descartadas = refinadas = 0
+    for q in geradas:
         diag = pontuar_vicios(q, emb, cfg)
         if tem_vicio(diag):
             nova = refinar_questao(llm_forte, q, diag, documento, cfg)
@@ -1543,20 +1552,30 @@ def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
         # -- pós-processamento: posição do gabarito -------------------------
         # Os VALORES dos vícios não mudam com a posição, mas o `detalhe` cita a
         # letra da correta; recalcular (embeddings já em cache) mantém o
-        # registro coerente com o que foi armazenado.
+        # registro coerente com o que vai pro judge e, se aprovado, pro
+        # repositório.
         if cfg.embaralhar_alternativas:
             q = embaralhar_posicao(q, rng)
             diag = pontuar_vicios(q, emb, cfg)
-        # -- passo 7: armazenamento -----------------------------------------
-        guardadas.append(repo.adicionar(q, diag))
-    log.update({"refinadas": refinadas, "descartadas_vicio": descartadas,
-                "guardadas": len(guardadas)})
+        candidatas.append(q)
+        diagnosticos[q["id"]] = diag
+    log.update({"refinadas": refinadas, "descartadas_vicio": descartadas})
+
+    # -- passo 4: judge, agora ao FIM da rodada ------------------------------
+    # Único responsável por: qualidade, dificuldade e filtrar o que não está
+    # tecnicamente correto — sobre a versão que já passou pelo scorer/refino.
+    aprovadas = julgar_lote(llm_judge, candidatas, faceta.subtopico, cfg)
+    log["aprovadas_judge"] = len(aprovadas)
+
+    # -- passo 7: armazenamento ----------------------------------------------
+    guardadas = [repo.adicionar(q, diagnosticos[q["id"]]) for q in aprovadas]
+    log["guardadas"] = len(guardadas)
     log["ids_guardadas"] = [q["id"] for q in guardadas]
 
     if verbose:
         print(f"    rodada {rodada:>2} · {faceta.titulo[:34]:<34} "
-              f"gerou {log['geradas']:>2} · judge {log['aprovadas_judge']:>2} · "
-              f"refinou {refinadas} · descartou {descartadas} · "
+              f"gerou {log['geradas']:>2} · refinou {refinadas} · "
+              f"descartou {descartadas} · judge {log['aprovadas_judge']:>2} · "
               f"guardou {len(guardadas)}")
     return log
 
@@ -1622,11 +1641,29 @@ def calibrar_tolerancias(questoes: Sequence[dict], emb: "Embedder", cfg: Config,
 
 
 
+def ids_pool_ausentes_do_repositorio(est: "EstadoSubtopico",
+                                     repo: "Repositorio") -> list[str]:
+    """Ids que o estado do subtópico marca como aprovados (`ids_pool`) mas que
+    não existem mais em `repo.questoes`.
+
+    Detecta o cenário do bug de ago/2026: o arquivo do repositório perdeu
+    dados em disco (deleção externa, dessincronia de sync de pasta, etc.) sem
+    que o estado (contador de rodada, `historico_entropia`) fosse tocado — a
+    entropia calculada depois disso passou a rodar sobre um pool reiniciado do
+    zero, e `EstadoSubtopico.registrar_rodada` tratou isso como "aquecendo"
+    (primeira rodada / pool imaturo) em vez de acusar a inconsistência, porque
+    nada cruzava `ids_pool` contra o repositório de fato.
+    """
+    ids_no_repo = {q["id"] for q in repo.questoes}
+    return [i for i in est.ids_pool if i not in ids_no_repo]
+
+
 def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta],
                        plano: Sequence[dict], llm_leve, llm_forte, llm_judge,
                        pool: "PoolFewShot", repo: "Repositorio", emb: "Embedder",
                        codebook: "Codebook", cfg: Config,
-                       max_rodadas: int = 60, verbose: bool = True) -> "EstadoSubtopico":
+                       max_rodadas: int = 60, verbose: bool = True,
+                       ignorar_inconsistencia_pool: bool = False) -> "EstadoSubtopico":
     """Passos 3–9 em laço, até estagnar em todos os documentos do subtópico.
 
     Retomável: o estado é gravado a cada rodada, então reexecutar continua de
@@ -1634,6 +1671,31 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
     chamadas idênticas).
     """
     est = EstadoSubtopico.carregar(subtopico, topico, cfg)
+
+    # -- checagem de consistência (ago/2026) --------------------------------
+    # Antes de rodar mais uma rodada em cima de um estado retomado, confere se
+    # o pool que o estado acha que existe bate com o que está de fato no
+    # repositório. Ver `ids_pool_ausentes_do_repositorio`.
+    faltando = ids_pool_ausentes_do_repositorio(est, repo)
+    if faltando and not ignorar_inconsistencia_pool:
+        raise RuntimeError(
+            f"inconsistência no repositório do subtópico '{subtopico}': "
+            f"{len(faltando)} de {len(est.ids_pool)} questões que o estado "
+            f"(rodada {est.rodada}) marca como aprovadas não existem em "
+            f"repo.questoes — o repositório parece ter perdido dados sem o "
+            f"estado ser resetado (foi exatamente o que aconteceu em ago/2026, "
+            f"ver os arquivos saida_fase3/repositorio/questoes.jsonl.bak_* e "
+            f"fase3_pipeline.md na memória do projeto). Não sigo em frente "
+            f"sozinho porque a entropia calculada sobre um pool incompleto "
+            f"invalida o critério de parada. Reconcilie o repositório "
+            f"(recuperando as questões faltantes de um backup ou commit git) "
+            f"ou, se a perda for aceita de propósito, chame de novo com "
+            f"ignorar_inconsistencia_pool=True.")
+    elif faltando and verbose:
+        print(f"  [aviso] {len(faltando)} questões do ids_pool de '{subtopico}' "
+              f"não estão no repositório — seguindo mesmo assim "
+              f"(ignorar_inconsistencia_pool=True).")
+
     fac_por_id = {f.id: f for f in facetas}
     if verbose:
         print(f"\n=== {subtopico} === ({len(plano)} documentos, "
@@ -1704,4 +1766,5 @@ __all__ = [
     "entropia_normalizada",
     "sugerir_limiar_entropia", "calibrar_tolerancias",
     "executar_rodada", "executar_subtopico", "registrar_log",
+    "ids_pool_ausentes_do_repositorio",
 ]
