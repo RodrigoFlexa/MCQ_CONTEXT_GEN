@@ -106,6 +106,8 @@ class Config:
 
     # ------------------------------------------------------------ geração --
     n_questoes_por_lote: int = 6
+    pausa_entre_lotes: float = 10.0
+    pausa_entre_etapas: float = 2.0
     n_alternativas: int = 4
     n_exemplos_fewshot: int = 3
     # Pós-processamento: a posição do gabarito é sorteada aqui, não pedida ao
@@ -1528,6 +1530,7 @@ def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
     log["geradas"] = len(geradas)
     log["fewshot"] = [q["id"] for q in exemplos]
     log["exemplo_externo"] = exemplo_externo["id"] if exemplo_externo else None
+    time.sleep(cfg.pausa_entre_etapas)
 
     # -- passos 5 e 6: vícios e refinamento (agora ANTES do judge) ----------
     # Corre sobre todas as questões geradas, não só sobre um subconjunto
@@ -1560,12 +1563,14 @@ def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
         candidatas.append(q)
         diagnosticos[q["id"]] = diag
     log.update({"refinadas": refinadas, "descartadas_vicio": descartadas})
+    time.sleep(cfg.pausa_entre_etapas)
 
     # -- passo 4: judge, agora ao FIM da rodada ------------------------------
     # Único responsável por: qualidade, dificuldade e filtrar o que não está
     # tecnicamente correto — sobre a versão que já passou pelo scorer/refino.
     aprovadas = julgar_lote(llm_judge, candidatas, faceta.subtopico, cfg)
     log["aprovadas_judge"] = len(aprovadas)
+    time.sleep(cfg.pausa_entre_etapas)
 
     # -- passo 7: armazenamento ----------------------------------------------
     guardadas = [repo.adicionar(q, diagnosticos[q["id"]]) for q in aprovadas]
@@ -1712,6 +1717,8 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
         faceta = fac_por_id[doc["faceta_id"]]
         documento = consolidar_documento(llm_leve, doc, faceta, cfg)
 
+        if est.rodada > 0:
+            time.sleep(cfg.pausa_entre_lotes)
         est.rodada += 1
         est.rodadas_no_documento += 1
         log = executar_rodada(llm_forte=llm_forte, llm_judge=llm_judge, doc=doc,
