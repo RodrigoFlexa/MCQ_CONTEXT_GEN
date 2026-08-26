@@ -49,6 +49,11 @@ import numpy as np
 import prompts_fase3 as P
 from exemplos_externos_fase3 import EXEMPLOS_ARC
 
+try:  # soft: usado só pra classificar exceção, não pra criar acoplamento duro
+    from azure_openai_backend import LLMError
+except ImportError:  # pragma: no cover — outro backend, sem essa classe
+    LLMError = RuntimeError
+
 # ===========================================================================
 # Config
 # ===========================================================================
@@ -144,9 +149,24 @@ class Config:
     # ------------------------------------------------------------ entropia --
     n_clusters_codebook: int = 24    # k da clusterização fixa, por subtópico
     limiar_ganho_entropia: float = 0.010  # A CALIBRAR no piloto (passo 9)
-    rodadas_estagnadas_max: int = 5
+    rodadas_estagnadas_max: int = 5  # <- "mínimo de rodadas estagnadas" pra declarar parada
     min_questoes_para_entropia: int = 12  # pool pequeno demais não informa nada
     max_rodadas_por_documento: int = 30   # trava de segurança
+
+    # -------------------------------------------------------- resiliência --
+    # ago/2026: uma rodada pode falhar por erro de LLM sem derrubar as outras
+    # 39 (ver `executar_rodada`/`executar_subtopico`). O filtro de conteúdo do
+    # Azure é tratado à parte porque, ao contrário de uma falha transiente, ele
+    # tende a se repetir enquanto o documento/faceta continuar sendo a fonte —
+    # depois de `erros_filtro_conteudo_max + 1` ocorrências, o subtópico é
+    # abandonado em vez de insistir.
+    erros_filtro_conteudo_max: int = 2
+    # ...mas se o filtro repetir no MESMO documento antes disso, não vale a
+    # pena insistir nele: pulamos pro próximo documento do subtópico. Padrão
+    # 1 = pula já na 2ª ocorrência ("se esse erro se repetir", conforme
+    # pedido) — o documento em si não é apagado do disco, só descartado da
+    # varredura deste subtópico.
+    erros_filtro_conteudo_doc_max: int = 1
 
     # ------------------------------------------------------------- geral ---
     seed: int = 42
@@ -1260,6 +1280,12 @@ class EstadoSubtopico:
     historico_entropia: list[float] = field(default_factory=list)
     ids_pool: list[str] = field(default_factory=list)  # questões aprovadas
     concluido: bool = False
+    # -------------------------------------------------------- resiliência --
+    erros_filtro_conteudo: int = 0   # rodadas perdidas pro filtro de conteúdo do Azure (subtópico todo)
+    erros_filtro_conteudo_doc: int = 0  # idem, mas só no documento ATUAL (zera a cada avanço de doc_idx)
+    erros_llm: int = 0               # rodadas perdidas por outro erro de LLM (não classificado)
+    abandonado: bool = False         # True quando desistimos do subtópico (ver executar_subtopico)
+    motivo_abandono: str = ""
 
     # ------------------------------------------------------------ passo 9 --
     def registrar_rodada(self, entropia: float, n_pool: int, cfg: "Config") -> dict:
@@ -1496,6 +1522,36 @@ class PoolFewShot:
 # Rodada: passos 3 a 8 encadeados
 # ===========================================================================
 
+# Marcadores de texto do bloqueio de filtro de conteúdo do Azure OpenAI.
+# `AzureOpenAIBackend._call` embrulha a exceção original do SDK (openai.
+# BadRequestError, status 400) numa `LLMError` cuja mensagem já interpola
+# `str(exc_original)` — por isso basta procurar substring na mensagem da
+# LLMError, sem precisar importar tipos do SDK da OpenAI aqui. Também
+# percorre `__cause__`/`__context__` por segurança, caso o formato da
+# mensagem mude no futuro.
+_MARCADORES_FILTRO_CONTEUDO = (
+    "content_filter",
+    "content management policy",
+    "responsibleaipolicyviolation",
+    "filtered due to",
+    "content filtering policies",
+)
+
+
+def _eh_erro_filtro_conteudo(exc: BaseException) -> bool:
+    """True se `exc` (ou algo na sua cadeia de causas) é um bloqueio do filtro
+    de conteúdo do Azure — prompt ou resposta sinalizados (ex.: categoria
+    "sexual", "violence", "self_harm", "hate"), não um erro transiente."""
+    vistos: set[int] = set()
+    atual: BaseException | None = exc
+    while atual is not None and id(atual) not in vistos:
+        vistos.add(id(atual))
+        texto = str(atual).lower()
+        if any(marcador in texto for marcador in _MARCADORES_FILTRO_CONTEUDO):
+            return True
+        atual = atual.__cause__ or atual.__context__
+    return False
+
 
 def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
                     documento: str, pool: PoolFewShot, repo: Repositorio,
@@ -1514,75 +1570,99 @@ def executar_rodada(*, llm_forte, llm_judge, doc: dict, faceta: Faceta,
     Devolve o relatório da rodada (contagens por etapa e as questões guardadas).
     """
     log: dict[str, Any] = {"rodada": rodada, "doc_id": doc["doc_id"],
-                           "faceta": faceta.titulo}
+                           "faceta": faceta.titulo, "erro": None}
 
     # Um rng só pra rodada inteira (sorteio do exemplo externo + embaralhamento
     # da posição do gabarito, nessa ordem): reprodutível, sem precisar de dois
     # objetos Random com offsets ad-hoc.
     rng = random.Random(cfg.seed + rodada)
 
-    # -- passo 3: geração ----------------------------------------------------
-    exemplos = pool.amostrar(excluir_subtopico=faceta.subtopico)
-    exemplo_externo = (amostrar_exemplo_externo(rng) if cfg.usar_exemplos_externos
-                        else None)
-    geradas = gerar_lote(llm_forte, doc, faceta, documento, exemplos, rodada, cfg,
-                         exemplo_externo=exemplo_externo)
-    log["geradas"] = len(geradas)
-    log["fewshot"] = [q["id"] for q in exemplos]
-    log["exemplo_externo"] = exemplo_externo["id"] if exemplo_externo else None
-    time.sleep(cfg.pausa_entre_etapas)
+    # Tudo que chama LLM nesta rodada (geração, refinamento, judge) fica dentro
+    # do try — uma chamada que falha (filtro de conteúdo do Azure ou qualquer
+    # outro erro de LLM) não deve derrubar as outras rodadas/subtópicos do
+    # laço. `executar_subtopico` decide o que fazer com `log["erro"]`: conta,
+    # loga e segue; se for filtro de conteúdo repetido, abandona o subtópico.
+    try:
+        # -- passo 3: geração -------------------------------------------------
+        exemplos = pool.amostrar(excluir_subtopico=faceta.subtopico)
+        exemplo_externo = (amostrar_exemplo_externo(rng) if cfg.usar_exemplos_externos
+                            else None)
+        geradas = gerar_lote(llm_forte, doc, faceta, documento, exemplos, rodada, cfg,
+                             exemplo_externo=exemplo_externo)
+        log["geradas"] = len(geradas)
+        log["fewshot"] = [q["id"] for q in exemplos]
+        log["exemplo_externo"] = exemplo_externo["id"] if exemplo_externo else None
+        time.sleep(cfg.pausa_entre_etapas)
 
-    # -- passos 5 e 6: vícios e refinamento (agora ANTES do judge) ----------
-    # Corre sobre todas as questões geradas, não só sobre um subconjunto
-    # pré-aprovado: métrica e refinamento preparam o texto que o judge vai
-    # avaliar por último.
-    candidatas: list[dict] = []
-    diagnosticos: dict[str, dict] = {}
-    descartadas = refinadas = 0
-    for q in geradas:
-        diag = pontuar_vicios(q, emb, cfg)
-        if tem_vicio(diag):
-            nova = refinar_questao(llm_forte, q, diag, documento, cfg)
-            if nova is None:
-                descartadas += 1
-                continue
-            diag2 = pontuar_vicios(nova, emb, cfg)
-            if tem_vicio(diag2):        # reincidiu: descarta, não insiste
-                descartadas += 1
-                continue
-            q, diag = nova, diag2
-            refinadas += 1
-        # -- pós-processamento: posição do gabarito -------------------------
-        # Os VALORES dos vícios não mudam com a posição, mas o `detalhe` cita a
-        # letra da correta; recalcular (embeddings já em cache) mantém o
-        # registro coerente com o que vai pro judge e, se aprovado, pro
-        # repositório.
-        if cfg.embaralhar_alternativas:
-            q = embaralhar_posicao(q, rng)
+        # -- passos 5 e 6: vícios e refinamento (agora ANTES do judge) -------
+        # Corre sobre todas as questões geradas, não só sobre um subconjunto
+        # pré-aprovado: métrica e refinamento preparam o texto que o judge vai
+        # avaliar por último.
+        candidatas: list[dict] = []
+        diagnosticos: dict[str, dict] = {}
+        descartadas = refinadas = 0
+        for q in geradas:
             diag = pontuar_vicios(q, emb, cfg)
-        candidatas.append(q)
-        diagnosticos[q["id"]] = diag
-    log.update({"refinadas": refinadas, "descartadas_vicio": descartadas})
-    time.sleep(cfg.pausa_entre_etapas)
+            if tem_vicio(diag):
+                nova = refinar_questao(llm_forte, q, diag, documento, cfg)
+                if nova is None:
+                    descartadas += 1
+                    continue
+                diag2 = pontuar_vicios(nova, emb, cfg)
+                if tem_vicio(diag2):        # reincidiu: descarta, não insiste
+                    descartadas += 1
+                    continue
+                q, diag = nova, diag2
+                refinadas += 1
+            # -- pós-processamento: posição do gabarito ----------------------
+            # Os VALORES dos vícios não mudam com a posição, mas o `detalhe`
+            # cita a letra da correta; recalcular (embeddings já em cache)
+            # mantém o registro coerente com o que vai pro judge e, se
+            # aprovado, pro repositório.
+            if cfg.embaralhar_alternativas:
+                q = embaralhar_posicao(q, rng)
+                diag = pontuar_vicios(q, emb, cfg)
+            candidatas.append(q)
+            diagnosticos[q["id"]] = diag
+        log.update({"refinadas": refinadas, "descartadas_vicio": descartadas})
+        time.sleep(cfg.pausa_entre_etapas)
 
-    # -- passo 4: judge, agora ao FIM da rodada ------------------------------
-    # Único responsável por: qualidade, dificuldade e filtrar o que não está
-    # tecnicamente correto — sobre a versão que já passou pelo scorer/refino.
-    aprovadas = julgar_lote(llm_judge, candidatas, faceta.subtopico, cfg)
-    log["aprovadas_judge"] = len(aprovadas)
-    time.sleep(cfg.pausa_entre_etapas)
+        # -- passo 4: judge, agora ao FIM da rodada --------------------------
+        # Único responsável por: qualidade, dificuldade e filtrar o que não
+        # está tecnicamente correto — sobre a versão que já passou pelo
+        # scorer/refino.
+        aprovadas = julgar_lote(llm_judge, candidatas, faceta.subtopico, cfg)
+        log["aprovadas_judge"] = len(aprovadas)
+        time.sleep(cfg.pausa_entre_etapas)
 
-    # -- passo 7: armazenamento ----------------------------------------------
-    guardadas = [repo.adicionar(q, diagnosticos[q["id"]]) for q in aprovadas]
-    log["guardadas"] = len(guardadas)
-    log["ids_guardadas"] = [q["id"] for q in guardadas]
+        # -- passo 7: armazenamento -------------------------------------------
+        guardadas = [repo.adicionar(q, diagnosticos[q["id"]]) for q in aprovadas]
+        log["guardadas"] = len(guardadas)
+        log["ids_guardadas"] = [q["id"] for q in guardadas]
 
-    if verbose:
-        print(f"    rodada {rodada:>2} · {faceta.titulo[:34]:<34} "
-              f"gerou {log['geradas']:>2} · refinou {refinadas} · "
-              f"descartou {descartadas} · judge {log['aprovadas_judge']:>2} · "
-              f"guardou {len(guardadas)}")
-    return log
+        if verbose:
+            print(f"    rodada {rodada:>2} · {faceta.titulo[:34]:<34} "
+                  f"gerou {log['geradas']:>2} · refinou {refinadas} · "
+                  f"descartou {descartadas} · judge {log['aprovadas_judge']:>2} · "
+                  f"guardou {len(guardadas)}")
+        return log
+
+    except LLMError as exc:
+        filtro = _eh_erro_filtro_conteudo(exc)
+        log["erro"] = "filtro_conteudo" if filtro else "llm"
+        log["erro_detalhe"] = str(exc)[:500]
+        # Contagens em 0: nada desta rodada foi gerado/aprovado/guardado —
+        # os campos existem pra `registrar_log`/análise não terem que tratar
+        # rodada com erro como caso especial.
+        log.setdefault("geradas", 0)
+        log.setdefault("aprovadas_judge", 0)
+        log.update({"refinadas": 0, "descartadas_vicio": 0,
+                    "guardadas": 0, "ids_guardadas": []})
+        if verbose:
+            rotulo = "FILTRO DE CONTEÚDO (Azure)" if filtro else "erro de LLM"
+            print(f"    rodada {rodada:>2} · {faceta.titulo[:34]:<34} "
+                  f"[{rotulo}] {str(exc)[:160]}")
+        return log
 
 
 def registrar_log(cfg: Config, nome: str, payload: dict) -> None:
@@ -1701,6 +1781,14 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
               f"não estão no repositório — seguindo mesmo assim "
               f"(ignorar_inconsistencia_pool=True).")
 
+    if est.abandonado:
+        if verbose:
+            print(f"\n=== {subtopico} === já foi ABANDONADO antes: "
+                  f"{est.motivo_abandono}\n"
+                  f"    (pra tentar de novo, zere `erros_filtro_conteudo` e "
+                  f"`abandonado` no estado salvo)")
+        return est
+
     fac_por_id = {f.id: f for f in facetas}
     if verbose:
         print(f"\n=== {subtopico} === ({len(plano)} documentos, "
@@ -1715,17 +1803,91 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
 
         doc = plano[est.doc_idx]
         faceta = fac_por_id[doc["faceta_id"]]
-        documento = consolidar_documento(llm_leve, doc, faceta, cfg)
 
         if est.rodada > 0:
             time.sleep(cfg.pausa_entre_lotes)
         est.rodada += 1
         est.rodadas_no_documento += 1
-        log = executar_rodada(llm_forte=llm_forte, llm_judge=llm_judge, doc=doc,
-                              faceta=faceta, documento=documento, pool=pool,
-                              repo=repo, emb=emb, cfg=cfg, rodada=est.rodada,
-                              verbose=verbose)
+
+        # A consolidação (llm_leve) também é uma chamada de LLM e também pode
+        # ser bloqueada pelo filtro de conteúdo — fora do try de
+        # `executar_rodada` porque acontece antes dela. Mesmo tratamento:
+        # nada é gerado nesta rodada, mas o laço segue.
+        try:
+            documento = consolidar_documento(llm_leve, doc, faceta, cfg)
+        except LLMError as exc:
+            filtro = _eh_erro_filtro_conteudo(exc)
+            log = {"rodada": est.rodada, "doc_id": doc["doc_id"],
+                   "faceta": faceta.titulo,
+                   "erro": "filtro_conteudo" if filtro else "llm",
+                   "erro_detalhe": str(exc)[:500],
+                   "geradas": 0, "aprovadas_judge": 0, "refinadas": 0,
+                   "descartadas_vicio": 0, "guardadas": 0, "ids_guardadas": []}
+            if verbose:
+                rotulo = "FILTRO DE CONTEÚDO (Azure)" if filtro else "erro de LLM"
+                print(f"    rodada {est.rodada:>2} · {faceta.titulo[:34]:<34} "
+                      f"[{rotulo} na consolidação] {str(exc)[:160]}")
+        else:
+            log = executar_rodada(llm_forte=llm_forte, llm_judge=llm_judge, doc=doc,
+                                  faceta=faceta, documento=documento, pool=pool,
+                                  repo=repo, emb=emb, cfg=cfg, rodada=est.rodada,
+                                  verbose=verbose)
         est.ids_pool.extend(log["ids_guardadas"])
+
+        # -- erro nesta rodada: conta, loga e passa pra próxima -------------
+        # (não entra no cálculo de entropia — o pool do repositório não mudou)
+        if log.get("erro") == "filtro_conteudo":
+            est.erros_filtro_conteudo += 1
+            est.erros_filtro_conteudo_doc += 1
+            registrar_log(cfg, "rodadas", {"subtopico": subtopico, **log})
+            if verbose:
+                print(f"       [filtro de conteúdo: {est.erros_filtro_conteudo}"
+                      f"/{cfg.erros_filtro_conteudo_max + 1} antes de abandonar "
+                      f"o subtópico · {est.erros_filtro_conteudo_doc}"
+                      f"/{cfg.erros_filtro_conteudo_doc_max + 1} antes de pular "
+                      f"este documento]")
+            if est.erros_filtro_conteudo > cfg.erros_filtro_conteudo_max:
+                est.abandonado = True
+                est.motivo_abandono = (
+                    f"{est.erros_filtro_conteudo} erros de filtro de conteúdo "
+                    f"do Azure (rodada {est.rodada}, doc {doc['doc_id']}) — "
+                    f"abandonando o subtópico em vez de insistir.")
+                est.salvar(cfg)
+                repo.salvar()
+                if verbose:
+                    print(f"       -> ABANDONADO: {est.motivo_abandono}")
+                break
+            if est.erros_filtro_conteudo_doc > cfg.erros_filtro_conteudo_doc_max:
+                # o filtro repetiu no MESMO documento — não insistimos nele,
+                # pulamos pro próximo da fila do subtópico (o .md consolidado
+                # continua no disco, só sai da varredura deste subtópico).
+                est.doc_idx += 1
+                est.rodadas_estagnadas = 0
+                est.rodadas_no_documento = 0
+                est.erros_filtro_conteudo_doc = 0
+                if verbose:
+                    print(f"       -> filtro repetiu neste documento "
+                          f"({doc['doc_id']}): pulando pro próximo "
+                          f"({est.doc_idx}/{len(plano)})")
+                if est.doc_idx >= len(plano):
+                    est.concluido = True
+                    if verbose:
+                        print("       -> subtópico concluído")
+                est.salvar(cfg)
+                repo.salvar()
+                continue
+            est.salvar(cfg)
+            repo.salvar()
+            continue
+        elif log.get("erro"):
+            est.erros_llm += 1
+            registrar_log(cfg, "rodadas", {"subtopico": subtopico, **log})
+            if verbose:
+                print(f"       [erro de LLM não classificado, {est.erros_llm} "
+                      f"até agora — seguindo pra próxima rodada]")
+            est.salvar(cfg)
+            repo.salvar()
+            continue
 
         # -- passo 9: entropia do pool acumulado do SUBTÓPICO ----------------
         idxs = repo.por_subtopico(subtopico)
@@ -1745,6 +1907,7 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
             est.doc_idx += 1
             est.rodadas_estagnadas = 0
             est.rodadas_no_documento = 0
+            est.erros_filtro_conteudo_doc = 0
             if verbose:
                 print(f"       -> {motivo}: avança para o documento "
                       f"{est.doc_idx}/{len(plano)}")
@@ -1773,5 +1936,5 @@ __all__ = [
     "entropia_normalizada",
     "sugerir_limiar_entropia", "calibrar_tolerancias",
     "executar_rodada", "executar_subtopico", "registrar_log",
-    "ids_pool_ausentes_do_repositorio",
+    "ids_pool_ausentes_do_repositorio", "_eh_erro_filtro_conteudo",
 ]
