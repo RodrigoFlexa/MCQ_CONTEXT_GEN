@@ -1,0 +1,32 @@
+Mangueiras, conexões e acopladores
+As mangueiras de offloading devem conectar-se por meio de conectores de engate rápido às tomadas existentes nos adaptadores de saída (por exemplo, em BLS coupler). O BLS coupler, quando o mangote está conectado e travado nas três garras, aciona por força hidráulica um pistão que pressiona o disco central contra o disco da válvula na extremidade do mangote (North Sea Valve, NSV), permitindo o bombeamento do óleo do FPSO para o navio aliviador através da tubulação de recebimento até o manifold central do navio. Apesar da automação e do ganho de segurança, a operação exige supervisão local contínua, pois sistemas de detecção de derramamento não detectam eficientemente pequenas quantidades; uma conexão mangote–coupler mal feita pode vazar e um operador presente pode detectar e corrigir o problema.
+
+Sistemas de conexão de mangote e amarração (hawser)
+Em operações de alívio offshore, além de riscos de colisão direta, o principal risco mitigado pelo cabo de amarração (hawser) é a perda de posição do navio aliviador em relação ao FPSO. O hawser é justificado pela possibilidade de afastamento do navio aliviador do FPSO. Detalhes sobre chafe chain e pick-up rope não constam nos trechos fornecidos e, portanto, não foram incorporados.
+
+Manifolds e choke manifold
+O choke manifold é o conjunto de válvulas e chokes destinado ao direcionamento dos fluidos e ao controle de pressão durante manobras de kick ou durante operações de controle de pressão. Suas funções incluem controlar, restringir e direcionar fluxos provenientes do poço com o BOP fechado e garantir a queda de pressão necessária antes do processamento. Pode incluir múltiplas válvulas choke principais (por exemplo, <NUMBER> chokes em alguns arranjos) que atuam como redundância ou em conjunto para ajuste fino de contrapressão e vazão máxima, além de um bypass com outra válvula choke por motivos de segurança e confiabilidade.
+
+O choke manifold pode ser integrado a sistemas MPD (Managed Pressure Drilling) com diferentes métodos de controle: integração do controle dos chokes ao modelo hidráulico, uso de dados de PWD para calibragem, atuação em tempo real via modelagem hidráulica e disponibilidade de bomba de contrapressão exclusiva. Em configurações CBHP (Constant Bottom Hole Pressure), o flowmeter posicionado a jusante do choke manifold é central: comparando continuamente a vazão bombeada (baseada na contagem de strokes) com a vazão medida pelo flowmeter, o sistema antecipa influxos (kicks) ou perdas. A bomba de contrapressão garante manutenção da contrapressão no anular quando o choke está totalmente ou quase fechado durante parada das bombas.
+
+Data header e interfaces
+O data header é usado para conectar instrumentos e sensores para aquisição de dados e para acesso à injeção ou coleta de fluidos à jusante do choke manifold, podendo também ter uma tomada à montante. Data headers típicos contêm de <NUMBER> a <NUMBER> tomadas para medição de pressão e temperatura.
+
+Valvulas, manifolds de exportação e bombas
+Nas operações de offloading, a proteção das linhas de exportação exige válvulas compatíveis com a pressão de trabalho do sistema (SSV, NSV, chokes). A seleção de válvulas exige especificação do perfil de vazão, pressão máxima de operação (maior pressão à qual a válvula totalmente fechada pode ser submetida sem perda de estanqueidade ou dano ao selo — condição relevante durante intervenções e testes de estanqueidade) e pressão máxima diferencial (maior pressão entre coluna e anular à qual a válvula pode ser submetida para operar normalmente sua abertura — condição encontrada durante operação normal do poço).
+
+Bombas de exportação e bombas de contrapressão desempenham papéis distintos: bombas de exportação transferem óleo do FPSO para o navio, passando pela NSV e pelo coupler até o manifold do navio; bombas de contrapressão, quando presentes no sistema de controle de poço, mantêm contrapressão no anular durante condições específicas de choke fechado.
+
+Unidade de potência hidráulica (HPU)
+Para movimentar válvulas de acionamento hidráulico e acopladores, utiliza‑se uma unidade de potência hidráulica (Hydraulic Power Unit, HPU). A HPU pressuriza o fluido até um nível especificado pelo fabricante — tipicamente em torno de <NUMBER> psi — e distribui essa pressão nas linhas de controle através de um conjunto de válvulas (manifold) para acionamento remoto de válvulas e elementos de acoplamento.
+
+BOP, controle e sequências de emergência
+O BOP e seus componentes (BOP gaveta, BOP anular, válvulas de saída para linhas de kill e choke, carretéis compatíveis, carretel espaçador, câmara de expansão do choke) formam a barreira de controle primária do poço. Os sistemas de controle podem ser multiplexados (sinais elétricos/fibra convertidos para hidráulicos no BOP) ou pilotados hidraulicamente (toda a transmissão via hidráulica).
+
+A Emergency Disconnection Sequence (EDS) é uma função automática do sistema de BOP submarino que realiza uma sequência de ações para promover desconexão do LMRP em situações de emergência, por exemplo perda de posição da embarcação. O Emergency Shutdown System (ESD) permite o rápido fechamento de linhas de fluxo na Surface Safety Valve (SSV) ou na válvula de flow da cabeça de teste em caso de emergência; essas válvulas são normalmente comandadas hidraulicamente a partir de painel ou botoeiras alimentadas por linhas de ar de baixa pressão, cujo corte aciona o fechamento automático.
+
+Operação, supervisão e segurança
+Mesmo com automação (acopladores, NSV, HPU, sistemas multiplexados), a operação de offloading deve ser integralmente supervisionada localmente devido à limitação dos detectores de derramamento e ao risco de vazamentos em conexões. A presença de operador é crucial para detecção e mitigação imediata de falhas de conexão entre mangote e coupler, bem como para monitoramento de tensões do hawser e condições de estabilidade do navio aliviador.
+
+Observações sobre lacunas nos trechos fornecidos
+Alguns itens solicitados no recorte (por exemplo, critérios específicos de manutenção de chafe chain, pick-up rope, procedimentos detalhados de inspeção das mangueiras, frequências de testes de HPU ou bombas de exportação) não constam nos trechos fornecidos e, portanto, não foram adicionados nem inferidos.

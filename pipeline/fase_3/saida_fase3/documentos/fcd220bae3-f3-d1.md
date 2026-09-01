@@ -1,0 +1,31 @@
+Sistemas de referência e sensores
+
+Os Sistemas de Referência de Posição (SRP) determinam a posição da unidade em tempo real. Exemplos presentes no corpus incluem DGPS, sistemas acústicos (LBL, SBL, SSBL/USBL) e estações de referência permanentes. O princípio do DGPS baseia‑se na comparação de sinais recebidos por uma estação de referência de posição conhecida e pelo receptor embarcado, permitindo compensar erros correlatos (relojoaria dos satélites, órbitas, efeitos atmosféricos) e fornecer correções de pseudodistâncias ou coordenadas. Redes de referência costeiras e globais (ex.: IGS, redes nacionais como SAPOS) fornecem estações contínuas que transmitem correções em tempo real.
+
+Os Sistemas de Sensores complementares incluem giroscópios/gyrocompass (aproamento, transformação de coordenadas, orientação de antenas GPS/Inmarsat), VRU (Vertical Reference Unit: roll, pitch e heave) e anemômetros (direção e velocidade do vento). VRU e giroscópios são vitais para balizar correções aos SRP, já que DGPS e sistemas acústicos são afetados pelos movimentos do casco e pela orientação dos sensores. Anemômetros fornecem a força ambiental necessária para o cálculo das forças restauradoras aplicadas pelos thrusters.
+
+Arquitetura, redundância e alimentação
+
+O sistema DP é composto por quatro subgrupos: SRP, Sistemas de Sensores, Controladores (computadores) e UPS (Uninterruptible Power Supply). Por critério de redundância, sondas DP possuem pelo menos dois equipamentos para cada subsistema de Sensores, Controladores e UPS, e tipicamente três SRP. Controladores DP operam em configuração redundante (modo master/slave); em falha de um controlador, soa um alarme e o controlador em falha é retirado, mantendo operação com os demais; se o master falha, o slave assume automaticamente.
+
+Comunicação de dados do DP utiliza rede Ethernet de alta velocidade com duas redes redundantes (Net A e Net B). Perda de uma rede aciona alarme de perda de redundância; o operador pode migrar controle para outra estação com redundância intacta. UPS mantém o sistema DP (controladores, processadores, SRP e sensores vitais) por um período mínimo especificado no projeto (ex.: trinta minutos) e filtra picos/ruídos; contudo, UPS não alimenta thrusters. Bancos de baterias do UPS podem estar conectados a barramentos distintos da planta (ex.: essential swb e emergency swb) e alimentam conjuntos específicos de equipamentos (listagens de UPS-1, UPS-2 etc. exemplificam divisão por controladores, DGPS, Hipap, Gyro, WS, ARTEMIS, Inmarsat e datalogger).
+
+Monitoramento de linhas de ancoragem e tensão
+
+Embora os trechos fornecidos destacem sensores de posicionamento e redundância do DP, há referência explícita ao monitoramento de tensões de linhas de ancoragem na demanda do recorte. Os SRP e sensores de movimento do casco (VRU, giroscópio) devem ser integrados a procedimentos de medição e registro das tensões nas linhas, correlacionando leituras de tensão com deslocamentos e heading para identificar tendências de perda de station keeping. Instrumentação direta nas linhas (sensores de tensão) deverá ser alimentada pelas UPS e integradas à rede de dados do DP para geração de alarmes e tendências.
+
+Movimentação do casco e condições meteoceanográficas
+
+Medir e acompanhar roll, pitch e heave via VRU é essencial para corrigir leituras dos SRP; movimentos do casco afetam a orientação das antenas e a propagação de sinais acústicos. Anemômetros quantificam vento local, enquanto sensores de condições meteoceanográficas (implícitos nos SRP e sensores embarcados) alimentam o modelo de forças ambientais requerido pelo controlador DP para cálculo de comandos aos thrusters. Correlações entre variações meteoceanográficas, movimentos do casco e aumento de tensão nas linhas são indicadores primários de degradação da capacidade de manutenção de posição.
+
+Definição de limites, alarmes e tendências
+
+Estados Operacionais devem ser definidos para quantificar a Capacidade Operacional da sonda em cada instante. Limites operacionais do DP abrangem disponibilidade de SRP (nº de referências válidas), disponibilidade de controladores, integridade das redes Net A/Net B, nível de carga das UPS e valores limites de tensão nas linhas e deslocamento do casco em relação ao objetivo. Alarmes devem ser configurados para: perda de um SRP, falha de controlador, perda de redundância de rede, queda de tensão de UPS abaixo de limiar, excedência de tensão em linhas, variação excessiva de heading ou de heave/roll/pitch, e perda de correlações entre sensores (ex.: discrepância entre DGPS e sistema acústico). Tendências históricas de posição, heading, tensão de linhas e consumo energético devem ser monitoradas para identificar deterioração progressiva antes de atingir alarmes críticos.
+
+Critérios de identificação de perda de station keeping
+
+Perda de station keeping deve ser identificada por combinação de eventos: perda sequencial de SRP (redução abaixo do mínimo definido), falha de controladores resultando em degradamento do controle, perda de redundância de comunicações, UPS incapaz de manter sistemas vitais, leituras de tensão nas linhas que ultrapassam limites operacionais ou mostram aumento consistente, e deslocamentos/heading que ultrapassam limiares preestabelecidos ou exibem tendência de aumento incontrolável. Alarmes imediatos e alertas de tendência devem permitir ações: assumir manualmente controle em estação redundante, executar procedimentos de desconexão de emergência, ou iniciar manobras de recuperação conforme procedimentos operacionais.
+
+Integração e procedimentos
+
+Toda instrumentação relevante (SRP, VRU, giroscópio, anemômetros, sensores de tensão, UPS, controladores) deve estar integrada à rede DP redundante, com logs e dataloggers para análise de tendência. Procedimentos operacionais devem prever ações em caso de alarme de perda de redundância, falha de controller, perda de SRP, e leituras anômalas de tensão ou movimento do casco. A existência de UPSs conectadas a barramentos distintos assegura continuidade de informação para decisão mesmo em falhas de geração, mas não mantém propulsão — procedimentos devem considerar esse trade‑off para decisões de desconexão ou recuperação.

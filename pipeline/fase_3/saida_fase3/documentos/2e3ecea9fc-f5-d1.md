@@ -1,0 +1,37 @@
+Cultura de segurança e comprometimento gerencial
+A cultura de segurança é apresentada como resultado emergente de componentes organizacionais, comportamentais e psicológicos interativos. Fontes citadas descrevem subculturas que a compõem: cultura do informe (incentivo ao reporte de erros), cultura de justiça (clima de confiança com critérios claros de aceitabilidade de comportamentos), cultura flexível (capacidade de adaptação rápida em emergências) e cultura de aprendizado (sistematização do aprendizado a partir da experiência). Dois componentes centrais são ressaltados: comprometimento da linha hierárquica e atitude/conduta da força de trabalho. Elementos organizacionais associados incluem definição de política, responsabilidades, estrutura de gestão, recursos, qualificação e treinamentos, auditorias e comunicação. A formação de uma cultura de segurança exige liderança ativa, comunicação transparente e mecanismos formais de aprendizagem e revisão.
+
+Fatores organizacionais e influência na segurança
+Fusões, descentralização da gestão de segurança, redução de orçamentos, incremento de incidentes sem ações corretivas, pressões de produção e confusão entre indicadores de segurança do trabalho e segurança industrial são apontados como fatores organizacionais que degradam a capacidade de prevenção e contribuem para acidentes graves. A contratação de empresas terceirizadas com histórico de indicadores de segurança pouco considerados, alta rotatividade e baixo investimento em treinamento resulta em variabilidade do desempenho de SMS entre empreendimentos. Em muitos casos, o número insuficiente de fiscais e profissionais de SMS e a terceirização desses cargos limitam a capacidade de fiscalização e orientação.
+
+Liderança operacional, supervisão e papel da gestão
+A liderança operacional e o comprometimento gerencial devem priorizar a definição e controle de práticas de segurança, qualificação profissional, auditorias e revisões. A confiança entre gestão e empregados e a flexibilidade para resolução de problemas (clima organizacional) influenciam atitudes e percepções, que por sua vez condicionam comportamentos observáveis. A gestão tem papel central na comunicação clara de objetivos e metas, na disciplina operacional e na criação de um ambiente que incentive reporte de desvios sem receio indevido de punição.
+
+Comunicação, feedback e troca de informações
+Processos de mudança cultural dependem da troca contínua de informações e conceitos. Discussões encorajadas entre as partes e feedback sistematizado em ambos os sentidos (empresa→trabalhadores e trabalhadores→empresa) são necessários para melhoria contínua. Programas de segurança baseados na dedicação dos empregados funcionam melhor quando há participação dos trabalhadores no planejamento e aceitação dos programas, ao contrário da imposição unilateral.
+
+Treinamento, capacitação e massa crítica
+A eficácia de programas depende da divulgação e da capacitação adequada. Exemplo prático: o Programa de Auditorias Comportamentais (Audicomp) foi lançado com treinamento inicial limitado a uma turma de gerentes e fiscais, resultando em ausência de massa crítica e baixo engajamento. Essa deficiência na formação e divulgação correlacionou-se com participação efetiva abaixo do esperado entre auditores cadastrados. Conclusão implícita: iniciativas de auditoria comportamental exigem capacitação em escala suficiente antes da implantação para evitar descontentamento e baixa adesão.
+
+Carga de trabalho, fadiga e disciplina operacional
+Embora não se apresentem procedimentos pormenorizados, as políticas de prevenção de fadiga foram objeto de análise nas investigações, indicando que a prevenção da fadiga é componente avaliável da gestão de riscos. A disciplina operacional, comunicação clara de metas e gestão comprometida da liderança são apontadas como fatores que vão além da ergonomia e da interface homem–máquina, afetando o desempenho seguro sob cargas de trabalho e possíveis estados de fadiga.
+
+Avaliação de desempenho, feedback e lições aprendidas
+A avaliação das proposições relativas aos atributos dos elementos dos domínios organizacional, comportamental e psicológico deve ser sistemática, utilizando escalas para identificar condições latentes de não conformidade e possibilitar tratamento adequado. Ferramentas recomendadas incluem questionários, entrevistas, listas de verificação de auditorias e observações de campo, organizadas para verificar integridade de atributos e permitir visualização do estágio evolutivo da cultura de segurança. A cultura de informação (reporting) e de aprendizado exige mecanismos formais para captura de lições aprendidas, análise e incorporação de melhorias.
+
+Ferramentas de investigação e diagnóstico organizacional
+Investigações de acidentes incluíram revisão documental extensa, entrevistas, testes de instrumentos, construção de linhas do tempo e árvores de causas com múltiplos níveis, além da participação de especialistas em fatores humanos. Análises de políticas organizacionais (gestão de mudanças, prevenção de fadiga, cultura de segurança) e dos processos históricos foram realizadas para identificar a gênese de falhas. Para avaliação preventiva e diagnóstica, são indicadas auditorias, observações diretas/indiretas, questionários e checklists, com proposições sequenciais para avaliação dos elementos dos domínios.
+
+Trabalho em equipe, comunicação e comportamento individual
+A interação entre atributos pessoais, comportamentais e ambientais é enfatizada: a conscientização individual para execução segura pode levar a mudanças no ambiente de trabalho que o tornem mais seguro. Comportamentos e ações são aspectos observáveis e mensuráveis da cultura; atitudes e percepções são subjetivas, porém influenciam os comportamentos. Assim, avaliações devem contemplar tanto indicadores objetivos (procedimentos, sistemas, fluxos de informação) quanto métodos para captar percepções e atitudes.
+
+Seleção e gestão de contratados
+O padrão de segurança nos empreendimentos depende em grande medida do comprometimento e das práticas das empresas contratadas. A contratação sem consideração adequada do histórico de indicadores de segurança e com alto turnover reduz o investimento em treinamento e contribui para cultura superficial de segurança entre trabalhadores terceirizados. Reforça-se a necessidade de critérios contratuais que exijam capacidades mínimas de SMS e mecanismos de verificação contínua.
+
+Recomendações operacionais sintetizadas
+- Tornar explícito e mensurável o comprometimento gerencial e a liderança operacional em políticas, recursos e responsabilidades.  
+- Capacitar em escala antes de implementar programas comportamentais; garantir massa crítica de treinados.  
+- Sistematizar feedback bidirecional e mecanismos de reporte com proteção justa e processos de aprendizado.  
+- Incluir critérios objetivos de indicadores de segurança no processo de seleção e gestão de contratados.  
+- Utilizar combinação de ferramentas (questionários, observações, auditorias, checklists) para avaliar domínios organizacional, comportamental e psicológico e tratar atributos identificados.  
+- Registrar, analisar e incorporar lições aprendidas em revisões de treinamento e processos para mitigar fatores humanos e organizacionais identificados em investigações.
