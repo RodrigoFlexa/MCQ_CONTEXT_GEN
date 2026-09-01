@@ -1,0 +1,31 @@
+Logística de içamentos e transferências de pessoal
+
+O içamento de cestas para transbordo de pessoal deve ser autorizado pelo supervisor de convés somente após preenchimento da lista de verificação do trabalho e confirmação de condições do embarque: os passageiros devem assumir a posição correta na cesta (um pé na borda e outro no piso), segurando nos cabos, distribuídos adequadamente; o solado do calçado deve estar isento de resíduos de óleo e graxa. O operador do guindaste aceita comandos de movimentação apenas dos supervisores de convés.
+
+Requisitos operacionais para movimentação de cestas: a cesta deve ser içada posicionada sobre o mar e fora da vertical da embarcação; os cabos devem permanecer aprumados para minimizar trancos e balanços; não é permitida a execução simultânea de içamento e deslocamento horizontal com o mesmo dispositivo de içamento; é vedado descer a cesta utilizando a opção de descida em queda livre. Deve ser utilizado cabo guia sem nós em toda sua extensão para direcionamento da cesta, içando-a até altura em que o cabo guia não possa se prender em estruturas, equipamentos ou objetos. O bote de resgate da instalação marítima ou da embarcação deve estar pronto para lançamento imediato. Requisitos de propulsão da embarcação empregada no transbordo: propulsão dupla para embarcações com comprimento menor que <NUMBER> m; propulsão dupla e propulsão lateral de proa para embarcações com comprimento maior ou igual a <NUMBER> m.
+
+Planejamento e controle de cargas suspensas (overboarding e instalação de equipamentos)
+
+Posicionamento de equipamentos para overboarding deve considerar redução do raio do guindaste e ausência de interferência com o pedestal durante o giro. Quando parte do equipamento fica para fora do convés, o seafastening deve ser projetado para absorver esforços de tração e compressão decorrentes do movimento de roll da embarcação. O controle absoluto do equipamento durante a saída do convés é imprescindível quando houver proximidade com estruturas do navio; esse controle é normalmente realizado com guinchos do convés e, se necessário, com crashing walls do seafastening para guiar o equipamento. Simulações (Orcaflex, segundo relato) são empregadas para verificar layout de guinchos e impactos durante a operação; os movimentos pendulares podem ser acentuados mesmo com guinchos, representando risco de dano por aproximação a estruturas.
+
+Procedimento mitigador demonstrado: promover contato do equipamento contra defensas de borracha tipo DGH e defensas pneumáticas e utilizar tuggers winches do guindaste de <NUMBER> pressionando o equipamento contra as defensas durante a saída do convés. Esse contato guiado mostrou-se eficaz em minimizar movimento pendular e reduzir velocidade de impacto.
+
+Instalação e docagem de estruturas (jaquetas e skids)
+
+Transporte e lançamento de jaquetas envolve etapas com requisitos estruturais e hidrodinâmicos: carregamento sobre balsa com análise estrutural em várias posições; transporte do conjunto jaqueta-balsa com análise hidrodinâmica para os vários estados de mar; lançamento quando não é possível içar por guindaste, com componentes submetidos a fortes solicitações. Após lançamento a jaqueta flutua com aproximadamente <NUMBER> do seu volume acima da linha d’água. Em casos de docagem sobre gabarito de poços, a jaqueta é suspensa e manobrada até obter encaixe macho-fêmea, requerendo distância inicial entre o fundo da jaqueta e o solo marinho de <NUMBER> m a <NUMBER> m, geralmente obtida com auxílio de embarcação-guindaste. Os movimentos máximos da jaqueta durante instalação devem ser precisamente calculados para definir limites operacionais do sistema embarcação-guindaste/jaqueta.
+
+Transporte de skids e itens modularizados: equipamentos são desconectados para transporte; tubulações e instrumentos devem ser amarrados lateralmente à prancha; a instalação e montagem demandam autorizações ambientais, inspeções de especialistas, montagem de andaimes e guindastes, e coordenação das disciplinas mecânica, elétrica e instrumentação para interligação de tubulações, painéis elétricos, transformadores e PLCs.
+
+Segurança no convés, prevenção de queda de objetos e materiais de emergência
+
+Inspeção pré-operacional do convés é exigida antes de desembarque e movimentação de cargas. Equipamentos de proteção individual incluem luvas brancas de PVC ou neoprene, entre outros. Materiais descontaminantes e de emergência a serem providenciados (quando aplicável) incluem permanganato de potássio, cal clorada, pasta especial de vedação, querosene e trapos de pano/estopa.
+
+Manuseio e içamento de recipientes (tambores e containers)
+
+No desembarque em cais, após liberação alfandegária, o representante de segurança deve inspecionar todos os tambores/containers quanto a vazamentos. Havendo vazamento, deve providenciar descontaminação imediata do local e do recipiente, localizar e tentar vedar o ponto de vazamento com pasta apropriada e remover o recipiente para local isolado e seguro.
+
+Içamento e carregamento de tambores: devem ser amarrados com estropo de corda e içados um a um ou, no máximo, dois a dois por guindastes. É expressamente vedado o içamento utilizando estropos, ganchos de aço ou qualquer outro metal. Precauções adicionais: proteger tambores contra pancadas e quedas; acomodá-los na posição vertical; dispor em uma só camada, nunca sobrepostos ou com as cintas montadas; realizar amarrações com cordas que evitem abalroamento durante o transporte; não cobrir os tambores com lona, pois isso dificulta inspeção e identificação de vazamentos durante o transporte.
+
+Inspeção, recertificação e controle operacional
+
+As operações descritas exigem listas de verificação do trabalho e inspeções rigorosas antes de içamentos e desembarques. O conteúdo apresenta procedimentos de inspeção pré-operacional do convés, verificação de integridade de tambores/containers, utilização de guinchos e sistemas de seafastening durante overboarding, e requisitos de posicionamento e guia de cargas. Onde indicado, simulações e análises hidrodinâmicas e estruturais devem subsidiar limites operacionais e layout de guinchos, bem como a concepção do seafastening.

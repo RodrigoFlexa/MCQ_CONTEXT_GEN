@@ -1,0 +1,36 @@
+Compressor e requisitos de qualidade do ar
+O sistema utiliza compressores dimensionados para manter a pressão normativa no vaso pulmão, com o compressor regulado para manter a pressão de <NUMBER> cm (valor de referência do projeto). Para operação isenta de óleo foram especificados compressores tipo pistão Atlas Copco com concepção de materiais que permitem operação contínua com baixa manutenção e baixos níveis de ruído. Em projeto e comissionamento deve-se registrar a pressão alvo no vaso pulmão e verificar ajuste do controle do compressor frente à carga do sistema e perdas da rede. Em operação, o vaso pulmão atua como reservatório que permite temporariamente operar com o compressor desligado, desde que não sejam realizadas experiências que consumam gás. O volume do vaso é de <NUMBER> litros, o que, combinado com o consumo típico das válvulas, define autonomia operacional sem compressor.
+
+Tratamento de ar comprimido: filtros, secadores e adsorventes
+A cadeia de tratamento especificada inclui filtros coalescentes (filtros finos e superfinos), secadores e filtros de carvão ativado. Filtros coalescentes possuem elementos plissados com meios de densidade graduada para retenção de partículas finas e separação de aerossóis por coalescência; essas unidades separam óleo e água e apresentam baixa queda de carga. Filtros superfinos são iguais aos finos, porém com maior eficiência de separação de condensados e partículas sólidas acima de determinado diâmetro. Para retenção de vapores de óleo e odores é previsto filtro com camada central de carvão ativado (absorção), visando ar isento de óleo e inodoro.
+
+Dimensionamento dos secadores
+Os secadores (marca indicada: Domnick Hunter) devem ser dimensionados com base no ponto de orvalho esperado na rede e na garantia de que o condensado não congele, evitando ingresso de condensados na malha e protegendo instrumentos e componentes subsequentes. O critério de projeto essencial é o ponto de orvalho admissível a montante dos equipamentos sensíveis; o não atendimento permite formação de líquidos e contaminação de atuadores, válvulas e instrumentos pneumáticos.
+
+Qualidade do ar e verificação de meios filtrantes
+Para controle de qualidade do ar comprimido prevê‑se análise de deposição nas mídias filtrantes com equipamentos de análise de imagem (Image Pró-Plus) e microscopia óptica (Olimpus) para avaliação do meio filtrante após filtração, incluindo partículas depositadas superficialmente e internamente. Ensaios de filtração foram considerados segundo norma VDI <NUMBER>, sendo que adaptações de instrumentação (por exemplo acoplamento do dosador gravimétrico em linha pressurizada) podem ser necessárias em comissionamento.
+
+Vasos de armazenamento e separação: vaso pulmão e vaso separador
+O vaso pulmão é o primeiro vaso a receber ar do compressor e funciona como reservatório pressurizado. Está equipado com manômetro, dreno e válvula de escape/segurança. O manômetro deve ser observado continuamente em operação para monitorar a pressão no vaso; se a pressão exceder o valor ajustado, a válvula de escape libera excesso, mantendo estabilidade. O dreno inferior serve para evacuar água acumulada por condensados, retrocesso de líquidos do sistema e outras fontes. O vaso também possui válvula manual a montante que permite isolar o compressor quando necessário.
+
+O sistema inclui, além do vaso pulmão, um vaso separador bifásico que recebe fluxo quando gás empurra líquido contido nas tubulações. O vaso separador é instrumentado com sensores para controle de nível e pressão, e com sensor de temperatura para monitoramento. O controle de líquido é realizado por válvula na saída da bomba que alimenta a tubulação; o controle de pressão na saída do separador é feito por válvula de controle posicionada na descarga, com medição de vazão por placa de orifício na extremidade da tubulação.
+
+Arranjos de válvulas e controle distribuído
+Válvulas manuais de controle de gás são instaladas em série/paralelo para limitar o fluxo entre vasos (por exemplo entre vaso pulmão e separador); uma válvula solenóide em uma ramificação permite liberação rápida comandada por CLP (abertura/fechamento binário). Em comissionamento e operação ficou evidenciado que, devido ao grande diâmetro de uma linha, deixar válvulas manuais totalmente abertas impede atingir baixas pressões nos ensaios de controle; assim as parciais aberturas das válvulas manuais foram indexadas (marcadas) para corresponder a pressões mínimas estabilizáveis no separador quando a válvula de controle está totalmente aberta. Em campo, estas marcas auxiliam no ajuste fino para testes que exigem determinados pontos de pressão.
+
+Instrumentação e supervisão
+Cinco variáveis são prioritárias para supervisão e controle: nível, pressão, vazão, estimativa de vazão e temperatura. O CLP centraliza sinais de nível e pressão do vaso separador e comanda a válvula solenóide e a válvula de controle de pressão. O medidor de vazão tipo placa de orifício na descarga do separador fornece sinal para controle e para estimação de massa. Para dimensionamento e seleção de instrumentos é imprescindível definir parâmetros de processo (pressões, vazões, temperaturas, composição do fluido) durante projeto.
+
+Operação, manutenção e solução de problemas
+- Proteção da rede: garantir ponto de orvalho adequado a montante de atuadores e instrumentos pneumáticos evita condensados e contaminação; filtros coalescentes e secadores corretamente dimensionados reduzem necessidade de intervenções.  
+- Manutenção preventiva: inspeção periódica de drenos, teste funcional de válvulas solenóide, verificação de integridade dos elementos filtrantes e substituição conforme análise de depósito.  
+- Comissionamento: validar eficiência de separação e ponto de orvalho in situ; ajustar set‑points do compressor em relação ao manômetro do vaso pulmão; calibrar marcas de abertura das válvulas manuais usadas para limitar pressão.  
+- Solução de problemas operacionais: se não se consegue atingir baixa pressão no vaso separador, verificar diâmetros de linha, posição de válvulas manuais (marcas) e bloqueios; presença de líquidos na tubulação pode obstruir fluxo e alterar dinâmica do circuito; condensados em rede indicam falha no secador ou drenagem do vaso.  
+- Análise de falha em filtros: utilizar análise por imagem e microscopia para identificar tipo e tamanho de partículas depositadas, orientar troca de elemento e revisar proteção do compressor e secador.
+
+Critérios de projeto a reter
+- Definir claramente pressão de projeto no vaso pulmão e set‑points do compressor.  
+- Dimensionar secador para ponto de orvalho que impeça congelamento do condensado e ingresso de líquido na rede.  
+- Selecionar filtros com eficiência adequada (fino/superfino/coalescente/ carvão ativado) conforme requisitos de particulado e vapores.  
+- Garantir instrumentação de nível, pressão, vazão e temperatura para controle e diagnósticos.  
+- Planejar procedimentos operacionais para isolamento, drenagem e operação com compressor desligado quando aplicável.

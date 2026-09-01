@@ -100,7 +100,7 @@ class Config:
 
     # ------------------------------------------------- recuperação (est. 2) --
     n_trechos_por_documento: int = 6   # N do passo 1 (trechos -> 1 documento)
-    n_documentos_por_faceta: int = 4   # quantos documentos de geração por faceta
+    n_documentos_por_faceta: int = 2   # quantos documentos de geração por faceta
     peso_lexical: float = 0.4
     peso_semantico: float = 0.6
     mmr_lambda: float = 0.7
@@ -111,8 +111,8 @@ class Config:
 
     # ------------------------------------------------------------ geração --
     n_questoes_por_lote: int = 6
-    pausa_entre_lotes: float = 10.0
-    pausa_entre_etapas: float = 2.0
+    pausa_entre_lotes: float = 2.0
+    pausa_entre_etapas: float = 1.0
     n_alternativas: int = 4
     n_exemplos_fewshot: int = 3
     # Pós-processamento: a posição do gabarito é sorteada aqui, não pedida ao
@@ -149,9 +149,9 @@ class Config:
     # ------------------------------------------------------------ entropia --
     n_clusters_codebook: int = 24    # k da clusterização fixa, por subtópico
     limiar_ganho_entropia: float = 0.010  # A CALIBRAR no piloto (passo 9)
-    rodadas_estagnadas_max: int = 5  # <- "mínimo de rodadas estagnadas" pra declarar parada
+    rodadas_estagnadas_max: int = 3  # <- "mínimo de rodadas estagnadas" pra declarar parada
     min_questoes_para_entropia: int = 12  # pool pequeno demais não informa nada
-    max_rodadas_por_documento: int = 30   # trava de segurança
+    max_rodadas_por_documento: int = 10   # trava de segurança
 
     # -------------------------------------------------------- resiliência --
     # ago/2026: uma rodada pode falhar por erro de LLM sem derrubar as outras

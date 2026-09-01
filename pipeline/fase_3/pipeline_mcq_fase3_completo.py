@@ -53,8 +53,8 @@ def construir_config(out_dir: Path) -> U.Config:
         out_dir=out_dir,
         modelo_forte="gpt-5-4-petrobras",
         modelo_leve="gpt-5-mini-petrobras",
-        pausa_entre_lotes=10.0,
-        pausa_entre_etapas=2.0,
+        pausa_entre_lotes=2.0,
+        pausa_entre_etapas=1.0,
     )
 
 
@@ -87,13 +87,13 @@ def executar(subtopicos: list[str] | None = None,
         request_timeout=300.0,
     )
     llm_gerador = AzureOpenAIBackend(
-        deployment='gpt-5-2-petrobras',
+        deployment='gpt-5-4-petrobras',
         max_tokens=12000,
         reasoning_effort=cfg.gerador_reasoning_effort,
         request_timeout=300.0,
     )
     llm_judge = AzureOpenAIBackend(
-        deployment='gpt-5-2-petrobras',
+        deployment='gpt-5-4-petrobras',
         max_tokens=8000,
         reasoning_effort=cfg.judge_reasoning_effort,
         request_timeout=300.0,

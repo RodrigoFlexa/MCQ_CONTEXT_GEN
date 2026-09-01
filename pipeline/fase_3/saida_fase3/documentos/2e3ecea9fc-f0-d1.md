@@ -1,0 +1,35 @@
+Organização e posicionamento da função logística e de projetos
+A evolução da estrutura organizacional para atividades logísticas e de projetos segue uma progressão em estágios que altera responsabilidades, autoridade e interfaces entre funções a bordo (offshore) e onshore. Inicialmente há fragmentação funcional: atividades logísticas dispersas pela organização, responsabilidade descentralizada e comunicação interfuncional deficiente. Em estágio subsequente ocorre agrupamento de atividades logísticas sem mudança hierárquica significativa, mantendo a responsabilidade em territórios tradicionais (marketing, manufatura) e gerando interfaces fracas entre áreas. O avanço para separação formal da área de logística na estrutura organizacional eleva sua posição de autoridade e responsabilidade, aumentando o impacto estratégico e favorecendo coordenação entre offshore e onshore. No estágio de agregação plena, todas as funções e operações logísticas são unificadas sob um executivo da alta administração, concentrando autoridade, responsabilidade e coordenação interfuncional.
+
+Implicações para gestão de pessoas e treinamento
+- Posicionamento hierárquico determina mandatos e autoridade: em estruturas fragmentadas a autoridade operacional permanece local; em estruturas centralizadas a autoridade para políticas, treinamentos e métodos integrais passa para nível executivo, exigindo formação de líderes com visão sistêmica.
+- Progressão para agregação funcional requer capacitação em gestão interfuncional, integração de sistemas de informação logística e desenvolvimento de competências em coordenação de interfaces offshore/onshore.
+- Treinamento deve abarcar procedimentos de comunicação intersetorial, gestão de contratos com empresas terceirizadas, e protocolos de interface entre Gerência de Projetos, Grupo de Apoio, Escritórios Regionais e EGP Central.
+
+Estrutura organizacional típica para programas e projetos
+- Gerentes de Programas e Projetos: responsáveis pelo planejamento e execução dos programas e projetos para atendimento das metas da Diretoria de Investimentos. Responsabilidade direta por desempenho, entregas e interfaces com stakeholders onshore e offshore.
+- Sponsor (dono do investimento): responsável por obter resultados do investimento; avaliação periódica de resultados após encerramento de projeto para validar hipóteses do EVTE. Interfere no alinhamento estratégico entre áreas corporativas e operações offshore.
+- Comitê de acompanhamento: acompanha andamento de investimentos, programas e projetos, atuando como fórum de decisão para conflitos de interface e escalonamento de autoridade.
+- Grupo de Apoio: composto por setores envolvidos no planejamento (Compras, Jurídico, Informática, Engenharia, Marketing etc.), presta suporte técnico e administrativo ao ciclo FEL; sua composição multidisciplinar define necessidades de treinamento específico por disciplina.
+- Escritórios Regionais de Gerenciamento de Projetos (EGPs): apoiam os gerentes de projetos localmente, cuidam de interface regional entre contratantes, empreiteiros e operações offshore.
+- EGP Central: acompanha carteira de projetos, implementa e mantém a plataforma de gerenciamento de programas e projetos; coordena EGPs regionais, consolidando políticas de recursos humanos, treinamento e avaliação de desempenho.
+- Empreiteiros e empresas externas (Design, fiscalização técnica): executam construção, montagem e fiscalização técnica; exigem processos de integração, padronização de treinamentos e clara definição de responsabilidades em contratos e interfaces.
+
+Responsabilidades, autoridade e interfaces entre funções
+- Claridade de responsabilidades: cada função (Gerente de Projeto, Sponsor, Grupo de Apoio, EGPs, empreiteiros, empresas de fiscalização) deve ter descrito seu escopo, limites de autoridade e pontos de interface para evitar sobreposição ou lacunas, especialmente entre atividades onshore (planejamento, compras, licenciamento) e offshore (execução, operação).
+- Autoridade para decisão e escalonamento: estruturas centralizadas tendem a concentrar decisões estratégicas e recursos, enquanto escritórios regionais e gerentes locais exigem delegação operacional documentada; fluxos de comunicação e procedimento de escalonamento devem constar em matrizes de responsabilidades.
+- Integração com terceiros: contratação de empresas especializadas em design, construção, montagem e fiscalização requer protocolos de entrada em plataforma, treinamento comum, definição de autoridade técnica durante a execução e critérios de aceite.
+
+Dimensionamento e composição de equipes por disciplina
+- Formação multidisciplinar: o Grupo de Apoio e as equipes de projeto devem incluir, no mínimo, representantes de Compras, Jurídico, Informática, Engenharia, Meio Ambiente e Operações; a presença de fiscalizações técnicas independentes complementa a equipe com competências de controle de qualidade e conformidade contratual.
+- Nível e especialização: à medida que a logística e a gestão de projetos sobem na hierarquia, aumenta a necessidade de pessoal com competências em integração sistêmica, planejamento estratégico, contratos e gestão de risco; equipes regionais devem ser dimensionadas para garantir suporte operacional e continuidade das interfaces com operações offshore.
+- Uso de empresas externas: para suprir competências específicas (design, fiscalização, construção), os contratos devem prever transferência de conhecimento, requisitos mínimos de qualificação e treinamento conjunto com equipes internas.
+
+Interfaces regulatórias e de autoridade estatal relevantes
+- Jurisdição e fiscalização: Estados costeiros têm competência para aplicar normas nacionais e medidas de prevenção e controle conforme legislação nacional e instrumentos internacionais; isso requer que equipes onshore e offshore mantenham interfaces com autoridades competentes para licenciamento, fiscalização e resposta a incidentes.
+- Autoridades envolvidas: em processos de licenciamento ambiental e fiscalização podem atuar autoridades marítimas, órgãos ambientais e reguladores da indústria de petróleo; interfaces organizacionais devem mapear responsáveis por comunicação, cumprimento de requisitos e relatórios aos órgãos competentes.
+- Natureza das instalações: plataformas e instalações offshore podem ser tratadas por legislação específica (instalações fixas ou flutuantes) distinta da aplicável a navios, influenciando cadeia de responsabilidades, requisitos de segurança e treinamento obrigatório.
+
+Governança, compliance e ciclos de lições aprendidas
+- EGP Central e Comitês devem garantir a manutenção de uma plataforma de gerenciamento de projetos que incorpore lições aprendidas, avaliação pós-encerramento e validação de premissas do estudo de viabilidade, garantindo que capacitação e composição de equipes evoluam conforme experiências e requisitos regulatórios.
+- Contratos e políticas internas devem prever mecanismos para atualização contínua de treinamentos, auditorias de conformidade e verificação das interfaces técnicas e administrativas entre onshore e offshore.
