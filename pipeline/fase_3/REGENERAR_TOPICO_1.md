@@ -8,7 +8,7 @@ Set/2026. O especialista reescreveu a instrução do tópico 1 no docx
 | tópico | `Gestão do Desempenho` | `Gestão do Desempenho Empresarial (KPI)` |
 | subtópico | `Geral` | `Gestão do Desempenho Empresarial (KPI)` |
 | recorte | "aspectos de gestão e desempenho de FPSOs…" | "aspectos de gestão e desempenho **empresarial (KPI)** de FPSOs…" |
-| alvo | — | 200 questões |
+| quantidade | — | **mínimo** de 200 questões |
 
 As 512 questões antigas do tópico foram geradas a partir do texto velho e saem
 do dataset.
@@ -25,8 +25,13 @@ Com nomes distintos, cada tópico volta a ter estado próprio.
 |---|---|
 | `topicos.py` | tópico 1 renomeado + texto novo do especialista |
 | `purgar_topico.py` | **novo** — remove de `saida_fase3/` as questões de um tópico, com backup |
-| `pipeline_mcq_fase3_completo.py` | `--topico`, `--max-questoes`; facetas e varredura do corpus continuam cobrindo os 40 subtópicos |
-| `utils_fase3.py` | `executar_subtopico(..., max_questoes=N)` — encerra o subtópico ao atingir o alvo |
+| `pipeline_mcq_fase3_completo.py` | `--topico`, `--min-questoes`, `--max-questoes`; facetas e varredura do corpus continuam cobrindo os 40 subtópicos |
+| `utils_fase3.py` | `executar_subtopico(..., min_questoes=N, max_questoes=N)` |
+
+Os números do docx são **piso**, não cota: `--min-questoes` não interrompe nada,
+só avisa no fim se o subtópico terminou abaixo do número pedido. O critério de
+parada continua sendo a saturação de entropia. (`--max-questoes` é o teto
+oposto, para teste ou para cortar um subtópico caro; fica desligado por padrão.)
 
 Por que facetas/varredura seguem cobrindo os 40 subtópicos mesmo gerando um só:
 a assinatura de `varrer_corpus` inclui o conjunto de facetas, então varrer só o
@@ -49,22 +54,30 @@ python pipeline/fase_3/purgar_topico.py --topico "Gestão do Desempenho"
 # 3) aplicar (backups .bak_purga_<timestamp> ficam ao lado de cada arquivo)
 python pipeline/fase_3/purgar_topico.py --topico "Gestão do Desempenho" --aplicar
 
-# 4) regenerar só o tópico 1, com alvo de 200 questões
+# 4) regenerar só o tópico 1 (o pipeline para por saturação de entropia;
+#    o 200 do docx entra só como piso de conferência)
 python pipeline/fase_3/pipeline_mcq_fase3_completo.py \
     --topico "Gestão do Desempenho Empresarial (KPI)" \
-    --max-questoes 200
+    --min-questoes 200
 ```
 
 O passo 4 faz, nesta ordem: extrai as facetas novas do tópico 1 (`gpt-5-mini`,
 as outras 232 vêm do cache) → **revarre o corpus inteiro** porque o conjunto de
 facetas mudou (alguns minutos, é a parte longa) → monta plano de documentos e
-codebook só do tópico 1 → gera em rodadas até estagnar a entropia ou bater 200
-questões.
+codebook só do tópico 1 → gera em rodadas até a entropia saturar em todos os
+documentos da fila. Na execução anterior esse tópico rendeu 512 questões com o
+texto antigo, então o piso de 200 deve sobrar.
 
 `executar_subtopico` roda no máximo 60 rodadas por chamada. Se parar em 60 antes
 das 200 questões, **rode o mesmo comando de novo**: o estado é retomável e ele
 continua de onde parou (o corpus não é revarrido na segunda vez, a assinatura já
 confere).
+
+Se ao final o aviso disser que ficou **abaixo de 200**: o subtópico marcou
+`concluido` porque a fila de documentos acabou. Para continuar, zere
+`concluido` e `doc_idx` no `saida_fase3/estado/<hash>.json` do subtópico e rode
+de novo, ou aumente `n_documentos_por_faceta` no `construir_config` (alonga a
+fila de documentos de cada faceta) antes de reexecutar.
 
 ## Conferência depois
 
@@ -79,8 +92,8 @@ for k, v in sorted(c.items()):
 EOF
 ```
 
-Esperado: nenhuma linha com `Gestão do Desempenho` (nome antigo) e ~200 com
-`Gestão do Desempenho Empresarial (KPI)`.
+Esperado: nenhuma linha com `Gestão do Desempenho` (nome antigo) e pelo menos
+200 com `Gestão do Desempenho Empresarial (KPI)`.
 
 ## Pendências que isto abre
 

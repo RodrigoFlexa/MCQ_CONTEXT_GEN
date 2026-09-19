@@ -7,9 +7,13 @@ Para validar o fluxo com poucos subtópicos:
     python pipeline/fase_3/pipeline_mcq_fase3_completo.py \
         --subtopico "nome exato do subtópico"
 
-Para (re)gerar um tópico inteiro, com um alvo de tamanho:
+Para (re)gerar um tópico inteiro:
     python pipeline/fase_3/pipeline_mcq_fase3_completo.py \
-        --topico "Gestão do Desempenho Empresarial (KPI)" --max-questoes 200
+        --topico "Gestão do Desempenho Empresarial (KPI)" --min-questoes 200
+
+Os números do docx do especialista são PISO: `--min-questoes` não interrompe
+nada, só avisa se o subtópico terminar abaixo. `--max-questoes` é o teto
+oposto (corta o subtópico ao atingir), útil em teste.
 
 As facetas e o índice de candidatos do corpus são SEMPRE calculados sobre os 40
 subtópicos, mesmo quando a geração roda só em um: a assinatura de
@@ -110,7 +114,8 @@ def exportar(repo: U.Repositorio, cfg: U.Config) -> None:
 def executar(subtopicos: list[str] | None = None,
              out_dir: Path | None = None,
              topicos: list[str] | None = None,
-             max_questoes: int | None = None) -> None:
+             max_questoes: int | None = None,
+             min_questoes: int | None = None) -> None:
     cfg = construir_config(out_dir or AQUI / "saida_fase3")
     escopo = selecionar_subtopicos(subtopicos, topicos)
     escopo_indice = todos_os_pares()
@@ -120,8 +125,10 @@ def executar(subtopicos: list[str] | None = None,
           f"de {len(escopo_indice)}", flush=True)
     for topico, subtopico in escopo:
         print(f"  · {topico} >> {subtopico}", flush=True)
+    if min_questoes:
+        print(f"piso por subtópico: {min_questoes} questões (só aviso)", flush=True)
     if max_questoes:
-        print(f"alvo por subtópico: {max_questoes} questões", flush=True)
+        print(f"teto por subtópico: {max_questoes} questões", flush=True)
     print(cfg.resumo(), flush=True)
 
     llm_leve = AzureOpenAIBackend(
@@ -213,6 +220,7 @@ def executar(subtopicos: list[str] | None = None,
             codebook=codebooks[subtopico],
             cfg=cfg,
             max_questoes=max_questoes,
+            min_questoes=min_questoes,
         )
         repo.salvar()
         print(f"concluído: {subtopico} · repositório: {len(repo)} questões",
@@ -243,10 +251,17 @@ def main() -> None:
         help="Tópico inteiro a processar; pode ser repetido.",
     )
     parser.add_argument(
+        "--min-questoes",
+        type=int,
+        default=None,
+        help="Piso de questões por subtópico (número do docx do especialista); "
+             "não interrompe nada, só avisa se terminar abaixo.",
+    )
+    parser.add_argument(
         "--max-questoes",
         type=int,
         default=None,
-        help="Alvo de questões por subtópico; encerra o subtópico ao atingir.",
+        help="Teto de questões por subtópico; encerra o subtópico ao atingir.",
     )
     parser.add_argument(
         "--out-dir",
@@ -254,7 +269,8 @@ def main() -> None:
         help="Diretório de saída; o padrão é pipeline/fase_3/saida_fase3.",
     )
     args = parser.parse_args()
-    executar(args.subtopicos, args.out_dir, args.topicos, args.max_questoes)
+    executar(args.subtopicos, args.out_dir, args.topicos, args.max_questoes,
+             args.min_questoes)
 
 
 if __name__ == "__main__":

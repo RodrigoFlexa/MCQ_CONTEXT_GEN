@@ -1748,6 +1748,7 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
                        pool: "PoolFewShot", repo: "Repositorio", emb: "Embedder",
                        codebook: "Codebook", cfg: Config,
                        max_rodadas: int = 60, max_questoes: int | None = None,
+                       min_questoes: int | None = None,
                        verbose: bool = True,
                        ignorar_inconsistencia_pool: bool = False) -> "EstadoSubtopico":
     """Passos 3–9 em laço, até estagnar em todos os documentos do subtópico.
@@ -1798,11 +1799,11 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
     for _ in range(max_rodadas):
         if est.concluido:
             break
-        # Alvo opcional de tamanho (set/2026): o critério de parada do pipeline é
-        # a saturação de entropia, não a contagem. Quando o especialista pede um
-        # número de questões para o subtópico ("200 questões"), `max_questoes`
-        # para o laço assim que o pool do subtópico chega lá — sem mexer no
-        # critério de entropia, que continua valendo para parar antes disso.
+        # Teto opcional (set/2026). ATENÇÃO: os números do docx do especialista
+        # ("200 questões") são PISO, não teto — para eles use `min_questoes`,
+        # que só avisa se o subtópico terminar abaixo. `max_questoes` existe
+        # para testes e para cortar um subtópico caro; fica None por padrão e
+        # o critério normal de parada continua sendo a saturação de entropia.
         if max_questoes is not None and len(repo.por_subtopico(subtopico)) >= max_questoes:
             if verbose:
                 print(f"    alvo de {max_questoes} questoes atingido "
@@ -1931,6 +1932,22 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
                     print("       -> subtópico concluído")
         est.salvar(cfg)
         repo.salvar()
+
+    # -- piso de questões (set/2026) ---------------------------------------
+    # Os números do docx do especialista são MÍNIMOS. O pipeline para por
+    # saturação de entropia, não por contagem, então pode terminar abaixo do
+    # piso — aqui isso vira aviso explícito em vez de passar despercebido.
+    # Para seguir gerando depois de `concluido`: zere `concluido`/`doc_idx` no
+    # estado do subtópico e rode de novo (ou aumente `n_documentos_por_faceta`,
+    # que alonga a fila de documentos).
+    if min_questoes is not None:
+        n = len(repo.por_subtopico(subtopico))
+        if n < min_questoes and verbose:
+            print(f"    [aviso] '{subtopico}' terminou com {n} questões, "
+                  f"abaixo do piso de {min_questoes} "
+                  f"({'concluído' if est.concluido else 'parou por max_rodadas'})")
+        elif verbose:
+            print(f"    piso de {min_questoes} atendido: {n} questões")
     return est
 
 
