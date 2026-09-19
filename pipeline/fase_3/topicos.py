@@ -8,8 +8,14 @@ correspondente a ser usada no campo de conteúdo do prompt.
 """
 
 TOPICOS: dict[str, dict[str, str]] = {
-    "Gestão do Desempenho": {
-        "Geral": "As questões devem abordar aspectos de gestão e desempenho de FPSOs, incluindo planejamento e controle operacional, gestão de indicadores e metas, eficiência e disponibilidade dos sistemas, confiabilidade dos ativos, gestão de riscos, custos, perdas de produção, desempenho das equipes e processos de melhoria contínua ao longo do ciclo de vida da unidade.",
+    # Revisado pelo especialista em 09/09/2026 (docx "SUGESTÃO DE FRASES PARA COMPOR
+    # PROMPT MÚLTIPLA ESCOLHA V14"): o recorte passou a ser explicitamente KPI /
+    # desempenho empresarial. O subtópico deixou de se chamar "Geral" porque o estado
+    # do pipeline é indexado por hash do NOME do subtópico (estado/<hash>.json) e
+    # "Geral" colidia com o "Geral" de Descomissionamento — os dois tópicos
+    # compartilhavam o mesmo arquivo de estado.
+    "Gestão do Desempenho Empresarial (KPI)": {
+        "Gestão do Desempenho Empresarial (KPI)": "As questões devem abordar aspectos de gestão e desempenho empresarial (KPI) de FPSOs, incluindo planejamento e controle operacional, gestão de indicadores e metas, eficiência e disponibilidade dos sistemas, confiabilidade dos ativos, gestão de riscos, custos, perdas de produção, desempenho das equipes e processos de melhoria contínua ao longo do ciclo de vida da unidade.",
     },
     "Produção e Processo (Medição Fiscal e Sistema de Alívio)": {
         "Medição Fiscal de óleo, medição fiscal de gás e transferência de custódia em operações de offloading": "As questões devem abordar a medição fiscal de petróleo e gás natural e a medição de transferência de custódia nas operações de offloading de FPSOs, incluindo requisitos de projeto, instalação, operação, calibração, verificação, manutenção e controle metrológico dos sistemas de medição, tratamento e validação dos dados, determinação de volumes e propriedades dos fluidos, gestão de incertezas, rastreabilidade, registros, auditorias, comunicação de falhas e atendimento à regulamentação vigente da ANP.",

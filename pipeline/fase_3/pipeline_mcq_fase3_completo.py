@@ -6,6 +6,16 @@ Uso, a partir da raiz do repositório:
 Para validar o fluxo com poucos subtópicos:
     python pipeline/fase_3/pipeline_mcq_fase3_completo.py \
         --subtopico "nome exato do subtópico"
+
+Para (re)gerar um tópico inteiro, com um alvo de tamanho:
+    python pipeline/fase_3/pipeline_mcq_fase3_completo.py \
+        --topico "Gestão do Desempenho Empresarial (KPI)" --max-questoes 200
+
+As facetas e o índice de candidatos do corpus são SEMPRE calculados sobre os 40
+subtópicos, mesmo quando a geração roda só em um: a assinatura de
+`varrer_corpus` inclui o conjunto de facetas, então varrer só um tópico
+sobrescreveria `indices/candidatos.jsonl` com um índice parcial e obrigaria a
+revarrer o corpus inteiro na próxima execução dos demais.
 """
 
 from __future__ import annotations
@@ -27,23 +37,49 @@ from azure_openai_backend import AzureOpenAIBackend
 from topicos import TOPICOS
 
 
-def selecionar_subtopicos(nomes: list[str] | None) -> list[tuple[str, str]]:
-    todos = [(topico, subtopico)
-             for topico, subtopicos in TOPICOS.items()
-             for subtopico in subtopicos]
-    if not nomes:
+def todos_os_pares() -> list[tuple[str, str]]:
+    return [(topico, subtopico)
+            for topico, subtopicos in TOPICOS.items()
+            for subtopico in subtopicos]
+
+
+def selecionar_subtopicos(nomes: list[str] | None,
+                          topicos: list[str] | None = None,
+                          ) -> list[tuple[str, str]]:
+    """Escopo de GERAÇÃO: por nome de subtópico, por tópico inteiro, ou tudo."""
+    todos = todos_os_pares()
+    if not nomes and not topicos:
         return todos
 
-    por_nome = {subtopico: (topico, subtopico)
-                for topico, subtopico in todos}
-    desconhecidos = [nome for nome in nomes if nome not in por_nome]
-    if desconhecidos:
-        disponiveis = ", ".join(sorted(por_nome))
-        raise ValueError(
-            "Subtópico(s) desconhecido(s): " + ", ".join(desconhecidos)
-            + "\nDisponíveis: " + disponiveis
-        )
-    return [por_nome[nome] for nome in nomes]
+    escopo: list[tuple[str, str]] = []
+
+    if topicos:
+        desconhecidos = [t for t in topicos if t not in TOPICOS]
+        if desconhecidos:
+            raise ValueError(
+                "Tópico(s) desconhecido(s): " + ", ".join(desconhecidos)
+                + "\nDisponíveis: " + ", ".join(TOPICOS)
+            )
+        escopo += [(t, s) for t in topicos for s in TOPICOS[t]]
+
+    if nomes:
+        # Nome de subtópico pode, em princípio, repetir entre tópicos (foi o
+        # caso de "Geral"): aqui todas as ocorrências entram no escopo.
+        por_nome: dict[str, list[tuple[str, str]]] = {}
+        for topico, subtopico in todos:
+            por_nome.setdefault(subtopico, []).append((topico, subtopico))
+        desconhecidos = [nome for nome in nomes if nome not in por_nome]
+        if desconhecidos:
+            raise ValueError(
+                "Subtópico(s) desconhecido(s): " + ", ".join(desconhecidos)
+                + "\nDisponíveis: " + ", ".join(sorted(por_nome))
+            )
+        for nome in nomes:
+            escopo += por_nome[nome]
+
+    vistos: set[tuple[str, str]] = set()
+    return [par for par in escopo
+            if not (par in vistos or vistos.add(par))]
 
 
 def construir_config(out_dir: Path) -> U.Config:
@@ -72,13 +108,20 @@ def exportar(repo: U.Repositorio, cfg: U.Config) -> None:
 
 
 def executar(subtopicos: list[str] | None = None,
-             out_dir: Path | None = None) -> None:
+             out_dir: Path | None = None,
+             topicos: list[str] | None = None,
+             max_questoes: int | None = None) -> None:
     cfg = construir_config(out_dir or AQUI / "saida_fase3")
-    escopo = selecionar_subtopicos(subtopicos)
+    escopo = selecionar_subtopicos(subtopicos, topicos)
+    escopo_indice = todos_os_pares()
 
     print(f"raiz: {RAIZ}", flush=True)
-    print(f"tópicos: {len(TOPICOS)} · subtópicos selecionados: {len(escopo)}",
-          flush=True)
+    print(f"tópicos: {len(TOPICOS)} · subtópicos selecionados: {len(escopo)} "
+          f"de {len(escopo_indice)}", flush=True)
+    for topico, subtopico in escopo:
+        print(f"  · {topico} >> {subtopico}", flush=True)
+    if max_questoes:
+        print(f"alvo por subtópico: {max_questoes} questões", flush=True)
     print(cfg.resumo(), flush=True)
 
     llm_leve = AzureOpenAIBackend(
@@ -119,8 +162,11 @@ def executar(subtopicos: list[str] | None = None,
         print("nenhum estado de piloto encontrado; mantendo o default do Config: "
               f"{cfg.limiar_ganho_entropia:.4f}", flush=True)
 
+    # Facetas e varredura do corpus SEMPRE sobre os 40 subtópicos — ver a
+    # docstring do módulo. As facetas já extraídas vêm do cache; só as novas
+    # (tópico reescrito pelo especialista) custam chamada de LLM.
     facetas = U.extrair_facetas(llm_leve, TOPICOS, cfg,
-                                subtopicos_alvo=escopo)
+                                subtopicos_alvo=escopo_indice)
     por_sub = U.agrupar_por_subtopico(facetas)
     print(f"{len(facetas)} facetas em {len(por_sub)} subtópicos", flush=True)
 
@@ -130,18 +176,22 @@ def executar(subtopicos: list[str] | None = None,
     print(f"{sum(len(v) for v in candidatos.values()):,} candidatos em "
           f"{len(candidatos)} facetas", flush=True)
 
+    # Planos e codebooks só dos subtópicos que vão gerar (os dois custam
+    # embedding de milhares de trechos por subtópico).
+    subs_escopo = [s for _, s in escopo]
     emb = U.Embedder(cfg)
     planos = {
-        subtopico: U.plano_de_documentos(fs, candidatos, emb, cfg)
-        for subtopico, fs in por_sub.items()
+        subtopico: U.plano_de_documentos(por_sub[subtopico], candidatos, emb, cfg)
+        for subtopico in subs_escopo
     }
     sugerido = U.calibrar_tolerancias(banco_seed, emb, cfg, percentil=75)
     cfg.tol_similaridade = sugerido["similaridade"]
     cfg.tol_comprimento = sugerido["comprimento"]
     cfg.tol_distratores = sugerido["distratores"]
     codebooks = {
-        subtopico: U.codebook_do_subtopico(subtopico, fs, candidatos, emb, cfg)
-        for subtopico, fs in por_sub.items()
+        subtopico: U.codebook_do_subtopico(subtopico, por_sub[subtopico],
+                                           candidatos, emb, cfg)
+        for subtopico in subs_escopo
     }
 
     repo = U.Repositorio(cfg, emb)
@@ -162,6 +212,7 @@ def executar(subtopicos: list[str] | None = None,
             emb=emb,
             codebook=codebooks[subtopico],
             cfg=cfg,
+            max_questoes=max_questoes,
         )
         repo.salvar()
         print(f"concluído: {subtopico} · repositório: {len(repo)} questões",
@@ -186,12 +237,24 @@ def main() -> None:
         help="Subtópico exato a processar; pode ser repetido. O padrão é todos.",
     )
     parser.add_argument(
+        "--topico",
+        action="append",
+        dest="topicos",
+        help="Tópico inteiro a processar; pode ser repetido.",
+    )
+    parser.add_argument(
+        "--max-questoes",
+        type=int,
+        default=None,
+        help="Alvo de questões por subtópico; encerra o subtópico ao atingir.",
+    )
+    parser.add_argument(
         "--out-dir",
         type=Path,
         help="Diretório de saída; o padrão é pipeline/fase_3/saida_fase3.",
     )
     args = parser.parse_args()
-    executar(args.subtopicos, args.out_dir)
+    executar(args.subtopicos, args.out_dir, args.topicos, args.max_questoes)
 
 
 if __name__ == "__main__":

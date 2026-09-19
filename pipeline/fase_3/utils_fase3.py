@@ -1747,7 +1747,8 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
                        plano: Sequence[dict], llm_leve, llm_forte, llm_judge,
                        pool: "PoolFewShot", repo: "Repositorio", emb: "Embedder",
                        codebook: "Codebook", cfg: Config,
-                       max_rodadas: int = 60, verbose: bool = True,
+                       max_rodadas: int = 60, max_questoes: int | None = None,
+                       verbose: bool = True,
                        ignorar_inconsistencia_pool: bool = False) -> "EstadoSubtopico":
     """Passos 3–9 em laço, até estagnar em todos os documentos do subtópico.
 
@@ -1796,6 +1797,19 @@ def executar_subtopico(*, subtopico: str, topico: str, facetas: Sequence[Faceta]
 
     for _ in range(max_rodadas):
         if est.concluido:
+            break
+        # Alvo opcional de tamanho (set/2026): o critério de parada do pipeline é
+        # a saturação de entropia, não a contagem. Quando o especialista pede um
+        # número de questões para o subtópico ("200 questões"), `max_questoes`
+        # para o laço assim que o pool do subtópico chega lá — sem mexer no
+        # critério de entropia, que continua valendo para parar antes disso.
+        if max_questoes is not None and len(repo.por_subtopico(subtopico)) >= max_questoes:
+            if verbose:
+                print(f"    alvo de {max_questoes} questoes atingido "
+                      f"({len(repo.por_subtopico(subtopico))} no pool) — "
+                      f"encerrando o subtópico")
+            est.salvar(cfg)
+            repo.salvar()
             break
         if est.doc_idx >= len(plano):
             est.concluido = True
