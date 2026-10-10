@@ -107,13 +107,16 @@ CATALOG: list[dict[str, Any]] = [
 CHOICE_REFERENCES = re.compile(
     r"\b(which|what)\s+of\s+the\s+following\b|\b(select|choose|pick)\s+"
     r"(one|the correct|the best|an answer|a response)\b|\b(option|alternative)\s+[A-E]\b|"
-    r"\bquais?\s+das\s+seguintes\b|\bassinale\b|\bselecione\s+(uma|a|o)\b|"
+    r"\b(?:qual|quais)\s+d[ao]s?\s+seguintes\b|\bassinale\b|\bselecione\s+(uma|a|o)\b|"
+    r"\bwhich\s+of\s+these\b|\bwhich\s+(statement|sentence|choice|option)\b|"
     r"\b(opção|alternativa)\s+[A-E]\b",
     re.IGNORECASE,
 )
 CONTEXT_REFERENCES = re.compile(
     r"\b(according to|based on|in|from)\s+(the\s+)?(passage|text|article|paragraph|context)\b|"
-    r"\b(the|above)\s+(passage|text|article|paragraph)\b",
+    r"\b(the|above)\s+(passage|text|article|paragraph)\b|"
+    r"\b(segundo|conforme|de acordo com)\s+(o\s+)?(texto|trecho|documento|passagem)\b|"
+    r"\b(texto|trecho|passagem)\s+(acima|a seguir)\b",
     re.IGNORECASE,
 )
 LABEL_ONLY = re.compile(r"^\s*(?:[A-E]|\d+)\s*[).:-]?\s*$", re.IGNORECASE)

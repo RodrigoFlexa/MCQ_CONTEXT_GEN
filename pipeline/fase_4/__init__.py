@@ -1,1 +1,1 @@
-"""PetroQuest fase 4: geração e análise de QA."""
+"""PetroQuest QA: domínio, exemplos avaliados, Scorer/Refiner/Judge e métricas observacionais."""

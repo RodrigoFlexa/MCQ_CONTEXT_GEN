@@ -56,6 +56,8 @@ O extrator gera:
 
 A classificação automática é intencionalmente conservadora. “Aprovada com ressalvas”, qualquer sinal de repetição, dúvida técnica ou de escopo, e parecer ausente ficam fora da lista automática de seeds. Observações apenas sobre distratores não bloqueiam uma semente QA, pois as alternativas não são exportadas. A triagem precisa ser confirmada por leitura humana, sobretudo para identificar as duas questões envolvidas quando o comentário diz “repetida” ou “questão anterior”.
 
+O fluxo QA completo em [`../fase_4/README.md`](../fase_4/README.md) integra essas candidatas com as vencedoras da avaliação humana da fase 2 e novas questões de nota alta do Judge. Os fatos são recuperados do corpus Petrolês. A geração atual mantém cosine e saturação como observação, com Scorer/Refiner/Judge de qualidade ativos.
+
 ## Referências
 
 - [Pirá — repositório e descrição do dataset](https://github.com/C4AI/Pira) · [Pirá no Hugging Face](https://huggingface.co/datasets/paulopirozelli/pira)
