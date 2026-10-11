@@ -1,127 +1,171 @@
-# PetroQuest QA — fase 4 completa
+# PetroQuest QA v3
 
-Esta fase adapta o motor da fase 3 para **pergunta e resposta**, preservando recuperação de domínio, exemplos avaliados, refinamento, Judge e entropia semântica. A fase 3 permanece intacta. As fases 4/5 anteriores estão em `pipeline/backup/pre_petroquest_qa_2026-10-10/`; a primeira implementação QA desta conversa também foi preservada em `pipeline/backup/pre_refatoracao_qa_2026-10-10/`.
+Geração de perguntas/respostas técnicas autossuficientes para FPSO/FSO e produção subsea. Alternativas e distratores continuam em standby. O notebook e o CLI utilizam o mesmo motor.
+
+As versões anteriores estão preservadas: fases antigas em `pipeline/backup/pre_petroquest_qa_2026-10-10/`, primeira refatoração em `pre_refatoracao_qa_2026-10-10/` e código QA v2 em **`pipeline/backup/pre_qa_v3_2026-10-11/fase_4/`**. Resultados QA v2 e sua análise permanecem na pasta original. Uma execução v2 não pode ser retomada como v3.
+
+## Fluxo implementado
 
 ```mermaid
 flowchart TD
-    C[Corpus Petrolês] --> F[Facetas do escopo revisado]
-    F --> R[Busca lexical e rerank semântico com MMR]
-    R --> D[Documento consolidado e trechos originais]
-    H[Avaliação humana e questões aprovadas] --> E[Exemplos melhor avaliados de outros tópicos]
-    X[Datasets externos normalizados para QA] --> P[Prompt QA]
+    C[Petrolês] --> F[Facetas e recuperação lexical, vetorial e MMR]
+    F --> A[Auditoria factual por LLM de cada documento candidato]
+    A --> B[Rejeitados com parecer e proveniência]
+    A --> D[Afirmações sustentadas, contexto original e limites]
+    D --> E[Exploração por subtópico, faceta, fonte e alvo]
+    H[Seeds humanas deduplicadas de outros tópicos] --> P[Prompt QA]
+    X[Exemplos externos normalizados para QA] --> P
     E --> P
-    D --> P
     P --> G[Gerador]
-    G --> S[Scorer QA]
-    S --> K{Precisa de correção?}
-    K -- sim --> RF[Refiner]
-    RF --> S
-    K -- não --> J[Judge independente da versão final]
-    J --> Q[Questões aprovadas e journal de candidatas]
-    Q --> E
-    Q --> M[Métricas de similaridade e entropia]
-    M --> L[Continuar até meta ou limite técnico]
-    L --> P
+    G --> S[Scorer]
+    S --> R[Refiner limitado]
+    R --> S
+    S --> J[Judge com fontes originais e auditoria]
+    J --> R
+    J --> Q[Dificuldade independente]
+    Q --> N[Vizinhos por cosine e avaliação de pares]
+    N --> O[Journal e QA aprovadas]
+    O --> M[Entropia, cobertura e rendimento de novidade]
+    M --> T[Sinal de parada e recuperação]
+    T --> E
 ```
 
-## Fonte factual e recuperação
+### 1. Auditoria de fontes antes de gerar
 
-`domain.py` reutiliza `utils_fase3.py`: extração das facetas a partir das frases revisadas em `topicos.py`, varredura lexical streaming do corpus, rerank vetorial, MMR e consolidação dos trechos. O gerador e o Judge recebem os trechos originais e o documento consolidado. Cada resposta precisa de `evidence` com ID e citação literal de fonte. Arquivo e linhas de origem permanecem no journal.
+O corpus factual continua sendo Petrolês. A recuperação reutiliza as facetas do escopo revisado da fase 3, a varredura lexical, o rerank vetorial e MMR. **Todos os documentos candidatos dos tópicos selecionados são auditados antes da primeira pergunta.**
 
-Não há geração baseada apenas no título do tópico ou fallback quando o corpus/embeddings faltam. Subtópicos sem evidência são registrados em `cobertura_dominio.json` e no resumo. O corpus de vários GB continua fora do Git: use o Petrolês já instalado no servidor. A descoberta automática prefere a pasta `PetrolesCompleto` e usa `PetrolesHibrido` quando necessário; recomendamos caminho explícito para registrar exatamente a base do experimento.
+O auditor recebe faceta, escopo e trechos originais. Avalia consistência técnica, condições da instalação/processo, compatibilidade com FPSO, transferibilidade, contradições e incerteza normativa. Rejeita transposições indevidas de refinaria, Spar, coleta urbana e outros contextos. Aprovação exige critérios explícitos, confiança ≥0,85 e afirmações sustentadas por citações literais verificadas pelo código.
 
-## Exemplos melhor avaliados
+Somente chunks autorizados permanecem no contexto. O documento do prompt é montado a partir das afirmações aprovadas, preservando **contexto original, aplicabilidade e limitações**; não existe uma segunda consolidação livre capaz de acrescentar fatos. Ausência de material adequado deixa o subtópico descoberto; não há geração pelo título nem adaptação silenciosa. Auditorias inválidas interrompem a preparação após duas respostas estruturais inválidas; reprovações factuais válidas são registradas como bloqueio.
 
-- As vencedoras da avaliação humana da fase 2 continuam sendo extraídas por `seed_fase3.construir_banco_seed`. A margem de preferência e os votos ficam registrados; essa margem não é confundida com uma nota de qualidade absoluta.
-- As aprovações sem ressalvas detectadas na revisão do especialista entram como candidatas a seed. Pareceres de repetição, erro técnico ou incompatibilidade de escopo ficam fora desse banco.
-- Novas questões aprovadas pelo Judge com nota ≥0,85 podem entrar no pool. O peso relativo das seeds diminui conforme esse pool cresce, preservando a lógica da fase 3.
-- O pool PetroQuest exclui **todo o tópico atual**, como solicitado. Os exemplos fornecem forma; somente o corpus recuperado fornece fatos.
-- ARC-Easy, ARC-Challenge, Pirá, SQuAD 2.0, HotpotQA e BoolQ entram como QA. O ARC fornece pergunta e texto da resposta correta, sem alternativas; enunciados dependentes de opções são filtrados. São até 8 exemplos externos por lote e 4 exemplos PetroQuest por padrão.
+A QA é respondível sem ler a fonte. A fonte sustenta fatos, mas não é apresentada ao respondente nem convertida em passagem de interpretação. Cenários só aparecem quando necessários à decisão técnica. A auditoria pelo modelo é uma avaliação estimada, não substitui a curadoria técnica humana.
 
-## Scorer, Refiner e Judge
+### 2. Exploração e exemplos
 
-O Scorer determinístico foi adaptado para QA: referências a alternativas/passagens, respostas em forma de letra de gabarito, placeholders, extensão desnecessária, excesso de siglas e evidências ausentes ou inválidas. Até dois refinamentos são permitidos; o Scorer reavalia cada versão. Problemas não resolvidos permanecem rejeitados com diagnóstico.
+- Cotas alvo de aprovadas por `(tópico, subtópico)` são distribuídas entre os subtópicos com fontes auditadas. Lacunas permanecem explícitas. Cotas são metas de balanceamento, não garantia quando existem bloqueios.
+- Seleção prioriza cobertura de facetas/documentos; depois considera rendimento de novidade, exploração e sobreposição dos chunks recentemente usados. Não permanece na mesma faceta até a entropia saturar.
+- Alvos de conhecimento vêm da auditoria, possuem IDs e são priorizados pelo menor uso. O lote padrão é **2 perguntas**, no máximo uma por alvo.
+- Dificuldades solicitadas alternam **localmente em cada subtópico**, evitando sincronização com o ciclo global. Distribuições solicitada/inferida são separadas; o código não relabela uma pergunta para preencher uma cota de dificuldade.
+- Seeds humanas mantêm avaliação/proveniência e passam por deduplicação semântica confirmada antes de serem exemplos. O few-shot PetroQuest exclui todo o tópico atual. Novas questões entram nos exemplos somente quando aprovadas, nota ≥0,85 e novidade útil estimada.
+- ARC Easy/Challenge, Pirá, SQuAD 2.0, HotpotQA e BoolQ fornecem referências de **formato**. No ARC, somente pergunta e texto da opção correta permanecem; comandos dependentes de alternativas são filtrados. O banco usa amostragem por lote, com até 8 exemplos externos e 4 PetroQuest.
 
-O Judge avalia a **versão final**, separadamente do gerador/refinador, contra as fontes originais. Requer vereditos explícitos de correção técnica, suporte nas fontes, aderência ao escopo FPSO e pergunta autossuficiente. Pontua correção (0,40), clareza (0,20), completude da resposta (0,20) e relevância (0,20). A nota é calculada pelo código; aprovação exige ≥0,75. Notas, vereditos ou dificuldade ausentes/inválidos não aprovam a questão. A dificuldade julgada e a solicitada ficam separadas.
+### 3. Scorer, Refiner e Judge
 
-## Rodada observacional atual
+O Scorer verifica formato QA, ausência de alternativas/passagens, siglas, extensão, placeholders, target_id e evidências literais. Há até **2 refinamentos no total por candidata**, incluindo correções solicitadas pelo Judge. Cada versão é reavaliada; problemas persistentes reprovam.
 
-**Cosine e parada por saturação ficam desligados por padrão.** A aprovação por qualidade técnica continua ativa. Similaridade, duplicatas exatas, diversidade lexical e sinais de saturação não provocam refinamento ou rejeição neste modo. Não há descarte oculto de duplicatas exatas.
+O Judge recebe a QA final, escopo, material auditado e **trechos originais**. Exige razões para oito verificações: correção técnica, suporte factual, escopo/alvo, autonomia, compatibilidade com contexto, ausência de generalização indevida, validade normativa e cobertura das afirmações. Lista suporte por afirmação da resposta. Falhas factuais/de contexto não podem ser maquiadas por refinamento.
 
-Cosine continua sendo usado para recuperar/selecionar trechos do corpus; o filtro desligado é o de similaridade entre **questões**. Os limiares de 0,50/0,70/0,85/0,95 são comparados como decisões simuladas. Também são medidos cosine da pergunta e do par QA, máximos separados para seeds/geradas, Jaccard lexical, trigramas de caracteres e combinações. Os IDs dos vizinhos mais semelhantes ficam registrados.
+Pesos: correção 0,40, clareza 0,20, completude 0,20 e relevância 0,20. Aprovação exige todos os critérios, nota ≥**0,85**, correção ≥**0,90** e relevância ≥**0,85**. Vereditos malformados não aprovam nem contam como evidência científica de saturação. Esses valores são parâmetros iniciais, a calibrar com curadoria.
 
-A entropia principal é Shannon normalizada sobre **codebooks fixos treinados em chunks do domínio**, por tópico e subtópico, reutilizando a implementação da fase 3. Tags conceituais e entropia lexical são indicadores secundários. Cada rodada registra ganho de entropia, novos clusters, aceitação, distribuição de dificuldade e sinais que teriam disparado parada. As curvas consideram tanto candidatas quanto aprovadas para estudar o efeito do Judge.
+### 4. Dificuldade adaptada do backup
 
-A meta é **100 questões novas aceitas por tópico**, alternando subtópicos e dificuldades. Seeds não consomem a meta. Limites técnicos: 500 posições solicitadas ao gerador por tópico, 5.000 pedidos lógicos somados entre preparação/gerador/refinador/Judge e 3 falhas consecutivas. Pedidos HTTP de retry do backend não equivalem a novos pedidos lógicos. Meta, orçamentos e limites são configuráveis. Os filtros futuros só são ativados explicitamente por `--enable-cosine-filter` e `--enable-saturation-stop`.
+Origem: `pipeline/backup/pre_petroquest_qa_2026-10-10/fase_4/avaliacao_dificuldade_azure.ipynb`.
 
-Decisões simuladas permitem comparar cortes no conjunto observado; não simulam a trajetória de um experimento que tivesse descartado/refinado questões com outra política desde o início.
+O avaliador independente recebe pergunta/resposta, tópico/subtópico, **sem o nível solicitado e sem o documento**. Quatro dimensões de 1 a 3: integração de conhecimento, cadeia de raciocínio, demanda cognitiva e especificidade técnica. A dimensão de distratores foi removida. A média define fácil ≤1,66; média ≤2,33; difícil acima disso. Difícil requer também raciocínio e demanda cognitiva ≥2. Extensão, cenário artificial e siglas não elevam dificuldade sozinhos. Notas, razões e confiança ficam no journal; baixa confiança sinaliza revisão humana.
 
-## Executar no servidor Petrobras
+Os prompts completos estão em `prompts_qa_v3.md` e podem ser impressos sem chamada Azure:
 
-Na raiz do checkout, com `.env` Azure e certificado/gateway configurados como já previsto em `azure_openai_backend.py`:
+```bash
+python pipeline/fase_4/run_qa.py --print-prompt
+python pipeline/fase_4/run_qa.py --print-source-audit-prompt
+python pipeline/fase_4/run_qa.py --print-judge-prompt
+python pipeline/fase_4/run_qa.py --print-difficulty-prompt
+```
+
+### 5. Similaridade e entropia
+
+Embeddings cobrem o texto inteiro por janelas sobrepostas, agregadas com média ponderada e normalização. Modelo, revisão disponível, hashes dos pesos/vocabulário, janela, sobreposição e diagnósticos ficam registrados; não há truncamento silencioso. **A escala de cosine muda em relação à QA v2**, logo o corte 0,85 é inicial e precisa de nova calibração.
+
+Cosine ≥0,85 recupera até 8 vizinhos para uma avaliação de **pares pergunta/resposta** pelo modelo. A avaliação distingue redundância, sobreposição parcial, questões distintas e incerteza, considerando objetivo, condições e resposta essencial. O modelo não recebe o cosine para decidir. Só redundância confirmada com confiança ≥0,90 autoriza o filtro opcional. Perguntas normalizadas idênticas são marcadas deterministicamente; respostas divergentes ficam para revisão.
+
+A base decisional contém seeds deduplicadas e aprovadas consideradas novidades úteis. Rejeitadas e repetições aceitas no modo observacional não alimentam essa base. Além dela, `metrics_by_baseline` mede separadamente contra seeds, todas as aprovadas e rejeitadas anteriores, exclusivamente para diagnóstico. Incertezas não viram evidência de ausência de novidade. As candidatas continuam todas no journal.
+
+Entropia Shannon normalizada usa codebooks fixos treinados apenas nos chunks **auditados** do domínio, por tópico/subtópico. Também se registram cosine de Q, resposta e QA, Jaccard, trigramas, diversidade lexical e decisões simuladas. Há curvas sobre aprovadas e novidades úteis. Codebooks pequenos são marcados como pouco confiáveis. Entropia não decide sozinha a parada.
+
+### 6. Parada robusta e recuperação
+
+Por subtópico, requer:
+
+1. Pelo menos 12 candidatas mensuráveis e cobertura de ≥50% dos documentos e facetas auditados.
+2. **Duas janelas completas e disjuntas de 30 candidatas mensuráveis**, ambas com rendimento de novidade útil ≤10% e nenhum novo alvo útil.
+3. Rodada de recuperação com outras fontes/alvos: pelo menos 12 candidatas mensuráveis e dois documentos distintos, quando disponíveis.
+4. Se aparecer novidade útil na recuperação, retoma exploração e exige nova observação. Se não aparecer, distingue saturação de bloqueio de qualidade.
+
+Uma falha de API, resposta malformada ou problema de Scorer não demonstra saturação. O tópico só recebe sinal de encerramento quando todos os subtópicos cobertos estiverem fechados; bloqueio de qualidade tem motivo separado. Limites de orçamento e falta de fonte são encerramentos operacionais, não conclusão de saturação.
+
+**Nesta coleta de 100 por tópico, parada e filtros permanecem desligados.** Continuamos explorando até depois de um sinal para observar novidades tardias. Com essa amostra alguns subtópicos não terão duas janelas completas: isso significa evidência insuficiente. Os limiares não estão calibrados ainda.
+
+```bash
+python pipeline/fase_4/replay_stopping.py --output pipeline/fase_4/saida_qa_v3_medium
+```
+
+O replay compara janelas 12/20/30, paciências 2/3 e coberturas 50/75/100%, contando novidade após sinais. Não reproduz como a geração teria mudado sob outra seleção. Ativação futura explícita: `--enable-saturation-stop` e/ou `--enable-redundancy-filter`. O antigo filtro puramente numérico `--enable-cosine-filter` também é explícito, mas não é a política recomendada de redundância confirmada.
+
+## Enviar o código e executar no servidor Petrobras
+
+Na raiz do projeto local, branch `dev`, revise as alterações antes de publicar. Este comando inclui o backup do código e não inclui datasets, credenciais ou resultados:
+
+```powershell
+git add -- pipeline/fase_4/*.py pipeline/fase_4/README.md pipeline/fase_4/prompts_qa_v3.md pipeline/fase_4/petroquest_fase4_qa.ipynb pipeline/backup/pre_qa_v3_2026-10-11/
+git diff --cached --stat
+git commit -m "feat: audit sources and balance PetroQuest QA exploration"
+git push origin dev
+```
+
+No servidor, na raiz do checkout, com `.env`, certificado/gateway Azure já configurados:
 
 ```bash
 git pull --ff-only origin dev
 python -m pip install -r requirements.txt
 python pipeline/qa_references/download_qa_examples.py --max-per-dataset 1000
-python pipeline/fase_4/run_qa.py --list-topics
-python pipeline/fase_4/run_qa.py --print-prompt
-```
-
-Para esta rodada, use uma **nova pasta**, preservando as questões da implementação anterior:
-
-```bash
-mkdir -p pipeline/fase_4/saida_qa_v2
+mkdir -p pipeline/fase_4/saida_qa_v3_medium
 nohup python -u pipeline/fase_4/run_qa.py \
-  --corpus-dir /caminho/real/do/PetrolesCompleto \
-  --deployment gpt-5-4-petrobras \
-  --effort high \
-  --limit-per-topic 100 \
-  --observe-only \
-  --output pipeline/fase_4/saida_qa_v2 \
-  > pipeline/fase_4/saida_qa_v2/execucao.log 2>&1 < /dev/null &
+  --corpus-txt /caminho/real/arquivo1.txt /caminho/real/arquivo2.txt \
+  --deployment gpt-5-4-petrobras --effort medium \
+  --limit-per-topic 100 --batch-size 2 --observe-only \
+  --output pipeline/fase_4/saida_qa_v3_medium \
+  > pipeline/fase_4/saida_qa_v3_medium/execucao.log 2>&1 < /dev/null &
 ```
 
-O mesmo deployment e esforço são usados por padrão na preparação, no gerador, no refinador e no Judge. O backend não poderá remover `reasoning_effort` silenciosamente nesta fase: uma recusa desse parâmetro interrompe a etapa e fica registrada.
+Substitua os caminhos pelos **dois TXT reais** usados na execução anterior. Pode usar `--corpus-dir /pasta/real` ou `--corpus-zip /arquivo.zip` em vez de `--corpus-txt`. Não existe exigência de ser o Híbrido; mantenha a mesma escolha para comparação.
 
-O teto mínimo de conclusão é 12.000 tokens em cada papel, incluindo preparação, para acomodar o raciocínio com esforço alto. É um limite de espaço para raciocínio e resposta; o consumo real é o informado pelo Azure.
+Todos os sete papéis usam esse deployment/effort por padrão: preparação, auditor, gerador, refinador, Judge, dificuldade e redundância. [GPT‑5.4 suporta effort medium](https://developers.openai.com/api/docs/models/gpt-5.4); a disponibilidade do deployment depende do ambiente Petrobras. Remoção silenciosa de effort pelo backend é detectada e bloqueia continuidade.
 
-Também são aceitos `--corpus-txt arquivo1.txt arquivo2.txt` ou `--corpus-zip corpus.zip`. Para preparar somente índices/codebooks, use `--prepare-only`; depois execute novamente com `--resume` para gerar. Para continuar uma geração QA v2 interrompida, repita os mesmos parâmetros com `--resume`. Execuções antigas sem suporte no domínio não são retomadas como QA v2. Não use a pasta da implementação anterior.
+Limites: 100 **novas aprovadas** por tópico, até 1.000 posições solicitadas ao gerador por tópico, 5.000 pedidos lógicos globais e três falhas consecutivas. Seeds não consomem a meta. Retries HTTP do backend não são novos pedidos lógicos. Limite de conclusão mínimo 12.000 tokens acomoda raciocínio e resposta; tokens informados nas respostas e duração são registrados por papel. Respostas sem usage e falhas HTTP não permitem recuperar consumo completo; os registros não equivalem à fatura. A auditoria adiciona chamadas e tempo; medium não garante execução total mais rápida que o fluxo antigo.
 
-Dados do corpus, bancos de exemplos, prompts, modelo de embeddings e políticas possuem assinaturas/checkpoints. Alterações de fontes ou políticas exigem outra saída, para manter comparações interpretáveis. Sem `--resume`, uma pasta que já contém execução é recusada; arquivos não são apagados automaticamente.
+Para preparar somente fontes/índices/auditorias, adicione `--prepare-only`. Depois repita os mesmos argumentos com `--resume` e sem `--prepare-only`. Na retomada, auditorias válidas são reutilizadas; versões, fontes, exemplos e políticas precisam coincidir. Para continuar uma interrupção, repita os argumentos com `--resume`. Para mudar política use nova saída. Orçamentos técnicos podem ser ampliados na retomada.
 
-## Saídas e curadoria
+## Saídas e transporte pelo GitHub
 
 | Arquivo | Conteúdo |
 |---|---|
-| `questoes_qa.jsonl` | Aprovadas pelo fluxo técnico, com nota, dificuldade, evidência e proveniência |
-| `pares_qa.jsonl` | Apenas pergunta e resposta, pronto para consumo QA |
-| `candidatas_metricas.jsonl` | Journal completo: original, versões refinadas, Scorer, Judge, métricas, decisões simuladas e motivo de rejeição |
-| `metricas_por_rodada.jsonl` | Entropia semântica, ganhos, cobertura, aceitação, similaridades e sinais de saturação |
-| `resumo_topicos.json` / `.jsonl` | Volume, dificuldades julgadas, lacunas de domínio e motivo de término |
-| `banco_seed_qa.jsonl` | Seeds com tipo de avaliação e proveniência humana |
-| `external_examples_used.jsonl` | Snapshot dos exemplos externos com origem e licença |
-| `seeds_especialista_e_geradas.jsonl` | Candidatas aprovadas pelo especialista e novas questões para curadoria |
-| `run_config.json`, `state.json` | Versão, configuração, assinaturas e pedidos por papel, retomáveis |
-| `dominio/` | Índices de recuperação, documentos consolidados, embeddings e codebooks |
-| `eventos.jsonl` | Lotes originais e erros por etapa, incluindo uma interrupção no meio do lote |
+| `questoes_qa.jsonl` / `pares_qa.jsonl` | Aprovadas com metadados / somente pergunta e resposta |
+| `candidatas_metricas.jsonl` | Original, refinos, Scorer, Judge, dificuldade, redundância, fontes e métricas |
+| `auditorias_contexto.jsonl`, `dominio/auditorias/` | Pareceres completos de documentos aprovados e bloqueados |
+| `cobertura_dominio.json` | Documentos/facetas aprovados e lacunas por subtópico |
+| `metricas_por_rodada.jsonl` | Curvas, seleção, cobertura, recuperação e sinais de parada |
+| `resumo_topicos.json` / `.jsonl` | Aprovação, novidade, dificuldade, lacunas e motivo de encerramento |
+| `banco_seed_qa.jsonl`, `seeds_deduplicadas.jsonl` | Banco humano com proveniência, após deduplicação |
+| `external_examples_used.jsonl` | Snapshot externo com origem/licença |
+| `chamadas_modelo.jsonl` | Deployment, effort, tokens efetivos e falhas por papel |
+| `run_config.json`, `state.json`, `eventos.jsonl` | Versões, assinaturas, orçamento, checkpoint e lotes brutos |
+| `dominio/documentos/`, `dominio/indices/facetas.jsonl` | Conteúdo auditado utilizado e facetas |
+| `analise_parada/replay.json` / `.csv` | Comparação posterior dos sinais na trajetória observada |
 
-O journal é a fonte da exportação: se houver interrupção entre journal e saída aceita, a retomada reconstrói a exportação sem duplicar IDs. Uma rodada interrompida fica preservada nos eventos e o número de rodada é reservado antes da chamada; a próxima rodada não reutiliza esse ID.
-
-Para transportar os resultados:
-
-```bash
-tar -czf petroquest-qa-v2-resultados.tar.gz pipeline/fase_4/saida_qa_v2
-```
-
-Leve a pasta completa para poder curar respostas junto com fontes, versões, notas e curvas. A revisão humana permanece necessária para avaliar o resultado do experimento.
-
-## Notebook e verificação local
-
-`petroquest_fase4_qa.ipynb` configura e executa o mesmo motor, mostra o prompt, os bancos de exemplos e as curvas. Não mantém uma segunda implementação da geração.
+Depois da geração, no servidor, branch `dev`:
 
 ```bash
-python -m unittest discover -s pipeline/fase_4/tests -v
+python pipeline/fase_4/replay_stopping.py --output pipeline/fase_4/saida_qa_v3_medium
+git add -f -- pipeline/fase_4/saida_qa_v3_medium/*.json pipeline/fase_4/saida_qa_v3_medium/*.jsonl
+git add -f -- pipeline/fase_4/saida_qa_v3_medium/dominio/documentos/ pipeline/fase_4/saida_qa_v3_medium/dominio/auditorias/
+git add -f -- pipeline/fase_4/saida_qa_v3_medium/dominio/indices/facetas.jsonl pipeline/fase_4/saida_qa_v3_medium/analise_parada/
+git diff --cached --stat
+git commit -m "data: add PetroQuest QA v3 medium observational run"
+git push origin dev
 ```
 
-Os testes usam clientes/embeddings simulados e um pequeno corpus real de fixture, sem custos Azure. Verificam: recuperação e rastreabilidade, refino antes do Judge, reprovação sem suporte/veredito, exemplares com avaliação, cota por tópico, continuidade com cosine/saturação altos, filtros apenas por ativação explícita, limites globais e retomada sem duplicar dados. Esses testes validam o fluxo; a qualidade das novas questões precisa ser medida na execução real.
+No computador local: `git pull --ff-only origin dev`. Os globs são expandidos pelo Bash do servidor. Corpus, `.env` e caches binários não entram nesses comandos. Cada candidata traz trechos originais; documentos e auditorias complementam a curadoria. Preserve uma pasta por experimento.
+
+## Notebook
+
+`petroquest_fase4_qa.ipynb` permite configurar, baixar exemplos, imprimir prompts, preparar/auditar, inspecionar pareceres, gerar e analisar as curvas. Células de preparação/geração usam Azure e têm custo. O código foi inspecionado quanto a sintaxe e imports; a validação factual e a calibração dependem da próxima coleta e revisão humana.

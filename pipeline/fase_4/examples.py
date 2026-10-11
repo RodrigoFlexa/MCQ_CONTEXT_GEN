@@ -5,6 +5,7 @@ from collections import defaultdict
 from pipeline.qa_references.download_qa_examples import CHOICE_REFERENCES, CONTEXT_REFERENCES
 from .domain import human_seeds, legacy, TOPICOS
 from .storage import read_jsonl, write_jsonl
+from .metrics import canonical_question
 
 
 def canonical_topic(name):
@@ -55,7 +56,7 @@ def build_seed_bank(cfg):
                      "selection_weight": 3.0, "evaluation_type": "binary_expert_approval"})
     unique = {}
     for q in rows:
-        key = " ".join(legacy.tokenizar(legacy.normalizar(q["question"])))
+        key = canonical_question(q['question'])
         if key not in unique or q["selection_weight"] > unique[key]["selection_weight"]:
             unique[key] = q
     bank = list(unique.values())
@@ -70,7 +71,7 @@ class ExamplePool:
 
     def sample_quality(self, topic, round_number):
         rng = random.Random(f"{self.cfg.seed}:{topic}:{round_number}:quality")
-        generated = [q for q in self.accepted if q.get("nota", 0) >= self.cfg.minimum_fewshot_quality]
+        generated = [q for q in self.accepted if q.get("nota", 0) >= self.cfg.minimum_fewshot_quality and q.get('useful_novel',False)]
         seed_weight = max(0.1, 1 - len(generated) / 40)
         pool = [(q, q["selection_weight"] * seed_weight) for q in self.seeds if q["topic"] != topic]
         pool += [(q, q["nota"]) for q in generated if q["topic"] != topic]

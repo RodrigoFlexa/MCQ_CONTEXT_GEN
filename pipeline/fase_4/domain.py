@@ -6,7 +6,8 @@ from collections import defaultdict
 from pathlib import Path
 
 from .config import ROOT
-from .storage import atomic_json
+from .storage import atomic_json, append_jsonl, read_jsonl
+from .source_audit import audit_source, audited_document, AUDIT_VERSION, SYSTEM_PROMPT as AUDIT_PROMPT
 
 LEGACY_PATH = ROOT / "pipeline/fase_3"
 if str(LEGACY_PATH) not in sys.path:
@@ -21,8 +22,9 @@ def fingerprint(value):
 
 
 class DomainResources:
-    def __init__(self, cfg, client):
+    def __init__(self, cfg, client, audit_client=None):
         self.cfg, self.client = cfg, client
+        self.audit_client = audit_client or client
         self.legacy_cfg = legacy.Config(
             raiz=ROOT, out_dir=Path(cfg.output) / "dominio",
             corpus_dir=None if (cfg.corpus_txt or cfg.corpus_zip) else cfg.corpus_dir,
@@ -32,6 +34,7 @@ class DomainResources:
         self.pairs = {}
         self.topic_codebooks = {}
         self.chunk_lookup = {}
+        self.doc_contexts = {}
 
     def prepare(self, selected_topics):
         # Verificação de fonte antes de carregar embeddings ou gastar chamadas de LLM.
@@ -46,6 +49,8 @@ class DomainResources:
                               "mtime_ns": f.stat().st_mtime_ns} for f in files],
                   "scope": TOPICOS, "embedding": self.cfg.embedding_model,
                   "clusters": self.cfg.clusters, "seed": self.cfg.seed,
+                  "audit_version": AUDIT_VERSION, "audit_prompt": fingerprint(AUDIT_PROMPT),
+                  "embedding_representation": "full_text_windows_v1", "overlap":self.cfg.embedding_overlap_tokens,
                   "retrieval": {"window_words": self.legacy_cfg.alvo_palavras_trecho,
                                 "lexical_top_k": self.legacy_cfg.top_k_lexical,
                                 "mmr_lambda": self.legacy_cfg.mmr_lambda,
@@ -56,7 +61,8 @@ class DomainResources:
             raise ValueError("Corpus, tópicos ou modelo mudaram. Use outro --output para preservar índices e curvas anteriores.")
         atomic_json(manifest, {"signature": signature, "inputs": inputs})
         self.signature = signature
-        self.emb = legacy.Embedder(self.legacy_cfg)
+        from .embedding import FullTextEmbedder
+        self.emb = FullTextEmbedder(self.legacy_cfg,self.cfg.embedding_overlap_tokens)
         # Reutiliza os passos já existentes: extração de facetas -> busca lexical
         # streaming em todos os tópicos -> rerank semântico + MMR.
         facets = legacy.extrair_facetas(self.client, TOPICOS, self.legacy_cfg)
@@ -70,18 +76,47 @@ class DomainResources:
             for chunk in values:
                 self.chunk_lookup[chunk["chunk_id"]] = chunk
         coverage = []
+        audit_journal=Path(self.cfg.output)/'auditorias_contexto.jsonl'
+        journaled={r['doc_id'] for r in read_jsonl(audit_journal)}
         for topic in selected_topics:
             topic_texts = {}
             for subtopic in TOPICOS[topic]:
                 pair_facets = grouped.get((topic, subtopic), [])
                 plan = legacy.plano_de_documentos(pair_facets, candidates, self.emb, self.legacy_cfg)
-                unique = {c["chunk_id"]: c["texto"] for f in pair_facets for c in candidates.get(f.id, [])}
+                valid_plan=[]
+                facets_by_id={f.id:f for f in pair_facets}
+                for doc in plan:
+                    facet=facets_by_id[doc['faceta_id']]
+                    chunks=[self.chunk_lookup[cid] for cid in doc['chunk_ids']]
+                    context={'topic':topic,'subtopic':subtopic,'scope':TOPICOS[topic][subtopic],
+                        'focus':facet.foco,'facet_id':facet.id,'facet_title':facet.titulo,
+                        'doc_id':doc['doc_id'],'chunks':chunks}
+                    audit=audit_source(self.audit_client,context,self.legacy_cfg.out_dir,signature)
+                    if doc['doc_id'] not in journaled:
+                        append_jsonl(audit_journal,{'doc_id':doc['doc_id'],'topic':topic,'subtopic':subtopic,
+                            'approved':audit['approved'],'audit':audit})
+                        journaled.add(doc['doc_id'])
+                    print(f"[auditoria] {subtopic}: {doc['doc_id']} -> {'aprovado' if audit['approved'] else 'bloqueado'}",flush=True)
+                    if not audit['approved']:continue
+                    allowed=set(audit['allowed_chunk_ids'])
+                    context['chunks']=[{k:c[k] for k in ('chunk_id','arquivo','linha_ini','linha_fim','texto')}
+                                       for c in chunks if c['chunk_id'] in allowed]
+                    context.update(document=audited_document(audit),source_audit=audit,corpus_signature=signature,
+                        embedding_diagnostics={c['chunk_id']:self.emb.diagnostics(c['texto']) for c in context['chunks']})
+                    self.doc_contexts[doc['doc_id']]=context
+                    (self.legacy_cfg.out_dir/'documentos').mkdir(parents=True,exist_ok=True)
+                    (self.legacy_cfg.out_dir/'documentos'/f"{doc['doc_id']}.md").write_text(context['document'],encoding='utf-8')
+                    valid_plan.append(doc)
+                unique={c['chunk_id']:c['texto'] for doc in valid_plan for c in self.doc_contexts[doc['doc_id']]['chunks']}
                 topic_texts.update(unique)
                 codebook = self.make_codebook(list(unique.values()), f"sub::{topic}::{subtopic}") if unique else None
                 self.pairs[(topic, subtopic)] = {
-                    "plan": plan, "codebook": codebook, "facets": {f.id: f for f in pair_facets}}
+                    "plan": valid_plan, "codebook": codebook, "facets": facets_by_id}
                 coverage.append({"topic": topic, "subtopic": subtopic, "chunks": len(unique),
-                                 "documents": len(plan), "codebook_clusters": codebook.k if codebook else 0})
+                                 "documents": len(valid_plan), "planned_documents":len(plan),
+                                 "blocked_documents":len(plan)-len(valid_plan),
+                                 "valid_facets":len({d['faceta_id'] for d in valid_plan}),
+                                 "codebook_clusters": codebook.k if codebook else 0})
             if topic_texts:
                 self.topic_codebooks[topic] = self.make_codebook(list(topic_texts.values()), f"topic::{topic}")
         atomic_json(Path(self.cfg.output) / "cobertura_dominio.json", coverage)
@@ -91,7 +126,7 @@ class DomainResources:
     def make_codebook(self, texts, name):
         # O codebook é fixo e treinado sobre dados do domínio, nunca sobre tags
         # livres geradas pelo próprio modelo nem reagrupado a cada rodada.
-        name = f"qa-v2::{self.signature}::{name}"
+        name = f"qa-v3::{self.signature}::{fingerprint(texts)}::{name}"
         if len(texts) >= 8:
             return legacy.treinar_codebook(texts, self.emb, self.legacy_cfg, nome=name)
         centers = self.emb.encode(texts)
@@ -101,23 +136,17 @@ class DomainResources:
     def covered_subtopics(self, topic):
         return [s for s in TOPICOS[topic] if self.pairs[(topic, s)]["plan"]]
 
-    def materialize(self, topic, subtopic, cursor):
+    def materialize(self, topic, subtopic, cursor=0, doc_id=None):
         resources = self.pairs[(topic, subtopic)]
         plan = resources["plan"]
         if not plan:
             raise ValueError(f"Nenhum documento recuperado para {topic} / {subtopic}")
-        doc = plan[cursor % len(plan)]
-        facet = resources["facets"][doc["faceta_id"]]
-        consolidated = legacy.consolidar_documento(self.client, doc, facet, self.legacy_cfg)
-        if not consolidated.strip():
-            raise ValueError("Consolidação vazia: geração sem evidência bloqueada")
-        chunks = [{k: self.chunk_lookup[cid][k] for k in
-                   ("chunk_id", "arquivo", "linha_ini", "linha_fim", "texto")}
-                  for cid in doc["chunk_ids"]]
-        return {"topic": topic, "subtopic": subtopic, "scope": TOPICOS[topic][subtopic],
-                "focus": facet.foco, "document": consolidated, "chunks": chunks,
-                "doc_id": doc["doc_id"], "facet_id": facet.id, "facet_title": facet.titulo,
-                "corpus_signature": self.signature}
+        doc = next((d for d in plan if d['doc_id']==doc_id),None) if doc_id else plan[cursor % len(plan)]
+        if doc is None:raise ValueError('Documento não pertence ao plano auditado')
+        return dict(self.doc_contexts[doc['doc_id']])
+
+    def documents(self,topic,subtopic):
+        return [self.doc_contexts[d['doc_id']] for d in self.pairs[(topic,subtopic)]['plan']]
 
     def entropy(self, rows, topic, subtopic=None):
         cb = self.pairs[(topic, subtopic)]["codebook"] if subtopic else self.topic_codebooks.get(topic)

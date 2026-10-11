@@ -1,6 +1,7 @@
 """Journal de candidatas, saída aceita derivada e checkpoint atômico."""
 import json
 import os
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -63,15 +64,11 @@ class RunStore:
         if self.config_path.exists():
             previous = json.loads(self.config_path.read_text(encoding="utf-8"))
             if previous.get("schema_version") != SCHEMA_VERSION:
-                raise ValueError("Saída incompatível com QA v2. Use outra pasta; os resultados antigos permanecem preservados.")
+                raise ValueError("Saída incompatível com QA v3. Use outra pasta; os resultados antigos permanecem preservados.")
             if not cfg.resume:
                 raise ValueError("A pasta já contém uma execução. Use --resume ou escolha outro --output.")
-            for key in ("deployment", "preparation_deployment", "judge_deployment", "effort", "embedding_model", "seed",
-                        "minimum_quality", "minimum_fewshot_quality", "max_refinements",
-                        "enable_cosine_filter", "enable_saturation_stop", "similarity_threshold",
-                        "batch_size", "format_examples", "cross_topic_examples", "min_human_preference",
-                        "max_question_words", "max_answer_words", "entropy_gain_threshold",
-                        "entropy_patience", "entropy_warmup", "clusters"):
+            mutable={'resume','prepare_only','max_calls','max_attempts_per_topic','max_consecutive_api_failures'}
+            for key in cfg.serializable().keys()-mutable:
                 if previous["config"].get(key) != cfg.serializable().get(key):
                     raise ValueError(f"O parâmetro {key} mudou. Compare políticas em uma nova pasta.")
             self.meta = previous
@@ -91,6 +88,7 @@ class RunStore:
             raise ValueError("Há ids duplicados no journal de candidatas")
         self.accepted = [r for r in self.records if r.get("accepted")]
         self.rounds = read_jsonl(self.root / "metricas_por_rodada.jsonl")
+        self.state.setdefault('exploration',{})
         # Reconstrói a exportação se a execução parou entre journal e exportação.
         write_jsonl(self.root / "questoes_qa.jsonl", self.accepted)
 
@@ -146,15 +144,34 @@ class BudgetedClient:
 
     def complete(self, *args, **kwargs):
         self.reserve()
-        result = self.backend.complete(*args, **kwargs)
-        self.check_effort()
-        return result
+        return self.invoke('complete',args,kwargs)
 
     def complete_json(self, *args, **kwargs):
         self.reserve()
-        result = self.backend.complete_json(*args, **kwargs)
-        self.check_effort()
-        return result
+        return self.invoke('complete_json',args,kwargs)
+
+    def invoke(self,method,args,kwargs):
+        keys=('calls','cached_calls','prompt_tokens','completion_tokens','empty_responses')
+        usage=getattr(self.backend,'usage',None)
+        before={k:getattr(usage,k,0) for k in keys}
+        started=utc_now();timer=time.monotonic();error=None
+        try:
+            result=getattr(self.backend,method)(*args,**kwargs)
+            self.check_effort()
+            return result
+        except BaseException as exc:
+            error=type(exc).__name__;raise
+        finally:
+            after=getattr(self.backend,'usage',None)
+            delta={k:max(0,getattr(after,k,0)-v) for k,v in before.items()}
+            record={'role':self.role,'started_at':started,'finished_at':utc_now(),'error_type':error,
+                'elapsed_seconds':round(time.monotonic()-timer,3),
+                'deployment':getattr(self.backend,'deployment',None),'effort':self.store.cfg.effort,
+                'usage':delta,'usage_available':usage is not None}
+            append_jsonl(self.store.root/'chamadas_modelo.jsonl',record)
+            total=self.store.state.setdefault('usage_by_role',{}).setdefault(self.role,{k:0 for k in keys})
+            for k,v in delta.items():total[k]=total.get(k,0)+v
+            self.store.save_state()
 
     def check_effort(self):
         if "reasoning_effort" in getattr(self.backend, "_unsupported", set()):

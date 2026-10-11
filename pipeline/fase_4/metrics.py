@@ -14,6 +14,11 @@ def tokens(text):
     return re.findall(r"[a-z0-9]+", norm)
 
 
+def canonical_question(text):
+    # Sinais, unidades e números podem mudar o problema: não os apague para decidir duplicidade.
+    return ' '.join(unicodedata.normalize('NFKC',text).casefold().split())
+
+
 def entropy(values):
     values = [x for x in values if x]
     counts = Counter(values)
@@ -65,12 +70,13 @@ def metric_decisions(similarities, threshold=0.5):
 
 
 class MetricsIndex:
-    """Mede cada candidata contra seeds e candidatas anteriores, sem auto-comparação."""
+    """Índice explícito de referência, sem auto-comparação."""
     def __init__(self, embedder, rows=()):
         self.emb = embedder
         self.rows, self.word_sets, self.char_sets, self.normalized = [], [], [], []
         self.q_vectors = np.empty((0, embedder.dim), dtype=np.float32)
         self.qa_vectors = np.empty((0, embedder.dim), dtype=np.float32)
+        self.answer_vectors = np.empty((0, embedder.dim), dtype=np.float32)
         self.ids, self.vocab = set(), set()
         self.add_many(rows)
 
@@ -87,6 +93,7 @@ class MetricsIndex:
         qa_vecs = self.emb.encode([r["question"] + "\n" + r["answer"] for r in pending])
         self.q_vectors = np.vstack([self.q_vectors, q_vecs])
         self.qa_vectors = np.vstack([self.qa_vectors, qa_vecs])
+        self.answer_vectors = np.vstack([self.answer_vectors,self.emb.encode([r['answer'] for r in pending])])
         for row in pending:
             self.rows.append(row)
             self.ids.add(row["id"])
@@ -108,10 +115,12 @@ class MetricsIndex:
         qavec = self.emb.encode([row["question"] + "\n" + row["answer"]])[0]
         qs = self.q_vectors[indices] @ qvec
         qas = self.qa_vectors[indices] @ qavec
+        ans = self.answer_vectors[indices] @ self.emb.encode([row['answer']])[0]
         words, chars = set(tokens(row["question"])), chargrams(row["question"])
         lex = [jaccard(words, self.word_sets[i]) for i in indices]
         char_scores = [jaccard(chars, self.char_sets[i]) for i in indices]
         for name, scores in (("cosine", qs), ("cosine_question_answer", qas),
+                             ('cosine_answer',ans),
                              ("lexical_jaccard", lex), ("char_trigram_jaccard", char_scores)):
             pos = int(np.argmax(scores))
             ref = self.rows[indices[pos]]
@@ -122,9 +131,32 @@ class MetricsIndex:
         values["exact"] = float(any(self.normalized[i] == norm for i in indices))
         for category in ("generated", "seeds"):
             scores = [float(qs[j]) for j, i in enumerate(indices)
-                      if (self.rows[i].get("origin") == "generated_qa_v2") == (category == "generated")]
+                      if self.rows[i].get('origin','').startswith('generated_qa') == (category == "generated")]
             values[f"cosine_max_{category}"] = round(max(scores), 6) if scores else None
         return values
+
+    def neighbors(self,row,threshold=.85,limit=8):
+        if not self.rows:return []
+        scores=self.q_vectors @ self.emb.encode([row['question']])[0]
+        answer_scores=self.answer_vectors @ self.emb.encode([row['answer']])[0]
+        order=np.argsort(-scores)
+        return [{'reference':self.rows[i],'cosine_question':float(scores[i]),'cosine_answer':float(answer_scores[i]),
+                 'word_jaccard':jaccard(set(tokens(row['question'])),self.word_sets[i])}
+                for i in order if self.rows[i]['id']!=row.get('id') and scores[i]>=threshold][:limit]
+
+
+class DiagnosticBaselines:
+    """Bases separadas para estudo; nunca entram na aprovação ou na parada."""
+    def __init__(self,embedder,seeds,records):
+        self.indices={'seeds':MetricsIndex(embedder,seeds),
+                      'accepted':MetricsIndex(embedder,[r for r in records if r.get('accepted')]),
+                      'rejected':MetricsIndex(embedder,[r for r in records if not r.get('accepted')])}
+
+    def measure(self,row):
+        return {name:index.measure(row) for name,index in self.indices.items()}
+
+    def add(self,row):
+        self.indices['accepted' if row['accepted'] else 'rejected'].add_many([row])
 
 
 def saturation_signals(history, current, cfg):

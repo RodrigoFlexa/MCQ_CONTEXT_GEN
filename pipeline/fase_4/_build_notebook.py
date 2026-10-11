@@ -1,164 +1,159 @@
-"""Mantém o notebook como interface do mesmo motor usado pelo CLI."""
+"""Notebook de operação do mesmo motor QA v3 utilizado pelo CLI."""
 import json
 from pathlib import Path
 
 
 def markdown(source):
-    return {"cell_type": "markdown", "metadata": {}, "source": source.splitlines(keepends=True)}
+    return {'cell_type':'markdown','metadata':{},'source':source.splitlines(keepends=True)}
 
 
 def code(source):
-    return {"cell_type": "code", "metadata": {}, "execution_count": None, "outputs": [],
-            "source": source.splitlines(keepends=True)}
+    return {'cell_type':'code','metadata':{},'execution_count':None,'outputs':[],
+            'source':source.splitlines(keepends=True)}
 
 
-cells = [
-markdown("""# PetroQuest QA — fluxo completo da fase 4
+cells=[
+markdown('''# PetroQuest QA v3 — fontes auditadas e exploração por cobertura
 
-**Domínio Petrolês → facetas → recuperação semântica/MMR → documento consolidado → geração QA → Scorer → Refiner → Judge → dataset.**
+Petrolês → facetas/recuperação → **auditoria factual por LLM** → alternância de subtópicos, facetas, documentos e alvos → Gerador → Scorer/Refiner/Judge → dificuldade independente → avaliação de redundância → journal.
 
-O alvo desta rodada é até 100 questões novas aceitas por tópico. Entropia, cosine, Jaccard e diversidade lexical são observados durante a geração. **Cosine e saturação não filtram nem encerram a rodada por padrão.** A aprovação técnica do Judge continua ativa. Não há distratores ou alternativas.
-
-Execute este notebook no servidor com corpus, exemplos externos e configuração Azure. O notebook e a linha de comando chamam o mesmo motor. As saídas anteriores devem ser preservadas em sua própria pasta.
-"""),
-code("""from pathlib import Path
-import sys
-import json
+Próxima coleta: **100 novas QA aprovadas por tópico**, GPT‑5.4, effort `medium`. Somente pergunta/resposta. Os filtros de similaridade/redundância e a parada científica permanecem **desligados**; suas decisões são registradas. Auditoria e aprovação técnica continuam obrigatórias. A meta, orçamento e falhas técnicas podem encerrar a execução.
+'''),
+code('''from pathlib import Path
+from dataclasses import replace
 from collections import Counter
+import sys, json, subprocess
 
-cwd = Path.cwd().resolve()
-ROOT = next(p for p in [cwd, *cwd.parents] if (p / 'pipeline/fase_4/run_qa.py').is_file())
-sys.path.insert(0, str(ROOT))
+cwd=Path.cwd().resolve()
+ROOT=next(p for p in [cwd,*cwd.parents] if (p/'pipeline/fase_4/run_qa.py').is_file())
+sys.path.insert(0,str(ROOT))
 from pipeline.fase_4.config import QAConfig
 from pipeline.fase_4.engine import execute
 from pipeline.fase_4.domain import TOPICOS
-from pipeline.fase_4.examples import build_seed_bank
-
+from pipeline.fase_4.storage import read_jsonl
 print(ROOT)
-print(f'{len(TOPICOS)} tópicos; {sum(len(s) for s in TOPICOS.values())} subtópicos')
-"""),
-markdown("""## Configurar o experimento
+print('Tópicos:',len(TOPICOS))
+'''),
+markdown('''## Configuração
 
-O corpus deve ser o Petrolês disponível no servidor. A descoberta automática prefere `PetrolesCompleto` e usa `PetrolesHibrido` quando o completo não existe; o caminho e a assinatura ficam no manifesto. É possível escolher explicitamente pasta, arquivos TXT ou ZIP.
-
-O `.env` deve conter endpoint, chave e versão da API Azure. Credenciais não entram em células, notebooks ou Git.
-"""),
-code("""cfg = QAConfig()
-cfg.output = ROOT / 'pipeline/fase_4/saida_qa_v2'
-# Ajuste se necessário:
-# cfg.corpus_dir = Path('/caminho/no/servidor/PetrolesCompleto')
-cfg.deployment = 'gpt-5-4-petrobras'
-cfg.preparation_deployment = cfg.deployment
-cfg.judge_deployment = cfg.deployment
-cfg.effort = 'high'
-cfg.limit_per_topic = 100
-cfg.batch_size = 5
-cfg.max_attempts_per_topic = 500
-cfg.max_calls = 5000
-cfg.enable_cosine_filter = False
-cfg.enable_saturation_stop = False
-cfg.similarity_threshold = 0.50  # Somente diagnóstico nesta rodada
-cfg.resume = False  # True para continuar uma execução QA v2 existente
-# cfg.topics = [next(iter(TOPICOS))]  # Opcional: restringir tópicos
+Use o mesmo corpus da rodada anterior para a comparação. Informe a pasta ou os dois TXT reais do Petrolês. Endpoint/chave/versão Azure ficam no `.env`, fora do Git. Cada política usa sua própria saída: **não retome QA v2 como v3**.
+'''),
+code('''cfg=QAConfig()
+cfg.output=ROOT/'pipeline/fase_4/saida_qa_v3_medium'
+# cfg.corpus_dir=Path('/caminho/real/do/PetrolesHibrido')
+# Ou os dois arquivos, evitando a descoberta automática:
+# cfg.corpus_dir=None
+# cfg.corpus_txt=[Path('/caminho/arquivo1.txt'),Path('/caminho/arquivo2.txt')]
+cfg.deployment=cfg.preparation_deployment=cfg.judge_deployment='gpt-5-4-petrobras'
+cfg.effort='medium'
+cfg.limit_per_topic=100
+cfg.batch_size=2
+cfg.enable_cosine_filter=cfg.filter_redundancy=cfg.enable_saturation_stop=False
+cfg.resume=False  # True apenas para continuar esta mesma execução v3
 cfg.validate()
-print(json.dumps(cfg.serializable(), ensure_ascii=False, indent=2))
-"""),
-markdown("""## Baixar exemplos externos QA
+print(json.dumps(cfg.serializable(),ensure_ascii=False,indent=2))
+'''),
+markdown('''## Exemplos externos e humanos
 
-O downloader busca Pirá, ARC Easy/Challenge, SQuAD 2.0, HotpotQA e BoolQ. No ARC, o texto da opção correta vira a resposta e todas as opções são removidas. Enunciados que dependem de alternativas ou passagem são filtrados. Os exemplos são referências de forma, nunca fontes factuais sobre FPSO. Licença e proveniência permanecem nos arquivos de auditoria.
-"""),
-code("""import subprocess
-if not cfg.external_examples.exists():
-    subprocess.run([sys.executable, str(ROOT / 'pipeline/qa_references/download_qa_examples.py'),
-                    '--max-per-dataset', '1000'], cwd=ROOT, check=True)
+ARC Easy/Challenge, Pirá, SQuAD 2.0, HotpotQA e BoolQ são normalizados para QA e amostrados a cada lote. No ARC, opções são removidas e o texto da opção correta vira resposta; comandos dependentes de alternativas são excluídos. Exemplos fornecem formato, nunca suporte factual para FPSO.
+
+Seeds humanas mantêm proveniência; a preparação da geração remove redundância confirmada entre seeds. Novas QA de outros tópicos só entram nos exemplos se aprovadas e consideradas novidade útil.
+'''),
+code('''if not cfg.external_examples.exists():
+    subprocess.run([sys.executable,str(ROOT/'pipeline/qa_references/download_qa_examples.py'),
+                    '--max-per-dataset','1000'],cwd=ROOT,check=True)
 else:
-    print('Banco externo já disponível:', cfg.external_examples)
-"""),
-markdown("""## Verificar exemplos melhor avaliados
+    print('Exemplos disponíveis:',cfg.external_examples)
+'''),
+markdown('''## Revisar os prompts antes de gastar chamadas
 
-O banco preserva as vencedoras da avaliação humana da fase 2 e as aprovações sem ressalvas extraídas da revisão do especialista. A nota de preferência humana e a aprovação binária são identificadas separadamente; não são tratadas como a mesma escala do Judge. Durante a geração, questões novas com nota ≥0,85 também podem entrar no pool. Todo few-shot PetroQuest vem de outros tópicos.
-"""),
-code("""seeds = build_seed_bank(cfg)
-print('Seeds elegíveis:', len(seeds))
-print('Origens:', dict(Counter(q['origin'] for q in seeds)))
-print('Tópicos:', dict(Counter(q['topic'] for q in seeds)))
-print(seeds[0]['question'])
-print(seeds[0]['answer'])
-"""),
-markdown("""## Rever o prompt
+A rubrica de dificuldade foi recuperada do notebook antigo do backup e adaptada para QA. O avaliador recebe pergunta/resposta e tópico, **sem a dificuldade solicitada**. Dimensões: integração de conhecimento, cadeia de raciocínio, demanda cognitiva e especificidade técnica. Não há dimensão de distratores.
+'''),
+code('''for flag in ('--print-prompt','--print-source-audit-prompt','--print-judge-prompt','--print-difficulty-prompt'):
+    print()
+    print(flag)
+    subprocess.run([sys.executable,str(ROOT/'pipeline/fase_4/run_qa.py'),flag],cwd=ROOT,check=True)
+'''),
+markdown('''## Preparar e auditar as fontes — usa Azure
 
-O núcleo do prompt usa apenas QA e contexto quando necessário. O conteúdo dinâmico inclui o escopo revisado, a faceta, o documento consolidado e os trechos originais com seus IDs. Cada resposta gerada precisa indicar evidência literal para auditoria. O Scorer verifica a forma e a rastreabilidade; o Refiner corrige problemas; o Judge avalia a versão final contra as fontes.
-"""),
-code("""subprocess.run([sys.executable, str(ROOT / 'pipeline/fase_4/run_qa.py'), '--print-prompt'],
-               cwd=ROOT, check=True)
-"""),
-markdown("""## Executar o fluxo completo
+Esta célula chama o modelo para avaliar **todos os documentos candidatos dos tópicos selecionados**, antes de gerar perguntas. Audita faceta, condições originais, transferibilidade, afirmações/citações literais e limites normativos. Materiais rejeitados ficam registrados; não são adaptados silenciosamente.
 
-A primeira execução extrai facetas, percorre o corpus, faz recuperação semântica com MMR e treina codebooks fixos sobre trechos do domínio. Em seguida gera e avalia QA. Índices, codebooks, estados e pedidos por papel são persistidos. A entropia principal mede a distribuição dos pares pergunta/resposta sobre esses clusters fixos, por tópico e subtópico.
+O documento usado no prompt é uma montagem das afirmações aprovadas, preservando contexto e limites. Embeddings usam janelas sobre o texto completo e os codebooks ficam fixos por execução. Esta etapa adiciona custo de preparação, mesmo com effort medium.
+'''),
+code('''prepared=execute(replace(cfg,prepare_only=True))
+print('Estado:',prepared.meta['status'])
+print('Chamadas por papel:',prepared.state['calls_by_role'])
+audits=read_jsonl(cfg.output/'auditorias_contexto.jsonl')
+print('Auditorias:',dict(Counter('aprovado' if r['approved'] else 'bloqueado' for r in audits)))
+print(json.dumps(json.loads((cfg.output/'cobertura_dominio.json').read_text(encoding='utf-8')),
+                 ensure_ascii=False,indent=2))
+'''),
+code('''# Inspeção factual antes da geração: troque por uma auditoria aprovada/bloqueada desejada.
+if audits:
+    print(json.dumps(audits[0],ensure_ascii=False,indent=2))
+'''),
+markdown('''## Gerar QA — usa Azure
 
-Os limites de 100 aceitas, tentativas, chamadas e falhas técnicas são os únicos encerramentos ativos neste experimento. O sinal `configured_saturation_would_stop` fica disponível para estudo e não interrompe a rodada.
-"""),
-code("""run = execute(cfg)
-print(run.meta['status'])
-print('Questões aceitas:', len(run.accepted))
-print('Pedidos por papel:', run.state['calls_by_role'])
-"""),
-markdown("""## Estudar curvas e regras simuladas
+O agendador alterna subtópicos, facetas/fontes e alvos de conhecimento, considerando cobertura e rendimento de novidade. A dificuldade solicitada é balanceada **dentro de cada subtópico**. A dificuldade inferida é registrada separadamente, sem forçar concordância com a solicitada.
 
-Cada candidata conserva versão original, refinamentos, diagnóstico do Scorer, veredito/nota/dificuldade do Judge, fontes, métricas e IDs dos exemplos. As decisões simuladas não são taxas de uma geração contrafactual completa: o conjunto é o produzido nesta execução observacional. Isso permite comparar cortes sem esconder o efeito de seleção.
-"""),
-code("""import pandas as pd
+Scorer e Judge podem acionar até dois refinamentos no total por candidata. O Judge recebe os trechos originais e a auditoria, exige suporte para cada afirmação e não aceita generalização indevida. Cosine ≥0,85 recupera vizinhos para avaliação de pares; nesta coleta não descarta candidatos.
+'''),
+code('''if prepared.meta['status']!='prepared':
+    raise RuntimeError('Preparação incompleta; reveja orçamento/checkpoint antes de gerar')
+cfg.resume=True
+run=execute(cfg)
+print('Estado:',run.meta['status'])
+print('Aceitas:',len(run.accepted))
+print('Novidade útil estimada:',sum(bool(r.get('useful_novel')) for r in run.accepted))
+print('Chamadas:',run.state['calls_by_role'])
+print('Tokens:',run.state.get('usage_by_role',{}))
+'''),
+markdown('''## Observar métricas e dificuldade
+
+A entropia é diagnóstica. A parada requer cobertura mínima, duas janelas completas sem novidade suficiente e sem novos alvos, seguidas de recuperação com outras fontes. Falhas técnicas não entram nas janelas. Bloqueio de qualidade é separado de saturação. Com apenas 100 por tópico, alguns subtópicos poderão não acumular amostras suficientes para concluir saturação.
+'''),
+code('''import pandas as pd
 import matplotlib.pyplot as plt
-
-rows_path = cfg.output / 'metricas_por_rodada.jsonl'
-if rows_path.exists():
-    rounds = pd.read_json(rows_path, lines=True)
-    rounds['entropy_value'] = rounds['entropy'].map(lambda x: x['value'])
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4))
-    for topic, group in rounds.groupby('topic', sort=False):
-        axes[0].plot(group['round'], group['entropy_value'], label=topic)
-        axes[1].plot(group['round'], group['mean_cosine'], label=topic)
-    axes[0].set(title='Entropia sobre clusters fixos do domínio', xlabel='Rodada', ylabel='Entropia normalizada')
-    axes[1].set(title='Cosine máximo médio por rodada', xlabel='Rodada', ylabel='Cosine')
-    axes[0].legend(fontsize=6, loc='best')
+rounds=pd.DataFrame(read_jsonl(cfg.output/'metricas_por_rodada.jsonl'))
+candidates=pd.DataFrame(read_jsonl(cfg.output/'candidatas_metricas.jsonl'))
+if not rounds.empty:
+    fig,axes=plt.subplots(1,3,figsize=(16,4))
+    for topic,group in rounds.groupby('topic',sort=False):
+        axes[0].plot(group['round'],group['entropy'].map(lambda x:x['value']),label=topic)
+        axes[1].plot(group['round'],group['mean_cosine'])
+        valid=group[group['generated']>0]
+        axes[2].plot(valid['round'],valid['useful_novel_this_round']/valid['generated'])
+    for ax,title in zip(axes,('Entropia das aprovadas','Cosine máximo médio','Rendimento de novidade útil')):
+        ax.set(title=title,xlabel='Rodada')
+    axes[0].legend(fontsize=6)
     fig.tight_layout()
-    fig.savefig(cfg.output / 'curvas_metricas.png', dpi=180)
     plt.show()
-"""),
-code("""candidate_path = cfg.output / 'candidatas_metricas.jsonl'
-if candidate_path.exists():
-    candidates = pd.read_json(candidate_path, lines=True)
-    if 'counterfactual_decisions' in candidates:
-        measured = candidates[candidates['counterfactual_decisions'].map(lambda x: isinstance(x, dict))]
-        policies = pd.json_normalize(measured['counterfactual_decisions'])
-        display(policies.mean().rename('fração que seria recusada').to_frame())
-    display(candidates.reindex(columns=['topic', 'subtopic', 'question', 'answer', 'accepted', 'nota',
-                                       'requested_difficulty', 'difficulty', 'rejection_reason']).head(20))
-"""),
-markdown("""## Levar os resultados para curadoria
+if not candidates.empty:
+    approved=candidates[candidates['accepted'].eq(True)]
+    display(pd.crosstab(approved['requested_difficulty'],approved['difficulty']))
+    display(approved.groupby(['topic','subtopic','difficulty']).size().rename('quantidade').to_frame())
+    display(candidates.reindex(columns=['topic','subtopic','question','answer','accepted','useful_novel',
+                                       'requested_difficulty','difficulty','rejection_reason']).head(30))
+'''),
+markdown('''## Reavaliar os sinais e trazer pelo GitHub
 
-`questoes_qa.jsonl` contém as aprovadas pelo fluxo técnico. `pares_qa.jsonl` contém somente pergunta/resposta. `seeds_especialista_e_geradas.jsonl` reúne candidatas aprovadas pelo especialista e novas questões para curadoria. Dados de auditoria, fontes e exemplos são preservados na pasta da execução. A revisão humana continua necessária para confirmar a qualidade das questões e calibrar as métricas.
-"""),
-code("""import zipfile
-archive = ROOT / 'pipeline/fase_4/petroquest_qa_v2_resultados.zip'
-with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED) as zipped:
-    for path in cfg.output.rglob('*'):
-        if path.is_file():
-            zipped.write(path, path.relative_to(cfg.output.parent))
-print('Pacote para trazer de volta:', archive)
-"""),
+`replay_stopping.py` reconstrói os sinais em diferentes janelas e coberturas, registrando novidades observadas depois deles. Isso é replay da trajetória observada, não uma nova geração contrafactual.
+
+`questoes_qa.jsonl`, `candidatas_metricas.jsonl`, `auditorias_contexto.jsonl`, documentos e chamadas permitem curadoria junto com as fontes. Os comandos Git de transporte estão no README. Mantenha corpus, `.env` e caches binários fora do Git.
+'''),
+code('''subprocess.run([sys.executable,str(ROOT/'pipeline/fase_4/replay_stopping.py'),
+                '--output',str(cfg.output)],cwd=ROOT,check=True)
+print('Resultados:',cfg.output)
+'''),
 ]
 
 
 def main():
-    for number, cell in enumerate(cells):
-        cell["id"] = f"qa-v2-{number:02d}"
-    notebook = {"cells": cells, "metadata": {
-        "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
-        "language_info": {"name": "python"}}, "nbformat": 4, "nbformat_minor": 5}
-    path = Path(__file__).with_name("petroquest_fase4_qa.ipynb")
-    path.write_text(json.dumps(notebook, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    for number,cell in enumerate(cells):cell['id']=f'qa-v3-{number:02d}'
+    notebook={'cells':cells,'metadata':{'kernelspec':{'display_name':'Python 3','language':'python','name':'python3'},
+                'language_info':{'name':'python'}},'nbformat':4,'nbformat_minor':5}
+    Path(__file__).with_name('petroquest_fase4_qa.ipynb').write_text(
+        json.dumps(notebook,ensure_ascii=False,indent=1)+'\n',encoding='utf-8')
 
 
-if __name__ == "__main__":
-    main()
+if __name__=='__main__':main()
