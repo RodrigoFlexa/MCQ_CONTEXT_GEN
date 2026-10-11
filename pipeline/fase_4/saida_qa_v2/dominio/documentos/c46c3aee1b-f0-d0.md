@@ -1,0 +1,27 @@
+AVISO: Os trechos são parcialmente fora do recorte de FPSO e trazem pouca informação direta sobre requisição, expedição, consolidação, recebimento e interface com equipes offshore; consolida-se abaixo apenas o conteúdo aproveitável.
+
+**Planejamento de demanda**
+
+O planejamento de demanda é tratado como etapa central do processo de suprimento, voltada à estimativa da demanda futura e à definição do modelo logístico de suprimento de cada material. As previsões de demanda são apresentadas como base para decisões operacionais e estratégicas na cadeia de suprimento, pois orientam compras, estoques e a alocação de recursos. O processo descrito combina dados históricos com interpretação gerencial de informações de mercado. Entre as entradas citadas estão histórico de consumo, vendas, preços, investimentos e condições externas; esse conjunto é processado por análise estatística dos dados históricos e por interpretação gerencial, gerando uma previsão que suporta o planejamento da cadeia.
+
+**Integração com fornecedores**
+
+Os trechos enfatizam que o fornecedor é elo relevante para o planejamento de estoques e demandas e pode contribuir para reduzir custos e lead time. Em lugar de relações transacionais tradicionais, é destacada a tendência de alianças logísticas baseadas em colaboração, troca de informações e cooperação. Essa colaboração é apresentada como estratégia de negócio voltada à sincronização de atividades entre empresas da cadeia, buscando melhor uso dos recursos disponíveis, benefício mútuo, maior sinergia e melhor desempenho do abastecimento.
+
+No caso descrito, a unidade de negócio identificou oportunidade de reduzir custos de estoque, melhorar o nível de serviço de entrega dos materiais e melhorar o fluxo de informações com fornecedores. Para isso, decidiu gerenciar de forma diferenciada contratos com fornecedores selecionados por localização, tradição, qualidade de fornecimento e disposição para maior interação. A implantação desse planejamento colaborativo incluiu criação e manutenção de bancos de dados com informações de demanda dos materiais e equipamentos destinados à atividade-fim da unidade, reuniões internas para levantamento de dados e definição de estratégias e reuniões com participação do fornecedor e da área de suprimento, com ênfase na importância da proximidade e nas vantagens mútuas decorrentes.
+
+**Compras e responsabilidade de abastecimento**
+
+Após a contratação dos materiais, em contratos com duração normalmente não inferior a dois anos, o gerenciamento de compras e estoques é delegado a cada unidade de negócio, dentro de políticas de estoque e orientações corporativas. O contrato, depois da licitação, é disponibilizado aos gestores de estoque da unidade, que passam a ter responsabilidade direta por garantir o abastecimento. Essa responsabilidade envolve comprar os materiais nas quantidades adequadas e com a antecedência necessária para evitar ruptura de estoque e prejuízos operacionais. Assim, o suprimento deixa de ser apenas execução de pedidos e passa a depender de planejamento contínuo, monitoramento do consumo e antecipação da reposição.
+
+**Ruptura, lead time e estoque**
+
+Os trechos associam explicitamente a gestão de estoques e demandas à necessidade de evitar ruptura e reduzir lead time. A redução do lead time aparece como resultado esperado da maior integração com fornecedores e do compartilhamento de informações. A decisão de compra com antecedência suficiente é apresentada como mecanismo de proteção contra desabastecimento e impacto operacional. Não há, porém, detalhamento de critérios formais de criticidade de materiais, nem de métodos específicos para priorização de sobressalentes críticos; o conteúdo disponível concentra-se na lógica geral de garantir abastecimento sem ruptura por meio de previsão de demanda, políticas de estoque e coordenação com fornecedores.
+
+**Armazenagem estratégica**
+
+Embora parte do material seja de outros setores, os trechos úteis mostram que estoque estratégico depende de capacidade de armazenagem e de investimento em infraestrutura. A formação e manutenção desses estoques são descritas como atividades custosas, especialmente quando exigem construção ou ampliação de tancagem. Também é ressaltado que a ausência de capacidade de armazenagem suficiente pode criar gargalos de abastecimento, mesmo quando há produção, e que aumento de produtividade sem investimento em armazenagem não resolve oscilações de abastecimento no curto prazo. Em termos logísticos, a armazenagem aparece vinculada às funções de recebimento, expedição e estocagem, o que reforça seu papel como elemento estruturante da continuidade do suprimento.
+
+**Fluxo logístico e limitações**
+
+Os trechos sustentam um fluxo integrado em que previsão de demanda, contratos, compras, estoques e relacionamento com fornecedores devem operar de forma coordenada. Também indicam que a qualidade do fluxo de informação é determinante para o nível de serviço e para a antecipação de compras. Há referência funcional a recebimento, expedição e armazenagem, mas sem detalhamento operacional de consolidação de cargas, rotinas de almoxarifado, critérios de recebimento físico ou interfaces específicas com manutenção, operação, marine e equipe offshore. Da mesma forma, não há tratamento explícito da disponibilidade de transporte, embora o lead time e o nível de serviço de entrega sejam apresentados como variáveis críticas para o abastecimento.

@@ -1,0 +1,33 @@
+AVISO: os trechos sustentam requisitos de capacitação para resposta a emergências, tarefas críticas, Permissão para Trabalho, isolamentos elétricos por cadeamento, trabalhos especiais e operação/manutenção, mas não trazem conteúdo específico sobre operações marítimas e não detalham transientes além de partida, operação normal, parada, emergência e tratamento de desvios operacionais.
+
+**Competências para tarefas críticas**
+
+O desenvolvimento de competências deve estar apoiado em um processo estruturado de Permissão para Trabalho, com procedimento de controle para serviços de maior risco que incorpore Análise Preliminar de Riscos, referida também como APR ou APP. Os trabalhos explicitamente cobertos são espaço confinado, trabalho em altura, escavações, serviços elétricos com cadeamento e trabalho a quente. Nos trechos, esse conjunto aparece como requisito recorrente e como base para o controle operacional de atividades críticas, exigindo que as pessoas envolvidas conheçam o processo, os perigos, os controles aplicáveis e as responsabilidades associadas à autorização e execução do serviço.
+
+Além da PT, a competência operacional é vinculada ao uso de análises preliminares de risco e análise de segurança da tarefa, bem como à verificação de conformidade de procedimentos críticos. Isso indica necessidade de capacitação prática e padronizada para reconhecer perigos, aplicar controles antes do início do trabalho e atuar conforme os procedimentos estabelecidos.
+
+**Gestão de riscos e disseminação**
+
+A capacitação deve ser sustentada por um sistema único de gestão de riscos, implementado conforme a natureza e magnitude dos riscos e disseminado de forma clara em toda a organização. Os mecanismos previstos incluem identificar e avaliar, de forma sistemática, a frequência e as consequências de eventos indesejáveis, priorizar os riscos identificados e assegurar documentação, comunicação e acompanhamento das medidas de controle. A análise de risco deve ser incorporada em todas as fases dos projetos e produtos, incluindo os aspectos relacionados à proteção da força de trabalho.
+
+Esse arranjo é relevante para treinamento porque a gestão de risco é tratada como um dos pilares do sistema de SMS e fornece subsídios para a elaboração dos planos de emergência. Também há previsão de avaliação periódica dos riscos, a cada <NUMBER> anos para instalações novas ou modificadas e a cada <NUMBER> anos para instalações sem alteração, o que reforça a necessidade de atualização contínua das competências diante de mudanças de processo e revisão dos cenários de risco.
+
+**Terceirização e padronização de competências**
+
+Os trechos destacam preocupação com diferenças de cultura e qualificação de empregados terceirizados, associadas a acidentes e falta de qualidade. Em resposta, a contratante exige qualificação específica para determinadas funções, programas e treinamentos de conscientização em QSMS e responsabilidade social, treinamentos com foco em SMS, sistemática de DDSMS, procedimentos de controle operacional, APR, AST, PT, gestão de mudanças, manutenção preventiva, procedimentos para espaço confinado, montagem de andaimes e trabalho em altura.
+
+Esse conteúdo evidencia que a gestão de pessoas deve reduzir variabilidade de desempenho entre contratadas por meio de qualificação formal, conscientização e padronização de práticas críticas. Também mostra que a contratante influencia a gestão e os processos das contratadas e pode ser responsabilizada pelo desempenho delas em segurança, meio ambiente e cumprimento legal, o que torna a verificação de competência e aderência a procedimentos um requisito de controle, não apenas administrativo.
+
+**Operação e manutenção seguras**
+
+As competências para operação e manutenção devem ser ancoradas em procedimentos claros, precisos e detalhados, com adoção de práticas seguras que conservem a saúde dos trabalhadores. Os procedimentos devem ser atualizados sistematicamente e a organização deve verificar se estão sendo efetivamente seguidos. Para formação e qualificação operacional, os trechos exigem cobertura das etapas de partida, operação normal, parada e parada de emergência, incluindo limites operacionais, consequências dos desvios e passos para corrigi-los, sempre observadas as recomendações provenientes das análises de risco.
+
+Há ainda exigência de mecanismos que permitam, com rapidez, identificar, caracterizar e corrigir casos de não conformidade com os procedimentos de operação e manutenção. No campo da confiabilidade e da integridade, aparecem procedimentos de inspeção e manutenção para controlar riscos e garantir integridade mecânica, além de programas específicos de inspeção, teste e manutenção associados a sistemas de segurança, integridade e proteção das instalações, com o objetivo de assegurar confiabilidade. Isso implica treinamento voltado não só à execução rotineira, mas também ao reconhecimento de desvios, resposta adequada e disciplina de procedimento.
+
+**Resposta a emergências em espaço confinado**
+
+A preparação para emergência em espaço confinado requer estruturação e organização de comando, tratada nos trechos como fator absoluto. A organização da resposta e a prática de resgate são deveres, e o tempo de resposta é considerado muito importante. Cada membro da equipe deve conhecer sua responsabilidade muito antes de chegar ao cenário do acidente, o que caracteriza uma necessidade clara de treinamento prévio, definição de papéis e prática regular.
+
+Também é exigido planejamento operacional escrito e mantido em standby para servir de guia, mesmo quando a equipe conhece o local. Esse planejamento deve resultar em formulário com diretrizes descritivas da operação. Quando, em razão de perigo iminente no espaço confinado, for planejada a permanência da equipe de resgate e de todo o sistema de salvamento montado para entrada e saída do resgatista, essa permanência deve ser rigorosamente cumprida.
+
+Os trechos ainda registram que, em resgates, a condição e a situação da vítima determinam o tipo e o tempo da operação. Há protocolos pré-estabelecidos para o cuidado do paciente, mas eles podem ser modificados em função das condições da vítima e do local. No exemplo citado, em ambiente com deficiência de oxigênio e paciente sem respiração, os danos possíveis de uma retirada rápida e do transporte para atmosfera melhor tornam-se secundários. Isso reforça a necessidade de competência para tomada de decisão sob condições anormais, dentro de protocolos previamente praticados.
