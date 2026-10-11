@@ -32,7 +32,7 @@ flowchart TD
 
 ### 1. Auditoria de fontes antes de gerar
 
-O corpus factual passa a ser **Petrolês + ANP + HSE + BSEE + REGIS**, selecionado por `--corpus-manifest`. [Instalação e próxima execução](../domain_corpora/README.md) descreve coleta, testes e comandos prontos. O modo antigo com somente TXT continua disponível para reproduzir rodadas anteriores. A busca conjunta usa consultas PT/EN, cotas de candidatos por coleção e montagens separadas por coleção; preserva documento, página quando disponível, idioma e jurisdição. **Todos os documentos candidatos dos tópicos selecionados são auditados antes da primeira pergunta.**
+O corpus factual passa a ser **Petrolês + ANP + HSE + BSEE + REGIS**, selecionado por `--corpus-manifest`. [Instalação e próxima execução](../domain_corpora/README.md) descreve coleta, testes e comandos prontos. O modo antigo com somente TXT continua disponível para reproduzir rodadas anteriores. A busca conjunta usa consultas PT/EN e cotas de candidatos por coleção. A montagem usa o conjunto único por faceta: **um mesmo contexto pode combinar vários corpora, sem funções fixas por coleção**. Preserva documento, página quando disponível, idioma e jurisdição por trecho. **Todos os documentos candidatos dos tópicos selecionados são auditados antes da primeira pergunta.**
 
 O auditor recebe faceta, escopo e trechos originais. Avalia consistência técnica, condições da instalação/processo, compatibilidade com FPSO, transferibilidade, contradições e incerteza normativa. Rejeita transposições indevidas de refinaria, Spar, coleta urbana e outros contextos. Aprovação exige critérios explícitos, confiança ≥0,85 e afirmações sustentadas por citações literais verificadas pelo código.
 
@@ -103,7 +103,7 @@ O replay compara janelas 12/20/30, paciências 2/3 e coberturas 50/75/100%, cont
 
 ## Enviar o código e executar no servidor Petrobras
 
-A próxima rodada com os **cinco corpora** usa o instalador e `--corpus-manifest` descritos em [pipeline/domain_corpora/README.md](../domain_corpora/README.md), com saída nova `saida_qa_v3_corpora_medium`. Os comandos abaixo documentam também a execução anterior com somente Petrolês.
+A próxima rodada com **contextos que podem combinar os cinco corpora** usa o instalador e `--corpus-manifest` descritos em [pipeline/domain_corpora/README.md](../domain_corpora/README.md), com saída nova `saida_qa_v3_contextos_multicorpus_medium`. Os comandos abaixo documentam também a execução anterior com somente Petrolês.
 
 Na raiz do projeto local, branch `dev`, revise as alterações antes de publicar. Este comando inclui o backup do código e não inclui datasets, credenciais ou resultados:
 

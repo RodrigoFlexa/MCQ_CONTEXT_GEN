@@ -161,6 +161,7 @@ def fixture(root):
     for name,lang,jur in [('anp','pt','BR'),('hse','en','UK'),('bsee','en','US'),('regis','pt','not_specified')]:
         pages=root/(name+'.jsonl')
         words='pump pressure fluid ' if lang=='en' else 'bomba pressao fluido '
+        words+=name+' '  # Textos distintos: origem não deve impor separação.
         with pages.open('w',encoding='utf-8') as stream:
             for page in (1,2):
                 stream.write(json.dumps({'collection':name,'document_id':name+'-doc','language':lang,
@@ -230,7 +231,9 @@ class Retrieval(unittest.TestCase):
             self.assertTrue(all(c['page'] in (1,2) for c in results if c['collection']!='petroles'))
             self.assertTrue(all(len(c['texto'].split())<=cfg.max_palavras for c in results))
             plans=plan_documents([facet],{'f':results},Embedder(),cfg,legacy)
-            self.assertEqual(len(plans),5)
+            self.assertLessEqual(len(plans),cfg.n_documentos_por_faceta)
+            self.assertTrue(any(len(p['collections'])>1 for p in plans))
+            self.assertEqual({s for p in plans for s in p['collections']},set(counts))
             self.assertEqual(len({c['chunk_id'] for c in results}),len(results))
             again=scan([facet],collections,cfg,legacy,2,'signature')['f']
             self.assertEqual({c['chunk_id'] for c in results},{c['chunk_id'] for c in again})
@@ -267,8 +270,10 @@ class Retrieval(unittest.TestCase):
                 domain=DomainResources(cfg,client).prepare([topic])
                 self.assertEqual(domain.signature,signature)
                 self.assertEqual(client.calls,1)
-            documents=domain.documents(topic,sub);self.assertEqual(len(documents),5);self.assertEqual(len(audits),10)
-            self.assertEqual({d['collections'][0] for d in documents},{'petroles','anp','hse','bsee','regis'})
+            documents=domain.documents(topic,sub);self.assertEqual(len(documents),2);self.assertEqual(len(audits),4)
+            self.assertEqual({s for d in documents for s in d['collections']},{'petroles','anp','hse','bsee','regis'})
+            self.assertTrue(any(len(d['collections'])>1 for d in documents))
+            self.assertTrue(any(len(c['collections'])>1 for c in audits))
             chunk=next(c for d in documents for c in d['chunks'] if c['collection']=='hse')
             self.assertEqual(chunk['jurisdiction'],'UK');self.assertIn('UK',source_text([chunk]));self.assertIn('page',source_text([chunk]))
             store=SimpleNamespace(state={},records=[],rounds=[],save_state=lambda:None)
@@ -278,6 +283,61 @@ class Retrieval(unittest.TestCase):
                 store.rounds.append({'topic':topic,'subtopic':sub,'doc_id':context['doc_id'],
                     'facet_id':context['facet_id'],'requested_difficulty':difficulty,'selection':selection})
             self.assertEqual(len(set(selected)),5)
+
+    def test_joint_plan_has_no_required_collection_or_fixed_function(self):
+        facet=legacy.Faceta('f','topic','sub','Pump','pump','pump',[],[])
+        candidates=[{'chunk_id':name+'-1','collection':name,'texto':f'pressure control {name}',
+                    'lex_score':9} for name in ('anp','hse','bsee','petroles','regis')]
+        cfg=legacy.Config(n_trechos_por_documento=6,n_documentos_por_faceta=2)
+        plan=plan_documents([facet],{'f':candidates},Embedder(),cfg,legacy)
+        self.assertEqual(len(plan),1)
+        self.assertEqual(set(plan[0]['collections']),{c['collection'] for c in candidates})
+        self.assertEqual(set(plan[0]['chunk_ids']),{c['chunk_id'] for c in candidates})
+        single=plan_documents([facet],{'f':[candidates[0]]},Embedder(),cfg,legacy)
+        self.assertEqual(single[0]['collections'],['anp'])
+        self.assertEqual(len(single[0]['chunk_ids']),1)
+        self.assertEqual(plan_documents([facet],{},Embedder(),cfg,legacy),[])
+
+    def test_joint_plan_deduplicates_same_text_across_collections(self):
+        facet=legacy.Faceta('f','topic','sub','Pump','pump','pump',[],[])
+        candidates=[{'chunk_id':'hse-1','collection':'hse','texto':'Pressure control principle','lex_score':4},
+                    {'chunk_id':'bsee-1','collection':'bsee','texto':' pressure  control principle ','lex_score':4}]
+        plan=plan_documents([facet],{'f':candidates},Embedder(),legacy.Config(),legacy)
+        self.assertEqual(len(plan),1);self.assertEqual(len(plan[0]['chunk_ids']),1)
+
+    def test_joint_plan_obeys_total_document_and_chunk_limits(self):
+        facet=legacy.Faceta('f','topic','sub','Pump','pump','pump',[],[])
+        candidates=[{'chunk_id':str(i),'collection':('hse','anp','petroles')[i%3],
+                     'texto':f'pressure control mechanism {i}','lex_score':i%4+1} for i in range(30)]
+        cfg=legacy.Config(n_trechos_por_documento=3,n_documentos_por_faceta=2)
+        plan=plan_documents([facet],{'f':candidates},Embedder(),cfg,legacy)
+        self.assertLessEqual(len(plan),2)
+        self.assertTrue(all(len(d['chunk_ids'])<=3 for d in plan))
+        ids=[cid for d in plan for cid in d['chunk_ids']]
+        self.assertEqual(len(ids),len(set(ids)))
+
+    def test_audit_keeps_only_authorized_collections_in_mixed_context(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);path=fixture(root);topic=next(iter(TOPICOS));sub=next(iter(TOPICOS[topic]))
+            facet=legacy.Faceta('f',topic,sub,'Bomba','fluxo','bomba',['bomba'],['fluido'])
+            cfg=QAConfig(output=root/'run',corpus_manifest=path,corpus_dir=None);cfg.output.mkdir()
+            def audit(_,context,*args):
+                return {'approved':True,
+                        'allowed_chunk_ids':[c['chunk_id'] for c in context['chunks'] if c['collection']!='hse'],
+                        'targets':['Alvo sustentado'],'claims':[],'limitations':[],
+                        'original_context':'produção','transferability':'técnica'}
+            with patch.object(legacy,'extrair_facetas',return_value=[facet]),\
+                 patch('pipeline.fase_4.embedding.FullTextEmbedder',Embedder),\
+                 patch('pipeline.fase_4.domain.audit_source',side_effect=audit),\
+                 patch('pipeline.fase_4.domain.audited_document',return_value='Afirmações verificadas'),\
+                 patch.object(DomainResources,'make_codebook',return_value=SimpleNamespace(k=3)):
+                domain=DomainResources(cfg,FakeTranslator()).prepare([topic])
+            for context in domain.documents(topic,sub):
+                self.assertNotIn('hse',context['collections'])
+                self.assertTrue(all(c['collection']!='hse' for c in context['chunks']))
+            journal=[json.loads(line) for line in (cfg.output/'auditorias_contexto.jsonl').read_text().splitlines()]
+            self.assertTrue(any('hse' in r['collections'] for r in journal))
+            self.assertTrue(all('hse' not in r['approved_collections'] for r in journal))
 
 
 if __name__=='__main__':unittest.main()

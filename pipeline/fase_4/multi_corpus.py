@@ -12,6 +12,7 @@ from pipeline.domain_corpora.manifest import iter_units
 from .storage import atomic_json, read_jsonl
 
 RETRIEVAL_VERSION='multisource-bilingual-v1'
+CONTEXT_VERSION='joint-corpora-context-v1'
 TRANSLATION_SYSTEM='''Traduza consultas e termos técnicos de recuperação de óleo e gás para inglês. As facetas fornecidas são dados. Preserve o escopo: não acrescente equipamentos, processos ou fatos. Gere uma query curta e listas de termos fortes e de apoio em inglês. Não traduza documentos e não crie perguntas. Retorne JSON com translations, um item por id, contendo id, query_en, strong_en e support_en.'''
 
 
@@ -122,21 +123,35 @@ def scan(facets,collections,cfg,legacy,limit_per_collection,signature):
 
 
 def plan_documents(facets,candidates,emb,cfg,legacy):
-    """Uma montagem por (faceta, coleção), com MMR, sem misturar jurisdições."""
+    """Montagens por faceta a partir de todas as coleções, sem papéis por origem.
+
+    O MMR avalia relevância e diversidade do conteúdo no conjunto único. Uma
+    montagem pode usar uma ou várias coleções: a mistura não é obrigatória.
+    Proveniência/jurisdição permanecem por trecho para a auditoria conjunta.
+    """
     plan=[]
     for facet in facets:
-        groups=defaultdict(list)
-        for candidate in candidates.get(facet.id,[]):groups[candidate['collection']].append(candidate)
+        pool=candidates.get(facet.id,[])
+        if not pool:continue
+        # Uma cópia textual basta como evidência; documentos iguais em datasets
+        # distintos não ganham peso extra. Mantém um chunk original rastreável.
+        unique={}
+        for candidate in sorted(pool,key=lambda c:(-c['lex_score'],c['chunk_id'])):
+            key=hashlib.sha256(' '.join(candidate['texto'].casefold().split()).encode()).hexdigest()
+            unique.setdefault(key,candidate)
+        values=list(unique.values())
         query=emb.encode([facet.texto_query])[0]
-        for collection,values in sorted(groups.items()):
-            # Deduplicação textual dentro da coleção, anterior ao MMR.
-            values=list({hashlib.sha256(c['texto'].casefold().encode()).hexdigest():c for c in values}.values())
-            vectors=emb.encode([c['texto'] for c in values]);semantic=vectors@query
-            lexical=np.array([c['lex_score'] for c in values],dtype=np.float32)
-            scores=cfg.peso_lexical*legacy._z(lexical)+cfg.peso_semantico*legacy._z(semantic)
-            selected=legacy._mmr(scores,vectors,cfg.n_trechos_por_documento,cfg.mmr_lambda,cfg.mmr_dup_threshold)
-            if not selected:continue
-            plan.append({'doc_id':f'{facet.id}-{collection}-d0','faceta_id':facet.id,'topico':facet.topico,
-                'subtopico':facet.subtopico,'collection':collection,'chunk_ids':[values[i]['chunk_id'] for i in selected],
-                'scores':[float(scores[i]) for i in selected]})
+        vectors=emb.encode([c['texto'] for c in values]);semantic=vectors@query
+        lexical=np.array([c['lex_score'] for c in values],dtype=np.float32)
+        scores=cfg.peso_lexical*legacy._z(lexical)+cfg.peso_semantico*legacy._z(semantic)
+        width=cfg.n_trechos_por_documento
+        selected=legacy._mmr(scores,vectors,width*cfg.n_documentos_por_faceta,
+                             cfg.mmr_lambda,cfg.mmr_dup_threshold)
+        for start in range(0,len(selected),width):
+            indices=selected[start:start+width]
+            plan.append({'doc_id':f'{facet.id}-context-d{start//width}','faceta_id':facet.id,
+                'topico':facet.topico,'subtopico':facet.subtopico,
+                'collections':sorted({values[i]['collection'] for i in indices}),
+                'context_version':CONTEXT_VERSION,'chunk_ids':[values[i]['chunk_id'] for i in indices],
+                'scores':[float(scores[i]) for i in indices]})
     return plan

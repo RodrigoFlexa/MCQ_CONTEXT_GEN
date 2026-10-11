@@ -57,3 +57,9 @@ python pipeline/domain_corpora/install_corpora.py \
 python pipeline/domain_corpora/verify_corpora.py \
   --manifest dataset/corpora_validation/manifest.json --allow-sample
 ```
+
+## Atualização: contextos com várias coleções
+
+Na atualização de 11/10/2026, a montagem passou a usar o conjunto de candidatos de todas as coleções por faceta. O mesmo documento pode combinar origens; não há função fixa nem coleção obrigatória. Até dois contextos por faceta, com até seis trechos cada, passam por auditoria conjunta. A auditoria pode autorizar somente parte dos trechos, com as coleções efetivamente mantidas registradas separadamente.
+
+**25 testes passaram**, incluindo montagem com as cinco coleções no mesmo documento, contexto com uma coleção, ausência de candidatos, deduplicação entre corpora, limites de montagem e exclusão de uma coleção pela auditoria. A integração usa embeddings e respostas do auditor simulados; não houve chamadas Azure nem validação factual pelo modelo nesta atualização. O notebook e os prompts foram atualizados e a sintaxe foi verificada. Os testes de downloads anteriores continuam válidos; não foi necessário baixar novamente os corpora.

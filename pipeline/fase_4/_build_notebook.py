@@ -15,7 +15,7 @@ def code(source):
 cells=[
 markdown('''# PetroQuest QA v3 — fontes auditadas e exploração por cobertura
 
-Petrolês + ANP + HSE + BSEE + REGIS → recuperação bilíngue com cotas por coleção → **auditoria factual por LLM** → alternância de subtópicos, facetas, coleções, documentos e alvos → Gerador → Scorer/Refiner/Judge → dificuldade independente → avaliação de redundância → journal.
+Petrolês + ANP + HSE + BSEE + REGIS → recuperação bilíngue → **contextos que podem combinar vários corpora, sem funções fixas por coleção** → auditoria factual por LLM → alternância de subtópicos, facetas, documentos e alvos → Gerador → Scorer/Refiner/Judge → dificuldade independente → avaliação de redundância → journal.
 
 Próxima coleta: **100 novas QA aprovadas por tópico**, GPT‑5.4, effort `medium`. Somente pergunta/resposta. Os filtros de similaridade/redundância e a parada científica permanecem **desligados**; suas decisões são registradas. Auditoria e aprovação técnica continuam obrigatórias. A meta, orçamento e falhas técnicas podem encerrar a execução.
 '''),
@@ -39,7 +39,7 @@ markdown('''## Configuração
 O manifesto une as quatro novas coleções aos dois TXT reais do Petrolês. Instale com `python pipeline/domain_corpora/install_corpora.py --petroles-dir /pasta/real` antes desta etapa. O README de `pipeline/domain_corpora` contém os comandos de instalação e teste. Endpoint/chave/versão Azure ficam no `.env`, fora do Git. Use uma saída nova: o corpus mudou e as curvas anteriores devem ser preservadas.
 '''),
 code('''cfg=QAConfig()
-cfg.output=ROOT/'pipeline/fase_4/saida_qa_v3_corpora_medium'
+cfg.output=ROOT/'pipeline/fase_4/saida_qa_v3_contextos_multicorpus_medium'
 cfg.corpus_manifest=ROOT/'dataset/domain_corpora/manifest.json'
 cfg.corpus_dir=None  # Petrolês já está no manifesto
 # cfg.corpus_dir=Path('/caminho/real/do/PetrolesHibrido')

@@ -8,6 +8,7 @@ from pathlib import Path
 from .config import ROOT
 from .storage import atomic_json, append_jsonl, read_jsonl
 from .source_audit import audit_source, audited_document, AUDIT_VERSION, SYSTEM_PROMPT as AUDIT_PROMPT
+from .multi_corpus import CONTEXT_VERSION
 
 LEGACY_PATH = ROOT / "pipeline/fase_3"
 if str(LEGACY_PATH) not in sys.path:
@@ -67,6 +68,7 @@ class DomainResources:
                   "scope": TOPICOS, "embedding": self.cfg.embedding_model,
                   "corpora_manifest":corpus_manifest,
                   "multisource_retrieval":"multisource-bilingual-v1" if collections else None,
+                  "context_assembly":CONTEXT_VERSION if collections else None,
                   "lexical_quota_per_collection":self.cfg.lexical_candidates_per_collection,
                   "clusters": self.cfg.clusters, "seed": self.cfg.seed,
                   "audit_version": AUDIT_VERSION, "audit_prompt": fingerprint(AUDIT_PROMPT),
@@ -74,7 +76,8 @@ class DomainResources:
                   "retrieval": {"window_words": self.legacy_cfg.alvo_palavras_trecho,
                                 "lexical_top_k": self.legacy_cfg.top_k_lexical,
                                 "mmr_lambda": self.legacy_cfg.mmr_lambda,
-                                "chunks_per_document": self.legacy_cfg.n_trechos_por_documento}}
+                                "chunks_per_document": self.legacy_cfg.n_trechos_por_documento,
+                                "documents_per_facet":self.legacy_cfg.n_documentos_por_faceta}}
         signature = fingerprint(inputs)
         manifest = self.legacy_cfg.out_dir / "manifesto_qa.json"
         if manifest.exists() and json.loads(manifest.read_text(encoding="utf-8"))["signature"] != signature:
@@ -118,10 +121,14 @@ class DomainResources:
                     chunks=[self.chunk_lookup[cid] for cid in doc['chunk_ids']]
                     context={'topic':topic,'subtopic':subtopic,'scope':TOPICOS[topic][subtopic],
                         'focus':facet.foco,'facet_id':facet.id,'facet_title':facet.titulo,
-                        'doc_id':doc['doc_id'],'chunks':chunks}
+                        'doc_id':doc['doc_id'],'chunks':chunks,
+                        'collections':sorted({c.get('collection','petroles') for c in chunks})}
                     audit=audit_source(self.audit_client,context,self.legacy_cfg.out_dir,signature)
                     if doc['doc_id'] not in journaled:
                         append_jsonl(audit_journal,{'doc_id':doc['doc_id'],'topic':topic,'subtopic':subtopic,
+                            'collections':context['collections'],
+                            'approved_collections':sorted({c.get('collection','petroles') for c in chunks
+                                if audit['approved'] and c['chunk_id'] in audit.get('allowed_chunk_ids',[])}),
                             'approved':audit['approved'],'audit':audit})
                         journaled.add(doc['doc_id'])
                     print(f"[auditoria] {subtopic}: {doc['doc_id']} -> {'aprovado' if audit['approved'] else 'bloqueado'}",flush=True)
@@ -146,7 +153,9 @@ class DomainResources:
                                  "valid_facets":len({d['faceta_id'] for d in valid_plan}),
                                  "codebook_clusters": codebook.k if codebook else 0,
                                  "documents_by_collection":dict(Counter(
-                                     c for doc in valid_plan for c in self.doc_contexts[doc['doc_id']]['collections']))})
+                                     c for doc in valid_plan for c in self.doc_contexts[doc['doc_id']]['collections'])),
+                                 "documents_with_multiple_collections":sum(
+                                     len(self.doc_contexts[doc['doc_id']]['collections'])>1 for doc in valid_plan)})
             if topic_texts:
                 self.topic_codebooks[topic] = self.make_codebook(list(topic_texts.values()), f"topic::{topic}")
         atomic_json(Path(self.cfg.output) / "cobertura_dominio.json", coverage)
