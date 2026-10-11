@@ -24,6 +24,9 @@ def parser():
     corpus.add_argument("--corpus-dir", type=Path)
     corpus.add_argument("--corpus-txt", type=Path, nargs="+")
     corpus.add_argument("--corpus-zip", type=Path)
+    corpus.add_argument('--corpus-manifest',type=Path,help='Manifesto instalado com Petrolês + ANP + HSE + BSEE + REGIS')
+    p.add_argument('--allow-sample-corpus',action='store_true',help='Permite explicitamente um corpus de teste, sem confundir com instalação completa')
+    p.add_argument('--lexical-candidates-per-collection',type=int,default=60)
     p.add_argument("--output", type=Path, default=QAConfig.output)
     p.add_argument("--external-examples", type=Path, default=QAConfig.external_examples)
     p.add_argument("--reviewed-seeds", type=Path, default=QAConfig.reviewed_seeds)
@@ -88,6 +91,10 @@ def config_from_args(args):
         setattr(cfg,name,getattr(args,name))
     cfg.preparation_deployment = args.preparation_deployment or args.deployment
     cfg.judge_deployment = args.judge_deployment or args.deployment
+    cfg.corpus_manifest=args.corpus_manifest
+    cfg.allow_sample_corpus=args.allow_sample_corpus
+    cfg.lexical_candidates_per_collection=args.lexical_candidates_per_collection
+    if args.corpus_manifest is not None:cfg.corpus_dir=None
     if args.corpus_dir is not None:
         cfg.corpus_dir = args.corpus_dir
     if args.corpus_txt:

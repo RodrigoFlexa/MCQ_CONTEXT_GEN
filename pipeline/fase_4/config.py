@@ -22,6 +22,9 @@ class QAConfig:
     corpus_dir: Path | None = field(default_factory=default_corpus)
     corpus_txt: list[Path] = field(default_factory=list)
     corpus_zip: Path | None = None
+    corpus_manifest: Path | None = None
+    allow_sample_corpus: bool = False
+    lexical_candidates_per_collection: int = 60
     external_examples: Path = ROOT / "pipeline/qa_references/data/qa_examples.jsonl"
     reviewed_seeds: Path = ROOT / "pipeline/qa_references/review/sementes_qa_candidatas.jsonl"
     human_ratings: Path = ROOT / "pipeline/fase_2/questionarios/respostas_questionario"
@@ -77,6 +80,10 @@ class QAConfig:
             raise ValueError('Effort suportado nesta rodada: low, medium ou high')
         if min(self.limit_per_topic, self.batch_size, self.max_attempts_per_topic, self.max_calls) < 1:
             raise ValueError("Metas, tamanho de lote e limites técnicos devem ser positivos")
+        if self.lexical_candidates_per_collection < 1:
+            raise ValueError('Cota lexical por coleção deve ser positiva')
+        if self.corpus_manifest and (self.corpus_txt or self.corpus_zip):
+            raise ValueError('O manifesto já inclui Petrolês; não combine com --corpus-txt/zip')
         if self.max_refinements < 0 or self.format_examples < 1 or self.cross_topic_examples < 1:
             raise ValueError("Exemplos devem ser positivos; refinamentos não podem ser negativos")
         if min(self.entropy_patience, self.entropy_warmup, self.max_consecutive_api_failures) < 1 or self.clusters < 2:

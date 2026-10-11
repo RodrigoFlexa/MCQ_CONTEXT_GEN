@@ -15,7 +15,7 @@ def code(source):
 cells=[
 markdown('''# PetroQuest QA v3 — fontes auditadas e exploração por cobertura
 
-Petrolês → facetas/recuperação → **auditoria factual por LLM** → alternância de subtópicos, facetas, documentos e alvos → Gerador → Scorer/Refiner/Judge → dificuldade independente → avaliação de redundância → journal.
+Petrolês + ANP + HSE + BSEE + REGIS → recuperação bilíngue com cotas por coleção → **auditoria factual por LLM** → alternância de subtópicos, facetas, coleções, documentos e alvos → Gerador → Scorer/Refiner/Judge → dificuldade independente → avaliação de redundância → journal.
 
 Próxima coleta: **100 novas QA aprovadas por tópico**, GPT‑5.4, effort `medium`. Somente pergunta/resposta. Os filtros de similaridade/redundância e a parada científica permanecem **desligados**; suas decisões são registradas. Auditoria e aprovação técnica continuam obrigatórias. A meta, orçamento e falhas técnicas podem encerrar a execução.
 '''),
@@ -36,10 +36,12 @@ print('Tópicos:',len(TOPICOS))
 '''),
 markdown('''## Configuração
 
-Use o mesmo corpus da rodada anterior para a comparação. Informe a pasta ou os dois TXT reais do Petrolês. Endpoint/chave/versão Azure ficam no `.env`, fora do Git. Cada política usa sua própria saída: **não retome QA v2 como v3**.
+O manifesto une as quatro novas coleções aos dois TXT reais do Petrolês. Instale com `python pipeline/domain_corpora/install_corpora.py --petroles-dir /pasta/real` antes desta etapa. O README de `pipeline/domain_corpora` contém os comandos de instalação e teste. Endpoint/chave/versão Azure ficam no `.env`, fora do Git. Use uma saída nova: o corpus mudou e as curvas anteriores devem ser preservadas.
 '''),
 code('''cfg=QAConfig()
-cfg.output=ROOT/'pipeline/fase_4/saida_qa_v3_medium'
+cfg.output=ROOT/'pipeline/fase_4/saida_qa_v3_corpora_medium'
+cfg.corpus_manifest=ROOT/'dataset/domain_corpora/manifest.json'
+cfg.corpus_dir=None  # Petrolês já está no manifesto
 # cfg.corpus_dir=Path('/caminho/real/do/PetrolesHibrido')
 # Ou os dois arquivos, evitando a descoberta automática:
 # cfg.corpus_dir=None
@@ -48,10 +50,18 @@ cfg.deployment=cfg.preparation_deployment=cfg.judge_deployment='gpt-5-4-petrobra
 cfg.effort='medium'
 cfg.limit_per_topic=100
 cfg.batch_size=2
+cfg.max_calls=10000  # Mais documentos auditáveis; teto operacional, não sinal de saturação
 cfg.enable_cosine_filter=cfg.filter_redundancy=cfg.enable_saturation_stop=False
 cfg.resume=False  # True apenas para continuar esta mesma execução v3
 cfg.validate()
 print(json.dumps(cfg.serializable(),ensure_ascii=False,indent=2))
+'''),
+markdown('''## Conferir a instalação dos cinco corpora — sem Azure
+
+Confere hashes e proveniência. Um manifesto de amostra é bloqueado por padrão; a rodada principal deve usar a instalação sem `--max-documents-per-source`.
+'''),
+code('''subprocess.run([sys.executable,str(ROOT/'pipeline/domain_corpora/verify_corpora.py'),
+                '--manifest',str(cfg.corpus_manifest)],cwd=ROOT,check=True)
 '''),
 markdown('''## Exemplos externos e humanos
 

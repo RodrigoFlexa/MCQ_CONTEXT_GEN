@@ -8,7 +8,7 @@ As versões anteriores estão preservadas: fases antigas em `pipeline/backup/pre
 
 ```mermaid
 flowchart TD
-    C[Petrolês] --> F[Facetas e recuperação lexical, vetorial e MMR]
+    C[Petrolês + ANP + HSE + BSEE + REGIS] --> F[Facetas bilíngues, cotas por coleção, vetores e MMR]
     F --> A[Auditoria factual por LLM de cada documento candidato]
     A --> B[Rejeitados com parecer e proveniência]
     A --> D[Afirmações sustentadas, contexto original e limites]
@@ -32,7 +32,7 @@ flowchart TD
 
 ### 1. Auditoria de fontes antes de gerar
 
-O corpus factual continua sendo Petrolês. A recuperação reutiliza as facetas do escopo revisado da fase 3, a varredura lexical, o rerank vetorial e MMR. **Todos os documentos candidatos dos tópicos selecionados são auditados antes da primeira pergunta.**
+O corpus factual passa a ser **Petrolês + ANP + HSE + BSEE + REGIS**, selecionado por `--corpus-manifest`. [Instalação e próxima execução](../domain_corpora/README.md) descreve coleta, testes e comandos prontos. O modo antigo com somente TXT continua disponível para reproduzir rodadas anteriores. A busca conjunta usa consultas PT/EN, cotas de candidatos por coleção e montagens separadas por coleção; preserva documento, página quando disponível, idioma e jurisdição. **Todos os documentos candidatos dos tópicos selecionados são auditados antes da primeira pergunta.**
 
 O auditor recebe faceta, escopo e trechos originais. Avalia consistência técnica, condições da instalação/processo, compatibilidade com FPSO, transferibilidade, contradições e incerteza normativa. Rejeita transposições indevidas de refinaria, Spar, coleta urbana e outros contextos. Aprovação exige critérios explícitos, confiança ≥0,85 e afirmações sustentadas por citações literais verificadas pelo código.
 
@@ -102,6 +102,8 @@ python pipeline/fase_4/replay_stopping.py --output pipeline/fase_4/saida_qa_v3_m
 O replay compara janelas 12/20/30, paciências 2/3 e coberturas 50/75/100%, contando novidade após sinais. Não reproduz como a geração teria mudado sob outra seleção. Ativação futura explícita: `--enable-saturation-stop` e/ou `--enable-redundancy-filter`. O antigo filtro puramente numérico `--enable-cosine-filter` também é explícito, mas não é a política recomendada de redundância confirmada.
 
 ## Enviar o código e executar no servidor Petrobras
+
+A próxima rodada com os **cinco corpora** usa o instalador e `--corpus-manifest` descritos em [pipeline/domain_corpora/README.md](../domain_corpora/README.md), com saída nova `saida_qa_v3_corpora_medium`. Os comandos abaixo documentam também a execução anterior com somente Petrolês.
 
 Na raiz do projeto local, branch `dev`, revise as alterações antes de publicar. Este comando inclui o backup do código e não inclui datasets, credenciais ou resultados:
 

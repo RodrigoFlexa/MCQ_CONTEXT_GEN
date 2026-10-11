@@ -59,6 +59,8 @@ class CoverageScheduler:
         recent={r['doc_id'] for r in rows[-self.cfg.novelty_window:]}
         recovery_docs={r['doc_id'] for r in rows[state.get('recovery_start',len(rows)):]} if state['phase']=='recovery' else set()
         previous_chunks={c['chunk_id'] for r in rows[-self.cfg.batch_size:] for c in r.get('source_chunks',[])}
+        collection_visits=Counter(collection for r in recent_rounds
+            for collection in self.domain.doc_contexts.get(r.get('doc_id'),{}).get('collections',[])) if hasattr(self.domain,'doc_contexts') else Counter()
         def docscore(doc):
             history=[r for r in rows if r['doc_id']==doc['doc_id'] and r.get('novelty_measurable')]
             n=len(history);novel=sum(bool(r.get('useful_novel')) for r in history)
@@ -68,6 +70,7 @@ class CoverageScheduler:
             return (doc['doc_id'] in recovery_docs if state['phase']=='recovery' else False,
                     doc['doc_id'] in recent if state['phase']=='recovery' else False,
                     facet_visits[doc['facet_id']]>0,doc_visits[doc['doc_id']]>0,
+                    sum(collection_visits[c] for c in doc.get('collections',[])),
                     overlap,-utility,doc_visits[doc['doc_id']])
         doc=min(docs,key=docscore)
         context=self.domain.materialize(topic,sub,doc_id=doc['doc_id'])
@@ -79,5 +82,6 @@ class CoverageScheduler:
                   'difficulty':difficulty,'phase':state['phase'],'coverage':state['diagnostics'],
                   'generation_targets':context['generation_targets'],'selection':'coverage_then_smoothed_yield_and_source_overlap'}
         decision['subtopic_quota']=quotas[sub]
+        decision['collections']=context.get('collections',['petroles'])
         decision['subtopic_accepted']=sum(bool(r.get('accepted')) for r in rows)
         return context,difficulty,decision,status

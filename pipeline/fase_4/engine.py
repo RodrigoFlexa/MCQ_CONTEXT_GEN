@@ -166,10 +166,11 @@ def execute(cfg,*,backends=None,domain=None,seeds=None,external=None):
     if set(selected)-set(TOPICOS):raise ValueError('Tópicos desconhecidos')
     store=RunStore(cfg);summaries={}
     try:
-        names=('prompts_qa','source_audit','difficulty','scoring','redundancy','embedding','scheduling','stopping','engine','examples','metrics','domain','config','storage')
+        names=('prompts_qa','source_audit','difficulty','scoring','redundancy','embedding','scheduling','stopping','engine','examples','metrics','domain','config','storage','multi_corpus')
         files=[Path(__file__).with_name(n+'.py') for n in names]
         files += [Path(__file__).parents[1]/'fase_3'/name for name in ('utils_fase3.py','prompts_fase3.py','topicos.py','seed_fase3.py')]
         files += [Path(__file__).parents[1]/'qa_references/download_qa_examples.py']
+        files += sorted((Path(__file__).parents[1]/'domain_corpora').glob('*.py'))
         signature=fingerprint({str(p.relative_to(Path(__file__).parents[2])):hashlib.sha256(p.read_bytes()).hexdigest() for p in files})
         if store.meta.get('prompt_signature') and store.meta['prompt_signature']!=signature:
             raise ValueError('Implementação/prompts mudaram; use nova saída')

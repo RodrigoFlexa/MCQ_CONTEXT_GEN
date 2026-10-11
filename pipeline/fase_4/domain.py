@@ -2,7 +2,7 @@
 import hashlib
 import json
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 from .config import ROOT
@@ -27,7 +27,7 @@ class DomainResources:
         self.audit_client = audit_client or client
         self.legacy_cfg = legacy.Config(
             raiz=ROOT, out_dir=Path(cfg.output) / "dominio",
-            corpus_dir=None if (cfg.corpus_txt or cfg.corpus_zip) else cfg.corpus_dir,
+            corpus_dir=None if (cfg.corpus_txt or cfg.corpus_zip or cfg.corpus_manifest) else cfg.corpus_dir,
             corpus_txt=cfg.corpus_txt, corpus_zip=cfg.corpus_zip,
             modelo_embedding=cfg.embedding_model, seed=cfg.seed,
             n_clusters_codebook=cfg.clusters)
@@ -38,16 +38,36 @@ class DomainResources:
 
     def prepare(self, selected_topics):
         # Verificação de fonte antes de carregar embeddings ou gastar chamadas de LLM.
-        files = legacy.arquivos_do_corpus(self.legacy_cfg)
+        corpus_manifest=None;collections=None
+        if self.cfg.corpus_manifest:
+            from pipeline.domain_corpora.manifest import load_manifest
+            corpus_manifest,collections=load_manifest(self.cfg.corpus_manifest,self.cfg.allow_sample_corpus)
+            if corpus_manifest.get('partial'):
+                print('[corpus] instalação parcial autorizada no instalador; confira install_report.json',flush=True)
+            files=[Path(self.cfg.corpus_manifest)]
+            for collection in collections:
+                if collection['format']=='pages_jsonl':files.append(collection['resolved_path'])
+                else:files.extend(f['resolved_path'] for f in collection['files'])
+        else:files = legacy.arquivos_do_corpus(self.legacy_cfg)
         if not files and not self.cfg.corpus_zip:
             raise FileNotFoundError("Corpus Petrolês não encontrado. Configure --corpus-dir, --corpus-txt ou --corpus-zip.")
         if self.cfg.corpus_zip:
             files = [Path(self.cfg.corpus_zip)]
         if any(not f.is_file() for f in files):
             raise FileNotFoundError("Um arquivo configurado do corpus não existe")
+        digests={}
+        if collections:
+            digests[str(Path(self.cfg.corpus_manifest).resolve())]=fingerprint(corpus_manifest)
+            for collection in collections:
+                if collection['format']=='pages_jsonl':digests[str(collection['resolved_path'])]=collection['sha256']
+                else:digests.update({str(f['resolved_path']):f['sha256'] for f in collection['files']})
         inputs = {"corpus": [{"path": str(f.resolve()), "bytes": f.stat().st_size,
-                              "mtime_ns": f.stat().st_mtime_ns} for f in files],
+                              **({'sha256':digests[str(f.resolve())]} if collections else
+                                 {'mtime_ns':f.stat().st_mtime_ns})} for f in files],
                   "scope": TOPICOS, "embedding": self.cfg.embedding_model,
+                  "corpora_manifest":corpus_manifest,
+                  "multisource_retrieval":"multisource-bilingual-v1" if collections else None,
+                  "lexical_quota_per_collection":self.cfg.lexical_candidates_per_collection,
                   "clusters": self.cfg.clusters, "seed": self.cfg.seed,
                   "audit_version": AUDIT_VERSION, "audit_prompt": fingerprint(AUDIT_PROMPT),
                   "embedding_representation": "full_text_windows_v1", "overlap":self.cfg.embedding_overlap_tokens,
@@ -65,10 +85,17 @@ class DomainResources:
         self.emb = FullTextEmbedder(self.legacy_cfg,self.cfg.embedding_overlap_tokens)
         # Reutiliza os passos já existentes: extração de facetas -> busca lexical
         # streaming em todos os tópicos -> rerank semântico + MMR.
-        facets = legacy.extrair_facetas(self.client, TOPICOS, self.legacy_cfg)
-        legacy.descrever_corpus(self.legacy_cfg)
-        legacy.varrer_corpus(facets, self.legacy_cfg)
-        candidates = legacy.carregar_candidatos(self.legacy_cfg)
+        facets = legacy.extrair_facetas(self.client, TOPICOS, self.legacy_cfg,
+            subtopicos_alvo=[(t,s) for t in selected_topics for s in TOPICOS[t]])
+        if collections:
+            from .multi_corpus import bilingual_facets, scan, plan_documents
+            facets=bilingual_facets(facets,self.client,self.legacy_cfg.out_dir/'indices/facetas_bilingues.json',legacy)
+            candidates=scan(facets,collections,self.legacy_cfg,legacy,self.cfg.lexical_candidates_per_collection,signature)
+            atomic_json(Path(self.cfg.output)/'corpora_utilizados.json',corpus_manifest)
+        else:
+            legacy.descrever_corpus(self.legacy_cfg)
+            legacy.varrer_corpus(facets, self.legacy_cfg)
+            candidates = legacy.carregar_candidatos(self.legacy_cfg)
         grouped = defaultdict(list)
         for facet in facets:
             grouped[(facet.topico, facet.subtopico)].append(facet)
@@ -82,7 +109,8 @@ class DomainResources:
             topic_texts = {}
             for subtopic in TOPICOS[topic]:
                 pair_facets = grouped.get((topic, subtopic), [])
-                plan = legacy.plano_de_documentos(pair_facets, candidates, self.emb, self.legacy_cfg)
+                plan = (plan_documents(pair_facets,candidates,self.emb,self.legacy_cfg,legacy) if collections else
+                        legacy.plano_de_documentos(pair_facets, candidates, self.emb, self.legacy_cfg))
                 valid_plan=[]
                 facets_by_id={f.id:f for f in pair_facets}
                 for doc in plan:
@@ -99,8 +127,8 @@ class DomainResources:
                     print(f"[auditoria] {subtopic}: {doc['doc_id']} -> {'aprovado' if audit['approved'] else 'bloqueado'}",flush=True)
                     if not audit['approved']:continue
                     allowed=set(audit['allowed_chunk_ids'])
-                    context['chunks']=[{k:c[k] for k in ('chunk_id','arquivo','linha_ini','linha_fim','texto')}
-                                       for c in chunks if c['chunk_id'] in allowed]
+                    context['chunks']=[dict(c) for c in chunks if c['chunk_id'] in allowed]
+                    context['collections']=sorted({c.get('collection','petroles') for c in context['chunks']})
                     context.update(document=audited_document(audit),source_audit=audit,corpus_signature=signature,
                         embedding_diagnostics={c['chunk_id']:self.emb.diagnostics(c['texto']) for c in context['chunks']})
                     self.doc_contexts[doc['doc_id']]=context
@@ -116,7 +144,9 @@ class DomainResources:
                                  "documents": len(valid_plan), "planned_documents":len(plan),
                                  "blocked_documents":len(plan)-len(valid_plan),
                                  "valid_facets":len({d['faceta_id'] for d in valid_plan}),
-                                 "codebook_clusters": codebook.k if codebook else 0})
+                                 "codebook_clusters": codebook.k if codebook else 0,
+                                 "documents_by_collection":dict(Counter(
+                                     c for doc in valid_plan for c in self.doc_contexts[doc['doc_id']]['collections']))})
             if topic_texts:
                 self.topic_codebooks[topic] = self.make_codebook(list(topic_texts.values()), f"topic::{topic}")
         atomic_json(Path(self.cfg.output) / "cobertura_dominio.json", coverage)
