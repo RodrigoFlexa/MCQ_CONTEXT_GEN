@@ -31,11 +31,12 @@ from pipeline.inventario import extracao as X  # noqa: E402
 from pipeline.inventario import fichas as F  # noqa: E402
 from pipeline.inventario import selecao as S  # noqa: E402
 from pipeline.inventario import varredura as V  # noqa: E402
+from pipeline.inventario import revisao as R  # noqa: E402
 from pipeline.inventario.llm import LLMClient, load_dotenv  # noqa: E402
 from pipeline.inventario.textutil import (atomic_json, norm, read_json, read_jsonl, sha, slug,  # noqa: E402
                                           write_jsonl)
 
-STAGES = ('assuntos', 'varredura', 'selecao', 'extracao', 'consolidacao', 'fichas')
+STAGES = ('assuntos', 'varredura', 'selecao', 'extracao', 'revisao', 'consolidacao', 'fichas')
 
 
 class Log:
@@ -80,6 +81,7 @@ def parse(argv=None):
     p.add_argument('--trechos-por-assunto', type=int, default=12)
     p.add_argument('--min-rerank', type=float, default=0.10)
     p.add_argument('--limiar-consolidacao', type=float, default=0.86)
+    p.add_argument('--review-batch', type=int, default=8, help='unidades por chamada do revisor/refinador')
     p.add_argument('--parar-apos', choices=STAGES, default='fichas')
     p.add_argument('--limite-unidades', type=int, default=None, help='TESTE: lê só N páginas/linhas por coleção')
     return p.parse_args(argv)
@@ -87,7 +89,7 @@ def parse(argv=None):
 
 def validate_args(args):
     for key in ('workers', 'max_chamadas', 'embed_batch', 'rerank_batch', 'chunk_words', 'chunk_stride',
-                'candidatos_por_colecao', 'dense_top', 'trechos_por_assunto'):
+                'candidatos_por_colecao', 'dense_top', 'trechos_por_assunto', 'review_batch'):
         if getattr(args, key) < 1:
             raise ValueError(f'{key} deve ser positivo')
     if args.chunk_words < 80 or args.chunk_stride > args.chunk_words:
@@ -398,7 +400,12 @@ def run_selected(args, out, log, t0, llm, pool, subs, timings, sig, idx_dir, can
         for u in dr:
             for r in u['descartada_por']:
                 reasons[r] += 1
-        ext_stats[s['key']] = {'aceitas': len(k), 'descartadas': len(dr), 'motivos': dict(reasons)}
+        drafts = {kind:sum(u['redacao']['ajuste'] == kind for u in k+dr)
+                  for kind in ('nenhum', 'editorial', 'tecnico')}
+        ext_stats[s['key']] = {'aceitas': len(k), 'descartadas': len(dr), 'motivos': dict(reasons),
+                               'redacao':drafts}
+        log(f"[redação] {s['subtopico']}: {drafts} (ajustes propostos; aguardam revisão)")
+    atomic_json(out / 'resumo_redacao.json', {key:value['redacao'] for key,value in ext_stats.items()})
     timings['extracao'] = round(time.time() - t, 1)
     log(f"[extração] concluída: {failures} falhas")
     atomic_json(out / 'falhas_extracao.json', failed_jobs)
@@ -407,6 +414,35 @@ def run_selected(args, out, log, t0, llm, pool, subs, timings, sig, idx_dir, can
                            'Falha de API não será classificada como ausência de contexto.')
     if args.parar_apos == 'extracao':
         return finish(out, log, llm, timings, t0, [])
+
+    # -------------------------------------------------------------- revisão
+    t = time.time()
+    source_chunks = {c['chunk_id']:c for row in selections.values() for v in row.values() for c in v['trechos']}
+    review_stats = {}
+    for s in subs:
+        d = out / 'subtopicos' / s['dir']
+        raw_units = kept[s['key']] + dropped[s['key']]
+        log(f"[revisão] {s['subtopico']}: {len(raw_units)} unidades; lote={args.review_batch}")
+        try:
+            reviewed, rejected, pending, verdicts, stats = R.review_units(
+                llm,s,raw_units,source_chunks,by_sub[s['key']],batch_size=args.review_batch,pool=pool)
+        except Exception as exc:
+            atomic_json(out / 'falha_revisao.json', {'sub_key':s['key'],'error':type(exc).__name__})
+            raise
+        kept[s['key']] = reviewed
+        review_stats[s['key']] = stats
+        ext_stats[s['key']]['revisao'] = stats
+        write_jsonl(d / 'unidades_revisadas.jsonl',reviewed)
+        write_jsonl(d / 'unidades_rejeitadas_revisao.jsonl',rejected)
+        write_jsonl(d / 'unidades_pendentes.jsonl',pending)
+        write_jsonl(d / 'pareceres_revisao.jsonl',verdicts)
+        atomic_json(d / 'resumo_revisao.json',stats)
+        log(f"[revisão] {s['subtopico']}: {stats}")
+    atomic_json(out / 'falha_revisao.json',None)
+    atomic_json(out / 'resumo_revisao.json',review_stats)
+    timings['revisao'] = round(time.time()-t,1)
+    if args.parar_apos == 'revisao':
+        return finish(out,log,llm,timings,t0,[])
 
     # -------------------------------------------------------- 5. consolidação
     t = time.time()
@@ -438,10 +474,14 @@ def run_selected(args, out, log, t0, llm, pool, subs, timings, sig, idx_dir, can
 
 def finish(out, log, llm, timings, t0, rows, n_units=None):
     resumo = {'tempo_total_s': round(time.time() - t0, 1), 'tempos_s': timings, 'uso_llm': llm.usage}
+    revisions = read_json(out / 'resumo_revisao.json')
+    if revisions:
+        resumo['revisao'] = revisions
     if rows:
         resumo['assuntos'] = len(rows)
         resumo['status'] = {k: sum(r['status'] == k for r in rows) for k in ('ok', 'contexto_parcial', 'sem_contexto', 'generico')}
         resumo['unidades_consolidadas'] = n_units
+        resumo['vinculos_assuntos'] = sum(r['unidades'] for r in rows)
     atomic_json(out / 'resumo.json', resumo)
     log(f"[fim] {json.dumps(resumo, ensure_ascii=False)}")
     return resumo

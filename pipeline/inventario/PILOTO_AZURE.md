@@ -1,5 +1,8 @@
 # Piloto: somente documentos de KPI
 
+Na v3, há revisão/refinamento entre extração e consolidação. As saídas novas de KPI ficam em
+`saida_piloto_kpi_v3_correcao_azure`; para o próximo tópico use [PRODUCAO_V3.md](PRODUCAO_V3.md).
+
 O inventário organiza a frase do especialista em assuntos, recupera trechos das cinco coleções,
 extrai afirmações com citações, separa conflitos e escreve fichas e um documento técnico do tópico.
 Esta execução **não gera perguntas**. O gerador antigo da fase_4 ainda não consome este inventário.
@@ -55,7 +58,7 @@ powershell -ExecutionPolicy Bypass -File pipeline/inventario/run_piloto_azure.ps
 
 ## Saída e acompanhamento
 
-Pasta padrão: `pipeline/inventario/saida_piloto_kpi_azure/`.
+Pasta padrão: `pipeline/inventario/saida_piloto_kpi_v3_correcao_azure/`.
 
 - `execucao.log`: etapas, contagens e tempos.
 - `chamadas_llm.jsonl` e `chamadas_embeddings.jsonl`: pedidos e erros, sem chaves.
@@ -67,7 +70,7 @@ Pasta padrão: `pipeline/inventario/saida_piloto_kpi_azure/`.
 - `resumo.json`: resumo da última execução bem-sucedida.
 
 ```bash
-tail -f pipeline/inventario/saida_piloto_kpi_azure/execucao.log
+tail -f pipeline/inventario/saida_piloto_kpi_v3_correcao_azure/execucao.log
 ```
 
 Repetir o comando retoma do cache. Alterações de modelo, esforço, trechos ou seleção exigem nova saída.

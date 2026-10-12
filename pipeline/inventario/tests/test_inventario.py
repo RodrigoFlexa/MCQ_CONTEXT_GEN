@@ -73,6 +73,13 @@ class FakeLLM:
                                 'membros': [u['uid'] for u in g['unidades']]} for g in groups]}
         else:
             raise AssertionError('prompt inesperado')
+        if system is X.SYSTEM:
+            for u in data['unidades']:
+                u['carater_avaliativo']='conhecimento_profissional'
+                u['alvo_qa']='Avaliar o princípio técnico de manutenção descrito.'
+                u['redacao']={'ajuste':'nenhum','afirmacao_original':u['afirmacao'],
+                              'condicoes_originais':u['condicoes'],'base':'fonte_original',
+                              'motivo':'','referencias':[],'suporte_citacao':True}
         if validate:
             validate(data)
         return data
@@ -147,7 +154,8 @@ class Tests(unittest.TestCase):
                 cons, st = C.consolidate(self.llm, 'k1', kept, vecs, threshold=0.9, pool=pool)
             self.assertLess(len(cons), len(kept))  # a cópia foi fundida
             self.assertGreater(st['equivalentes'], 0)
-            self.assertTrue(any(c['status'] == 'corroborada' and c['n_documentos'] == 2 for c in cons))
+            self.assertTrue(any(c['status'] == 'consolidada' and c['n_documentos'] == 2 for c in cons))
+            self.assertTrue(all(c['independencia_fontes']=='nao_verificada' for c in cons))
             rows = F.write_subtopic(Path(tmp) / 'sub', self.sub, self.items, cons, sels, {'aceitas': len(kept)})
             F.write_coverage(Path(tmp), rows)
             md = (Path(tmp) / 'sub' / 'fichas' / 'a02.md').read_text(encoding='utf-8')

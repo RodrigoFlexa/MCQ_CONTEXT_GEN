@@ -2,7 +2,7 @@
 import csv
 from pathlib import Path
 
-from .textutil import atomic_json, write_jsonl, slug, sha
+from .textutil import atomic_json, write_jsonl, read_jsonl, read_json, slug, sha
 
 TIPO_LABEL = {'definicao': 'Definições', 'mecanismo': 'Mecanismos', 'causa_efeito': 'Causa e efeito',
               'procedimento': 'Procedimentos', 'criterio_limite': 'Critérios e limites',
@@ -32,6 +32,22 @@ def _src(f):
         page = f" p.{f['page_ini']}" + (f"-{f['page_fim']}" if f.get('page_fim') not in (None, f['page_ini']) else '')
     title = f.get('title') or f.get('document_id')
     return f"{f['collection']}: {title}{page}"
+
+
+def _draft_history(unit):
+    """Mostra a intervenção anterior à revisão, preservando a origem de cada membro."""
+    lines = []
+    for draft in unit.get('redacoes', []):
+        if draft['ajuste'] == 'nenhum':
+            continue
+        lines += [f"Ajuste do redator ({draft['uid']}; {draft['ajuste']}; {draft['base']}): {draft['motivo']}",
+                  f"Antes da redação: {draft['afirmacao_original']}",
+                  f"Condições antes da redação: {draft['condicoes_originais'] or 'não declaradas'}"]
+        if not draft['suporte_citacao']:
+            lines.append('A citação original registra a origem, mas não sustenta a correção proposta pelo redator.')
+        for ref in draft.get('referencias_detalhadas', []):
+            lines.append(f"Referência usada pelo redator: {ref['url']}")
+    return lines
 
 
 def render_ficha(sub, a, units, sel_info):
@@ -71,6 +87,17 @@ def render_ficha(sub, a, units, sel_info):
             lines.append(f"- **[{u['cid'].split(':')[-1]}]** {u['afirmacao']} _({' · '.join(tag)})_")
             if u['condicoes']:
                 lines.append(f"  - Condições: {u['condicoes']}")
+            for target in sorted({x['descricao'] for x in u.get('alvos_qa',[])}):
+                lines.append(f"  - Conhecimento avaliável: {target}")
+            lines.extend(f"  - {line}" for line in _draft_history(u))
+            for review in u.get('revisoes',[]):
+                if review['decisao'] == 'refinar':
+                    lines.append(f"  - Revisão técnica ({review['base']}): {review['motivo']}")
+                    lines.append(f"  - Antes da revisão: {review['afirmacao_original']}")
+                if not review['suporte_citacao']:
+                    lines.append('  - A citação abaixo registra a origem; a correção técnica tem a base indicada na revisão.')
+                for ref in review.get('referencias_detalhadas',[]):
+                    lines.append(f"  - Referência da correção: {ref['url']}")
             for f in u['fontes'][:3]:
                 lines.append(f"  - Fonte: {_src(f)} — \"{f.get('citacao', '')}\"")
         lines.append('')
@@ -84,6 +111,7 @@ def render_ficha(sub, a, units, sel_info):
 def write_subtopic(out_dir, sub, assuntos, consolidated, selections, extraction_stats):
     d = Path(out_dir)
     rows = []
+    pendings = read_jsonl(d / 'unidades_pendentes.jsonl')
     for a in assuntos:
         units = [u for u in consolidated if a['id'] in u['assuntos']]
         sel = selections.get(a['id'], {}).get('info', {})
@@ -93,9 +121,16 @@ def write_subtopic(out_dir, sub, assuntos, consolidated, selections, extraction_
         rows.append({'topico': sub['topico'], 'subtopico': sub['subtopico'], 'assunto_id': a['id'],
                      'assunto': a['texto'], 'generico': a['generico'], 'literal': a['literal'],
                      'candidatos': sel.get('candidatos', 0), 'trechos_selecionados': sel.get('selecionados', 0),
-                     'rerank_max': sel.get('rerank_max'), 'colecoes': '|'.join(sel.get('colecoes', [])),
+                     'rerank_max': sel.get('rerank_max'),
+                     'colecoes': '|'.join(sorted({f['collection'] for u in usable for f in u['fontes']})),
+                     'colecoes_recuperadas': '|'.join(sel.get('colecoes',[])),
                      'unidades': len(usable), 'alto_valor': n_high,
                      'corroboradas': sum(u['status'] == 'corroborada' for u in units),
+                     'consolidadas_equivalentes':sum(u['status']=='consolidada' for u in units),
+                     'revisadas':sum(u.get('revisada',False) for u in usable),
+                     'refinadas':sum(any(r['decisao']=='refinar' for r in u.get('revisoes',[])) for u in usable),
+                     'pendentes':sum(a['id'] in u['assuntos'] for u in pendings),
+                     'revisao_modelo': 'concluida' if read_json(d/'resumo_revisao.json') is not None else 'nao_executada',
                      'conflitos': sum(u['status'] == 'conflito' for u in units),
                      'fpso_direta': sum(u['aplicabilidade'] == 'fpso_direta' for u in units), 'status': st,
                      'modo_geracao': MODO[st], 'sub_dir': d.name,
@@ -106,6 +141,8 @@ def write_subtopic(out_dir, sub, assuntos, consolidated, selections, extraction_
             atomic_json(d / 'fichas' / f"{a['id']}.json", {'subtopico': {k: sub.get(k) for k in ('key', 'topico', 'subtopico', 'frase')},
                                                           'assunto': a, 'status': st, 'modo_geracao': MODO[st],
                                                           'selecao': sel, 'unidades': usable,
+                                                          'revisao_modelo':rows[-1]['revisao_modelo'],
+                                                          'pendentes':[u for u in pendings if a['id'] in u['assuntos']],
                                                           'divergencias': [u for u in units if u['status'] == 'conflito']})
     write_jsonl(d / 'unidades_consolidadas.jsonl', consolidated)
     resumo = ['# ' + sub['subtopico'], '', f"Tópico: {sub['topico']}", '',
@@ -131,6 +168,8 @@ def write_coverage(out_dir, rows):
     for r in rows:
         subs.setdefault((r['topico'], r['subtopico']), []).append(r)
     lines = ['# Cobertura do inventário', '',
+             'Status de quantidade e cobertura. Revisão por modelo é registrada separadamente e não equivale a certificação factual. '
+             'As contagens por assunto representam vínculos: a mesma unidade pode servir a vários assuntos.', '',
              '| Tópico | Subtópico | Assuntos | com contexto | contexto parcial | sem contexto | genérico | Unidades | Alto valor | Conflitos |',
              '|---|---|---:|---:|---:|---:|---:|---:|---:|---:|']
     for (t, s), rs in subs.items():
@@ -142,6 +181,13 @@ def write_coverage(out_dir, rows):
         lines += ['', '## Assuntos que serão gerados sem contexto (sem trechos nos corpora)', '']
         lines += [f"- {r['subtopico']} / {r['assunto_id']}: {r['assunto']}" for r in lacunas]
     (out_dir / 'cobertura.md').write_text('\n'.join(lines), encoding='utf-8')
+    unique = set()
+    for d in {r['sub_dir'] for r in rows}:
+        unique.update(u['cid'] for u in read_jsonl(out_dir/'subtopicos'/d/'unidades_consolidadas.jsonl')
+                      if u['status']!='conflito')
+    atomic_json(out_dir/'cobertura_resumo.json',{'unidades_distintas':len(unique),
+                                              'vinculos_assuntos':sum(r['unidades'] for r in rows),
+                                              'nota':'Vínculos não são unidades independentes; revisão é julgamento do modelo.'})
 
 
 def write_generation_index(out_dir, rows):
@@ -152,7 +198,7 @@ def write_generation_index(out_dir, rows):
 
 
 def write_topic_documents(out_dir, rows):
-    """Reúne as fichas em um documento por tópico, sem síntese adicional do LLM."""
+    """Documento por tópico, com cada unidade canônica apenas uma vez e índice de assuntos."""
     out_dir = Path(out_dir)
     groups = {}
     for r in rows:
@@ -166,10 +212,42 @@ def write_topic_documents(out_dir, rows):
                  'Inventário para curadoria antes da geração de QA. Citações verificadas literalmente; '
                  'a correspondência textual não comprova corretude técnica. Conflitos são separados '
                  'das unidades utilizáveis. Assuntos sem evidência permanecem identificados.', '']
-        for r in rs:
-            ficha_md = out_dir / Path(r['ficha']).with_suffix('.md')
-            parts.extend([f"## {r['subtopico']} / {r['assunto_id']} — {r['status']}", '',
-                          ficha_md.read_text(encoding='utf-8').replace('# ', '### ', 1), ''])
+        seen = set()
+        for dirname in sorted({r['sub_dir'] for r in rs}):
+            subrows = [r for r in rs if r['sub_dir']==dirname]
+            parts += [f"## {subrows[0]['subtopico']}",'','### Assuntos','']
+            for r in subrows:
+                parts.append(f"- {r['assunto_id']}: {r['assunto']} ({r['status']}; {r['unidades']} vínculos; "
+                             f"{r['pendentes']} unidades pendentes)")
+            parts += ['', '### Unidades técnicas', '']
+            for u in read_jsonl(out_dir/'subtopicos'/dirname/'unidades_consolidadas.jsonl'):
+                if u['cid'] in seen:
+                    continue
+                seen.add(u['cid'])
+                cid = u['cid'].split(':')[-1]
+                parts += [f"#### {cid} — {', '.join(u['assuntos'])}",'',
+                          'CONFLITO — não utilizar como resposta factual.' if u['status']=='conflito' else u['afirmacao'],
+                          f"Condições: {u['condicoes'] or 'princípio geral; conferir limites da fonte'}",'']
+                for target in sorted({x['descricao'] for x in u.get('alvos_qa',[])}):
+                    parts.append(f"Conhecimento avaliável: {target}")
+                parts.extend(_draft_history(u))
+                for rev in u.get('revisoes',[]):
+                    if rev['decisao']=='refinar':
+                        parts.append(f"Revisão ({rev['base']}): {rev['motivo']}")
+                        parts.append(f"Antes da revisão: {rev['afirmacao_original']}")
+                    if not rev['suporte_citacao']:
+                        parts.append('A citação preserva a origem e a imprecisão original; a correção tem base adicional registrada.')
+                    for ref in rev.get('referencias_detalhadas',[]):
+                        parts.append(f"Referência técnica: {ref['url']}")
+                for f in u['fontes']:
+                    parts.append(f"- {_src(f)}: {f.get('citacao','')}")
+                if u['status']=='conflito':
+                    parts.append(u['nota'])
+                    for original in u['unidades_originais']:
+                        parts.append(f"Versão divergente: {original['afirmacao']} — {original['condicoes']}")
+                if u['n_documentos']>1:
+                    parts.append('Múltiplos documentos; independência das fontes não verificada.')
+                parts.append('')
         path = doc_dir / 'documento_tecnico.md'
         tmp = path.with_suffix('.md.tmp')
         tmp.write_text('\n'.join(parts), encoding='utf-8')

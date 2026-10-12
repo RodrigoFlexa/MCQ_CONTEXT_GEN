@@ -1,11 +1,11 @@
 param(
     [string]$Python = "python",
     [string]$Manifest = "dataset/domain_corpora/manifest.json",
-    [string]$Output = "pipeline/inventario/saida_piloto_kpi_azure",
+    [string]$Output = "pipeline/inventario/saida_piloto_kpi_v3_correcao_azure",
     [switch]$Plan,
     [switch]$CheckApi,
     [switch]$AllowSampleCorpus,
-    [ValidateSet('assuntos', 'varredura', 'selecao', 'extracao', 'consolidacao', 'fichas')]
+    [ValidateSet('assuntos', 'varredura', 'selecao', 'extracao', 'revisao', 'consolidacao', 'fichas')]
     [string]$PararApos = "fichas"
 )
 $ErrorActionPreference = "Stop"

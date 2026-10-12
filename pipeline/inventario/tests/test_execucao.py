@@ -11,7 +11,7 @@ from unittest.mock import Mock
 from types import SimpleNamespace
 import numpy as np
 
-from pipeline.inventario import assuntos as A, extracao as X, consolidacao as C
+from pipeline.inventario import assuntos as A, extracao as X, consolidacao as C, revisao as R
 from pipeline.inventario.locking import output_lock
 from pipeline.inventario.run_inventario import main
 
@@ -38,11 +38,23 @@ class FakeLLM:
             data = {'unidades': [{'tipo':'definicao', 'afirmacao':'Backlog reúne ordens de serviço pendentes.',
                 'condicoes':'', 'entidades':['backlog'], 'assuntos':['a01'], 'aplicabilidade':'transferivel',
                 'valor_para_pergunta':'alto',
+                'carater_avaliativo':'conhecimento_profissional','alvo_qa':'Definir backlog de manutenção.',
                 'citacao':'O backlog de manutenção corresponde ao conjunto de ordens de serviço pendentes.'}]}
         elif system == C.SYSTEM:
             data = {'grupos':[{'grupo':g['grupo'], 'status':'complementares'} for g in json.loads(user)]}
+        elif system == R.SYSTEM:
+            batch=json.loads(user)['unidades']
+            data={'pareceres':[{'uid':u['uid'],'decisao':'aprovar','motivo':'Pertinente e consistente.',
+                               'carater_avaliativo':u['carater_avaliativo'],'alvo_qa':u['alvo_qa'],
+                               'base':'fonte_original','referencias':[],'suporte_citacao':True,
+                               'unidade':{k:u[k] for k in R.FIELDS}} for u in batch]}
         else:
             raise AssertionError('Chamada inesperada')
+        if system == X.SYSTEM:
+            for u in data['unidades']:
+                u['redacao']={'ajuste':'nenhum','afirmacao_original':u['afirmacao'],
+                              'condicoes_originais':u['condicoes'],'base':'fonte_original',
+                              'motivo':'','referencias':[],'suporte_citacao':True}
         kwargs['validate'](data)
         return data
 
@@ -79,6 +91,8 @@ class Execucao(unittest.TestCase):
             self.assertEqual([d['topico'] for d in docs], [TOPIC])
             self.assertIn('Backlog reúne', (out/docs[0]['arquivo']).read_text(encoding='utf-8'))
             self.assertFalse((out/'questoes_qa.jsonl').exists())
+            drafts=json.loads((out/'resumo_redacao.json').read_text(encoding='utf-8'))
+            self.assertTrue(all(x['nenhum']>0 and x['tecnico']==0 for x in drafts.values()))
             second = main(self.options(manifest, out))
             self.assertEqual(second['assuntos'], 1)
             self.assertEqual(len(list((out/'subtopicos').iterdir())), 1)

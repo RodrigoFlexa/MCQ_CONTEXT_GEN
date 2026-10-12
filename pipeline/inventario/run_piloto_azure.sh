@@ -9,4 +9,4 @@ cd "$ROOT"
   --llm-provider azure --llm-model gpt-5-4-petrobras --effort medium \
   --embedder embedding-3-large-global --reranker none \
   --workers 2 --max-chamadas 400 \
-  --output "${INV_OUTPUT:-pipeline/inventario/saida_piloto_kpi_azure}" "$@"
+  --output "${INV_OUTPUT:-pipeline/inventario/saida_piloto_kpi_v3_correcao_azure}" "$@"
