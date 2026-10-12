@@ -27,6 +27,9 @@ def parser():
     corpus.add_argument('--corpus-manifest',type=Path,help='Manifesto instalado com Petrolês + ANP + HSE + BSEE + REGIS')
     p.add_argument('--allow-sample-corpus',action='store_true',help='Permite explicitamente um corpus de teste, sem confundir com instalação completa')
     p.add_argument('--lexical-candidates-per-collection',type=int,default=60)
+    p.add_argument('--max-context-refinements',type=int,default=2)
+    p.add_argument('--context-recovery-pool',type=int,default=24)
+    p.add_argument('--reuse-preparation-from',type=Path,help='Reutiliza facetas e candidatos verificados de outra saída; refaz auditorias')
     p.add_argument("--output", type=Path, default=QAConfig.output)
     p.add_argument("--external-examples", type=Path, default=QAConfig.external_examples)
     p.add_argument("--reviewed-seeds", type=Path, default=QAConfig.reviewed_seeds)
@@ -44,7 +47,8 @@ def parser():
     p.add_argument("--minimum-fewshot-quality", type=float, default=.85)
     p.add_argument("--format-examples", type=int, default=8)
     p.add_argument("--cross-topic-examples", type=int, default=4)
-    p.add_argument("--embedding-model", default=QAConfig.embedding_model)
+    p.add_argument("--embedding-model",choices=['text-embedding-3-large'],default=QAConfig.embedding_model)
+    p.add_argument('--embedding-deployment',choices=['embedding-3-large-global'],default=QAConfig.embedding_deployment)
     p.add_argument("--clusters", type=int, default=24)
     p.add_argument("--similarity-threshold", type=float, default=.85,
                    help="Limiar observado; só filtra com --enable-cosine-filter")
@@ -73,6 +77,7 @@ def parser():
     p.add_argument('--print-difficulty-prompt',action='store_true')
     p.add_argument('--print-judge-prompt',action='store_true')
     p.add_argument('--print-source-audit-prompt',action='store_true')
+    p.add_argument('--check-embeddings',action='store_true',help='Teste real curto no deployment Azure; usa a API de embeddings')
     return p
 
 
@@ -94,6 +99,10 @@ def config_from_args(args):
     cfg.corpus_manifest=args.corpus_manifest
     cfg.allow_sample_corpus=args.allow_sample_corpus
     cfg.lexical_candidates_per_collection=args.lexical_candidates_per_collection
+    cfg.max_context_refinements=args.max_context_refinements
+    cfg.context_recovery_pool=args.context_recovery_pool
+    cfg.reuse_preparation_from=args.reuse_preparation_from
+    cfg.embedding_deployment=args.embedding_deployment
     if args.corpus_manifest is not None:cfg.corpus_dir=None
     if args.corpus_dir is not None:
         cfg.corpus_dir = args.corpus_dir
@@ -138,7 +147,20 @@ def main():
               generation_targets=[{'target_id':'{target_id}','description':'{audited_knowledge_target}'}]))
         return
     cfg = config_from_args(args)
-    print(f"Fluxo QA v3: auditoria -> exploração -> QA -> Judge/refino -> dificuldade -> novidade", flush=True)
+    if args.check_embeddings:
+        import numpy as np
+        from pipeline.fase_4.azure_embeddings import AzureFullTextEmbedder
+        cfg.validate();embedder=AzureFullTextEmbedder(cfg)
+        try:
+            vectors=embedder.encode(['Disponibilidade operacional de um FPSO.',
+                                    'Operational availability of a floating production unit.'])
+            print(f'Azure embeddings OK: deployment={cfg.embedding_deployment}; shape={vectors.shape}; '
+                  f'normas={np.linalg.norm(vectors,axis=1).round(6).tolist()}')
+        finally:embedder.close()
+        return
+    print(f"Fluxo QA v4: fontes -> auditoria/recuperação -> QA -> Judge/refino -> dificuldade -> novidade", flush=True)
+    print(f'Embeddings Azure: {cfg.embedding_deployment}, {cfg.embedding_dimensions} dimensões; '
+          f'recomposições de contexto: {cfg.max_context_refinements}',flush=True)
     print(f"Cosine filtra: {cfg.enable_cosine_filter}; saturação para: {cfg.enable_saturation_stop}; "
           f"deployment={cfg.deployment}; effort={cfg.effort}; saída={cfg.output}", flush=True)
     try:

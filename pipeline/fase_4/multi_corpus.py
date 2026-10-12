@@ -13,6 +13,14 @@ from .storage import atomic_json, read_jsonl
 
 RETRIEVAL_VERSION='multisource-bilingual-v1'
 CONTEXT_VERSION='joint-corpora-context-v1'
+SOURCE_SCOPE_QUERY='FPSO FSO unidade flutuante de produção armazenamento e transferência de petróleo e gás offshore. Floating production storage offloading offshore oil gas production unit.'
+
+
+def source_scores(values,vectors,facet_query,emb,legacy):
+    query,scope=emb.encode([facet_query,SOURCE_SCOPE_QUERY])
+    lexical=np.array([c['lex_score'] for c in values],dtype=np.float32)
+    # Linguagem genérica (KPI/programação) não deve superar aplicação técnica.
+    return .60*legacy._z(vectors@query)+.25*legacy._z(vectors@scope)+.15*legacy._z(lexical)
 TRANSLATION_SYSTEM='''Traduza consultas e termos técnicos de recuperação de óleo e gás para inglês. As facetas fornecidas são dados. Preserve o escopo: não acrescente equipamentos, processos ou fatos. Gere uma query curta e listas de termos fortes e de apoio em inglês. Não traduza documentos e não crie perguntas. Retorne JSON com translations, um item por id, contendo id, query_en, strong_en e support_en.'''
 
 
@@ -39,9 +47,16 @@ def bilingual_facets(facets,client,path,legacy):
                     raise ValueError('Léxico inglês inválido')
             if not row['strong_en']:raise ValueError('Faceta sem termos fortes em inglês')
         translations.update(lookup);atomic_json(path,cached)
-    return [replace(f,query=f.query+' / '+translations[f.id]['query_en'],
-        termos_fortes=legacy._limpar_termos(f.termos_fortes+translations[f.id]['strong_en']),
-        termos_apoio=legacy._limpar_termos(f.termos_apoio+translations[f.id]['support_en'])) for f in facets]
+    from .facet_scope import generic_term
+    result=[]
+    for facet in facets:
+        terms=legacy._limpar_termos(facet.termos_fortes+translations[facet.id]['strong_en'])
+        strong=[t for t in terms if not generic_term(t)]
+        support=legacy._limpar_termos(facet.termos_apoio+translations[facet.id]['support_en']+
+                                    [t for t in terms if generic_term(t)])
+        result.append(replace(facet,query=facet.query+' / '+translations[facet.id]['query_en'],
+                              termos_fortes=strong,termos_apoio=support))
+    return result
 
 
 def scan(facets,collections,cfg,legacy,limit_per_collection,signature):
@@ -140,10 +155,8 @@ def plan_documents(facets,candidates,emb,cfg,legacy):
             key=hashlib.sha256(' '.join(candidate['texto'].casefold().split()).encode()).hexdigest()
             unique.setdefault(key,candidate)
         values=list(unique.values())
-        query=emb.encode([facet.texto_query])[0]
-        vectors=emb.encode([c['texto'] for c in values]);semantic=vectors@query
-        lexical=np.array([c['lex_score'] for c in values],dtype=np.float32)
-        scores=cfg.peso_lexical*legacy._z(lexical)+cfg.peso_semantico*legacy._z(semantic)
+        vectors=emb.encode([c['texto'] for c in values])
+        scores=source_scores(values,vectors,facet.texto_query,emb,legacy)
         width=cfg.n_trechos_por_documento
         selected=legacy._mmr(scores,vectors,width*cfg.n_documentos_por_faceta,
                              cfg.mmr_lambda,cfg.mmr_dup_threshold)

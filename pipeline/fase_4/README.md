@@ -1,6 +1,8 @@
-# PetroQuest QA v3
+# PetroQuest QA v4
 
 Geração de perguntas/respostas técnicas autossuficientes para FPSO/FSO e produção subsea. Alternativas e distratores continuam em standby. O notebook e o CLI utilizam o mesmo motor.
+
+**Rodada atual:** embeddings exclusivos Azure `embedding-3-large-global` (3.072 dimensões), facetas com busca ancorada em FPSO/FSO e recuperação dos contextos bloqueados com até duas recomposições seguidas de auditoria. O conteúdo de cada trecho preserva sua origem; o rótulo de outra faceta não pode sobrescrevê-lo. Os motivos aparecem no log. A versão anterior será desconsiderada na nova coleta, preservada para diagnóstico. Comandos atuais e teste de acesso ao Azure estão em [domain_corpora/README.md](../domain_corpora/README.md).
 
 As versões anteriores estão preservadas: fases antigas em `pipeline/backup/pre_petroquest_qa_2026-10-10/`, primeira refatoração em `pre_refatoracao_qa_2026-10-10/` e código QA v2 em **`pipeline/backup/pre_qa_v3_2026-10-11/fase_4/`**. Resultados QA v2 e sua análise permanecem na pasta original. Uma execução v2 não pode ser retomada como v3.
 
@@ -11,6 +13,8 @@ flowchart TD
     C[Petrolês + ANP + HSE + BSEE + REGIS] --> F[Facetas bilíngues, cotas por coleção, vetores e MMR]
     F --> A[Auditoria factual por LLM de cada documento candidato]
     A --> B[Rejeitados com parecer e proveniência]
+    B --> RC[Até duas recomposições com trechos existentes]
+    RC --> A
     A --> D[Afirmações sustentadas, contexto original e limites]
     D --> E[Exploração por subtópico, faceta, fonte e alvo]
     H[Seeds humanas deduplicadas de outros tópicos] --> P[Prompt QA]
@@ -63,7 +67,7 @@ Origem: `pipeline/backup/pre_petroquest_qa_2026-10-10/fase_4/avaliacao_dificulda
 
 O avaliador independente recebe pergunta/resposta, tópico/subtópico, **sem o nível solicitado e sem o documento**. Quatro dimensões de 1 a 3: integração de conhecimento, cadeia de raciocínio, demanda cognitiva e especificidade técnica. A dimensão de distratores foi removida. A média define fácil ≤1,66; média ≤2,33; difícil acima disso. Difícil requer também raciocínio e demanda cognitiva ≥2. Extensão, cenário artificial e siglas não elevam dificuldade sozinhos. Notas, razões e confiança ficam no journal; baixa confiança sinaliza revisão humana.
 
-Os prompts completos estão em `prompts_qa_v3.md` e podem ser impressos sem chamada Azure:
+Os prompts completos estão em `prompts_qa_v4.md` e podem ser impressos sem chamada Azure:
 
 ```bash
 python pipeline/fase_4/run_qa.py --print-prompt
@@ -74,7 +78,7 @@ python pipeline/fase_4/run_qa.py --print-difficulty-prompt
 
 ### 5. Similaridade e entropia
 
-Embeddings cobrem o texto inteiro por janelas sobrepostas, agregadas com média ponderada e normalização. Modelo, revisão disponível, hashes dos pesos/vocabulário, janela, sobreposição e diagnósticos ficam registrados; não há truncamento silencioso. **A escala de cosine muda em relação à QA v2**, logo o corte 0,85 é inicial e precisa de nova calibração.
+Embeddings cobrem o texto inteiro com **Azure `embedding-3-large-global`, em 3.072 dimensões**. Entradas com mais de 8.192 tokens usam janelas sobrepostas, agregadas com média ponderada e normalização. Deployment, modelo declarado, API version, tokenizer, dimensões e diagnósticos ficam registrados, com cache SQLite separado dos vetores locais anteriores. **A escala de cosine muda**, logo o corte 0,85 é inicial e precisa de nova calibração.
 
 Cosine ≥0,85 recupera até 8 vizinhos para uma avaliação de **pares pergunta/resposta** pelo modelo. A avaliação distingue redundância, sobreposição parcial, questões distintas e incerteza, considerando objetivo, condições e resposta essencial. O modelo não recebe o cosine para decidir. Só redundância confirmada com confiança ≥0,90 autoriza o filtro opcional. Perguntas normalizadas idênticas são marcadas deterministicamente; respostas divergentes ficam para revisão.
 
@@ -103,7 +107,7 @@ O replay compara janelas 12/20/30, paciências 2/3 e coberturas 50/75/100%, cont
 
 ## Enviar o código e executar no servidor Petrobras
 
-A próxima rodada com **contextos que podem combinar os cinco corpora** usa o instalador e `--corpus-manifest` descritos em [pipeline/domain_corpora/README.md](../domain_corpora/README.md), com saída nova `saida_qa_v3_contextos_multicorpus_medium`. Os comandos abaixo documentam também a execução anterior com somente Petrolês.
+A próxima rodada com **contextos que podem combinar os cinco corpora** usa o instalador e `--corpus-manifest` descritos em [pipeline/domain_corpora/README.md](../domain_corpora/README.md), com saída nova `saida_qa_v4_azure_large_medium`. Os comandos abaixo documentam a versão anterior; use o guia referido para a QA v4.
 
 Na raiz do projeto local, branch `dev`, revise as alterações antes de publicar. Este comando inclui o backup do código e não inclui datasets, credenciais ou resultados:
 

@@ -26,6 +26,8 @@ class DomainResources:
     def __init__(self, cfg, client, audit_client=None):
         self.cfg, self.client = cfg, client
         self.audit_client = audit_client or client
+        self.recovery_client=client
+        self.embedding_store=None
         self.legacy_cfg = legacy.Config(
             raiz=ROOT, out_dir=Path(cfg.output) / "dominio",
             corpus_dir=None if (cfg.corpus_txt or cfg.corpus_zip or cfg.corpus_manifest) else cfg.corpus_dir,
@@ -72,6 +74,11 @@ class DomainResources:
                   "lexical_quota_per_collection":self.cfg.lexical_candidates_per_collection,
                   "clusters": self.cfg.clusters, "seed": self.cfg.seed,
                   "audit_version": AUDIT_VERSION, "audit_prompt": fingerprint(AUDIT_PROMPT),
+                  "context_recovery":{"version":"context-recovery-v1","attempts":self.cfg.max_context_refinements,
+                                      "pool":self.cfg.context_recovery_pool},
+                  "embedding_deployment":self.cfg.embedding_deployment,
+                  "embedding_dimensions":self.cfg.embedding_dimensions,
+                  "facet_scope_version":"qa-fpso-facets-v1","source_rerank_version":"fpso-scope-v1",
                   "embedding_representation": "full_text_windows_v1", "overlap":self.cfg.embedding_overlap_tokens,
                   "retrieval": {"window_words": self.legacy_cfg.alvo_palavras_trecho,
                                 "lexical_top_k": self.legacy_cfg.top_k_lexical,
@@ -84,11 +91,15 @@ class DomainResources:
             raise ValueError("Corpus, tópicos ou modelo mudaram. Use outro --output para preservar índices e curvas anteriores.")
         atomic_json(manifest, {"signature": signature, "inputs": inputs})
         self.signature = signature
-        from .embedding import FullTextEmbedder
-        self.emb = FullTextEmbedder(self.legacy_cfg,self.cfg.embedding_overlap_tokens)
+        if self.cfg.reuse_preparation_from:
+            from .preparation_cache import reuse_preparation
+            reuse_preparation(self.cfg.reuse_preparation_from,self.legacy_cfg.out_dir,inputs,signature)
+        from .azure_embeddings import AzureFullTextEmbedder
+        self.emb = AzureFullTextEmbedder(self.cfg,store=self.embedding_store)
         # Reutiliza os passos já existentes: extração de facetas -> busca lexical
         # streaming em todos os tópicos -> rerank semântico + MMR.
-        facets = legacy.extrair_facetas(self.client, TOPICOS, self.legacy_cfg,
+        from .facet_scope import ScopedFacetClient
+        facets = legacy.extrair_facetas(ScopedFacetClient(self.client), TOPICOS, self.legacy_cfg,
             subtopicos_alvo=[(t,s) for t in selected_topics for s in TOPICOS[t]])
         if collections:
             from .multi_corpus import bilingual_facets, scan, plan_documents
@@ -104,10 +115,23 @@ class DomainResources:
             grouped[(facet.topico, facet.subtopico)].append(facet)
         for values in candidates.values():
             for chunk in values:
-                self.chunk_lookup[chunk["chunk_id"]] = chunk
+                # A mesma fonte pode aparecer em várias buscas. A faceta/score
+                # de uma busca não pode sobrescrever a identidade de outra.
+                self.chunk_lookup[chunk["chunk_id"]] = {k:v for k,v in chunk.items()
+                    if k not in ('faceta_id','lex_score','termos_fortes')}
         coverage = []
         audit_journal=Path(self.cfg.output)/'auditorias_contexto.jsonl'
         journaled={r['doc_id'] for r in read_jsonl(audit_journal)}
+        def log_audit(context,audit):
+            chunks=context['chunks'];doc_id=context['doc_id']
+            if doc_id not in journaled:
+                append_jsonl(audit_journal,{'doc_id':doc_id,'topic':context['topic'],'subtopic':context['subtopic'],
+                    'collections':context['collections'],'approved_collections':sorted({c.get('collection','petroles')
+                    for c in chunks if audit['approved'] and c['chunk_id'] in audit.get('allowed_chunk_ids',[])}),
+                    'approved':audit['approved'],'audit':audit})
+                journaled.add(doc_id)
+            reason=' '.join(str(audit.get('reason','')).split())[:300]
+            print(f"[auditoria] {context['subtopic']}: {doc_id} -> {'aprovado' if audit['approved'] else 'bloqueado'} | {reason}",flush=True)
         for topic in selected_topics:
             topic_texts = {}
             for subtopic in TOPICOS[topic]:
@@ -115,6 +139,7 @@ class DomainResources:
                 plan = (plan_documents(pair_facets,candidates,self.emb,self.legacy_cfg,legacy) if collections else
                         legacy.plano_de_documentos(pair_facets, candidates, self.emb, self.legacy_cfg))
                 valid_plan=[]
+                approved_sets=set();duplicate_contexts=0;content_blocked=0
                 facets_by_id={f.id:f for f in pair_facets}
                 for doc in plan:
                     facet=facets_by_id[doc['faceta_id']]
@@ -124,17 +149,23 @@ class DomainResources:
                         'doc_id':doc['doc_id'],'chunks':chunks,
                         'collections':sorted({c.get('collection','petroles') for c in chunks})}
                     audit=audit_source(self.audit_client,context,self.legacy_cfg.out_dir,signature)
-                    if doc['doc_id'] not in journaled:
-                        append_jsonl(audit_journal,{'doc_id':doc['doc_id'],'topic':topic,'subtopic':subtopic,
-                            'collections':context['collections'],
-                            'approved_collections':sorted({c.get('collection','petroles') for c in chunks
-                                if audit['approved'] and c['chunk_id'] in audit.get('allowed_chunk_ids',[])}),
-                            'approved':audit['approved'],'audit':audit})
-                        journaled.add(doc['doc_id'])
-                    print(f"[auditoria] {subtopic}: {doc['doc_id']} -> {'aprovado' if audit['approved'] else 'bloqueado'}",flush=True)
-                    if not audit['approved']:continue
+                    log_audit(context,audit)
+                    if not audit['approved'] and self.cfg.max_context_refinements:
+                        from .context_recovery import recover_context
+                        context,audit=recover_context(context,audit,candidates.get(facet.id,[]),self.emb,self.legacy_cfg,
+                            self.cfg,self.recovery_client,self.audit_client,self.legacy_cfg.out_dir,signature,legacy,audit_source,log_audit)
+                    if not audit['approved']:
+                        content_blocked+=1;continue
+                    chunks=context['chunks']
+                    doc={**doc,'doc_id':context['doc_id'],'chunk_ids':[c['chunk_id'] for c in chunks]}
                     allowed=set(audit['allowed_chunk_ids'])
                     context['chunks']=[dict(c) for c in chunks if c['chunk_id'] in allowed]
+                    evidence_set=(facet.id,frozenset(c['chunk_id'] for c in context['chunks']))
+                    if evidence_set in approved_sets:
+                        duplicate_contexts+=1
+                        print(f"[contexto] {context['doc_id']}: seleção aprovada já presente; duplicata retirada do plano",flush=True)
+                        continue
+                    approved_sets.add(evidence_set)
                     context['collections']=sorted({c.get('collection','petroles') for c in context['chunks']})
                     context.update(document=audited_document(audit),source_audit=audit,corpus_signature=signature,
                         embedding_diagnostics={c['chunk_id']:self.emb.diagnostics(c['texto']) for c in context['chunks']})
@@ -149,13 +180,16 @@ class DomainResources:
                     "plan": valid_plan, "codebook": codebook, "facets": facets_by_id}
                 coverage.append({"topic": topic, "subtopic": subtopic, "chunks": len(unique),
                                  "documents": len(valid_plan), "planned_documents":len(plan),
-                                 "blocked_documents":len(plan)-len(valid_plan),
+                                 "blocked_documents":content_blocked,
                                  "valid_facets":len({d['faceta_id'] for d in valid_plan}),
                                  "codebook_clusters": codebook.k if codebook else 0,
                                  "documents_by_collection":dict(Counter(
                                      c for doc in valid_plan for c in self.doc_contexts[doc['doc_id']]['collections'])),
                                  "documents_with_multiple_collections":sum(
-                                     len(self.doc_contexts[doc['doc_id']]['collections'])>1 for doc in valid_plan)})
+                                     len(self.doc_contexts[doc['doc_id']]['collections'])>1 for doc in valid_plan),
+                                 "recovered_documents":sum(bool(self.doc_contexts[doc['doc_id']].get(
+                                     'context_recovery',{}).get('recovered')) for doc in valid_plan),
+                                 "duplicate_contexts_removed":duplicate_contexts})
             if topic_texts:
                 self.topic_codebooks[topic] = self.make_codebook(list(topic_texts.values()), f"topic::{topic}")
         atomic_json(Path(self.cfg.output) / "cobertura_dominio.json", coverage)
@@ -165,7 +199,7 @@ class DomainResources:
     def make_codebook(self, texts, name):
         # O codebook é fixo e treinado sobre dados do domínio, nunca sobre tags
         # livres geradas pelo próprio modelo nem reagrupado a cada rodada.
-        name = f"qa-v3::{self.signature}::{fingerprint(texts)}::{name}"
+        name = f"qa-v4::{self.signature}::{fingerprint(texts)}::{name}"
         if len(texts) >= 8:
             return legacy.treinar_codebook(texts, self.emb, self.legacy_cfg, nome=name)
         centers = self.emb.encode(texts)

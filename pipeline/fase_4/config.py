@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_VERSION = "petroquest-qa-v3"
+SCHEMA_VERSION = "petroquest-qa-v4"
 DIFFICULTIES = ("facil", "media", "dificil")
 
 
@@ -18,13 +18,16 @@ def default_corpus():
 
 @dataclass
 class QAConfig:
-    output: Path = ROOT / "pipeline/fase_4/saida_qa_v3_medium"
+    output: Path = ROOT / "pipeline/fase_4/saida_qa_v4_azure_large_medium"
     corpus_dir: Path | None = field(default_factory=default_corpus)
     corpus_txt: list[Path] = field(default_factory=list)
     corpus_zip: Path | None = None
     corpus_manifest: Path | None = None
     allow_sample_corpus: bool = False
     lexical_candidates_per_collection: int = 60
+    max_context_refinements: int = 2
+    context_recovery_pool: int = 24
+    reuse_preparation_from: Path | None = None
     external_examples: Path = ROOT / "pipeline/qa_references/data/qa_examples.jsonl"
     reviewed_seeds: Path = ROOT / "pipeline/qa_references/review/sementes_qa_candidatas.jsonl"
     human_ratings: Path = ROOT / "pipeline/fase_2/questionarios/respostas_questionario"
@@ -32,7 +35,12 @@ class QAConfig:
     preparation_deployment: str = "gpt-5-4-petrobras"
     judge_deployment: str = "gpt-5-4-petrobras"
     effort: str = "medium"
-    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    embedding_model: str = "text-embedding-3-large"
+    embedding_deployment: str = 'embedding-3-large-global'
+    embedding_dimensions: int = 3072
+    embedding_max_tokens: int = 8192
+    embedding_batch_size: int = 64
+    embedding_batch_tokens: int = 100000
     limit_per_topic: int = 100
     batch_size: int = 2
     max_attempts_per_topic: int = 1000
@@ -78,10 +86,18 @@ class QAConfig:
                 raise ValueError(f'O parâmetro {name} precisa ser finito')
         if self.effort not in ('low','medium','high'):
             raise ValueError('Effort suportado nesta rodada: low, medium ou high')
+        if (self.embedding_model,self.embedding_deployment,self.embedding_dimensions)!=(
+            'text-embedding-3-large','embedding-3-large-global',3072):
+            raise ValueError('Esta rodada usa exclusivamente embedding-3-large-global, com 3072 dimensões')
+        if not 1<=self.embedding_batch_size<=2048 or not 1<=self.embedding_batch_tokens<=300000:
+            raise ValueError('Lotes de embeddings fora dos limites da API')
+        if self.embedding_max_tokens!=8192:raise ValueError('Limite de entrada desta rodada: 8192 tokens')
         if min(self.limit_per_topic, self.batch_size, self.max_attempts_per_topic, self.max_calls) < 1:
             raise ValueError("Metas, tamanho de lote e limites técnicos devem ser positivos")
         if self.lexical_candidates_per_collection < 1:
             raise ValueError('Cota lexical por coleção deve ser positiva')
+        if self.max_context_refinements<0 or self.context_recovery_pool<6:
+            raise ValueError('Refinos de contexto >=0 e conjunto de recuperação >=6')
         if self.corpus_manifest and (self.corpus_txt or self.corpus_zip):
             raise ValueError('O manifesto já inclui Petrolês; não combine com --corpus-txt/zip')
         if self.max_refinements < 0 or self.format_examples < 1 or self.cross_topic_examples < 1:

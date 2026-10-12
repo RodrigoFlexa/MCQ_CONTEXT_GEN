@@ -83,17 +83,29 @@ Se alguns PDFs públicos estiverem indisponíveis, consulte o relatório e repit
 
 ```bash
 python pipeline/qa_references/download_qa_examples.py --max-per-dataset 1000
-mkdir -p pipeline/fase_4/saida_qa_v3_contextos_multicorpus_medium
+mkdir -p pipeline/fase_4/saida_qa_v4_azure_large_medium
 
 nohup python -u pipeline/fase_4/run_qa.py \
   --corpus-manifest dataset/domain_corpora/manifest.json \
   --deployment gpt-5-4-petrobras --effort medium \
+  --embedding-deployment embedding-3-large-global \
   --limit-per-topic 100 --batch-size 2 --observe-only --max-calls 10000 \
-  --output pipeline/fase_4/saida_qa_v3_contextos_multicorpus_medium \
-  > pipeline/fase_4/saida_qa_v3_contextos_multicorpus_medium/execucao.log 2>&1 < /dev/null &
+  --max-context-refinements 2 \
+  --output pipeline/fase_4/saida_qa_v4_azure_large_medium \
+  > pipeline/fase_4/saida_qa_v4_azure_large_medium/execucao.log 2>&1 < /dev/null &
 ```
 
-Use uma **nova saída**: fontes, recuperação e prompts mudaram. Para retomar esta mesma rodada, repita os argumentos com `--resume`. `--prepare-only` permite revisar as auditorias antes de gerar QA; essa etapa **usa Azure**. O teto de 10.000 chamadas é operacional e foi ampliado porque haverá mais documentos auditáveis; não é uma previsão de consumo.
+Use uma **nova saída QA v4**, sem retomar a coleta anterior: facetas, seleção, embeddings e auditoria mudaram. Os corpora instalados permanecem válidos; a preparação e os vetores são recalculados. Para continuar uma interrupção desta mesma QA v4, repita os argumentos com `--resume`. `--prepare-only` permite revisar as auditorias antes de gerar QA; essa etapa **usa Azure**, inclusive embeddings. O teto de 10.000 pedidos lógicos inclui LLM e embeddings; não é uma previsão de consumo. Pode ser ampliado na retomada.
+
+Antes de iniciar, teste o acesso ao deployment com um pedido curto de embeddings (não gera QA):
+
+```bash
+python pipeline/fase_4/prepare_tokenizer.py
+python pipeline/fase_4/run_qa.py --check-embeddings \
+  --embedding-deployment embedding-3-large-global --output dataset/embedding_smoke_servidor
+```
+
+O primeiro comando baixa o vocabulário público cl100k_base, verificando seu hash; aceita `--ca-file` e utiliza `AOAI_CA_BUNDLE` do backend quando configurado. O segundo usa o Azure e precisa retornar vetores `(2, 3072)`. Ambos preservam verificação TLS. Endpoint, credenciais, API version, gateway e certificado seguem a configuração existente do projeto. Não há chamada ao modelo de chat no teste de embeddings.
 
 O manifesto substitui a seleção de arquivos na CLI: já contém Petrolês. Não combine `--corpus-manifest` com `--corpus-txt`, `--corpus-dir` ou `--corpus-zip`.
 
@@ -102,8 +114,8 @@ O manifesto substitui a seleção de arquivos na CLI: já contém Petrolês. Nã
 1. O manifesto e os hashes são conferidos antes de preparar facetas.
 2. As consultas/termos das facetas ganham versão em inglês, via modelo de preparação, com cache. Textos originais não são traduzidos em massa.
 3. A busca guarda até **60 candidatos por `(faceta, coleção)`**, em vez de deixar todo o top-K ser ocupado pelo corpus maior. Janelas não atravessam documentos/páginas quando essas fronteiras existem.
-4. Os candidatos de **todas as coleções formam um conjunto único por faceta**. Rerank vetorial e MMR selecionam até 12 trechos, montando até dois documentos de contexto com no máximo seis trechos cada. **Um mesmo documento pode combinar Petrolês, ANP, HSE, BSEE e REGIS.** Não há função específica nem fonte obrigatória por coleção; a escolha depende de relevância e diversidade do conteúdo. Conteúdo textual idêntico em coleções distintas é deduplicado. Também são válidos contextos de uma só coleção.
-5. Cada montagem passa pelo auditor de conteúdo, que recebe o conjunto e a proveniência de cada trecho. Ele verifica compatibilidade de condições, contradições e jurisdições, podendo excluir trechos ou bloquear a montagem. Apenas trechos autorizados chegam ao Gerador/Refiner/Judge, com idioma, jurisdição e referência ao original. O código não infere que fontes da mesma faceta descrevam a mesma instalação.
+4. Os candidatos de **todas as coleções formam um conjunto único por faceta**. Embeddings são exclusivamente Azure `embedding-3-large-global`, em 3.072 dimensões. O ranking combina similaridade à faceta (0,60), ao escopo FPSO/FSO (0,25) e relevância lexical (0,15), seguido de MMR. São parâmetros iniciais, ainda não calibrados com a nova coleta. Seleciona até 12 trechos, montando até dois documentos com no máximo seis trechos cada. **Um mesmo contexto pode combinar os cinco corpora**, sem função fixa por coleção. Conteúdo idêntico entre coleções é deduplicado; contextos de uma só coleção também são válidos.
+5. Cada montagem passa pelo auditor de conteúdo, que recebe o conjunto e a proveniência de cada trecho. Ele verifica compatibilidade de condições, contradições e jurisdições, podendo excluir trechos ou bloquear a montagem. Um contexto bloqueado pode passar por **duas recomposições**: um refinador seleciona novos IDs entre até 24 candidatos reais, orientado pelo parecer; cada seleção recebe nova auditoria independente. Não altera texto original, não inventa fatos e não pode repetir um conjunto já reprovado. Se não houver suporte útil, mantém o bloqueio. Apenas trechos autorizados chegam ao Gerador/Refiner/Judge.
 6. A exploração alterna facetas/documentos e considera uso das coleções. Não é obrigatório usar todas em cada tópico: a pertinência e a auditoria governam a cobertura.
 
 QA continua em português, autossuficiente e sem alternativas. HSE/BSEE não viram automaticamente requisitos brasileiros. Auditoria e Judge fazem o controle factual. Cosine, redundância e saturação continuam **observacionais** nesta rodada.
@@ -111,3 +123,7 @@ QA continua em português, autossuficiente e sem alternativas. HSE/BSEE não vir
 Os resultados incluem `corpora_utilizados.json`, `dominio/indices/candidatos_multicorpus.meta.json`, cobertura por coleção, auditorias, escolhas de coleção em cada rodada e proveniência dos trechos por candidata. Isso permitirá analisar quais fontes contribuíram e onde foram bloqueadas.
 
 `cobertura_dominio.json` também registra `documents_with_multiple_collections`. Um contexto com duas coleções conta em ambas em `documents_by_collection`; essa soma pode exceder o total de documentos. O journal de auditorias registra as coleções candidatas e as efetivamente autorizadas. A nova montagem muda a assinatura dos contextos: se já houve preparação na versão que separava por coleção, utilize a nova saída indicada acima. Os corpora instalados podem ser reutilizados.
+
+QA v4 acrescenta `recuperacoes_contexto.jsonl`, `dominio/recuperacoes/`, `chamadas_embeddings.jsonl` e `dominio/embeddings/azure_cache.sqlite3`. O cache guarda vetores já normalizados por hash do texto e valida modelo, deployment, dimensões, tokenizer e API version. Textos maiores que 8.192 tokens são divididos em janelas sobrepostas e agregados sem truncamento. Lotes têm até 64 entradas e 100.000 tokens. O contrato segue a [API oficial de embeddings](https://developers.openai.com/api/reference/python/resources/embeddings/methods/create). Nenhum vetor MiniLM é utilizado nesta QA v4. A escala de cosine e os clusters mudam, exigindo nova análise; os filtros continuam observacionais.
+
+`--reuse-preparation-from` é uma opção para futuras execuções com preparação compatível, verificando assinaturas e copiando somente facetas/índice lexical. Ela não importa vetores nem auditorias e rejeita as facetas da versão anterior. **Nesta nova rodada, não use essa opção**, para refazer a preparação que gerou os bloqueios relatados.

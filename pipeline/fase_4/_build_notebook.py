@@ -13,7 +13,7 @@ def code(source):
 
 
 cells=[
-markdown('''# PetroQuest QA v3 — fontes auditadas e exploração por cobertura
+markdown('''# PetroQuest QA v4 — embeddings Azure e recuperação dos contextos
 
 Petrolês + ANP + HSE + BSEE + REGIS → recuperação bilíngue → **contextos que podem combinar vários corpora, sem funções fixas por coleção** → auditoria factual por LLM → alternância de subtópicos, facetas, documentos e alvos → Gerador → Scorer/Refiner/Judge → dificuldade independente → avaliação de redundância → journal.
 
@@ -39,7 +39,7 @@ markdown('''## Configuração
 O manifesto une as quatro novas coleções aos dois TXT reais do Petrolês. Instale com `python pipeline/domain_corpora/install_corpora.py --petroles-dir /pasta/real` antes desta etapa. O README de `pipeline/domain_corpora` contém os comandos de instalação e teste. Endpoint/chave/versão Azure ficam no `.env`, fora do Git. Use uma saída nova: o corpus mudou e as curvas anteriores devem ser preservadas.
 '''),
 code('''cfg=QAConfig()
-cfg.output=ROOT/'pipeline/fase_4/saida_qa_v3_contextos_multicorpus_medium'
+cfg.output=ROOT/'pipeline/fase_4/saida_qa_v4_azure_large_medium'
 cfg.corpus_manifest=ROOT/'dataset/domain_corpora/manifest.json'
 cfg.corpus_dir=None  # Petrolês já está no manifesto
 # cfg.corpus_dir=Path('/caminho/real/do/PetrolesHibrido')
@@ -48,11 +48,14 @@ cfg.corpus_dir=None  # Petrolês já está no manifesto
 # cfg.corpus_txt=[Path('/caminho/arquivo1.txt'),Path('/caminho/arquivo2.txt')]
 cfg.deployment=cfg.preparation_deployment=cfg.judge_deployment='gpt-5-4-petrobras'
 cfg.effort='medium'
+cfg.embedding_model='text-embedding-3-large'
+cfg.embedding_deployment='embedding-3-large-global'
+cfg.max_context_refinements=2
 cfg.limit_per_topic=100
 cfg.batch_size=2
 cfg.max_calls=10000  # Mais documentos auditáveis; teto operacional, não sinal de saturação
 cfg.enable_cosine_filter=cfg.filter_redundancy=cfg.enable_saturation_stop=False
-cfg.resume=False  # True apenas para continuar esta mesma execução v3
+cfg.resume=False  # True apenas para continuar esta mesma execução v4
 cfg.validate()
 print(json.dumps(cfg.serializable(),ensure_ascii=False,indent=2))
 '''),
@@ -88,7 +91,9 @@ markdown('''## Preparar e auditar as fontes — usa Azure
 
 Esta célula chama o modelo para avaliar **todos os documentos candidatos dos tópicos selecionados**, antes de gerar perguntas. Audita faceta, condições originais, transferibilidade, afirmações/citações literais e limites normativos. Materiais rejeitados ficam registrados; não são adaptados silenciosamente.
 
-O documento usado no prompt é uma montagem das afirmações aprovadas, preservando contexto e limites. Embeddings usam janelas sobre o texto completo e os codebooks ficam fixos por execução. Esta etapa adiciona custo de preparação, mesmo com effort medium.
+O documento usado no prompt é uma montagem das afirmações aprovadas, preservando contexto e limites. Os embeddings usam exclusivamente Azure `embedding-3-large-global`, em 3.072 dimensões, cobrindo o texto completo em janelas de até 8.192 tokens. Vetores persistem em SQLite e os codebooks ficam fixos por execução. Esta etapa adiciona custo de preparação, inclusive requisições de embeddings.
+
+Contextos bloqueados podem passar por até duas recomposições com trechos existentes, diagnóstico por trecho e nova auditoria independente. O refinador seleciona IDs, sem reescrever fontes. As causas e os resultados ficam no journal de recuperação. Uma reprovação válida com zero trechos autorizados é registrada como bloqueio factual, não erro de formato. Esta rodada descarta a preparação e os resultados anteriores: use a nova saída sem `--resume` nem `--reuse-preparation-from`.
 '''),
 code('''prepared=execute(replace(cfg,prepare_only=True))
 print('Estado:',prepared.meta['status'])
@@ -159,7 +164,7 @@ print('Resultados:',cfg.output)
 
 
 def main():
-    for number,cell in enumerate(cells):cell['id']=f'qa-v3-{number:02d}'
+    for number,cell in enumerate(cells):cell['id']=f'qa-v4-{number:02d}'
     notebook={'cells':cells,'metadata':{'kernelspec':{'display_name':'Python 3','language':'python','name':'python3'},
                 'language_info':{'name':'python'}},'nbformat':4,'nbformat_minor':5}
     Path(__file__).with_name('petroquest_fase4_qa.ipynb').write_text(

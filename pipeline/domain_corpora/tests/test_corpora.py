@@ -260,7 +260,7 @@ class Retrieval(unittest.TestCase):
                 return {'approved':True,'allowed_chunk_ids':[c['chunk_id'] for c in context['chunks']],
                         'targets':['Função da bomba'],'claims':[],'limitations':[],'original_context':'produção','transferability':'técnica'}
             with patch.object(legacy,'extrair_facetas',return_value=[facet]),\
-                 patch('pipeline.fase_4.embedding.FullTextEmbedder',Embedder),\
+                 patch('pipeline.fase_4.azure_embeddings.AzureFullTextEmbedder',Embedder),\
                  patch('pipeline.fase_4.domain.audit_source',side_effect=audit),\
                  patch('pipeline.fase_4.domain.audited_document',return_value='Afirmações verificadas'),\
                  patch.object(DomainResources,'make_codebook',return_value=SimpleNamespace(k=3)):
@@ -327,7 +327,7 @@ class Retrieval(unittest.TestCase):
                         'targets':['Alvo sustentado'],'claims':[],'limitations':[],
                         'original_context':'produção','transferability':'técnica'}
             with patch.object(legacy,'extrair_facetas',return_value=[facet]),\
-                 patch('pipeline.fase_4.embedding.FullTextEmbedder',Embedder),\
+                 patch('pipeline.fase_4.azure_embeddings.AzureFullTextEmbedder',Embedder),\
                  patch('pipeline.fase_4.domain.audit_source',side_effect=audit),\
                  patch('pipeline.fase_4.domain.audited_document',return_value='Afirmações verificadas'),\
                  patch.object(DomainResources,'make_codebook',return_value=SimpleNamespace(k=3)):
@@ -338,6 +338,27 @@ class Retrieval(unittest.TestCase):
             journal=[json.loads(line) for line in (cfg.output/'auditorias_contexto.jsonl').read_text().splitlines()]
             self.assertTrue(any('hse' in r['collections'] for r in journal))
             self.assertTrue(all('hse' not in r['approved_collections'] for r in journal))
+
+    def test_shared_chunks_do_not_carry_another_facets_label(self):
+        from dataclasses import replace
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);path=fixture(root);topic=next(iter(TOPICOS));sub=next(iter(TOPICOS[topic]))
+            facet=legacy.Faceta('f0',topic,sub,'Bomba','fluxo','bomba',['bomba'],['fluido'])
+            cfg=QAConfig(output=root/'run',corpus_manifest=path,corpus_dir=None);cfg.output.mkdir();received=[]
+            def audit(_,context,*args):
+                received.append(context)
+                return {'approved':True,'allowed_chunk_ids':[c['chunk_id'] for c in context['chunks']],
+                        'targets':['Alvo sustentado'],'claims':[],'limitations':[],
+                        'original_context':'produção','transferability':'técnica'}
+            with patch.object(legacy,'extrair_facetas',return_value=[facet,replace(facet,id='f1')]),\
+                 patch('pipeline.fase_4.azure_embeddings.AzureFullTextEmbedder',Embedder),\
+                 patch('pipeline.fase_4.domain.audit_source',side_effect=audit),\
+                 patch('pipeline.fase_4.domain.audited_document',return_value='Verificado'),\
+                 patch.object(DomainResources,'make_codebook',return_value=SimpleNamespace(k=3)):
+                domain=DomainResources(cfg,FakeTranslator()).prepare([topic])
+            self.assertEqual({c['facet_id'] for c in received},{'f0','f1'})
+            self.assertTrue(all('faceta_id' not in chunk for c in received for chunk in c['chunks']))
+            self.assertEqual({d['facet_id'] for d in domain.documents(topic,sub)},{'f0','f1'})
 
 
 if __name__=='__main__':unittest.main()

@@ -35,7 +35,8 @@ class FullTextEmbedder(legacy.Embedder):
         atomic_json(manifest,self.protocol)
 
     def windows(self, text):
-        ids=self.model.tokenizer.encode(text,add_special_tokens=False)
+        # Aqui somente contamos/dividimos tokens; o texto integral não vai ao modelo.
+        ids=self.model.tokenizer.encode(text,add_special_tokens=False,truncation=False,verbose=False)
         if len(ids)<=self.window:
             return [text],[max(1,len(ids))]
         pieces, weights=[],[]
@@ -62,7 +63,7 @@ class FullTextEmbedder(legacy.Embedder):
         if pieces:
             # encode de texto decodificado pode alterar a tokenização: nunca cortar silenciosamente.
             for part in pieces:
-                if len(self.model.tokenizer.encode(part,add_special_tokens=True))>self.model.max_seq_length:
+                if len(self.model.tokenizer.encode(part,add_special_tokens=True,truncation=False,verbose=False))>self.model.max_seq_length:
                     raise ValueError("Janela re-tokenizada excede o modelo; ajuste a estratégia")
             vectors=np.asarray(self.model.encode(pieces,batch_size=batch_size,
                 normalize_embeddings=True,show_progress_bar=progresso),dtype=np.float32)
@@ -72,5 +73,5 @@ class FullTextEmbedder(legacy.Embedder):
         return np.stack([self._cache[k] for k in keys])
 
     def diagnostics(self,text):
-        n=len(self.model.tokenizer.encode(text,add_special_tokens=False))
+        n=len(self.model.tokenizer.encode(text,add_special_tokens=False,truncation=False,verbose=False))
         return {'tokens':n,'windows':len(self.windows(text)[0]),'silently_truncated':False}
