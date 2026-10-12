@@ -9,8 +9,10 @@ from .stopping import update_status,topic_status
 
 
 def target_list(context):
+    sources={t['description']:t['chunk_ids'] for t in context['source_audit'].get('target_sources',[])}
     return [{'target_id':hashlib.sha256((context['topic']+'|'+context['subtopic']+'|'+
-                 ' '.join(t.casefold().split())).encode()).hexdigest()[:16],'description':t}
+                 ' '.join(t.casefold().split())).encode()).hexdigest()[:16],'description':t,
+             **({'chunk_ids':sources[t]} if t in sources else {})}
             for t in context['source_audit']['targets']]
 
 

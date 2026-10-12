@@ -64,7 +64,7 @@ class RunStore:
         if self.config_path.exists():
             previous = json.loads(self.config_path.read_text(encoding="utf-8"))
             if previous.get("schema_version") != SCHEMA_VERSION:
-                raise ValueError("Saída incompatível com QA v4. Use outra pasta; os resultados antigos permanecem preservados.")
+                raise ValueError("Saída incompatível com QA v6. Use outra pasta; os resultados antigos permanecem preservados.")
             if not cfg.resume:
                 raise ValueError("A pasta já contém uma execução. Use --resume ou escolha outro --output.")
             mutable={'resume','prepare_only','max_calls','max_attempts_per_topic','max_consecutive_api_failures'}

@@ -1,4 +1,4 @@
-"""QA v4: embeddings Azure, recuperação de contexto e QA auditada."""
+"""QA v6: composição técnica por faceta e geração QA com avaliação independente."""
 from collections import Counter
 import hashlib
 from pathlib import Path
@@ -14,16 +14,17 @@ from .redundancy import assess_redundancy,deduplicate_seeds
 from .scheduling import CoverageScheduler
 from .storage import RunStore,BudgetedClient,CallLimitReached,utc_now,atomic_json,write_jsonl
 
-ROLES=('preparation','source_auditor','context_refiner','generator','refiner','judge','difficulty','redundancy')
+ROLES=('preparation','context_composer','source_auditor','context_refiner','generator','refiner','judge','difficulty','redundancy')
 
 
 def build_clients(cfg,store,backends=None):
     if backends is None:
         from azure_openai_backend import AzureOpenAIBackend
-        deployments={r:cfg.preparation_deployment if r in ('preparation','source_auditor','context_refiner') else
+        deployments={r:cfg.preparation_deployment if r in ('preparation','context_composer','source_auditor','context_refiner') else
                        cfg.judge_deployment if r in ('judge','difficulty','redundancy') else cfg.deployment for r in ROLES}
         backends={r:AzureOpenAIBackend(deployment=d,reasoning_effort=cfg.effort,api_style='reasoning',
-                    max_tokens=12000,reasoning_min_tokens=12000,request_timeout=300,cache_enabled=False)
+                    max_tokens=cfg.composition_max_tokens if r=='context_composer' else 12000,
+                    reasoning_min_tokens=12000,request_timeout=600 if r=='context_composer' else 300,cache_enabled=False)
                   for r,d in deployments.items()}
     return {r:BudgetedClient(backends[r],r,store) for r in ROLES}
 
@@ -57,11 +58,13 @@ def process_batch(raw_items,context,difficulty,batch_id,quality_examples,externa
     processed=[];used_targets=set()
     for position,raw in enumerate(raw_items[:requested]):
         normalized=normalize_question(raw)
-        row={'schema_version':SCHEMA_VERSION,'id':f'{batch_id}-q{position}','origin':'generated_qa_v4',
+        row={'schema_version':SCHEMA_VERSION,'id':f'{batch_id}-q{position}','origin':'generated_qa_v6',
             'topic':context['topic'],'subtopic':context['subtopic'],'requested_difficulty':difficulty,
             'batch_id':batch_id,'doc_id':context['doc_id'],'facet_id':context['facet_id'],
             'facet_title':context['facet_title'],'focus':context['focus'],'source_chunks':context['chunks'],
             'source_audit':context['source_audit'],'document':context['document'],
+            'context_mode':context.get('context_mode','audited'),
+            'context_composition':context.get('context_composition'),
             'context_recovery':context.get('context_recovery'),
             'source_embedding_diagnostics':context.get('embedding_diagnostics',{}),
             'corpus_signature':context['corpus_signature'],
@@ -167,7 +170,7 @@ def execute(cfg,*,backends=None,domain=None,seeds=None,external=None):
     if set(selected)-set(TOPICOS):raise ValueError('Tópicos desconhecidos')
     store=RunStore(cfg);summaries={}
     try:
-        names=('prompts_qa','source_audit','difficulty','scoring','redundancy','embedding','azure_embeddings','prepare_tokenizer','facet_scope','context_recovery','preparation_cache','scheduling','stopping','engine','examples','metrics','domain','config','storage','multi_corpus')
+        names=('prompts_qa','source_audit','context_composition','difficulty','scoring','redundancy','embedding','azure_embeddings','prepare_tokenizer','facet_scope','context_recovery','preparation_cache','scheduling','stopping','engine','examples','metrics','domain','config','storage','multi_corpus')
         files=[Path(__file__).with_name(n+'.py') for n in names]
         files += [Path(__file__).parents[1]/'fase_3'/name for name in ('utils_fase3.py','prompts_fase3.py','topicos.py','seed_fase3.py')]
         files += [Path(__file__).parents[1]/'qa_references/download_qa_examples.py']
@@ -189,8 +192,10 @@ def execute(cfg,*,backends=None,domain=None,seeds=None,external=None):
         if domain is None:
             domain=DomainResources(cfg,clients['preparation'],clients['source_auditor'])
             domain.recovery_client=clients['context_refiner'];domain.embedding_store=store
+            domain.composition_client=clients['context_composer']
             domain.prepare(selected)
         store.meta.update(corpus_signature=domain.signature,domain_required=True,quality_roles=list(ROLES),
+                          context_mode=cfg.context_mode,factually_audited_contexts=cfg.context_mode=='audited',
                           embedding_protocol=getattr(domain.emb,'protocol',{}))
         if cfg.prepare_only:store.status('prepared');return store
         if not seeds or not external:raise ValueError('Exemplos humanos e externos QA são obrigatórios')
@@ -203,7 +208,7 @@ def execute(cfg,*,backends=None,domain=None,seeds=None,external=None):
         for topic in selected:
             covered=domain.covered_subtopics(topic)
             if not covered:
-                summaries[topic]={'topic':topic,'accepted':0,'stop_reason':'no_audited_domain_evidence'}
+                summaries[topic]={'topic':topic,'accepted':0,'stop_reason':'no_prepared_domain_context'}
                 atomic_json(store.root/'resumo_topicos.json',list(summaries.values()));continue
             reason=None
             while sum(r['topic']==topic for r in store.accepted)<cfg.limit_per_topic:
@@ -217,7 +222,7 @@ def execute(cfg,*,backends=None,domain=None,seeds=None,external=None):
                 quota_remaining=selection['subtopic_quota']-selection['subtopic_accepted']
                 requested=min(cfg.batch_size,remaining,attempts,len(context['generation_targets']),max(1,quota_remaining))
                 number=store.reserve_round(topic,requested)
-                batch_id=f"qa-v4-{hashlib.sha256(topic.encode()).hexdigest()[:12]}-r{number}"
+                batch_id=f"qa-v6-{hashlib.sha256(topic.encode()).hexdigest()[:12]}-r{number}"
                 subtopic=context['subtopic'];before=domain.entropy(store.accepted,topic)
                 store.event('selection',{'batch_id':batch_id,**selection})
                 try:
@@ -266,7 +271,7 @@ def execute(cfg,*,backends=None,domain=None,seeds=None,external=None):
         store.status('completed' if len(summaries)==len(selected) and all(r['accepted']>=cfg.limit_per_topic for r in summaries.values()) else 'finished_with_limits')
         return store
     except CallLimitReached:
-        store.status('finished_with_limits');store.event('api_budget',{'stage_detail':'preparation_or_audit'});return store
+        store.status('finished_with_limits');store.event('api_budget',{'stage_detail':'preparation_or_composition_or_audit'});return store
     except BaseException:
         store.status('interrupted');raise
     finally:

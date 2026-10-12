@@ -253,7 +253,7 @@ class Retrieval(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);path=fixture(root);topic=next(iter(TOPICOS));sub=next(iter(TOPICOS[topic]))
             facet=legacy.Faceta('f',topic,sub,'Bomba','fluxo','bomba pressao',['bomba'],['fluido'])
-            cfg=QAConfig(output=root/'run',corpus_manifest=path,corpus_dir=None)
+            cfg=QAConfig(context_mode='audited',chunk_words=250,chunks_per_facet=3,output=root/'run',corpus_manifest=path,corpus_dir=None)
             cfg.output.mkdir();client=FakeTranslator();audits=[]
             def audit(_,context,*args):
                 audits.append(context)
@@ -320,7 +320,7 @@ class Retrieval(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);path=fixture(root);topic=next(iter(TOPICOS));sub=next(iter(TOPICOS[topic]))
             facet=legacy.Faceta('f',topic,sub,'Bomba','fluxo','bomba',['bomba'],['fluido'])
-            cfg=QAConfig(output=root/'run',corpus_manifest=path,corpus_dir=None);cfg.output.mkdir()
+            cfg=QAConfig(context_mode='audited',chunk_words=250,chunks_per_facet=3,output=root/'run',corpus_manifest=path,corpus_dir=None);cfg.output.mkdir()
             def audit(_,context,*args):
                 return {'approved':True,
                         'allowed_chunk_ids':[c['chunk_id'] for c in context['chunks'] if c['collection']!='hse'],
@@ -344,7 +344,7 @@ class Retrieval(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);path=fixture(root);topic=next(iter(TOPICOS));sub=next(iter(TOPICOS[topic]))
             facet=legacy.Faceta('f0',topic,sub,'Bomba','fluxo','bomba',['bomba'],['fluido'])
-            cfg=QAConfig(output=root/'run',corpus_manifest=path,corpus_dir=None);cfg.output.mkdir();received=[]
+            cfg=QAConfig(context_mode='audited',chunk_words=250,chunks_per_facet=3,output=root/'run',corpus_manifest=path,corpus_dir=None);cfg.output.mkdir();received=[]
             def audit(_,context,*args):
                 received.append(context)
                 return {'approved':True,'allowed_chunk_ids':[c['chunk_id'] for c in context['chunks']],

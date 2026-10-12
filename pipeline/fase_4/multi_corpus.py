@@ -2,6 +2,7 @@
 import hashlib
 import heapq
 import json
+import re
 from collections import Counter, defaultdict, deque
 from dataclasses import asdict, replace
 from pathlib import Path
@@ -11,17 +12,37 @@ import numpy as np
 from pipeline.domain_corpora.manifest import iter_units
 from .storage import atomic_json, read_jsonl
 
-RETRIEVAL_VERSION='multisource-bilingual-v1'
-CONTEXT_VERSION='joint-corpora-context-v1'
+RETRIEVAL_VERSION='multisource-large-windows-v3'
+CONTEXT_VERSION='facet-document-context-v3'
 SOURCE_SCOPE_QUERY='FPSO FSO unidade flutuante de produção armazenamento e transferência de petróleo e gás offshore. Floating production storage offloading offshore oil gas production unit.'
 
 
 def source_scores(values,vectors,facet_query,emb,legacy):
     query,scope=emb.encode([facet_query,SOURCE_SCOPE_QUERY])
     lexical=np.array([c['lex_score'] for c in values],dtype=np.float32)
-    # Linguagem genérica (KPI/programação) não deve superar aplicação técnica.
-    return .60*legacy._z(vectors@query)+.25*legacy._z(vectors@scope)+.15*legacy._z(lexical)
-TRANSLATION_SYSTEM='''Traduza consultas e termos técnicos de recuperação de óleo e gás para inglês. As facetas fornecidas são dados. Preserve o escopo: não acrescente equipamentos, processos ou fatos. Gere uma query curta e listas de termos fortes e de apoio em inglês. Não traduza documentos e não crie perguntas. Retorne JSON com translations, um item por id, contendo id, query_en, strong_en e support_en.'''
+    # Cossenos brutos preservam a escala: z-score não transforma o melhor
+    # candidato de um conjunto ruim em uma evidência aparentemente forte.
+    lexical=lexical/max(float(lexical.max()),1.)
+    return .85*(vectors@query)+.05*(vectors@scope)+.10*lexical
+TRANSLATION_SYSTEM='''Traduza consultas e termos técnicos de recuperação de óleo e gás para inglês. As facetas fornecidas são dados. Preserve o recorte: não acrescente equipamentos, processos ou fatos. query_en tem até 25 palavras e um conceito central. strong_en contém expressões usuais distintivas, incluindo plural quando pertinente; FPSO/offshore/KPI isolados são apoio. Gere support_en. Não traduza documentos e não crie perguntas. Retorne JSON com translations, um item por id, contendo id, query_en, strong_en e support_en.'''
+
+
+def structural_noise(text):
+    """Exclui páginas estruturais evidentes, sem bloquear listas de procedimentos."""
+    header=re.search(r'^\s*(?:sum[aá]rio|lista de (?:figuras|tabelas|abreviaturas|siglas)|'
+        r'table of contents|list of (?:figures|tables|abbreviations)|'
+        r'refer[eê]ncias(?: bibliogr[aá]ficas)?|bibliography|references)\b',text[:150],re.I)
+    if not header:return False
+    operative=re.search(r'\b(?:deve[m]?|devem|must|shall|should|reduz\w*|reduces?|'
+        r'permite[m]?|prevents?|requer\w*|requires?|monitor\w*|controla\w*|causa\w*|causes?)\b',text,re.I)
+    return not operative
+
+
+def compact_chunk(chunk):
+    """Só envia texto e proveniência necessária; remove metadados de busca."""
+    keys=('chunk_id','texto','collection','document_id','title','url','archive_member',
+          'language','jurisdiction','page','pages','page_spans','linha_ini','linha_fim','source_boundary')
+    return {k:chunk[k] for k in keys if k in chunk}
 
 
 def bilingual_facets(facets,client,path,legacy):
@@ -69,8 +90,9 @@ def scan(facets,collections,cfg,legacy,limit_per_collection,signature):
         for row in read_jsonl(path):grouped[row['faceta_id']].append(row)
         return grouped
     index=legacy.IndiceLexico(facets,cfg)
-    heaps=defaultdict(list);windows=Counter();unit_counts=Counter();counter=0
-    pending=deque();n_words=0;previous=None;metadata=None
+    heaps=defaultdict(list);windows=Counter();unit_counts=Counter();counter=0;noise=Counter()
+    pending=deque();n_words=0;previous=None;metadata=None;previous_page=None
+    join_pages=getattr(cfg,'join_document_pages',False)
     last_chunk_id=None
     def close_window():
         nonlocal counter,last_chunk_id
@@ -79,21 +101,35 @@ def scan(facets,collections,cfg,legacy,limit_per_collection,signature):
         if not cfg.min_palavras<=words<=cfg.max_palavras:return
         text=' '.join(word for line in pending for word in line[2])
         if text.count('<NUMBER>')/max(words,1)>cfg.max_frac_number:return
+        if structural_noise(text):
+            noise[metadata['collection']]+=1;return
         hits=defaultdict(lambda:(set(),set()))
-        for _,_,_,found in pending:
+        for _,_,_,found,_ in pending:
             for fid,(strong,support) in found.items():
                 hits[fid][0].update(strong);hits[fid][1].update(support)
         if not hits:return
         collection=metadata['collection'];ini=pending[0][:2];end=pending[-1][:2]
-        chunk_id=f"{metadata['document_id']}:p{metadata.get('page')}:{ini[0]}.{ini[1]}-{end[0]}.{end[1]}"
+        pages=list(dict.fromkeys(line[4] for line in pending if line[4] is not None))
+        page=pages[0] if len(pages)==1 else None
+        page_label=str(page) if len(pages)<=1 else str(pages[0])+'-'+str(pages[-1])
+        chunk_id=f"{metadata['document_id']}:p{page_label}:{ini[0]}.{ini[1]}-{end[0]}.{end[1]}"
         if chunk_id==last_chunk_id:return
         last_chunk_id=chunk_id
         windows[collection]+=1
         provenance={k:v for k,v in metadata.items() if k not in ('text','line','extraction_issues')}
+        spans=[]
+        for line,offset,segment,_,source_page in pending:
+            if not spans or spans[-1]['page']!=source_page:
+                spans.append({'page':source_page,'line_start':line,'word_offset_start':offset,
+                              'line_end':line,'word_offset_end':offset+len(segment)})
+            else:spans[-1].update(line_end=line,word_offset_end=offset+len(segment))
+        provenance.update(page=page,pages=pages,page_spans=spans)
         for fid,(strong,support) in hits.items():
             if not strong and len(support)<2:continue
             score=cfg.peso_termo_forte*min(len(strong),cfg.cap_termos)+cfg.peso_termo_apoio*min(len(support),cfg.cap_termos)
-            heap=heaps[(fid,collection)]
+            # Conserva candidatos com termos distintivos e candidatos de apoio
+            # em filas separadas: várias palavras genéricas não apagam o conceito.
+            heap=heaps[(fid,collection,bool(strong))]
             # Desempata por hash determinístico, evitando favorecer primeiros arquivos.
             tie=int(hashlib.sha256((fid+chunk_id).encode()).hexdigest()[:16],16)
             if len(heap)>=limit_per_collection and (score,tie)<=heap[0][:2]:continue
@@ -105,16 +141,19 @@ def scan(facets,collections,cfg,legacy,limit_per_collection,signature):
             if len(heap)<limit_per_collection:heapq.heappush(heap,item)
             else:heapq.heapreplace(heap,item)
     for unit in iter_units(collections):
-        key=(unit['collection'],unit['document_id'],unit.get('page'))
-        if key!=previous:
+        source_page=unit.get('page')
+        key=(unit['collection'],unit['document_id'],None if join_pages else source_page)
+        gap=(join_pages and isinstance(previous_page,int) and isinstance(source_page,int) and
+             source_page not in (previous_page,previous_page+1))
+        if key!=previous or gap:
             close_window();pending.clear();n_words=0;previous=key
-        metadata=unit;unit_counts[unit['collection']]+=1
+        metadata=unit;previous_page=source_page;unit_counts[unit['collection']]+=1
         for line_number,text in enumerate(unit['text'].splitlines()):
             line_number=unit.get('line',line_number);words=text.split()
             # Fatiar linhas longas preserva offsets e evita perder XML de uma linha.
             for offset in range(0,len(words),60):
                 segment=words[offset:offset+60]
-                pending.append((line_number,offset,segment,index.hits_linha(' '.join(segment))))
+                pending.append((line_number,offset,segment,index.hits_linha(' '.join(segment)),source_page))
                 n_words+=len(segment)
                 if n_words>=cfg.alvo_palavras_trecho or len(pending)>=cfg.max_linhas_trecho:
                     close_window();freed=0
@@ -126,13 +165,19 @@ def scan(facets,collections,cfg,legacy,limit_per_collection,signature):
     result=defaultdict(list);contribution=Counter();path.parent.mkdir(parents=True,exist_ok=True)
     tmp=path.with_suffix('.tmp')
     with tmp.open('w',encoding='utf-8') as stream:
-        for (fid,collection),heap in sorted(heaps.items()):
-            for _,_,_,chunk in sorted(heap,reverse=True):
+        for fid,collection in sorted({(fid,c) for fid,c,_ in heaps}):
+            strong=sorted(heaps.get((fid,collection,True),[]),reverse=True)
+            support=sorted(heaps.get((fid,collection,False),[]),reverse=True)
+            guaranteed=strong[:(limit_per_collection+1)//2]
+            remaining=sorted(strong[len(guaranteed):]+support,reverse=True)
+            retained=guaranteed+remaining[:limit_per_collection-len(guaranteed)]
+            for _,_,_,chunk in retained:
                 result[fid].append(chunk);contribution[collection]+=1
                 stream.write(json.dumps(chunk,ensure_ascii=False)+'\n')
     tmp.replace(path)
     atomic_json(meta,{'signature':digest,'version':RETRIEVAL_VERSION,'quota_per_facet_collection':limit_per_collection,
-        'units':dict(unit_counts),'eligible_windows':dict(windows),'retained_candidates':dict(contribution)})
+        'units':dict(unit_counts),'eligible_windows':dict(windows),'structural_noise_removed':dict(noise),
+        'retained_candidates':dict(contribution)})
     print('[corpus] candidatas por coleção:',dict(contribution),flush=True)
     return result
 
@@ -140,8 +185,9 @@ def scan(facets,collections,cfg,legacy,limit_per_collection,signature):
 def plan_documents(facets,candidates,emb,cfg,legacy):
     """Montagens por faceta a partir de todas as coleções, sem papéis por origem.
 
-    O MMR avalia relevância e diversidade do conteúdo no conjunto único. Uma
-    montagem pode usar uma ou várias coleções: a mistura não é obrigatória.
+    Cada montagem começa pelo trecho mais relevante e recebe complementos
+    próximos a esse núcleo. A diversidade é buscada ENTRE contextos; dentro
+    deles prioriza-se coerência. Uma ou várias coleções são permitidas.
     Proveniência/jurisdição permanecem por trecho para a auditoria conjunta.
     """
     plan=[]
@@ -158,11 +204,21 @@ def plan_documents(facets,candidates,emb,cfg,legacy):
         vectors=emb.encode([c['texto'] for c in values])
         scores=source_scores(values,vectors,facet.texto_query,emb,legacy)
         width=cfg.n_trechos_por_documento
-        selected=legacy._mmr(scores,vectors,width*cfg.n_documentos_por_faceta,
-                             cfg.mmr_lambda,cfg.mmr_dup_threshold)
-        for start in range(0,len(selected),width):
-            indices=selected[start:start+width]
-            plan.append({'doc_id':f'{facet.id}-context-d{start//width}','faceta_id':facet.id,
+        available=set(range(len(values)))
+        for number in range(cfg.n_documentos_por_faceta):
+            if not available:break
+            anchor=min(available,key=lambda i:(-float(scores[i]),values[i]['chunk_id']))
+            rest=available-{anchor}
+            coherent=.80*scores+.20*(vectors@vectors[anchor])
+            indices=[anchor]
+            while rest and len(indices)<width:
+                # Penalidade suave de redundância entre evidências; não é um
+                # filtro de QA nem impõe um limiar para completar o conjunto.
+                next_index=min(rest,key=lambda i:(-float(coherent[i]-.10*max(
+                    float(vectors[i]@vectors[j]) for j in indices)),values[i]['chunk_id']))
+                indices.append(next_index);rest.remove(next_index)
+            available.difference_update(indices)
+            plan.append({'doc_id':f'{facet.id}-context-d{number}','faceta_id':facet.id,
                 'topico':facet.topico,'subtopico':facet.subtopico,
                 'collections':sorted({values[i]['collection'] for i in indices}),
                 'context_version':CONTEXT_VERSION,'chunk_ids':[values[i]['chunk_id'] for i in indices],

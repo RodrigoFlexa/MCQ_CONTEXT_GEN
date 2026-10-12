@@ -27,6 +27,11 @@ def parser():
     corpus.add_argument('--corpus-manifest',type=Path,help='Manifesto instalado com Petrolês + ANP + HSE + BSEE + REGIS')
     p.add_argument('--allow-sample-corpus',action='store_true',help='Permite explicitamente um corpus de teste, sem confundir com instalação completa')
     p.add_argument('--lexical-candidates-per-collection',type=int,default=60)
+    p.add_argument('--context-mode',choices=['composed','audited'],default=QAConfig.context_mode,
+                   help='composed: documento técnico por LLM sem auditoria prévia bloqueante; audited: auditoria estrita')
+    p.add_argument('--chunk-words',type=int,default=QAConfig.chunk_words,help='Alvo de palavras por trecho; preserva proveniência entre páginas consecutivas')
+    p.add_argument('--chunks-per-facet',type=int,default=QAConfig.chunks_per_facet,help='Máximo de trechos selecionados para o documento da faceta')
+    p.add_argument('--composition-max-tokens',type=int,default=QAConfig.composition_max_tokens)
     p.add_argument('--max-context-refinements',type=int,default=2)
     p.add_argument('--context-recovery-pool',type=int,default=24)
     p.add_argument('--reuse-preparation-from',type=Path,help='Reutiliza facetas e candidatos verificados de outra saída; refaz auditorias')
@@ -77,6 +82,7 @@ def parser():
     p.add_argument('--print-difficulty-prompt',action='store_true')
     p.add_argument('--print-judge-prompt',action='store_true')
     p.add_argument('--print-source-audit-prompt',action='store_true')
+    p.add_argument('--print-composition-prompt',action='store_true')
     p.add_argument('--check-embeddings',action='store_true',help='Teste real curto no deployment Azure; usa a API de embeddings')
     return p
 
@@ -99,6 +105,8 @@ def config_from_args(args):
     cfg.corpus_manifest=args.corpus_manifest
     cfg.allow_sample_corpus=args.allow_sample_corpus
     cfg.lexical_candidates_per_collection=args.lexical_candidates_per_collection
+    for name in ('context_mode','chunk_words','chunks_per_facet','composition_max_tokens'):
+        setattr(cfg,name,getattr(args,name))
     cfg.max_context_refinements=args.max_context_refinements
     cfg.context_recovery_pool=args.context_recovery_pool
     cfg.reuse_preparation_from=args.reuse_preparation_from
@@ -130,6 +138,9 @@ def main():
     if args.print_source_audit_prompt:
         from pipeline.fase_4.source_audit import SYSTEM_PROMPT as prompt
         print(prompt);return
+    if args.print_composition_prompt:
+        from pipeline.fase_4.context_composition import SYSTEM_PROMPT as prompt
+        print(prompt);return
     if args.print_judge_prompt:
         from pipeline.fase_4.prompts_qa import judge_prompt
         print(judge_prompt([],{'topic':'{topic}','subtopic':'{subtopic}','scope':'{scope}',
@@ -158,9 +169,12 @@ def main():
                   f'normas={np.linalg.norm(vectors,axis=1).round(6).tolist()}')
         finally:embedder.close()
         return
-    print(f"Fluxo QA v4: fontes -> auditoria/recuperação -> QA -> Judge/refino -> dificuldade -> novidade", flush=True)
-    print(f'Embeddings Azure: {cfg.embedding_deployment}, {cfg.embedding_dimensions} dimensões; '
-          f'recomposições de contexto: {cfg.max_context_refinements}',flush=True)
+    print(f"Fluxo QA v6: recuperação -> {cfg.context_mode} -> QA -> Judge/refino -> dificuldade -> novidade", flush=True)
+    print(f'Documentos: até {cfg.chunks_per_facet} trechos/faceta; alvo de {cfg.chunk_words} palavras/trecho',flush=True)
+    print(f'Embeddings Azure: {cfg.embedding_deployment}, {cfg.embedding_dimensions} dimensões',flush=True)
+    if cfg.context_mode=='composed':
+        print(f'Composição por LLM: até {cfg.composition_max_tokens} tokens de saída; sem auditoria factual prévia bloqueante',flush=True)
+    else:print(f'Auditoria estrita; recomposições de contexto: {cfg.max_context_refinements}',flush=True)
     print(f"Cosine filtra: {cfg.enable_cosine_filter}; saturação para: {cfg.enable_saturation_stop}; "
           f"deployment={cfg.deployment}; effort={cfg.effort}; saída={cfg.output}", flush=True)
     try:

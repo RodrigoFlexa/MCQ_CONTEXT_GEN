@@ -1,5 +1,11 @@
 # Validação — 11/10/2026
 
+# QA v6 — composição técnica por faceta (12/10/2026)
+
+76 testes offline passaram: coletores/extração/proveniência, embeddings Azure com clientes simulados, modo auditado histórico, janelas de 1.000 palavras entre páginas consecutivas, composição de documento com dez fontes, cache, falhas de formato e fluxo de geração/Judge/dificuldade. O launcher Bash foi executado com Python simulado, incluindo caminhos com espaços e `--resume`, sem downloads nem Azure. Notebook e módulos foram compilados.
+
+No modo atual `composed`, o conteúdo é refinado pelo próprio prompt do compositor; não há auditoria factual prévia bloqueante. Documentos/metadados registram essa condição. Os testes verificam execução e contratos, não qualidade factual dos modelos privados. [Comandos QA v6](../fase_4/EXECUCAO_QA_V6.md).
+
 ## Execuções realizadas
 
 | Verificação | Resultado |

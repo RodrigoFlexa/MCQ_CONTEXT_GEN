@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_VERSION = "petroquest-qa-v4"
+SCHEMA_VERSION = "petroquest-qa-v6"
 DIFFICULTIES = ("facil", "media", "dificil")
 
 
@@ -18,13 +18,17 @@ def default_corpus():
 
 @dataclass
 class QAConfig:
-    output: Path = ROOT / "pipeline/fase_4/saida_qa_v4_azure_large_medium"
+    output: Path = ROOT / "pipeline/fase_4/saida_qa_v6_documentos_10x1000_medium"
     corpus_dir: Path | None = field(default_factory=default_corpus)
     corpus_txt: list[Path] = field(default_factory=list)
     corpus_zip: Path | None = None
     corpus_manifest: Path | None = None
     allow_sample_corpus: bool = False
     lexical_candidates_per_collection: int = 60
+    context_mode: str = 'composed'
+    chunk_words: int = 1000
+    chunks_per_facet: int = 10
+    composition_max_tokens: int = 32000
     max_context_refinements: int = 2
     context_recovery_pool: int = 24
     reuse_preparation_from: Path | None = None
@@ -86,6 +90,10 @@ class QAConfig:
                 raise ValueError(f'O parâmetro {name} precisa ser finito')
         if self.effort not in ('low','medium','high'):
             raise ValueError('Effort suportado nesta rodada: low, medium ou high')
+        if self.context_mode not in ('composed','audited'):
+            raise ValueError('Modo de contexto: composed ou audited')
+        if self.chunk_words<80 or self.chunks_per_facet<1 or self.composition_max_tokens<1000:
+            raise ValueError('Trechos >=80 palavras, quantidade >=1 e orçamento da composição >=1000 tokens')
         if (self.embedding_model,self.embedding_deployment,self.embedding_dimensions)!=(
             'text-embedding-3-large','embedding-3-large-global',3072):
             raise ValueError('Esta rodada usa exclusivamente embedding-3-large-global, com 3072 dimensões')

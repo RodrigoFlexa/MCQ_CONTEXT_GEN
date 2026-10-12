@@ -908,7 +908,9 @@ def parse_json_loose(text: str) -> Any:
                 return json.loads(cleaned[start : end + 1])
             except json.JSONDecodeError:
                 continue
-    raise ValueError(f"não consegui parsear JSON da saída do modelo: {text[:300]!r}")
+    error=ValueError(f"não consegui parsear JSON da saída do modelo: {text[:300]!r}")
+    error.raw_response=text
+    raise error
 
 
 # ============================================================================

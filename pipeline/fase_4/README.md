@@ -1,17 +1,22 @@
-# PetroQuest QA v4
+# PetroQuest QA v6
 
-Geração de perguntas/respostas técnicas autossuficientes para FPSO/FSO e produção subsea. Alternativas e distratores continuam em standby. O notebook e o CLI utilizam o mesmo motor.
+Geração de perguntas/respostas técnicas autossuficientes. Alternativas em standby. Notebook e CLI usam o mesmo motor.
 
-**Rodada atual:** embeddings exclusivos Azure `embedding-3-large-global` (3.072 dimensões), facetas com busca ancorada em FPSO/FSO e recuperação dos contextos bloqueados com até duas recomposições seguidas de auditoria. O conteúdo de cada trecho preserva sua origem; o rótulo de outra faceta não pode sobrescrevê-lo. Os motivos aparecem no log. A versão anterior será desconsiderada na nova coleta, preservada para diagnóstico. Comandos atuais e teste de acesso ao Azure estão em [domain_corpora/README.md](../domain_corpora/README.md).
+**Rodada atual:** 10 trechos de cerca de 1.000 palavras por faceta → documento técnico composto por LLM → geração QA → Scorer/Refiner/Judge → dificuldade e métricas. Não há auditoria factual prévia bloqueante no modo composto. GPT‑5.4, effort `medium`; embeddings exclusivos Azure `embedding-3-large-global`.
+
+**[Comandos atuais, acompanhamento e transporte dos resultados](EXECUCAO_QA_V6.md)** · **[Prompts para revisão](prompts_qa_v6.md)**
+
+As seções e comandos QA v3/v4/v5 abaixo são históricos, especialmente a auditoria obrigatória. Não retome essas saídas com QA v6.
 
 As versões anteriores estão preservadas: fases antigas em `pipeline/backup/pre_petroquest_qa_2026-10-10/`, primeira refatoração em `pre_refatoracao_qa_2026-10-10/` e código QA v2 em **`pipeline/backup/pre_qa_v3_2026-10-11/fase_4/`**. Resultados QA v2 e sua análise permanecem na pasta original. Uma execução v2 não pode ser retomada como v3.
 
-## Fluxo implementado
+## Fluxo anterior auditado (histórico)
 
 ```mermaid
 flowchart TD
-    C[Petrolês + ANP + HSE + BSEE + REGIS] --> F[Facetas bilíngues, cotas por coleção, vetores e MMR]
-    F --> A[Auditoria factual por LLM de cada documento candidato]
+    C[Petrolês + ANP + HSE + BSEE + REGIS] --> F[Recortes estreitos e busca PT/EN]
+    F --> CF[Até 3 trechos com núcleo coerente]
+    CF --> A[Auditoria por alvo sustentado; cobertura parcial permitida]
     A --> B[Rejeitados com parecer e proveniência]
     B --> RC[Até duas recomposições com trechos existentes]
     RC --> A

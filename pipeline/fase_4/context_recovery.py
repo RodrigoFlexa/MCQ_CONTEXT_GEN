@@ -7,8 +7,12 @@ import numpy as np
 
 from .storage import atomic_json, append_jsonl, read_jsonl, utc_now
 
-VERSION='context-recovery-v1'
-SYSTEM_PROMPT='''Você refina a seleção de evidências de um contexto para QA de FPSO/FSO. Use o diagnóstico do auditor para selecionar um novo conjunto coerente de trechos reais, mantendo a faceta e o escopo. Pode excluir trechos, aproveitar trechos compatíveis já utilizados e selecionar substitutos de qualquer coleção, sem funções fixas por corpus. Não reescreva fontes, não complete fatos, não invente IDs, não suavize critérios de qualidade. Não suponha mesma instalação ou condições pela proximidade temática. Selecionar poucas evidências úteis é permitido. Retorne JSON com selected_chunk_ids, reason e unrepairable (booleano). Se não há suporte apropriado, selected_chunk_ids=[] e unrepairable=true. A nova seleção ainda será auditada independentemente.'''
+VERSION='context-recovery-v2-focused'
+SYSTEM_PROMPT='''Selecione evidências reais para UM alvo profissional de QA pertinente à faceta de FPSO/FSO. Escopo e faceta delimitam assuntos permitidos, não requisitos de cobertura integral. Um único trecho útil pode bastar; não exija integrar todos os sistemas, interfaces ou indicadores. Prefira um núcleo coerente e acrescente somente complementos pertinentes, de qualquer coleção e sem funções fixas por corpus. Use o diagnóstico para excluir material inadequado. Estudos/casos podem sustentar conceitos delimitados, sem transformar conclusões particulares em regras universais. Não invente fatos, relações, fontes ou IDs. Preserve condições e jurisdição. Retorne JSON com selected_chunk_ids, reason breve e unrepairable (booleano). unrepairable=true e IDs=[] apenas quando NENHUM recorte sustentado e pertinente puder ser selecionado. A seleção será auditada independentemente.'''
+
+
+class InvalidContextPlan(ValueError):
+    """Resposta inválida do modelo, distinta de erro de API ou configuração."""
 
 
 def digest(value):
@@ -55,10 +59,12 @@ def validate_plan(raw,pool,previous_sets,width):
 
 
 def choose_plan(client,context,audit,pool,previous_sets,width,path,signature):
+    from .multi_corpus import compact_chunk
     request={'facet_id':context['facet_id'],'focus':context['focus'],'scope':context['scope'],
         'previous_chunk_sets':[sorted(s) for s in previous_sets],
         'diagnostic':{k:audit.get(k) for k in ('reason','issues','validation_errors','chunk_reviews','recovery_advice')},
-        'candidate_chunks':pool,'maximum_chunks':width}
+        'candidate_chunks':[compact_chunk(c) for c in pool],'maximum_chunks':width,
+        'coverage_requirement':'Basta UM alvo bem sustentado; cobertura parcial é permitida'}
     request_hash=digest(request)
     if path.exists():
         saved=json.loads(path.read_text(encoding='utf-8'))
@@ -66,12 +72,18 @@ def choose_plan(client,context,audit,pool,previous_sets,width,path,signature):
             raise ValueError('Plano de recuperação em cache incompatível; use nova saída')
         return validate_plan(saved['plan'],pool,previous_sets,width)
     user=json.dumps(request,ensure_ascii=False)
+    responses=path.with_suffix('.respostas.jsonl')
     for attempt in range(2):
-        raw=client.complete_json(user,system=SYSTEM_PROMPT,max_tokens=4000)
+        try:
+            raw=client.complete_json(user,system=SYSTEM_PROMPT,max_tokens=4000)
+        except ValueError as error:
+            if not hasattr(error,'raw_response'):raise
+            raw=error.raw_response
+        append_jsonl(responses,{'attempt':attempt+1,'at':utc_now(),'response':json.dumps(raw,ensure_ascii=False)})
         try:plan=validate_plan(raw,pool,previous_sets,width);break
         except ValueError as error:
-            if attempt:raise ValueError('Refinador de contexto inválido duas vezes: '+str(error)) from error
-            user+='\nCorrija a resposta anterior: '+str(error)
+            if attempt:raise InvalidContextPlan('Refinador de contexto inválido duas vezes: '+str(error)) from error
+            user+='\nCorrija esta resposta: '+json.dumps(raw,ensure_ascii=False)+'\nErro: '+str(error)
     path.parent.mkdir(parents=True,exist_ok=True)
     atomic_json(path,{'version':VERSION,'signature':signature,'request_hash':request_hash,'plan':plan,'created_at':utc_now()})
     return plan
@@ -91,9 +103,12 @@ def recover_context(context,audit,candidates,emb,legacy_cfg,qa_cfg,refiner,audit
         if not pool:
             event.update(status='no_eligible_candidates',reason='Não há candidatos elegíveis restantes')
         else:
-            plan=choose_plan(refiner,current,audit,pool,previous_sets,legacy_cfg.n_trechos_por_documento,path,signature)
-            if plan['unrepairable']:event.update(status='unrepairable',reason=plan['reason'])
-            else:
+            try:
+                plan=choose_plan(refiner,current,audit,pool,previous_sets,legacy_cfg.n_trechos_por_documento,path,signature)
+            except InvalidContextPlan as error:
+                plan=None;event.update(status='invalid_response',reason=str(error))
+            if plan and plan['unrepairable']:event.update(status='unrepairable',reason=plan['reason'])
+            elif plan:
                 lookup={c['chunk_id']:c for c in pool}
                 chunks=[dict(lookup[cid]) for cid in plan['selected_chunk_ids']]
                 previous_sets.append(frozenset(plan['selected_chunk_ids']))
@@ -102,12 +117,13 @@ def recover_context(context,audit,candidates,emb,legacy_cfg,qa_cfg,refiner,audit
                 audit=audit_fn(auditor,current,root,signature)
                 on_audit(current,audit)
                 event.update(doc_id=current['doc_id'],selected_chunk_ids=plan['selected_chunk_ids'],
-                    collections=current['collections'],status='recovered' if audit['approved'] else 'blocked',
+                    collections=current['collections'],status='invalid_response' if audit.get('audit_status')=='invalid_response'
+                    else 'recovered' if audit['approved'] else 'blocked',
                     reason=plan['reason'],audit_reason=audit.get('reason'),validation_errors=audit.get('validation_errors',[]))
         attempts.append(event)
         if (base_id,number) not in recorded:
             append_jsonl(journal,{**event,'at':utc_now()});recorded.add((base_id,number))
         print(f"[recuperação] {base_id}: tentativa {number}/{qa_cfg.max_context_refinements} -> {event['status']}",flush=True)
-        if event['status'] in ('recovered','unrepairable','no_eligible_candidates'):break
+        if event['status'] in ('recovered','unrepairable','no_eligible_candidates','invalid_response'):break
     current['context_recovery']={'version':VERSION,'base_doc_id':base_id,'attempts':attempts,'recovered':bool(audit['approved'])}
     return current,audit

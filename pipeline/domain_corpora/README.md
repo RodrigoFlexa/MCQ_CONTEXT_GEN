@@ -1,5 +1,9 @@
 # Corpora factuais para PetroQuest QA
 
+## Próxima execução: QA v6
+
+A instalação dos corpora permanece a mesma. A rodada atual compõe documentos técnicos por faceta usando 10 trechos de cerca de 1.000 palavras, sem auditoria factual prévia bloqueante. **[Comandos atuais QA v6](../fase_4/EXECUCAO_QA_V6.md)**. Use saída nova. Comandos QA v4 abaixo são históricos; não reutilize seus índices ou documentos.
+
 **Petrolês continua na base**, junto com ANP, HSE, BSEE e REGIS. Estes materiais fornecem suporte factual; os datasets de QA externos continuam servindo como exemplos de formato.
 
 ## Instalar no servidor
