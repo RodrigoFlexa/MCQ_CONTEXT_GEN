@@ -1,82 +1,39 @@
 # Inventário de conhecimento do PetroQuest
 
-## Nova rodada: revisão e Produção e Processo
-
-Veja [PRODUCAO_V3.md](PRODUCAO_V3.md). O fluxo agora inclui revisor/refinador entre extração e consolidação,
-preserva originais e correções, distingue pendência de irrelevância e registra os pareceres.
-O documento por tópico apresenta cada unidade canônica uma vez, com os assuntos associados.
-O redator já pode adaptar a escrita e propor correções conceituais, preservando a formulação original,
-a citação e a base usada. O revisor confere cada correção técnica antes da consolidação.
-
-## Piloto atual: Azure, somente documentos de KPI
-
-Leia **[PILOTO_AZURE.md](PILOTO_AZURE.md)** para instalação, comandos Linux/Windows,
-validação de conectividade e acompanhamento. O padrão atual usa `gpt-5-4-petrobras`
-com effort medium e `embedding-3-large-global` (3072 dimensões).
+Transforma as frases do especialista e os cinco corpora (Petrolês, ANP, HSE, BSEE, REGIS) em **notas técnicas
+por conceito**, base da geração de QA. Versão atual: **v4**. Leia **[PRODUCAO_V4.md](PRODUCAO_V4.md)** para o
+fluxo, a política de erros, os comandos do servidor e o formato da saída.
 
 ```text
-frase do especialista → assuntos literais → varredura lexical nos cinco corpora
-→ embeddings Azure + cosseno + MMR → extração de unidades com citações
-→ revisão/refinamento → consolidação e conflitos → fichas por assunto → documento técnico por tópico
+assuntos → varredura → seleção bilíngue → fatos com citação → conceitos → nota técnica + revisão → combinações → documentos
 ```
 
-O inventário não gera perguntas. `assuntos_para_geracao.jsonl` é um contrato para
-uma integração futura; o gerador da fase_4 ainda não o consome.
+## Módulos
 
-## Arquivos produzidos
-
-- `topicos/*/documento_tecnico.md`: reúne as fichas, preservando condições e fontes.
-- `documentos_topicos.json`: índice dos documentos.
-- `subtopicos/*/assuntos.json`: programa de conteúdo e consultas em português/inglês.
-- `subtopicos/*/selecao.json`: trechos originais, proveniência e scores.
-- `subtopicos/*/fichas/*.md` e `.json`: conhecimento utilizável e conflitos separados.
-- `unidades_brutas.jsonl`, `unidades_descartadas.jsonl`, `unidades_consolidadas.jsonl`:
-  extração, descartes e consolidação auditáveis, dentro de cada subtópico.
-- `cobertura.md`, `cobertura.csv`: assuntos com contexto, parcial ou sem contexto.
-- `falhas_extracao.json`: erros de execução; não viram ausência de contexto.
-- `resumo_redacao.json`: contagem de ajustes propostos pelo redator; não significa aprovação pelo revisor.
-- `execucao.log`, `resumo.json`, `chamadas_llm.jsonl`, `chamadas_embeddings.jsonl`: execução e uso.
-
-## Retomada e validação
-
-Hashes dos corpora são verificados antes das chamadas, inclusive na retomada.
-Caches distinguem modelos, endpoint e orçamento de resposta. A configuração
-experimental fica fixa por saída; workers, limite de chamadas e etapa final podem mudar.
-Os registros de extração são ordenados e duas execuções não podem escrever na mesma saída.
-
-Citações precisam ser contíguas, sem trocar números, operadores ou negações.
-Elas toleram caixa, acentos e espaços. A presença da citação não comprova que toda
-a afirmação é correta ou que o princípio é aplicável a um FPSO.
-
-Correções técnicas preservam as citações originais e declaram a base adicional de conhecimento.
-Unidades potencialmente úteis com dúvida ficam em `unidades_pendentes.jsonl`.
-Conflitos preservam as afirmações originais e não contam como conhecimento
-utilizável. Um assunto sem evidência permanece identificado para a futura geração
-sem contexto; falhas de API interrompem o processo em vez de produzir esse status.
-
-## Opção local com GPU
-
-O caminho originalmente criado pelo Claude continua disponível mediante escolha
-explícita de `--embedder BAAI/bge-m3 --reranker BAAI/bge-reranker-v2-m3`.
-Esses modelos exigem CUDA e as dependências em `requirements.txt`;
-`setup_gpu.ps1` prepara um ambiente Windows separado. Não há fallback CPU.
-`--embedder hash` é somente um substituto determinístico para testes offline.
-Nenhum deles é usado automaticamente no piloto Azure.
-
-## Limitações a avaliar no piloto
-
-- A triagem lexical pode perder material sem os termos pesquisados.
-- Sem cross-encoder local, o score é cosseno; o limiar não é uma probabilidade calibrada.
-- Trechos padrão: 350 palavras, stride 250, até 12 por assunto; isso difere da v6 (10×1000 por faceta).
-- Petrolês substitui números por `<NUMBER>` e não identifica fronteiras confiáveis de documento.
-- Extração, revisão e consolidação dependem do julgamento do LLM; citações não são uma auditoria factual independente.
-- O agrupamento por similaridade pode deixar conflitos entre unidades de grupos diferentes sem detecção.
-- Não há integração com geração/refino/julgamento de QA nesta etapa.
+| Arquivo | Papel |
+|---|---|
+| `run_topico_azure.sh` | rodada de um tópico na Azure (`run_producao_azure.sh` é o atalho de Produção e Processo) |
+| `run_inventario.py` | CLI e orquestração; execução por item, ocorrências, disjuntor, retomada |
+| `llm.py` | cliente Azure/OpenAI: cache, reparo de validação, truncamento, filtro de conteúdo, diagnóstico |
+| `assuntos.py` | frase do especialista → assuntos literais + consultas pt/en |
+| `varredura.py` | passada lexical pelos corpora (candidatos por assunto e coleção) |
+| `selecao.py` | escolha dos trechos: consulta pt/en, piso de relevância, cota por coleção, MMR |
+| `extracao.py` | fatos técnicos com citação literal; descarte por fato, nunca da resposta inteira |
+| `consolidacao.py` | plano de conceitos por assunto (agrupa fatos, descarta o que não pertence) |
+| `notas.py` | redator de notas técnicas, validação, métricas e deduplicação |
+| `revisao.py` | revisor de notas: aprovar, corrigir ou rejeitar, com notas de avaliação |
+| `combinacoes.py` | mapa de combinações de notas por subtópico (difíceis tipo B) |
+| `teste_dificeis.py` | experimento: gera fácil/média/difícil A/difícil B e mede com o avaliador da fase 4 |
+| `fichas.py` | documentos Markdown, cobertura e índice para a geração |
+| `modelos.py` | embeddings (Azure, bge-m3 local em GPU, hash para testes) e reranker opcional |
 
 ## Testes
 
 ```bash
-python -m unittest discover -s pipeline/inventario/tests -v
+python3 -m unittest discover -s pipeline/inventario/tests -v
 ```
 
-Os testes não usam rede ou GPU; a conectividade real é verificada por `--check-api` no servidor.
+Sem rede, sem chaves e sem GPU. Histórico das versões anteriores: `PILOTO_AZURE.md`, `PRODUCAO_V3.md`,
+`REVISAO_2026_10_12.md` (descrevem a v3, baseada em unidades de uma frase, substituída pela v4).
+
+Execução local com GPU (embeddings bge-m3): `setup_gpu.ps1`, `check_gpu.py` e `requirements.txt`.

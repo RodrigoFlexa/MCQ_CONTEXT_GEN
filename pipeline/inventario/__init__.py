@@ -1,10 +1,9 @@
 """Inventário de conhecimento do PetroQuest.
 
-Constrói, a partir das frases do especialista e dos corpora de domínio, um
-inventário de unidades de conhecimento por assunto (fichas), para futura
-geração de QA. Alternativas permanecem em standby.
+Constrói, a partir das frases do especialista e dos corpora de domínio, notas técnicas por
+conceito para cada assunto, base da futura geração de QA. Alternativas permanecem em standby.
 
-Etapas: assuntos -> varredura lexical -> seleção densa -> redação de
-unidades (LLM) -> revisão -> consolidação -> fichas e relatório de cobertura.
+Etapas: assuntos -> varredura lexical -> seleção bilíngue -> fatos com citação -> conceitos ->
+nota técnica (redator) + revisão -> documentos e índices.
 """
-VERSION = "inventario-v3-correcao-redator"
+VERSION = "inventario-v4-notas"

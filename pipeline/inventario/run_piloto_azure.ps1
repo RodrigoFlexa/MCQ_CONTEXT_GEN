@@ -1,22 +1,29 @@
 param(
     [string]$Python = "python",
     [string]$Manifest = "dataset/domain_corpora/manifest.json",
-    [string]$Output = "pipeline/inventario/saida_piloto_kpi_v3_correcao_azure",
+    [string]$Output = "pipeline/inventario/saida_kpi_v4_notas",
+    [string]$Reuse = "",
+    [string[]]$Subtopicos = @(),
+    [int]$Workers = 8,
+    [int]$LimiteAssuntos = 0,
     [switch]$Plan,
     [switch]$CheckApi,
     [switch]$AllowSampleCorpus,
-    [ValidateSet('assuntos', 'varredura', 'selecao', 'extracao', 'revisao', 'consolidacao', 'fichas')]
-    [string]$PararApos = "fichas"
+    [ValidateSet('assuntos', 'varredura', 'selecao', 'fatos', 'conceitos', 'notas', 'combinacoes', 'documentos')]
+    [string]$PararApos = "documentos"
 )
 $ErrorActionPreference = "Stop"
 Set-Location (Resolve-Path (Join-Path $PSScriptRoot "../.."))
+# Filtro ASCII para compatibilidade com Windows PowerShell 5.1.
 $invArgs = @('-u', 'pipeline/inventario/run_inventario.py', '--corpus-manifest', $Manifest,
-    '--topicos', 'KPI',
-    '--llm-provider', 'azure', '--llm-model', 'gpt-5-4-petrobras', '--effort', 'medium',
-    '--embedder', 'embedding-3-large-global', '--reranker', 'none',
-    '--workers', '2', '--max-chamadas', '400', '--output', $Output, '--parar-apos', $PararApos)
+    '--topicos', 'KPI', '--llm-provider', 'azure', '--llm-model', 'gpt-5-4-petrobras',
+    '--effort', 'medium', '--embedder', 'embedding-3-large-global', '--reranker', 'none',
+    '--workers', "$Workers", '--max-chamadas', '5000', '--output', $Output, '--parar-apos', $PararApos)
+if ($Reuse -and (Test-Path $Reuse)) { $invArgs += @('--reaproveitar-de', $Reuse) }
+if ($Subtopicos.Count -gt 0) { $invArgs += '--subtopicos'; $invArgs += $Subtopicos }
+if ($LimiteAssuntos -gt 0) { $invArgs += @('--limite-assuntos', "$LimiteAssuntos") }
 if ($Plan) { $invArgs += '--plan' }
 if ($CheckApi) { $invArgs += '--check-api' }
 if ($AllowSampleCorpus) { $invArgs += '--allow-sample-corpus' }
 & $Python @invArgs
-if ($LASTEXITCODE -ne 0) { throw "O piloto falhou (exit=$LASTEXITCODE). Consulte execucao.log e falhas_extracao.json." }
+if ($LASTEXITCODE -ne 0) { throw "Execução interrompida (exit=$LASTEXITCODE). Veja execucao.log e ocorrencias.jsonl." }

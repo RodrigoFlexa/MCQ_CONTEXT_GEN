@@ -90,6 +90,49 @@ def read_jsonl(path):
         return [json.loads(line) for line in f if line.strip()]
 
 
+_NUM_SOURCE = re.compile(r'\d{1,3}(?: \d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)*')
+_NUM_CLAIM = re.compile(r'\d+(?:[.,]\d+)*')
+
+
+def _num_keys(s):
+    """Chaves equivalentes de um número: dígitos sem separadores e valor decimal provável."""
+    digits = re.sub(r'\D', '', s).lstrip('0') or '0'
+    keys = {digits}
+    compact = s.replace(' ', '')
+    if re.fullmatch(r'\d{1,3}(\.\d{3})+(,\d+)?', compact):
+        compact = compact.replace('.', '').replace(',', '.')
+    elif re.fullmatch(r'\d{1,3}(,\d{3})+(\.\d+)?', compact):
+        compact = compact.replace(',', '')
+    else:
+        compact = compact.replace(',', '.')
+    try:
+        keys.add(repr(round(float(compact), 6)))
+    except ValueError:
+        pass
+    return keys
+
+
+def unsupported_numbers(claim, sources, min_value=10):
+    """Números do texto que não aparecem nas fontes (tolera '1 050' = '1.050' e '8,33' = '8.33').
+
+    Inteiros pequenos (< min_value) são ignorados: aparecem em contagens e fórmulas químicas.
+    """
+    known = set()
+    for src in sources:
+        for m in _NUM_SOURCE.finditer(src or ''):
+            known |= _num_keys(m.group(0))
+            for run in re.findall(r'\d+', m.group(0)):
+                known.add(run.lstrip('0') or '0')
+    missing = []
+    for m in _NUM_CLAIM.finditer(claim or ''):
+        s = m.group(0)
+        if re.fullmatch(r'\d+', s) and int(s) < min_value:
+            continue
+        if not (_num_keys(s) & known):
+            missing.append(s)
+    return sorted(set(missing))
+
+
 def quote_supported(quote, source, min_ratio=None):
     """Correspondência contígua; tolera caixa, acentos e espaços, nunca altera números/sinais."""
     def parts(text):

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Apenas documentos do tópico KPI. Ex.: bash pipeline/inventario/run_piloto_azure.sh --plan
+# Notas técnicas do tópico KPI na Azure. Ex.: bash pipeline/inventario/run_piloto_azure.sh --plan
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
@@ -8,5 +8,5 @@ cd "$ROOT"
   --topicos 'Gestão do Desempenho Empresarial (KPI)' \
   --llm-provider azure --llm-model gpt-5-4-petrobras --effort medium \
   --embedder embedding-3-large-global --reranker none \
-  --workers 2 --max-chamadas 400 \
-  --output "${INV_OUTPUT:-pipeline/inventario/saida_piloto_kpi_v3_correcao_azure}" "$@"
+  --workers "${INV_WORKERS:-8}" --max-chamadas "${INV_MAX_CHAMADAS:-5000}" \
+  --output "${INV_OUTPUT:-pipeline/inventario/saida_kpi_v4_notas}" "$@"
