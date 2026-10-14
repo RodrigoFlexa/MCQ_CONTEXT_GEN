@@ -4,6 +4,9 @@ Transforma as frases do especialista e os cinco corpora (Petrolês, ANP, HSE, BS
 por conceito**, base da geração de QA. Versão atual: **v4**. Leia **[PRODUCAO_V4.md](PRODUCAO_V4.md)** para o
 fluxo, a política de erros, os comandos do servidor e o formato da saída.
 
+Próxima rodada: [RODADA_5_TOPICOS.md](RODADA_5_TOPICOS.md), com Lastro já concluído e quatro
+tópicos novos (23 subtópicos) no script `run_mais_4_topicos_azure.sh`.
+
 ```text
 assuntos → varredura → seleção bilíngue → fatos com citação → conceitos → nota técnica + revisão → combinações → documentos
 ```

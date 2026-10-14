@@ -11,7 +11,8 @@ import numpy as np
 
 from apoio import FakeLLM, corpus_fixture
 from pipeline.inventario.locking import output_lock
-from pipeline.inventario.run_inventario import SystemicFailure, main
+from pipeline.inventario.run_inventario import SystemicFailure, main, select_subtopics, Pipeline
+from pipeline.fase_3.topicos import TOPICOS
 
 TOPIC = 'Gestão do Desempenho Empresarial (KPI)'
 
@@ -21,6 +22,41 @@ def read_jsonl(path):
 
 
 class Execucao(unittest.TestCase):
+    def test_redator_isola_fatos_com_mesmo_id_por_subtopico(self):
+        from types import SimpleNamespace
+        from time import time
+        subs = [{'key':'s1','subtopico':'Primeiro'}, {'key':'s2','subtopico':'Segundo'}]
+        assunto = {'id':'a01','generico':False}
+        facts = {s['key']:[{'fid':'mesmo-trecho#f0','sub_key':s['key']}] for s in subs}
+        plans = {s['key']:{'a01':{'conceitos':[{'kid':s['key']+':a01:k1'}]}} for s in subs}
+        pipeline = Pipeline(SimpleNamespace(), self.out, Mock(), None, None,
+                            SimpleNamespace(rows=[]), subs, None, None, time())
+        pipeline.run_jobs = lambda stage,jobs,fn,*a,**kw: {key:fn(payload) for key,payload in jobs}
+
+        def write(llm, sub, subject, concept, lookup, chunks):
+            self.assertEqual(lookup['mesmo-trecho#f0']['sub_key'], sub['key'])
+            return {'insuficiente':'simulado'}
+
+        def record(sub, subject, concept, draft, review, lookup, chunks):
+            self.assertEqual(lookup['mesmo-trecho#f0']['sub_key'], sub['key'])
+            return {'nid':concept['kid'],'status':'insuficiente'}
+
+        with patch('pipeline.inventario.run_inventario.N.write_note', side_effect=write), \
+             patch('pipeline.inventario.run_inventario.note_record', side_effect=record):
+            result=pipeline.stage_notas({s['key']:[assunto] for s in subs},facts,{},plans,None,None)
+        self.assertEqual(set(result),{'s1','s2'})
+
+    def test_recorte_dos_quatro_topicos_preserva_lastro(self):
+        names = ['Produção e Processo (Medição Fiscal e Sistema de Alívio)',
+                 'Operações submarinas, poços, risers e equipamentos submarinos',
+                 'Utilidades, geração de energia e sistemas auxiliares',
+                 'Segurança Operacional, SGSO, Sistemas de Segurança e Gestão de Riscos']
+        selected = select_subtopics(TOPICOS, names, [])
+        self.assertEqual(len(selected), 23)
+        self.assertEqual({s['topico'] for s in selected}, set(names))
+        self.assertFalse(any('Lastro' in s['topico'] for s in selected))
+        self.assertFalse(any('KPI' in s['topico'] for s in selected))
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)

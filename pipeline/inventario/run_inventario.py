@@ -564,7 +564,9 @@ class Pipeline:
     def stage_notas(self, by_sub, facts, chunks, plans, embedder, emb_cache):
         t = time.time()
         jobs = []
-        facts_by_fid = {f['fid']: f for lst in facts.values() for f in lst}
+        # A mesma janela pode gerar F0 diferentes para subtópicos distintos.
+        # Cada plano deve consultar a extração do seu próprio subtópico.
+        facts_by_sub = {sk: {f['fid']: f for f in lst} for sk, lst in facts.items()}
         assunto_by = {(s['key'], x['id']): x for s in self.subs if s['key'] in by_sub for x in by_sub[s['key']]}
         for s in self.subs:
             for aid, plan in plans.get(s['key'], {}).items():
@@ -573,6 +575,7 @@ class Pipeline:
 
         def do(p):
             s, x, k = p
+            facts_by_fid = facts_by_sub.get(s['key'], {})
             draft = N.write_note(self.llm, s, x, k, facts_by_fid, chunks)
             if draft['insuficiente']:
                 return note_record(s, x, k, draft, None, facts_by_fid, chunks)

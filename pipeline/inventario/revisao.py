@@ -8,7 +8,7 @@ import json
 
 from . import notas as N
 
-VERSION = 'revisao-notas-v1'
+VERSION = 'revisao-notas-v2-autonomia'
 DECISOES = ('aprovar', 'corrigir', 'rejeitar')
 CRITERIOS = ('correcao_tecnica', 'suporte', 'pertinencia', 'riqueza')
 MINIMOS = {'correcao_tecnica': 4, 'suporte': 3, 'pertinencia': 3, 'riqueza': 3}
@@ -22,6 +22,7 @@ Verifique seção por seção:
 4. Riqueza: a nota explica mecanismos, variáveis, problemas e decisões a ponto de sustentar ao menos 3 perguntas distintas, incluindo uma difícil? Frases vagas contam como ausência de conteúdo.
 5. Resolva os alertas automáticos (números sem fonte, seção sem fato, referências inválidas).
 6. O campo "fatos" de cada seção aceita ids de fatos (F#) e de trechos (T#). Não escreva ids no texto. Não acrescente comentários sobre o que as fontes deixam de informar dentro das seções; use "lacunas".
+7. Autonomia dos alvos: a futura QA precisa ser respondível sem ler o relatório. Corrija alvos que pedem recordar o resultado de um acidente, quem fez uma ação, uma data ou um tanque identificado apenas na fonte. O caso pode permanecer como evidência, mas o alvo deve avaliar a relação técnica sustentada, com condições explícitas. Não invente uma regra geral para reaproveitar o caso; se a relação não tiver suporte, retire esse alvo ou rejeite a nota quando ele for seu único conteúdo.
 Corrija apenas quando houver problema real; uma nota correta deve ser aprovada como está.
 
 Decisão:

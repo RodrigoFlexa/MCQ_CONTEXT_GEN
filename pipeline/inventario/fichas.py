@@ -84,6 +84,7 @@ def write_subtopic(d, sub, assuntos, selections, facts, plans, notes, failed_ass
         n_facts = sum(a['id'] in f['assuntos'] for f in facts)
         rows.append({'topico': sub['topico'], 'subtopico': sub['subtopico'], 'assunto_id': a['id'], 'assunto': a['texto'],
                      'status': st, 'modo_geracao': MODO[st], 'trechos': sel.get('selecionados', 0),
+                     'processamento_completo': a['id'] not in failed_assuntos,
                      'colecoes_trechos': '|'.join(f"{k}:{v}" for k, v in sorted((sel.get('colecoes') or {}).items())),
                      'fatos': n_facts, 'conceitos': len(plan.get('conceitos', [])),
                      'notas_aprovadas': len(mine), 'notas_reprovadas': sum(n['status'] == 'reprovada' for n in others),
@@ -95,6 +96,9 @@ def write_subtopic(d, sub, assuntos, selections, facts, plans, notes, failed_ass
         if a['generico']:
             continue
         doc += [f"## {a['id']} · {a['texto']}", '']
+        if mine and a['id'] in failed_assuntos:
+            doc += ['_Há notas aprovadas utilizáveis, mas o processamento deste assunto teve itens pulados. '
+                    'Confira ocorrencias.jsonl; cobertura de conteúdo não significa processamento completo._', '']
         if not mine:
             doc += [{'sem_contexto': '_Sem material nos corpora que sustente uma nota técnica. Assunto marcado para '
                                      'geração **sem contexto**._',
@@ -149,7 +153,8 @@ def write_coverage(out_dir, rows):
 
 
 def write_generation_index(out_dir, rows):
-    keep = ('topico', 'subtopico', 'assunto_id', 'assunto', 'modo_geracao', 'notas', 'sub_dir')
+    keep = ('topico', 'subtopico', 'assunto_id', 'assunto', 'modo_geracao', 'notas', 'sub_dir',
+            'processamento_completo')
     write_jsonl(Path(out_dir) / 'assuntos_para_geracao.jsonl',
                 [{k: r[k] for k in keep} for r in rows if r['modo_geracao'] != 'nao_gerar'])
 

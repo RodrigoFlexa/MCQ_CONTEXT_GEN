@@ -10,7 +10,7 @@ import numpy as np
 
 from .textutil import unsupported_numbers
 
-VERSION = 'notas-v1'
+VERSION = 'notas-v2-autonomia'
 
 SECOES = {
     'definicao_funcao': 'O que é e para que serve',
@@ -52,6 +52,8 @@ Regras:
 8. Escreva o que o material ensina. Não comente dentro das seções o que as fontes deixam de informar; registre isso uma única vez em "lacunas".
 9. alvos: 4 a 8 conhecimentos avaliáveis (não escreva perguntas), cada um com nivel facil|media|dificil; inclua ao menos 1 dificil (diagnóstico, decisão sob condições, integração de variáveis) quando o material permitir.
 10. Se os fatos não sustentarem pelo menos duas seções fundamentadas com conteúdo explicativo, devolva status "insuficiente" e explique em lacunas.
+11. A futura pergunta será respondida SEM acesso às fontes. O núcleo da nota e seus alvos devem explicar conhecimento profissional reutilizável sob condições explícitas. Um incidente ou estudo pode ser evidência ou ilustração; identidade da unidade, número do tanque, datas e o resultado de um episódio não devem ser o conhecimento a memorizar. Explicite a relação técnica que o caso sustenta, conservando os limites: não transforme uma observação particular em regra universal.
+12. Nos alvos, descreva o mecanismo, variável, diagnóstico ou critério a avaliar sem exigir conhecimento do relatório. Exemplo inadequado: explicar por que o tanque 6C do caso não esvaziou. Alvo adequado, quando sustentado: explicar como comunicação indesejada entre compartimentos pode prejudicar o esvaziamento, dadas as condições hidráulicas descritas. Uma configuração específica só serve ao alvo quando suas informações essenciais puderem ser fornecidas naturalmente no futuro enunciado.
 
 Retorne JSON: {"status":"ok|insuficiente","titulo":"...","resumo":"2 a 3 frases","secoes":[{"tipo":"...","texto":"...","fatos":["F1"],"conhecimento_geral":false}],"alvos":[{"nivel":"facil|media|dificil","descricao":"..."}],"correcoes":[{"original":"...","corrigido":"...","motivo":"..."}],"lacunas":["..."]}"""
 

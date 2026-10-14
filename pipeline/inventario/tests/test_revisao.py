@@ -82,6 +82,15 @@ class Deduplicacao(unittest.TestCase):
 
 
 class Documentos(unittest.TestCase):
+    def test_nota_aprovada_nao_oculta_processamento_parcial(self):
+        d = draft()
+        rec = note_record(SUB, ASSUNTO, CONCEITO, d, R.review_note(LLM(verdict()), d, 'k'), FACTS, CHUNKS)
+        with tempfile.TemporaryDirectory() as tmp:
+            rows = F.write_subtopic(tmp, SUB, [ASSUNTO], {}, list(FACTS.values()), {}, [rec], {'a01'})
+            self.assertEqual(rows[0]['status'], 'com_contexto')
+            self.assertFalse(rows[0]['processamento_completo'])
+            self.assertIn('itens pulados', (Path(tmp)/'documento.md').read_text(encoding='utf-8'))
+
     def test_documento_com_fontes_e_cobertura(self):
         d = draft()
         rec = note_record(SUB, ASSUNTO, CONCEITO, d, R.review_note(LLM(verdict()), d, 'k'), FACTS, CHUNKS)
