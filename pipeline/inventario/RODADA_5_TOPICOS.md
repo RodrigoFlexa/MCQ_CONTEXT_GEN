@@ -17,7 +17,34 @@ Os próximos quatro tópicos escolhidos são:
 
 O script `run_mais_4_topicos_azure.sh` seleciona somente esses quatro. A varredura lexical percorre
 os corpora uma vez para o conjunto; não são quatro processos simultâneos. O padrão usa oito pedidos
-LLM simultâneos, GPT-5.4 Petrobras com effort medium e somente `embedding-3-large-global`.
+LLM simultâneos, o perfil `petrobras-nano-low` e somente `embedding-3-large-global`.
+
+## Modelos por etapa
+
+| Etapa | Deployment Azure | Effort |
+|---|---|---|
+| Organizar assuntos e consultas (inclusive tentativa de reorganização) | `gpt-5-4-nano-petrobras` | low |
+| Extrair fatos e citações | `gpt-5-4-nano-petrobras` | low |
+| Agrupar fatos em conceitos | `gpt-5-4-petrobras` | low |
+| Redigir notas técnicas | `gpt-5-4-petrobras` | low |
+| Revisar notas | `gpt-5-4-petrobras` | low |
+| Planejar combinações para questões difíceis | `gpt-5-4-petrobras` | low |
+
+O roteamento vale também para reparos de JSON, respostas truncadas e retentativas: cada pedido
+continua no modelo da sua etapa. Não há fallback para outro deployment. Um nome de etapa não
+configurado causa erro antes da chamada. Os oito workers e o limite de chamadas são compartilhados
+entre os dois modelos; retentativas também consomem o limite, respostas do cache não.
+
+`run_config.json` registra o perfil efetivo. `chamadas_llm.jsonl` identifica etapa, modelo e effort
+em cada tentativa; `resumo.json` traz o uso agregado, o uso por etapa e as tentativas consumidas.
+Esses contadores representam a invocação atual; o log de chamadas é acumulado nas retomadas.
+O cache diferencia deployment e effort. Alterar o perfil exige outra saída para não misturar notas
+e fatos já gravados com um experimento diferente.
+
+Para usar esse perfil diretamente com `run_inventario.py`, acrescente
+`--perfil-modelos petrobras-nano-low` (effort low é automático), sem `--llm-model`.
+Os comandos antigos continuam no perfil `unico`: `--llm-model` e `--effort` valem para todas as etapas,
+com medium como padrão. O perfil misto exige Azure e recusa modelos ou efforts conflitantes.
 
 ## Conteúdo e ajustes
 
@@ -40,13 +67,17 @@ Na raiz do repositório, com o ambiente e as credenciais corporativas:
 ```bash
 git pull --ff-only origin dev
 python3 -m pip install -r pipeline/inventario/requirements_azure.txt
-export INV_OUTPUT=pipeline/inventario/saida_mais_4_topicos_v4_notas
+export INV_OUTPUT=pipeline/inventario/saida_mais_4_topicos_v4_nano_low
 
 bash pipeline/inventario/run_mais_4_topicos_azure.sh --plan
 bash pipeline/inventario/run_mais_4_topicos_azure.sh --check-api
 ```
 
-O plano deve listar **23 subtópicos de quatro tópicos**, sem Lastro nem KPI. Quando ambas as
+O plano deve listar **23 subtópicos de quatro tópicos**, sem Lastro nem KPI, e mostrar os modelos
+por etapa. `--check-api` faz um pedido JSON real e novo em **cada um dos dois deployments**, ambos
+com effort low, e uma chamada de embeddings Azure para dois textos (3.072 dimensões). Não usa
+respostas em cache nesse teste. Credenciais, API version, gateway e certificado vêm da configuração
+Azure já utilizada no servidor; não é necessário cadastrar uma chave por modelo. Quando ambas as
 verificações concluírem com sucesso:
 
 ```bash
@@ -57,6 +88,12 @@ tail -F "$INV_OUTPUT/console.log"
 ```
 
 `Ctrl+C` encerra apenas o acompanhamento. O processo continua ao fechar a sessão SSH.
+Para ver o modelo de cada pedido, em outra sessão:
+
+```bash
+tail -F "$INV_OUTPUT/chamadas_llm.jsonl"
+```
+
 Retome com o mesmo comando e saída caso haja interrupção; para preservar o log, use `>>` na retomada.
 Não inicie uma segunda execução nessa mesma saída enquanto a primeira estiver ativa.
 
@@ -83,7 +120,7 @@ Na saída nova:
 Depois da execução no servidor:
 
 ```bash
-git add pipeline/inventario/saida_mais_4_topicos_v4_notas/
+git add pipeline/inventario/saida_mais_4_topicos_v4_nano_low/
 git commit -m "results: inventarios v4 de quatro novos topicos"
 git push origin dev
 ```

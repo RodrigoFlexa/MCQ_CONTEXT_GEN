@@ -40,6 +40,7 @@ from pipeline.inventario import revisao as R  # noqa: E402
 from pipeline.inventario import selecao as S  # noqa: E402
 from pipeline.inventario import varredura as V  # noqa: E402
 from pipeline.inventario.llm import BudgetExceeded, ContentFiltered, LLMClient, is_fatal, load_dotenv  # noqa: E402
+from pipeline.inventario.perfil_modelos import PROFILE, StageLLM, resolve as resolve_models  # noqa: E402
 from pipeline.inventario.textutil import (atomic_json, norm, read_json, read_jsonl, sha, slug,  # noqa: E402
                                           write_jsonl)
 
@@ -97,9 +98,12 @@ def parse(argv=None):
                    help='saída anterior: copia assuntos, índice lexical e cache de embeddings (não copia LLM)')
     p.add_argument('--llm-provider', choices=['azure', 'openai'], default='azure')
     p.add_argument('--llm-model', default=None, help='deployment Azure; padrão gpt-5-4-petrobras')
+    p.add_argument('--perfil-modelos', choices=['unico', PROFILE], default='unico',
+                   help='unico: --llm-model/--effort; petrobras-nano-low: Nano em assuntos/fatos, GPT-5.4 nas demais')
     p.add_argument('--plan', action='store_true', help='valida parâmetros e corpora, lista o recorte, sem chamadas')
-    p.add_argument('--check-api', action='store_true', help='teste curto real: um pedido LLM e embeddings, sem corpora')
-    p.add_argument('--effort', default='medium', choices=['none', 'low', 'medium', 'high'])
+    p.add_argument('--check-api', action='store_true', help='teste real de cada deployment/effort e embeddings, sem corpora')
+    p.add_argument('--effort', default=None, choices=['none', 'low', 'medium', 'high'],
+                   help='padrão medium no perfil unico; low no perfil petrobras-nano-low')
     p.add_argument('--workers', type=int, default=8, help='chamadas LLM simultâneas')
     p.add_argument('--max-chamadas', type=int, default=30000)
     p.add_argument('--max-falhas-consecutivas', type=int, default=20)
@@ -210,6 +214,8 @@ def run_main(args):
     import os
     model = args.llm_model or ('gpt-5-4-petrobras' if args.llm_provider == 'azure' else
                                os.environ.get('INVENTARIO_LLM_MODEL', 'gpt-6-luna'))
+    routes = resolve_models(args, model)
+    model_label = model if args.perfil_modelos == 'unico' else 'por etapa'
     out = Path(args.output)
     if not out.is_absolute():
         out = ROOT / out
@@ -220,8 +226,9 @@ def run_main(args):
     subs = select_subtopics(TOPICOS, args.topicos, args.subtopicos)
     if not subs:
         raise SystemExit('Nenhum subtópico corresponde ao filtro informado.')
-    log(f"[início] {VERSION} | modelo={model} effort={args.effort} workers={args.workers} | "
+    log(f"[início] {VERSION} | modelo={model_label} effort={args.effort} workers={args.workers} | "
         f"{len(subs)} subtópicos | saída={out}")
+    log(f'[modelos] perfil={args.perfil_modelos}; etapas={json.dumps(routes, ensure_ascii=False)}')
     from pipeline.domain_corpora.manifest import load_manifest
     manifest_path = Path(args.corpus_manifest)
     if not manifest_path.is_absolute():
@@ -233,16 +240,21 @@ def run_main(args):
     if args.plan:
         for sub in subs:
             log(f"[plano] {sub['topico']} / {sub['subtopico']}")
-        log(f'[plano] {len(subs)} subtópicos; provider={args.llm_provider}; modelo={model}; '
+        log(f'[plano] {len(subs)} subtópicos; provider={args.llm_provider}; modelo={model_label}; '
             f'embeddings={args.embedder}; reranker={args.reranker}; chamadas=0')
         return {'subtopicos': len(subs), 'calls': 0}
     if args.check_api and args.embedder != 'embedding-3-large-global':
         raise ValueError('--check-api exige embedding-3-large-global')
-    config = {'version': VERSION, 'model': model, 'args': vars(args)}
+    config = {'version': VERSION, 'model': model, 'args': vars(args), 'modelos_por_etapa': routes}
     identity = {k: v for k, v in vars(args).items() if k not in
                 ('workers', 'max_chamadas', 'parar_apos', 'plan', 'check_api', 'output', 'reaproveitar_de',
                  'max_falhas_consecutivas')}
-    config['signature'] = sha(json.dumps([VERSION, model, identity], sort_keys=True), 40)
+    if args.perfil_modelos == 'unico':
+        identity.pop('perfil_modelos')  # Compatibilidade com saídas anteriores de modelo único.
+        signature_data = [VERSION, model, identity]
+    else:
+        signature_data = [VERSION, model, identity, routes]
+    config['signature'] = sha(json.dumps(signature_data, sort_keys=True), 40)
     previous = read_json(out / 'run_config.json')
     if previous and previous.get('signature') != config['signature']:
         raise ValueError('Configuração mudou; escolha uma nova pasta de saída para preservar o experimento')
@@ -260,8 +272,12 @@ def run_main(args):
         from pipeline.inventario.modelos import require_gpu, _device
         _device(args.device)
         log(f"[gpu] {require_gpu()}")
-    llm = LLMClient(model, None if args.effort == 'none' else args.effort, out / 'cache' / 'llm_cache.sqlite3',
-                    out / 'chamadas_llm.jsonl', max_calls=args.max_chamadas, provider=args.llm_provider)
+    if args.perfil_modelos == 'unico':
+        llm = LLMClient(model, None if args.effort == 'none' else args.effort, out / 'cache' / 'llm_cache.sqlite3',
+                        out / 'chamadas_llm.jsonl', max_calls=args.max_chamadas, provider=args.llm_provider)
+    else:
+        llm = StageLLM(routes, out / 'cache' / 'llm_cache.sqlite3', out / 'chamadas_llm.jsonl',
+                       max_calls=args.max_chamadas, provider=args.llm_provider, client_factory=LLMClient)
     try:
         if args.check_api:
             return check_api(args, out, log, llm, model)
@@ -286,12 +302,16 @@ def check_api(args, out, log, llm, model):
         def validate(data):
             if data.get('ok') is not True:
                 raise ValueError('Teste JSON inválido')
-        data = llm.json('Responda somente JSON: {"ok":true}', 'Teste de conectividade: ' + str(uuid.uuid4()),
-                        tag='check_api', max_tokens=4096, validate=validate)
+        checks = llm.clients.items() if isinstance(llm, StageLLM) else [((model, args.effort), llm)]
+        for (deployment, effort), client in checks:
+            data = client.json('Responda somente JSON: {"ok":true}',
+                               'Teste de conectividade: ' + str(uuid.uuid4()),
+                               tag=f'check_api:{deployment}', max_tokens=4096, validate=validate)
+            log(f'[API OK] LLM={deployment}; effort={effort}')
         vectors = emb.impl.encode(['confiabilidade de ativos offshore', 'maintenance backlog'], usar_cache=False)
         if vectors.shape != (2, 3072):
             raise ValueError('Dimensão inesperada')
-        log(f'[API OK] LLM={model}; embeddings={args.embedder}; shape={vectors.shape}')
+        log(f'[API OK] embeddings={args.embedder}; shape={vectors.shape}')
         return data
     finally:
         emb.close()
@@ -675,6 +695,12 @@ def finish(out, log, llm, occ, timings, t0, rows=None, notes=None, status=None, 
     resumo = {'versao': VERSION, 'status': status or ('concluido_com_ocorrencias' if oc else 'concluido'),
               'tempo_total_s': round(time.time() - t0, 1), 'tempos_s': timings, 'uso_llm': llm.usage,
               'ocorrencias': oc}
+    resumo['uso_llm_por_etapa'] = getattr(llm, 'usage_by_stage', {})
+    if isinstance(llm, StageLLM):
+        resumo['modelos_por_etapa'] = llm.routes
+        resumo['tentativas_llm'] = llm.budget.used
+    else:
+        resumo['tentativas_llm'] = getattr(llm, 'calls', 0)
     if reason:
         resumo['motivo'] = reason
     if rows:

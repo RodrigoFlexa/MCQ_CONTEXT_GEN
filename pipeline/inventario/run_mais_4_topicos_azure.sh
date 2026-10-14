@@ -14,8 +14,8 @@ if [[ -d "$REUSE" ]]; then EXTRA+=(--reaproveitar-de "$REUSE"); fi
     'Operações submarinas, poços, risers e equipamentos submarinos' \
     'Utilidades, geração de energia e sistemas auxiliares' \
     'Segurança Operacional, SGSO, Sistemas de Segurança e Gestão de Riscos' \
-  --llm-provider azure --llm-model gpt-5-4-petrobras --effort medium \
+  --llm-provider azure --perfil-modelos petrobras-nano-low --effort low \
   --embedder embedding-3-large-global --reranker none \
   --workers "${INV_WORKERS:-8}" --max-chamadas "${INV_MAX_CHAMADAS:-30000}" \
-  --output "${INV_OUTPUT:-pipeline/inventario/saida_mais_4_topicos_v4_notas}" \
+  --output "${INV_OUTPUT:-pipeline/inventario/saida_mais_4_topicos_v4_nano_low}" \
   ${EXTRA[@]+"${EXTRA[@]}"} "$@"

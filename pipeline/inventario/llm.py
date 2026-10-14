@@ -36,6 +36,20 @@ class BudgetExceeded(LLMError):
     kind = 'orcamento'
 
 
+class CallBudget:
+    """Limite global de tentativas de API, compartilhado entre deployments e workers."""
+
+    def __init__(self, limit):
+        self.limit, self.used = limit, 0
+        self.lock = threading.Lock()
+
+    def reserve(self):
+        with self.lock:
+            if self.used >= self.limit:
+                raise BudgetExceeded(f'Limite global de {self.limit} chamadas atingido')
+            self.used += 1
+
+
 class ContentFiltered(LLMError):
     """Bloqueio do filtro de conteúdo (Responsible AI). Item é pulado; a execução segue."""
     kind = 'filtro_conteudo'
@@ -119,7 +133,7 @@ def retry_after(exc):
 class LLMClient:
     def __init__(self, model, effort, cache_path, log_path, max_calls=50000, timeout=600, api_key=None,
                  provider='azure', client=None, settings=None, max_attempts=6, max_tokens_cap=32000,
-                 sleep=None):
+                 sleep=None, budget=None, log_lock=None):
         if provider not in ('azure', 'openai'):
             raise ValueError('Provider inválido')
         identity = {'provider': provider}
@@ -150,8 +164,10 @@ class LLMClient:
         self.max_attempts, self.max_tokens_cap = max_attempts, max_tokens_cap
         self.sleep = sleep or time.sleep
         self.lock = threading.Lock()
+        self.budget = budget
+        self.log_lock = log_lock or self.lock
         Path(cache_path).parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(str(cache_path), check_same_thread=False)
+        self.db = sqlite3.connect(str(cache_path), check_same_thread=False, timeout=30)
         self.db.execute('PRAGMA journal_mode=WAL')
         self.db.execute('CREATE TABLE IF NOT EXISTS cache (k TEXT PRIMARY KEY, v TEXT)')
         self.db.commit()
@@ -160,6 +176,20 @@ class LLMClient:
         self.calls = 0
         self.usage = {'calls': 0, 'cached': 0, 'prompt_tokens': 0, 'completion_tokens': 0, 'errors': 0,
                       'filtro_conteudo': 0, 'reparos': 0}
+        self._stage_usage = {}
+
+    @property
+    def usage_by_stage(self):
+        with self.lock:
+            return {tag: dict(counts) for tag, counts in self._stage_usage.items()}
+
+    def _add_usage(self, tag, **counts):
+        with self.lock:
+            stage = self._stage_usage.setdefault(tag, {**dict.fromkeys(self.usage, 0), 'attempts': 0})
+            for key, value in counts.items():
+                stage[key] += value
+                if key in self.usage:
+                    self.usage[key] += value
 
     # ------------------------------------------------------------------ util
     def close(self):
@@ -183,16 +213,20 @@ class LLMClient:
             self.db.commit()
 
     def _log(self, row):
-        row = {'at': datetime.now(timezone.utc).isoformat(), **row}
-        with self.lock:
+        row = {'at': datetime.now(timezone.utc).isoformat(), 'model': self.model,
+               'effort': self.effort or 'none', 'provider': self.identity['provider'], **row}
+        with self.log_lock:
             with self.log_path.open('a', encoding='utf-8') as f:
                 f.write(json.dumps(row, ensure_ascii=False) + '\n')
 
-    def _reserve(self):
+    def _reserve(self, tag=''):
         with self.lock:
             if self.calls >= self.max_calls:
                 raise BudgetExceeded(f'Limite de {self.max_calls} chamadas atingido')
+            if self.budget is not None:
+                self.budget.reserve()
             self.calls += 1
+        self._add_usage(tag, attempts=1)
 
     # ------------------------------------------------------------------ API
     def json(self, system, user, tag='', max_tokens=16000, validate=None, item=None):
@@ -206,14 +240,13 @@ class LLMClient:
             except ValueError:
                 self._drop(key)
             else:
-                with self.lock:
-                    self.usage['cached'] += 1
+                self._add_usage(tag, cached=1)
                 return cached
         tokens = max_tokens
         repair = None          # (conteúdo anterior, erro) para a tentativa de reparo
         last_kind, last_msg = None, None
         for attempt in range(self.max_attempts):
-            self._reserve()
+            self._reserve(tag)
             started = time.time()
             messages = [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}]
             if repair:
@@ -230,11 +263,9 @@ class LLMClient:
                 resp = self.client.chat.completions.create(**kwargs)
             except Exception as exc:  # noqa: BLE001 - classificado abaixo
                 msg = _error_body_text(exc)[:800]
-                with self.lock:
-                    self.usage['errors'] += 1
+                self._add_usage(tag, errors=1)
                 if is_content_filter(exc):
-                    with self.lock:
-                        self.usage['filtro_conteudo'] += 1
+                    self._add_usage(tag, filtro_conteudo=1)
                     self._log({**base_log, 'ok': False, 'kind': 'filtro_conteudo', 'error': type(exc).__name__,
                                'message': msg})
                     raise ContentFiltered(f'Filtro de conteúdo ({tag}): {msg[:300]}', tag=tag, item=item) from exc
@@ -256,15 +287,11 @@ class LLMClient:
             u = getattr(resp, 'usage', None)
             pt = getattr(u, 'prompt_tokens', 0) or 0
             ct = getattr(u, 'completion_tokens', 0) or 0
-            with self.lock:
-                self.usage['calls'] += 1
-                self.usage['prompt_tokens'] += pt
-                self.usage['completion_tokens'] += ct
+            self._add_usage(tag, calls=1, prompt_tokens=pt, completion_tokens=ct)
             meta = {**base_log, 'finish': finish, 'prompt_tokens': pt, 'completion_tokens': ct,
                     'seconds': round(time.time() - started, 2)}
             if finish == 'content_filter':
-                with self.lock:
-                    self.usage['filtro_conteudo'] += 1
+                self._add_usage(tag, filtro_conteudo=1)
                 self._log({**meta, 'ok': False, 'kind': 'filtro_conteudo', 'message': 'resposta bloqueada'})
                 raise ContentFiltered(f'Filtro de conteúdo na resposta ({tag})', tag=tag, item=item)
             if finish == 'length':
@@ -283,8 +310,7 @@ class LLMClient:
             except ValueError as exc:  # inclui JSONDecodeError
                 msg = str(exc)[:600]
                 self._log({**meta, 'ok': False, 'kind': 'validacao', 'message': msg})
-                with self.lock:
-                    self.usage['reparos'] += 1
+                self._add_usage(tag, reparos=1)
                 last_kind, last_msg = 'validacao', msg
                 repair = (content, msg)
                 continue
