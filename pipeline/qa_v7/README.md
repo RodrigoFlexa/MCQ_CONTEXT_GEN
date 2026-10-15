@@ -46,6 +46,11 @@ pergunta composta ou aberta, tamanhos, 1 a 2 pontos essenciais.
 - modo cota: aprovadas que repetem uma aprovada anterior do subtópico (novidade) viram `redundante` e são
   substituídas na onda seguinte (`--manter-redundantes` desliga).
 
+**v8.2**: ids `F#` são retirados da explicação ("Segundo F4, ..."); "métodos citados", "FPSOs avaliados" e
+duas perguntas separadas por dois-pontos são barrados em código. O formulário do especialista
+(`formulario/montar_formulario.py`, padrão `saida_v81_10_por_topico`, 5 por tópico) reaplica essas regras, mostra o
+critério de correção (pontos essenciais) e completa níveis ausentes no tópico com o mais próximo.
+
 ## Modos
 
 - `--modo piloto`: 4 perguntas por subtópico (uma nota dá fácil + média, outra dá difícil A, uma combinação dá

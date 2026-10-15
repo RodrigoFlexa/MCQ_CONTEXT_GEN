@@ -31,7 +31,7 @@ from pipeline.inventario.textutil import atomic_json, write_jsonl  # noqa: E402
 from pipeline.qa_references.download_qa_examples import CHOICE_REFERENCES, CONTEXT_REFERENCES  # noqa: E402
 from pipeline.qa_v7 import novidade as N, plano as P  # noqa: E402
 
-VERSION = 'qa-v8.1-objetiva'
+VERSION = 'qa-v8.2-objetiva'
 NIVEL = {'facil': 'fácil', 'media': 'média', 'dificil': 'difícil'}
 TIPO_NIVEL = {'facil': 'facil', 'media': 'media', 'dificil_A': 'dificil', 'dificil_B': 'dificil'}
 TIPOS = tuple(TIPO_NIVEL)
@@ -67,7 +67,7 @@ GEN_SYSTEM = f"""Você cria questões de avaliação profissional (pergunta + re
 {PADRAO}
 
 Regras:
-1. Autonomia: o respondente NÃO vê o material. Nunca escreva "segundo o texto", "de acordo com a nota", "nas fontes", "no estudo citado", "os sistemas descritos", "as aplicações informadas", nem peça o que um relatório, caso, tanque identificado ou data específica disse. Isso vale também para a resposta e a explicação.
+1. Autonomia: o respondente NÃO vê o material. Nunca escreva "segundo o texto", "de acordo com a nota", "nas fontes", "no estudo citado", "os sistemas descritos", "os métodos citados", "as aplicações informadas", nem peça o que um relatório, caso, tanque identificado ou data específica disse, nem o resultado de um estudo ("para os FPSOs avaliados...", "nos casos analisados..."). Os ids F# vão só no campo "fatos", nunca no texto da pergunta, resposta ou explicação. Isso vale também para a resposta e a explicação.
 2. Conhecimento transferível: avalie princípios, mecanismos, critérios e diagnósticos que um profissional deve saber. Não cobre valores, prazos, listas ou procedimentos que aparecem em uma única fonte, a menos que o enunciado forneça o contexto que os torna dedutíveis.
 3. Suporte: resposta e explicação são sustentadas pelos fatos citados em "fatos" (ids F#). Não invente valores, normas, equipamentos ou procedimentos. Conhecimento marcado como geral na nota não basta sozinho.
 4. Jurisdição: HSE é Reino Unido, BSEE é Estados Unidos; não as apresente como exigência da ANP/Brasil.
@@ -88,7 +88,7 @@ Verificações (cada uma com razão curta, mesmo quando verdadeira):
 - resposta_unica: um profissional competente, respondendo livremente, chegaria a esta MESMA resposta essencial? Reprove se houver outra resposta igualmente correta, se a pergunta pede "considerações", "cuidados" ou "como gerenciar" (admitem várias respostas), se faltam condições no enunciado para decidir, ou se é pergunta genérica de finalidade ou importância ("para que serve X", "por que X é importante", "qual a função de um sistema de gestão") cuja resposta esperada é só uma paráfrase entre muitas possíveis. "Por que" é aceitável só quando há UM mecanismo ou causa específica. Reprove também se a resposta omite alternativas técnicas comuns que um profissional citaria (ex.: métodos de detecção). Diga qual outra resposta seria válida.
 - sem_pista: a resposta NÃO pode ser deduzida só pelo enunciado, sem conhecimento técnico. Reprove quando o enunciado já nomeia a causa, a variável ou a conclusão e a resposta só a repete (ex.: "a maior deterioração foi na performance; o que priorizar?" -> "a performance"; "ambas usam o mesmo transmissor; por quê?" -> "porque o transmissor é comum"), ou quando a resposta é o óbvio do senso comum. Sinais de cenário que exigem interpretação técnica são aceitáveis.
 - objetividade: a pergunta pede uma só coisa (um ponto de interrogação, sem "e qual/e como/e por que/e a que", sem pedir o significado de vários casos); a resposta traz só o núcleo, sem repetir a pergunta, sem lista com mais de 3 itens e sem frases de efeito; os pontos_essenciais (1 ou 2) bastam para corrigir uma resposta livre, coincidem com a resposta e não usam o segundo ponto para justificativa.
-- autonomia: a pergunta é respondível por um profissional sem ler o material; não depende de caso, estudo, tanque, data, documento ou valor de uma fonte específica. Resposta e explicação também não se apoiam em caso, unidade, tanque, estudo ou data específicos como se fossem regra.
+- autonomia: a pergunta é respondível por um profissional sem ler o material; não depende de caso, estudo, tanque, data, documento ou valor de uma fonte específica. Resposta e explicação também não se apoiam em caso, unidade, tanque, estudo ou data específicos como se fossem regra. Reprove pergunta sobre o resultado de um estudo ("para os FPSOs avaliados", "nos casos analisados") ou sobre "os métodos citados".
 - escopo: a questão avalia o alvo indicado e pertence ao subtópico.
 - jurisdicao: não apresenta regra estrangeira (HSE, BSEE) como obrigação brasileira, nem afirma vigência sem suporte.
 - sem_generalizacao: não transforma observação particular em regra universal.
@@ -112,7 +112,9 @@ EXTRA_REFS = re.compile(
     r'\bnota t[ée]cnica\b|\bnas fontes\b|\b(?:no|o) estudo (?:citado|analisado|mencionado|de caso)\b|\bno caso (?:relatado|descrito|analisado)\b|'
     r'\bmaterial fornecido\b|\btexto acima\b|\bF\d+\b|\bT\d+\b|'
     r'\bet al\b|\(\s*(?:19|20)\d{2}[a-z]?\s*\)|'
-    r'\b(?:descrit|informad|apresentad|mencionad|listad)[oa]s?(?=\s*(?:[?.,;:]|$|\bacima\b|\babaixo\b|\bno\b|\bna\b))',
+    r'\b(?:descrit|informad|apresentad|mencionad|listad)[oa]s?(?=\s*(?:[?.,;:]|$|\bacima\b|\babaixo\b|\bno\b|\bna\b))|'
+    r'\b(?:m[ée]todos?|sistemas?|equipamentos?|aplica[çc](?:[ãa]o|[õo]es)|crit[ée]rios?|itens|casos?|exemplos?|valores?|'
+    r'alternativas?|unidades|FPSOs?|plataformas)\s+(?:citad|descrit|mencionad|apresentad|listad|informad|avaliad|analisad|estudad)[oa]s?\b',
     re.IGNORECASE)
 # Estudo atribuído a autor ("estudo de Hines"): sensível a maiúscula para não pegar "estudo de risco".
 AUTHOR_STUDY = re.compile(r'\b[Ee]studo de [A-ZÁÉÍÓÚ][a-záéíóúãõç]+\b')
@@ -302,11 +304,30 @@ ABERTA = re.compile(r'\b(?:o que (?:deve|precisa) ser (?:considerad|avaliad|veri
                     re.IGNORECASE)
 
 
+INTERROGATIVA = re.compile(r'\b(?:qual|quais|como|por que|quando|onde|o que|quanto|que)\b', re.IGNORECASE)
+# Ids de fatos citados no texto ("Segundo F4, ...", "(F1, F3)"): o respondente e o especialista não veem os ids.
+IDS_FATOS = re.compile(r'\s*\((?:F\d+[,;\s]*(?:e\s+)?)+\)|'
+                       r'\b(?:segundo|conforme|de acordo com|em|pelo|pela|como (?:indica|mostra))\s+(?:o\s+|a\s+)?'
+                       r'F\d+(?:\s*(?:,|e)\s*F\d+)*\s*,?\s*', re.IGNORECASE)
+
+
+def sem_ids(text):
+    out = IDS_FATOS.sub(' ', (text or '').strip())
+    out = re.sub(r'\s+([,.;:])', r'\1', re.sub(r'\s{2,}', ' ', out)).strip()
+    return re.sub(r'(^|[.!?]\s+)([a-zà-ú])', lambda m: m.group(1) + m.group(2).upper(), out)
+
+
 def composta(pergunta):
-    """Mais de um ponto de interrogação, texto depois dele ou "e qual/e como..." na frase interrogativa."""
+    """Mais de um ponto de interrogação, texto depois dele, "e qual/e como..." na frase interrogativa ou duas
+    perguntas separadas por dois-pontos."""
     p = pergunta.strip()
     if p.count('?') > 1 or re.search(r'\?\s*\S', p):
         return True
+    frase = re.split(r'(?<=[.!])\s+', p)[-1]
+    if ':' in frase:
+        antes, depois = frase.rsplit(':', 1)
+        if INTERROGATIVA.search(antes) and INTERROGATIVA.search(depois):
+            return True
     ultima = re.split(r'(?<=[.!:;])\s+', p)[-1]
     return bool(COMPOSTA.search(ultima))
 
@@ -441,7 +462,7 @@ class Runner:
             fatos = [f for f in raw.get('fatos') or [] if isinstance(f, str)]
             q = {'id': f"{batch['id']}-{a['aid']}", 'alvo': a['aid'], 'alvo_descricao': a['descricao'], 'tipo': a['tipo'],
                  'nivel': TIPO_NIVEL[a['tipo']], 'pergunta': raw['pergunta'].strip(), 'resposta': raw['resposta'].strip(),
-                 'pontos_essenciais': clean_list(raw.get('pontos_essenciais')), 'explicacao': raw['explicacao'].strip(),
+                 'pontos_essenciais': clean_list(raw.get('pontos_essenciais')), 'explicacao': sem_ids(raw['explicacao']),
                  'fatos': fatos, 'conceito': raw.get('conceito', ''),
                  'exemplos': {'especialista': [s['id'] for s in seeds], 'externos': [e['id'] for e in exts]},
                  'original': {'pergunta': raw['pergunta'].strip(), 'resposta': raw['resposta'].strip(),
@@ -482,7 +503,7 @@ class Runner:
                                'mudancas': data.get('mudancas', '')})
         q.update(pergunta=data['pergunta'].strip(), resposta=data['resposta'].strip(),
                  pontos_essenciais=clean_list(data.get('pontos_essenciais')) or q['pontos_essenciais'],
-                 explicacao=(data.get('explicacao') or q['explicacao']).strip(),
+                 explicacao=sem_ids(data.get('explicacao') or q['explicacao']),
                  fatos=[f for f in data.get('fatos') or q['fatos'] if isinstance(f, str)],
                  conceito=data.get('conceito', q['conceito']))
         q['codigo'] = check_code(q, table)

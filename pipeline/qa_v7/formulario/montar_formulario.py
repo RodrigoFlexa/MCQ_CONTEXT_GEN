@@ -5,7 +5,7 @@ espalhadas pelos subtópicos, preferindo as que não foram corrigidas nem marcad
 Gera formulario_especialista.gs (dados embutidos) e o mapa código -> questão para analisar as respostas.
 
     python pipeline/qa_v7/formulario/montar_formulario.py \\
-        --questoes pipeline/qa_v7/saida_cota_100_por_topico/questoes.jsonl --saida pipeline/qa_v7/formulario
+        --questoes pipeline/qa_v7/saida_v81_10_por_topico/questoes.jsonl --saida pipeline/qa_v7/formulario
 """
 import argparse
 import csv
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pipeline.qa_v7.gerar_qa import load_inventory, read_jsonl  # noqa: E402
+from pipeline.qa_v7.gerar_qa import check_code, load_inventory, read_jsonl, sem_ids  # noqa: E402
 
 # Mistura de tipos por tamanho do lote por tópico; outros tamanhos completam com médias.
 MISTURAS = {5: (('facil', 1), ('media', 2), ('dificil_A', 1), ('dificil_B', 1)),
@@ -29,15 +29,23 @@ NIVEL = {'facil': 'Fácil', 'media': 'Média', 'dificil_A': 'Difícil (cenário 
 DIFICULDADE = {'facil': 'Fácil', 'media': 'Média', 'dificil_A': 'Difícil', 'dificil_B': 'Difícil'}
 COLECAO = {'petroles': 'Petrolês', 'anp': 'ANP', 'hse': 'HSE (Reino Unido)', 'bsee': 'BSEE (EUA)', 'regis': 'REGIS'}
 MAX_FATOS, MAX_CITACAO, MAX_CONTEXTO = 6, 320, 3800
+# Quando o tópico não tem aprovada do tipo pedido, usa o próximo da lista.
+SUBSTITUTO = {'dificil_B': ('dificil_A', 'media', 'facil'), 'dificil_A': ('dificil_B', 'media', 'facil'),
+              'media': ('facil', 'dificil_A'), 'facil': ('media', 'dificil_A')}
 
 
 def preferred(q):
     return not q['correcoes'] and not (q.get('novidade') or {}).get('redundante')
 
 
+def passa_regras_atuais(q):
+    """Reaplica as verificações em código da versão atual do gerador (questões de rodadas anteriores)."""
+    return not check_code({**q, 'explicacao': sem_ids(q.get('explicacao', ''))}, {f: {} for f in q.get('fatos', [])})
+
+
 def select(rows, por_topico, seed):
     rng = random.Random(seed)
-    ap = [q for q in rows if q.get('status') == 'aprovada']
+    ap = [q for q in rows if q.get('status') == 'aprovada' and passa_regras_atuais(q)]
     by_topic = defaultdict(list)
     for q in ap:
         by_topic[q['topico']].append(q)
@@ -50,9 +58,11 @@ def select(rows, por_topico, seed):
         mix = MISTURAS.get(por_topico, MISTURAS[10])
         plan = [t for t, n in mix for _ in range(n)]
         plan += ['media'] * max(0, por_topico - len(plan))
-        for tipo in plan[:por_topico]:
-            for pref in (True, False):
-                done = False
+        for pedido in plan[:por_topico]:
+            done = False
+            for tipo, pref in [(t, p) for t in (pedido,) + SUBSTITUTO[pedido] for p in (True, False)]:
+                if done:
+                    break
                 for k in range(len(subs)):
                     sub = subs[(cursor + k) % len(subs)]
                     pool = [q for q in qs if q['subtopico'] == sub and q['tipo'] == tipo and q['id'] not in ids
@@ -64,8 +74,6 @@ def select(rows, por_topico, seed):
                         cursor = (cursor + k + 1) % len(subs)
                         done = True
                         break
-                if done:
-                    break
         chosen += picked
     return chosen
 
@@ -99,7 +107,7 @@ def context(q, notes_by_nid):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument('--questoes', default='pipeline/qa_v7/saida_cota_100_por_topico/questoes.jsonl')
+    p.add_argument('--questoes', default='pipeline/qa_v7/saida_v81_10_por_topico/questoes.jsonl')
     p.add_argument('--inventarios', nargs='+', default=[
         'pipeline/inventario/saida_sistemas_de_lastro_v4_notas', 'pipeline/inventario/saida_mais_4_topicos_v4_nano_low',
         'pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low'])
@@ -116,17 +124,19 @@ def main(argv=None):
     for i, q in enumerate(chosen, 1):
         data.append({'codigo': f'Q{i:03d}', 'id': q['id'], 'topico': q['topico'], 'subtopico': q['subtopico'],
                      'nivel': NIVEL[q['tipo']], 'dificuldade': DIFICULDADE[q['tipo']],
-                     'pergunta': q['pergunta'], 'resposta': q['resposta'], 'explicacao': q.get('explicacao', ''),
+                     'pergunta': q['pergunta'], 'resposta': q['resposta'],
+                     'pontos_essenciais': q.get('pontos_essenciais', []), 'explicacao': sem_ids(q.get('explicacao', '')),
                      'contexto': context(q, notes)})
     template = (Path(__file__).with_name('formulario_template.gs')).read_text(encoding='utf-8')
     payload = json.dumps(data, ensure_ascii=False, indent=1).replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     (out / 'formulario_especialista.gs').write_text(template.replace('/*__QUESTOES__*/[]', payload), encoding='utf-8')
     with (out / 'mapa_questoes_formulario.csv').open('w', encoding='utf-8-sig', newline='') as f:
         w = csv.writer(f)
-        w.writerow(['codigo', 'id', 'topico', 'subtopico', 'dificuldade', 'nivel', 'pergunta', 'resposta'])
+        w.writerow(['codigo', 'id', 'topico', 'subtopico', 'dificuldade', 'nivel', 'pergunta', 'resposta',
+                    'pontos_essenciais'])
         for d in data:
             w.writerow([d['codigo'], d['id'], d['topico'], d['subtopico'], d['dificuldade'], d['nivel'], d['pergunta'],
-                        d['resposta']])
+                        d['resposta'], ' | '.join(d['pontos_essenciais'])])
     counts = defaultdict(int)
     for d in data:
         counts[d['topico']] += 1

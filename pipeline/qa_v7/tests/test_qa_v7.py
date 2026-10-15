@@ -234,6 +234,16 @@ class QAv7(unittest.TestCase):
         self.assertNotIn('depende_do_material', G.check_code(q, {'F1': {}}))
         self.assertIn('sem_pista', G.CHECKS)
 
+    def test_regras_v82(self):
+        self.assertEqual(G.sem_ids('Segundo F4, testes exigem avaliação. A pressão cai (F1, F3).'),
+                         'Testes exigem avaliação. A pressão cai.')
+        self.assertTrue(G.composta('Qual mecanismo reduz o risco: o que deve existir em recursos?'))
+        self.assertFalse(G.composta('Qual cenário governa a seleção: bloqueio, fogo ou falha de controle?'))
+        for p in ('Quais métodos citados se aplicam à detecção de H2S?', 'Para FPSOs avaliados em Campos, qual a opção?'):
+            q = {'pergunta': p, 'resposta': 'X.', 'fatos': ['F1'], 'tipo': 'facil', 'pontos_essenciais': ['x'],
+                 'explicacao': ''}
+            self.assertIn('depende_do_material', G.check_code(q, {'F1': {}}))
+
     def test_modo_profundo_e_novidade(self):
         def embed(texts):
             return np.stack([np.ones(4) / 2 for _ in texts])              # tudo igual: tudo vizinho

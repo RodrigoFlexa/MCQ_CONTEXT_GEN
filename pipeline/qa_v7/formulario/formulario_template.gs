@@ -9,11 +9,11 @@
  *   4. No final, o registro mostra os links (listarLinks mostra de novo).
  *      Para começar do zero, execute recomecar, apague os formulários antigos no Drive e rode criarFormulario.
  *
- * Por padrão é criado um formulário por tópico (10 questões cada): o Google Forms limita o número de itens
+ * Por padrão é criado um formulário por tópico (5 questões cada): o Google Forms limita o número de itens
  * por formulário e 100 questões numa página só ficariam longas demais para uma sessão. Se mesmo assim um
  * formulário atingir o limite, o script cria automaticamente uma "parte 2" e continua dali.
  *
- * Cada questão ocupa uma página: enunciado, resposta, grade de notas de 1 a 5, o contexto usado na geração
+ * Cada questão ocupa uma página: enunciado, resposta, critério de correção, justificativa, grade de notas de 1 a 5, o contexto usado na geração
  * com parecer e motivo, o parecer final da questão com motivo e a concordância com a nossa classificação de
  * dificuldade. Quem discorda vai para uma página curta: a classificação que daria e os motivos (com "Outro"). Os títulos levam o código (Q001...) para
  * cruzar as respostas com o arquivo mapa_questoes_formulario.csv.
@@ -57,8 +57,8 @@ function criarFormulario() {
   const inicio = Date.now();
   const props = PropertiesService.getScriptProperties();
   let estado = JSON.parse(props.getProperty('ESTADO') || 'null');
-  if (!estado || estado.versao !== 3) {
-    estado = { versao: 3, grupos: montarGrupos_(), atual: 0 };
+  if (!estado || estado.versao !== 4) {
+    estado = { versao: 4, grupos: montarGrupos_(), atual: 0 };
   }
   const salvar = function () { props.setProperty('ESTADO', JSON.stringify(estado)); };
   while (estado.atual < estado.grupos.length) {
@@ -105,7 +105,7 @@ function criarFormulario() {
 
 function listarLinks() {
   const estado = JSON.parse(PropertiesService.getScriptProperties().getProperty('ESTADO') || 'null');
-  if (!estado || estado.versao !== 3) {
+  if (!estado || estado.versao !== 4) {
     Logger.log('Nenhum formulário criado ainda. Execute criarFormulario.');
     return;
   }
@@ -191,6 +191,10 @@ function adicionarQuestao_(form, q, n, total) {
       .setHelpText('Tópico: ' + q.topico + '\nSubtópico: ' + q.subtopico);
     add(form.addSectionHeaderItem()).setTitle('Enunciado').setHelpText(q.pergunta);
     add(form.addSectionHeaderItem()).setTitle('Resposta correta').setHelpText(q.resposta);
+    if (q.pontos_essenciais && q.pontos_essenciais.length) {
+      add(form.addSectionHeaderItem()).setTitle('Critério de correção (o que uma resposta precisa conter)')
+        .setHelpText(q.pontos_essenciais.map(function (p) { return '• ' + p; }).join('\n'));
+    }
     if (q.explicacao) {
       add(form.addSectionHeaderItem()).setTitle('Justificativa da resposta').setHelpText(q.explicacao);
     }
