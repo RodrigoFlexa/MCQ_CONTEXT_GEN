@@ -74,6 +74,15 @@ class ClienteLLM(LLMBase):
         self.assertEqual(self.client.chat.completions.create.call_count, 2)
         self.sleep.assert_called_once()
 
+    def test_saldo_esgotado_nao_repete(self):
+        class RateLimitError(Exception):
+            status_code = 429
+        llm = self.make(RateLimitError("{'code': 'credit_balance_exhausted', 'type': 'insufficient_quota'}"))
+        with self.assertRaises(RateLimitError):
+            llm.json('s', 'u')
+        self.assertEqual(self.client.chat.completions.create.call_count, 1)
+        self.sleep.assert_not_called()
+
     def test_filtro_de_conteudo_no_prompt_nao_repete(self):
         class BadRequestError(Exception):
             status_code = 400

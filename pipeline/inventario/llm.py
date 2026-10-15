@@ -104,7 +104,15 @@ def is_content_filter(exc):
                                    'content management policy'))
 
 
+def is_quota_exhausted(exc):
+    """Saldo ou cota esgotados (429 permanente): esperar não resolve."""
+    text = str(exc).casefold()
+    return any(tok in text for tok in ('insufficient_quota', 'credit_balance_exhausted', 'billing_hard_limit'))
+
+
 def is_transient(exc):
+    if is_quota_exhausted(exc):
+        return False
     if _status(exc) in (408, 409, 429, 500, 502, 503, 504):
         return True
     name = type(exc).__name__
@@ -113,7 +121,7 @@ def is_transient(exc):
 
 
 def is_fatal(exc):
-    if _status(exc) in FATAL_STATUS:
+    if is_quota_exhausted(exc) or _status(exc) in FATAL_STATUS:
         return True
     return type(exc).__name__ in ('AuthenticationError', 'PermissionDeniedError', 'NotFoundError')
 
@@ -133,19 +141,21 @@ def retry_after(exc):
 class LLMClient:
     def __init__(self, model, effort, cache_path, log_path, max_calls=50000, timeout=600, api_key=None,
                  provider='azure', client=None, settings=None, max_attempts=6, max_tokens_cap=32000,
-                 sleep=None, budget=None, log_lock=None):
+                 sleep=None, budget=None, log_lock=None, api_version=None):
         if provider not in ('azure', 'openai'):
             raise ValueError('Provider inválido')
         identity = {'provider': provider}
         if provider == 'azure':
             from azure_openai_backend import AzureSettings, AzureOpenAIBackend
             settings = settings or (AzureSettings.load() if client is None else None)
+            # Alguns deployments (o3, o4-mini) exigem outra API version; o padrão vem da configuração Azure.
+            version = api_version or (settings.azure_api_version if settings else None)
             if settings:
                 settings.require()
-                identity.update(endpoint_sha=sha(settings.azure_endpoint, 40), api_version=settings.azure_api_version)
+                identity.update(endpoint_sha=sha(settings.azure_endpoint, 40), api_version=version)
             if client is None:
                 from openai import AzureOpenAI
-                kwargs = dict(api_key=settings.azure_api_key, api_version=settings.azure_api_version,
+                kwargs = dict(api_key=settings.azure_api_key, api_version=version,
                               timeout=timeout, max_retries=0)
                 kwargs['base_url' if settings.use_base_url else 'azure_endpoint'] = settings.azure_endpoint
                 http = AzureOpenAIBackend._build_http_client(settings.ca_bundle, timeout)
