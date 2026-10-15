@@ -151,6 +151,20 @@ class QAv7(unittest.TestCase):
         self.assertEqual(resumo['concordancia']['j1:medium x j2:low']['concordancia'], 1.0)
         self.assertIn('Defeitos plantados que passaram', (out / 'relatorio_juizes.md').read_text(encoding='utf-8'))
 
+    def test_juiz_indisponivel_nao_derruba_comparacao(self):
+        class Down(FakeLLM):
+            def json(self, system, user, **kw):
+                if system == G.JUDGE_SYSTEM:
+                    raise RuntimeError('NotFoundError: deployment inexistente')
+                return super().json(system, user, **kw)
+        G.main(self.args(), clients=(FakeLLM(), FakeLLM()))
+        resumo = CJ.main(['--inventarios', str(self.inv), '--questoes', str(self.root / 'out' / 'questoes.jsonl'),
+                          '--saida', str(self.root / 'cmp2'), '--juizes', 'ok:low', 'fora:low', '--defeitos', '4',
+                          '--env', str(self.root)],
+                         clients={'juizes': {'ok:low': FakeLLM(), 'fora:low': Down()}, 'defeitos': FakeLLM()})
+        self.assertEqual(resumo['juizes']['fora:low']['erros'], 16)
+        self.assertEqual(resumo['juizes']['ok:low']['avaliados'], 16)
+
     def test_modelo_invalido(self):
         with self.assertRaises(ValueError):
             G.parse_role('gpt:altissimo')

@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pipeline.inventario.llm import CallFailed, ContentFiltered, load_dotenv  # noqa: E402
+from pipeline.inventario.llm import BudgetExceeded, CallFailed, ContentFiltered, load_dotenv  # noqa: E402
 from pipeline.inventario.textutil import atomic_json, write_jsonl  # noqa: E402
 from pipeline.qa_v7.gerar_qa import (TIPOS, failed_checks, judge_items, load_inventory, make_client, material,  # noqa: E402
                                      parse_role, read_jsonl, verdict_ok)
@@ -217,6 +217,8 @@ def main(argv=None, clients=None):
                 variants += f.result()
             except (ContentFiltered, CallFailed) as e:
                 print(f"[juizes] defeitos não gerados para {futs[f]['qid']}: {e}", flush=True)
+    if chosen and not variants:
+        raise SystemExit(f'Nenhuma versão com defeito foi gerada por {a.gerador_defeitos}; confira o deployment')
     items = originals + sorted(variants, key=lambda x: x['id'])
     print(f'[juizes] {len(originals)} originais + {len(variants)} variantes com defeito | juízes: {", ".join(a.juizes)}', flush=True)
 
@@ -224,8 +226,10 @@ def main(argv=None, clients=None):
         base = {'juiz': judge, 'item': it['id'], 'qid': it['qid'], 'variante': it['variante'], 'tipo': it['tipo']}
         try:
             v = judge_items(judges[judge], mats[it['qid']], [it], it['id'])[it['id']]
-        except (ContentFiltered, CallFailed) as e:
-            return {**base, 'valido': False, 'erro': str(e)[:300]}
+        except BudgetExceeded:
+            raise
+        except Exception as e:  # noqa: BLE001 - um juiz indisponível (ex.: deployment 404) não derruba os demais
+            return {**base, 'valido': False, 'erro': f'{type(e).__name__}: {e}'[:300]}
         return {**base, 'valido': True, 'aprovado': verdict_ok(v), 'falhas': failed_checks(v),
                 'problemas': [str(x) for x in v.get('problemas') or []], 'parecer': v}
     results = []
