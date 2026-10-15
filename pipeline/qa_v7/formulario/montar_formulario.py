@@ -1,6 +1,6 @@
 """Monta o Google Apps Script do formulário de avaliação por especialista.
 
-Seleciona N questões aprovadas por tópico (padrão 10: 3 fácil, 4 média, 2 difícil A, 1 difícil B),
+Seleciona N questões aprovadas por tópico (padrão 5: 1 fácil, 2 média, 1 difícil A, 1 difícil B; com 10: 3/4/2/1),
 espalhadas pelos subtópicos, preferindo as que não foram corrigidas nem marcadas como repetidas.
 Gera formulario_especialista.gs (dados embutidos) e o mapa código -> questão para analisar as respostas.
 
@@ -21,7 +21,9 @@ if str(ROOT) not in sys.path:
 
 from pipeline.qa_v7.gerar_qa import load_inventory, read_jsonl  # noqa: E402
 
-COTA_TIPOS = (('facil', 3), ('media', 4), ('dificil_A', 2), ('dificil_B', 1))
+# Mistura de tipos por tamanho do lote por tópico; outros tamanhos completam com médias.
+MISTURAS = {5: (('facil', 1), ('media', 2), ('dificil_A', 1), ('dificil_B', 1)),
+            10: (('facil', 3), ('media', 4), ('dificil_A', 2), ('dificil_B', 1))}
 NIVEL = {'facil': 'Fácil', 'media': 'Média', 'dificil_A': 'Difícil (cenário em um conceito)',
          'dificil_B': 'Difícil (integra dois ou mais conceitos)'}
 COLECAO = {'petroles': 'Petrolês', 'anp': 'ANP', 'hse': 'HSE (Reino Unido)', 'bsee': 'BSEE (EUA)', 'regis': 'REGIS'}
@@ -44,7 +46,8 @@ def select(rows, por_topico, seed):
         subs = sorted({q['subtopico'] for q in qs})
         rng.shuffle(subs)
         cursor = 0
-        plan = [t for t, n in COTA_TIPOS for _ in range(n)]
+        mix = MISTURAS.get(por_topico, MISTURAS[10])
+        plan = [t for t, n in mix for _ in range(n)]
         plan += ['media'] * max(0, por_topico - len(plan))
         for tipo in plan[:por_topico]:
             for pref in (True, False):
@@ -100,7 +103,7 @@ def main(argv=None):
         'pipeline/inventario/saida_sistemas_de_lastro_v4_notas', 'pipeline/inventario/saida_mais_4_topicos_v4_nano_low',
         'pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low'])
     p.add_argument('--saida', default='pipeline/qa_v7/formulario')
-    p.add_argument('--por-topico', type=int, default=10)
+    p.add_argument('--por-topico', type=int, default=5)
     p.add_argument('--seed', type=int, default=2026)
     a = p.parse_args(argv)
     out = Path(a.saida)
