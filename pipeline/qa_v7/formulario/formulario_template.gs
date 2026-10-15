@@ -14,7 +14,8 @@
  * formulário atingir o limite, o script cria automaticamente uma "parte 2" e continua dali.
  *
  * Cada questão ocupa uma página: enunciado, resposta, grade de notas de 1 a 5, o contexto usado na geração
- * com parecer e motivo, e o parecer final da questão com motivo. Os títulos levam o código (Q001...) para
+ * com parecer e motivo, o parecer final da questão com motivo e a concordância com a nossa classificação de
+ * dificuldade. Quem discorda vai para uma página curta: a classificação que daria e os motivos (com "Outro"). Os títulos levam o código (Q001...) para
  * cruzar as respostas com o arquivo mapa_questoes_formulario.csv.
  */
 
@@ -34,6 +35,20 @@ const CRITERIOS = [
 ];
 const NOTAS = ['1 (muito ruim)', '2', '3', '4', '5 (excelente)'];
 const PARECERES = ['Aprovado', 'Aprovado com ressalvas', 'Rejeitado'];
+const NIVEIS = ['Fácil', 'Média', 'Difícil'];
+const CONCORDO = 'Concordo';
+const DISCORDO = 'Discordo';
+const MOTIVOS_DIFICULDADE = [
+  'Exige apenas recordar um conceito ou definição',
+  'A resposta é direta ou está sugerida no próprio enunciado',
+  'É conhecimento básico para quem atua em FPSO',
+  'O cenário não acrescenta raciocínio; a decisão é direta',
+  'Exige integrar vários conceitos, sistemas ou disciplinas',
+  'Exige várias etapas de raciocínio ou análise de prós e contras',
+  'Exige conhecimento especializado ou pouco difundido',
+  'Exige experiência prática de operação',
+  'Envolve cálculo ou interpretação de valores e dados',
+];
 const LIMITE_MS = 5 * 60 * 1000;  // o Apps Script encerra execuções com 6 minutos
 
 const QUESTOES = /*__QUESTOES__*/[];
@@ -42,8 +57,8 @@ function criarFormulario() {
   const inicio = Date.now();
   const props = PropertiesService.getScriptProperties();
   let estado = JSON.parse(props.getProperty('ESTADO') || 'null');
-  if (!estado || !estado.versao) {
-    estado = { versao: 2, grupos: montarGrupos_(), atual: 0 };
+  if (!estado || estado.versao !== 3) {
+    estado = { versao: 3, grupos: montarGrupos_(), atual: 0 };
   }
   const salvar = function () { props.setProperty('ESTADO', JSON.stringify(estado)); };
   while (estado.atual < estado.grupos.length) {
@@ -61,7 +76,12 @@ function criarFormulario() {
         return;
       }
       const q = QUESTOES[grupo.questoes[grupo.proxima]];
-      if (adicionarQuestao_(form, q, grupo.proxima + 1, grupo.questoes.length)) {
+      const criada = adicionarQuestao_(form, q, grupo.proxima + 1, grupo.questoes.length);
+      if (criada) {
+        if (grupo.anterior && grupo.anterior.formId === form.getId()) {
+          ligarDificuldade_(form, grupo.anterior.itemId, form.getItemById(criada.pagina).asPageBreakItem());
+        }
+        grupo.anterior = { formId: form.getId(), itemId: criada.dificuldade };
         grupo.proxima += 1;
         vazio = false;
         salvar();
@@ -72,6 +92,7 @@ function criarFormulario() {
       }
       Logger.log('"%s" atingiu o limite de itens na questão %s. Criando uma nova parte.', grupo.titulo, q.codigo);
       grupo.inicioParte = grupo.proxima;
+      grupo.anterior = null;
       form = novoFormulario_(grupo, salvar);
       vazio = true;
     }
@@ -84,7 +105,7 @@ function criarFormulario() {
 
 function listarLinks() {
   const estado = JSON.parse(PropertiesService.getScriptProperties().getProperty('ESTADO') || 'null');
-  if (!estado || !estado.versao) {
+  if (!estado || estado.versao !== 3) {
     Logger.log('Nenhum formulário criado ainda. Execute criarFormulario.');
     return;
   }
@@ -105,7 +126,9 @@ function recomecar() {
 }
 
 function montarGrupos_() {
-  const novo = function (titulo) { return { titulo: titulo, questoes: [], proxima: 0, formIds: [], inicioParte: 0 }; };
+  const novo = function (titulo) {
+    return { titulo: titulo, questoes: [], proxima: 0, formIds: [], inicioParte: 0, anterior: null };
+  };
   if (!CONFIG.umFormularioPorTopico) {
     const g = novo(CONFIG.titulo);
     QUESTOES.forEach(function (_, i) { g.questoes.push(i); });
@@ -132,7 +155,8 @@ function novoFormulario_(grupo, salvar) {
   form.setDescription(
     'Obrigado por colaborar. Cada página traz uma questão gerada automaticamente sobre operação de FPSOs, ' +
     'com a resposta considerada correta. Dê notas de 1 (muito ruim) a 5 (excelente) aos quatro critérios, ' +
-    'avalie o contexto usado para gerar a questão e, por fim, dê o parecer sobre a questão.\n\n' +
+    'avalie o contexto usado para gerar a questão, dê o parecer sobre a questão e diga se concorda ' +
+    'com a nossa classificação de dificuldade.\n\n' +
     'Sua tarefa é apenas avaliar: não é preciso reescrever nem corrigir as questões. ' +
     'Quando marcar "Rejeitado" ou "Aprovado com ressalvas", escreva o motivo no campo logo abaixo.' +
     (CONFIG.permitirEditarResposta ? '\n\nDepois de enviar, você poderá editar suas respostas pelo link de edição.' : ''));
@@ -151,15 +175,20 @@ function novoFormulario_(grupo, salvar) {
   return form;
 }
 
-/** Cria a página da questão. Devolve false (sem deixar itens soltos) se o formulário atingiu o limite. */
+/**
+ * Cria a página da questão e a página condicional de discordância da dificuldade.
+ * Devolve {pagina, dificuldade} (ids) ou null, sem deixar itens soltos, se o formulário atingiu o limite.
+ * "Concordo" leva à próxima questão (ligado quando ela é criada; na última, envia o formulário);
+ * "Discordo" abre a página em que o especialista dá a classificação dele e marca os motivos.
+ */
 function adicionarQuestao_(form, q, n, total) {
   const criados = [];
   const add = function (item) { criados.push(item); return item; };
   const c = q.codigo;
   try {
-    add(form.addPageBreakItem())
+    const pagina = add(form.addPageBreakItem())
       .setTitle(c + ' · Questão ' + n + ' de ' + total)
-      .setHelpText('Tópico: ' + q.topico + '\nSubtópico: ' + q.subtopico + '\nNível pretendido: ' + q.nivel);
+      .setHelpText('Tópico: ' + q.topico + '\nSubtópico: ' + q.subtopico);
     add(form.addSectionHeaderItem()).setTitle('Enunciado').setHelpText(q.pergunta);
     add(form.addSectionHeaderItem()).setTitle('Resposta correta').setHelpText(q.resposta);
     add(form.addGridItem())
@@ -186,14 +215,40 @@ function adicionarQuestao_(form, q, n, total) {
     add(form.addParagraphTextItem())
       .setTitle(c + ' · Motivo (questão)')
       .setHelpText('Obrigatório se marcou "Rejeitado" ou "Aprovado com ressalvas".');
-    return true;
+    const dif = add(form.addMultipleChoiceItem());
+    dif.setTitle(c + ' · Nossa classificação de dificuldade: ' + q.dificuldade.toUpperCase() + '. Você concorda?')
+      .setHelpText('Considere um profissional que atua em operação de FPSOs.')
+      .setChoices([dif.createChoice(CONCORDO, FormApp.PageNavigationType.SUBMIT),
+                   dif.createChoice(DISCORDO, FormApp.PageNavigationType.CONTINUE)])
+      .setRequired(true);
+    add(form.addPageBreakItem())
+      .setTitle(c + ' · Sua classificação de dificuldade')
+      .setHelpText('Você discordou da nossa classificação (' + q.dificuldade + ').');
+    add(form.addMultipleChoiceItem())
+      .setTitle(c + ' · Qual classificação você daria?')
+      .setChoiceValues(NIVEIS.filter(function (x) { return x !== q.dificuldade; }))
+      .setRequired(true);
+    add(form.addCheckboxItem())
+      .setTitle(c + ' · Por que essa classificação?')
+      .setHelpText('Marque todas as opções que se aplicam. Use "Outro" se nenhuma descrever o motivo.')
+      .setChoiceValues(MOTIVOS_DIFICULDADE)
+      .showOtherOption(true)
+      .setRequired(true);
+    return { pagina: pagina.getId(), dificuldade: dif.getId() };
   } catch (e) {
     criados.reverse().forEach(function (item) {
       try { form.deleteItem(item); } catch (ignorado) { /* item já inexistente */ }
     });
     if (/m[áa]ximo de itens|maximum number of items|too many items/i.test(String(e && e.message || e))) {
-      return false;
+      return null;
     }
     throw e;
   }
+}
+
+/** "Concordo" na questão anterior passa a levar à página da questão recém-criada. */
+function ligarDificuldade_(form, itemId, proximaPagina) {
+  const mc = form.getItemById(itemId).asMultipleChoiceItem();
+  mc.setChoices([mc.createChoice(CONCORDO, proximaPagina),
+                 mc.createChoice(DISCORDO, FormApp.PageNavigationType.CONTINUE)]);
 }

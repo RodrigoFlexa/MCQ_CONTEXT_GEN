@@ -26,6 +26,7 @@ MISTURAS = {5: (('facil', 1), ('media', 2), ('dificil_A', 1), ('dificil_B', 1)),
             10: (('facil', 3), ('media', 4), ('dificil_A', 2), ('dificil_B', 1))}
 NIVEL = {'facil': 'Fácil', 'media': 'Média', 'dificil_A': 'Difícil (cenário em um conceito)',
          'dificil_B': 'Difícil (integra dois ou mais conceitos)'}
+DIFICULDADE = {'facil': 'Fácil', 'media': 'Média', 'dificil_A': 'Difícil', 'dificil_B': 'Difícil'}
 COLECAO = {'petroles': 'Petrolês', 'anp': 'ANP', 'hse': 'HSE (Reino Unido)', 'bsee': 'BSEE (EUA)', 'regis': 'REGIS'}
 MAX_FATOS, MAX_CITACAO, MAX_CONTEXTO = 6, 320, 3800
 
@@ -114,16 +115,18 @@ def main(argv=None):
     data = []
     for i, q in enumerate(chosen, 1):
         data.append({'codigo': f'Q{i:03d}', 'id': q['id'], 'topico': q['topico'], 'subtopico': q['subtopico'],
-                     'nivel': NIVEL[q['tipo']], 'pergunta': q['pergunta'], 'resposta': q['resposta'],
+                     'nivel': NIVEL[q['tipo']], 'dificuldade': DIFICULDADE[q['tipo']],
+                     'pergunta': q['pergunta'], 'resposta': q['resposta'],
                      'contexto': context(q, notes)})
     template = (Path(__file__).with_name('formulario_template.gs')).read_text(encoding='utf-8')
     payload = json.dumps(data, ensure_ascii=False, indent=1).replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     (out / 'formulario_especialista.gs').write_text(template.replace('/*__QUESTOES__*/[]', payload), encoding='utf-8')
     with (out / 'mapa_questoes_formulario.csv').open('w', encoding='utf-8-sig', newline='') as f:
         w = csv.writer(f)
-        w.writerow(['codigo', 'id', 'topico', 'subtopico', 'nivel', 'pergunta', 'resposta'])
+        w.writerow(['codigo', 'id', 'topico', 'subtopico', 'dificuldade', 'nivel', 'pergunta', 'resposta'])
         for d in data:
-            w.writerow([d['codigo'], d['id'], d['topico'], d['subtopico'], d['nivel'], d['pergunta'], d['resposta']])
+            w.writerow([d['codigo'], d['id'], d['topico'], d['subtopico'], d['dificuldade'], d['nivel'], d['pergunta'],
+                        d['resposta']])
     counts = defaultdict(int)
     for d in data:
         counts[d['topico']] += 1
