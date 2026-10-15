@@ -23,7 +23,7 @@ const CONFIG = {
   // true: um formulário por tópico (recomendado). false: tenta um formulário único (divide em partes se lotar).
   umFormularioPorTopico: true,
   criarPlanilhaDeRespostas: true,
-  permitirEditarResposta: true,
+  permitirEditarResposta: false,  // o especialista só avalia; não edita a resposta depois de enviar
 };
 
 const CRITERIOS = [
@@ -634,8 +634,8 @@ function novoFormulario_(grupo, salvar) {
     'Obrigado por colaborar. Cada página traz uma questão gerada automaticamente sobre operação de FPSOs, ' +
     'com a resposta considerada correta. Dê notas de 1 (muito ruim) a 5 (excelente) aos quatro critérios, ' +
     'avalie o contexto usado para gerar a questão e, por fim, dê o parecer sobre a questão.\n\n' +
-    'Quando marcar "Rejeitado" ou "Aprovado com ressalvas", escreva o motivo no campo logo abaixo. ' +
-    'Sugestões de correção são muito bem-vindas.' +
+    'Sua tarefa é apenas avaliar: não é preciso reescrever nem corrigir as questões. ' +
+    'Quando marcar "Rejeitado" ou "Aprovado com ressalvas", escreva o motivo no campo logo abaixo.' +
     (CONFIG.permitirEditarResposta ? '\n\nDepois de enviar, você poderá editar suas respostas pelo link de edição.' : ''));
   form.setProgressBar(true);
   form.setCollectEmail(false);
@@ -686,7 +686,7 @@ function adicionarQuestao_(form, q, n, total) {
       .setRequired(true);
     add(form.addParagraphTextItem())
       .setTitle(c + ' · Motivo (questão)')
-      .setHelpText('Obrigatório se marcou "Rejeitado" ou "Aprovado com ressalvas". Se possível, sugira a correção.');
+      .setHelpText('Obrigatório se marcou "Rejeitado" ou "Aprovado com ressalvas".');
     return true;
   } catch (e) {
     criados.reverse().forEach(function (item) {
