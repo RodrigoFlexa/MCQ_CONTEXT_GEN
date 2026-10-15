@@ -5,13 +5,15 @@ import re
 import sys
 import tempfile
 import unittest
+
+import numpy as np
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 
 from pipeline.inventario.llm import CallFailed  # noqa: E402
-from pipeline.qa_v7 import comparar_juizes as CJ, gerar_qa as G  # noqa: E402
+from pipeline.qa_v7 import comparar_juizes as CJ, gerar_qa as G, novidade as NV, plano as PL  # noqa: E402
 
 
 def note(nid, assunto, alvos=('facil', 'media', 'dificil')):
@@ -81,6 +83,9 @@ class FakeLLM:
         elif system == G.REFINE_SYSTEM:
             data = {'pergunta': 'Por que a espuma reduz a área de gás no separador?', 'resposta': 'Ocupa volume.',
                     'fatos': ['F1'], 'mudancas': 'redação'}
+        elif system == NV.SYSTEM:
+            ids = [x['id'] for x in json.loads(user)['anteriores']]
+            data = {'pares': [{'id': i, 'julgamento': 'redundante', 'razao': 'mesma coisa'} for i in ids]}
         elif system == CJ.DEFECT_SYSTEM:
             data = {k: {'pergunta': f'Pergunta com {k}?', 'resposta': f'Resposta com {k}.', 'defeito': k} for k in CJ.DEFEITOS}
         else:
@@ -168,6 +173,54 @@ class QAv7(unittest.TestCase):
                          clients={'juizes': {'ok:low': FakeLLM(), 'fora:low': Down()}, 'defeitos': FakeLLM()})
         self.assertEqual(resumo['juizes']['fora:low']['erros'], 20)
         self.assertEqual(resumo['juizes']['ok:low']['avaliados'], 20)
+
+    def test_fila_reveza_niveis_notas_e_esgota_alvos(self):
+        sub = G.load_inventory([self.inv])[0]
+        q = PL.build_queue(sub, 7)
+        self.assertEqual(len(q), 3 * 3 + 1)                               # 9 alvos + 1 combinação
+        self.assertEqual(len({b['alvo_ref'] for b in q}), len(q))         # cada alvo uma vez
+        self.assertEqual([b['alvos'][0]['tipo'] for b in q[:6]],
+                         ['facil', 'media', 'dificil_A', 'media', 'facil', 'dificil_B'])
+        self.assertEqual(len({b['notas'][0]['nid'] for b in q[:3]}), 3)   # 3 notas antes de repetir
+        self.assertEqual(q, PL.build_queue(sub, 7))                       # determinística
+        self.assertEqual([b['ordem'] for b in q], list(range(len(q))))
+
+    def test_cota_por_topico(self):
+        subs = [{'key': k, 'topico': t, 'notas': [0] * n} for k, t, n in
+                (('a', 'T1', 60), ('b', 'T1', 30), ('c', 'T1', 2), ('d', 'T2', 5))]
+        q = PL.allocate(subs, 100, 3)
+        self.assertEqual(q['a'] + q['b'] + q['c'], 100)
+        self.assertEqual(q['d'], 100)
+        self.assertGreaterEqual(q['c'], 3)
+        self.assertGreater(q['a'], q['b'])
+
+    def test_modo_cota_repoe_reprovadas(self):
+        judge = FakeLLM(reject={'s1-s0001-A1'})
+        resumo = G.main(self.args('--modo', 'cota', '--por-topico', '4', '--min-por-subtopico', '1'),
+                        clients=(FakeLLM(), judge))
+        self.assertEqual(resumo['aprovadas_por_topico'], {'Tópico X': 4})
+        rows = [json.loads(l) for l in (self.root / 'out' / 'questoes.jsonl').read_text(encoding='utf-8').splitlines()]
+        self.assertEqual([r['ordem'] for r in rows], [0, 1, 2, 3, 4])      # 5ª da fila repõe a reprovada
+
+    def test_modo_profundo_e_novidade(self):
+        def embed(texts):
+            return np.stack([np.ones(4) / 2 for _ in texts])              # tudo igual: tudo vizinho
+        resumo = G.main(self.args('--modo', 'profundo', '--subtopicos', 'Sub Y'),
+                        clients=(FakeLLM(), FakeLLM(), FakeLLM()), embed=embed)
+        self.assertEqual(sum(resumo['status'].values()), 10)
+        self.assertEqual(resumo['redundantes'], 9)                        # a primeira é nova; as demais repetem
+        nov = json.loads((self.root / 'out' / 'novidade.json').read_text(encoding='utf-8'))
+        self.assertEqual(nov['janelas']['s1'][0]['redundantes'], 9)
+        self.assertIn('Curva de novidade', (self.root / 'out' / 'relatorio.md').read_text(encoding='utf-8'))
+
+    def test_profundo_exige_subtopicos(self):
+        with self.assertRaises(SystemExit):
+            G.parse(self.args('--modo', 'profundo'))
+
+    def test_citacao_de_estudo_na_resposta(self):
+        r = G.check_code({'pergunta': 'Por que calibrar por condição?', 'resposta': 'Como em Hines et al. (2008a).',
+                          'fatos': ['F1']}, {'F1': {}})
+        self.assertIn('depende_do_material', r)
 
     def test_modelo_invalido(self):
         with self.assertRaises(ValueError):

@@ -170,6 +170,7 @@ class LLMClient:
             client = OpenAI(api_key=key, timeout=timeout, max_retries=0)
         self.client = client
         self.provider, self.timeout = provider, timeout
+        self._api_version = api_version
         self._auto_client = provider == 'azure' and settings is not None and self.client is not None \
             and type(client).__name__ == 'AzureOpenAI'
         self._key_seen = getattr(settings, 'azure_api_key', None)
@@ -223,7 +224,7 @@ class LLMClient:
             new = AzureSettings.load(override=True)
             if not new.azure_api_key or new.azure_api_key == failed_key:
                 return False
-            kwargs = dict(api_key=new.azure_api_key, api_version=new.azure_api_version,
+            kwargs = dict(api_key=new.azure_api_key, api_version=self._api_version or new.azure_api_version,
                           timeout=self.timeout, max_retries=0)
             kwargs['base_url' if new.use_base_url else 'azure_endpoint'] = new.azure_endpoint
             http = AzureOpenAIBackend._build_http_client(new.ca_bundle, self.timeout)

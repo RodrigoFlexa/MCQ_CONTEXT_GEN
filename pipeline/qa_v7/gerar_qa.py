@@ -20,6 +20,8 @@ from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+import numpy as np
+
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -27,8 +29,9 @@ if str(ROOT) not in sys.path:
 from pipeline.inventario.llm import CallFailed, ContentFiltered, LLMClient, load_dotenv  # noqa: E402
 from pipeline.inventario.textutil import atomic_json, write_jsonl  # noqa: E402
 from pipeline.qa_references.download_qa_examples import CHOICE_REFERENCES, CONTEXT_REFERENCES  # noqa: E402
+from pipeline.qa_v7 import novidade as N, plano as P  # noqa: E402
 
-VERSION = 'qa-v7-piloto-3'
+VERSION = 'qa-v7-4-fila'
 NIVEL = {'facil': 'fácil', 'media': 'média', 'dificil': 'difícil'}
 TIPO_NIVEL = {'facil': 'facil', 'media': 'media', 'dificil_A': 'dificil', 'dificil_B': 'dificil'}
 TIPOS = tuple(TIPO_NIVEL)
@@ -82,7 +85,8 @@ Retorne JSON: {{"pergunta":"...","resposta":"...","fatos":["F1"],"conceito":"...
 EXTRA_REFS = re.compile(
     r'\b(?:segundo|conforme|de acordo com)\s+(?:a|as|o|os)\s+(?:nota|notas|fonte|fontes|material|estudo|relat[óo]rio)\b|'
     r'\bnota t[ée]cnica\b|\bnas fontes\b|\b(?:no|o) estudo (?:citado|analisado|mencionado|de caso)\b|\bno caso (?:relatado|descrito|analisado)\b|'
-    r'\bmaterial fornecido\b|\btexto acima\b|\bF\d+\b|\bT\d+\b', re.IGNORECASE)
+    r'\bmaterial fornecido\b|\btexto acima\b|\bF\d+\b|\bT\d+\b|'
+    r'\bet al\b|\(\s*(?:19|20)\d{2}[a-z]?\s*\)|\bestudo de [A-ZÁÉÍÓÚ][a-záéíóúãõç]+', re.IGNORECASE)
 # Referência a alternativas de múltipla escolha (o filtro genérico confunde "opção A" de um cenário).
 CHOICE_ONLY = re.compile(r'\b(?:assinale|marque a|letra [A-E]|alternativa (?:correta|incorreta|errada|verdadeira|falsa)|'
                          r'(?:as|das|nas) (?:alternativas|op[çc][õo]es) (?:abaixo|a seguir|acima)|'
@@ -332,6 +336,15 @@ class Runner:
                 out.append({'id': batch['id'], 'status': 'falhou', 'erro': str(e)[:300], **meta(sub, batch)})
         return out
 
+    def run_job(self, sub, batch):
+        """Um lote da fila (modos cota e profundo); exemplos sorteados pelo id do lote."""
+        try:
+            return self.run_batch(sub, batch, random.Random(f'{self.seed}:{batch["id"]}'))
+        except ContentFiltered as e:
+            return [{'id': batch['id'], 'status': 'filtro_conteudo', 'erro': str(e)[:300], **meta(sub, batch)}]
+        except CallFailed as e:
+            return [{'id': batch['id'], 'status': 'falhou', 'erro': str(e)[:300], **meta(sub, batch)}]
+
     def run_batch(self, sub, batch, rng):
         table, mat_gen = material(sub, batch['notas'], batch['alvos'], with_quotes=False)
         _, mat_judge = material(sub, batch['notas'], batch['alvos'], with_quotes=True)
@@ -407,17 +420,17 @@ class Runner:
 
 def meta(sub, batch):
     return {'topico': sub['topico'], 'subtopico': sub['subtopico'], 'sub_key': sub['key'], 'inventario': sub['inventario'],
-            'lote': batch['id'], 'notas': [n['nid'] for n in batch['notas']],
-            'titulos_notas': [n['titulo'] for n in batch['notas']],
+            'lote': batch['id'], 'ordem': batch.get('ordem'), 'alvo_ref': batch.get('alvo_ref'),
+            'notas': [n['nid'] for n in batch['notas']], 'titulos_notas': [n['titulo'] for n in batch['notas']],
             'combinacao': (batch.get('combinacao') or {}).get('cid')}
 
 
 # ---------------------------------------------------------------- relatório
 
-def report(rows, out, usage, elapsed, models):
+def report(rows, out, usage, elapsed, models, modo, quota=None, curves=None):
     qs = [r for r in rows if 'pergunta' in r]
     ok = [q for q in qs if q['status'] == 'aprovada']
-    lines = ['# Piloto QA v7: perguntas a partir do inventário', '',
+    lines = [f'# QA v7 ({modo}): perguntas a partir do inventário', '',
              f"Gerador {models['gerador']}, juiz {models['juiz']}. {len(qs)} questões geradas, {len(ok)} aprovadas "
              f'({len(ok) / max(1, len(qs)):.0%}). Tempo {elapsed / 60:.1f} min. Chamadas {usage.get("calls", 0)}, '
              f"tokens de entrada {usage.get('prompt_tokens', 0):,}, de saída {usage.get('completion_tokens', 0):,}.", '',
@@ -430,17 +443,36 @@ def report(rows, out, usage, elapsed, models):
     falhas = [r for r in rows if r.get('status') in ('falhou', 'filtro_conteudo')]
     lines += ['', 'Motivos de reprovação: ' + (', '.join(f'{k} ({v})' for k, v in mot.most_common()) or 'nenhum'),
               f'Lotes com falha ou filtro de conteúdo: {len(falhas)}', '']
+    by_sub = defaultdict(list)
+    for r in rows:
+        by_sub[(r['topico'], r['subtopico'], r.get('sub_key'))].append(r)
+    lines += ['## Por subtópico', '', '| Tópico | Subtópico | cota | geradas | aprovadas | redundantes (novidade) |',
+              '|---|---|---:|---:|---:|---:|']
+    for (t, st, key), rs in by_sub.items():
+        red = sum(1 for q in rs if (q.get('novidade') or {}).get('redundante'))
+        lines.append(f"| {t[:40]} | {st[:50]} | {(quota or {}).get(key, '')} | {sum('pergunta' in r for r in rs)} | "
+                     f"{sum(r.get('status') == 'aprovada' for r in rs)} | {red} |")
+    if curves:
+        lines += ['', '## Curva de novidade (aprovadas na ordem da fila, janelas de 20)', '']
+        for c in curves.values():
+            w = N.windows(c['sequencia'])
+            lines += [f"### {c['subtopico']}", '', '| aprovadas | redundantes | fração |', '|---|---:|---:|']
+            lines += [f"| {x['de']} a {x['ate']} | {x['redundantes']} | {x['fracao']:.0%} |" for x in w]
+            lines.append('')
     by_topic = defaultdict(lambda: defaultdict(list))
     for q in qs:
         by_topic[q['topico']][q['subtopico']].append(q)
+    lines += ['## Questões', '']
     for topic, subs in by_topic.items():
-        lines += [f'## {topic}', '']
+        lines += [f'### {topic}', '']
         for sub, items in subs.items():
-            lines += [f'### {sub}', '']
-            for q in items:
+            lines += [f'#### {sub}', '']
+            for q in sorted(items, key=lambda q: (q.get('ordem') or 0, q['id'])):
                 st = 'APROVADA' if q['status'] == 'aprovada' else 'REPROVADA: ' + ', '.join(q.get('motivos', []))
                 fix = ' · corrigida' if q['correcoes'] else ''
-                lines += [f"**{q['tipo']} · {st}{fix}**  ", f"_Nota(s): {'; '.join(q['titulos_notas'])}_", '',
+                nov = q.get('novidade') or {}
+                red = ' · REDUNDANTE' if nov.get('redundante') else ''
+                lines += [f"**{q['tipo']} · {st}{fix}{red}**  ", f"_Nota(s): {'; '.join(q['titulos_notas'])}_", '',
                           f"**P:** {q['pergunta']}", '', f"**R:** {q['resposta']}", '']
     (out / 'relatorio.md').write_text('\n'.join(lines), encoding='utf-8')
 
@@ -449,42 +481,61 @@ def parse(argv):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--inventarios', nargs='+', required=True)
     p.add_argument('--saida', required=True)
+    p.add_argument('--modo', choices=['piloto', 'cota', 'profundo'], default='piloto',
+                   help='piloto: 4 por subtópico; cota: N aprovadas por tópico; profundo: todos os alvos dos subtópicos')
+    p.add_argument('--por-topico', type=int, default=100, help='modo cota: perguntas aprovadas por tópico')
+    p.add_argument('--min-por-subtopico', type=int, default=3)
+    p.add_argument('--ondas', type=int, default=3, help='modo cota: rodadas para repor reprovadas com novos alvos')
+    p.add_argument('--subtopicos', nargs='*', default=[], help='nomes (ou partes) de subtópicos; obrigatório no profundo')
     p.add_argument('--sementes', default=str(ROOT / 'pipeline/qa_references/review/sementes_qa_candidatas.jsonl'))
     p.add_argument('--exemplos-externos', default=str(ROOT / 'pipeline/qa_references/data/qa_examples.jsonl'))
     p.add_argument('--llm-provider', choices=['azure', 'openai'], default='azure')
     p.add_argument('--gerador', default='gpt-5-4-petrobras:low', help='deployment:effort do gerador e refinador')
-    p.add_argument('--juiz', default='gpt-5-4-petrobras:medium', help='deployment:effort do juiz')
+    p.add_argument('--juiz', default='gpt-5-4-petrobras:low', help='deployment:effort do juiz')
+    p.add_argument('--redundancia', default='gpt-5-4-nano-petrobras:low', help='deployment:effort da checagem de novidade')
+    p.add_argument('--sem-novidade', action='store_true', help='não mede novidade (embeddings + modelo pequeno)')
+    p.add_argument('--limiar-novidade', type=float, default=0.70, help='cosseno a partir do qual o par é checado')
+    p.add_argument('--embedder', default='embedding-3-large-global', choices=['embedding-3-large-global', 'hash'])
     p.add_argument('--workers', type=int, default=8)
-    p.add_argument('--max-chamadas', type=int, default=3000)
+    p.add_argument('--max-chamadas', type=int, default=20000)
     p.add_argument('--limite-subtopicos', type=int, default=0)
     p.add_argument('--seed', type=int, default=7)
     p.add_argument('--env', default=None, help='pasta com .env (padrão: raiz do repositório)')
     a = p.parse_args(argv)
-    parse_role(a.gerador)
-    parse_role(a.juiz)
+    for spec in (a.gerador, a.juiz, a.redundancia):
+        parse_role(spec)
+    if a.modo == 'profundo' and not a.subtopicos:
+        p.error('--modo profundo exige --subtopicos')
     return a
 
 
-def main(argv=None, clients=None):
-    a = parse(argv)
-    load_dotenv(Path(a.env) if a.env else ROOT)
-    out = Path(a.saida)
-    out.mkdir(parents=True, exist_ok=True)
-    subs = load_inventory(a.inventarios)
-    if a.limite_subtopicos:
-        subs = subs[:a.limite_subtopicos]
-    if not subs:
-        raise SystemExit('Nenhum subtópico com notas aprovadas nos inventários informados')
-    seeds, ext = load_examples(a.sementes, a.exemplos_externos)
-    if not seeds or not ext:
-        raise SystemExit('Exemplos ausentes: confira --sementes e --exemplos-externos')
-    print(f'[qa] {len(subs)} subtópicos, {sum(len(s["notas"]) for s in subs)} notas | gerador {a.gerador} | juiz {a.juiz} | '
-          f'exemplos: {len(seeds)} do especialista, ' + ', '.join(f'{k}={len(v)}' for k, v in sorted(ext.items())), flush=True)
-    gen, judge = clients or (make_client(a.gerador, a.llm_provider, out, a.max_chamadas, 'gerador'),
-                             make_client(a.juiz, a.llm_provider, out, a.max_chamadas, 'juiz'))
-    runner = Runner(gen, judge, seeds, ext, a.seed)
-    rows, t0 = [], time.time()
-    with ThreadPoolExecutor(a.workers) as pool:
+def select_subtopics(subs, names):
+    if not names:
+        return subs
+    wanted = [canon(n) for n in names]
+    return [s for s in subs if any(w == canon(s['subtopico']) or w in canon(s['subtopico']) for w in wanted)]
+
+
+def run_jobs(runner, jobs, workers, label):
+    """Executa lotes em paralelo; um lote com erro inesperado vira linha 'falhou' e o resto segue."""
+    rows = []
+    with ThreadPoolExecutor(workers) as pool:
+        futs = {pool.submit(runner.run_job, s, b): (s, b) for s, b in jobs}
+        for i, f in enumerate(as_completed(futs), 1):
+            s, b = futs[f]
+            try:
+                rows += f.result()
+            except Exception as e:  # noqa: BLE001
+                rows.append({'id': b['id'], 'status': 'falhou', 'erro': f'{type(e).__name__}: {e}'[:300], **meta(s, b)})
+            if i % 25 == 0 or i == len(futs):
+                c = Counter(r['status'] for r in rows)
+                print(f'[qa] {label}: {i}/{len(futs)} lotes | {dict(c)}', flush=True)
+    return rows
+
+
+def run_piloto(runner, subs, workers):
+    rows = []
+    with ThreadPoolExecutor(workers) as pool:
         futs = {pool.submit(runner.run_subtopic, s): s for s in subs}
         for i, f in enumerate(as_completed(futs), 1):
             s = futs[f]
@@ -495,23 +546,108 @@ def main(argv=None, clients=None):
                         'topico': s['topico'], 'subtopico': s['subtopico'], 'sub_key': s['key']}]
             rows += res
             print(f"[qa] {i}/{len(subs)} {s['subtopico'][:55]}: {dict(Counter(r['status'] for r in res))}", flush=True)
+    return rows
+
+
+def run_cota(runner, subs, a):
+    """Ondas: a primeira gera a cota de cada subtópico; as seguintes repõem as reprovadas com os próximos alvos."""
+    quota = P.allocate(subs, a.por_topico, a.min_por_subtopico)
+    queues = {s['key']: P.build_queue(s, a.seed) for s in subs}
+    used = Counter()
+    rows = []
+    for onda in range(1, a.ondas + 1):
+        jobs = []
+        for s in subs:
+            ok = sum(1 for r in rows if r.get('sub_key') == s['key'] and r.get('status') == 'aprovada')
+            want = quota[s['key']] - ok
+            take = queues[s['key']][used[s['key']]:used[s['key']] + max(0, want)]
+            used[s['key']] += len(take)
+            jobs += [(s, b) for b in take]
+        if not jobs:
+            break
+        print(f'[qa] onda {onda}: {len(jobs)} lotes', flush=True)
+        rows += run_jobs(runner, jobs, a.workers, f'onda {onda}')
+    return rows, quota
+
+
+def main(argv=None, clients=None, embed=None):
+    a = parse(argv)
+    load_dotenv(Path(a.env) if a.env else ROOT)
+    out = Path(a.saida)
+    out.mkdir(parents=True, exist_ok=True)
+    subs = select_subtopics(load_inventory(a.inventarios), a.subtopicos)
+    if a.limite_subtopicos:
+        subs = subs[:a.limite_subtopicos]
+    if not subs:
+        raise SystemExit('Nenhum subtópico com notas aprovadas nos inventários/subtópicos informados')
+    seeds, ext = load_examples(a.sementes, a.exemplos_externos)
+    if not seeds or not ext:
+        raise SystemExit('Exemplos ausentes: confira --sementes e --exemplos-externos')
+    print(f'[qa] modo {a.modo} | {len(subs)} subtópicos, {sum(len(s["notas"]) for s in subs)} notas | gerador {a.gerador} | '
+          f'juiz {a.juiz} | exemplos: {len(seeds)} do especialista, '
+          + ', '.join(f'{k}={len(v)}' for k, v in sorted(ext.items())), flush=True)
+    if clients:
+        gen, judge, red = (list(clients) + [None])[:3]
+    else:
+        gen = make_client(a.gerador, a.llm_provider, out, a.max_chamadas, 'gerador')
+        judge = make_client(a.juiz, a.llm_provider, out, a.max_chamadas, 'juiz')
+        red = None if a.sem_novidade else make_client(a.redundancia, a.llm_provider, out, a.max_chamadas, 'novidade')
+    runner = Runner(gen, judge, seeds, ext, a.seed)
+    t0, quota = time.time(), None
+    if a.modo == 'piloto':
+        rows = run_piloto(runner, subs, a.workers)
+    elif a.modo == 'cota':
+        rows, quota = run_cota(runner, subs, a)
+    else:
+        queues = {s['key']: P.build_queue(s, a.seed) for s in subs}
+        print('[qa] fila completa: ' + ', '.join(f"{s['subtopico'][:30]}={len(queues[s['key']])}" for s in subs), flush=True)
+        rows = run_jobs(runner, [(s, b) for s in subs for b in queues[s['key']]], a.workers, 'profundo')
     order = {s['key']: i for i, s in enumerate(subs)}
-    rows.sort(key=lambda r: (order.get(r.get('sub_key'), 0), r['id']))
+    rows.sort(key=lambda r: (order.get(r.get('sub_key'), 0), r.get('ordem') or 0, r['id']))
+    curves = None
+    if not a.sem_novidade and red is not None:
+        print('[qa] medindo novidade das aprovadas', flush=True)
+        embed = embed or azure_embed(out, a.embedder)
+        curves = N.measure(rows, embed, red, limiar=a.limiar_novidade, workers=a.workers)
+        atomic_json(out / 'novidade.json', {'version': N.VERSION, 'limiar': a.limiar_novidade,
+                                            'curvas': curves, 'janelas': {k: N.windows(c['sequencia']) for k, c in curves.items()}})
     elapsed = time.time() - t0
-    usage = add_usage(add_usage({}, gen.usage), judge.usage) if gen is not judge else dict(gen.usage)
+    roles = {'gerador': gen, 'juiz': judge, **({'novidade': red} if red is not None else {})}
+    usage = {}
+    for c in {id(c): c for c in roles.values()}.values():
+        add_usage(usage, c.usage)
     write_jsonl(out / 'questoes.jsonl', rows)
     write_jsonl(out / 'aprovadas.jsonl', [{'id': q['id'], 'topico': q['topico'], 'subtopico': q['subtopico'],
                                            'pergunta': q['pergunta'], 'resposta': q['resposta'], 'nivel': q['nivel'],
-                                           'tipo': q['tipo'], 'notas': q['notas']}
+                                           'tipo': q['tipo'], 'notas': q['notas'], 'ordem': q.get('ordem'),
+                                           'redundante': (q.get('novidade') or {}).get('redundante')}
                                           for q in rows if q.get('status') == 'aprovada'])
-    report(rows, out, usage, elapsed, {'gerador': a.gerador, 'juiz': a.juiz})
-    resumo = {'version': VERSION, 'provider': a.llm_provider, 'gerador': a.gerador, 'juiz': a.juiz,
+    if quota:
+        atomic_json(out / 'cota.json', {s['key']: {'topico': s['topico'], 'subtopico': s['subtopico'],
+                                                   'cota': quota[s['key']]} for s in subs})
+    report(rows, out, usage, elapsed, {'gerador': a.gerador, 'juiz': a.juiz}, a.modo, quota, curves)
+    resumo = {'version': VERSION, 'modo': a.modo, 'provider': a.llm_provider, 'gerador': a.gerador, 'juiz': a.juiz,
               'subtopicos': len(subs), 'status': dict(Counter(r['status'] for r in rows)),
               'por_tipo': {t: dict(Counter(q['status'] for q in rows if q.get('tipo') == t)) for t in TIPOS},
-              'uso_gerador': gen.usage, 'uso_juiz': judge.usage, 'tempo_s': round(elapsed, 1)}
+              'aprovadas_por_topico': dict(Counter(q['topico'] for q in rows if q.get('status') == 'aprovada')),
+              'redundantes': sum(1 for q in rows if (q.get('novidade') or {}).get('redundante')),
+              'uso': {k: c.usage for k, c in roles.items()}, 'tempo_s': round(elapsed, 1)}
     atomic_json(out / 'resumo.json', resumo)
-    print('[qa] fim ' + json.dumps({k: resumo[k] for k in ('status', 'tempo_s')}, ensure_ascii=False), flush=True)
+    print('[qa] fim ' + json.dumps({k: resumo[k] for k in ('status', 'redundantes', 'tempo_s')}, ensure_ascii=False), flush=True)
     return resumo
+
+
+def azure_embed(out, name):
+    """Embeddings normalizados com cache em disco (Azure embedding-3-large ou hash para testes)."""
+    from pipeline.inventario.modelos import EmbeddingCache, load_models
+    emb, _ = load_models(name, 'none', output=out)
+    cache = EmbeddingCache(out / 'cache' / 'embeddings_qa.npz', name)
+
+    def embed(texts):
+        vecs = cache.encode(emb, texts)
+        cache.save()
+        return vecs / np.maximum(np.linalg.norm(vecs, axis=1, keepdims=True), 1e-12)
+    return embed
 
 
 if __name__ == '__main__':

@@ -21,57 +21,59 @@ nota ou combinação ─► GERADOR (1 chamada por lote, 1 pergunta por alvo, ci
 - Robustez herdada do inventário: cache, filtro de conteúdo da Azure (o lote é pulado e registrado),
   reparo de JSON, saldo/cota esgotados encerram sem insistir. Um lote com falha não derruba os demais.
 
-## Piloto atual
+## Modos
 
-Por subtópico (40 no total): uma nota gera fácil + média, outra nota gera difícil A e uma combinação gera
-difícil B, totalizando 160 questões. O critério de parada definitivo ainda não foi escolhido; será estudado
-num teste com 100 questões por subtópico.
+- `--modo piloto`: 4 perguntas por subtópico (uma nota dá fácil + média, outra dá difícil A, uma combinação dá
+  difícil B). Usado para comparar juízes.
+- `--modo cota --por-topico 100`: 100 perguntas **aprovadas** por tópico. A cota de cada subtópico é proporcional
+  ao número de notas aprovadas, com piso de 3. Reprovadas são repostas com os próximos alvos da fila (até 3 ondas).
+- `--modo profundo --subtopicos ...`: consome **todos** os alvos dos subtópicos indicados (estudo de parada).
+
+**Fila de alvos** (`plano.py`): cada nota traz de 4 a 8 alvos (conhecimentos avaliáveis com nível). A fila de um
+subtópico reveza níveis (3 fácil : 4 média : 2 difícil A : 1 difícil B), assuntos e notas: uma nota só recebe a
+segunda pergunta depois que todas as notas com alvo naquele nível receberam a primeira. Cada alvo vira no máximo
+uma pergunta (aprovada ou não) e sai da fila; cada combinação de notas vira uma difícil B. A fila é determinística.
+
+**Novidade** (`novidade.py`, observacional, não filtra): para cada aprovada, na ordem da fila, o cosseno do
+embedding (`embedding-3-large-global`) com as aprovadas anteriores do subtópico; quando passa de 0,70, o
+`gpt-5-4-nano-petrobras` diz se os pares são redundantes, sobrepostos ou distintos. `novidade.json` traz a curva
+por subtópico e a fração de redundantes por janela de 20 aprovadas, base para escolher o critério de parada.
 
 `comparar_juizes.py` testa juízes diferentes sobre **as mesmas** questões (a versão original do gerador) e
 sobre versões com um defeito sutil plantado (`erro_tecnico`, `sem_suporte`, `dependencia_fonte`,
-`caso_na_resposta`), criadas por modelo. Mede aprovação das originais, detecção de cada defeito, se o motivo da reprovação é o esperado,
-concordância entre juízes (kappa) e tokens. As originais em que os juízes divergem ficam listadas para
-o especialista decidir.
-
-`piloto_sol_2026_10_14/` guarda o primeiro piloto (160 questões, gerador e juiz `gpt-6.1-sol`, com o
-avaliador de dificuldade ainda ativo), para comparação.
+`caso_na_resposta`). `piloto_sol_2026_10_14/` guarda o primeiro piloto (gpt-6.1-sol).
 
 ### Histórico dos pilotos
 
-- `saida_piloto_azure` (2026-10-15): juiz GPT-5.2 aprovou 61%. Na comparação, GPT-5.2 aprovou só 34% das
-  originais (rigor excessivo em suporte); o3 e GPT-5 aprovaram 92% e 88%, mas deixaram passar 66% e 47%
-  das perguntas que dependem de uma fonte; GPT-5.4 medium aprovou 66% e pegou todos os defeitos. Os defeitos
-  de erro técnico e sem suporte foram fáceis para todos e ficaram sutis no piloto seguinte.
-- `saida_piloto_azure_v2`: juiz GPT-5.4 medium com regra de suporte que aceita ligações lógicas diretas;
-  gerador com resposta enxuta e sem caso específico na resposta; filtro de alternativas sem falsos positivos.
-  Compara GPT-5.4 medium, GPT-5.2 medium e GPT-5.4 low.
+- `saida_piloto_azure`: juiz GPT-5.2 aprovou 61%. Na comparação, GPT-5.2 aprovou só 34% das originais (rigor
+  excessivo em suporte); o3 e GPT-5 deixaram passar 66% e 47% das perguntas dependentes de fonte.
+- `saida_piloto_azure_v2`: regras novas de suporte, resposta enxuta e sem caso específico; aprovação 82%.
+  GPT-5.4 low e medium equivalentes (aprovam 81-82%, pegam 88-85% dos defeitos sutis); GPT-5.2 aprova 68%.
+  Escolhido GPT-5.4 low como juiz.
 
 ## No servidor
 
 ```bash
 git pull --ff-only origin dev
-OUT=pipeline/qa_v7/saida_piloto_azure_v2
-mkdir -p "$OUT"
-nohup bash pipeline/qa_v7/run_piloto_juizes_azure.sh > "$OUT/console.log" 2>&1 &
-tail -F "$OUT/console.log"
+nohup bash pipeline/qa_v7/run_qa_v7_azure.sh ambos > pipeline/qa_v7/console_qa_v7.log 2>&1 &
+tail -F pipeline/qa_v7/console_qa_v7.log
 ```
 
-`run_piloto_juizes_azure.sh geracao` ou `juizes` roda só uma das etapas. Variáveis: `QA_GERADOR`
-(padrão `gpt-5-4-petrobras:low`), `QA_JUIZ` (padrão `gpt-5-4-petrobras:medium`), `QA_JUIZES` (padrão
-`gpt-5-4-petrobras:medium gpt-5-2-petrobras:medium gpt-5-4-petrobras:low`),
-`QA_DEFEITOS` (32), `QA_WORKERS` (8), `QA_SOL=1` (também compara os juízes nas questões do piloto Sol),
-`QA_OUTPUT`, `QA_PYTHON` (padrão: `venv/bin/python` se existir, senão `python3`). A pasta de saída é
-definida só por `QA_OUTPUT`, não por `OUT` no shell. Repetir o comando reaproveita o cache.
+`cota` ou `profundo` rodam só uma etapa. Variáveis: `QA_WORKERS` (8), `QA_GERADOR`, `QA_JUIZ`
+(`gpt-5-4-petrobras:low`), `QA_POR_TOPICO` (100), `QA_PROFUNDOS` (nomes separados por `|`), `QA_SAIDA_COTA`,
+`QA_SAIDA_PROFUNDO`, `QA_PYTHON`. Repetir o comando reaproveita o cache. O piloto de juízes continua em
+`run_piloto_juizes_azure.sh`.
 
 ## Saída
 
 ```text
-saida_piloto_azure_v2/
-  questoes.jsonl       todas as questões: original do gerador, correções, pareceres do juiz, fatos e fontes
+saida_cota_100_por_topico/  (e saida_profundo_3_subtopicos/)
+  questoes.jsonl       todas as questões: ordem na fila, original do gerador, correções, juiz, fatos, novidade
   aprovadas.jsonl      só as aprovadas (pergunta, resposta, nível, notas de origem)
   relatorio.md         questões por tópico e subtópico, com status e motivos
-  resumo.json          contagens e tokens por papel
-  juizes/relatorio_juizes.md, resumo_juizes.json, avaliacoes.jsonl, itens.jsonl
+  resumo.json          contagens, aprovadas por tópico, redundantes e tokens por papel
+  novidade.json        curva de novidade por subtópico e janelas de 20
+  cota.json            cota de cada subtópico (modo cota)
 ```
 
 ## Testes
