@@ -36,6 +36,16 @@ options", pergunta focada, alternativa correta sem pista de tamanho). Cada quest
 O juiz ganhou `resposta_unica` (outro profissional chegaria à mesma resposta?) e `objetividade`. Em código:
 pergunta composta ou aberta, tamanhos, 1 a 2 pontos essenciais.
 
+**v8.1** (após ler as 100 aprovadas de `saida_v8_10_por_topico`, ~21 com problema):
+- juiz ganhou `sem_pista` (a resposta não pode ser deduzida só do enunciado; "clang clue" do NBME) e
+  `resposta_unica` reprova perguntas genéricas de finalidade/importância ("para que serve X");
+- objetividade: sem pedir vários casos de uma vez, sem lista com mais de 3 itens, 1 ponto essencial quando a
+  resposta é uma coisa só (o segundo ponto nunca é a justificativa);
+- código: "e a que / e de que / e em que..." contam como pergunta composta; "os sistemas descritos", "as aplicações
+  informadas" contam como dependência do material;
+- modo cota: aprovadas que repetem uma aprovada anterior do subtópico (novidade) viram `redundante` e são
+  substituídas na onda seguinte (`--manter-redundantes` desliga).
+
 ## Modos
 
 - `--modo piloto`: 4 perguntas por subtópico (uma nota dá fácil + média, outra dá difícil A, uma combinação dá
@@ -73,9 +83,9 @@ git pull --ff-only origin dev
 nohup bash pipeline/qa_v7/run_qa_v7_azure.sh ambos > pipeline/qa_v7/console_qa_v7.log 2>&1 &
 tail -F pipeline/qa_v7/console_qa_v7.log
 
-# formato v8, 10 por tópico
-QA_POR_TOPICO=10 QA_SAIDA_COTA=pipeline/qa_v7/saida_v8_10_por_topico \
-  nohup bash pipeline/qa_v7/run_qa_v7_azure.sh cota > pipeline/qa_v7/console_v8.log 2>&1 &
+# formato v8.1, 10 por tópico
+QA_POR_TOPICO=10 QA_SAIDA_COTA=pipeline/qa_v7/saida_v81_10_por_topico \
+  nohup bash pipeline/qa_v7/run_qa_v7_azure.sh cota > pipeline/qa_v7/console_v81.log 2>&1 &
 ```
 
 `cota` ou `profundo` rodam só uma etapa. Variáveis: `QA_WORKERS` (8), `QA_GERADOR`, `QA_JUIZ`

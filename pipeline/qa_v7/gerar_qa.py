@@ -31,14 +31,14 @@ from pipeline.inventario.textutil import atomic_json, write_jsonl  # noqa: E402
 from pipeline.qa_references.download_qa_examples import CHOICE_REFERENCES, CONTEXT_REFERENCES  # noqa: E402
 from pipeline.qa_v7 import novidade as N, plano as P  # noqa: E402
 
-VERSION = 'qa-v8-objetiva'
+VERSION = 'qa-v8.1-objetiva'
 NIVEL = {'facil': 'fácil', 'media': 'média', 'dificil': 'difícil'}
 TIPO_NIVEL = {'facil': 'facil', 'media': 'media', 'dificil_A': 'dificil', 'dificil_B': 'dificil'}
 TIPOS = tuple(TIPO_NIVEL)
 # Deployments Azure que exigem outra API version (tabela de modelos do backend Petrobras).
 AZURE_API_VERSIONS = {'o3-petrobras': '2025-01-01-preview', 'o4-mini-petrobras': '2025-01-01-preview'}
-CHECKS = ('correcao_tecnica', 'suporte', 'resposta_unica', 'objetividade', 'autonomia', 'escopo', 'jurisdicao',
-          'sem_generalizacao', 'tipo_ok')
+CHECKS = ('correcao_tecnica', 'suporte', 'resposta_unica', 'sem_pista', 'objetividade', 'autonomia', 'escopo',
+          'jurisdicao', 'sem_generalizacao', 'tipo_ok')
 # Tetos em palavras verificados em código, com folga sobre o que o prompt pede (35/60/90, resposta 30,
 # explicação 3 frases). A resposta é o núcleo; o raciocínio vai na explicação.
 LIMITE_PERGUNTA = {'facil': 45, 'media': 70, 'dificil_A': 100, 'dificil_B': 100}
@@ -48,13 +48,16 @@ LIMITE_EXPLICACAO = 100
 PADRAO = """Padrão de questão (o mesmo de benchmarks como SimpleQA, GPQA e das diretrizes de itens de resposta única do NBME):
 - Resposta única e indiscutível: um profissional competente que responda corretamente chega à MESMA resposta essencial. A pergunta delimita o que se quer ("qual parâmetro", "qual a causa mais provável", "qual ação deve vir primeiro", "qual o efeito sobre X"), nunca "o que deve ser considerado", "quais cuidados", "como deve ser feita a gestão" ou outras formulações que admitem várias respostas corretas.
 - Respondível sem alternativas: a pergunta deve poder ser respondida de forma livre, só com o enunciado; mais tarde ela pode virar múltipla escolha.
-- Uma só coisa por pergunta: um ponto de interrogação, sem "e qual", "e como", "e por que".
+- Nada de pergunta genérica de finalidade ou importância ("para que serve um sistema de KPIs", "por que priorizar por criticidade", "qual a importância de X"): elas admitem muitas respostas parafraseadas. "Por que" só quando existe UM mecanismo ou causa específica que a resposta nomeia.
+- Sem pista no enunciado: a resposta não pode ser deduzida só lendo a pergunta. O enunciado não nomeia a causa, a variável ou a conclusão que a resposta apenas repetiria ("...ambas usam o mesmo transmissor. Por quê?" -> "porque o transmissor é comum" é inválida). Em cenários, os sinais devem exigir interpretação técnica.
+- Uma só coisa por pergunta: um ponto de interrogação, sem "e qual", "e como", "e por que", "e a que", e sem pedir o significado de vários casos de uma vez ("o que significa estar sobre, acima e abaixo").
+- Sem listas: a resposta tem no máximo 3 itens; nunca peça para listar todas as atualizações, etapas ou documentos.
 - Condições suficientes: se a resposta depende de condições, elas estão no enunciado; se não estão, a pergunta é ambígua.
 - Resposta = núcleo: a resposta curta (até 30 palavras, idealmente uma frase) diz só o que foi perguntado, sem repetir a pergunta, sem lista de considerações e sem frases de efeito. O porquê vai em "explicacao".
-- pontos_essenciais: 1 ou 2 itens curtos que uma resposta livre precisa conter para ser considerada correta (critério de correção). Se precisar de mais de 2, a pergunta está aberta demais."""
+- pontos_essenciais: 1 ou 2 itens curtos que uma resposta livre precisa conter para ser considerada correta (critério de correção). Use 1 quando a resposta é uma coisa só; o segundo ponto só existe se for um segundo elemento obrigatório da resposta, nunca a justificativa (justificativa vai na explicação). Se precisar de mais de 2, a pergunta está aberta demais."""
 
 FORMAS = """Formas por tipo:
-- facil: pergunta direta sobre um conceito, função, causa ou efeito (até 35 palavras). Sem cenário.
+- facil: pergunta direta sobre um conceito, parâmetro, causa ou efeito específico (até 35 palavras). Sem cenário. Prefira "qual/que" com objeto delimitado a "por que" genérico.
 - media: aplicar uma relação de causa e efeito, variável ou critério a uma condição dada em 1 ou 2 frases (até 60 palavras).
 - dificil_A: cenário operacional curto (até 90 palavras) dentro de UM conceito; o respondente precisa diagnosticar ou decidir entre possibilidades, e o enunciado traz os sinais que tornam UMA delas a correta. A resposta continua curta: a causa, a decisão ou a prioridade, com no máximo uma oração de justificativa.
 - dificil_B: cenário (até 90 palavras) em que os conceitos de DUAS OU TRÊS notas interagem (um explica, mascara ou limita o outro); a resposta correta só é alcançável integrando as notas e também é curta: uma decisão, priorização ou diagnóstico."""
@@ -64,7 +67,7 @@ GEN_SYSTEM = f"""Você cria questões de avaliação profissional (pergunta + re
 {PADRAO}
 
 Regras:
-1. Autonomia: o respondente NÃO vê o material. Nunca escreva "segundo o texto", "de acordo com a nota", "nas fontes", "no estudo citado", nem peça o que um relatório, caso, tanque identificado ou data específica disse. Isso vale também para a resposta e a explicação.
+1. Autonomia: o respondente NÃO vê o material. Nunca escreva "segundo o texto", "de acordo com a nota", "nas fontes", "no estudo citado", "os sistemas descritos", "as aplicações informadas", nem peça o que um relatório, caso, tanque identificado ou data específica disse. Isso vale também para a resposta e a explicação.
 2. Conhecimento transferível: avalie princípios, mecanismos, critérios e diagnósticos que um profissional deve saber. Não cobre valores, prazos, listas ou procedimentos que aparecem em uma única fonte, a menos que o enunciado forneça o contexto que os torna dedutíveis.
 3. Suporte: resposta e explicação são sustentadas pelos fatos citados em "fatos" (ids F#). Não invente valores, normas, equipamentos ou procedimentos. Conhecimento marcado como geral na nota não basta sozinho.
 4. Jurisdição: HSE é Reino Unido, BSEE é Estados Unidos; não as apresente como exigência da ANP/Brasil.
@@ -82,19 +85,20 @@ Cada questão tem pergunta, resposta (núcleo curto), pontos_essenciais (critér
 Verificações (cada uma com razão curta, mesmo quando verdadeira):
 - correcao_tecnica: resposta e explicação estão tecnicamente corretas, inclusive relações de causa e efeito, critérios e conclusões.
 - suporte: CADA afirmação substantiva da resposta e da explicação é sustentada pelos fatos citados ou pelos fatos da nota (liste as afirmações e os F# que as sustentam). Valor, norma, prazo, procedimento, mecanismo, consequência ou exemplo sem fato correspondente reprova. Não exigem fato próprio: ligações lógicas diretas entre fatos, a aplicação de um fato à condição do enunciado e paráfrases fiéis. Não reprove por sinônimo ou palavra de ligação; reprove por conteúdo técnico novo.
-- resposta_unica: um profissional competente, respondendo livremente, chegaria a esta MESMA resposta essencial? Reprove se houver outra resposta igualmente correta, se a pergunta pede "considerações", "cuidados" ou "como gerenciar" (admitem várias respostas) ou se faltam condições no enunciado para decidir. Diga qual outra resposta seria válida.
-- objetividade: a pergunta pede uma só coisa (um ponto de interrogação, sem "e qual/e como/e por que"); a resposta traz só o núcleo, sem repetir a pergunta, sem lista de considerações e sem frases de efeito; os pontos_essenciais (1 ou 2) bastam para corrigir uma resposta livre e coincidem com a resposta.
+- resposta_unica: um profissional competente, respondendo livremente, chegaria a esta MESMA resposta essencial? Reprove se houver outra resposta igualmente correta, se a pergunta pede "considerações", "cuidados" ou "como gerenciar" (admitem várias respostas), se faltam condições no enunciado para decidir, ou se é pergunta genérica de finalidade ou importância ("para que serve X", "por que X é importante", "qual a função de um sistema de gestão") cuja resposta esperada é só uma paráfrase entre muitas possíveis. "Por que" é aceitável só quando há UM mecanismo ou causa específica. Reprove também se a resposta omite alternativas técnicas comuns que um profissional citaria (ex.: métodos de detecção). Diga qual outra resposta seria válida.
+- sem_pista: a resposta NÃO pode ser deduzida só pelo enunciado, sem conhecimento técnico. Reprove quando o enunciado já nomeia a causa, a variável ou a conclusão e a resposta só a repete (ex.: "a maior deterioração foi na performance; o que priorizar?" -> "a performance"; "ambas usam o mesmo transmissor; por quê?" -> "porque o transmissor é comum"), ou quando a resposta é o óbvio do senso comum. Sinais de cenário que exigem interpretação técnica são aceitáveis.
+- objetividade: a pergunta pede uma só coisa (um ponto de interrogação, sem "e qual/e como/e por que/e a que", sem pedir o significado de vários casos); a resposta traz só o núcleo, sem repetir a pergunta, sem lista com mais de 3 itens e sem frases de efeito; os pontos_essenciais (1 ou 2) bastam para corrigir uma resposta livre, coincidem com a resposta e não usam o segundo ponto para justificativa.
 - autonomia: a pergunta é respondível por um profissional sem ler o material; não depende de caso, estudo, tanque, data, documento ou valor de uma fonte específica. Resposta e explicação também não se apoiam em caso, unidade, tanque, estudo ou data específicos como se fossem regra.
 - escopo: a questão avalia o alvo indicado e pertence ao subtópico.
 - jurisdicao: não apresenta regra estrangeira (HSE, BSEE) como obrigação brasileira, nem afirma vigência sem suporte.
 - sem_generalizacao: não transforma observação particular em regra universal.
 - tipo_ok: a forma corresponde ao tipo pedido (fácil: uma pergunta direta; média: aplicação a uma condição; difícil A: cenário com diagnóstico ou decisão em um conceito; difícil B: integração indispensável de notas).
 
-Notas de 0 a 1: correcao, clareza, completude. reparavel=true somente quando a falha é de redação, objetividade, resposta única (estreitar a pergunta ou acrescentar a condição que falta), autonomia ou forma e pode ser corrigida com o MESMO material, sem inventar conteúdo. Erro técnico ou falta de suporte não é reparável.
+Notas de 0 a 1: correcao, clareza, completude. reparavel=true somente quando a falha é de redação, objetividade, resposta única (estreitar a pergunta ou acrescentar a condição que falta), pista no enunciado (retirar do enunciado o termo que entrega a resposta), autonomia ou forma e pode ser corrigida com o MESMO material, sem inventar conteúdo. Erro técnico ou falta de suporte não é reparável.
 
-Retorne JSON: {"avaliacoes":[{"id":"...","verificacoes":{"correcao_tecnica":{"ok":true,"razao":"..."},"suporte":{"ok":true,"razao":"..."},"resposta_unica":{"ok":true,"razao":"..."},"objetividade":{"ok":true,"razao":"..."},"autonomia":{"ok":true,"razao":"..."},"escopo":{"ok":true,"razao":"..."},"jurisdicao":{"ok":true,"razao":"..."},"sem_generalizacao":{"ok":true,"razao":"..."},"tipo_ok":{"ok":true,"razao":"..."}},"afirmacoes":[{"afirmacao":"...","fatos":["F1"]}],"notas":{"correcao":0.9,"clareza":0.9,"completude":0.9},"reparavel":false,"problemas":["..."]}]}"""
+Retorne JSON: {"avaliacoes":[{"id":"...","verificacoes":{"correcao_tecnica":{"ok":true,"razao":"..."},"suporte":{"ok":true,"razao":"..."},"resposta_unica":{"ok":true,"razao":"..."},"sem_pista":{"ok":true,"razao":"..."},"objetividade":{"ok":true,"razao":"..."},"autonomia":{"ok":true,"razao":"..."},"escopo":{"ok":true,"razao":"..."},"jurisdicao":{"ok":true,"razao":"..."},"sem_generalizacao":{"ok":true,"razao":"..."},"tipo_ok":{"ok":true,"razao":"..."}},"afirmacoes":[{"afirmacao":"...","fatos":["F1"]}],"notas":{"correcao":0.9,"clareza":0.9,"completude":0.9},"reparavel":false,"problemas":["..."]}]}"""
 
-REFINE_SYSTEM = f"""Você corrige UMA questão de avaliação de FPSO/FSO (pergunta + resposta, sem alternativas) a partir do parecer do juiz. Use somente o mesmo material (notas e fatos F#); não invente conteúdo. Corrija redação, objetividade, resposta única (estreite a pergunta ou acrescente a condição que falta no enunciado), autonomia ou forma; se a correção exigir fatos que o material não tem, devolva {{"impossivel": true}}.
+REFINE_SYSTEM = f"""Você corrige UMA questão de avaliação de FPSO/FSO (pergunta + resposta, sem alternativas) a partir do parecer do juiz. Use somente o mesmo material (notas e fatos F#); não invente conteúdo. Corrija redação, objetividade, resposta única (estreite a pergunta ou acrescente a condição que falta no enunciado), pista no enunciado (retire o termo que entrega a resposta, mantendo os sinais técnicos), autonomia ou forma; se a correção exigir fatos que o material não tem, devolva {{"impossivel": true}}.
 Mantenha o alvo e o tipo.
 
 {PADRAO}
@@ -107,7 +111,9 @@ EXTRA_REFS = re.compile(
     r'\b(?:segundo|conforme|de acordo com)\s+(?:a|as|o|os)\s+(?:nota|notas|fonte|fontes|material|estudo|relat[óo]rio)\b|'
     r'\bnota t[ée]cnica\b|\bnas fontes\b|\b(?:no|o) estudo (?:citado|analisado|mencionado|de caso)\b|\bno caso (?:relatado|descrito|analisado)\b|'
     r'\bmaterial fornecido\b|\btexto acima\b|\bF\d+\b|\bT\d+\b|'
-    r'\bet al\b|\(\s*(?:19|20)\d{2}[a-z]?\s*\)', re.IGNORECASE)
+    r'\bet al\b|\(\s*(?:19|20)\d{2}[a-z]?\s*\)|'
+    r'\b(?:descrit|informad|apresentad|mencionad|listad)[oa]s?(?=\s*(?:[?.,;:]|$|\bacima\b|\babaixo\b|\bno\b|\bna\b))',
+    re.IGNORECASE)
 # Estudo atribuído a autor ("estudo de Hines"): sensível a maiúscula para não pegar "estudo de risco".
 AUTHOR_STUDY = re.compile(r'\b[Ee]studo de [A-ZÁÉÍÓÚ][a-záéíóúãõç]+\b')
 # Referência a alternativas de múltipla escolha (o filtro genérico confunde "opção A" de um cenário).
@@ -289,7 +295,8 @@ def pick_examples(seeds, ext, topic, types, rng, n_seeds=3):
 # ---------------------------------------------------------------- verificação
 
 # Segunda pergunta embutida na frase interrogativa ("Qual a causa e o que fazer?").
-COMPOSTA = re.compile(r'(?:,\s*|\s)(?:e|ou) (?:qual|quais|como|por que|quando|onde|o que)\b', re.IGNORECASE)
+COMPOSTA = re.compile(r'(?:,\s*|\s)(?:e|ou) (?:qual|quais|como|por que|quando|onde|o que|'
+                      r'(?:a|em|de|com|para|por) (?:qual|quais|que)\b)\b', re.IGNORECASE)
 ABERTA = re.compile(r'\b(?:o que (?:deve|precisa) ser (?:considerad|avaliad|verificad)|quais (?:cuidados|aspectos|fatores|'
                     r'considera[çc][õo]es|medidas|a[çc][õo]es)|como (?:deve|devem|pode|podem) ser (?:feit|gerenciad|conduzid|tratad))',
                     re.IGNORECASE)
@@ -560,6 +567,8 @@ def parse(argv):
     p.add_argument('--juiz', default='gpt-5-4-petrobras:low', help='deployment:effort do juiz')
     p.add_argument('--redundancia', default='gpt-5-4-nano-petrobras:low', help='deployment:effort da checagem de novidade')
     p.add_argument('--sem-novidade', action='store_true', help='não mede novidade (embeddings + modelo pequeno)')
+    p.add_argument('--manter-redundantes', action='store_true',
+                   help='modo cota: não substitui aprovadas que repetem outra aprovada (só registra)')
     p.add_argument('--limiar-novidade', type=float, default=0.70, help='cosseno a partir do qual o par é checado')
     p.add_argument('--embedder', default='embedding-3-large-global', choices=['embedding-3-large-global', 'hash'])
     p.add_argument('--workers', type=int, default=8)
@@ -615,8 +624,20 @@ def run_piloto(runner, subs, workers):
     return rows
 
 
-def run_cota(runner, subs, a):
-    """Ondas: a primeira gera a cota de cada subtópico; as seguintes repõem as reprovadas com os próximos alvos."""
+def descartar_redundantes(rows, embed, llm, a):
+    """Mede a novidade das aprovadas e tira da cota as que repetem uma aprovada anterior do subtópico."""
+    N.measure(rows, embed, llm, limiar=a.limiar_novidade, workers=a.workers)
+    n = 0
+    for q in rows:
+        if q.get('status') == 'aprovada' and (q.get('novidade') or {}).get('redundante'):
+            q['status'] = 'redundante'
+            n += 1
+    return n
+
+
+def run_cota(runner, subs, a, dedup=None):
+    """Ondas: a primeira gera a cota de cada subtópico; as seguintes repõem as reprovadas (e, com dedup, as
+    aprovadas que repetem outra aprovada) com os próximos alvos."""
     quota = P.allocate(subs, a.por_topico, a.min_por_subtopico)
     queues = {s['key']: P.build_queue(s, a.seed) for s in subs}
     used = Counter()
@@ -633,6 +654,8 @@ def run_cota(runner, subs, a):
             break
         print(f'[qa] onda {onda}: {len(jobs)} lotes', flush=True)
         rows += run_jobs(runner, jobs, a.workers, f'onda {onda}')
+        if dedup:
+            print(f'[qa] onda {onda}: {dedup(rows)} redundantes descartadas', flush=True)
     return rows, quota
 
 
@@ -663,7 +686,11 @@ def main(argv=None, clients=None, embed=None):
     if a.modo == 'piloto':
         rows = run_piloto(runner, subs, a.workers)
     elif a.modo == 'cota':
-        rows, quota = run_cota(runner, subs, a)
+        dedup = None
+        if red is not None and not a.sem_novidade and not a.manter_redundantes:
+            embed = embed or azure_embed(out, a.embedder)
+            dedup = lambda rs: descartar_redundantes(rs, embed, red, a)  # noqa: E731
+        rows, quota = run_cota(runner, subs, a, dedup)
     else:
         queues = {s['key']: P.build_queue(s, a.seed) for s in subs}
         print('[qa] fila completa: ' + ', '.join(f"{s['subtopico'][:30]}={len(queues[s['key']])}" for s in subs), flush=True)
@@ -699,6 +726,7 @@ def main(argv=None, clients=None, embed=None):
               'por_tipo': {t: dict(Counter(q['status'] for q in rows if q.get('tipo') == t)) for t in TIPOS},
               'aprovadas_por_topico': dict(Counter(q['topico'] for q in rows if q.get('status') == 'aprovada')),
               'redundantes': sum(1 for q in rows if (q.get('novidade') or {}).get('redundante')),
+              'redundantes_descartadas': sum(1 for q in rows if q.get('status') == 'redundante'),
               'uso': {k: c.usage for k, c in roles.items()}, 'tempo_s': round(elapsed, 1)}
     atomic_json(out / 'resumo.json', resumo)
     print('[qa] fim ' + json.dumps({k: resumo[k] for k in ('status', 'redundantes', 'tempo_s')}, ensure_ascii=False), flush=True)

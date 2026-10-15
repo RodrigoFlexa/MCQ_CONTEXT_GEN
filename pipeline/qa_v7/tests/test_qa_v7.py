@@ -215,6 +215,25 @@ class QAv7(unittest.TestCase):
         rows = [json.loads(l) for l in (self.root / 'out' / 'questoes.jsonl').read_text(encoding='utf-8').splitlines()]
         self.assertEqual([r['ordem'] for r in rows], [0, 1, 2, 3, 4])      # 5ª da fila repõe a reprovada
 
+    def test_modo_cota_descarta_redundantes(self):
+        def embed(texts):
+            return np.stack([np.ones(4) / 2 for _ in texts])              # tudo igual: tudo repete a primeira
+        resumo = G.main(self.args('--modo', 'cota', '--por-topico', '4', '--min-por-subtopico', '1'),
+                        clients=(FakeLLM(), FakeLLM(), FakeLLM()), embed=embed)
+        self.assertEqual(resumo['status'], {'aprovada': 1, 'redundante': 9})   # repostas até esgotar a fila
+        self.assertEqual(resumo['redundantes_descartadas'], 9)
+
+    def test_regras_v81(self):
+        self.assertTrue(G.composta('Qual evento é o principal e a que consequência ele leva?'))
+        self.assertTrue(G.composta('Qual a causa e de que forma corrigir?'))
+        self.assertFalse(G.composta('Qual ação deve vir primeiro para a equipe que opera a planta?'))
+        q = {'pergunta': 'Quais consumidores são alimentados pelos sistemas de 24 Vcc descritos?', 'resposta': 'O CLP.',
+             'fatos': ['F1'], 'tipo': 'facil', 'pontos_essenciais': ['CLP'], 'explicacao': ''}
+        self.assertIn('depende_do_material', G.check_code(q, {'F1': {}}))
+        q['pergunta'] = 'Qual pressão é informada pelo transmissor quando a válvula fecha?'
+        self.assertNotIn('depende_do_material', G.check_code(q, {'F1': {}}))
+        self.assertIn('sem_pista', G.CHECKS)
+
     def test_modo_profundo_e_novidade(self):
         def embed(texts):
             return np.stack([np.ones(4) / 2 for _ in texts])              # tudo igual: tudo vizinho
