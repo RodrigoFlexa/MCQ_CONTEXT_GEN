@@ -69,7 +69,8 @@ class FakeLLM:
                 raise CallFailed('falha simulada', kind='validacao')
             alvos = re.findall(r'^(A\d+) \((\w+)\):', user, flags=re.M)
             data = {'items': [{'alvo': a, 'tipo': t, 'pergunta': f'Por que a espuma afeta o gás ({t})?',
-                               'resposta': 'Porque reduz a área de escoamento.', 'fatos': ['F1'], 'conceito': 'espuma'}
+                               'resposta': 'Porque reduz a área de escoamento.', 'pontos_essenciais': ['reduz a área'],
+                               'explicacao': 'A espuma ocupa volume do vaso.', 'fatos': ['F1'], 'conceito': 'espuma'}
                               for a, t in alvos]}
         elif system == G.JUDGE_SYSTEM:
             qs = json.loads(user.split('QUESTÕES:\n', 1)[1])
@@ -82,7 +83,8 @@ class FakeLLM:
             data = {'avaliacoes': out}
         elif system == G.REFINE_SYSTEM:
             data = {'pergunta': 'Por que a espuma reduz a área de gás no separador?', 'resposta': 'Ocupa volume.',
-                    'fatos': ['F1'], 'mudancas': 'redação'}
+                    'pontos_essenciais': ['ocupa volume'], 'explicacao': 'Ocupa volume.', 'fatos': ['F1'],
+                    'mudancas': 'redação'}
         elif system == NV.SYSTEM:
             ids = [x['id'] for x in json.loads(user)['anteriores']]
             data = {'pares': [{'id': i, 'julgamento': 'redundante', 'razao': 'mesma coisa'} for i in ids]}
@@ -115,16 +117,25 @@ class QAv7(unittest.TestCase):
 
     def test_verificacao_em_codigo(self):
         table = {'F1': {}}
-        q = {'pergunta': 'Na opção A, com menor impacto, qual escolher?', 'resposta': 'A opção A.', 'fatos': ['F1']}
-        self.assertEqual(G.check_code(q, table), [])                      # "opção A" de cenário não é alternativa
+
+        def q(pergunta, resposta='Sim.', fatos=('F1',), **kw):
+            return {'pergunta': pergunta, 'resposta': resposta, 'fatos': list(fatos), 'tipo': 'media',
+                    'pontos_essenciais': ['sim'], 'explicacao': 'Porque sim.', **kw}
+        self.assertEqual(G.check_code(q('Na opção A, com menor impacto, qual escolher?', 'A opção A.'), table), [])
         for ok in ('A equipe avalia duas alternativas de projeto: qual priorizar?', 'O cenário foi considerado no estudo do sistema receptor?',
-                   'O estudo de dispersão e o estudo de risco indicam o quê?', 'Em um estudo de segurança, qual a prioridade?'):
-            self.assertEqual(G.check_code({'pergunta': ok, 'resposta': 'Sim.', 'fatos': ['F1']}, table), [])
+                   'O estudo de dispersão e o estudo de risco indicam o quê?', 'Em um estudo de segurança, qual a prioridade?',
+                   'A pressão sobe e como resultado o nível cai. Qual a causa mais provável?'):
+            self.assertEqual(G.check_code(q(ok), table), [], ok)
         for bad in ('Assinale a alternativa correta.', 'Conforme o estudo citado, qual a causa?', 'O F3 indica o quê?',
                     'Como mostrou o estudo de Hines, qual a taxa?'):
-            self.assertTrue(G.check_code({'pergunta': bad, 'resposta': 'Sim.', 'fatos': ['F1']}, table))
-        q2 = {'pergunta': 'Segundo a nota técnica, qual das seguintes?', 'resposta': 'Ver F2.', 'fatos': ['F9']}
-        self.assertEqual(set(G.check_code(q2, table)), {'referencia_alternativas', 'depende_do_material', 'fato_inexistente'})
+            self.assertTrue(G.check_code(q(bad), table), bad)
+        self.assertEqual(set(G.check_code(q('Segundo a nota técnica, qual das seguintes?', 'Ver F2.', ('F9',)), table)),
+                         {'referencia_alternativas', 'depende_do_material', 'fato_inexistente'})
+        self.assertIn('pergunta_composta', G.check_code(q('Qual a causa e o que fazer?'), table))
+        self.assertIn('pergunta_composta', G.check_code(q('Qual a causa? Explique.'), table))
+        self.assertIn('pergunta_aberta', G.check_code(q('Quais cuidados devem ser tomados no offloading?'), table))
+        self.assertIn('resposta_longa', G.check_code(q('Qual a causa?', ' '.join(['palavra'] * 40)), table))
+        self.assertIn('pontos_essenciais', G.check_code(q('Qual a causa?', pontos_essenciais=['a', 'b', 'c']), table))
 
     def test_fluxo_aprova_corrige_e_reprova(self):
         gen = FakeLLM()
@@ -221,7 +232,7 @@ class QAv7(unittest.TestCase):
 
     def test_citacao_de_estudo_na_resposta(self):
         r = G.check_code({'pergunta': 'Por que calibrar por condição?', 'resposta': 'Como em Hines et al. (2008a).',
-                          'fatos': ['F1']}, {'F1': {}})
+                          'fatos': ['F1'], 'tipo': 'facil', 'pontos_essenciais': ['x'], 'explicacao': ''}, {'F1': {}})
         self.assertIn('depende_do_material', r)
 
     def test_modelo_invalido(self):

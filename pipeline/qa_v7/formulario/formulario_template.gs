@@ -191,6 +191,9 @@ function adicionarQuestao_(form, q, n, total) {
       .setHelpText('Tópico: ' + q.topico + '\nSubtópico: ' + q.subtopico);
     add(form.addSectionHeaderItem()).setTitle('Enunciado').setHelpText(q.pergunta);
     add(form.addSectionHeaderItem()).setTitle('Resposta correta').setHelpText(q.resposta);
+    if (q.explicacao) {
+      add(form.addSectionHeaderItem()).setTitle('Justificativa da resposta').setHelpText(q.explicacao);
+    }
     add(form.addGridItem())
       .setTitle(c + ' · Notas da questão')
       .setHelpText('De 1 (muito ruim) a 5 (excelente), uma nota por linha.')

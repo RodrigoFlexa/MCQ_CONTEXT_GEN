@@ -21,6 +21,21 @@ nota ou combinação ─► GERADOR (1 chamada por lote, 1 pergunta por alvo, ci
 - Robustez herdada do inventário: cache, filtro de conteúdo da Azure (o lote é pulado e registrado),
   reparo de JSON, saldo/cota esgotados encerram sem insistir. Um lote com falha não derruba os demais.
 
+## Formato das questões (v8, padrão da literatura)
+
+Inspirado em SimpleQA (resposta única e indiscutível, curta, verificada), GPQA (questões objetivas respondíveis
+sem alternativas, com explicação do autor) e nas diretrizes de itens de resposta única do NBME ("cover the
+options", pergunta focada, alternativa correta sem pista de tamanho). Cada questão tem:
+
+- `pergunta`: uma só coisa, delimitada ("qual a causa mais provável", "qual ação vem primeiro"), com as condições
+  necessárias; nunca "quais cuidados", "o que deve ser considerado" ou "como gerenciar".
+- `resposta`: o núcleo, até ~30 palavras.
+- `pontos_essenciais`: 1 ou 2 itens que uma resposta livre precisa conter para ser correta (critério de correção).
+- `explicacao`: o porquê, em até 3 frases, com os fatos `F#`.
+
+O juiz ganhou `resposta_unica` (outro profissional chegaria à mesma resposta?) e `objetividade`. Em código:
+pergunta composta ou aberta, tamanhos, 1 a 2 pontos essenciais.
+
 ## Modos
 
 - `--modo piloto`: 4 perguntas por subtópico (uma nota dá fácil + média, outra dá difícil A, uma combinação dá
@@ -57,6 +72,10 @@ sobre versões com um defeito sutil plantado (`erro_tecnico`, `sem_suporte`, `de
 git pull --ff-only origin dev
 nohup bash pipeline/qa_v7/run_qa_v7_azure.sh ambos > pipeline/qa_v7/console_qa_v7.log 2>&1 &
 tail -F pipeline/qa_v7/console_qa_v7.log
+
+# formato v8, 10 por tópico
+QA_POR_TOPICO=10 QA_SAIDA_COTA=pipeline/qa_v7/saida_v8_10_por_topico \
+  nohup bash pipeline/qa_v7/run_qa_v7_azure.sh cota > pipeline/qa_v7/console_v8.log 2>&1 &
 ```
 
 `cota` ou `profundo` rodam só uma etapa. Variáveis: `QA_WORKERS` (8), `QA_GERADOR`, `QA_JUIZ`

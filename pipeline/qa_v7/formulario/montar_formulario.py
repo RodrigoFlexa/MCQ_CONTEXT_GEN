@@ -116,7 +116,7 @@ def main(argv=None):
     for i, q in enumerate(chosen, 1):
         data.append({'codigo': f'Q{i:03d}', 'id': q['id'], 'topico': q['topico'], 'subtopico': q['subtopico'],
                      'nivel': NIVEL[q['tipo']], 'dificuldade': DIFICULDADE[q['tipo']],
-                     'pergunta': q['pergunta'], 'resposta': q['resposta'],
+                     'pergunta': q['pergunta'], 'resposta': q['resposta'], 'explicacao': q.get('explicacao', ''),
                      'contexto': context(q, notes)})
     template = (Path(__file__).with_name('formulario_template.gs')).read_text(encoding='utf-8')
     payload = json.dumps(data, ensure_ascii=False, indent=1).replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')

@@ -72,6 +72,8 @@ def base_item(q):
     orig = q.get('original') or {}
     return {'id': f"{q['id']}::original", 'qid': q['id'], 'variante': 'original', 'alvo': q['alvo'], 'tipo': q['tipo'],
             'pergunta': orig.get('pergunta', q['pergunta']), 'resposta': orig.get('resposta', q['resposta']),
+            'pontos_essenciais': orig.get('pontos_essenciais', q.get('pontos_essenciais', [])),
+            'explicacao': orig.get('explicacao', q.get('explicacao', '')),
             'fatos': orig.get('fatos', q['fatos']), 'topico': q['topico'], 'subtopico': q['subtopico'],
             'status_geracao': q['status']}
 
