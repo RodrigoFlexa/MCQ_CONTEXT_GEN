@@ -7,7 +7,13 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
-PY="${QA_PYTHON:-python3}"
+if [[ -n "${QA_PYTHON:-}" ]]; then
+  PY="$QA_PYTHON"
+elif [[ -x "$ROOT/venv/bin/python" ]]; then
+  PY="$ROOT/venv/bin/python"
+else
+  PY=python3
+fi
 ETAPA="${1:-tudo}"
 OUT="${QA_OUTPUT:-pipeline/qa_v7/saida_piloto_azure_v2}"
 I=pipeline/inventario

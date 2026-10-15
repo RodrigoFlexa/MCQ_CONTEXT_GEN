@@ -60,7 +60,8 @@ tail -F "$OUT/console.log"
 (padrão `gpt-5-4-petrobras:low`), `QA_JUIZ` (padrão `gpt-5-4-petrobras:medium`), `QA_JUIZES` (padrão
 `gpt-5-4-petrobras:medium gpt-5-2-petrobras:medium gpt-5-4-petrobras:low`),
 `QA_DEFEITOS` (32), `QA_WORKERS` (8), `QA_SOL=1` (também compara os juízes nas questões do piloto Sol),
-`QA_OUTPUT`, `QA_PYTHON`. Repetir o comando reaproveita o cache.
+`QA_OUTPUT`, `QA_PYTHON` (padrão: `venv/bin/python` se existir, senão `python3`). A pasta de saída é
+definida só por `QA_OUTPUT`, não por `OUT` no shell. Repetir o comando reaproveita o cache.
 
 ## Saída
 
