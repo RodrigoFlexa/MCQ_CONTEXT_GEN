@@ -117,9 +117,11 @@ class QAv7(unittest.TestCase):
         table = {'F1': {}}
         q = {'pergunta': 'Na opção A, com menor impacto, qual escolher?', 'resposta': 'A opção A.', 'fatos': ['F1']}
         self.assertEqual(G.check_code(q, table), [])                      # "opção A" de cenário não é alternativa
-        for ok in ('A equipe avalia duas alternativas de projeto: qual priorizar?', 'O cenário foi considerado no estudo do sistema receptor?'):
+        for ok in ('A equipe avalia duas alternativas de projeto: qual priorizar?', 'O cenário foi considerado no estudo do sistema receptor?',
+                   'O estudo de dispersão e o estudo de risco indicam o quê?', 'Em um estudo de segurança, qual a prioridade?'):
             self.assertEqual(G.check_code({'pergunta': ok, 'resposta': 'Sim.', 'fatos': ['F1']}, table), [])
-        for bad in ('Assinale a alternativa correta.', 'Conforme o estudo citado, qual a causa?', 'O F3 indica o quê?'):
+        for bad in ('Assinale a alternativa correta.', 'Conforme o estudo citado, qual a causa?', 'O F3 indica o quê?',
+                    'Como mostrou o estudo de Hines, qual a taxa?'):
             self.assertTrue(G.check_code({'pergunta': bad, 'resposta': 'Sim.', 'fatos': ['F1']}, table))
         q2 = {'pergunta': 'Segundo a nota técnica, qual das seguintes?', 'resposta': 'Ver F2.', 'fatos': ['F9']}
         self.assertEqual(set(G.check_code(q2, table)), {'referencia_alternativas', 'depende_do_material', 'fato_inexistente'})

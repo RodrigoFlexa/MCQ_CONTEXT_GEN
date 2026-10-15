@@ -86,7 +86,9 @@ EXTRA_REFS = re.compile(
     r'\b(?:segundo|conforme|de acordo com)\s+(?:a|as|o|os)\s+(?:nota|notas|fonte|fontes|material|estudo|relat[óo]rio)\b|'
     r'\bnota t[ée]cnica\b|\bnas fontes\b|\b(?:no|o) estudo (?:citado|analisado|mencionado|de caso)\b|\bno caso (?:relatado|descrito|analisado)\b|'
     r'\bmaterial fornecido\b|\btexto acima\b|\bF\d+\b|\bT\d+\b|'
-    r'\bet al\b|\(\s*(?:19|20)\d{2}[a-z]?\s*\)|\bestudo de [A-ZÁÉÍÓÚ][a-záéíóúãõç]+', re.IGNORECASE)
+    r'\bet al\b|\(\s*(?:19|20)\d{2}[a-z]?\s*\)', re.IGNORECASE)
+# Estudo atribuído a autor ("estudo de Hines"): sensível a maiúscula para não pegar "estudo de risco".
+AUTHOR_STUDY = re.compile(r'\b[Ee]studo de [A-ZÁÉÍÓÚ][a-záéíóúãõç]+\b')
 # Referência a alternativas de múltipla escolha (o filtro genérico confunde "opção A" de um cenário).
 CHOICE_ONLY = re.compile(r'\b(?:assinale|marque a|letra [A-E]|alternativa (?:correta|incorreta|errada|verdadeira|falsa)|'
                          r'(?:as|das|nas) (?:alternativas|op[çc][õo]es) (?:abaixo|a seguir|acima)|'
@@ -273,7 +275,7 @@ def check_code(q, table):
         reasons.append('vazia')
     if CHOICE_ONLY.search(text):
         reasons.append('referencia_alternativas')
-    if CONTEXT_REFERENCES.search(text) or EXTRA_REFS.search(text):
+    if CONTEXT_REFERENCES.search(text) or EXTRA_REFS.search(text) or AUTHOR_STUDY.search(text):
         reasons.append('depende_do_material')
     if len(q['pergunta'].split()) > 140:
         reasons.append('pergunta_longa')
@@ -485,7 +487,7 @@ def parse(argv):
                    help='piloto: 4 por subtópico; cota: N aprovadas por tópico; profundo: todos os alvos dos subtópicos')
     p.add_argument('--por-topico', type=int, default=100, help='modo cota: perguntas aprovadas por tópico')
     p.add_argument('--min-por-subtopico', type=int, default=3)
-    p.add_argument('--ondas', type=int, default=3, help='modo cota: rodadas para repor reprovadas com novos alvos')
+    p.add_argument('--ondas', type=int, default=5, help='modo cota: rodadas para repor reprovadas com novos alvos')
     p.add_argument('--subtopicos', nargs='*', default=[], help='nomes (ou partes) de subtópicos; obrigatório no profundo')
     p.add_argument('--sementes', default=str(ROOT / 'pipeline/qa_references/review/sementes_qa_candidatas.jsonl'))
     p.add_argument('--exemplos-externos', default=str(ROOT / 'pipeline/qa_references/data/qa_examples.jsonl'))

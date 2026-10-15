@@ -26,7 +26,7 @@ nota ou combinação ─► GERADOR (1 chamada por lote, 1 pergunta por alvo, ci
 - `--modo piloto`: 4 perguntas por subtópico (uma nota dá fácil + média, outra dá difícil A, uma combinação dá
   difícil B). Usado para comparar juízes.
 - `--modo cota --por-topico 100`: 100 perguntas **aprovadas** por tópico. A cota de cada subtópico é proporcional
-  ao número de notas aprovadas, com piso de 3. Reprovadas são repostas com os próximos alvos da fila (até 3 ondas).
+  ao número de notas aprovadas, com piso de 3. Reprovadas são repostas com os próximos alvos da fila (até 5 ondas).
 - `--modo profundo --subtopicos ...`: consome **todos** os alvos dos subtópicos indicados (estudo de parada).
 
 **Fila de alvos** (`plano.py`): cada nota traz de 4 a 8 alvos (conhecimentos avaliáveis com nível). A fila de um
