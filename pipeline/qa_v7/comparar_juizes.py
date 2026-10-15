@@ -2,9 +2,9 @@
 
 1. Lê as questões geradas por gerar_qa.py e usa a versão ORIGINAL do gerador (antes de correções),
    para que todos os juízes recebam exatamente o mesmo item.
-2. Para uma amostra, um modelo cria três versões defeituosas de cada questão:
-   erro_tecnico (relação ou conclusão errada), sem_suporte (afirmação plausível que o material não
-   sustenta) e dependencia_fonte (pergunta que só se responde conhecendo um caso ou documento).
+2. Para uma amostra, um modelo cria quatro versões com UM defeito sutil cada: erro_tecnico,
+   sem_suporte, dependencia_fonte (a pergunta depende de um caso ou documento) e caso_na_resposta
+   (a resposta usa um caso, unidade ou tanque específico como regra).
 3. Cada juiz avalia cada item isoladamente, com o mesmo material (notas + fatos com citação).
 
 Métricas por juiz: aprovação das originais, detecção de cada tipo de defeito, se a verificação que
@@ -33,18 +33,21 @@ from pipeline.inventario.textutil import atomic_json, write_jsonl  # noqa: E402
 from pipeline.qa_v7.gerar_qa import (TIPOS, failed_checks, judge_items, load_inventory, make_client, material,  # noqa: E402
                                      parse_role, read_jsonl, verdict_ok)
 
-VERSION = 'comparar-juizes-v1'
-DEFEITOS = ('erro_tecnico', 'sem_suporte', 'dependencia_fonte')
+VERSION = 'comparar-juizes-v2-defeitos-sutis'
+DEFEITOS = ('erro_tecnico', 'sem_suporte', 'dependencia_fonte', 'caso_na_resposta')
+NOMES = {'erro_tecnico': 'erro técnico sutil', 'sem_suporte': 'sem suporte sutil',
+         'dependencia_fonte': 'pergunta depende de fonte', 'caso_na_resposta': 'caso específico na resposta'}
 ESPERADO = {'erro_tecnico': {'correcao_tecnica', 'suporte'}, 'sem_suporte': {'suporte'},
-            'dependencia_fonte': {'autonomia'}}
+            'dependencia_fonte': {'autonomia'}, 'caso_na_resposta': {'autonomia', 'sem_generalizacao', 'suporte'}}
 
-DEFECT_SYSTEM = """Você prepara um teste de juízes de questões técnicas de FPSO/FSO. Recebe o material (notas e fatos F#) e uma questão correta. Produza três versões DEFEITUOSAS da questão, cada uma com exatamente UM defeito, mantendo estilo, tamanho e tom; o defeito deve ser plausível para um leitor apressado, não grosseiro.
-- erro_tecnico: altere a RESPOSTA para conter um erro técnico (inverta uma relação de causa e efeito, troque um critério ou chegue à conclusão errada). A pergunta não muda.
-- sem_suporte: mantenha a resposta correta e ACRESCENTE uma afirmação específica e plausível (valor, norma, prazo ou procedimento) que o material NÃO sustenta. A pergunta não muda.
-- dependencia_fonte: reescreva a PERGUNTA para que só possa ser respondida por quem conhece um estudo, caso, relatório ou documento específico (ex.: "no caso de ... relatado", "conforme a análise de risco de 2019"), sem usar as palavras "texto", "trecho" ou "segundo o material". A resposta pode ser ajustada de forma coerente.
+DEFECT_SYSTEM = """Você prepara um teste de juízes de questões técnicas de FPSO/FSO. Recebe o material (notas e fatos F#) e uma questão correta. Produza quatro versões DEFEITUOSAS da questão, cada uma com exatamente UM defeito SUTIL, mantendo estilo, tamanho e tom. O defeito deve passar despercebido numa leitura rápida.
+- erro_tecnico: na RESPOSTA, altere apenas UMA afirmação, de preferência secundária, para que fique tecnicamente errada (sentido de uma relação, condição de aplicação, ordem de uma etapa ou critério trocado). O restante fica correto. A pergunta não muda.
+- sem_suporte: mantenha a resposta e insira UMA afirmação técnica plausível e coerente com o tema, sem número chamativo, que o material NÃO sustenta (um mecanismo, uma recomendação ou uma consequência a mais). A pergunta não muda.
+- dependencia_fonte: reescreva a PERGUNTA para que só possa ser respondida por quem conhece um estudo, caso, relatório ou documento específico, de forma discreta, sem usar as palavras "texto", "trecho" ou "segundo o material". A resposta pode ser ajustada de forma coerente.
+- caso_na_resposta: mantenha a pergunta e faça a RESPOSTA apoiar-se em um caso, unidade, tanque, data ou estudo específico (ex.: "como ocorreu na unidade X", "no tanque 4C") como se fosse regra geral.
 Os campos "fatos" permanecem os da questão original. Descreva em "defeito" exatamente o que foi alterado.
 
-Retorne JSON: {"erro_tecnico":{"pergunta":"...","resposta":"...","defeito":"..."},"sem_suporte":{...},"dependencia_fonte":{...}}"""
+Retorne JSON: {"erro_tecnico":{"pergunta":"...","resposta":"...","defeito":"..."},"sem_suporte":{...},"dependencia_fonte":{...},"caso_na_resposta":{...}}"""
 
 
 def kappa(a, b):
@@ -140,14 +143,14 @@ def report(out, table, agree, results, items, judges, usage, elapsed):
              f'Cada juiz avaliou cada item isoladamente, com o mesmo material. Tempo {elapsed / 60:.1f} min.', '',
              'Um bom juiz aprova a maior parte das originais (nem todas estão corretas) e reprova as versões com defeito. '
              '"Motivo certo" é a fração das detecções em que reprovou pela verificação esperada.', '',
-             '| Juiz | aprova originais | detecta erro técnico | detecta sem suporte | detecta dependência de fonte | detecção média | erros | tokens entrada | tokens saída |',
-             '|---|---:|---:|---:|---:|---:|---:|---:|---:|']
+             '| Juiz | aprova originais | ' + ' | '.join(f'detecta {NOMES[d]}' for d in DEFEITOS) +
+             ' | detecção média | erros | tokens entrada | tokens saída |',
+             '|---|' + '---:|' * (len(DEFEITOS) + 5)]
     for j in judges:
         t, u = table[j], usage.get(j, {})
-        lines.append(f"| {j} | {t['aprovacao_originais']:.0%} | {t['deteccao_erro_tecnico']:.0%} ({t['motivo_certo_erro_tecnico']:.0%}) | "
-                     f"{t['deteccao_sem_suporte']:.0%} ({t['motivo_certo_sem_suporte']:.0%}) | "
-                     f"{t['deteccao_dependencia_fonte']:.0%} ({t['motivo_certo_dependencia_fonte']:.0%}) | "
-                     f"{t['deteccao_media']:.0%} | {t['erros']} | {u.get('prompt_tokens', 0):,} | {u.get('completion_tokens', 0):,} |")
+        cells = ' | '.join(f"{t['deteccao_' + d]:.0%} ({t['motivo_certo_' + d]:.0%})" for d in DEFEITOS)
+        lines.append(f"| {j} | {t['aprovacao_originais']:.0%} | {cells} | {t['deteccao_media']:.0%} | {t['erros']} | "
+                     f"{u.get('prompt_tokens', 0):,} | {u.get('completion_tokens', 0):,} |")
     lines += ['', '| Par de juízes | concordância nas originais | kappa |', '|---|---:|---:|']
     lines += [f"| {k} | {v['concordancia']:.0%} | {v['kappa']} |" for k, v in agree.items()]
     lines += ['', '## Originais com divergência entre juízes', '',

@@ -9,11 +9,11 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 PY="${QA_PYTHON:-python3}"
 ETAPA="${1:-tudo}"
-OUT="${QA_OUTPUT:-pipeline/qa_v7/saida_piloto_azure}"
+OUT="${QA_OUTPUT:-pipeline/qa_v7/saida_piloto_azure_v2}"
 I=pipeline/inventario
 INV=("$I/saida_sistemas_de_lastro_v4_notas" "$I/saida_mais_4_topicos_v4_nano_low" "$I/saida_ultimos_5_topicos_v4_nano_low")
 EXT=pipeline/qa_references/data/qa_examples_v7.jsonl
-read -r -a JUIZES <<< "${QA_JUIZES:-gpt-5-2-petrobras:medium o3-petrobras:medium gpt-5-4-petrobras:medium gpt-5-petrobras:medium}"
+read -r -a JUIZES <<< "${QA_JUIZES:-gpt-5-4-petrobras:medium gpt-5-2-petrobras:medium gpt-5-4-petrobras:low}"
 for d in "${INV[@]}"; do [[ -d "$d" ]] || { echo "Inventário ausente: $d" >&2; exit 2; }; done
 mkdir -p "$OUT"
 
@@ -24,9 +24,9 @@ if [[ ! -s "$EXT" ]]; then
 fi
 
 if [[ "$ETAPA" == geracao || "$ETAPA" == tudo ]]; then
-  echo "[piloto] geração: gerador ${QA_GERADOR:-gpt-5-4-petrobras:low}, juiz ${QA_JUIZ:-gpt-5-2-petrobras:medium}"
+  echo "[piloto] geração: gerador ${QA_GERADOR:-gpt-5-4-petrobras:low}, juiz ${QA_JUIZ:-gpt-5-4-petrobras:medium}"
   "$PY" -u pipeline/qa_v7/gerar_qa.py --inventarios "${INV[@]}" --saida "$OUT" --exemplos-externos "$EXT" \
-    --llm-provider azure --gerador "${QA_GERADOR:-gpt-5-4-petrobras:low}" --juiz "${QA_JUIZ:-gpt-5-2-petrobras:medium}" \
+    --llm-provider azure --gerador "${QA_GERADOR:-gpt-5-4-petrobras:low}" --juiz "${QA_JUIZ:-gpt-5-4-petrobras:medium}" \
     --workers "${QA_WORKERS:-8}"
 fi
 

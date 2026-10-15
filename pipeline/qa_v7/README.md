@@ -28,34 +28,44 @@ difícil B, totalizando 160 questões. O critério de parada definitivo ainda n�
 num teste com 100 questões por subtópico.
 
 `comparar_juizes.py` testa juízes diferentes sobre **as mesmas** questões (a versão original do gerador) e
-sobre versões com defeito plantado (`erro_tecnico`, `sem_suporte`, `dependencia_fonte`), criadas por
-modelo. Mede aprovação das originais, detecção de cada defeito, se o motivo da reprovação é o esperado,
+sobre versões com um defeito sutil plantado (`erro_tecnico`, `sem_suporte`, `dependencia_fonte`,
+`caso_na_resposta`), criadas por modelo. Mede aprovação das originais, detecção de cada defeito, se o motivo da reprovação é o esperado,
 concordância entre juízes (kappa) e tokens. As originais em que os juízes divergem ficam listadas para
 o especialista decidir.
 
 `piloto_sol_2026_10_14/` guarda o primeiro piloto (160 questões, gerador e juiz `gpt-6.1-sol`, com o
 avaliador de dificuldade ainda ativo), para comparação.
 
+### Histórico dos pilotos
+
+- `saida_piloto_azure` (2026-10-15): juiz GPT-5.2 aprovou 61%. Na comparação, GPT-5.2 aprovou só 34% das
+  originais (rigor excessivo em suporte); o3 e GPT-5 aprovaram 92% e 88%, mas deixaram passar 66% e 47%
+  das perguntas que dependem de uma fonte; GPT-5.4 medium aprovou 66% e pegou todos os defeitos. Os defeitos
+  de erro técnico e sem suporte foram fáceis para todos e ficaram sutis no piloto seguinte.
+- `saida_piloto_azure_v2`: juiz GPT-5.4 medium com regra de suporte que aceita ligações lógicas diretas;
+  gerador com resposta enxuta e sem caso específico na resposta; filtro de alternativas sem falsos positivos.
+  Compara GPT-5.4 medium, GPT-5.2 medium e GPT-5.4 low.
+
 ## No servidor
 
 ```bash
 git pull --ff-only origin dev
-OUT=pipeline/qa_v7/saida_piloto_azure
+OUT=pipeline/qa_v7/saida_piloto_azure_v2
 mkdir -p "$OUT"
 nohup bash pipeline/qa_v7/run_piloto_juizes_azure.sh > "$OUT/console.log" 2>&1 &
 tail -F "$OUT/console.log"
 ```
 
 `run_piloto_juizes_azure.sh geracao` ou `juizes` roda só uma das etapas. Variáveis: `QA_GERADOR`
-(padrão `gpt-5-4-petrobras:low`), `QA_JUIZ` (padrão `gpt-5-2-petrobras:medium`), `QA_JUIZES` (padrão
-`gpt-5-2-petrobras:medium o3-petrobras:medium gpt-5-4-petrobras:medium gpt-5-petrobras:medium`),
+(padrão `gpt-5-4-petrobras:low`), `QA_JUIZ` (padrão `gpt-5-4-petrobras:medium`), `QA_JUIZES` (padrão
+`gpt-5-4-petrobras:medium gpt-5-2-petrobras:medium gpt-5-4-petrobras:low`),
 `QA_DEFEITOS` (32), `QA_WORKERS` (8), `QA_SOL=1` (também compara os juízes nas questões do piloto Sol),
 `QA_OUTPUT`, `QA_PYTHON`. Repetir o comando reaproveita o cache.
 
 ## Saída
 
 ```text
-saida_piloto_azure/
+saida_piloto_azure_v2/
   questoes.jsonl       todas as questões: original do gerador, correções, pareceres do juiz, fatos e fontes
   aprovadas.jsonl      só as aprovadas (pergunta, resposta, nível, notas de origem)
   relatorio.md         questões por tópico e subtópico, com status e motivos

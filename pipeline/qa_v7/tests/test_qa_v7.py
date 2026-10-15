@@ -112,6 +112,10 @@ class QAv7(unittest.TestCase):
         table = {'F1': {}}
         q = {'pergunta': 'Na opção A, com menor impacto, qual escolher?', 'resposta': 'A opção A.', 'fatos': ['F1']}
         self.assertEqual(G.check_code(q, table), [])                      # "opção A" de cenário não é alternativa
+        for ok in ('A equipe avalia duas alternativas de projeto: qual priorizar?', 'O cenário foi considerado no estudo do sistema receptor?'):
+            self.assertEqual(G.check_code({'pergunta': ok, 'resposta': 'Sim.', 'fatos': ['F1']}, table), [])
+        for bad in ('Assinale a alternativa correta.', 'Conforme o estudo citado, qual a causa?', 'O F3 indica o quê?'):
+            self.assertTrue(G.check_code({'pergunta': bad, 'resposta': 'Sim.', 'fatos': ['F1']}, table))
         q2 = {'pergunta': 'Segundo a nota técnica, qual das seguintes?', 'resposta': 'Ver F2.', 'fatos': ['F9']}
         self.assertEqual(set(G.check_code(q2, table)), {'referencia_alternativas', 'depende_do_material', 'fato_inexistente'})
 
@@ -143,7 +147,7 @@ class QAv7(unittest.TestCase):
                          clients={'juizes': {'j1:medium': FakeLLM(), 'j2:low': FakeLLM()}, 'defeitos': FakeLLM()})
         t = resumo['juizes']['j1:medium']
         self.assertEqual(resumo['originais'], 4)
-        self.assertEqual(resumo['variantes'], 12)
+        self.assertEqual(resumo['variantes'], 16)
         self.assertEqual(t['aprovacao_originais'], 1.0)
         self.assertEqual(t['deteccao_erro_tecnico'], 1.0)                 # o fake reprova erro técnico e sem suporte
         self.assertEqual(t['deteccao_dependencia_fonte'], 0.0)
@@ -162,8 +166,8 @@ class QAv7(unittest.TestCase):
                           '--saida', str(self.root / 'cmp2'), '--juizes', 'ok:low', 'fora:low', '--defeitos', '4',
                           '--env', str(self.root)],
                          clients={'juizes': {'ok:low': FakeLLM(), 'fora:low': Down()}, 'defeitos': FakeLLM()})
-        self.assertEqual(resumo['juizes']['fora:low']['erros'], 16)
-        self.assertEqual(resumo['juizes']['ok:low']['avaliados'], 16)
+        self.assertEqual(resumo['juizes']['fora:low']['erros'], 20)
+        self.assertEqual(resumo['juizes']['ok:low']['avaliados'], 20)
 
     def test_modelo_invalido(self):
         with self.assertRaises(ValueError):
