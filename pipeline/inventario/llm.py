@@ -169,6 +169,10 @@ class LLMClient:
                 raise RuntimeError('OPENAI_API_KEY ausente')
             client = OpenAI(api_key=key, timeout=timeout, max_retries=0)
         self.client = client
+        self.provider, self.timeout = provider, timeout
+        self._auto_client = provider == 'azure' and settings is not None and self.client is not None \
+            and type(client).__name__ == 'AzureOpenAI'
+        self._key_seen = getattr(settings, 'azure_api_key', None)
         self.identity = identity
         self.model, self.effort, self.max_calls = model, effort or '', max_calls
         self.max_attempts, self.max_tokens_cap = max_attempts, max_tokens_cap
@@ -206,6 +210,28 @@ class LLMClient:
         self.db.close()
         if hasattr(self.client, 'close'):
             self.client.close()
+
+    def _refresh_credentials(self, failed_key):
+        """Relê o .env (token JWT do gateway expira) e recria o cliente. True se a chave mudou."""
+        if not self._auto_client:
+            return False
+        with self.lock:
+            if self._key_seen != failed_key:
+                return True  # outra thread já renovou
+            from azure_openai_backend import AzureSettings, AzureOpenAIBackend
+            from openai import AzureOpenAI
+            new = AzureSettings.load(override=True)
+            if not new.azure_api_key or new.azure_api_key == failed_key:
+                return False
+            kwargs = dict(api_key=new.azure_api_key, api_version=new.azure_api_version,
+                          timeout=self.timeout, max_retries=0)
+            kwargs['base_url' if new.use_base_url else 'azure_endpoint'] = new.azure_endpoint
+            http = AzureOpenAIBackend._build_http_client(new.ca_bundle, self.timeout)
+            if http is not None:
+                kwargs['http_client'] = http
+            self.client = AzureOpenAI(**kwargs)
+            self._key_seen = new.azure_api_key
+            return True
 
     def _get(self, key):
         with self.lock:
@@ -255,6 +281,7 @@ class LLMClient:
         tokens = max_tokens
         repair = None          # (conteúdo anterior, erro) para a tentativa de reparo
         last_kind, last_msg = None, None
+        refreshed = False
         for attempt in range(self.max_attempts):
             self._reserve(tag)
             started = time.time()
@@ -269,8 +296,10 @@ class LLMClient:
             if self.effort:
                 kwargs['reasoning_effort'] = self.effort
             base_log = {'tag': tag, 'item': item, 'attempt': attempt, 'max_tokens': tokens, 'reparo': bool(repair)}
+            client = self.client
+            used_key = self._key_seen
             try:
-                resp = self.client.chat.completions.create(**kwargs)
+                resp = client.chat.completions.create(**kwargs)
             except Exception as exc:  # noqa: BLE001 - classificado abaixo
                 msg = _error_body_text(exc)[:800]
                 self._add_usage(tag, errors=1)
@@ -279,8 +308,18 @@ class LLMClient:
                     self._log({**base_log, 'ok': False, 'kind': 'filtro_conteudo', 'error': type(exc).__name__,
                                'message': msg})
                     raise ContentFiltered(f'Filtro de conteúdo ({tag}): {msg[:300]}', tag=tag, item=item) from exc
+                if _status(exc) == 401 and not refreshed:
+                    refreshed = True
+                    if self._refresh_credentials(used_key):
+                        self._log({**base_log, 'ok': False, 'kind': 'credencial_renovada',
+                                   'error': type(exc).__name__, 'message': msg})
+                        continue
                 if is_fatal(exc):
                     self._log({**base_log, 'ok': False, 'kind': 'fatal', 'error': type(exc).__name__, 'message': msg})
+                    if _status(exc) == 401:
+                        raise LLMError('401: a chave/JWT da Azure expirou ou é inválida. Atualize '
+                                       'AZURE_OPENAI_API_KEY no .env (e no ambiente, se definida) e rode de novo; '
+                                       'o cache retoma de onde parou.', kind='fatal', tag=tag, item=item) from exc
                     raise
                 kind = 'transitorio' if is_transient(exc) else 'requisicao'
                 self._log({**base_log, 'ok': False, 'kind': kind, 'error': type(exc).__name__, 'message': msg,
