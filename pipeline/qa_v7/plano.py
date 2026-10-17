@@ -61,7 +61,8 @@ def build_queue(sub, seed):
             nid = min(cands, key=key)
             i = pools[lvl][nid].pop(0)
             n = by_nid[nid]
-            alvo = {'tipo': tipo, 'descricao': n['alvos'][i]['descricao']}
+            alvo = {'tipo': tipo, 'descricao': n['alvos'][i]['descricao'],
+                    **({'resposta_esperada': n['alvos'][i]['resposta']} if n['alvos'][i].get('resposta') else {})}
             batch = {'notas': [n], 'alvos': [alvo], 'alvo_ref': f'{nid}#alvo{i}'}
         for n in batch['notas']:
             uses_note[n['nid']] += 1

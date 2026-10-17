@@ -51,6 +51,20 @@ duas perguntas separadas por dois-pontos são barrados em código. O formulário
 (`formulario/montar_formulario.py`, padrão `saida_v81_10_por_topico`, 5 por tópico) reaplica essas regras, mostra o
 critério de correção (pontos essenciais) e completa níveis ausentes no tópico com o mais próximo.
 
+**v9** (questão "que resultado da análise de falhas permite...?" passou com várias respostas válidas):
+- **triagem de alvos** antes de gerar: o gerador classifica o alvo da nota como `objetivo`, `recortar` (reescreve
+  como um aspecto específico com resposta única) ou `descartar` (genérico: "explicar como X contribui para Y",
+  "importância de X"). Descartados viram `alvo_descartado` e, no modo cota, são repostos pelo próximo alvo.
+- **respondente às cegas** (verificação do SimpleQA): outro modelo (`--respondente`, padrão
+  `gpt-5-2-petrobras:low`) responde só com o enunciado; o juiz compara com a referência (`equivalente`, `parcial`,
+  `incorreta`, `alternativa_valida`, `pergunta_insuficiente`). Os dois últimos indicam pergunta com mais de uma
+  resposta: 1 correção com a resposta às cegas como parecer; se continuar ambígua, reprova (`resposta_unica_cega`).
+  O veredito final (`acerto_cego`) é guardado e serve como estimativa de dificuldade.
+- juiz atento ao "genérico disfarçado" ("que resultado/papel/característica de X permite...").
+- inventário (próximas rodadas): notas sem frases genéricas e alvos objetivos com `resposta` curta
+  (`notas-v3-alvos-objetivos`, `revisao-notas-v3-alvos-objetivos`); a resposta do alvo chega ao gerador.
+- `--sem-triagem` e `--sem-cego` desligam as etapas.
+
 ## Modos
 
 - `--modo piloto`: 4 perguntas por subtópico (uma nota dá fácil + média, outra dá difícil A, uma combinação dá
@@ -88,9 +102,9 @@ git pull --ff-only origin dev
 nohup bash pipeline/qa_v7/run_qa_v7_azure.sh ambos > pipeline/qa_v7/console_qa_v7.log 2>&1 &
 tail -F pipeline/qa_v7/console_qa_v7.log
 
-# formato v8.1, 10 por tópico
-QA_POR_TOPICO=10 QA_SAIDA_COTA=pipeline/qa_v7/saida_v81_10_por_topico \
-  nohup bash pipeline/qa_v7/run_qa_v7_azure.sh cota > pipeline/qa_v7/console_v81.log 2>&1 &
+# v9 (triagem + respondente às cegas), 10 por tópico
+QA_POR_TOPICO=10 QA_SAIDA_COTA=pipeline/qa_v7/saida_v9_10_por_topico \
+  nohup bash pipeline/qa_v7/run_qa_v7_azure.sh cota > pipeline/qa_v7/console_v9.log 2>&1 &
 ```
 
 `cota` ou `profundo` rodam só uma etapa. Variáveis: `QA_WORKERS` (8), `QA_GERADOR`, `QA_JUIZ`

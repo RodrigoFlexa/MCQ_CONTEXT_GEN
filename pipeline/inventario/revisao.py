@@ -8,7 +8,7 @@ import json
 
 from . import notas as N
 
-VERSION = 'revisao-notas-v2-autonomia'
+VERSION = 'revisao-notas-v3-alvos-objetivos'
 DECISOES = ('aprovar', 'corrigir', 'rejeitar')
 CRITERIOS = ('correcao_tecnica', 'suporte', 'pertinencia', 'riqueza')
 MINIMOS = {'correcao_tecnica': 4, 'suporte': 3, 'pertinencia': 3, 'riqueza': 3}
@@ -23,11 +23,12 @@ Verifique seção por seção:
 5. Resolva os alertas automáticos (números sem fonte, seção sem fato, referências inválidas).
 6. O campo "fatos" de cada seção aceita ids de fatos (F#) e de trechos (T#). Não escreva ids no texto. Não acrescente comentários sobre o que as fontes deixam de informar dentro das seções; use "lacunas".
 7. Autonomia dos alvos: a futura QA precisa ser respondível sem ler o relatório. Corrija alvos que pedem recordar o resultado de um acidente, quem fez uma ação, uma data ou um tanque identificado apenas na fonte. O caso pode permanecer como evidência, mas o alvo deve avaliar a relação técnica sustentada, com condições explícitas. Não invente uma regra geral para reaproveitar o caso; se a relação não tiver suporte, retire esse alvo ou rejeite a nota quando ele for seu único conteúdo.
+8. Objetividade dos alvos: cada alvo nomeia um mecanismo, variável, critério, causa, valor com condição ou decisão específica, com "resposta" curta e única que os fatos sustentam. Reescreva de forma específica ou retire alvos genéricos ("explicar como X contribui/reduz/melhora Y", "importância/benefícios/papel de X", "função de um sistema de gestão"), cuja resposta seria uma paráfrase entre muitas. Frases genéricas nas seções (valeriam para qualquer sistema) contam como "vago".
 Corrija apenas quando houver problema real; uma nota correta deve ser aprovada como está.
 
 Decisão:
 - aprovar: correta, sustentada, pertinente e rica.
-- corrigir: devolva em "nota_final" a NOTA COMPLETA corrigida, no mesmo formato (titulo, resumo, secoes com tipo/texto/fatos/conhecimento_geral, alvos, correcoes, lacunas). Remova o que não tem suporte, corrija erros, explicite condições e enriqueça só com o que fatos e trechos sustentam (ou conhecimento geral consagrado, marcado).
+- corrigir: devolva em "nota_final" a NOTA COMPLETA corrigida, no mesmo formato (titulo, resumo, secoes com tipo/texto/fatos/conhecimento_geral, alvos com nivel/descricao/resposta, correcoes, lacunas). Remova o que não tem suporte, corrija erros, explicite condições e enriqueça só com o que fatos e trechos sustentam (ou conhecimento geral consagrado, marcado).
 - rejeitar: irrelevante para o assunto ou para FPSO, trivial, ou impossível de corrigir com o material.
 "avaliacao" (1 a 5) refere-se à versão FINAL: correcao_tecnica, suporte, pertinencia, riqueza.
 Escala de riqueza: 5 = explica com conteúdo fundamentado mecanismo, variáveis, problemas e decisões, integrando mais de uma fonte; 4 = três desses aspectos fundamentados; 3 = dois aspectos fundamentados com explicação real; 2 = poucas afirmações fundamentadas, apoiada sobretudo em conhecimento geral; 1 = trivial ou vaga.

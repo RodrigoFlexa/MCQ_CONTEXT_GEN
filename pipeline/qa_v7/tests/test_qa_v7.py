@@ -57,8 +57,10 @@ def verdict(qid, ok=True, reparavel=False, falha='suporte'):
 class FakeLLM:
     """Gerador/juiz simulado; `reject` define ids reprovados pelo juiz na primeira avaliação."""
 
-    def __init__(self, reject=(), repairable=(), fail_gen=False):
+    def __init__(self, reject=(), repairable=(), fail_gen=False, descartar=(), ambiguo=(), sempre_ambiguo=()):
         self.reject, self.repairable, self.fail_gen = set(reject), set(repairable), fail_gen
+        self.descartar, self.ambiguo, self.sempre_ambiguo = set(descartar), set(ambiguo), set(sempre_ambiguo)
+        self.comparados = set()
         self.usage = {'calls': 0, 'prompt_tokens': 0, 'completion_tokens': 0}
         self.seen = set()
 
@@ -85,6 +87,19 @@ class FakeLLM:
             data = {'pergunta': 'Por que a espuma reduz a área de gás no separador?', 'resposta': 'Ocupa volume.',
                     'pontos_essenciais': ['ocupa volume'], 'explicacao': 'Ocupa volume.', 'fatos': ['F1'],
                     'mudancas': 'redação'}
+        elif system == G.TRIAGEM_SYSTEM:
+            alvo = user.rsplit('ALVO (', 1)[1]
+            drop = any(d in alvo for d in self.descartar)
+            data = {'decisao': 'descartar' if drop else 'objetivo', 'alvo': alvo.split('): ', 1)[1].split('\n')[0],
+                    'resposta_esperada': 'reduz a área', 'fatos': ['F1'], 'razao': 'ok'}
+        elif system == G.CEGO_SYSTEM:
+            data = {'resposta': 'Porque diminui a área de escoamento do gás.'}
+        elif system == G.COMPARA_SYSTEM:
+            qid = item
+            first = qid not in self.comparados
+            self.comparados.add(qid)
+            amb = qid in self.sempre_ambiguo or (qid in self.ambiguo and first)
+            data = {'veredito': 'alternativa_valida' if amb else 'equivalente', 'razao': 'r', 'sugestao': 's'}
         elif system == NV.SYSTEM:
             ids = [x['id'] for x in json.loads(user)['anteriores']]
             data = {'pares': [{'id': i, 'julgamento': 'redundante', 'razao': 'mesma coisa'} for i in ids]}
@@ -243,6 +258,30 @@ class QAv7(unittest.TestCase):
             q = {'pergunta': p, 'resposta': 'X.', 'fatos': ['F1'], 'tipo': 'facil', 'pontos_essenciais': ['x'],
                  'explicacao': ''}
             self.assertIn('depende_do_material', G.check_code(q, {'F1': {}}))
+
+    def test_triagem_descarta_alvo_generico_e_cota_repoe(self):
+        gen = FakeLLM(descartar={'alvo facil de k'})
+        resumo = G.main(self.args('--modo', 'cota', '--por-topico', '4', '--min-por-subtopico', '1'),
+                        clients=(gen, FakeLLM()))
+        self.assertEqual(resumo['aprovadas_por_topico'], {'Tópico X': 4})
+        self.assertGreater(resumo['alvos_descartados'], 0)
+        rows = [json.loads(l) for l in (self.root / 'out' / 'questoes.jsonl').read_text(encoding='utf-8').splitlines()]
+        self.assertTrue(all('alvo facil' not in r.get('alvo_descricao', '') for r in rows if r['status'] == 'aprovada'))
+
+    def test_respondente_as_cegas(self):
+        q1, q2 = 's1-s0000-A1', 's1-s0001-A1'
+        judge = FakeLLM(ambiguo={q1}, sempre_ambiguo={q2})
+        resumo = G.main(self.args('--modo', 'cota', '--por-topico', '3', '--min-por-subtopico', '1', '--sem-triagem'),
+                        clients=(FakeLLM(), judge, None, FakeLLM()))
+        rows = {r['id']: r for r in map(json.loads, (self.root / 'out' / 'questoes.jsonl').read_text(
+            encoding='utf-8').splitlines())}
+        self.assertEqual(rows[q1]['status'], 'aprovada')                    # corrigida após a ambiguidade
+        self.assertEqual(len(rows[q1]['correcoes']), 1)
+        self.assertEqual([c['veredito'] for c in rows[q1]['cego']], ['alternativa_valida', 'equivalente'])
+        self.assertEqual(rows[q2]['status'], 'reprovada')
+        self.assertIn('resposta_unica_cega', rows[q2]['motivos'])
+        self.assertEqual(resumo['aprovadas_por_topico'], {'Tópico X': 3})   # a reprovada foi reposta
+        self.assertEqual(resumo['reprovadas_por_ambiguidade_cega'], 1)
 
     def test_modo_profundo_e_novidade(self):
         def embed(texts):

@@ -10,7 +10,7 @@ import numpy as np
 
 from .textutil import unsupported_numbers
 
-VERSION = 'notas-v2-autonomia'
+VERSION = 'notas-v3-alvos-objetivos'
 
 SECOES = {
     'definicao_funcao': 'O que é e para que serve',
@@ -48,14 +48,15 @@ Regras:
 4. Preserve condições e escopo: resultado de estudo ou caso continua sendo daquele estudo/caso; requisito HSE (Reino Unido) ou BSEE (EUA) não é obrigação da ANP; regra de refinaria ou onshore não vira regra de FPSO.
 5. Não invente valores, equipamentos, procedimentos de empresa ou normas. Nunca escreva <NUMBER>.
 6. Corrija erros evidentes de terminologia ou conceito das fontes (ex.: TEG "adsorvente" -> absorvente) e registre cada correção em "correcoes".
-7. Nada de frases vazias ("é importante monitorar", "contribui para a eficiência") sem dizer o quê, como e por quê.
+7. Nada de frases vazias ("é importante monitorar", "contribui para a eficiência", "é fundamental para a segurança", "permite melhorar a gestão") sem dizer o quê, como e por quê. Cada frase afirma algo verificável: qual variável, em que sentido, sob qual condição, com qual consequência ou critério. Uma frase que valeria para qualquer equipamento ou sistema de gestão deve ser cortada ou tornada específica.
 8. Escreva o que o material ensina. Não comente dentro das seções o que as fontes deixam de informar; registre isso uma única vez em "lacunas".
-9. alvos: 4 a 8 conhecimentos avaliáveis (não escreva perguntas), cada um com nivel facil|media|dificil; inclua ao menos 1 dificil (diagnóstico, decisão sob condições, integração de variáveis) quando o material permitir.
+9. alvos: 4 a 8 conhecimentos avaliáveis (não escreva perguntas), cada um com nivel facil|media|dificil e "resposta": o núcleo da resposta correta em até 20 palavras. Inclua ao menos 1 dificil (diagnóstico, decisão sob condições, integração de variáveis) quando o material permitir.
+   Um alvo é OBJETIVO: nomeia UM mecanismo, variável, critério, causa, sintoma, valor (com condição) ou decisão específica, e um profissional competente chegaria à mesma "resposta" sem ambiguidade. Alvos proibidos (admitem muitas respostas parafraseadas): "explicar como X contribui/reduz/melhora Y", "importância/benefícios/papel de X", "por que X é necessário", "função de um sistema de gestão/de KPIs", "como X apoia a tomada de decisão". Exemplo inadequado: "Explicar como a análise de falhas reduz reincidências" (resposta: qualquer paráfrase de "entender a causa"). Adequado, quando sustentado: "Critério para classificar uma falha como reincidente no histórico de manutenção" ou "Qual dado do histórico distingue falha por desgaste de falha por operação fora do envelope". Se o material só sustenta alvos genéricos, escreva menos alvos.
 10. Se os fatos não sustentarem pelo menos duas seções fundamentadas com conteúdo explicativo, devolva status "insuficiente" e explique em lacunas.
 11. A futura pergunta será respondida SEM acesso às fontes. O núcleo da nota e seus alvos devem explicar conhecimento profissional reutilizável sob condições explícitas. Um incidente ou estudo pode ser evidência ou ilustração; identidade da unidade, número do tanque, datas e o resultado de um episódio não devem ser o conhecimento a memorizar. Explicite a relação técnica que o caso sustenta, conservando os limites: não transforme uma observação particular em regra universal.
 12. Nos alvos, descreva o mecanismo, variável, diagnóstico ou critério a avaliar sem exigir conhecimento do relatório. Exemplo inadequado: explicar por que o tanque 6C do caso não esvaziou. Alvo adequado, quando sustentado: explicar como comunicação indesejada entre compartimentos pode prejudicar o esvaziamento, dadas as condições hidráulicas descritas. Uma configuração específica só serve ao alvo quando suas informações essenciais puderem ser fornecidas naturalmente no futuro enunciado.
 
-Retorne JSON: {"status":"ok|insuficiente","titulo":"...","resumo":"2 a 3 frases","secoes":[{"tipo":"...","texto":"...","fatos":["F1"],"conhecimento_geral":false}],"alvos":[{"nivel":"facil|media|dificil","descricao":"..."}],"correcoes":[{"original":"...","corrigido":"...","motivo":"..."}],"lacunas":["..."]}"""
+Retorne JSON: {"status":"ok|insuficiente","titulo":"...","resumo":"2 a 3 frases","secoes":[{"tipo":"...","texto":"...","fatos":["F1"],"conhecimento_geral":false}],"alvos":[{"nivel":"facil|media|dificil","descricao":"...","resposta":"núcleo da resposta correta"}],"correcoes":[{"original":"...","corrigido":"...","motivo":"..."}],"lacunas":["..."]}"""
 
 
 def build_context(sub, assunto, conceito, facts_by_fid, chunks):
@@ -136,7 +137,10 @@ def normalize_note(raw, idmap, sources):
     alvos = []
     for a in raw.get('alvos') or []:
         if isinstance(a, dict) and a.get('nivel') in NIVEIS and isinstance(a.get('descricao'), str) and a['descricao'].strip():
-            alvos.append({'nivel': a['nivel'], 'descricao': ' '.join(a['descricao'].split())})
+            alvo = {'nivel': a['nivel'], 'descricao': ' '.join(a['descricao'].split())}
+            if isinstance(a.get('resposta'), str) and a['resposta'].strip():
+                alvo['resposta'] = ' '.join(a['resposta'].split())
+            alvos.append(alvo)
     correcoes = [c for c in (raw.get('correcoes') or []) if isinstance(c, dict)]
     lacunas = [' '.join(x.split()) for x in (raw.get('lacunas') or []) if isinstance(x, str) and x.strip()]
     nota = {'status': status, 'titulo': ' '.join(str(raw.get('titulo') or '').split()),

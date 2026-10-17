@@ -5,7 +5,8 @@
 #             para estudar critérios de parada pela curva de novidade
 # Uso: bash pipeline/qa_v7/run_qa_v7_azure.sh cota|profundo|ambos   (padrão: ambos, um depois do outro)
 # Variáveis: QA_PYTHON, QA_WORKERS (8), QA_GERADOR (gpt-5-4-petrobras:low), QA_JUIZ (gpt-5-4-petrobras:low),
-#            QA_POR_TOPICO (100), QA_SAIDA_COTA, QA_SAIDA_PROFUNDO, QA_PROFUNDOS (nomes separados por "|").
+#            QA_RESPONDENTE (gpt-5-2-petrobras:low), QA_POR_TOPICO (100), QA_SAIDA_COTA, QA_SAIDA_PROFUNDO,
+#            QA_PROFUNDOS (nomes separados por "|"), QA_EXTRA (argumentos extras, ex.: "--sem-cego").
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
@@ -24,7 +25,7 @@ if [[ ! -s "$EXT" ]]; then
 fi
 COMUM=(--inventarios "${INV[@]}" --exemplos-externos "$EXT" --llm-provider azure
        --gerador "${QA_GERADOR:-gpt-5-4-petrobras:low}" --juiz "${QA_JUIZ:-gpt-5-4-petrobras:low}"
-       --workers "${QA_WORKERS:-8}")
+       --respondente "${QA_RESPONDENTE:-gpt-5-2-petrobras:low}" --workers "${QA_WORKERS:-8}" ${QA_EXTRA:-})
 
 if [[ "$ETAPA" == cota || "$ETAPA" == ambos ]]; then
   OUT="${QA_SAIDA_COTA:-pipeline/qa_v7/saida_cota_100_por_topico}"
