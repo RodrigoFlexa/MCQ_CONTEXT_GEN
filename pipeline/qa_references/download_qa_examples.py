@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Baixa e normaliza exemplos QA de benchmarks para few-shot de formato.
 
-Os registros exportados têm apenas pergunta e resposta. Alternativas, passagens,
-explicações e metadados dos datasets não são enviados ao prompt do PetroQuest.
+Os registros exportados têm pergunta e resposta. --preserve-reasoning-context conserva
+as sentenças de suporte do HotpotQA para demonstração de raciocínio no QA v11.
+Alternativas não são exportadas. O contexto não vira evidência técnica de FPSO.
 O catálogo inclui a atribuição/licença para manter a proveniência por registro.
 """
 
@@ -204,7 +205,24 @@ def normalize(entry: dict[str, Any], wrapped: dict[str, Any]) -> dict[str, Any] 
         "source_language": entry["language"],
         "source_split": entry["split"],
         "example_role": "format_only",
+        **({"reasoning_context": hotpot_support(row), "example_role": "format_and_reasoning_only"}
+           if entry.get("preserve_reasoning_context") and entry["id"] == "hotpotqa" else {}),
     }
+
+
+def hotpot_support(row: dict[str, Any]) -> list[dict[str, Any]]:
+    """Preserva somente sentenças realmente anotadas como suporte, sem gerar explicações."""
+    context = row.get('context') or {}
+    facts = row.get('supporting_facts') or {}
+    if not isinstance(context, dict) or not isinstance(facts, dict):
+        return []
+    passages = dict(zip(context.get('title', []), context.get('sentences', [])))
+    out = []
+    for title, index in zip(facts.get('title', []), facts.get('sent_id', [])):
+        sentences = passages.get(title, [])
+        if isinstance(index, int) and 0 <= index < len(sentences):
+            out.append({'title': title, 'sentence_index': index, 'text': sentences[index]})
+    return out
 
 
 def dataset_rows(entry: dict[str, Any], max_rows: int, seed: int) -> list[dict[str, Any]]:
@@ -253,11 +271,14 @@ def main() -> int:
     parser.add_argument("--max-per-dataset", type=int, default=500, help="Máximo de registros exportados por conjunto (0 = todos)")
     parser.add_argument("--seed", type=int, default=42, help="Semente para amostragem estável de páginas")
     parser.add_argument("--only", nargs="*", help="IDs opcionais: " + ", ".join(item["id"] for item in CATALOG))
+    parser.add_argument("--preserve-reasoning-context", action="store_true",
+                        help="Conserva sentenças anotadas de suporte do HotpotQA, sem alternativas")
     args = parser.parse_args()
     if args.max_per_dataset < 0:
         parser.error("--max-per-dataset deve ser >= 0")
 
-    selected = [item for item in CATALOG if not args.only or item["id"] in args.only]
+    selected = [{**item, 'preserve_reasoning_context': args.preserve_reasoning_context}
+                for item in CATALOG if not args.only or item["id"] in args.only]
     unknown = set(args.only or []) - {item["id"] for item in CATALOG}
     if unknown:
         parser.error(f"IDs desconhecidos: {', '.join(sorted(unknown))}")
