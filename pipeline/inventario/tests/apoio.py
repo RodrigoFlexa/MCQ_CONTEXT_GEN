@@ -38,6 +38,20 @@ def note_json(refs=('F1', 'F2'), status='ok', texto=None, geral=False):
             'correcoes': [], 'lacunas': []}
 
 
+def note_v5_json(refs=('F1', 'F2'), **kwargs):
+    raw = note_json(refs, **kwargs)
+    raw.update(schema_conhecimento='nota-v5', relacoes=[{
+        'id': 'R1', 'afirmacao': 'A espuma reduz a área de escoamento e favorece arraste de líquido.',
+        'origem': 'fonte', 'natureza': 'principio', 'aplicabilidade': 'fpso',
+        'condicoes': ['separador com espuma'], 'limites': ['não define a única causa de arraste'],
+        'fatos': list(refs), 'premissas': []}], buscas_complementares=[])
+    for target in raw['alvos']:
+        target.update(relacoes=['R1'], habilidade='compreensao' if target['nivel'] == 'facil' else 'aplicacao',
+                      resposta='Redução da área e aumento do arraste.', criterios_correcao=['área de gás reduzida'],
+                      condicoes_enunciado=['há espuma no separador'])
+    return raw
+
+
 class FakeLLM:
     """Responde a cada etapa conforme o prompt de sistema; falhas configuráveis por etapa."""
     fail = {}          # etapa -> 'filtro' | 'falha' | 'todos_falha'
@@ -87,7 +101,7 @@ class FakeLLM:
         elif system == N.SYSTEM:
             self._maybe_fail('notas', item)
             refs = tuple(re.findall(r'^(F\d+) ', user, flags=re.M)[:2])
-            data = note_json(refs)
+            data = note_v5_json(refs)
         elif system == R.SYSTEM:
             data = {'decisao': 'aprovar', 'avaliacao': {k: 5 for k in R.CRITERIOS}, 'problemas': [], 'motivo': 'ok',
                     'nota_final': None}
@@ -96,7 +110,10 @@ class FakeLLM:
             ids = re.findall(r'^(N\d+): ', user, flags=re.M)
             data = {'combinacoes': [{'notas': ids[:2], 'titulo': 'Espuma e nível', 'ligacao': 'a espuma mascara o nível',
                                      'raciocinio': 'integrar espuma e controle de nível', 'cenario': 'Nível oscila.',
-                                     'conhecimentos': [{'nota': ids[0], 'conhecimento': 'espuma'}]}],
+                                     'resposta': 'A espuma mascara o nível.', 'criterios_correcao': ['integrar as relações'],
+                                     'condicoes_enunciado': ['há espuma'], 'limites': [],
+                                     'conhecimentos': [{'nota': sid, 'conhecimento': 'espuma', 'relacoes': ['R1']}
+                                                      for sid in ids[:2]]}],
                     'observacao': ''}
         else:
             raise AssertionError('Chamada inesperada: ' + system[:60])

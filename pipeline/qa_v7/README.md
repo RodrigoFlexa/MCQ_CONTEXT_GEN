@@ -1,5 +1,10 @@
 # QA v7: perguntas a partir do inventário
 
+**Versão atual: QA v10 com notas v5.** Veja [atualização e comandos do servidor](../inventario/NOTAS_V5.md).
+As regras atuais preservam contratos avaliáveis, permitem insuficiência, deixam erro cego pendente,
+limitam o refinador a uma correção sem trocar gabarito e comparam novidade entre subtópicos.
+As descrições v7–v9 abaixo são históricas.
+
 A geração usa as notas técnicas aprovadas do inventário (`pipeline/inventario/saida_*`) como contexto.
 Não há busca nos corpora nem composição de documentos: cada nota já traz seções revisadas, fatos `F#` com
 citação literal e uma lista de alvos (fácil, média, difícil). As combinações de notas alimentam o difícil B.

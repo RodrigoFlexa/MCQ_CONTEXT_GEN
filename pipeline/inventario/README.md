@@ -1,5 +1,9 @@
 # Inventário de conhecimento do PetroQuest
 
+**Atualização:** [Notas v5 e QA v10](NOTAS_V5.md) descreve proveniência, liberdade de explicação,
+limites avaliáveis, reconstrução dos artefatos existentes e os comandos atuais do servidor.
+Os documentos v4 abaixo preservam o histórico da extração.
+
 Transforma as frases do especialista e os cinco corpora (Petrolês, ANP, HSE, BSEE, REGIS) em **notas técnicas
 por conceito**, base da geração de QA. Versão atual: **v4**. Leia **[PRODUCAO_V4.md](PRODUCAO_V4.md)** para o
 fluxo, a política de erros, os comandos do servidor e o formato da saída.

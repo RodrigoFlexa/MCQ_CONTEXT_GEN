@@ -12,10 +12,10 @@ import numpy as np
 
 from pipeline.inventario.llm import CallFailed, ContentFiltered
 
-VERSION = 'novidade-v1'
+VERSION = 'novidade-v2-escopo'
 JULGAMENTOS = ('redundante', 'sobreposicao', 'distinta')
 
-SYSTEM = """Você compara uma questão NOVA de avaliação técnica (FPSO/FSO) com questões já aprovadas do mesmo subtópico. Para cada anterior, classifique:
+SYSTEM = """Você compara uma questão NOVA de avaliação técnica (FPSO/FSO) com questões já aprovadas do banco no mesmo domínio. Para cada anterior, classifique:
 - redundante: avalia essencialmente o mesmo conhecimento e a resposta essencial é a mesma, mesmo com outra redação ou cenário;
 - sobreposicao: compartilha parte do conhecimento, mas a nova exige algo relevante que a anterior não exige;
 - distinta: avalia conhecimento diferente.
@@ -40,12 +40,13 @@ def _pair_check(llm, q, neighbors):
     return {p['id']: {'julgamento': p['julgamento'], 'razao': p.get('razao', '')} for p in data['pares']}
 
 
-def measure(rows, embed, llm, limiar=0.70, vizinhos=3, workers=8):
+def measure(rows, embed, llm, limiar=0.70, vizinhos=3, workers=8, scope='subtopico'):
     """Anota q['novidade'] nas aprovadas e devolve a curva por subtópico. embed(textos) -> vetores normalizados."""
     approved = [q for q in rows if q.get('status') == 'aprovada']
     by_sub = {}
     for q in approved:
-        by_sub.setdefault(q['sub_key'], []).append(q)
+        key = q['topico'] if scope == 'topico' else q['sub_key']
+        by_sub.setdefault(key, []).append(q)
     jobs = []
     for qs in by_sub.values():
         qs.sort(key=lambda q: (q.get('ordem', 0), q['id']))
@@ -58,7 +59,8 @@ def measure(rows, embed, llm, limiar=0.70, vizinhos=3, workers=8):
                 top = np.argsort(-sims)[:vizinhos]
                 info['max_cos'] = round(float(sims[top[0]]), 4)
                 info['vizinhos'] = [{'id': qs[i]['id'], 'cos': round(float(sims[i]), 4)} for i in top]
-                close = [qs[i] for i in top if sims[i] >= limiar]
+                info['acima_limiar'] = sum(float(sims[i]) >= limiar for i in top)
+                close = [qs[i] for i in top]  # Similaridade baixa não prova conhecimento distinto.
                 if close:
                     jobs.append((q, close))
             q['novidade'] = info
@@ -77,7 +79,7 @@ def measure(rows, embed, llm, limiar=0.70, vizinhos=3, workers=8):
             q['novidade']['redundante'] = any(n.get('julgamento') == 'redundante' for n in q['novidade']['vizinhos'])
     curves = {}
     for key, qs in by_sub.items():
-        curves[key] = {'topico': qs[0]['topico'], 'subtopico': qs[0]['subtopico'],
+        curves[key] = {'topico': qs[0]['topico'], 'subtopico': qs[0]['topico'] if scope == 'topico' else qs[0]['subtopico'], 'escopo': scope,
                        'sequencia': [{'id': q['id'], 'ordem': q.get('ordem'), 'tipo': q['tipo'],
                                       'max_cos': q['novidade']['max_cos'], 'redundante': q['novidade']['redundante']}
                                      for q in qs]}

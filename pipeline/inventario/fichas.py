@@ -35,8 +35,23 @@ def render_note(n, level=3):
             lines += [f"**{s['titulo']}.** {s['texto']} {marks}".rstrip(), '']
     if n['alvos']:
         lines += ['**Conhecimentos avaliáveis**', '']
-        lines += [f"- ({NIVEL[a['nivel']]}) {a['descricao']}" for a in n['alvos']]
+        for a in n['alvos']:
+            lines.append(f"- ({NIVEL[a['nivel']]}) {a['descricao']}")
+            if a.get('criterios_correcao'):
+                lines += ['  Resposta essencial: ' + a['resposta'],
+                          '  Critérios: ' + '; '.join(a['criterios_correcao']),
+                          '  Condições do enunciado: ' + '; '.join(a['condicoes_enunciado'])]
         lines.append('')
+    if n.get('relacoes'):
+        lines += ['**Relações, proveniência e limites**', '']
+        for r in n['relacoes']:
+            marks = ''.join(f"[{ref(f)}]" for f in r['fatos'])
+            lines += [f"- {r['id']} ({r['origem']}; {r['natureza']}; avaliável: {r['avaliavel']}): {r['afirmacao']} {marks}",
+                      '  Condições: ' + '; '.join(r['condicoes']), '  Limites: ' + '; '.join(r['limites'])]
+        lines.append('')
+    if n.get('lacunas'):
+        lines += ['**Lacunas e restrições para a avaliação**', '']
+        lines += ['- ' + x for x in n['lacunas']] + ['']
     if n.get('correcoes'):
         lines += ['**Correções de terminologia/conceito em relação às fontes**', '']
         lines += [f"- {c.get('original', '')} → {c.get('corrigido', '')}: {c.get('motivo', '')}" for c in n['correcoes']]

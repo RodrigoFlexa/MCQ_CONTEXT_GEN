@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-from apoio import FakeLLM, SOURCE, fact, note_json
+from apoio import FakeLLM, SOURCE, fact, note_json, note_v5_json
 from pipeline.inventario import fichas as F, notas as N, revisao as R
 from pipeline.inventario.run_inventario import note_record
 
@@ -45,7 +45,7 @@ class Revisor(unittest.TestCase):
         self.assertEqual(r['revisao']['decisao'], 'aprovar')
 
     def test_corrigir_usa_nota_final_e_remove_secao_sem_fato(self):
-        final = note_json(('F1',))
+        final = note_v5_json(('F1',))
         final['secoes'].append({'tipo': 'seguranca_riscos', 'texto': 'Texto sem fonte nenhuma ' * 5, 'fatos': [],
                                 'conhecimento_geral': False})
         r = R.review_note(LLM(verdict('corrigir', final)), draft(), 'k')
@@ -66,7 +66,7 @@ class Revisor(unittest.TestCase):
         with self.assertRaises(ValueError):
             v({**verdict(), 'avaliacao': {'correcao_tecnica': 9}})
         with self.assertRaisesRegex(ValueError, 'NUMBER'):
-            v(verdict('corrigir', note_json(texto='valor <NUMBER> bar ' * 10)))
+            v(verdict('corrigir', note_v5_json(texto='valor <NUMBER> bar ' * 10)))
 
 
 class Deduplicacao(unittest.TestCase):

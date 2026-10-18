@@ -7,6 +7,7 @@ Quando um nível se esgota, a fila usa o que restar, até acabar (modo profundo)
 """
 import random
 from collections import Counter
+from pipeline.inventario.conhecimento import target_contract
 
 PADRAO = ('facil', 'media', 'dificil_A', 'media', 'facil', 'dificil_B', 'media', 'dificil_A', 'facil', 'media')
 NIVEL_DO_TIPO = {'facil': 'facil', 'media': 'media', 'dificil_A': 'dificil', 'dificil_B': 'dificil'}
@@ -50,6 +51,14 @@ def build_queue(sub, seed):
             c = combos.pop(0)
             notes = [by_nid[nid] for nid in c['notas']]
             alvo = {'tipo': 'dificil_B', 'descricao': combo_alvo(c)}
+            if c.get('criterios_correcao'):
+                needed = {k['nid']: set(k.get('relacoes', [])) for k in c['conhecimentos']}
+                alvo['resposta_esperada'] = c['resposta']
+                alvo['contrato'] = {k: c[k] for k in ('criterios_correcao', 'condicoes_enunciado', 'limites')}
+                alvo['contrato'].update(habilidade='integracao',
+                    fatos=list(dict.fromkeys(f for n in notes for r in n['relacoes']
+                                             if r['id'] in needed.get(n['nid'], set()) for f in r['fatos'])),
+                    relacoes=[n['nid'] + ':' + rid for n in notes for rid in sorted(needed.get(n['nid'], []))])
             batch = {'notas': notes, 'combinacao': c, 'alvos': [alvo], 'alvo_ref': c['cid']}
         else:
             lvl = NIVEL_DO_TIPO[tipo]
@@ -62,6 +71,7 @@ def build_queue(sub, seed):
             i = pools[lvl][nid].pop(0)
             n = by_nid[nid]
             alvo = {'tipo': tipo, 'descricao': n['alvos'][i]['descricao'],
+                    'contrato': target_contract(n['alvos'][i]),
                     **({'resposta_esperada': n['alvos'][i]['resposta']} if n['alvos'][i].get('resposta') else {})}
             batch = {'notas': [n], 'alvos': [alvo], 'alvo_ref': f'{nid}#alvo{i}'}
         for n in batch['notas']:

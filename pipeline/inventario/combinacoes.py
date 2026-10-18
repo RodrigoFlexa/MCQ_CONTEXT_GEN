@@ -5,7 +5,9 @@ verdade numa situação operacional (ex.: espuma + controle de nível + carryove
 Questões difíceis do tipo A usam uma única nota (diagnóstico/decisão dentro do conceito);
 as do tipo B exigem integrar os conceitos de uma combinação.
 """
-VERSION = 'combinacoes-v1'
+from .conhecimento import SCHEMA
+
+VERSION = 'combinacoes-v2-relacoes'
 MAX_NOTAS = 120
 MIN_NOTAS = 2
 
@@ -18,10 +20,11 @@ Regras:
 - Use somente o que as notas sustentam; não invente valores, equipamentos ou procedimentos específicos.
 - raciocinio: o que o respondente precisa integrar e por quê.
 - cenario: esboço (2 a 4 frases) de uma situação operacional plausível em FPSO que exija essa integração, sem dar a resposta.
-- conhecimentos: o que a resposta correta precisa mobilizar de cada nota.
+- conhecimentos: o que a resposta correta mobiliza de CADA nota e os ids de suas relações avaliáveis (relacoes). Conteúdo paramétrico, lacunas e relações não avaliáveis não podem ser base. Não combinar relatos de incidentes em regra geral. A integração deve perder uma premissa necessária ao retirar qualquer nota.
+- resposta, criterios_correcao, condicoes_enunciado e limites: descreva o núcleo e as condições sustentadas para a integração; se faltarem, não proponha a combinação.
 - Quantidade: a pedida. Se não houver ligações reais suficientes, devolva menos (ou nenhuma) e explique em "observacao".
 
-Retorne JSON: {"combinacoes":[{"notas":["N1","N4"],"titulo":"...","ligacao":"...","raciocinio":"...","cenario":"...","conhecimentos":[{"nota":"N1","conhecimento":"..."}]}],"observacao":"..."}"""
+Retorne JSON: {"combinacoes":[{"notas":["N1","N4"],"titulo":"...","ligacao":"...","raciocinio":"...","cenario":"...","resposta":"...","criterios_correcao":["..."],"condicoes_enunciado":["..."],"limites":["..."],"conhecimentos":[{"nota":"N1","conhecimento":"...","relacoes":["R1"]}]}],"observacao":"..."}"""
 
 
 def target_count(n_notes):
@@ -29,6 +32,10 @@ def target_count(n_notes):
 
 
 def note_digest(n):
+    if n.get('schema_conhecimento') == SCHEMA:
+        import json
+        return n['titulo'] + ' | relações avaliáveis: ' + json.dumps(
+            [r for r in n['relacoes'] if r['avaliavel']], ensure_ascii=False) + ' | lacunas: ' + '; '.join(n['lacunas'])
     secs = '; '.join(f"{s['titulo']}: {s['texto'][:160]}" for s in n['secoes'])
     return f"{n['titulo']} | assunto: {n.get('assunto_texto', '')} | resumo: {n['resumo']} | seções: {secs}"
 
@@ -71,16 +78,30 @@ def normalize(data, short):
         if reason:
             dropped.append({'indice': i, 'motivo': reason, 'notas': ids})
             continue
+        structured = any(short[x].get('schema_conhecimento') == SCHEMA for x in valid)
+        if structured:
+            contributions = {k.get('nota'): k for k in c.get('conhecimentos', []) if isinstance(k, dict)}
+            supported = True
+            for sid in valid:
+                relation_ids = contributions.get(sid, {}).get('relacoes', [])
+                allowed = {r['id'] for r in short[sid].get('relacoes', []) if r['avaliavel']}
+                if not relation_ids or not set(relation_ids) <= allowed:
+                    supported = False
+            if not supported or not c.get('resposta') or not c.get('criterios_correcao'):
+                dropped.append({'indice': i, 'motivo': 'integracao_sem_contrato_sustentado', 'notas': ids})
+                continue
         seen.add(frozenset(valid))
         notes = [short[x] for x in valid]
-        conh = [{'nid': short[k['nota']]['nid'], 'conhecimento': _text(k.get('conhecimento'))}
+        conh = [{'nid': short[k['nota']]['nid'], 'conhecimento': _text(k.get('conhecimento')), 'relacoes': k.get('relacoes', [])}
                 for k in (c.get('conhecimentos') or []) if isinstance(k, dict) and k.get('nota') in valid]
         kept.append({'titulo': _text(c['titulo']), 'ligacao': _text(c.get('ligacao')),
                      'raciocinio': _text(c['raciocinio']), 'cenario': _text(c['cenario']),
                      'notas': [n['nid'] for n in notes], 'titulos_notas': [n['titulo'] for n in notes],
                      'assuntos': sorted({a for n in notes for a in n['assuntos']}),
                      'multi_assunto': len({a for n in notes for a in n['assuntos']}) > 1,
-                     'conhecimentos': conh})
+                     'conhecimentos': conh,
+                     **({k: c.get(k, []) for k in ('resposta', 'criterios_correcao', 'condicoes_enunciado', 'limites')}
+                        if structured else {})})
     return kept, dropped
 
 

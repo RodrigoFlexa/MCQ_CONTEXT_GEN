@@ -35,7 +35,7 @@ class Execucao(unittest.TestCase):
 
         def write(llm, sub, subject, concept, lookup, chunks):
             self.assertEqual(lookup['mesmo-trecho#f0']['sub_key'], sub['key'])
-            return {'insuficiente':'simulado'}
+            return {'insuficiente':'simulado', 'idmap':{}, 'nota':{}}
 
         def record(sub, subject, concept, draft, review, lookup, chunks):
             self.assertEqual(lookup['mesmo-trecho#f0']['sub_key'], sub['key'])

@@ -51,6 +51,7 @@ def verdict(qid, ok=True, reparavel=False, falha='suporte'):
     if not ok:
         checks[falha] = {'ok': False, 'razao': 'falhou'}
     return {'id': qid, 'verificacoes': checks, 'notas': {'correcao': 0.95 if ok else 0.5},
+            'afirmacoes': [{'afirmacao': 'A espuma reduz a área.', 'fatos': ['F1']}],
             'reparavel': reparavel, 'problemas': [] if ok else ['problema']}
 
 
@@ -84,8 +85,8 @@ class FakeLLM:
                 out.append(verdict(q['id'], ok=not bad, reparavel=q['id'] in self.repairable))
             data = {'avaliacoes': out}
         elif system == G.REFINE_SYSTEM:
-            data = {'pergunta': 'Por que a espuma reduz a área de gás no separador?', 'resposta': 'Ocupa volume.',
-                    'pontos_essenciais': ['ocupa volume'], 'explicacao': 'Ocupa volume.', 'fatos': ['F1'],
+            original = json.loads(user.split('QUESTÃO: ', 1)[1].split('\nPARECER DO JUIZ:', 1)[0])
+            data = {**original, 'pergunta': 'Por que a espuma reduz a área de gás no separador?',
                     'mudancas': 'redação'}
         elif system == G.TRIAGEM_SYSTEM:
             alvo = user.rsplit('ALVO (', 1)[1]
@@ -121,7 +122,7 @@ class QAv7(unittest.TestCase):
 
     def args(self, *extra):
         return ['--inventarios', str(self.inv), '--saida', str(self.root / 'out'), '--sementes', str(self.seeds),
-                '--exemplos-externos', str(self.ext), '--env', str(self.root), '--workers', '2', *extra]
+                '--exemplos-externos', str(self.ext), '--escopo-novidade', 'subtopico', '--env', str(self.root), '--workers', '2', *extra]
 
     def test_plano_por_subtopico(self):
         sub = G.load_inventory([self.inv])[0]
@@ -149,7 +150,7 @@ class QAv7(unittest.TestCase):
         self.assertIn('pergunta_composta', G.check_code(q('Qual a causa e o que fazer?'), table))
         self.assertIn('pergunta_composta', G.check_code(q('Qual a causa? Explique.'), table))
         self.assertIn('pergunta_aberta', G.check_code(q('Quais cuidados devem ser tomados no offloading?'), table))
-        self.assertIn('resposta_longa', G.check_code(q('Qual a causa?', ' '.join(['palavra'] * 40)), table))
+        self.assertIn('resposta_longa', G.check_code(q('Qual a causa?', ' '.join(['palavra'] * 90)), table))
         self.assertIn('pontos_essenciais', G.check_code(q('Qual a causa?', pontos_essenciais=['a', 'b', 'c']), table))
 
     def test_fluxo_aprova_corrige_e_reprova(self):

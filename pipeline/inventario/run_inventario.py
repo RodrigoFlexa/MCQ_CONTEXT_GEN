@@ -35,11 +35,12 @@ from pipeline.inventario import combinacoes as M  # noqa: E402
 from pipeline.inventario import consolidacao as C  # noqa: E402
 from pipeline.inventario import extracao as X  # noqa: E402
 from pipeline.inventario import fichas as F  # noqa: E402
+from pipeline.inventario import complemento as CP
 from pipeline.inventario import notas as N  # noqa: E402
 from pipeline.inventario import revisao as R  # noqa: E402
 from pipeline.inventario import selecao as S  # noqa: E402
 from pipeline.inventario import varredura as V  # noqa: E402
-from pipeline.inventario.llm import BudgetExceeded, ContentFiltered, LLMClient, is_fatal, load_dotenv  # noqa: E402
+from pipeline.inventario.llm import BudgetExceeded, CallFailed, ContentFiltered, LLMClient, is_fatal, load_dotenv  # noqa: E402
 from pipeline.inventario.perfil_modelos import PROFILE, StageLLM, resolve as resolve_models  # noqa: E402
 from pipeline.inventario.textutil import (atomic_json, norm, read_json, read_jsonl, sha, slug,  # noqa: E402
                                           write_jsonl)
@@ -123,6 +124,8 @@ def parse(argv=None):
     p.add_argument('--min-por-colecao', type=int, default=2, help='trechos garantidos por coleção elegível')
     p.add_argument('--max-por-documento', type=int, default=3)
     p.add_argument('--limiar-duplicata', type=float, default=0.92, help='similaridade para fundir notas repetidas')
+    p.add_argument('--sem-complemento-notas', action='store_true',
+                   help='desliga busca complementar limitada aos candidatos já recuperados')
     p.add_argument('--parar-apos', choices=STAGES, default='documentos')
     p.add_argument('--limite-unidades', type=int, default=None, help='TESTE: lê só N páginas/linhas por coleção')
     return p.parse_args(argv)
@@ -378,6 +381,7 @@ class Pipeline:
         if a.parar_apos == 'assuntos':
             return finish(self.out, self.log, self.llm, self.occ, self.timings, self.t0)
         candidates, sig = self.stage_varredura(by_sub)
+        self.candidates = candidates
         if a.parar_apos == 'varredura':
             return finish(self.out, self.log, self.llm, self.occ, self.timings, self.t0)
         from pipeline.inventario.modelos import EmbeddingCache, load_models
@@ -597,9 +601,23 @@ class Pipeline:
             s, x, k = p
             facts_by_fid = facts_by_sub.get(s['key'], {})
             draft = N.write_note(self.llm, s, x, k, facts_by_fid, chunks)
+            if not getattr(self.args, 'sem_complemento_notas', False):
+                pool = {c['chunk_id']: c for akey, cs in getattr(self, 'candidates', {}).items()
+                        if akey.startswith(s['key'] + '::') for c in cs}
+                used = [v[len('trecho:'):] for v in draft['idmap'].values() if v.startswith('trecho:')]
+                extra = CP.retrieve(draft['nota'].get('buscas_complementares', []), pool.values(), used)
+                if extra:
+                    try:
+                        draft = N.enrich_note(self.llm, draft, extra, k['kid'])
+                    except (ContentFiltered, CallFailed) as exc:
+                        self.occ.add(etapa='complemento', item=k['kid'], tipo=getattr(exc, 'kind', 'filtro_conteudo'),
+                                     mensagem=str(exc)[:600], sub_key=s['key'])
+                local_chunks = {**chunks, **{c['chunk_id']: c for c in extra}}
+            else:
+                local_chunks = chunks
             if draft['insuficiente']:
-                return note_record(s, x, k, draft, None, facts_by_fid, chunks)
-            return note_record(s, x, k, draft, R.review_note(self.llm, draft, k['kid']), facts_by_fid, chunks)
+                return note_record(s, x, k, draft, None, facts_by_fid, local_chunks)
+            return note_record(s, x, k, draft, R.review_note(self.llm, draft, k['kid']), facts_by_fid, local_chunks)
         res = self.run_jobs('notas', jobs, do, lambda p: {'sub_key': p[0]['key'], 'assunto': p[1]['id']},
                             progress_every=20)
         notes = defaultdict(list)
@@ -666,11 +684,12 @@ def note_record(sub, assunto, conceito, draft, review, facts_by_fid, chunks):
     """Registro completo de uma nota: versão final, rascunho, revisão e fontes citadas."""
     final = review['nota'] if review else draft['nota']
     used = {f for s in final['secoes'] for f in s['fatos']}
+    used.update(f for r in final.get('relacoes', []) for f in r['fatos'])
     fontes = {}
     for ref in sorted(used):
         if ref.startswith('trecho:'):
             c = chunks.get(ref[len('trecho:'):], {})
-            fontes[ref] = {'tipo': 'trecho', **{k: c.get(k) for k in ('chunk_id', 'collection', 'document_id', 'title',
+            fontes[ref] = {'tipo': 'trecho', 'texto': c.get('texto', ''), **{k: c.get(k) for k in ('chunk_id', 'collection', 'document_id', 'title',
                                                                       'url', 'jurisdiction', 'page_ini', 'page_fim')}}
         elif ref in facts_by_fid:
             f = facts_by_fid[ref]
@@ -680,6 +699,10 @@ def note_record(sub, assunto, conceito, draft, review, facts_by_fid, chunks):
     return {'nid': conceito['kid'], 'status': status, 'topico': sub['topico'], 'subtopico': sub['subtopico'],
             'sub_key': sub['key'], 'assuntos': [assunto['id']], 'assunto_texto': assunto['texto'], 'conceito': conceito,
             **{k: final[k] for k in ('titulo', 'resumo', 'secoes', 'alvos', 'correcoes', 'lacunas')},
+            **{k: final[k] for k in ('schema_conhecimento', 'relacoes', 'alvos_bloqueados',
+                                      'buscas_complementares') if k in final},
+            'complemento': draft.get('complemento', []),
+            'antes_complemento': draft.get('antes_complemento'),
             'metricas': review['metricas'] if review else draft['metricas'],
             'avaliacao': (review or {}).get('revisao', {}).get('avaliacao'),
             'revisao': (review or {}).get('revisao'),
@@ -707,6 +730,14 @@ def finish(out, log, llm, occ, timings, t0, rows=None, notes=None, status=None, 
         resumo['assuntos'] = dict(Counter(r['status'] for r in rows))
         resumo['notas'] = dict(Counter(n['status'] for lst in (notes or {}).values() for n in lst))
         resumo['palavras_aprovadas'] = sum(r['palavras'] for r in rows)
+        all_notes = [n for group in (notes or {}).values() for n in group]
+        relations = [r for n in all_notes for r in n.get('relacoes', [])]
+        resumo['conhecimento'] = {
+            'relacoes_por_origem': dict(Counter(r['origem'] for r in relations)),
+            'relacoes_avaliaveis': sum(r['avaliavel'] for r in relations),
+            'alvos_avaliaveis': sum(len(n.get('alvos', [])) for n in all_notes if n['status'] == 'aprovada'),
+            'alvos_bloqueados': sum(len(n.get('alvos_bloqueados', [])) for n in all_notes),
+            'notas_com_complemento': sum(bool(n.get('complemento')) for n in all_notes)}
     atomic_json(out / 'resumo.json', resumo)
     log(f"[fim] {json.dumps(resumo, ensure_ascii=False)}")
     if oc:
