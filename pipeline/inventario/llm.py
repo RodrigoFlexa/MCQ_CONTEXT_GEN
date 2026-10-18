@@ -19,7 +19,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .textutil import sha
+from .textutil import atomic_json, sha
 
 
 class LLMError(RuntimeError):
@@ -141,7 +141,7 @@ def retry_after(exc):
 class LLMClient:
     def __init__(self, model, effort, cache_path, log_path, max_calls=50000, timeout=600, api_key=None,
                  provider='azure', client=None, settings=None, max_attempts=6, max_tokens_cap=32000,
-                 sleep=None, budget=None, log_lock=None, api_version=None):
+                 sleep=None, budget=None, log_lock=None, api_version=None, response_dir=None):
         if provider not in ('azure', 'openai'):
             raise ValueError('Provider inválido')
         identity = {'provider': provider}
@@ -169,6 +169,8 @@ class LLMClient:
                 raise RuntimeError('OPENAI_API_KEY ausente')
             client = OpenAI(api_key=key, timeout=timeout, max_retries=0)
         self.client = client
+        # Opcional: auditoria das saídas, inclusive JSON inválido, sem headers/credenciais.
+        self.response_dir = Path(response_dir) if response_dir is not None else None
         self.provider, self.timeout = provider, timeout
         self._api_version = api_version
         self._auto_client = provider == 'azure' and settings is not None and self.client is not None \
@@ -340,6 +342,13 @@ class LLMClient:
             self._add_usage(tag, calls=1, prompt_tokens=pt, completion_tokens=ct)
             meta = {**base_log, 'finish': finish, 'prompt_tokens': pt, 'completion_tokens': ct,
                     'seconds': round(time.time() - started, 2)}
+            if self.response_dir is not None and finish != 'content_filter':
+                stamp = datetime.now(timezone.utc).isoformat()
+                response_id = sha(json.dumps([stamp, self.model, meta, content], sort_keys=True), 32)
+                atomic_json(self.response_dir / (response_id + '.json'),
+                            {'at': stamp, 'model': self.model, 'effort': self.effort,
+                             'provider': self.provider, **meta, 'content': content})
+                meta['response_file'] = str(self.response_dir / (response_id + '.json'))
             if finish == 'content_filter':
                 self._add_usage(tag, filtro_conteudo=1)
                 self._log({**meta, 'ok': False, 'kind': 'filtro_conteudo', 'message': 'resposta bloqueada'})
