@@ -1,0 +1,351 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "9.1. Logística e Suprimento Offshore",
+    "escopo": "As questões devem abordar os aspectos relacionados ao planejamento, coordenação, execução, controle, segurança e otimização da logística e do suprimento offshore para FPSOs, incluindo transporte e movimentação de pessoas, materiais, equipamentos, sobressalentes, produtos químicos, combustíveis, alimentos, resíduos e demais cargas necessárias à continuidade das operações, planejamento de demanda, requisições, compras, expedição, consolidação, rastreamento, recebimento e armazenamento de materiais, integração entre bases logísticas onshore, almoxarifados, fornecedores, planejamento da manutenção, operação, marine e equipes offshore, definição de prioridades conforme criticidade dos materiais e impacto potencial sobre produção, segurança e manutenção, planejamento e programação de embarcações de apoio como supply boats, AHTSs, PLSVs, RSVs e demais embarcações especializadas, operações de aproximação, posicionamento, transferência e afastamento das embarcações em relação ao FPSO, avaliação de condições meteoceanográficas e definição de limites operacionais para operações marítimas, gerenciamento de zonas de segurança e exclusão, comunicação e coordenação entre ponte, CCR, convés, guindastes e embarcações, operações de carga e descarga de materiais utilizando guindastes, cestas, contêineres, skids, mangueiras e demais equipamentos, planejamento de içamentos, controle de cargas suspensas, prevenção de queda de objetos e movimentação segura de cargas no convés, transferência offshore de diesel, água potável, produtos químicos, fluidos, resíduos e outros materiais a granel, conexão, desconexão e controle de mangueiras, prevenção de derramamentos e resposta a emergências durante transferências, operações de helicópteros para transporte de pessoal, cargas e evacuação médica, incluindo planejamento de voos, controle de passageiros, bagagens e cargas, helideck, abastecimento quando aplicável, condições meteorológicas, comunicação, segurança de aproximação, pouso e decolagem e resposta a emergências aeronáuticas, integração de operações com PLSVs durante lançamento, instalação, conexão, recuperação ou intervenção em dutos, flowlines, risers e umbilicais e com RSVs durante inspeções, manutenção e intervenções submarinas com ROV, gerenciamento das interfaces dessas embarcações com sistemas de ancoragem, risers, estruturas submarinas e demais atividades em curso, planejamento e controle de SIMOPS envolvendo embarcações, helicópteros, offloading, operações submarinas, manutenção e movimentação de cargas, gerenciamento de pessoal offshore, POB, escalas de embarque e desembarque, substituições de tripulação e competências mínimas requeridas a bordo, controle documental de cargas, passageiros, manifestos, certificados, documentação de transporte e rastreabilidade, identificação, embalagem, segregação, armazenamento e transporte de produtos perigosos, cilindros, produtos químicos e materiais especiais, gestão de contêineres e equipamentos de transporte offshore, inspeção e certificação de dispositivos de içamento e acessórios de movimentação, planejamento da logística reversa para materiais reparáveis, equipamentos, resíduos e cargas retornadas para terra, gestão de estoques offshore e reposição de sobressalentes críticos considerando consumo, lead time, disponibilidade de transporte e risco de ruptura, definição de estoques estratégicos e materiais de contingência, avaliação de desempenho logístico por meio de indicadores de atendimento, prazo, disponibilidade, utilização de embarcações e aeronaves, custos e eficiência das operações, contingências para atrasos, indisponibilidade de embarcações ou helicópteros, condições meteorológicas adversas, falhas de equipamentos e demandas emergenciais, além da aplicação de princípios de segurança marítima e aeronáutica, proteção ambiental, gestão de riscos, confiabilidade da cadeia de suprimentos e boas práticas de logística offshore para assegurar o fornecimento oportuno de pessoas, materiais e serviços necessários à operação segura, contínua e eficiente do FPSO.",
+    "area": "Logística, Suprimentos e Movimentação de Cargas",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 270,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Logística e Suprimento Offshore",
+      "titulo": "Demanda, suprimento e estoques",
+      "foco": "Demanda, compras, prioridades, criticidade, estoques, lead time e continuidade da cadeia de suprimentos.",
+      "termos": [
+        "offshore logistics",
+        "supply chain",
+        "logística offshore",
+        "spare parts"
+      ],
+      "consultas": [
+        "FPSO Logística e Suprimento Offshore: Demanda, suprimento e estoques. Demanda, compras, prioridades, criticidade, estoques, lead time e continuidade da cadeia de suprimentos.",
+        "FPSO offshore supply demand critical spares inventory lead time procurement"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "supply vessel",
+          "supply boat",
+          "psv",
+          "plsv",
+          "rsv",
+          "helideck",
+          "ahts"
+        ]
+      ]
+    },
+    {
+      "id": "F02",
+      "grupo": "Logística e Suprimento Offshore",
+      "titulo": "Embarcações e interfaces marítimas",
+      "foco": "Programação, aproximação, posicionamento, zonas de segurança, interface com ancoragem, risers e ROV.",
+      "termos": [
+        "supply vessel",
+        "psv",
+        "ahts",
+        "plsv",
+        "rsv"
+      ],
+      "consultas": [
+        "FPSO Logística e Suprimento Offshore: Embarcações e interfaces marítimas. Programação, aproximação, posicionamento, zonas de segurança, interface com ancoragem, risers e ROV.",
+        "FPSO supply vessel AHTS PLSV RSV approach station keeping marine interface"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "supply vessel",
+          "supply boat",
+          "psv",
+          "plsv",
+          "rsv",
+          "helideck",
+          "ahts"
+        ]
+      ]
+    },
+    {
+      "id": "F03",
+      "grupo": "Logística e Suprimento Offshore",
+      "titulo": "Cargas, granéis e produtos perigosos",
+      "foco": "Carga e descarga, granéis, mangueiras, identificação, embalagem, segregação e prevenção de derrames.",
+      "termos": [
+        "offshore logistics",
+        "bulk transfer",
+        "dangerous goods",
+        "cargo handling"
+      ],
+      "consultas": [
+        "FPSO Logística e Suprimento Offshore: Cargas, granéis e produtos perigosos. Carga e descarga, granéis, mangueiras, identificação, embalagem, segregação e prevenção de derrames.",
+        "FPSO cargo bulk diesel chemical transfer hose dangerous goods segregation"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "supply vessel",
+          "supply boat",
+          "psv",
+          "plsv",
+          "rsv",
+          "helideck",
+          "ahts"
+        ]
+      ]
+    },
+    {
+      "id": "F04",
+      "grupo": "Logística e Suprimento Offshore",
+      "titulo": "Helicópteros, POB e pessoal",
+      "foco": "Voos, helideck, passageiros, manifestos, POB, escalas, competências e evacuação médica.",
+      "termos": [
+        "helicopter",
+        "helideck",
+        "pob",
+        "crew change"
+      ],
+      "consultas": [
+        "FPSO Logística e Suprimento Offshore: Helicópteros, POB e pessoal. Voos, helideck, passageiros, manifestos, POB, escalas, competências e evacuação médica.",
+        "FPSO helicopter helideck passenger manifest POB crew change medevac"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "supply vessel",
+          "supply boat",
+          "psv",
+          "plsv",
+          "rsv",
+          "helideck",
+          "ahts"
+        ]
+      ]
+    },
+    {
+      "id": "F05",
+      "grupo": "Logística e Suprimento Offshore",
+      "titulo": "Logística reversa e rastreabilidade",
+      "foco": "Resíduos, reparáveis, retornos a terra, contêineres, documentação, certificados e rastreio.",
+      "termos": [
+        "reverse logistics",
+        "logística reversa",
+        "cargo manifest",
+        "container"
+      ],
+      "consultas": [
+        "FPSO Logística e Suprimento Offshore: Logística reversa e rastreabilidade. Resíduos, reparáveis, retornos a terra, contêineres, documentação, certificados e rastreio.",
+        "FPSO reverse logistics waste repairable container certification traceability"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "supply vessel",
+          "supply boat",
+          "psv",
+          "plsv",
+          "rsv",
+          "helideck",
+          "ahts"
+        ]
+      ]
+    },
+    {
+      "id": "F06",
+      "grupo": "Logística e Suprimento Offshore",
+      "titulo": "Desempenho, SIMOPS e contingências",
+      "foco": "Indicadores, custos, utilização de meios, atrasos, clima, demandas emergenciais e atividades simultâneas.",
+      "termos": [
+        "offshore logistics",
+        "simops",
+        "weather window",
+        "supply vessel"
+      ],
+      "consultas": [
+        "FPSO Logística e Suprimento Offshore: Desempenho, SIMOPS e contingências. Indicadores, custos, utilização de meios, atrasos, clima, demandas emergenciais e atividades simultâneas.",
+        "FPSO logistics performance vessel utilization weather disruption contingency SIMOPS"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "supply vessel",
+          "supply boat",
+          "psv",
+          "plsv",
+          "rsv",
+          "helideck",
+          "ahts"
+        ]
+      ]
+    }
+  ]
+}

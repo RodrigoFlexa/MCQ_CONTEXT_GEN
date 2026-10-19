@@ -1,5 +1,10 @@
 # Pesquisa no corpus → documento auditado → QA curta
 
+**Para as dez áreas (40 frases), use [DEZ_AREAS.md](DEZ_AREAS.md).** Os perfis têm
+217 recortes definidos manualmente; a preparação local compartilha uma única
+varredura e um E5 com GPU. No servidor:
+`bash pipeline/qa_research/rodar_documentos_10_areas.sh`.
+
 **Para a próxima execução de Produtos químicos, use a [síntese técnica autônoma v3](DOCUMENTO_DISTRIBUIDO.md)**
 e o notebook `documento_produtos_quimicos.ipynb`. O pacote já preparado localmente
 acompanha o Git; no servidor rodam somente as chamadas Azure e a coordenação do

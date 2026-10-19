@@ -1,0 +1,202 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "8.2. Segurança Ocupacional",
+    "escopo": "As questões devem abordar os aspectos relacionados à prevenção de acidentes e ao gerenciamento da segurança ocupacional dos trabalhadores em FPSOs durante atividades de operação, manutenção, inspeção, construção, comissionamento e descomissionamento, incluindo identificação de perigos, avaliação e controle de riscos das tarefas, aplicação da hierarquia de controles, análise preliminar de riscos, análise de segurança da tarefa, diálogos de segurança e Permissão para Trabalho, isolamento, bloqueio e etiquetagem de fontes de energia, despressurização, drenagem, purga e verificação de condição segura para intervenção, trabalhos a quente, trabalhos em altura, entrada em espaços confinados, atividades elétricas, intervenções em equipamentos e sistemas pressurizados, movimentação manual e mecânica de cargas, operações de içamento e uso de guindastes, prevenção de queda de objetos, utilização de andaimes, escadas e plataformas, atividades sobre o mar, trabalhos em áreas classificadas e demais tarefas críticas, seleção, inspeção, conservação e uso adequado de equipamentos de proteção individual e coletiva, controle de fontes de ignição, atmosferas inflamáveis, tóxicas ou deficientes em oxigênio, segurança na utilização de ferramentas manuais, elétricas, pneumáticas e hidráulicas, prevenção de esmagamento, aprisionamento, cortes, impactos, queimaduras, quedas no mesmo nível e em altura, choque elétrico e exposição a energias perigosas, segregação e sinalização de áreas de trabalho, controle de acesso e estabelecimento de zonas de exclusão, segurança em oficinas, Pipe Shops, almoxarifados, laboratórios e áreas de manutenção, prevenção de acidentes durante transporte e movimentação de pessoas e materiais a bordo, housekeeping, organização e limpeza das áreas, gestão de operações simultâneas e interferências entre atividades, comunicação entre equipes, coordenação de trabalhos e passagem de turno, competência, treinamento, capacitação e autorização dos trabalhadores para atividades específicas, responsabilidade de supervisores e executantes, direito e dever de interromper atividades diante de condições inseguras, gestão da segurança de empresas contratadas, inspeções comportamentais e de campo, observação de desvios e condições inseguras, registro, comunicação e investigação de acidentes, incidentes e quase acidentes, identificação de causas imediatas, básicas e sistêmicas, definição e acompanhamento de ações corretivas e preventivas, utilização de indicadores de segurança e análise de tendências e recorrências, preparação para resposta a emergências relacionadas às atividades ocupacionais, além da aplicação dos requisitos legais, disciplina operacional, cultura de segurança e boas práticas de engenharia para prevenir acidentes, preservar a integridade física dos trabalhadores e assegurar a execução segura das atividades a bordo do FPSO.",
+    "area": "Segurança Ocupacional, Saúde e Meio Ambiente",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 225,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Segurança Ocupacional",
+      "titulo": "Permissões e controle de energias",
+      "foco": "Permissões, APR, bloqueio, etiquetagem, energia residual e verificação antes da intervenção.",
+      "termos": [
+        "permit to work",
+        "lockout",
+        "tagout",
+        "segurança ocupacional"
+      ],
+      "consultas": [
+        "FPSO Segurança Ocupacional: Permissões e controle de energias. Permissões, APR, bloqueio, etiquetagem, energia residual e verificação antes da intervenção.",
+        "FPSO occupational safety permit work hazardous energy isolation verification"
+      ],
+      "context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "occupational",
+          "ocupacional",
+          "industrial",
+          "workplace",
+          "work site"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Segurança Ocupacional",
+      "titulo": "Espaço confinado e trabalho a quente",
+      "foco": "Atmosferas, ventilação, monitoramento, resgate, fontes de ignição e medidas de prevenção.",
+      "termos": [
+        "confined space",
+        "hot work",
+        "espaço confinado",
+        "trabalho a quente"
+      ],
+      "consultas": [
+        "FPSO Segurança Ocupacional: Espaço confinado e trabalho a quente. Atmosferas, ventilação, monitoramento, resgate, fontes de ignição e medidas de prevenção.",
+        "FPSO confined space atmosphere testing ventilation rescue hot work ignition"
+      ],
+      "context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "occupational",
+          "ocupacional",
+          "industrial",
+          "workplace",
+          "work site"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Segurança Ocupacional",
+      "titulo": "Altura, quedas e movimentação",
+      "foco": "Quedas de pessoas e objetos, acesso, içamentos, linha de fogo, esmagamento e zonas de exclusão.",
+      "termos": [
+        "work at height",
+        "fall protection",
+        "dropped object",
+        "trabalho em altura"
+      ],
+      "consultas": [
+        "FPSO Segurança Ocupacional: Altura, quedas e movimentação. Quedas de pessoas e objetos, acesso, içamentos, linha de fogo, esmagamento e zonas de exclusão.",
+        "FPSO working height fall protection lifting dropped objects line fire"
+      ],
+      "context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "occupational",
+          "ocupacional",
+          "industrial",
+          "workplace",
+          "work site"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Segurança Ocupacional",
+      "titulo": "Eletricidade, químicos e proteção",
+      "foco": "Risco elétrico, máquinas, produtos químicos, EPI, proteção coletiva e escolha de controles.",
+      "termos": [
+        "electrical safety",
+        "chemical handling",
+        "ppe",
+        "proteção individual"
+      ],
+      "consultas": [
+        "FPSO Segurança Ocupacional: Eletricidade, químicos e proteção. Risco elétrico, máquinas, produtos químicos, EPI, proteção coletiva e escolha de controles.",
+        "FPSO electrical safety chemical handling PPE machine guarding occupational"
+      ],
+      "context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "occupational",
+          "ocupacional",
+          "industrial",
+          "workplace",
+          "work site"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F05",
+      "grupo": "Segurança Ocupacional",
+      "titulo": "Organização, contratadas e aprendizagem",
+      "foco": "Supervisão, contratadas, competência, comunicação, inspeções, incidentes e cultura de segurança.",
+      "termos": [
+        "occupational safety",
+        "contractor",
+        "toolbox",
+        "safety culture"
+      ],
+      "consultas": [
+        "FPSO Segurança Ocupacional: Organização, contratadas e aprendizagem. Supervisão, contratadas, competência, comunicação, inspeções, incidentes e cultura de segurança.",
+        "FPSO occupational safety contractor toolbox human factors incident prevention"
+      ],
+      "context_groups": [
+        [
+          "offshore",
+          "fpso",
+          "occupational",
+          "ocupacional",
+          "industrial",
+          "workplace",
+          "work site"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}

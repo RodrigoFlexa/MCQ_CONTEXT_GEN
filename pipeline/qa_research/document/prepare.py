@@ -16,9 +16,10 @@ from ..corpus import _saved_chunks, _selection_files, _manifest_chunks
 from ..portable import _publish
 from .common import Packet, absolute, canonical, citations_for, file_hash, load_profile, source_record
 
+_ACCENTS = dict.fromkeys(i for i in range(0x110000) if unicodedata.combining(chr(i)))
 
 def fold(text):
-    return "".join(c for c in unicodedata.normalize("NFKD", text.casefold()) if not unicodedata.combining(c))
+    return unicodedata.normalize("NFKD", text.casefold()).translate(_ACCENTS)
 
 
 def context_filter(facet):
@@ -57,6 +58,15 @@ def acronym_list(text):
 def bibliographic_catalog(text):
     text = fold(text)
     return "resumos separados por assuntos" in text or ("sao emitidos por ano" in text and "resumos" in text)
+
+
+def translation_list(text):
+    """O glossário bilíngue usa 'Port' como rótulo, sem desenvolver conceitos.
+
+    Preserva texto narrativo e glossários com explicações, em vez de descartar
+    qualquer passagem que contenha traduções ou uma definição técnica.
+    """
+    return len(re.findall(r"\bPort\b", text)) >= 4 and len(re.findall(r"[.!?](?:\s|$)", text)) < 3
 
 
 def digest_cached(path, cache):
@@ -116,7 +126,8 @@ def inputs(profile, cache, progress):
     return itertools.chain.from_iterable(generators), fingerprints, mode, missing
 
 
-def prepare(profile_path, destination, semantic=True, feedback=None, progress=print):
+def prepare(profile_path, destination, semantic=True, feedback=None, progress=print,
+            *, frontier_data=None, shared_model=None, device="cpu", batch_size=16):
     profile = load_profile(profile_path)
     destination = absolute(destination)
     if destination.exists():
@@ -152,7 +163,7 @@ def prepare(profile_path, destination, semantic=True, feedback=None, progress=pr
                               "facets": coarse_facets, "selection": profile["selection"], "feedback": auxiliary}
         fingerprint = sha(canonical(selection_identity), 64)
         frontier_file = cache_dir / ("frontier-" + fingerprint + ".json")
-        frontier = read_json(frontier_file)
+        frontier = frontier_data if frontier_data is not None else read_json(frontier_file)
         if frontier is None:
             progress("Triagem lexical em streaming: leitura local, sem embeddings de todo o corpus")
             patterns = []
@@ -214,7 +225,8 @@ def prepare(profile_path, destination, semantic=True, feedback=None, progress=pr
         from collections import OrderedDict
         candidates = OrderedDict((r["source"]["id"], r["source"])
                                  for rows in frontier["rows"].values() for r in rows)
-        excluded_lists = [sid for sid, row in candidates.items() if acronym_list(row["texto"]) or bibliographic_catalog(row["texto"])]
+        excluded_lists = [sid for sid, row in candidates.items() if acronym_list(row["texto"])
+                          or bibliographic_catalog(row["texto"]) or translation_list(row["texto"])]
         candidates = OrderedDict((sid, row) for sid, row in candidates.items() if sid not in excluded_lists)
         if not candidates:
             raise ValueError("A fronteira só contém listas de siglas, sem conteúdo técnico substantivo")
@@ -223,7 +235,8 @@ def prepare(profile_path, destination, semantic=True, feedback=None, progress=pr
             from ..selection import LocalE5
             import numpy as np
             progress(f"Triagem E5 local de {len(candidates)} candidatos, após o filtro amplo")
-            model = LocalE5(cache_dir, offline=True, threads=profile["selection"].get("threads", 4))
+            model = shared_model or LocalE5(cache_dir, offline=True, threads=profile["selection"].get("threads", 4),
+                                          **({"device": device, "batch_size": batch_size} if device != "cpu" or batch_size != 16 else {}))
             try:
                 queries = [q for f in facets for q in [*f["consultas"], *auxiliary.get(f["id"], [])]]
                 query_vectors = model.queries(queries)
@@ -244,7 +257,8 @@ def prepare(profile_path, destination, semantic=True, feedback=None, progress=pr
                     progress(f"E5 local: {min(start + len(batch), len(candidate_rows))}/{len(candidate_rows)}")
                 semantic_protocol = model.protocol
             finally:
-                model.close()
+                if shared_model is None:
+                    model.close()
         selected_sources, selected_facets = {}, []
         for f in facets:
             lexical = [r for r in frontier["rows"][f["id"]] if r["source"]["id"] in candidates and post_rules[f["id"]](fold(r["source"]["texto"]))]
@@ -303,6 +317,7 @@ def prepare(profile_path, destination, semantic=True, feedback=None, progress=pr
                 "scanned_windows": frontier["scanned"], "frontier_unique": len(candidates),
                 "excluded_non_substantive": excluded_lists,
                 "selected_sources": len(selected_sources), "semantic_protocol": semantic_protocol,
+                "execution": getattr(shared_model, "execution", None),
                 "facets": [{"id": f["id"], "sources": len(f["fontes"])} for f in selected_facets],
                 "seconds": round(time.monotonic() - started, 3),
                 "limitations": ["A triagem temática pode omitir fontes pertinentes.",

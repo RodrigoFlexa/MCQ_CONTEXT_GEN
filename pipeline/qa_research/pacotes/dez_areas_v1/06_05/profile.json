@@ -1,0 +1,202 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "6.5. Sistema de Fogo e Gás (F&G)",
+    "escopo": "As questões devem abordar os aspectos de projeto, comissionamento, operação, monitoramento, teste, manutenção, integridade e solução de problemas dos sistemas de detecção de fogo e gás (F&G) em FPSOs, com ênfase na seleção, localização, cobertura e desempenho de sensores e detectores, incluindo detectores de gás inflamável por ponto e por caminho aberto, detectores de gases tóxicos como H₂S, detectores de chama por tecnologias UV, IR e combinações UV/IR ou IR múltiplo, detectores de fumaça, calor e outros dispositivos aplicáveis, definição das tecnologias conforme o tipo de perigo, características do ambiente e possíveis cenários de liberação, critérios de posicionamento considerando dispersão de gases, ventilação natural e mecânica, densidade relativa, fontes prováveis de vazamento, obstáculos, congestionamento, direção predominante do vento e áreas ocupadas, estudos de cobertura e mapeamento de detectores, definição de níveis de alarme e filosofias de votação como 1ooN, 2ooN e combinações aplicáveis, integração do sistema F&G com ESD, isolamento de processo, depressurização, sistemas de combate a incêndio, dilúvio, HVAC, fechamento de dampers, shutdown de equipamentos, alarmes gerais e demais funções de segurança, definição e gerenciamento de zonas de fogo e gás, avaliação de tempo de resposta, sensibilidade, alcance, campo de visão, interferências, falsos alarmes e falhas perigosas, efeitos de chuva, névoa, vapor, salinidade, sujeira, vibração, radiação solar e condições ambientais sobre o desempenho dos detectores, requisitos para instalação em áreas classificadas, alimentação elétrica, redundância, independência e disponibilidade do sistema, supervisão de falhas e perda de comunicação, testes funcionais, bump tests, calibração, proof tests e verificação periódica de cobertura e atuação das funções associadas, inspeção e manutenção preventiva, preditiva e corretiva, gestão de bypasses, inibições e detectores indisponíveis, definição de medidas compensatórias, análise de alarmes, falhas recorrentes e degradação de desempenho, avaliação de modificações de layout, processo ou ventilação que possam exigir revisão da cobertura dos detectores, além da aplicação de princípios de segurança funcional, segurança de processo, confiabilidade e boas práticas de engenharia para assegurar a detecção precoce de liberações de gás, incêndios e fumaça e permitir a atuação tempestiva das barreiras de prevenção, controle e mitigação de eventos acidentais.",
+    "area": "Segurança Operacional, SGSO, Sistemas de Segurança e Gestão de Riscos",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 200,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Sistema de Fogo e Gás (F&G)",
+      "titulo": "Tecnologias e cobertura de detecção",
+      "foco": "Gás inflamável e tóxico, chama, fumaça, tecnologias, cobertura, posicionamento e limitações ambientais.",
+      "termos": [
+        "gas detector",
+        "flame detector",
+        "fire gas",
+        "fogo e gás"
+      ],
+      "consultas": [
+        "FPSO Sistema de Fogo e Gás (F&G): Tecnologias e cobertura de detecção. Gás inflamável e tóxico, chama, fumaça, tecnologias, cobertura, posicionamento e limitações ambientais.",
+        "FPSO fire gas flame smoke detection technology coverage placement"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Sistema de Fogo e Gás (F&G)",
+      "titulo": "Lógica, votação e causa e efeito",
+      "foco": "Votação, alarmes, matriz causa e efeito, ESD, ventilação, isolamento e interfaces de combate.",
+      "termos": [
+        "fire gas",
+        "f&g",
+        "voting",
+        "cause effect"
+      ],
+      "consultas": [
+        "FPSO Sistema de Fogo e Gás (F&G): Lógica, votação e causa e efeito. Votação, alarmes, matriz causa e efeito, ESD, ventilação, isolamento e interfaces de combate.",
+        "FPSO fire gas voting logic cause effect alarm ESD HVAC isolation"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Sistema de Fogo e Gás (F&G)",
+      "titulo": "Testes, inibições e diagnóstico",
+      "foco": "Calibração, testes, falsas atuações, falhas, inibições, medidas compensatórias e retorno ao serviço.",
+      "termos": [
+        "gas detector",
+        "fire gas",
+        "proof test",
+        "detector"
+      ],
+      "consultas": [
+        "FPSO Sistema de Fogo e Gás (F&G): Testes, inibições e diagnóstico. Calibração, testes, falsas atuações, falhas, inibições, medidas compensatórias e retorno ao serviço.",
+        "FPSO fire gas calibration proof testing inhibit bypass fault spurious alarm"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Sistema de Fogo e Gás (F&G)",
+      "titulo": "Disponibilidade e manutenção",
+      "foco": "Redundância, alimentação, comunicação, manutenção, comissionamento e preservação da cobertura.",
+      "termos": [
+        "fire gas",
+        "f&g",
+        "detector",
+        "fire detection"
+      ],
+      "consultas": [
+        "FPSO Sistema de Fogo e Gás (F&G): Disponibilidade e manutenção. Redundância, alimentação, comunicação, manutenção, comissionamento e preservação da cobertura.",
+        "FPSO fire gas detector maintenance redundancy power communication availability"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}

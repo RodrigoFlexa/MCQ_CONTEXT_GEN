@@ -41,7 +41,7 @@ class LocalE5:
     Cache por conteúdo/modelo, separado do Azure; pontuação usa a melhor janela
     para cada consulta, sem misturar os dois espaços vetoriais.
     """
-    def __init__(self, directory, offline=True, threads=4, device="cpu"):
+    def __init__(self, directory, offline=True, threads=4, device="cpu", batch_size=16):
         # Algumas versões do transformers consultam adapter_config no Hub mesmo
         # com local_files_only. Um snapshot explícito evita essa consulta.
         model_path = LOCAL_MODEL
@@ -53,6 +53,15 @@ class LocalE5:
             model_path = str(snapshot)
         import torch
         from sentence_transformers import SentenceTransformer
+        if device == "auto":
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        if device.startswith("cuda") and not torch.cuda.is_available():
+            raise ValueError("CUDA solicitada, mas este Python não tem uma GPU CUDA disponível")
+        if batch_size < 1:
+            raise ValueError("batch_size deve ser positivo")
+        self.device, self.batch_size = device, batch_size
+        self.execution = {"device": device, "batch_size": batch_size,
+                          "torch": torch.__version__, "gpu": torch.cuda.get_device_name(0) if device.startswith("cuda") else None}
         torch.set_num_threads(threads)
         self.model = SentenceTransformer(model_path, revision=LOCAL_REVISION,
             local_files_only=offline, device=device, trust_remote_code=False)
@@ -70,7 +79,7 @@ class LocalE5:
         self.db.commit()
 
     def _encode(self, texts):
-        vectors = np.asarray(self.model.encode(texts, batch_size=16, normalize_embeddings=True,
+        vectors = np.asarray(self.model.encode(texts, batch_size=getattr(self, "batch_size", 16), normalize_embeddings=True,
                              convert_to_numpy=True, show_progress_bar=False), dtype=np.float32)
         if vectors.ndim != 2 or vectors.shape[1] != 384 or not np.isfinite(vectors).all():
             raise ValueError("Resposta local E5 inválida")

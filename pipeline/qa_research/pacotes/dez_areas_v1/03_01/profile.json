@@ -1,0 +1,285 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "3.1. Operação de Offloading",
+    "escopo": "As questões devem abordar os aspectos de projeto, planejamento, preparação, execução, monitoramento, controle, segurança e resposta a contingências das operações de offloading de petróleo em FPSOs, considerando unidades com sistemas de ancoragem do tipo turret e spread mooring, incluindo configuração e limitações dos sistemas de ancoragem, influência das condições ambientais de vento, ondas e corrente, movimentos relativos entre FPSO e navio aliviador, definição de setores e envelopes operacionais, aproximação, posicionamento, conexão, permanência e desconexão do navio aliviador, utilização de sistemas de posicionamento dinâmico e/ou rebocadores de apoio, procedimentos de tandem offloading, preparação, manuseio, conexão, teste, pressurização, transferência, drenagem, desconexão e armazenamento das mangueiras de offloading, sistemas de hawser, chafe chains, pick-up ropes e demais acessórios de amarração, sistemas de transferência de carga, bombas de exportação, válvulas, manifolds, linhas e equipamentos associados, controle de vazão, pressão, nível dos tanques e sequência de transferência, gestão do lastro e da estabilidade do FPSO e do navio aliviador durante a operação, interação entre movimentação de carga e esforços no sistema de ancoragem, diferenças operacionais decorrentes da capacidade de weathervaning dos FPSOs com turret e das restrições de aproamento das unidades com spread mooring, critérios meteorológicos e oceanográficos para início, continuidade, suspensão e abortamento da operação, sistemas de comunicação e coordenação entre FPSO, navio aliviador e embarcações de apoio, monitoramento de posição, distância, tensão nos cabos e esforços de amarração, prevenção de colisão, afastamento excessivo, ruptura de hawser ou mangueira, perda de posicionamento e derramamento de óleo, sistemas de parada de emergência e Emergency Release Systems, resposta a falhas de equipamentos e mudanças súbitas das condições ambientais, inspeção, manutenção e integridade dos equipamentos de offloading, prevenção e resposta a poluição, análise de riscos, SIMOPS e fatores humanos, além da aplicação de boas práticas de engenharia para assegurar a transferência segura, eficiente e ambientalmente controlada do petróleo armazenado no FPSO para o navio aliviador.",
+    "area": "Sistemas de Lastro, Estabilidade, Ancoragem e Posicionamento, Offloading e Tanques de Carga",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 225,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Operação de Offloading",
+      "titulo": "Configuração e aproximação do aliviador",
+      "foco": "Turret, spread mooring, weathervaning, setores de aproximação, DP e apoio de rebocadores.",
+      "termos": [
+        "offloading",
+        "tandem",
+        "shuttle tanker",
+        "aliviador"
+      ],
+      "consultas": [
+        "FPSO Operação de Offloading: Configuração e aproximação do aliviador. Turret, spread mooring, weathervaning, setores de aproximação, DP e apoio de rebocadores.",
+        "FPSO tandem offloading shuttle tanker approach turret spread mooring weathervaning"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offloading",
+          "aliviador",
+          "shuttle tanker",
+          "tandem",
+          "hawser",
+          "cargo transfer"
+        ]
+      ]
+    },
+    {
+      "id": "F02",
+      "grupo": "Operação de Offloading",
+      "titulo": "Amarração, posição e ambiente",
+      "foco": "Hawser, acessórios, movimentos relativos, tensões, posição, distância e envelopes ambientais.",
+      "termos": [
+        "hawser",
+        "offloading",
+        "chafe chain",
+        "pick-up rope"
+      ],
+      "consultas": [
+        "FPSO Operação de Offloading: Amarração, posição e ambiente. Hawser, acessórios, movimentos relativos, tensões, posição, distância e envelopes ambientais.",
+        "tandem offloading hawser tension relative motion station keeping weather limits"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offloading",
+          "aliviador",
+          "shuttle tanker",
+          "tandem",
+          "hawser",
+          "cargo transfer"
+        ]
+      ]
+    },
+    {
+      "id": "F03",
+      "grupo": "Operação de Offloading",
+      "titulo": "Mangueiras e equipamentos de transferência",
+      "foco": "Preparação, conexão, testes, pressurização, drenagem, desconexão, inspeção e armazenamento de mangueiras.",
+      "termos": [
+        "offloading hose",
+        "floating hose",
+        "mangueira de offloading"
+      ],
+      "consultas": [
+        "FPSO Operação de Offloading: Mangueiras e equipamentos de transferência. Preparação, conexão, testes, pressurização, drenagem, desconexão, inspeção e armazenamento de mangueiras.",
+        "FPSO offloading hose connection testing pressure drain disconnection storage"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offloading",
+          "aliviador",
+          "shuttle tanker",
+          "tandem",
+          "hawser",
+          "cargo transfer"
+        ]
+      ]
+    },
+    {
+      "id": "F04",
+      "grupo": "Operação de Offloading",
+      "titulo": "Transferência, lastro e comunicação",
+      "foco": "Bombas, válvulas, vazão, pressão, níveis, sequência de tanques, estabilidade e coordenação entre equipes.",
+      "termos": [
+        "offloading",
+        "cargo transfer",
+        "transferência de carga"
+      ],
+      "consultas": [
+        "FPSO Operação de Offloading: Transferência, lastro e comunicação. Bombas, válvulas, vazão, pressão, níveis, sequência de tanques, estabilidade e coordenação entre equipes.",
+        "FPSO shuttle tanker cargo transfer ballast stability pressure flow communication"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offloading",
+          "aliviador",
+          "shuttle tanker",
+          "tandem",
+          "hawser",
+          "cargo transfer"
+        ]
+      ]
+    },
+    {
+      "id": "F05",
+      "grupo": "Operação de Offloading",
+      "titulo": "Emergências e contingências",
+      "foco": "ESD, liberação de emergência, ruptura de cabo ou mangueira, perda de posição, poluição e SIMOPS.",
+      "termos": [
+        "offloading",
+        "emergency release",
+        "hawser",
+        "ers"
+      ],
+      "consultas": [
+        "FPSO Operação de Offloading: Emergências e contingências. ESD, liberação de emergência, ruptura de cabo ou mangueira, perda de posição, poluição e SIMOPS.",
+        "FPSO offloading emergency shutdown release collision hose rupture oil spill"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "offloading",
+          "aliviador",
+          "shuttle tanker",
+          "tandem",
+          "hawser",
+          "cargo transfer"
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "9.2. Movimentação de Cargas",
+    "escopo": "As questões devem abordar os aspectos relacionados ao planejamento, preparação, autorização, execução, supervisão, monitoramento e segurança das operações de movimentação e içamento de cargas em FPSOs, incluindo movimentação de materiais entre conveses, áreas de armazenamento, oficinas, Pipe Shops, módulos de processo e embarcações de apoio, utilização de guindastes offshore, monovias, pontes rolantes, talhas, guinchos, davits, empilhadeiras e demais equipamentos de movimentação, classificação das operações de içamento conforme peso, geometria, criticidade, complexidade e condições ambientais, elaboração e aplicação de planos de rigging e lifting plans para içamentos rotineiros, não rotineiros, complexos e críticos, determinação do peso, centro de gravidade, pontos de içamento, raio de operação, altura, trajetória e área necessária para movimentação da carga, avaliação da capacidade dos equipamentos considerando SWL/WLL, load charts, raio, comprimento e ângulo da lança, condições de operação e fatores dinâmicos, seleção, inspeção, identificação, certificação e utilização correta de acessórios de içamento como slings, cabos de aço, correntes, manilhas, ganchos, master links, spreader beams, lifting beams e demais dispositivos, avaliação dos ângulos das lingas e distribuição de esforços entre os pontos de sustentação, verificação da integridade e adequação de padeyes, pontos de içamento e estruturas temporariamente submetidas às cargas, utilização de tag lines e outros meios para controle da orientação e movimentação da carga, definição e controle de zonas de exclusão, prevenção da permanência de pessoas sob cargas suspensas e gerenciamento de line of fire, pinch points, esmagamento, aprisionamento e queda de objetos, definição das funções, responsabilidades, competências e comunicação entre operador de guindaste, rigger, sinaleiro, supervisor de içamento, equipe de convés e demais participantes, padronização de sinais manuais e comunicação por rádio, realização de toolbox talks e verificação das condições antes do início da atividade, operações de carga e descarga entre FPSO e supply boats considerando movimentos relativos, heave, roll, pitch, distância, posicionamento da embarcação e condições meteoceanográficas, definição de limites de vento, ondas, visibilidade e movimentos da unidade para início, continuidade, suspensão ou abortamento da operação, içamento de contêineres, cestas, skids, equipamentos, tubulações, cilindros, produtos químicos, materiais perigosos e cargas de configuração especial, controle da preparação, acondicionamento, amarração e segurança das cargas antes do transporte e içamento, gerenciamento de blind lifts e outras situações de visibilidade limitada, movimentação de cargas próximas a equipamentos em operação, linhas pressurizadas, áreas classificadas, estruturas, risers e outros obstáculos, avaliação de SIMOPS e interferências com produção, manutenção, offloading, operações submarinas e demais atividades, inspeção pré-uso, manutenção, testes e certificação periódica de guindastes, equipamentos e acessórios de içamento, monitoramento de mecanismos, freios, cabos, sistemas hidráulicos, limitadores, dispositivos de proteção e indicadores de carga, controle e armazenamento adequado dos acessórios de rigging, identificação e retirada de serviço de equipamentos danificados ou com certificação vencida, planejamento de contingências para falha de equipamento, perda de comunicação, mudança das condições ambientais, instabilidade da carga ou impossibilidade de concluir o içamento, investigação de incidentes, quase acidentes e quedas de objetos e incorporação das lições aprendidas, além da aplicação de princípios de segurança ocupacional, fatores humanos, gestão de riscos, disciplina operacional e boas práticas de engenharia para assegurar a movimentação segura e eficiente de cargas e prevenir danos às pessoas, equipamentos, estruturas e sistemas do FPSO.",
+    "area": "Logística, Suprimentos e Movimentação de Cargas",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 225,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Movimentação de Cargas",
+      "titulo": "Plano e capacidade do içamento",
+      "foco": "Peso, centro de gravidade, trajetória, raio, carga admissível, tabelas, fatores dinâmicos e içamentos críticos.",
+      "termos": [
+        "lifting plan",
+        "rigging",
+        "load chart",
+        "lifting operation"
+      ],
+      "consultas": [
+        "FPSO Movimentação de Cargas: Plano e capacidade do içamento. Peso, centro de gravidade, trajetória, raio, carga admissível, tabelas, fatores dinâmicos e içamentos críticos.",
+        "FPSO offshore lifting plan crane capacity radius centre gravity dynamic factor"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Movimentação de Cargas",
+      "titulo": "Acessórios e distribuição de esforços",
+      "foco": "Lingas, cabos, manilhas, ganchos, vigas, padeyes, ângulos e distribuição das forças.",
+      "termos": [
+        "sling",
+        "shackle",
+        "padeye",
+        "spreader beam",
+        "linga"
+      ],
+      "consultas": [
+        "FPSO Movimentação de Cargas: Acessórios e distribuição de esforços. Lingas, cabos, manilhas, ganchos, vigas, padeyes, ângulos e distribuição das forças.",
+        "offshore lifting slings shackles padeyes beam sling angle load distribution"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Movimentação de Cargas",
+      "titulo": "Equipamentos, condição e certificação",
+      "foco": "Guindastes, monovias, talhas, guinchos, freios, cabos, limitadores, inspeção e retirada de serviço.",
+      "termos": [
+        "offshore crane",
+        "hoist",
+        "guindaste",
+        "lifting appliance"
+      ],
+      "consultas": [
+        "FPSO Movimentação de Cargas: Equipamentos, condição e certificação. Guindastes, monovias, talhas, guinchos, freios, cabos, limitadores, inspeção e retirada de serviço.",
+        "FPSO crane hoist winch brake wire inspection testing certification maintenance"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Movimentação de Cargas",
+      "titulo": "Equipe, exclusão e comunicação",
+      "foco": "Responsabilidades, sinaleiro, rádio, toolbox, zonas de exclusão, linhas de fogo e controle da carga.",
+      "termos": [
+        "lifting",
+        "rigging",
+        "line of fire",
+        "tag line"
+      ],
+      "consultas": [
+        "FPSO Movimentação de Cargas: Equipe, exclusão e comunicação. Responsabilidades, sinaleiro, rádio, toolbox, zonas de exclusão, linhas de fogo e controle da carga.",
+        "FPSO lifting operator rigger banksman communication exclusion zone tag line"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F05",
+      "grupo": "Movimentação de Cargas",
+      "titulo": "Movimentos, ambiente e SIMOPS",
+      "foco": "Movimentos relativos, limites de vento e mar, visibilidade, blind lifts, obstáculos, SIMOPS, falhas e contingências.",
+      "termos": [
+        "offshore lifting",
+        "vessel motion",
+        "blind lift",
+        "guindaste"
+      ],
+      "consultas": [
+        "FPSO Movimentação de Cargas: Movimentos, ambiente e SIMOPS. Movimentos relativos, limites de vento e mar, visibilidade, blind lifts, obstáculos, SIMOPS, falhas e contingências.",
+        "FPSO supply boat lifting relative motion weather blind lift SIMOPS contingency"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}
