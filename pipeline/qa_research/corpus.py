@@ -333,14 +333,37 @@ class CorpusIndex:
         results = []
         if expression and limit:
             with closing(sqlite3.connect(self.path.as_uri() + "?mode=ro", uri=True)) as db:
-                cursor = db.execute("""SELECT c.id,c.digest,c.payload,bm25(search) AS score
-                    FROM search JOIN chunks c ON c.id=search.rowid
-                    WHERE search MATCH ? ORDER BY score,c.id""", (expression,))
-                for row in cursor:
+                excluded_rows = set()
+                exclusions = list(excluded)
+                for start in range(0, len(exclusions), 400):
+                    batch = exclusions[start:start + 400]
+                    marks = ",".join("?" for _ in batch)
+                    excluded_rows.update(r[0] for r in db.execute(
+                        f"SELECT id FROM chunks WHERE digest IN ({marks})", batch))
+                    # Um mesmo ID original pode aparecer em versões de texto
+                    # distintas. Conte IDs internos reais, não len(exclude).
+                    excluded_rows.update(r[0] for r in db.execute(
+                        f"SELECT chunk FROM sources WHERE original_id IN ({marks})", batch))
+                candidate_limit = limit + len(excluded_rows)
+                # A coluna rank usa BM25, mas ativa o caminho otimizado do FTS5.
+                # Buscar payload no JOIN antes de limitar provocava leituras e
+                # ordenação de textos de TODOS os resultados em consultas amplas.
+                cursor = db.execute("""SELECT rowid,rank FROM search WHERE search MATCH ?
+                    ORDER BY rank LIMIT ?""", (expression, candidate_limit))
+                trace.update(candidate_limit=candidate_limit, ranking="fts5_native_rank_bm25")
+                ranked = [(identifier, score) for identifier, score in cursor if identifier not in excluded_rows][:limit]
+                payloads = {}
+                for start in range(0, len(ranked), 400):
+                    identifiers = [identifier for identifier, _ in ranked[start:start + 400]]
+                    marks = ",".join("?" for _ in identifiers)
+                    payloads.update((row[0], row) for row in db.execute(
+                        f"SELECT id,digest,payload FROM chunks WHERE id IN ({marks})", identifiers))
+                for identifier, score in ranked:
+                    row = payloads[identifier]
                     result = self._hydrate(db, row)
                     if excluded.intersection([result["content_hash"], *result["chunk_id_aliases"]]):
                         continue
-                    result["retrieval"] = {"engine": _ENGINE, "kind": "bm25", "score": row[3], "query": query}
+                    result["retrieval"] = {"engine": _ENGINE, "kind": "bm25", "score": score, "query": query}
                     if neighbors:
                         result["_rowid"] = row[0]
                         result["neighbor_chunks"] = self._neighbors(db, result, excluded)

@@ -12,7 +12,7 @@ import numpy as np
 
 from pipeline.qa_research.corpus import CorpusIndex, _file_hash
 from pipeline.qa_research.hybrid import HybridCorpusIndex
-from pipeline.qa_research.portable import PreparedCorpusIndex, verify_pack, write_pack
+from pipeline.qa_research.portable import PreparedCorpusIndex, verify_pack, write_pack, _publish
 from pipeline.qa_research.prepare import prepare
 from pipeline.qa_research.run import execute
 from pipeline.qa_research.selection import LocalE5, materialize_selection, select_topic
@@ -144,6 +144,26 @@ class PortableTests(unittest.TestCase):
         target = self.pack(hybrid=False)
         with self.assertRaisesRegex(ValueError, "já existe"):
             write_pack(self.lexical, target)
+
+    def test_windows_transient_publication_lock_retries_without_recopying(self):
+        source, destination = self.root / "staging", self.root / "published"
+        source.mkdir()
+        error = PermissionError("transient Windows sharing lock")
+        error.winerror = 32
+        rename = os.rename
+        attempts = []
+        def transient(left, right):
+            attempts.append(1)
+            if len(attempts) < 3:
+                raise error
+            rename(left, right)
+        with patch("pipeline.qa_research.portable.os.rename", side_effect=transient), \
+                patch("pipeline.qa_research.portable.time.sleep"):
+            _publish(source, destination)
+        self.assertEqual(len(attempts), 3)
+        self.assertTrue(destination.is_dir())
+        with self.assertRaises(FileExistsError):
+            _publish(source, destination)
 
     def test_identity_ignores_machine_specific_paths_only_in_pack_mode(self):
         left = replace(self.config, prepared_pack="C:/local/pack", origins=["C:/original"])

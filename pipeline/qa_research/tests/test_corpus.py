@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from contextlib import closing
 from pathlib import Path
+from unittest.mock import patch
 
 from pipeline.qa_research.corpus import CorpusIndex
 
@@ -69,6 +70,45 @@ class CorpusTests(unittest.TestCase):
         self.selection([self.chunk("NO é um composto.", "regis:study:p1:w0"),
                         self.chunk("No é um composto.", "regis:study:p1:w250")])
         self.assertEqual(self.index().build()["chunks"], 2)
+
+    def test_ranked_search_limits_payload_reads_and_avoids_external_sort(self):
+        self.selection([self.chunk("oxigênio " * (i + 1) + "ensaio", f"regis:study:p1:w{i}")
+                        for i in range(30)])
+        index = self.index()
+        index.build()
+        statements = []
+        connect = sqlite3.connect
+        def traced(*args, **kwargs):
+            db = connect(*args, **kwargs)
+            db.set_trace_callback(statements.append)
+            return db
+        with patch("pipeline.qa_research.corpus.sqlite3.connect", side_effect=traced), \
+                patch.object(index, "_hydrate", wraps=index._hydrate) as hydrate:
+            rows = index.search("oxigênio", limit=3)
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(hydrate.call_count, 3)
+        statement = next(s for s in statements if s.startswith("SELECT rowid,rank FROM search"))
+        with closing(connect(index.path)) as db:
+            plan = list(db.execute("EXPLAIN QUERY PLAN " + statement))
+            self.assertFalse(any("TEMP B-TREE" in str(r) for r in plan))
+            # O ranking continua sendo BM25: valida score e ordem, não só contagem.
+            expected = list(db.execute("""SELECT rowid,bm25(search) FROM search
+                WHERE search MATCH 'oxigênio' ORDER BY bm25(search) LIMIT 3"""))
+            actual_ids = [db.execute("SELECT id FROM chunks WHERE digest=?", (r["content_hash"],)).fetchone()[0]
+                          for r in rows]
+        self.assertEqual(actual_ids, [r[0] for r in expected])
+        self.assertEqual([r["retrieval"]["score"] for r in rows], [r[1] for r in expected])
+
+    def test_excluding_original_id_covers_all_its_text_versions_without_starving_results(self):
+        versions = [self.chunk("oxigênio " * (i + 2), "regis:shared:p1:w0") for i in range(10)]
+        remaining = [self.chunk(f"oxigênio residual ensaio {i}", f"regis:other:p1:w{i}") for i in range(5)]
+        self.selection(versions + remaining)
+        index = self.index()
+        index.build()
+        rows = index.search("oxigênio", limit=3, exclude=["regis:shared:p1:w0"])
+        self.assertEqual(len(rows), 3)
+        self.assertTrue(all("regis:shared:p1:w0" not in r["chunk_id_aliases"] for r in rows))
+        self.assertEqual(index.last_query_trace["candidate_limit"], 13)
 
     def test_generated_outputs_are_never_discovered(self):
         self.selection([self.chunk("Desaeração física remove oxigênio.")])

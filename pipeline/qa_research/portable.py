@@ -7,6 +7,7 @@ import os
 import shutil
 import sqlite3
 import tempfile
+import time
 from contextlib import closing
 from pathlib import Path
 
@@ -135,6 +136,22 @@ class PreparedCorpusIndex(CorpusIndex):
         return self.info
 
 
+def _publish(staging, destination):
+    # OneDrive/antivírus podem manter um handle sem FILE_SHARE_DELETE por alguns
+    # milissegundos, mesmo após fechar SQLite/JSON. Não refaça uma cópia grande
+    # por causa desse bloqueio transitório; nunca substitua um pacote existente.
+    for attempt in range(6):
+        if destination.exists():
+            raise FileExistsError("Destino do pacote já existe")
+        try:
+            os.rename(staging, destination)
+            return
+        except PermissionError as exc:
+            if getattr(exc, "winerror", None) not in {5, 32} or attempt == 5 or destination.exists():
+                raise
+            time.sleep(.05 * 2 ** attempt)
+
+
 def write_pack(lexical, destination, vector=None, selection_files=(), progress=print):
     destination = Path(destination).resolve()
     if destination.exists():
@@ -172,7 +189,7 @@ def write_pack(lexical, destination, vector=None, selection_files=(), progress=p
         if vector and files["index.faiss"]["sha256"] != vector.info["sha256"]:
             raise ValueError("FAISS mudou durante a preparação")
         atomic_json(staging / "pack.json", data)
-        os.rename(staging, destination)
+        _publish(staging, destination)
         return data
     finally:
         if staging.exists() and staging.resolve().parent == destination.parent and staging.name.startswith(".pack-"):

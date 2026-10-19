@@ -9,6 +9,21 @@ Ainda faz embeddings Azure das novas consultas e chamadas ao reranqueador,
 pesquisadores, redator e auditor. Preparar o pacote não elimina essa latência.
 Não há estimativa de aceleração sem medir a execução real no servidor.
 
+Também foi corrigida uma fonte de I/O na busca lexical: agora o FTS5 ordena IDs
+pelo ranking nativo e limita os candidatos antes de ler os textos em lote. O BM25
+e os termos pesquisados continuam os mesmos. Esse caminho evita o JOIN e a
+ordenação externa dos textos de todos os resultados; a [documentação SQLite](https://www.sqlite.org/fts5.html#sorting_by_auxiliary_function_results)
+explica a otimização por `ORDER BY rank` e `LIMIT`. A busca ainda precisa percorrer
+postagens do índice; não passa a ter custo constante nem garante um tempo fixo.
+
+Um microbenchmark local com 5.576 trechos, cinco repetições e 80 candidatos mediu
+50,13 ms → 9,71 ms numa consulta com 3.299 correspondências. Nas consultas com 131
+e 82 correspondências, os tempos ficaram próximos (1,10 → 1,31 ms e 1,57 → 1,33 ms).
+Ele mede IDs/textos, sem hidratação de proveniência, e não representa o índice de
+29 GB nem a pipeline completa do servidor. O plano de execução deixou de usar
+uma árvore temporária de ordenação. Dados em
+[`benchmark_preprocessamento_2026_10_19.json`](../../docs/benchmark_preprocessamento_2026_10_19.json).
+
 ## Caminho recomendado: conservar todo o acervo
 
 Na máquina de preparação, com o manifesto completo dos cinco bancos e o ambiente
@@ -87,6 +102,13 @@ Por padrão, exige o modelo no cache e não baixa pesos. Acrescente
 `--allow-model-download` no primeiro uso se necessário. `--device cuda` usa GPU
 disponível na máquina de preparação; o padrão é CPU. CPU também pode demorar.
 
+Com milhões de trechos, o E5 ainda precisa ler e codificar todo o acervo nesta
+modalidade; um modelo pequeno não elimina esse custo. O ganho pretendido é reduzir
+os textos enviados ao Azure, com o risco de perda de cobertura já descrito. Usar
+um pacote completo, sem triagem, dispensa essa etapa adicional. Mudar de máquina
+também não aumenta a cota do backend Azure nem reduz os tokens necessários para o
+mesmo acervo/modelo.
+
 ## Se o corpus completo só existe no servidor
 
 Há duas opções para trazer os textos e a proveniência para a máquina de preparação:
@@ -122,6 +144,14 @@ python -u -m pipeline.qa_research.prepare `
 Retire `--profile` e `--local-semantic` para finalizar o acervo completo. Na
 finalização, os embeddings dos documentos são calculados na máquina de preparação
 por chamadas ao backend Azure; precisa haver acesso a esse backend nessa máquina.
+
+Para aproveitar embeddings já calculados no servidor, também se pode transportar
+uma cópia consistente de `index_dir/embeddings/<assinatura>/vectors.sqlite3` para
+o mesmo local relativo do cache na máquina de preparação. Use backup SQLite se o
+processo ainda estiver gravando em WAL; copiar só o arquivo principal durante a
+gravação pode omitir trabalho. O protocolo deve ser idêntico nos dois ambientes.
+O cache é por texto, portanto um subconjunto reutiliza vetores existentes. Esse
+cache de preparação não precisa voltar no pacote final e não é enviado pelo Git.
 
 Também é possível usar `--lexical-only` no preparo com originais e/ou triagem. Um
 pacote assim contém textos/BM25 e serve de etapa intermediária: **a pesquisa híbrida
