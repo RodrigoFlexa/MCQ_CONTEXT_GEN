@@ -105,7 +105,7 @@ class Engine:
 
         def payload(stage):
             # O histórico completo permanece no checkpoint; cada papel recebe sua tarefa atual.
-            data = {'pauta': {k: brief[k] for k in ('topico', 'subtopico', 'assunto')},
+            data = {'pauta': {k: brief[k] for k in ('topico', 'subtopico', 'assunto', 'frase_especialista')},
                     **source_context(state['evidencias'])}
             review = state['revisoes'][-1] if state['revisoes'] else None
             review = {k: review[k] for k in ('decisao', 'parecer', 'consultas')} if review else None

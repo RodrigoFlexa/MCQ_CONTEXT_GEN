@@ -93,6 +93,23 @@ def question_refinement(data, evidences):
     question(data, evidences)
 
 
+def question_batch(data, evidences, size):
+    status = enum(data, 'status', ('ok', 'insuficiente'))
+    rows = data.get('questoes')
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise ValueError('questoes: lista de objetos obrigatória')
+    if (status == 'ok' and len(rows) != size) or (status == 'insuficiente' and len(rows) >= size):
+        raise ValueError(f'questoes: ok exige {size} itens; insuficiente exige menos que {size}')
+    if not isinstance(data.get('motivo'), str):
+        raise ValueError('motivo: texto obrigatório, podendo ser vazio quando status=ok')
+    if status == 'insuficiente':
+        text(data.get('motivo'), 'motivo')
+    for row in rows:
+        if row.get('status') != 'ok':
+            raise ValueError('questoes: cada candidata deve ter status=ok')
+        question(row, evidences)
+
+
 def answer(data):
     text(data.get('resposta'), 'resposta')
 

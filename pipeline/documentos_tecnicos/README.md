@@ -1,47 +1,34 @@
-# Pesquisa de documentos e QA de um tópico
+# Uma pauta do especialista, um documento e dois lotes de seis questões
 
-Fluxo de pesquisa iterativa nos corpus autorizados: pesquisador/redator → revisão com fontes originais → pesquisa complementar quando necessária → refinamento → revisão final. A escrita é uma seção de livro técnico, com referências, sem extração/classificação obrigatória de cada afirmação.
+O piloto padrão pesquisa **uma pauta**, escreve e revisa **um documento** e gera **dois lotes de até seis candidatas sobre esse mesmo documento**. Não são doze documentos nem uma meta de doze aprovações. Cada candidata passa por resolução independente, juiz, refino quando necessário, resposta cega, adjudicação e novidade. A aprovação continua automática e requer conferência de especialista.
 
-Conforme a atualização do pedido, o modo `completo` produz documentos e tenta alcançar **10 questões aprovadas automaticamente sobre um tópico**. O padrão é **tanques de carga/lastro**, com dez pautas de documentos. Não há relação obrigatória de uma questão por documento: uma seção pode sustentar competências diferentes; a verificação de novidade compara todas as questões já aprovadas. Documentos pendentes não entram no QA. A quantidade aprovada não é garantida nem preenchida relaxando critérios. Revisão humana continua pendente.
+Versão: `pesquisa-documentos-3-lotes`. Implementação preparada **sem testes, plano, geração ou chamadas a modelos localmente**, conforme a orientação do usuário. O primeiro experimento será feito no servidor.
 
-Esta implementação foi preparada **sem executar testes, plano, geração ou chamadas a modelos localmente**, por orientação do usuário. Os comandos abaixo são para o servidor; ainda não há resultados deste fluxo.
+## De onde vêm as pautas
 
-A versão **`pesquisa-documentos-2`** incorpora os [prompts completos revisados](../../docs/pesquisa_prompts_2026_10_18/prompts_completos_revisados.md). Cada chamada recebe a tarefa e o contexto de seu papel, com os perfis de corpus apresentados uma vez por coleção. O revisor confere as conclusões importantes contra os trechos originais e distingue impedimentos materiais de preferências de estilo. O histórico completo permanece nos checkpoints. Essa revisão ainda precisa ser avaliada pelas saídas do servidor.
+O inventário `assuntos.json` conserva a frase original do especialista e os segmentos extraídos dela. O pipeline confere a correspondência dos textos com a frase e registra o programa completo em `programa_topico.json`, antes de pesquisar. O total de assuntos depende dessa segmentação, não da quantidade desejada de perguntas. Não fazemos nova segmentação paga a cada execução.
 
-## O que foi simplificado
+Para o subtópico de tanques, o inventário existente tem **21 segmentos: 19 pautas técnicas e dois segmentos classificados como genéricos**. Essa classificação é a do inventário, não uma certificação de que a divisão é a única possível.
 
-- Os agentes trabalham com trechos originais e prosa, sem grafo de afirmações, etiquetas por frase ou nove campos do juiz.
-- Contratos pequenos: pesquisador devolve ação/orientação/consultas; redator e refinador devolvem título/texto/fontes; revisor e juiz devolvem decisão/parecer/consultas. Os formatos completos estão nos prompts.
-- O pesquisador escolhe novas consultas a partir do que encontrou. Pedidos de evidência do revisor ou refinador retornam à pesquisa, dentro do orçamento. O refinador pode devolver um pedido curto de pesquisa em vez de inventar a correção. O redator pode usar seus conhecimentos para esclarecer conceitos e conectar ideias; as conclusões técnicas importantes precisam de fundamento e são examinadas pelo revisor.
-- Chamadas com fontes recebem orientações de leitura por corpus (REGIS, Petrolês, ANP, HSE, BSEE), uma vez por coleção presente. O gênero e o conteúdo prevalecem sobre o nome da coleção. Fontes continuam podendo estar erradas.
-- As pautas vêm de `assuntos.json`, com recorte escolhido pelo pesquisador. Não importamos as antigas notas/objetivos ou suas aprovações como verdade. As dez primeiras pautas não genéricas são usadas no piloto; amplie a quantidade para maior cobertura.
-- A organização do capítulo é livre. Opinião isolada, detalhes incidentais de instalação e generalidade vazia não devem sustentar suas conclusões. Conhecimento condicional, fundamentos e exemplos didáticos são permitidos.
-- A recuperação BM25, o índice com contexto vizinho, o cliente Azure e o banco curado de exemplos são reaproveitados. Não foi adicionado framework de agentes, OCR, GPU ou busca web automática.
-- Os corpus completos precisam estar instalados no manifesto. Sem ele, a cobertura declarada é somente a dos índices/seleções disponíveis. Esse fallback não equivale a auditoria do acervo completo.
+O piloto seleciona apenas `a02`: **planejamento e sequência das operações de enchimento, esvaziamento, transferência interna e offloading**. É o primeiro assunto técnico na ordem do especialista. A frase completa é contexto de escopo; o documento deve desenvolver a pauta selecionada. Este experimento não cobre todo o subtópico. `DOCS_ASSUNTO_ID` permite selecionar outra pauta técnica por seu ID.
 
-## Como as questões são avaliadas
+## Fluxo e lotes
 
-Cada candidata usa um capítulo automaticamente aprovado e os trechos originais. O gerador vê exemplos próprios/externos limpos e a cobertura anterior. O juiz recebe uma resolução produzida antes de ver o gabarito do autor, revisa a sustentação e a adequação pedagógica e pode pedir refino ou uma busca complementar. Revisões voltam ao julgamento. O respondente cego recebe exclusivamente a pergunta; a adjudicação confronta as respostas com as fontes, sem exigir coincidência literal. O verificador de novidade examina todas as aprovadas anteriores. Concordância entre modelos não substitui evidência ou revisão humana.
+1. Pesquisador escolhe o recorte e faz buscas adaptativas no acervo, com limites.
+2. Redator desenvolve uma seção de livro técnico. Revisor confere as conclusões importantes contra as fontes originais; refinador corrige ou solicita pesquisa. Organização e extensão são livres.
+3. Somente o documento aprovado alimenta o QA. O gerador propõe seis candidatas em uma chamada; o código atribui IDs e avalia cada candidata separadamente.
+4. Depois da avaliação do primeiro lote, o gerador recebe o mesmo documento e as candidatas anteriores para propor outras seis. Trocar nomes ou cenários não estabelece novidade.
+5. O verificador de novidade compara cada candidata com todas as anteriores aprovadas, inclusive as do outro lote. Não há reposição automática de reprovações.
 
-Para esta execução não usamos os juízos v11 que falharam no contrato de nove dimensões. O v11 histórico permanece separado. A única extensão no cliente compartilhado é a gravação opcional das saídas dos modelos, inclusive inválidas, ativada somente neste fluxo.
+Se o material não sustentar seis candidatas distintas, o lote pode retornar menos, inclusive zero, explicando a insuficiência. O piloto registra a saturação e continua para o outro lote dentro dos limites. Nenhum documento é criado de novo para preencher uma cota. Refinamentos e busca complementar de evidência por candidata continuam disponíveis.
 
-## Modelos e limites padrão
+As fontes são preservadas integralmente nos checkpoints. Cada chamada recebe contexto próprio do papel e as orientações de leitura uma vez por coleção (REGIS, Petrolês, ANP, HSE, BSEE). O redator pode usar seus conhecimentos para esclarecer conceitos e conectar ideias; as conclusões importantes precisam de fundamento. Opinião isolada, detalhes incidentais de instalação e generalidade vazia não devem sustentar o núcleo do documento ou do gabarito.
 
-| Papel | Deployment e esforço |
-| --- | --- |
-| Pesquisador/redator | `gpt-5-4-petrobras:low` |
-| Revisor/juiz/adjudicador | `gpt-5-4-petrobras:low` |
-| Refinador | `gpt-5-4-petrobras:low` |
-| Respondente cego | `gpt-5-2-petrobras:low` |
-| Novidade | `gpt-5-4-nano-petrobras:low` |
-
-Uma execução sequencial evita problemas de coordenação e torna o consumo mais previsível. Limites: 400 tentativas de API no total, 24 por documento, 20 por candidata, 40 candidatas, até quatro rodadas de busca por documento, até três consultas por rodada e 32 trechos preservados por unidade. Contexto vizinho conta no limite de trechos. Um refinamento por documento e um por candidata, com nova revisão em ambos. O primeiro rascunho não conta como refinamento.
-
-Cada chamada pode ter até duas tentativas. Se as duas falham, a execução inteira é interrompida com diagnóstico, preservando checkpoints; não percorre todas as pautas repetindo o mesmo erro de contrato. Filtro de conteúdo e limite por unidade ficam registrados, sem virar aprovação. Limites globais e por unidade são cumulativos após retomada. Cache válido não consome outra tentativa. O teto não é uma estimativa de consumo nem garantia de conclusão; tokens reais são registrados por etapa.
+O índice BM25 com contexto vizinho, cliente Azure e banco de exemplos próprios/externos limpos são reaproveitados. Não há busca web automática nem novo framework. Sem o corpus completo no manifesto, a cobertura fica limitada ao índice e às seleções disponíveis; isso é registrado.
 
 ## Executar no servidor
 
-Use o ambiente Azure já configurado no projeto. Atualize apenas depois de encerrar processos antigos que usam o mesmo checkout/índice.
+Use o ambiente Azure que já funciona no projeto. Atualize depois de encerrar execuções antigas que usem o mesmo checkout ou índice.
 
 ```bash
 cd /home/gbs2/MCQ_CONTEXT_GEN
@@ -49,87 +36,63 @@ git fetch origin
 git switch codex/qa-evidencias-verificadas
 git pull --ff-only origin codex/qa-evidencias-verificadas
 
-# Um tópico, dez pautas de documentos e meta de dez questões aprovadas.
-# A pasta nova separa esta versão dos experimentos anteriores.
 export DOCS_TOPICO="Operação de tanques de carga e lastro"
-export DOCS_QUANTIDADE=10
-export DOCS_QUESTOES=10
-export DOCS_SAIDA="pipeline/documentos_tecnicos/saida_tanques_10_prompts_v2"
+export DOCS_ASSUNTO_ID=a02
+export DOCS_QUANTIDADE=1
+export DOCS_LOTES=2
+export DOCS_QUESTOES_POR_LOTE=6
+export DOCS_SAIDA="pipeline/documentos_tecnicos/saida_tanques_1doc_2x6"
 
-# Só mostra as pautas e os limites; sem API, indexação ou download.
-# Opcional; não inicia a geração.
-bash pipeline/documentos_tecnicos/run_azure.sh plan
-
-# Dez pautas de documentos de tanques e meta de dez questões aprovadas.
 nohup bash pipeline/documentos_tecnicos/run_azure.sh completo \
-  > pipeline/documentos_tecnicos/console_tanques_10_prompts_v2.log 2>&1 &
+  > pipeline/documentos_tecnicos/console_tanques_1doc_2x6.log 2>&1 &
 
 echo "PID: $!"
-tail -F pipeline/documentos_tecnicos/console_tanques_10_prompts_v2.log
+tail -F pipeline/documentos_tecnicos/console_tanques_1doc_2x6.log
 ```
 
-O script prefere `venv/bin/python`; configure `DOCS_PYTHON` se seu ambiente tiver outro caminho. Use as dependências e a configuração Azure que já funcionavam no servidor; não foram adicionadas dependências. Os exemplos externos são baixados e filtrados somente se o arquivo v11 ainda não existir, no modo completo. Não há download no modo `plan` ou `documentos`.
+Opcionalmente, antes de iniciar, `bash pipeline/documentos_tecnicos/run_azure.sh plan` mostra a frase, todas as pautas, a selecionada e o tamanho dos lotes, sem chamar APIs, baixar exemplos ou construir o índice. Não executamos esse comando localmente.
 
-Para somente documentos, use **outra saída**:
+O script prefere `venv/bin/python`; configure `DOCS_PYTHON` se necessário. Não foram adicionadas dependências. Os exemplos externos são baixados e filtrados somente no modo completo, caso o arquivo ainda não exista. Para sair do acompanhamento sem encerrar a geração, use `Ctrl+C`.
 
-```bash
-DOCS_SAIDA=pipeline/documentos_tecnicos/saida_so_documentos \
-  bash pipeline/documentos_tecnicos/run_azure.sh documentos
-```
+A pasta é nova para separar as versões. Repita o mesmo comando para retomar checkpoints: o documento e os lotes gerados são reutilizados, e candidatas concluídas não são avaliadas novamente. Novos prompts, código, fontes, pauta, modelos ou desenho dos lotes exigem outra pasta. Metas e limites operacionais podem aumentar, mas número e tamanho dos lotes fazem parte da assinatura desta execução.
 
-O modo faz parte da assinatura; não troque `documentos` por `completo` na mesma saída. Para ter capítulos e questões numa execução use `completo` desde o início.
+Para gerar somente o documento, use `documentos` e outra pasta de saída desde o início; o modo faz parte da assinatura. O modo antigo de uma questão por chamada e meta de aprovadas continua disponível com `DOCS_LOTES=0` e `DOCS_QUESTOES`, em outra saída. `DOCS_QUESTOES` e `DOCS_MAX_CANDIDATAS` não determinam o tamanho do piloto em lotes.
 
-Para outro tópico ou outro deployment, use outra saída:
+## Modelos e limites
 
-```bash
-DOCS_TOPICO="Operação de Separadores Trifásicos" \
-DOCS_SAIDA=pipeline/documentos_tecnicos/saida_separadores_10 \
-  bash pipeline/documentos_tecnicos/run_azure.sh completo
-```
+| Papel | Deployment e esforço |
+| --- | --- |
+| Pesquisador/redator e gerador de lotes | `gpt-5-4-petrobras:low` |
+| Revisor/juiz/adjudicador | `gpt-5-4-petrobras:low` |
+| Refinador | `gpt-5-4-petrobras:low` |
+| Respondente cego | `gpt-5-2-petrobras:low` |
+| Novidade | `gpt-5-4-nano-petrobras:low` |
 
-## Retomar e ajustar limites
+Tetos cumulativos: 400 tentativas de API globais, 24 por documento, quatro por geração de lote e 20 por candidata. Até quatro rodadas de busca por documento, três consultas por rodada, 32 trechos por unidade e um refinamento de documento/candidata. Cada chamada tem até duas tentativas; falha nas duas interrompe a execução para não multiplicar erros de contrato. Esses limites são proteções, não estimativas de consumo nem garantia de conclusão.
 
-Repita o mesmo comando. Documentos aprovados e questões concluídas são reutilizados; checkpoints interrompidos retomam a etapa salva. Código, prompts, modelos, entradas, exemplos, tamanho da busca ou modo diferentes exigem outra saída. A assinatura inclui as dependências compartilhadas utilizadas, e a cobertura do corpus é conferida pelo índice.
+Código de saída `0`: documento aprovado, dois lotes completos gerados e todas as candidatas avaliadas sem interrupção. Isso **não exige doze aprovações**: rejeição, redundância, insuficiência ou decisão indeterminada de uma candidata são resultados registrados. Código `2`: piloto incompleto/erro, inclusive lote parcial por falta de conteúdo. Código `130`: interrupção pelo usuário. Consulte os estados e os motivos no resumo, não apenas o código de saída.
 
-Metas e limites podem aumentar sem trocar a saída, e a configuração de cada retomada é registrada. Para reabrir documentos que encerraram com pendência substantiva, use `DOCS_REVISITAR_PENDENTES=1` junto aos limites ampliados. Aprovações não são alteradas automaticamente, nem rejeições técnicas de questões são convertidas em aprovações. Uma indisponibilidade não é contada como rejeição técnica.
+## Arquivos para analisar
 
-```bash
-DOCS_MAX_CHAMADAS=550 \
-DOCS_MAX_CHAMADAS_DOCUMENTO=32 \
-DOCS_MAX_PESQUISAS=5 \
-DOCS_MAX_FONTES=40 \
-DOCS_REVISITAR_PENDENTES=1 \
-  bash pipeline/documentos_tecnicos/run_azure.sh completo
-```
+Em `pipeline/documentos_tecnicos/saida_tanques_1doc_2x6/`:
 
-Se aumentar também `DOCS_QUANTIDADE`, novas pautas são acrescentadas na ordem do inventário. Cada checkpoint preserva sua pauta e fontes. A cota de questões é do tópico inteiro, independentemente da quantidade de capítulos. `DOCS_MAX_CANDIDATAS` permite examinar outras competências quando algumas candidatas forem rejeitadas; nunca é uma ordem para completar a cota a qualquer custo.
-
-Código de saída `0`: ambas as metas atingidas sem interrupção; `2`: saída incompleta/erro, conferir resumo; `130`: interrupção pelo usuário. Não interprete `0` como validação de especialista.
-
-## Arquivos de resultado
-
-Em `pipeline/documentos_tecnicos/saida_tanques_10_prompts_v2/`:
-
-- `documentos.md` e `leitura/*.md`: índice e capítulos para ler, com estado, referências e pendências.
-- `documentos/*.json`: fontes originais, consultas, orientações do pesquisador, rascunhos, revisões e estado.
-- `documentos_aprovados.jsonl`: apenas capítulos aprovados automaticamente.
-- `questoes.md` e `questoes_aprovadas.jsonl`: questões automaticamente aprovadas com resposta, explicação e rubrica.
-- `questoes/*.json` e `questoes_todas.jsonl`: inclusive rejeições, falhas e pendências; histórico de refino, julgamento, resposta cega, adjudicação e novidade.
-- `resumo.json`: contagens, cobertura, deployments e tokens/tentativas por etapa.
-- `revisao_humana.csv`: aprovadas e demais candidatas com texto, sem rótulos humanos preenchidos automaticamente. Não é uma revisão cega.
-- `respostas_modelos/*.json`: saídas brutas dos modelos, incluindo saídas inválidas, sem headers/chaves de API.
-- `chamadas_llm.jsonl`, `uso_cache.json`, `run_config.json`, `pautas.json`: diagnóstico, consumo, versões e parâmetros.
-
-As referências externas são exemplos de formato, nunca fontes factuais das questões. As partições de demonstração, calibração e material reservado são preservadas em `referencias_avaliacao/`.
+- `programa_topico.json`: frase, segmentação completa, quantidades e origem; `pautas.json`: pauta selecionada e configuração dos lotes.
+- `documentos.md` e `leitura/*.md`: documento técnico e referências; `documentos/*.json`: fontes, consultas, versões e revisões.
+- `lotes/L01.json` e `lotes/L02.json`: candidatas originais dos lotes, exemplos usados e motivo de eventual insuficiência; `lotes.md`: candidatas e resultados por lote.
+- `questoes.md` e `questoes_aprovadas.jsonl`: somente as aprovadas; `questoes_todas.jsonl` e `questoes/*.json`: todas as candidatas, incluindo reprovações, respostas cegas e histórico.
+- `resumo.json`: solicitadas, geradas, avaliadas e estados por lote; contagem de aprovadas, cobertura, modelos e consumo.
+- `revisao_humana.csv`: itens com identificação de lote, sem rótulo humano preenchido; não é uma revisão cega.
+- `respostas_modelos/*.json`, `chamadas_llm.jsonl`, `uso_cache.json` e `run_config.json`: saídas brutas, inclusive inválidas, e diagnóstico, sem chaves de API.
+- `referencias_avaliacao/`: partições de exemplos de apresentação, calibração e material reservado. Exemplos não são fontes factuais dos itens.
 
 ## Devolver os resultados
 
-Quando terminar, inclusive se a saída estiver incompleta:
+Quando terminar, mesmo se nenhuma candidata for aprovada:
 
 ```bash
-git add pipeline/documentos_tecnicos/saida_tanques_10_prompts_v2
-git commit -m "results: pesquisa de documentos e QA de tanques"
+git add pipeline/documentos_tecnicos/saida_tanques_1doc_2x6
+git commit -m "results: um documento de tanques e dois lotes de seis"
 git push origin codex/qa-evidencias-verificadas
 ```
 
-O índice e os caches permanecem fora do Git; as evidências, versões e logs retornam para diagnóstico. Use a pasta correspondente se modificar `DOCS_SAIDA`.
+Índice, caches e locks ficam fora do Git. As evidências e os históricos voltam para análise. O conjunto de prompts está documentado em `docs/pesquisa_prompts_2026_10_18/prompts_completos_revisados.md`; os textos executáveis são os módulos `prompts.py`, `qa_prompts.py` e `profiles.py`.

@@ -9,6 +9,8 @@ PESQUISAR = BASE + """
 # Objetivo
 Reúna fundamento suficiente para uma seção de livro técnico sobre a pauta. Escolha um
 recorte que permita ensinar mecanismos, relações e condições de aplicação.
+O assunto selecionado define o recorte desta pesquisa; a frase do especialista
+apresenta o escopo do programa, sem exigir que este documento cubra todos os assuntos.
 
 # Investigação
 Use cada resultado para decidir o que ainda precisa ser esclarecido. Comece pelos

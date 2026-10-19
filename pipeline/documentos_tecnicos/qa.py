@@ -10,14 +10,45 @@ QUESTION_KEYS = ('status', 'pergunta', 'resposta', 'explicacao', 'competencia', 
 
 
 def brief_question(record):
-    return {k: record.get(k) for k in ('id', 'pergunta', 'resposta', 'competencia', 'rubrica')}
+    question = record.get('questao') or {}
+    return {k: record.get(k, question.get(k)) for k in ('id', 'pergunta', 'resposta', 'competencia', 'rubrica')}
 
 
-def generate(engine, document, qid, previous, examples):
+def generate_batch(engine, document, batch_id, size, previous, examples):
+    """Uma geração por lote; conserva as candidatas antes da avaliação individual."""
+    path = engine.out / 'lotes' / (batch_id + '.json')
+    stored = read_json(path)
+    if stored and stored.get('status') in ('gerado', 'insuficiente'):
+        return stored
+    engine.begin_scope(batch_id, engine.args.max_chamadas_lote)
+    atomic_json(path, {'id': batch_id, 'documento_id': document['id'],
+                       'solicitadas': size, 'status': 'em_andamento'})
+    styles = examples.choose({'descricao': document['documento']['titulo'] + ' ' + batch_id,
+                              'habilidade': 'aplicacao'}, document['pauta']['topico'])
+    result = engine.call(
+        'pesquisador', P.GENERATE_BATCH,
+        {'pauta': {k: document['pauta'][k] for k in ('topico', 'subtopico', 'assunto')},
+         'capitulo_revisado': document['documento'], **source_context(document['evidencias']),
+         'lote': batch_id, 'tamanho_lote': size, 'exemplos': styles,
+         'itens_anteriores': [brief_question(row) for row in previous]},
+        'qa_geracao_lote', batch_id + ':geracao',
+        lambda data: C.question_batch(data, document['evidencias'], size), 24000)
+    state = {'id': batch_id, 'documento_id': document['id'], 'solicitadas': size,
+             'status': 'gerado' if result['status'] == 'ok' else 'insuficiente',
+             'questoes': [{k: row[k] for k in QUESTION_KEYS if k in row}
+                          for row in result['questoes']], 'motivo': result['motivo'],
+             'exemplos': {key: [row['id'] for row in rows] for key, rows in styles.items()}}
+    atomic_json(path, state)
+    return state
+
+
+def generate(engine, document, qid, previous, examples, seed=None, batch_id=None):
     path = engine.out / 'questoes' / (qid + '.json')
     state = read_json(path) or {
-        'id': qid, 'documento_id': document['id'], 'status': 'em_andamento', 'etapa': 'geracao',
-        'pauta': document['pauta'], 'versoes': [], 'revisoes': [], 'refinamentos': 0,
+        'id': qid, 'documento_id': document['id'], 'lote_id': batch_id,
+        'status': 'em_andamento', 'etapa': 'nucleo' if seed else 'geracao',
+        'pauta': document['pauta'], 'versoes': [copy.deepcopy(seed)] if seed else [],
+        **({'questao': copy.deepcopy(seed)} if seed else {}), 'revisoes': [], 'refinamentos': 0,
         'busca_complementar_usada': False, 'evidencias': copy.deepcopy(document['evidencias']),
         'consultas_realizadas': [], 'validacao_humana': 'pendente',
     }
@@ -27,9 +58,13 @@ def generate(engine, document, qid, previous, examples):
     state.update(status='em_andamento')
     state.pop('erro', None)
     accepted = [r for r in previous if r['status'] == 'aprovada']
-    styles = examples.choose({'descricao': document['documento']['titulo'], 'habilidade': 'aplicacao'},
-                             document['pauta']['topico'])
-    state['exemplos'] = {key: [e['id'] for e in values] for key, values in styles.items()}
+    styles = {}
+    if batch_id:
+        state['exemplos_lote_id'] = batch_id
+    else:
+        styles = examples.choose({'descricao': document['documento']['titulo'], 'habilidade': 'aplicacao'},
+                                 document['pauta']['topico'])
+        state['exemplos'] = {key: [e['id'] for e in values] for key, values in styles.items()}
 
     def save():
         atomic_json(path, state)

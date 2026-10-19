@@ -1,10 +1,10 @@
 """Prompts de QA, resolução independente, revisão e diversidade."""
 from .prompts import BASE
 
-GENERATE = BASE + """
+QUESTION_DESIGN = """
 # Tarefa
-Crie uma pergunta aberta que avalie uma relação técnica específica ensinada no capítulo
-e ainda não coberta pelos itens aprovados.
+Elabore questões abertas que avaliem relações técnicas específicas ensinadas no capítulo
+e ainda não cobertas pelos itens aprovados. Cada questão deve ter uma competência definida.
 
 # Desenho da pergunta
 O respondente verá somente o enunciado. Forneça as condições necessárias para responder
@@ -17,6 +17,10 @@ Se conclusões essenciais incompatíveis forem possíveis, delimite as condiçõ
 distinguem. Use as fontes originais para fundamentar o gabarito. Os exemplos orientam
 a apresentação. Cenários hipotéticos devem ter premissas explícitas e consequências
 tecnicamente sustentadas.
+"""
+
+GENERATE = BASE + QUESTION_DESIGN + """
+Nesta chamada, crie somente uma questão.
 
 # Saída
 Retorne somente JSON:
@@ -27,6 +31,29 @@ Os textos são não vazios. rubrica é lista não vazia de textos. fontes é lis
 de IDs recebidos que sustentam o gabarito. Mantenha os IDs somente nos metadados, fora
 da pergunta e da resposta. Se faltar material para um item válido, retorne:
 {"status":"insuficiente","motivo":"lacuna concreta"}
+"""
+
+GENERATE_BATCH = BASE + QUESTION_DESIGN + """
+# Geração em lote
+Nesta chamada, crie a quantidade de questões indicada em tamanho_lote, sobre o mesmo
+capítulo. Cada questão deve avaliar uma relação técnica própria. Escolha a distribuição
+conforme o conteúdo, sem impor tipos de pergunta ou apenas trocar os dados de um cenário.
+Use os itens anteriores para procurar outras competências, inclusive quando ainda não
+tenham sido aprovados. As candidatas serão avaliadas individualmente depois desta chamada.
+Se o capítulo não sustentar a quantidade solicitada sem repetição ou perda de qualidade,
+entregue somente as candidatas viáveis e explique a limitação em motivo.
+
+# Saída
+Retorne somente JSON:
+{"status":"ok","questoes":[{"status":"ok","pergunta":"enunciado autônomo",
+"resposta":"gabarito técnico","explicacao":"justificativa técnica",
+"competencia":"relação técnica avaliada","rubrica":["critério semântico de correção"],
+"fontes":["E1"]}],"motivo":""}
+Com status ok, questoes contém exatamente tamanho_lote objetos. Cada objeto tem os
+campos apresentados, textos e listas não vazios e somente IDs recebidos que sustentam
+o gabarito. Mantenha os IDs nos metadados, fora da pergunta e da resposta.
+Se faltar material, use status insuficiente, motivo não vazio e questoes com menos
+objetos que tamanho_lote, podendo ser []. Não inclua candidatas inválidas para completar.
 """
 
 NUCLEUS = BASE + """

@@ -1,6 +1,6 @@
 # Prompts completos revisados — documentos e QA
 
-Versão editorial consolidada em 18/10/2026. **Aplicada ao pipeline `pesquisa-documentos-2`, por autorização do usuário; ainda não avaliada por geração.** Inclui os papéis de documentos e todas as etapas de QA. Substitui os trechos parciais de `prompts_propostos.md`. Os textos executáveis estão em `pipeline/documentos_tecnicos/prompts.py`, `qa_prompts.py` e `profiles.py`.
+Versão editorial consolidada em 18/10/2026. **Aplicada ao pipeline `pesquisa-documentos-3-lotes`, por autorização do usuário; ainda não avaliada por geração.** Inclui os papéis de documentos e todas as etapas de QA. Substitui os trechos parciais de `prompts_propostos.md`. Os textos executáveis estão em `pipeline/documentos_tecnicos/prompts.py`, `qa_prompts.py` e `profiles.py`.
 
 Cada chamada recebe a orientação comum e o prompt específico de seu papel. As orientações por corpus acompanham apenas chamadas que recebem fontes. As seções dos prompts organizam as instruções; não impõem a mesma organização aos capítulos ou perguntas.
 
@@ -22,6 +22,8 @@ Entrada: pauta, fontes consultadas, buscas anteriores, pendência atual, cobertu
 # Objetivo
 Reúna fundamento suficiente para uma seção de livro técnico sobre a pauta. Escolha um
 recorte que permita ensinar mecanismos, relações e condições de aplicação.
+O assunto selecionado define o recorte desta pesquisa; a frase do especialista
+apresenta o escopo do programa, sem exigir que este documento cubra todos os assuntos.
 
 # Investigação
 Use cada resultado para decidir o que ainda precisa ser esclarecido. Comece pelos
@@ -197,8 +199,8 @@ Entrada: capítulo revisado, fontes originais, exemplos de apresentação e comp
 
 ```text
 # Tarefa
-Crie uma pergunta aberta que avalie uma relação técnica específica ensinada no capítulo
-e ainda não coberta pelos itens aprovados.
+Elabore questões abertas que avaliem relações técnicas específicas ensinadas no capítulo
+e ainda não cobertas pelos itens aprovados. Cada questão deve ter uma competência definida.
 
 # Desenho da pergunta
 O respondente verá somente o enunciado. Forneça as condições necessárias para responder
@@ -211,6 +213,7 @@ Se conclusões essenciais incompatíveis forem possíveis, delimite as condiçõ
 distinguem. Use as fontes originais para fundamentar o gabarito. Os exemplos orientam
 a apresentação. Cenários hipotéticos devem ter premissas explícitas e consequências
 tecnicamente sustentadas.
+Nesta chamada, crie somente uma questão.
 
 # Saída
 Retorne somente JSON:
@@ -221,6 +224,48 @@ Os textos são não vazios. rubrica é lista não vazia de textos. fontes é lis
 de IDs recebidos que sustentam o gabarito. Mantenha os IDs somente nos metadados, fora
 da pergunta e da resposta. Se faltar material para um item válido, retorne:
 {"status":"insuficiente","motivo":"lacuna concreta"}
+```
+
+## 7.1. Gerador em lote
+
+O piloto atual usa este prompt para cada lote. Entrada: a mesma pauta e o mesmo documento aprovado, fontes, exemplos, tamanho do lote e candidatas anteriores, inclusive as ainda não aprovadas. Cada candidata passa depois por todas as etapas individuais de QA.
+
+```text
+# Tarefa
+Elabore questões abertas que avaliem relações técnicas específicas ensinadas no capítulo
+e ainda não cobertas pelos itens aprovados. Cada questão deve ter uma competência definida.
+
+# Desenho da pergunta
+O respondente verá somente o enunciado. Forneça as condições necessárias para responder
+sem conhecer a publicação ou uma instalação particular. Preserve uma exigência real de
+conhecimento profissional além dos dados apresentados. Escolha uma forma adequada à
+competência: explicação, aplicação, comparação ou decisão justificada, por exemplo.
+
+Defina uma resposta e critérios que aceitem explicações tecnicamente equivalentes.
+Se conclusões essenciais incompatíveis forem possíveis, delimite as condições que as
+distinguem. Use as fontes originais para fundamentar o gabarito. Os exemplos orientam
+a apresentação. Cenários hipotéticos devem ter premissas explícitas e consequências
+tecnicamente sustentadas.
+# Geração em lote
+Nesta chamada, crie a quantidade de questões indicada em tamanho_lote, sobre o mesmo
+capítulo. Cada questão deve avaliar uma relação técnica própria. Escolha a distribuição
+conforme o conteúdo, sem impor tipos de pergunta ou apenas trocar os dados de um cenário.
+Use os itens anteriores para procurar outras competências, inclusive quando ainda não
+tenham sido aprovados. As candidatas serão avaliadas individualmente depois desta chamada.
+Se o capítulo não sustentar a quantidade solicitada sem repetição ou perda de qualidade,
+entregue somente as candidatas viáveis e explique a limitação em motivo.
+
+# Saída
+Retorne somente JSON:
+{"status":"ok","questoes":[{"status":"ok","pergunta":"enunciado autônomo",
+"resposta":"gabarito técnico","explicacao":"justificativa técnica",
+"competencia":"relação técnica avaliada","rubrica":["critério semântico de correção"],
+"fontes":["E1"]}],"motivo":""}
+Com status ok, questoes contém exatamente tamanho_lote objetos. Cada objeto tem os
+campos apresentados, textos e listas não vazios e somente IDs recebidos que sustentam
+o gabarito. Mantenha os IDs nos metadados, fora da pergunta e da resposta.
+Se faltar material, use status insuficiente, motivo não vazio e questoes com menos
+objetos que tamanho_lote, podendo ser []. Não inclua candidatas inválidas para completar.
 ```
 
 ## 8. Resolução independente com evidências

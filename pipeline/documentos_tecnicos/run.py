@@ -15,7 +15,7 @@ from pipeline.qa_v11.examples import ExampleBank
 from pipeline.qa_v11.retrieval import CorpusIndex, file_hash, source_files
 from . import VERSION
 from .engine import Engine, ScopeExceeded
-from .qa import generate
+from .qa import generate, generate_batch
 
 ROOT = Path(__file__).resolve().parents[2]
 ORIGINS = ['pipeline/inventario/' + x for x in (
@@ -32,8 +32,11 @@ def parse(argv=None):
     p.add_argument('--topico', default='Operação de Tanques de Carga')
     p.add_argument('--saida', required=True)
     p.add_argument('--etapa', choices=('documentos', 'completo'), default='completo')
-    p.add_argument('--documentos', type=int, default=10, help='Número de pautas pesquisadas, sem garantir aprovação')
-    p.add_argument('--questoes', type=int, default=10, help='Meta de questões aprovadas automaticamente')
+    p.add_argument('--documentos', type=int, default=1, help='Número de pautas pesquisadas, sem garantir aprovação')
+    p.add_argument('--assunto-id', help='ID literal do inventário; com um documento, padrão é o primeiro técnico')
+    p.add_argument('--lotes', type=int, default=2, help='Lotes de candidatas sobre um documento; 0 usa meta de aprovadas')
+    p.add_argument('--questoes-por-lote', type=int, default=6)
+    p.add_argument('--questoes', type=int, default=10, help='Meta de aprovadas, usada somente com --lotes 0')
     p.add_argument('--max-candidatas', type=int, default=40)
     p.add_argument('--max-pesquisas', type=int, default=4, help='Rodadas de busca por documento, incluindo complementos')
     p.add_argument('--max-fontes', type=int, default=32)
@@ -43,6 +46,7 @@ def parse(argv=None):
     p.add_argument('--max-chamadas', type=int, default=400, help='Teto cumulativo global, incluindo reparos')
     p.add_argument('--max-chamadas-documento', type=int, default=24)
     p.add_argument('--max-chamadas-questao', type=int, default=20)
+    p.add_argument('--max-chamadas-lote', type=int, default=4)
     p.add_argument('--cache-dir', default='pipeline/documentos_tecnicos/cache_compartilhado')
     p.add_argument('--indice-dir', default='pipeline/qa_v11/cache_compartilhado/indice')
     p.add_argument('--manifest')
@@ -58,14 +62,19 @@ def parse(argv=None):
     p.add_argument('--plan', action='store_true', help='Inspeciona pautas sem API, download ou indexação')
     a = p.parse_args(argv)
     for key in ('documentos', 'questoes', 'max_candidatas', 'max_pesquisas', 'max_fontes',
-                'trechos_por_busca', 'max_chamadas', 'max_chamadas_documento', 'max_chamadas_questao'):
+                'trechos_por_busca', 'max_chamadas', 'max_chamadas_documento', 'max_chamadas_questao',
+                'questoes_por_lote', 'max_chamadas_lote'):
         if getattr(a, key) < 1:
             p.error(f'--{key.replace("_", "-")} deve ser positivo')
-    for key in ('max_refinamentos', 'max_refinamentos_qa'):
+    for key in ('max_refinamentos', 'max_refinamentos_qa', 'lotes'):
         if getattr(a, key) < 0:
             p.error(f'--{key.replace("_", "-")} deve ser >= 0')
-    if a.max_candidatas < a.questoes:
+    if not a.lotes and a.max_candidatas < a.questoes:
         p.error('--max-candidatas deve ser >= --questoes')
+    if a.lotes and a.etapa == 'completo' and a.documentos != 1:
+        p.error('O piloto em lotes usa um documento; configure --documentos 1')
+    if a.assunto_id and a.documentos != 1:
+        p.error('--assunto-id seleciona uma pauta; configure --documentos 1')
     for role in ('pesquisador', 'revisor', 'refinador', 'respondente', 'novidade'):
         model = getattr(a, role).rsplit(':', 1)
         if len(model) != 2 or not model[0] or model[1] not in ('none', 'low', 'medium', 'high'):
@@ -101,21 +110,60 @@ def load_briefs(args):
         raise ValueError(f'--topico deve identificar exatamente um subtópico: {len(matches)} encontrados')
     path, data = matches[0]
     sub = data['subtopico']
+    phrase = sub.get('frase')
+    if not isinstance(phrase, str) or not phrase.strip():
+        raise ValueError('Inventário sem a frase original do especialista')
+    if any(norm(s['texto']) not in norm(phrase) for s in data['assuntos']):
+        raise ValueError('Inventário contém assunto que não corresponde à frase do especialista')
     subjects = [s for s in data['assuntos'] if not s.get('generico')]
+    program = {'frase_especialista': phrase, 'origem': path.as_posix(),
+               'total_segmentos': len(data['assuntos']), 'pautas_tecnicas': len(subjects),
+               'segmentos_genericos': len(data['assuntos']) - len(subjects),
+               'assuntos': data['assuntos'],
+               'observacao': 'Segmentação existente da frase; quantidade não determina número de documentos.'}
+    if args.assunto_id:
+        subjects = [s for s in subjects if s['id'] == args.assunto_id]
+        if not subjects:
+            raise ValueError('--assunto-id não identifica uma pauta técnica deste subtópico')
     if len(subjects) < args.documentos:
         raise ValueError(f'Só há {len(subjects)} pautas não genéricas no inventário; reduza --documentos')
     briefs = [{'id': f'D{i:02d}-' + sha(sub['key'] + ':' + s['id'], 12),
                'topico': sub['topico'], 'subtopico': sub['subtopico'],
+               'frase_especialista': phrase,
                'assunto': s['texto'], 'consulta_pt': s.get('consulta_pt', ''),
                'consulta_en': s.get('consulta_en', ''),
                'termos': s.get('termos_pt', []) + s.get('termos_en', []),
                'origem_pauta': path.as_posix(), 'assunto_id': s['id']}
               for i, s in enumerate(subjects[:args.documentos], 1)]
-    return sub, briefs, path
+    return sub, briefs, path, program
 
 
 def snapshots(out, directory):
     return [read_json(p) for p in sorted((out / directory).glob('*.json'))]
+
+
+def question_jobs(engine, approved_docs, args, examples):
+    """Gera o lote seguinte após avaliar o anterior, sobre o mesmo documento."""
+    if args.lotes:
+        document = approved_docs[0]
+        for number in range(1, args.lotes + 1):
+            batch_id = f'L{number:02d}'
+            previous = snapshots(engine.out, 'questoes')
+            log(f'Lote {batch_id}: {args.questoes_por_lote} candidatas, documento {document["id"]}')
+            batch = generate_batch(engine, document, batch_id, args.questoes_por_lote, previous, examples)
+            for position, seed in enumerate(batch['questoes'], 1):
+                qid = f'Q{(number - 1) * args.questoes_por_lote + position:03d}'
+                yield qid, document, seed, batch_id
+        return
+    for number in range(1, args.max_candidatas + 1):
+        questions = snapshots(engine.out, 'questoes')
+        if sum(q['status'] == 'aprovada' for q in questions) >= args.questoes:
+            break
+        qid = f'Q{number:03d}'
+        old = read_json(engine.out / 'questoes' / (qid + '.json'))
+        document = (next(d for d in approved_docs if d['id'] == old['documento_id']) if old
+                    else approved_docs[(number - 1) % len(approved_docs)])
+        yield qid, document, None, None
 
 
 def write_reading(out, document):
@@ -153,11 +201,30 @@ def report(out, args, error=None):
         u['falhas_validacao'] += row.get('kind') == 'validacao'
         u['prompt_tokens'] += row.get('prompt_tokens', 0)
         u['completion_tokens'] += row.get('completion_tokens', 0)
-    reached = len(good_docs) >= args.documentos and (args.etapa == 'documentos' or len(approved) >= args.questoes)
+    batches = snapshots(out, 'lotes')
+    batch_summary = []
+    final_states = {'aprovada', 'reprovada', 'redundante', 'evidencia_insuficiente', 'pendente_validacao'}
+    for batch in batches:
+        rows = [q for q in questions if q.get('lote_id') == batch['id']]
+        reviewed = sum(q['status'] in final_states for q in rows)
+        generated = len(batch.get('questoes', []))
+        batch_summary.append({'id': batch['id'], 'documento_id': batch['documento_id'],
+                              'solicitadas': batch['solicitadas'], 'geradas': generated,
+                              'avaliadas': reviewed, 'estados': dict(Counter(q['status'] for q in rows)),
+                              'motivo': batch.get('motivo', ''),
+                              'concluido': batch['status'] == 'gerado'
+                                  and generated == batch['solicitadas'] and reviewed == generated})
+    qa_reached = ((len(batch_summary) == args.lotes and all(b['concluido'] for b in batch_summary))
+                  if args.lotes else len(approved) >= args.questoes)
+    reached = len(good_docs) >= args.documentos and (args.etapa == 'documentos' or qa_reached)
     summary = {'version': VERSION, 'topico': args.topico, 'etapa': args.etapa,
                'documentos': dict(Counter(d['status'] for d in docs)),
                'questoes': dict(Counter(q['status'] for q in questions)),
-               'meta_documentos': args.documentos, 'meta_questoes': args.questoes if args.etapa == 'completo' else 0,
+               'meta_documentos': args.documentos,
+               'meta_questoes': ((args.lotes * args.questoes_por_lote if args.lotes else args.questoes)
+                                if args.etapa == 'completo' else 0),
+               'criterio_questoes': 'candidatas geradas e avaliadas em lotes' if args.lotes else 'aprovadas',
+               'questoes_aprovadas': len(approved), 'lotes': batch_summary,
                'metas_atingidas': reached, 'tentativas_api': len(logs), 'uso_por_etapa': dict(usage),
                'tokens_totais': sum(r.get('prompt_tokens', 0) + r.get('completion_tokens', 0) for r in logs),
                'erro_ou_interrupcao': error, 'fontes': read_json(Path(args.indice_dir) / 'indice.json'),
@@ -189,7 +256,7 @@ def report(out, args, error=None):
     if review_path.exists():
         with review_path.open(encoding='utf-8-sig', newline='') as stream:
             old = {r['id_revisao']: r for r in csv.DictReader(stream)}
-    columns = ['id_revisao', 'id', 'status_automatico', 'pergunta', 'resposta', 'rubrica',
+    columns = ['id_revisao', 'id', 'lote_id', 'status_automatico', 'pergunta', 'resposta', 'rubrica',
                'veredito_humano', 'comentario']
     with review_path.open('w', encoding='utf-8-sig', newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=columns)
@@ -200,11 +267,24 @@ def report(out, args, error=None):
                 continue
             rid = sha(json.dumps([q['id'], text], sort_keys=True, ensure_ascii=False), 20)
             human = old.get(rid, {})
-            writer.writerow({'id_revisao': rid, 'id': q['id'], 'status_automatico': q['status'],
+            writer.writerow({'id_revisao': rid, 'id': q['id'], 'lote_id': q.get('lote_id') or '',
+                             'status_automatico': q['status'],
                              'pergunta': text['pergunta'], 'resposta': text['resposta'],
                              'rubrica': '; '.join(text['rubrica']),
                              'veredito_humano': human.get('veredito_humano', ''),
                              'comentario': human.get('comentario', '')})
+    batch_reading = ['# Lotes de questões', '', 'Candidatas e decisões automáticas; validação humana pendente.', '']
+    for batch in batch_summary:
+        batch_reading += [f"## {batch['id']} — {batch['geradas']}/{batch['solicitadas']} candidatas", '',
+                          f"Documento: {batch['documento_id']}. Estados: {batch['estados']}", '', batch['motivo'], '']
+        for q in questions:
+            if q.get('lote_id') != batch['id']:
+                continue
+            candidate = q.get('questao') or {}
+            batch_reading += [f"### {q['id']} — {q['status']}", '', candidate.get('pergunta', ''), '',
+                              '**Resposta:** ' + candidate.get('resposta', ''), '',
+                              '**Parecer:** ' + (q.get('motivo') or q.get('erro') or 'Em avaliação'), '']
+    (out / 'lotes.md').write_text('\n'.join(batch_reading) + '\n', encoding='utf-8')
     return summary
 
 
@@ -217,10 +297,14 @@ def failure(path, identifier, exc):
 
 def main(argv=None):
     args = parse(argv)
-    sub, briefs, topic_path = load_briefs(args)
+    sub, briefs, topic_path, program = load_briefs(args)
     plan = {'version': VERSION, 'subtopico': sub['subtopico'], 'etapa': args.etapa,
-            'pautas': briefs, 'meta_questoes_aprovadas': args.questoes if args.etapa == 'completo' else 0,
-            'max_candidatas': args.max_candidatas, 'max_chamadas': args.max_chamadas,
+            'programa_topico': program, 'pautas': briefs,
+            'lotes': args.lotes, 'questoes_por_lote': args.questoes_por_lote,
+            'candidatas_planejadas': args.lotes * args.questoes_por_lote if args.etapa == 'completo' else 0,
+            'meta_questoes_aprovadas': args.questoes if args.etapa == 'completo' and not args.lotes else None,
+            'max_candidatas': args.max_candidatas if not args.lotes else None,
+            'max_chamadas': args.max_chamadas,
             'manifesto': args.manifest, 'usa_rede_no_plano': False}
     if args.plan:
         print(json.dumps(plan, ensure_ascii=False, indent=2))
@@ -230,7 +314,8 @@ def main(argv=None):
     # Modelo, prompts, entradas e dependências entram na assinatura; limites podem aumentar.
     adjustable = {'saida', 'cache_dir', 'indice_dir', 'plan', 'revisitar_pendentes', 'documentos',
                   'questoes', 'max_candidatas', 'max_pesquisas', 'max_fontes', 'max_refinamentos',
-                  'max_refinamentos_qa', 'max_chamadas', 'max_chamadas_documento', 'max_chamadas_questao'}
+                  'max_refinamentos_qa', 'max_chamadas', 'max_chamadas_documento', 'max_chamadas_questao',
+                  'max_chamadas_lote'}
     identity = {k: v for k, v in vars(args).items() if k not in adjustable}
     implementation_paths = sorted(Path(__file__).parent.glob('*.py')) + [
         ROOT / 'pipeline/inventario/llm.py', ROOT / 'pipeline/inventario/textutil.py',
@@ -259,6 +344,8 @@ def main(argv=None):
         config['execucoes'].append({'at': datetime.now(timezone.utc).isoformat(), 'args': vars(args)})
         atomic_json(out / 'run_config.json', config)
         atomic_json(out / 'pautas.json', plan)
+        atomic_json(out / 'programa_topico.json', program)
+        log(f"Programa da frase: {program['pautas_tecnicas']} pautas técnicas; {len(briefs)} selecionada(s)")
         if report(out, args)['metas_atingidas']:
             log('Metas já atingidas nesta saída; artefatos preservados, sem novas chamadas.')
             return 0
@@ -321,21 +408,13 @@ def main(argv=None):
                 if not approved_docs:
                     error = 'Nenhum documento aprovado; QA não foi iniciado'
                 else:
-                    for number in range(1, args.max_candidatas + 1):
+                    for qid, document, seed, batch_id in question_jobs(engine, approved_docs, args, examples):
                         questions = snapshots(out, 'questoes')
-                        if sum(q['status'] == 'aprovada' for q in questions) >= args.questoes:
-                            break
-                        qid = f'Q{number:03d}'
                         path = out / 'questoes' / (qid + '.json')
-                        old = read_json(path)
-                        if old:
-                            document = next(d for d in approved_docs if d['id'] == old['documento_id'])
-                        else:
-                            document = approved_docs[(number - 1) % len(approved_docs)]
                         previous = [q for q in questions if q['id'] != qid]
                         log(f"Questão {qid}, documento {document['id']}")
                         try:
-                            q = generate(engine, document, qid, previous, examples)
+                            q = generate(engine, document, qid, previous, examples, seed=seed, batch_id=batch_id)
                             log(f"Questão {qid}: {q['status']}")
                         except (ScopeExceeded, CallFailed, ContentFiltered) as exc:
                             failure(path, qid, exc)
