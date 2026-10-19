@@ -1,0 +1,125 @@
+"""Execute pesquisa e/ou QA; --plan só inspeciona entradas, sem modelos ou rede."""
+import argparse
+import hashlib
+import json
+from dataclasses import asdict
+from pathlib import Path
+
+from pipeline.inventario.llm import BudgetExceeded
+from pipeline.inventario.locking import output_lock
+from pipeline.inventario.textutil import atomic_json, read_json, sha
+from . import VERSION
+from .config import Config
+from .corpus import CorpusIndex
+from .engine import ResearchPipeline
+from .export import export_run
+from .runtime import PersistentBudget, make_clients
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def load_config(path, output=None, manifest=None):
+    data = json.loads(Path(path).read_text(encoding="utf-8-sig"))
+    if output:
+        data["output"] = output
+    if manifest is not None:
+        data["manifest"] = manifest
+    config = Config(**data)
+    def absolute(value):
+        p = Path(value)
+        return str(p.resolve() if p.is_absolute() else (ROOT / p).resolve())
+    config.output, config.index_dir = absolute(config.output), absolute(config.index_dir)
+    config.origins = [absolute(p) for p in config.origins]
+    if config.manifest:
+        config.manifest = absolute(config.manifest)
+    return config.validate()
+
+
+def implementation_hash():
+    digest = hashlib.sha256()
+    for path in sorted(Path(__file__).parent.glob("*.py")):
+        digest.update(path.name.encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def inspect(config):
+    result = {"topico": config.topic, "limites": config.identity(),
+              "origens": [], "manifest": config.manifest,
+              "observacao": "Sem chamada de modelo, download ou indexação. Recortes serão propostos na pesquisa."}
+    for origin in config.origins:
+        root = Path(origin)
+        result["origens"].append({"path": origin, "existe": root.is_dir(),
+                                 "selecoes": len(list(root.glob("subtopicos/*/selecao.json")))})
+    if config.manifest and not Path(config.manifest).is_file():
+        raise ValueError("Manifesto informado não existe")
+    if not config.manifest and not any(r["selecoes"] for r in result["origens"]):
+        raise ValueError("Nenhuma seleção original encontrada nas origens")
+    return result
+
+
+def execute(config, stage="completo", clients=None, index=None, progress=print):
+    config.validate()
+    if stage not in ("pesquisa", "qa", "completo"):
+        raise ValueError("stage deve ser pesquisa, qa ou completo")
+    out = Path(config.output)
+    with output_lock(out):
+        index = index or CorpusIndex(config.index_dir, config.origins, config.manifest)
+        info = index.build()
+        identity = {"version": VERSION, "implementation": implementation_hash(),
+                    "config": config.identity(), "corpus_signature": info["signature"]}
+        fingerprint = sha(json.dumps(identity, sort_keys=True, ensure_ascii=False), 64)
+        record = read_json(out / "execucao.json")
+        if record and record["fingerprint"] != fingerprint:
+            raise ValueError("Configuração, implementação ou corpus mudaram. Use nova saída para preservar a rastreabilidade.")
+        atomic_json(out / "execucao.json", {"fingerprint": fingerprint, **identity})
+        atomic_json(out / "config.json", asdict(config))
+        atomic_json(out / "indice.json", info)
+        owned_clients = clients is None
+        budget = PersistentBudget(out / "orcamento.json", config.max_calls)
+        if stage == "qa" and not (out / "plano.json").exists():
+            raise ValueError("Execute --stage pesquisa antes de --stage qa")
+        interruption = None
+        try:
+            if clients is None:
+                clients = make_clients(config, budget)
+            engine = ResearchPipeline(config, index, clients, progress=progress)
+            completed = True
+            if stage in ("pesquisa", "completo"):
+                completed = engine.research()
+            if completed and stage in ("qa", "completo"):
+                completed = engine.generate_qa()
+            if not completed:
+                interruption = "Orçamento cumulativo de chamadas atingido"
+        except BudgetExceeded as exc:
+            interruption = str(exc)
+        except Exception as exc:
+            interruption = type(exc).__name__ + ": " + str(exc)
+            raise
+        finally:
+            if owned_clients and clients:
+                for client in clients.values():
+                    client.close()
+            summary = export_run(config, info, interruption)
+        return summary
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", required=True, help="Arquivo JSON com tópico e limites")
+    parser.add_argument("--output", help="Sobrescreve somente a pasta de saída")
+    parser.add_argument("--manifest", help="Manifesto do corpus completo; sobrescreve o campo do JSON")
+    parser.add_argument("--stage", choices=("pesquisa", "qa", "completo"), default="completo")
+    parser.add_argument("--plan", action="store_true")
+    args = parser.parse_args(argv)
+    config = load_config(args.config, args.output, args.manifest)
+    if args.plan:
+        print(json.dumps(inspect(config), ensure_ascii=False, indent=2))
+        return 0
+    summary = execute(config, stage=args.stage)
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return 2 if summary["interrupcao"] or summary["pendencias_execucao"] else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

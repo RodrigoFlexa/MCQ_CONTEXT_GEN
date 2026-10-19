@@ -1,6 +1,11 @@
 # MCQ_CONTEXT_GEN
 
-Geração e avaliação de questões de múltipla escolha (MCQ) em português, no domínio de óleo e gás (corpus Petrolês), comparando geração fundamentada em contexto (RAG) vs. instruction-only.
+Pesquisa e geração de questões em português no domínio de óleo e gás. O fluxo atual
+de **pergunta e resposta curta** está em [`pipeline/qa_research`](pipeline/qa_research/README.md):
+tópico → recortes → pesquisa no corpus → documento auditado → unidades de conhecimento → QA.
+Abra [`pesquisa_e_qa.ipynb`](pipeline/qa_research/pesquisa_e_qa.ipynb) para acompanhar as etapas.
+O plano está em [`docs/plano_qa_research.md`](docs/plano_qa_research.md).
+Os experimentos anteriores de múltipla escolha e comparação RAG/instruction-only seguem preservados.
 
 ## Estrutura
 

@@ -1,0 +1,112 @@
+# Pesquisa no corpus → documento auditado → QA curta
+
+Implementação nova para geração de **pergunta e resposta**, sem alternativas de
+múltipla escolha, datasets externos ou questões de exemplo nos prompts. A API e o
+notebook usam o mesmo motor; o notebook é a entrada recomendada para acompanhar as etapas.
+
+Abra `pesquisa_e_qa.ipynb`. O plano metodológico está em
+[`docs/plano_qa_research.md`](../../docs/plano_qa_research.md).
+Para gerar somente o documento de Produtos químicos no servidor, use
+[`SERVIDOR.md`](SERVIDOR.md).
+
+## Caminho implementado
+
+1. Planejador extrai eixos de serviço, fenômeno/produto e decisão do tópico. Propõe
+   recortes investigáveis com âncoras literais no escopo e consultas PT/EN.
+2. Pesquisadores investigam recortes em paralelo, avaliam a pertinência e o estatuto
+   dos textos, refinam consultas e propõem recortes novos com evidência literal.
+   O coordenador admite descobertas até o limite e registra as restantes.
+3. Redator escreve capítulos amplos, com blocos ligados às passagens originais.
+   Auditor independente verifica suporte, condições, escopo, atribuições e tradução.
+   Uma revisão pode pesquisar lacunas antes de reescrever. Só blocos aprovados são publicados.
+4. Extrator decompõe o documento admitido em unidades de conhecimento e escolhe
+   um alvo de resposta curta **antes** de formular uma pergunta. Outra auditoria
+   filtra fidelidade, atomicidade, contexto e determinação do alvo.
+5. Autor gera uma pergunta fechada por unidade elegível. Respondente recebe pergunta
+   e evidências, sem gabarito/variantes/unidade-alvo. Uma busca adicional pode trazer
+   contraevidência. Auditor adversarial verifica alternativas válidas e equivalência.
+6. Exportação aceita somente a cadeia aprovada. Falhas, ambiguidades e falta de suporte
+   ficam registradas; não se afrouxam filtros para cumprir a meta. Rodízio entre recortes
+   e comparação de unidades reduzem concentração temática e repetição.
+
+Papéis são chamadas separadas com contexto próprio; podem usar o mesmo deployment ou
+deployments diferentes em `models`. Isso não demonstra independência estatística dos erros.
+
+## Executar
+
+Na raiz do repositório, com Python 3.10+ e as dependências existentes:
+
+```powershell
+python -m pipeline.qa_research.run --config pipeline/qa_research/configs/piloto_produtos_quimicos.json --plan
+python -m pipeline.qa_research.run --config pipeline/qa_research/configs/piloto_produtos_quimicos.json --stage pesquisa
+python -m pipeline.qa_research.run --config pipeline/qa_research/configs/piloto_produtos_quimicos.json --stage qa
+```
+
+`--plan` não cria clientes, não lê credenciais, não faz chamadas, não baixa documentos
+e não indexa. Os recortes dependem do planejador e aparecem após executar pesquisa.
+`--stage completo` executa as duas fases. O perfil maior é `configs/produtos_quimicos.json`.
+O piloto limita a investigação a dois recortes: **não** pretende cobrir todo o tópico.
+`--manifest caminho/manifest.json` seleciona o corpus completo já instalado sem editar
+o JSON de configuração; o argumento tem prioridade sobre o campo `manifest` do arquivo.
+
+As credenciais e o cliente JSON com cache/reparo vêm da infraestrutura Azure/OpenAI
+já existente em `pipeline/inventario/llm.py`. Os defaults de deployment reaproveitam
+nomes do projeto, não representam detecção de disponibilidade na conta. Altere `models`
+se necessário, configurando todos os papéis de `config.ROLES` como `deployment:effort`.
+
+## Corpus e limites da busca
+
+Com `manifest`, o pipeline verifica hashes e utiliza o corpus completo declarado pelo
+manifesto existente. Sem manifesto, indexa somente textos originais em `selecao.json`
+nas `origins` e declara **cobertura parcial**. Não indexa notas, fatos extraídos,
+documentos gerados ou perguntas como fontes primárias. O manifesto tem prioridade
+sobre as seleções; versões antigas não se misturam à coleção verificada.
+
+O recuperador desta versão é **SQLite FTS5/BM25**, sem download de embeddings. As
+consultas multilíngues vêm do pesquisador; não se afirma que existe busca semântica
+quando ela não foi executada. Vizinhos só são incorporados com limites documentais
+conhecidos. TXT concatenado não recebe páginas ou fronteiras inventadas.
+
+Teses, dissertações e documentos estrangeiros permanecem consultáveis. O filtro é
+por afirmação: resultado experimental conserva condições; opinião/hipótese não vira
+QA factual; norma sem edição/jurisdição documentadas não é elegível. O idioma pode
+ser traduzido para compreensão, mas a evidência literal continua no original.
+
+## Saídas e retomada
+
+- `plano.json`: eixos, recortes, origem das descobertas e expansões não investigadas.
+- `recortes/`: buscas, fontes, avaliações, versões de capítulo e auditorias.
+- `documento_auditado.md` e `documento.json`: blocos admitidos, referências e lacunas.
+- `evidencias.jsonl`: textos originais, hashes e metadados disponíveis.
+- `unidades.jsonl`: proposições, condições, alvos e resultados da auditoria.
+- `qa.csv`: apenas `pergunta,resposta` para itens aprovados pelo modelo.
+- `qa_aprovadas.jsonl`: QA com cadeia de evidências e pareceres.
+- `qa_nao_aprovadas.jsonl`: rejeições, redundância e pendências.
+- `cobertura.json`, `resumo.json`, `relatorio.md`: alcance e limitações da execução.
+- `chamadas/`: prompts, entradas e saídas por chamada; material para auditoria.
+- `orcamento.json`: tentativas reservadas cumulativamente, inclusive reparos.
+
+Repita o mesmo comando para retomar a mesma saída. Configuração, corpus e implementação
+são vinculados por assinatura; mudança material exige uma nova pasta. Pode aumentar
+`max_calls` ou mudar `workers` sem invalidar a identidade. Não execute simultaneamente
+duas instâncias na mesma saída. Cada índice fixa seu snapshot de corpus.
+
+Interrupção por orçamento e pendência de execução retornam código 2. Não atingir a meta
+por falta de unidades aprováveis é registrado no resumo, sem fabricar itens. Os estados
+`auditado_modelo` e `aprovada_modelo` não significam validação humana.
+
+## Verificação
+
+```powershell
+python -m unittest discover -s pipeline/qa_research/tests -v
+```
+
+Os testes usam corpus temporário e clientes simulados. Verificam recuperação,
+proveniência, contratos, isolamento do gabarito, bloqueio de itens reprovados, orçamento
+e retomada. Não substituem um piloto com os modelos e revisão técnica humana.
+
+O desenho adapta extração contextual de [Claimify](https://aclanthology.org/2025.acl-long.348/),
+evidência científica de [SciFact](https://aclanthology.org/2020.emnlp-main.609/), extração
+atômica de [AIM-SciQA](https://arxiv.org/html/2603.14257v1) e pesquisa com feedback de
+[OpenScholar](https://www.nature.com/articles/s41586-025-10072-4). A composição e os
+critérios de QA curta são decisões deste projeto, não uma reprodução desses métodos.
