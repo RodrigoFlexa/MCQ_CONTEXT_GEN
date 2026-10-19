@@ -125,6 +125,32 @@ nohup bash pipeline/qa_research/rodar_documentos_10_areas.sh > documentos_10_are
 tail -f documentos_10_areas.log
 ```
 
+O terminal (e o log) mostra um resumo a cada **30 segundos**, mesmo enquanto uma
+chamada demorada está em andamento: documentos processados/selecionados, quantos
+concluíram, quantos têm pendências, documento atual, última etapa, tempo decorrido,
+tempo restante aproximado e horário previsto de término, no fuso do servidor.
+`--progress-interval 60` altera a frequência. O resumo também aparece no início
+e no fim. "Processado" significa tentativa encerrada; não significa que um
+documento com pendências foi aprovado integralmente.
+
+A estimativa usa o tempo dos documentos já processados, ponderado pelo número
+de recortes: Produtos químicos tem mais recortes que outras frases. Antes da
+primeira amostra, aparece "calculando". O tempo gasto no documento atual é
+descontado; se ele exceder a previsão do restante, o painel informa que está
+recalculando. A previsão é aproximada e depende da latência, reparos, tamanho
+dos capítulos e trabalho reaproveitado na retomada. Não é uma garantia de prazo.
+
+Se a geração já estiver rodando, acompanhe em **outro terminal**, sem reiniciar:
+
+```bash
+python3 -u -m pipeline.qa_research.document_progress watch
+```
+
+Use os mesmos `--batch`, `--output` e `--only` da geração quando tiver alterado
+esses parâmetros. `watch` só lê checkpoints, não faz chamadas Azure nem precisa
+de dependências de ML. Ctrl+C encerra somente o acompanhamento. Esta atualização
+do painel preserva a assinatura do motor e os checkpoints das pesquisas atuais.
+
 Repetir o mesmo comando retoma os checkpoints. Documentos concluídos não geram
 novas chamadas. Documento parcial não é tratado como concluído. Erros de backend
 ou cancelamento interrompem o lote; esgotar o teto de uma frase permite continuar

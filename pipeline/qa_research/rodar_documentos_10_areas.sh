@@ -10,4 +10,4 @@ elif [[ ! -x "$document_python" ]]; then
     document_python="$document_root/venv/bin/python"
     if [[ ! -x "$document_python" ]]; then document_python="$(command -v python3)"; fi
 fi
-exec "$document_python" -u -m pipeline.qa_research.document.batch run "$@"
+exec "$document_python" -u -m pipeline.qa_research.document_progress run "$@"
