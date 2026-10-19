@@ -1,6 +1,7 @@
 """Pesquisa documental retomável sobre pacote local, sem índice/modelo no servidor."""
 import concurrent.futures
 import json
+import re
 import threading
 import time
 from pathlib import Path
@@ -28,13 +29,14 @@ def new_state(facet):
 
 
 class Runner:
-    def __init__(self, packet, output, overrides=None, client=None, progress=print):
+    def __init__(self, packet, output, overrides=None, client=None, progress=print, reuse=None):
         self.packet, self.output = packet, Path(output).resolve()
         self.settings = {**packet.profile["runtime"], **(overrides or {})}
         for k in ("workers", "max_calls", "max_attempts", "research_rounds", "batch_sources", "writer_sources", "max_blocks"):
             if type(self.settings[k]) is not int or self.settings[k] < 1:
                 raise ValueError("Configuração inteira positiva esperada: " + k)
         self.client, self.progress = client, progress
+        self.reuse = reuse
         self.lock = threading.Lock()
         self.api_slots = threading.BoundedSemaphore(self.settings["workers"])
         self.timings = {}
@@ -148,12 +150,8 @@ class Runner:
 
     def write(self, facet, state, rejected=None):
         source_ids = self.writer_sources(facet, state)
-        if not source_ids:
-            state["status"] = "sem_suporte"
-            self.gap(state, "O material lido não forneceu relação técnica objetiva suficiente para este recorte.", "pesquisa")
-            self.reconcile(facet, state)
-            self.save(state)
-            return
+        # A ausência de uma passagem não impede explicar princípios técnicos.
+        # Complementos são declarados no bloco e auditados sem falsa atribuição.
         allowed = {c for s in source_ids for c in self.packet.by_source[s]}
         kept = C.approved(state, self.packet)
         maximum = self.settings["max_blocks"] - len(kept) if rejected is not None else self.settings["max_blocks"]
@@ -163,11 +161,12 @@ class Runner:
             "recorte": {k: facet[k] for k in ("id", "titulo", "foco")},
             "outros_focos": [f["foco"] for f in self.packet.facets if f["id"] != facet["id"]],
             "fontes": self.packet.views(source_ids),
+            "modo": "sintese_tecnica_autonoma_com_complementacao_declarada",
             "achados": [r for r in state["findings"] if r["fonte"] in source_ids],
             "limite_blocos": maximum, "limite_palavras_bloco": self.settings["max_block_words"],
             "blocos_mantidos": [{"id": b["id"], "texto": b["texto"]} for b in kept],
             "revisar": rejected or []},
-            lambda d: C.draft(d, allowed, maximum, self.settings["max_block_words"]), tokens=8000)
+            lambda d: C.draft(d, allowed, maximum, self.settings["max_block_words"], synthesis=True), tokens=9000)
         version = len(state["versions"]) + 1
         blocks = [{"id": f"{facet['id']}-V{version:02d}-B{i:03d}", **b}
                   for i, b in enumerate(data["blocos"], 1)]
@@ -233,6 +232,10 @@ class Runner:
             try:
                 blocks = C.approved(state, self.packet)
                 citations = {c for b in blocks for c in b["trechos"]}
+                if not citations:
+                    state["discovery_done"] = True
+                    self.save(state)
+                    return
                 data = self.call("discover", facet["id"], {"blocos": blocks,
                     "provas": self.packet.support(sorted(citations)),
                     "recortes": [{k: f[k] for k in ("id", "foco")} for f in self.packet.facets]},
@@ -303,12 +306,19 @@ class Runner:
         old = read_json(self.output / "consolidacao.json")
         if old and old.get("signature") == signature and old.get("complete"):
             return old
-        pairs, decisions = [], []
+        pairs, decisions, removed, seen_text = [], [], {}, {}
+        for _, block in blocks:
+            key = re.sub(r"\s+", " ", block["texto"]).strip()
+            if key in seen_text:
+                removed[block["id"]] = seen_text[key]
+                decisions.append({"a": seen_text[key], "b": block["id"], "equivalentes": True,
+                    "mesmas_condicoes": True, "parecer": "Texto integralmente idêntico; retenção determinística."})
+            else:
+                seen_text[key] = block["id"]
+        blocks = [(f, b) for f, b in blocks if b["id"] not in removed]
         for i, (fa, a) in enumerate(blocks):
             sa, words_a = set(a["trechos"]), set(a["texto"].casefold().split())
             for fb, b in blocks[i + 1:]:
-                if fa["id"] == fb["id"]:
-                    continue
                 sb, words_b = set(b["trechos"]), set(b["texto"].casefold().split())
                 proof_overlap = len(sa & sb) / max(1, min(len(sa), len(sb)))
                 lexical_overlap = len(words_a & words_b) / max(1, len(words_a | words_b))
@@ -328,7 +338,6 @@ class Runner:
                 errors.append(str(exc)[:1000])
                 if self.stop.is_set():
                     break
-        removed = {}
         for d in decisions:
             if d["equivalentes"] and d["mesmas_condicoes"]:
                 # Retenção transitiva: o destino sempre termina em um bloco mantido.
@@ -358,6 +367,9 @@ class Runner:
             atomic_json(self.output / "identidade.json", identity)
             for facet in self.packet.facets:
                 self.states[facet["id"]] = read_json(self.output / "recortes" / (facet["id"] + ".json")) or new_state(facet)
+            if self.reuse:
+                from .reuse import reuse_research
+                reuse_research(self.packet, self.reuse, self.output, self.states, self.save)
             self.budget = PersistentBudget(self.output / "orcamento.json", self.settings["max_calls"])
             if owned_client:
                 try:
@@ -418,5 +430,5 @@ class Runner:
             return summary
 
 
-def run(packet_path, output, overrides=None, client=None, progress=print):
-    return Runner(Packet(packet_path), output, overrides, client, progress).run()
+def run(packet_path, output, overrides=None, client=None, progress=print, reuse=None):
+    return Runner(Packet(packet_path), output, overrides, client, progress, reuse).run()

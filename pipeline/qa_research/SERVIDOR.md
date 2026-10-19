@@ -1,8 +1,11 @@
-# Próxima execução: fluxo documental v2
+# Próxima execução: síntese técnica autônoma v3
 
 Use [DOCUMENTO_DISTRIBUIDO.md](DOCUMENTO_DISTRIBUIDO.md): o pacote de Produtos químicos
 já vai preparado pelo Git. Esse fluxo dispensa corpus bruto, indexação e embeddings
-no servidor e gera somente o documento. As instruções abaixo são do fluxo anterior.
+no servidor e gera somente o documento. Após o pull, execute
+`bash pipeline/qa_research/rodar_documento_v3.sh`. O script usa uma saída nova,
+reutiliza a pesquisa v2 quando disponível e anuncia o término com os comandos
+de retorno pelo Git. As instruções abaixo são do fluxo anterior.
 
 # Fluxo anterior: documento de 2.2. Produtos químicos no servidor
 

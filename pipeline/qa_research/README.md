@@ -1,9 +1,12 @@
 # Pesquisa no corpus → documento auditado → QA curta
 
-**Para a próxima execução de Produtos químicos, use o [fluxo documental distribuído v2](DOCUMENTO_DISTRIBUIDO.md)**
+**Para a próxima execução de Produtos químicos, use a [síntese técnica autônoma v3](DOCUMENTO_DISTRIBUIDO.md)**
 e o notebook `documento_produtos_quimicos.ipynb`. O pacote já preparado localmente
 acompanha o Git; no servidor rodam somente as chamadas Azure e a coordenação do
-documento. As instruções abaixo descrevem o fluxo anterior, que também possui QA.
+documento. Execute `bash pipeline/qa_research/rodar_documento_v3.sh` no servidor.
+O pré-processamento e o pacote v2 são preservados. O produto passa a ensinar o
+assunto com explicações técnicas complementares auditadas, sem referências nem
+comentários sobre fontes no documento. As instruções abaixo descrevem o fluxo anterior, que também possui QA.
 
 Implementação nova para geração de **pergunta e resposta**, sem alternativas de
 múltipla escolha, datasets externos ou questões de exemplo nos prompts. A API e o

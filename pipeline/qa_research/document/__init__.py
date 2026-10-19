@@ -1,3 +1,3 @@
 """Pesquisa documental com preparação local e execução Azure sem índices no servidor."""
 
-VERSION = "document-research-2.0"
+VERSION = "document-research-3.0"

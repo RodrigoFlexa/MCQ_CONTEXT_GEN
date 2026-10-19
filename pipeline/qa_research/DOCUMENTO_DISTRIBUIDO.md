@@ -1,181 +1,155 @@
-# Documento de Produtos químicos: preparação local e pesquisa no servidor
+# Síntese técnica autônoma de Produtos químicos — v3
 
-Este é o fluxo recomendado para a próxima execução. Gera **somente o documento**
-do tópico 2.2. Produtos químicos, em Produção e Processo. Não gera QA, alternativas,
-exemplos de questões nem usa perguntas de datasets como contexto.
+Este fluxo gera somente o documento de conhecimento do tópico 2.2. Produtos
+químicos, em Produção e Processo. A futura geração de QA usará esse texto técnico.
+Não são geradas questões, exemplos de QA nem alternativas nesta execução.
 
-As máquinas trocam arquivos pelo Git. Nenhuma conexão SSH entre elas é necessária.
-O pacote preparado aqui já está em `pacotes/produtos_quimicos_v2/` e acompanha este
-commit. **Não execute `prepare` no servidor.**
+## Como deve ser o texto de contexto
 
-As decisões e sua relação com os problemas observados estão em
-[AJUSTES_V2.md](../../docs/analise_run_lexical_2026_10_19/AJUSTES_V2.md).
+O documento deve ensinar o domínio de forma independente: definir conceitos,
+explicar mecanismos e relações de causa e efeito, organizar critérios de seleção,
+aplicação, dosagem e monitoramento, discutir interações e consequências operacionais.
+Cada seção tem subtítulo específico, sujeito claro e condições suficientes para
+entender a relação técnica. Os princípios são situados em produção de óleo, água
+e gás e em sistemas de FPSO quando essa aplicação for tecnicamente defensável.
 
-## O que muda em relação à execução lexical anterior
+As passagens recuperadas orientam a exploração do assunto. O autor pode usar seu
+conhecimento técnico para desenvolver conceitos consolidados, conectar mecanismos
+e preencher lacunas conceituais. Essa contribuição é identificada internamente;
+não é atribuída ao corpus. Dados de campo, limites e resultados ausentes não são
+preenchidos por suposição. Afirmações numéricas novas continuam exigindo suporte
+nas passagens: complementar a explicação não recupera números apagados.
 
-1. A máquina local lê os originais em streaming e guarda uma fronteira lexical
-   por recorte. Exige contexto técnico de aplicação, reduz homônimos fora do
-   escopo e filtra catálogos/listas bibliográficas reconhecíveis. Calcula embeddings
-   E5 somente desses candidatos, compara consultas
-   PT/EN com janelas do texto e combina os rankings por RRF. Deduplica cópias muito
-   semelhantes e limita a concentração em documentos com fronteira identificada.
-   O servidor não lê os arquivos brutos, não constrói BM25/FAISS e não calcula
-   embeddings. O E5 é um filtro de recuperação; não escreve conhecimento científico.
-2. O perfil fixa 12 recortes para garantir cobertura: desemulsificantes, espuma,
-   água produzida, SRU, oxigênio/desaeração, microbiologia, MEG/hidratos,
-   corrosão no gás, depósitos, compatibilidade, armazenamento/manuseio e
-   monitoramento/dosagem. Todos recebem a primeira rodada de leitura antes de
-   aprofundarmos qualquer recorte. A cobertura é controlada pelo escopo, não pela
-   quantidade de variantes que o modelo inventar para água de injeção.
-3. No servidor, o pesquisador recebe seis passagens originais por rodada, com
-   título/procedência disponível, alertas de qualidade e IDs de seus intervalos.
-   Classifica pertinência e natureza da afirmação, extrai relações com condições
-   e limites e escolhe próximas fontes dentro do catálogo do recorte. Até três
-   rodadas leem até 18 das até 36 fontes pré-selecionadas por recorte. Sugestões de busca fora
-   do pacote vão para `pedidos_busca.json`; não são executadas no corpus remoto.
-4. O redator recebe até 12 fontes julgadas pertinentes e os achados. Escreve até
-   oito blocos delimitados por recorte, com até 220 palavras cada. O auditor vê
-   os originais em uma chamada separada por bloco, podendo corrigir a referência
-   proposta pelo redator. Exige suporte, condições, escopo, natureza da afirmação
-   e fundamentação completa. Somente os cinco critérios aprovados permitem publicar.
-5. Uma revisão reescreve somente blocos reprovados. Os IDs incluem a versão;
-   pareceres antigos nunca passam a valer para um texto novo. Trechos literais
-   são resolvidos pelo código a partir dos intervalos originais, evitando pedir
-   ao modelo que copie citações longas sem erro. Valores apagados não são recuperados.
-6. Lacunas históricas são reavaliadas contra os blocos atuais. Resolução exige
-   um bloco vigente e suporte original. Lacunas sem reavaliação ficam identificadas.
-   Descobertas são uma chamada opcional separada; falhas nelas não invalidam a
-   pesquisa principal. A consolidação compara possíveis duplicatas sem reescrever
-   a prosa aprovada nem tratar fontes sobrepostas como equivalência automática.
+O produto apresenta diretamente o conhecimento. Referências, citações, autores/ano,
+IDs, histórico de lacunas e comentários sobre fontes ficam em arquivos auxiliares.
+O redator e o auditor devem evitar relato de leitura e ressalvas genéricas sobre
+falta de fonte de FPSO, preservando as condições físicas e operacionais que de fato
+restringem uma afirmação. Resultados de outros processos só contribuem com um
+princípio transferível, sem transplantar cenários ou inventar validação offshore.
 
-Esses papéis podem usar o mesmo deployment em chamadas separadas. A auditoria é
-automatizada; não demonstra independência entre os erros dos modelos e não substitui
-revisão técnica. “Execução concluída” significa que o processamento terminou, não
-que o corpus permita responder a todos os aspectos do tópico.
+## O que mudou no código
 
-## Material disponível e limites
+1. O redator organiza uma síntese didática, com subtítulos e relações técnicas.
+   Cada bloco declara internamente `base=corpus`, `conhecimento_tecnico` ou `mista`.
+   Complementos do modelo são enumerados no campo interno `complementos`.
+2. A auditoria confronta o conteúdo derivado do corpus com os originais e verifica
+   cada complemento em uma chamada separada, com justificativa técnica. Um conceito
+   consolidado não é reprovado só por não estar no corpus. Cada complemento precisa
+   de avaliação explícita; o modelo não pode atribuí-lo a uma prova inexistente.
+   Essa revisão é automatizada por modelo, não confirmação empírica independente.
+3. Uma barreira editorial rejeita metadiscurso e citações no texto antes de publicar.
+   A revisão reescreve somente relações reprovadas, preservando os blocos aprovados.
+4. Duplicatas literais são removidas deterministicamente. A comparação semântica
+   também considera pares dentro do mesmo capítulo, inclusive versões diferentes.
+5. Lacunas permanecem internas. Explicações complementares aprovadas podem resolver
+   lacunas conceituais; fatos de ativos e dados empíricos exigem evidência própria.
+6. A execução termina com o aviso `O código acabou de rodar no terminal 🙂`, informa
+   o estado real e imprime os comandos de coleta e de Git. Uma interrupção ou erro
+   não é apresentado como sucesso.
 
-O pacote informa as entradas efetivamente utilizadas em `preparation.json`.
-Nesta máquina há os dois TXT originais do Petroles, seleções originais já salvas
-e passagens originais exportadas pela execução anterior. O manifesto completo
-dos cinco bancos **não está instalado aqui**. Não tratamos essas seleções como
-uma cópia integral de ANP, HSE, REGIS e demais bases.
+## O que permanece pronto
 
-Os TXT agregados nem sempre preservam título, página, fronteira documental ou
-números. Essas ausências acompanham cada passagem. Não se inventam páginas nem
-se contam passagens repetidas como estudos independentes. Uma relação qualitativa
-pode ser aproveitada mesmo quando a dosagem foi apagada; o documento não publicará
-`<NUMBER>` como se fosse um valor operacional.
+O pacote `pacotes/produtos_quimicos_v2/` permanece byte a byte igual: 352 passagens,
+12 recortes, citações por intervalos e os mesmos filtros lexicais, embeddings E5 e
+fusão RRF já preparados aqui. **Não rode `prepare` no servidor.**
 
-A triagem lexical é ampla, mas limitada. O E5 reranqueia a união dos candidatos
-dos recortes e pode promover material sem coincidência lexical naquele recorte.
-Não é uma busca vetorial exaustiva sobre todos os documentos. A avaliação de
-pertinência pelo pesquisador é uma segunda filtragem. A Azure não é usada para
-embeddar todo o corpus nesta preparação. O modelo e a revisão do E5 são registrados.
+As bases disponíveis localmente não representam os cinco bancos completos.
+A pesquisa no servidor explora o catálogo temático e registra pedidos adicionais
+para futura preparação local. Nenhuma dessas mudanças exige recalcular embeddings.
 
-## No servidor: instalar e executar
+A investigação já concluída em `relatorios/produtos_quimicos_v2/` também pode ser
+reutilizada. São importadas apenas leituras, avaliações e achados após verificar
+assinatura do pacote, arquivos e IDs. Redação, revisões e auditorias antigas não
+são importadas. Os 259 achados da execução v2 são compatíveis com a nova redação.
+O recibo fica em `pesquisa_reutilizada.json`; a retomada não reimporta nem sobrescreve
+trabalho novo. Sem pesquisa anterior, o fluxo executa a investigação normalmente.
 
-Na raiz do projeto, na branch `codex/qa-evidencias-verificadas`:
+## Rodar no servidor
+
+Na raiz do checkout, mantendo o ambiente e as credenciais Azure já usados:
 
 ```bash
 git pull --ff-only origin codex/qa-evidencias-verificadas
+bash pipeline/qa_research/rodar_documento_v3.sh
+```
+
+O script usa `.venv-documento/bin/python`, ou `venv/bin/python`, ou `python3`.
+Para escolher explicitamente outro ambiente:
+
+```bash
+DOCUMENT_PYTHON=/caminho/do/ambiente/bin/python bash pipeline/qa_research/rodar_documento_v3.sh
+```
+
+A saída é `pipeline/qa_research/saida_documento_produtos_quimicos_v3/`. O documento
+parcial é atualizado entre lotes de recortes. O script detecta o relatório v2 e
+reutiliza sua investigação. Repita o mesmo comando para retomar uma interrupção.
+Não use a pasta de saída v2 com código novo: as assinaturas protegem o histórico.
+
+Em ambiente novo, as dependências do servidor continuam leves:
+
+```bash
 python3 -m venv .venv-documento
 .venv-documento/bin/python -m pip install -r pipeline/qa_research/requirements-server.txt
-.venv-documento/bin/python -m pipeline.qa_research.document check --packet pipeline/qa_research/pacotes/produtos_quimicos_v2
 ```
 
-Use o `.env`/`.ini` e o certificado Azure que já funcionam no servidor.
-O deployment padrão é `gpt-5-4-petrobras:low`. Não envie credenciais pelo Git.
-O ambiente isolado acima evita instalar as dependências pesadas da preparação local.
-
-Para executar em segundo plano:
+Para manter a execução após desconectar do servidor:
 
 ```bash
-nohup .venv-documento/bin/python -u -m pipeline.qa_research.document run \
-  --packet pipeline/qa_research/pacotes/produtos_quimicos_v2 \
-  --output pipeline/qa_research/saida_documento_produtos_quimicos_v2 \
-  > documento_produtos_quimicos_v2.log 2>&1 &
+nohup bash pipeline/qa_research/rodar_documento_v3.sh > documento_produtos_quimicos_v3.log 2>&1 &
+tail -f documento_produtos_quimicos_v3.log
 ```
 
-```bash
-tail -f documento_produtos_quimicos_v2.log
-```
+Nesse modo, o aviso aparece no log e no terminal que o acompanha. `Ctrl+C` encerra
+apenas o acompanhamento. Para execução em primeiro plano, o primeiro comando
+com `bash` já mostra o aviso diretamente e devolve o controle do terminal ao final.
 
-`Ctrl+C` encerra o acompanhamento do log. O processo iniciado com `nohup` continua.
-O documento parcial é atualizado após cada lote de até três recortes. Leia:
+O deployment continua `gpt-5-4-petrobras:low`, com no máximo três chamadas concorrentes
+e orçamento cumulativo de 500 tentativas, incluindo reparos. O script aceita opções
+extras de `run`, como `--max-calls 700` ou `--workers 2`, sem zerar o orçamento anterior.
+Código de saída 0 indica processamento concluído; 2 indica interrupção/pendências.
+Consulte também `resumo.json`: conclusão do processamento não significa cobertura
+exaustiva ou confirmação científica independente.
 
-```bash
-cat pipeline/qa_research/saida_documento_produtos_quimicos_v2/resumo.json
-cat pipeline/qa_research/saida_documento_produtos_quimicos_v2/progresso.json
-```
+## Arquivos entregues
 
-O limite cumulativo é 500 tentativas, incluindo reparos e falhas, com até três
-tentativas por pedido. Há no máximo três chamadas concorrentes. O código de saída
-é 0 para processamento concluído e 2 para interrupção/pendências. Verifique o
-`status` e os `recortes_pendentes` do resumo; conteúdo ausente não deve ser confundido
-com erro de chamada. As durações por etapa são medidas, sem atribuir todo o tempo
-fora da API ao índice.
-Os tempos por etapa somam as durações dos pedidos; chamadas concorrentes podem
-se sobrepor. `session_seconds` mede o tempo de parede da sessão de execução.
+| Arquivo | Uso |
+|---|---|
+| `documento.md` | Texto técnico para leitura e futura geração de QA |
+| `documento_auditado.md` | Mesmo texto, mantido para compatibilidade com o nome anterior |
+| `documento.json` | Somente título, capítulos, subtítulos e texto; sem referências/IDs/auditorias |
+| `rastreabilidade.json` | Origem de cada bloco, complementos, suporte e decisões de auditoria |
+| `cobertura.json`, `lacunas.json` | Cobertura e pendências internas |
+| `suporte.jsonl`, `evidencias_citadas.jsonl` | Passagens originais e intervalos utilizados |
+| `resumo.json`, `chamadas/`, `recortes/` | Estado da execução, prompts, versões e revisões |
 
-Para retomar, execute novamente o mesmo comando `run`, com a mesma saída. Pode
-adicionar `--max-calls 700` ou `--workers 2`; o orçamento anterior não é zerado.
-Pacote, modelo, parâmetros de conteúdo e código são vinculados por assinatura.
-Se eles mudarem, use outra pasta. A saída lexical antiga não é reutilizada como
-se tivesse sido gerada por este método. Falhas fatais de credenciais interrompem
-a rodada; após corrigir a credencial no servidor, retome o comando.
+Use `documento.md` ou `documento.json` como contexto da futura geração de QA.
+A rastreabilidade é um recurso auxiliar de verificação e não integra o texto didático.
 
-## Quando terminar: devolver os resultados pelo Git
+## Retornar os resultados pelo Git
 
-Espere o processo terminar. O coletor recusa copiar uma saída ainda em uso. Ele
-inclui documento, cobertura, suporte original, versões, prompts, respostas, erros,
-orçamento e manifesto com hashes. Exclui credenciais, bancos de cache e índices.
+Quando terminar, os comandos concretos serão impressos no terminal. Para a primeira
+coleta da v3, equivalem a:
 
 ```bash
 .venv-documento/bin/python -m pipeline.qa_research.document collect \
   --packet pipeline/qa_research/pacotes/produtos_quimicos_v2 \
-  --output pipeline/qa_research/saida_documento_produtos_quimicos_v2 \
-  --destination pipeline/qa_research/relatorios/produtos_quimicos_v2
-git add -- pipeline/qa_research/relatorios/produtos_quimicos_v2
-git commit -m "Resultados do documento Produtos quimicos v2"
+  --output pipeline/qa_research/saida_documento_produtos_quimicos_v3 \
+  --destination pipeline/qa_research/relatorios/produtos_quimicos_v3
+git add -- pipeline/qa_research/relatorios/produtos_quimicos_v3
+git commit -m "Resultados do documento Produtos quimicos - sintese v3"
 git push origin codex/qa-evidencias-verificadas
 ```
 
-O coletor também pode retornar resultados parciais após uma execução interrompida.
-Para uma segunda coleta, use outro destino, preservando o primeiro snapshot.
+O aviso usa o Python efetivamente executado. Se o destino de coleta já existir,
+sugere outro nome com sufixo de retomada. O coletor recusa uma saída ainda em uso,
+preserva hashes e exclui credenciais, índices e caches.
 
-**Aqui na máquina local**, na mesma branch:
+Aqui na máquina local:
 
 ```powershell
 git pull --ff-only origin codex/qa-evidencias-verificadas
 ```
 
-Abra `pipeline/qa_research/relatorios/produtos_quimicos_v2/documento_auditado.md`
-ou o notebook `documento_produtos_quimicos.ipynb`. O manifesto permite conferir
-se os arquivos devolvidos permanecem iguais aos coletados.
-
-## Próxima rodada local, se faltarem fontes
-
-A preparação usa pesos E5 em cache, revisão fixada; o modo offline não baixa
-modelos silenciosamente. Na primeira preparação de outra máquina, instale as
-dependências de `requirements-local.txt` e disponibilize os pesos com:
-
-```powershell
-python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small', revision='614241f622f53c4eeff9890bdc4f31cfecc418b3')"
-```
-
-Depois, somente aqui:
-
-```powershell
-python -m pipeline.qa_research.document prepare --profile pipeline/qa_research/configs/documento_produtos_quimicos.json --feedback pipeline/qa_research/relatorios/produtos_quimicos_v2/pedidos_busca.json --destination pipeline/qa_research/pacotes/produtos_quimicos_v3
-```
-
-Hashes dos originais, fronteira lexical e embeddings de candidatos ficam em
-`.local/document/`, reutilizados quando suas entradas não mudam. Pedidos novos
-mudam a triagem e podem exigir uma nova leitura local. Adicionar os bancos ausentes
-ao manifesto local melhora o alcance; o feedback sozinho não cria documentos que
-não existem aqui. Envie o novo pacote pelo Git e use outra saída no servidor.
-
-Os prompts completos estão em `document/prompts.py`; os de cada chamada ficam em
-`chamadas/`. O plano anterior de QA permanece disponível para desenvolvimento
-futuro, sem ser chamado pelo fluxo documental v2.
+O notebook `documento_produtos_quimicos.ipynb` inspeciona o pacote e apresenta o
+novo documento depois do retorno. A documentação da execução v2 e sua análise
+continuam em `docs/analise_run_lexical_2026_10_19/` como histórico.

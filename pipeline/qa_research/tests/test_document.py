@@ -1,5 +1,7 @@
 """Fluxo distribuído: modelos simulados, falhas reais de contrato e publicação."""
 import copy
+import contextlib
+import io
 import json
 import subprocess
 import sys
@@ -39,15 +41,21 @@ class SimulatedLLM:
                 for s in p["fontes"]], "concluir": False, "proximas_fontes": [],
                 "pedidos_busca": ["evidências adicionais para o ensaio"], "lacunas": ["Falta suporte para dosagem numérica."]}
         elif stage == "write":
-            cid = p["fontes"][0]["trechos"][0]["id"]
-            data = {"titulo": "Síntese delimitada", "blocos": [{"texto": "No ensaio descrito, o produto reduziu a espuma.", "trechos": [cid]},
-                {"texto": "No ensaio descrito, o tratamento dependeu da temperatura.", "trechos": [cid]}], "lacunas": []}
+            cid = p["fontes"][0]["trechos"][0]["id"] if p["fontes"] else None
+            ending = " A seleção do tratamento envolve " + p["recorte"]["foco"] + "."
+            data = {"titulo": "Síntese técnica", "blocos": [
+                {"subtitulo": "Controle da espuma", "texto": "O tratamento químico reduz a formação de espuma." + ending,
+                 "trechos": [cid] if cid else [], "base": "corpus" if cid else "conhecimento_tecnico", "complementos": [] if cid else ["Controle químico da espuma."]},
+                {"subtitulo": "Influência da temperatura", "texto": "A temperatura altera o desempenho do tratamento químico." + ending,
+                 "trechos": [cid] if cid else [], "base": "corpus" if cid else "conhecimento_tecnico", "complementos": [] if cid else ["Influência térmica no desempenho."]}], "lacunas": []}
         elif stage == "audit":
-            cid = p["fontes"][0]["trechos"][0]["id"]
+            cid = p["fontes"][0]["trechos"][0]["id"] if p["fontes"] else None
             reject = self.reject and p["bloco"]["id"].endswith("V01-B002")
             data = {"bloco": p["bloco"]["id"], **{f: not reject for f in C.FLAGS},
                 "parecer": "Revisar relação." if reject else "Suportado no contexto do ensaio.",
-                "suporte": [] if reject else [cid], "contraevidencia": [], "lacunas": []}
+                "suporte": [] if reject or p["bloco"]["base"] == "conhecimento_tecnico" else [cid], "contraevidencia": [], "lacunas": [],
+                "validacao_complementar": [{"indice": i, "justificativa": "O mecanismo respeita as condições físicas declaradas."}
+                    for i, _ in enumerate(p["bloco"]["complementos"], 1)]}
         elif stage == "gaps":
             data = {"resolucoes": [{"id": g["id"], "estado": "aberta", "parecer": "Não há valor quantitativo disponível.",
                 "blocos": [], "trechos": []} for g in p["lacunas"]]}
@@ -296,6 +304,12 @@ class DocumentTests(unittest.TestCase):
     def test_consolidation_removes_only_equivalence_with_same_conditions(self):
         class Duplicate(SimulatedLLM):
             def json(inner, system, user, **kwargs):
+                if kwargs["tag"] == "document_write":
+                    data = super(Duplicate, inner).json(system, user, **kwargs)
+                    for b in data["blocos"]:
+                        b["texto"] = b["texto"].split(" A seleção do tratamento envolve ")[0]
+                    kwargs["validate"](data)
+                    return data
                 if kwargs["tag"] == "document_dedup":
                     p = json.loads(user)
                     result = {"comparacoes": [{"a": r["a"]["id"], "b": r["b"]["id"], "equivalentes": True,
@@ -404,7 +418,7 @@ class DocumentTests(unittest.TestCase):
     def test_unsupported_pressure_and_small_numeric_value_are_rejected(self):
         for value in ("No ensaio, a pressão foi 200 bar.", "O pH medido foi 5."):
             block, review = self.review(value)
-            with self.assertRaisesRegex(ValueError, "Número"):
+            with self.assertRaisesRegex(ValueError, "Número|Valor/unidade"):
                 C.audit(review, block, self.packet, block["trechos"])
 
     def test_context_filter_rejects_unrelated_storage_and_compatibility(self):
@@ -455,6 +469,172 @@ class DocumentTests(unittest.TestCase):
         from pipeline.qa_research.document.prepare import bibliographic_catalog
         self.assertTrue(bibliographic_catalog("São emitidos por ano muitos resumos de patentes."))
         self.assertFalse(bibliographic_catalog("A revisão científica compara os resultados de ensaios de biocidas."))
+
+    def knowledge_case(self):
+        block = {"id": "B1", "subtitulo": "Contato do biocida", "texto": "A ação do biocida depende do contato com os microrganismos.",
+                 "base": "conhecimento_tecnico", "trechos": [], "complementos": ["Necessidade de contato entre agente e microrganismo."]}
+        review = {"bloco": "B1", **{f: True for f in C.FLAGS}, "parecer": "Explicação tecnicamente coerente.",
+                  "suporte": [], "contraevidencia": [], "lacunas": [],
+                  "validacao_complementar": [{"indice": 1, "justificativa": "O agente precisa alcançar a célula para exercer a ação biocida."}]}
+        return block, review
+
+    def test_public_documents_contain_only_technical_content(self):
+        self.execute()
+        doc = read_json(self.output / "documento.json")
+        self.assertEqual(set(doc), {"titulo", "capitulos"})
+        for c in doc["capitulos"]:
+            self.assertEqual(set(c), {"titulo", "grupo", "blocos"})
+            for b in c["blocos"]:
+                self.assertEqual(set(b), {"subtitulo", "texto"})
+        md = (self.output / "documento.md").read_text(encoding="utf-8")
+        self.assertEqual(md, (self.output / "documento_auditado.md").read_text(encoding="utf-8"))
+        for unwanted in ("Referências", "Lacunas", "<!--", "[1]", "Estado da execução", self.sources[0]["id"]):
+            self.assertNotIn(unwanted, md)
+        trace = read_json(self.output / "rastreabilidade.json")
+        self.assertTrue(trace["fontes"])
+        self.assertTrue(trace["capitulos"][0]["blocos"][0]["auditoria"])
+        collect(self.output, self.root / "clean_snapshot", self.path)
+        self.assertTrue((self.root / "clean_snapshot/rastreabilidade.json").exists())
+
+    def test_editorial_guard_rejects_report_prose_and_citations(self):
+        for phrase in ("O trecho informa a reação.", "O próprio trecho enquadra a aplicação.",
+                       "Nos ensaios relatados, houve reação.", "Também se afirma que o tratamento atua.",
+                       "O que foi mostrado permite concluir.", "Não há fonte específica de FPSO.",
+                       "O biocida atua [1].", "O biocida atua (Silva, 2020).", "Consultar https://example.com."):
+            block, _ = self.knowledge_case()
+            block.pop("id")
+            block["texto"] = phrase
+            with self.subTest(phrase=phrase), self.assertRaises(ValueError):
+                C.draft({"titulo": "Biocidas", "blocos": [block], "lacunas": []}, self.packet.citations, 4, 220, synthesis=True)
+
+    def test_knowledge_complement_can_be_approved_without_fake_corpus_support(self):
+        block, review = self.knowledge_case()
+        C.draft({"titulo": "Biocidas", "blocos": [{k: v for k, v in block.items() if k != "id"}], "lacunas": []}, [], 4, 220, synthesis=True)
+        C.audit(review, block, self.packet, [])
+        state = {"active_blocks": [block], "reviews": {block["id"]: {**review, "allowed_citations": [], "seal": C.seal(block, review, self.packet)}}}
+        self.assertEqual(len(C.approved(state, self.packet)), 1)
+        self.assertEqual(C.approved(state, self.packet)[0]["trechos"], [])
+
+    def test_every_complement_requires_explicit_independent_review(self):
+        block, review = self.knowledge_case()
+        block["complementos"].append("A composição do biofilme altera o acesso ao agente.")
+        with self.assertRaisesRegex(ValueError, "cada afirmação"):
+            C.audit(review, block, self.packet, [])
+        review["validacao_complementar"].append({"indice": 2, "justificativa": "A matriz do biofilme impõe uma barreira de transporte ao agente."})
+        C.audit(review, block, self.packet, [])
+
+    def test_model_knowledge_is_not_disguised_as_corpus_evidence(self):
+        block, review = self.knowledge_case()
+        review["suporte"] = list(self.packet.citations)[:1]
+        with self.assertRaisesRegex(ValueError, "atribuído ao corpus"):
+            C.audit(review, block, self.packet, self.packet.citations)
+        block["base"] = "corpus"
+        block.pop("id")
+        with self.assertRaisesRegex(ValueError, "complementos"):
+            C.draft({"titulo": "Biocidas", "blocos": [block], "lacunas": []}, self.packet.citations, 4, 220, synthesis=True)
+
+    def test_complement_cannot_invent_operational_dosage(self):
+        for quantity in ("50 ppm", "50ppmv", "20bar"):
+            block, review = self.knowledge_case()
+            block["texto"] = "O parâmetro indicado é " + quantity + "."
+            with self.subTest(quantity=quantity), self.assertRaisesRegex(ValueError, "Valor/unidade"):
+                C.audit(review, block, self.packet, [])
+
+    def test_editorial_problem_blocks_publication_even_with_true_flags(self):
+        block, review = self.knowledge_case()
+        block["texto"] = "O trecho relata que o biocida precisa de contato."
+        state = {"active_blocks": [block], "reviews": {block["id"]: {**review, "allowed_citations": [], "seal": C.seal(block, review, self.packet)}}}
+        self.assertEqual(C.approved(state, self.packet), [])
+
+    def test_conceptual_gap_can_be_resolved_by_approved_complement(self):
+        block, review = self.knowledge_case()
+        C.audit(review, block, self.packet, [])
+        C.gaps({"resolucoes": [{"id": "G", "estado": "resolvida", "parecer": "O mecanismo foi explicado.",
+            "blocos": [block["id"]], "trechos": []}]}, {"G"}, {block["id"]: block}, [])
+
+    def test_writer_can_teach_concepts_when_retrieved_sources_are_irrelevant(self):
+        class NoRelevant(SimulatedLLM):
+            def json(inner, system, user, **kwargs):
+                if kwargs["tag"] == "document_research":
+                    p = json.loads(user)
+                    result = {"avaliacoes": [{"id": s["id"], "pertinente": False, "tipo": "indeterminado", "achados": []} for s in p["fontes"]],
+                              "concluir": True, "proximas_fontes": [], "pedidos_busca": [], "lacunas": []}
+                    kwargs["validate"](result)
+                    return result
+                return super(NoRelevant, inner).json(system, user, **kwargs)
+        result = self.execute(NoRelevant())
+        self.assertEqual(result["status"], "concluido")
+        self.assertEqual(result["fontes_citadas"], 0)
+        self.assertEqual(result["origem_blocos"], {"conhecimento_tecnico": 4})
+
+    def test_research_reuse_does_not_reuse_previous_writing_or_audit(self):
+        self.execute()
+        target = self.root / "rewritten"
+        client = SimulatedLLM()
+        result = run(self.path, target, client=client, progress=lambda _: None, reuse=self.output)
+        self.assertEqual(result["status"], "concluido")
+        stages = {s for s, _ in client.calls}
+        self.assertNotIn("research", stages)
+        self.assertTrue({"write", "audit"} <= stages)
+        self.assertTrue(read_json(target / "pesquisa_reutilizada.json")["complete"])
+        fresh = read_json(target / "recortes" / (self.packet.facets[0]["id"] + ".json"))
+        self.assertEqual(len(fresh["versions"]), 1)
+        self.assertFalse(any(g["origem"].startswith("redacao_V02") for g in fresh["gap_history"]))
+
+    def test_research_reuse_resume_performs_no_new_calls(self):
+        self.execute()
+        target = self.root / "reuse_resume"
+        run(self.path, target, client=SimulatedLLM(), progress=lambda _: None, reuse=self.output)
+        client = SimulatedLLM(fail="write")
+        result = run(self.path, target, client=client, progress=lambda _: None, reuse=self.output)
+        self.assertEqual(result["status"], "concluido")
+        self.assertEqual(client.calls, [])
+
+    def test_research_reuse_rejects_mismatched_packet_before_model_calls(self):
+        self.execute()
+        identity = read_json(self.output / "identidade.json")
+        atomic_json(self.output / "identidade.json", {**identity, "packet": "other"})
+        client = SimulatedLLM()
+        with self.assertRaisesRegex(ValueError, "outro pacote"):
+            run(self.path, self.root / "mismatch", client=client, progress=lambda _: None, reuse=self.output)
+        self.assertEqual(client.calls, [])
+
+    def test_research_reuse_checks_snapshot_hashes_before_import(self):
+        self.execute()
+        snapshot = self.root / "old_snapshot"
+        collect(self.output, snapshot, self.path)
+        path = snapshot / "recortes" / (self.packet.facets[0]["id"] + ".json")
+        path.write_text(path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+        client = SimulatedLLM()
+        with self.assertRaisesRegex(ValueError, "Snapshot anterior alterado"):
+            run(self.path, self.root / "invalid_snapshot", client=client, progress=lambda _: None, reuse=snapshot)
+        self.assertEqual(client.calls, [])
+
+    def test_literal_duplicates_from_rewrite_are_removed_within_same_chapter(self):
+        self.execute(SimulatedLLM(reject=True))
+        trace = read_json(self.output / "rastreabilidade.json")
+        for chapter in trace["capitulos"]:
+            texts = [b["texto"] for b in chapter["blocos"]]
+            self.assertEqual(len(texts), len(set(texts)))
+        self.assertTrue(read_json(self.output / "consolidacao.json")["removed"])
+
+    def test_terminal_completion_prints_requested_message_and_push_commands(self):
+        from pipeline.qa_research.document.__main__ import main
+        with patch("pipeline.qa_research.document.runner.run", return_value={"status": "concluido"}), contextlib.redirect_stdout(io.StringIO()) as output:
+            code = main(["run", "--packet", str(self.path), "--output", str(self.output), "--results", str(self.root / "returned")])
+        self.assertEqual(code, 0)
+        printed = output.getvalue()
+        self.assertIn("O código acabou de rodar no terminal 🙂", printed)
+        for command in ("collect --packet", "git add --", "git commit -m", "git push origin codex/qa-evidencias-verificadas"):
+            self.assertIn(command, printed)
+
+    def test_terminal_completion_does_not_claim_success_on_failure(self):
+        from pipeline.qa_research.document.__main__ import main
+        with patch("pipeline.qa_research.document.runner.run", side_effect=RuntimeError("Erro simulado")), contextlib.redirect_stdout(io.StringIO()) as output:
+            with self.assertRaisesRegex(RuntimeError, "Erro simulado"):
+                main(["run", "--packet", str(self.path), "--output", str(self.output)])
+        self.assertIn("O código acabou de rodar no terminal", output.getvalue())
+        self.assertIn("Estado da execução: falha", output.getvalue())
 
 
 if __name__ == "__main__":

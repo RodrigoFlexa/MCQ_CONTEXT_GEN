@@ -65,7 +65,6 @@ def export_document(packet, output, states, consolidation, reserved, timings,
                                  "motivo": "Sem aprovação íntegra nos cinco critérios"})
     used_citations = list(dict.fromkeys(c for bs in kept.values() for b in bs for c in b["trechos"]))
     sources = list(dict.fromkeys(packet.citations[c]["fonte"] for c in used_citations))
-    refs = {sid: i for i, sid in enumerate(sources, 1)}
     calls = []
     log = output / "chamadas_llm.jsonl"
     malformed_logs = 0
@@ -79,11 +78,13 @@ def export_document(packet, output, states, consolidation, reserved, timings,
     consolidation_complete = consolidation.get("signature") == current_signature and consolidation.get("complete") is True
     pending_stages = [] if consolidation_complete else ["consolidacao"]
     summary = {"version": VERSION, "document_only": True,
+        "formato": "sintese_tecnica_autonoma",
         "status": "interrompido" if interruption else ("parcial_com_pendencias" if pending or pending_stages else "concluido"),
         "interrupcao": interruption, "packet_signature": packet.signature,
         "recortes": len(coverage), "recortes_pendentes": pending, "etapas_pendentes": pending_stages,
         "recortes_com_conteudo": sum(bool(kept[f["id"]]) or bool(r["consolidado_em"]) for f, r in zip(packet.facets, coverage)),
         "blocos_publicados": sum(len(bs) for bs in kept.values()), "fontes_citadas": len(sources),
+        "origem_blocos": dict(Counter(b.get("base", "corpus") for bs in kept.values() for b in bs)),
         "tentativas_reservadas": reserved, "tentativas_registradas": len(calls),
         "tentativas_sem_log": max(0, reserved - len(calls)), "linhas_log_invalidas": malformed_logs,
         "respostas_validas": sum(r.get("ok") is True for r in calls),
@@ -93,9 +94,16 @@ def export_document(packet, output, states, consolidation, reserved, timings,
         "tempos_sessao": timings, "session_seconds": session_seconds,
         "consolidacao_completa": consolidation_complete,
         "limites": packet.preparation["limitations"], "input_mode": packet.preparation["input_mode"]}
-    document = {"topic": packet.profile["topic"], "summary": summary, "capitulos": chapters,
-                "referencias": [{"numero": refs[sid], "fonte": packet.sources[sid]} for sid in sources]}
+    # Produto usado na geração de QA: apenas organização e conhecimento técnico.
+    document = {"titulo": packet.profile["topic"]["titulo"], "capitulos": [
+        {"titulo": c["titulo"], "grupo": c["grupo"], "blocos": [
+            {"subtitulo": b["subtitulo"], "texto": b["texto"]} for b in c["blocos"]]}
+        for c in chapters if c["blocos"]]}
     atomic_json(output / "documento.json", document)
+    # Proveniência, fontes e revisões ficam fora do documento de conhecimento.
+    atomic_json(output / "rastreabilidade.json", {"topic": packet.profile["topic"],
+        "summary": summary, "capitulos": chapters,
+        "fontes": [packet.sources[sid] for sid in sources]})
     atomic_json(output / "cobertura.json", coverage)
     atomic_json(output / "lacunas.json", ledger)
     atomic_json(output / "pedidos_busca.json", {"topic": packet.profile["topic"], "requests": requests})
@@ -103,39 +111,21 @@ def export_document(packet, output, states, consolidation, reserved, timings,
     atomic_json(output / "resumo.json", summary)
     write_jsonl(output / "evidencias_citadas.jsonl", (packet.sources[sid] for sid in sources))
     write_jsonl(output / "suporte.jsonl", packet.support(used_citations))
-    lines = ["# " + packet.profile["topic"]["titulo"], "", "Síntese documental baseada em passagens originais do corpus.", "",
-        f"Estado da execução: **{summary['status']}**. Blocos publicados: {summary['blocos_publicados']}.", "",
-        "A auditoria é automatizada por modelo e verificações de integridade; não substitui revisão técnica especializada.", "",
-        "## Alcance das fontes", "", *["- " + s for s in summary["limites"]], ""]
+    lines = ["# " + packet.profile["topic"]["titulo"], ""]
     group = None
     for chapter in chapters:
+        if not chapter["blocos"]:
+            continue
         if group != chapter["grupo"]:
             group = chapter["grupo"]
             lines.extend(["## " + group, ""])
         lines.extend(["### " + chapter["titulo"], ""])
         for block in chapter["blocos"]:
-            numbers = sorted({refs[packet.citations[c]["fonte"]] for c in block["trechos"]})
-            lines.extend([block["texto"] + " " + " ".join(f"[{n}]" for n in numbers), "",
-                          "<!-- bloco: " + block["id"] + " -->", ""])
-        if not chapter["blocos"]:
-            lines.extend(["Conteúdo consolidado nos blocos " + ", ".join(chapter["consolidado_em"]) + "." if chapter["consolidado_em"] else
-                          "Ainda não há conteúdo aprovado para publicação neste recorte.", ""])
-        current = [g for g in chapter["lacunas"] if g["estado"] in {"aberta", "parcial"}]
-        if current:
-            lines.extend(["**Lacunas atuais:**", "", *[f"- ({g['estado']}) {g['texto']} — {g['parecer']}" for g in current], ""])
-        unreviewed = [g for g in chapter["lacunas"] if g["estado"] == "nao_reavaliada"]
-        if unreviewed:
-            lines.extend(["**Pendências de reavaliação:**", "", *["- " + g["texto"] for g in unreviewed], ""])
-    lines.extend(["## Referências e procedência", ""])
-    for sid in sources:
-        s = packet.sources[sid]
-        known = s["qualidade"]["documento_identificado"]
-        lines.extend([f"[{refs[sid]}] {s.get('title') or 'Título não identificado'}. "
-            f"Coleção: {s.get('collection', 'indeterminada')}. "
-            f"Documento individual: {'identificado' if known else 'limite indeterminado no texto agregado'}. "
-            f"Página: {s.get('page_ini') if s.get('page_ini') is not None else 'não identificada'}. "
-            f"Fonte `{sid}`; chunk original `{s['chunk_id']}`.", ""])
-    (output / "documento_auditado.md").write_text("\n".join(lines), encoding="utf-8")
+            C.prose(block)  # Defesa final: nunca limpar silenciosamente uma afirmação.
+            lines.extend(["#### " + block["subtitulo"], "", block["texto"], ""])
+    body = "\n".join(lines)
+    (output / "documento.md").write_text(body, encoding="utf-8")
+    (output / "documento_auditado.md").write_text(body, encoding="utf-8")
     return summary
 
 
@@ -152,9 +142,9 @@ def collect(output, destination, packet_path):
         destination.parent.mkdir(parents=True, exist_ok=True)
         staging = Path(tempfile.mkdtemp(prefix=".results-", dir=destination.parent))
         try:
-            filenames = ("documento_auditado.md", "documento.json", "cobertura.json", "lacunas.json", "pedidos_busca.json",
+            filenames = ("documento.md", "documento_auditado.md", "documento.json", "rastreabilidade.json", "cobertura.json", "lacunas.json", "pedidos_busca.json",
                 "rejeicoes.json", "resumo.json", "evidencias_citadas.jsonl", "suporte.jsonl", "identidade.json",
-                "orcamento.json", "backend.json", "consolidacao.json", "progresso.json", "chamadas_llm.jsonl")
+                "orcamento.json", "backend.json", "consolidacao.json", "progresso.json", "chamadas_llm.jsonl", "pesquisa_reutilizada.json")
             for name in filenames:
                 src = output / name
                 if src.is_file() and not src.is_symlink():

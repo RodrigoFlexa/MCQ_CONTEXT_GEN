@@ -5,8 +5,22 @@ from pipeline.inventario.textutil import sha
 
 FLAGS = ("suportado", "condicoes_preservadas", "escopo_preservado", "estatuto_preservado", "fundamentacao_completa")
 TYPES = {"resultado_experimental", "explicacao_tecnica", "recomendacao", "opiniao", "norma", "indeterminado"}
-NUMBER_UNIT = re.compile(r"(?<![\w])\d+(?:[.,]\d+)?\s*(?:ppb|ppm|mg\s*/\s*l|g\s*/\s*l|mm\s*/\s*ano|%|°\s*c|kgf\s*/\s*cm2)(?!\w)", re.I)
-NUMBER = re.compile(r"(?<![\w.,])[+-]?\d+(?:[.,]\d+)*(?:[eE][+-]?\d+)?(?!\w|[.,]\d)")
+BASES = {"corpus", "conhecimento_tecnico", "mista"}
+META_PROSE = re.compile(
+    r"\b(?:o|os)\s+(?:pr[oó]prios?\s+)?(?:trechos?|excertos?|corpus)\b|"
+    r"\b(?:a|as)\s+fontes?\s+(?:afirma|relata|descreve|apresenta|informa|indica|sustenta|menciona|fornece|cita)|"
+    r"\b(?:o documento|o texto|o material)\s+(?:afirma|relata|descreve|apresenta|informa|indica|sustenta|menciona|fornece|cita)|"
+    r"\bn(?:o|os)\s+ensaios?\s+(?:relatados?|descritos?)\b|\btamb[eé]m se afirma\b|"
+    r"\bo que foi (?:mostrado|relatado)\b|\bneste recorte\b|\bn[aã]o h[aá] fonte\b|"
+    r"\b(?:faltam|aus[eê]ncia de)\s+(?:dados|fontes|evid[eê]ncias)\b|"
+    r"\b(?:bibliografia|refer[eê]ncias bibliogr[aá]ficas)\b|\bet\s+al\.", re.I)
+REFERENCE = re.compile(r"https?://|\bdoi\s*:|\bE[0-9a-f]{16}(?::\d+:\d+)?\b|"
+    r"\[\s*\d+(?:\s*[-,;]\s*\d+)*\s*\]|"
+    r"\([A-ZÀ-ÖØ-Ý][A-Za-zÀ-ÿ'’ &-]{1,80}[,\s]+(?:19|20)\d{2}[a-z]?\)|<!--", re.I)
+NUMBER_UNIT = re.compile(r"(?<![\w.,])[+-]?\d+(?:[.,]\d+)?\s*(?:ppbv?|ppmv?|mg\s*/\s*l|g\s*/\s*l|mm\s*/\s*ano|%|°\s*c|bar(?:g|a)?|psi(?:g|a)?|kpa|mpa|kgf\s*/\s*cm2)(?!\w)", re.I)
+# Unidades coladas (50ppmv) também são valores. Dígitos internos de fórmulas
+# como CO2/H2S continuam excluídos pelo limite à esquerda.
+NUMBER = re.compile(r"(?<![\w.,])[+-]?\d+(?:[.,]\d+)*(?:[eE][+-]?\d+)?(?!\d|[.,]\d)")
 
 
 def obj(value, keys):
@@ -71,19 +85,41 @@ def findings(data, packet, allowed_sources):
     return accepted, rejected
 
 
-def draft(data, citations, max_blocks, max_words):
+def prose(block):
+    """Barreira editorial complementar à revisão semântica; nunca remove frases."""
+    text(block.get("subtitulo"), 160)
+    if re.search(r"\b(?:lacunas|pend[eê]ncias|auditoria|refer[eê]ncias|bibliografia)\b", block["subtitulo"], re.I):
+        raise ValueError("O subtítulo deve organizar conhecimento técnico; pendências e referências ficam nos auxiliares")
+    body = block["subtitulo"] + "\n" + block["texto"]
+    match = META_PROSE.search(body) or REFERENCE.search(body)
+    if match:
+        raise ValueError("Escreva conhecimento técnico autônomo, sem referência/metadiscurso: " + match.group())
+    if re.search(r"\bAE[12]\b", body):
+        raise ValueError("Código de produto anônimo não define conhecimento independente")
+
+
+def draft(data, citations, max_blocks, max_words, synthesis=False):
     obj(data, {"titulo", "blocos", "lacunas"})
     text(data["titulo"], 300)
     if type(data["blocos"]) is not list or not 1 <= len(data["blocos"]) <= max_blocks:
         raise ValueError("Quantidade de blocos fora do limite")
     for block in data["blocos"]:
-        obj(block, {"texto", "trechos"})
+        obj(block, {"texto", "trechos", "subtitulo", "base", "complementos"} if synthesis else {"texto", "trechos"})
         text(block["texto"], 12000)
         if len(block["texto"].split()) > max_words:
             raise ValueError("Bloco excedeu limite de palavras; divida as relações")
         if PLACEHOLDER.search(block["texto"]):
             raise ValueError("O texto final não deve reproduzir valores apagados; explique a limitação em lacunas")
-        refs(block["trechos"], citations)
+        if synthesis:
+            prose(block)
+            if block["base"] not in BASES:
+                raise ValueError("Origem do conhecimento desconhecida")
+            strings(block["complementos"], 6)
+            if (block["base"] == "corpus") != (len(block["complementos"]) == 0):
+                raise ValueError("Identifique as afirmações complementares; corpus puro não tem complementos")
+            if block["base"] == "conhecimento_tecnico" and block["trechos"]:
+                raise ValueError("Conhecimento complementar puro não deve alegar suporte do corpus")
+        refs(block["trechos"], citations, minimum=int(not synthesis or block["base"] != "conhecimento_tecnico"))
     strings(data["lacunas"], 12)
 
 
@@ -92,14 +128,39 @@ def numeric_tokens(text):
 
 
 def audit(data, block, packet, allowed_citations):
-    obj(data, {"bloco", *FLAGS, "parecer", "suporte", "contraevidencia", "lacunas"})
+    synthesis = "base" in block
+    keys = {"bloco", *FLAGS, "parecer", "suporte", "contraevidencia", "lacunas"}
+    obj(data, keys | ({"validacao_complementar"} if synthesis else set()))
     if data["bloco"] != block["id"] or any(type(data[k]) is not bool for k in FLAGS):
         raise ValueError("Bloco ou flags de auditoria inválidos")
     text(data["parecer"], 2400)
-    refs(data["suporte"], allowed_citations, minimum=int(all(data[k] for k in FLAGS)))
+    accepted = all(data[k] for k in FLAGS)
+    refs(data["suporte"], allowed_citations, minimum=int(accepted and block.get("base") != "conhecimento_tecnico"))
     refs(data["contraevidencia"], allowed_citations, minimum=0)
     strings(data["lacunas"], 8)
-    if all(data[k] for k in FLAGS):
+    if synthesis:
+        if block["base"] not in BASES:
+            raise ValueError("Origem do bloco desconhecida")
+        if block["base"] == "conhecimento_tecnico" and data["suporte"]:
+            raise ValueError("Complemento puro não pode ser atribuído ao corpus")
+        validations = data["validacao_complementar"]
+        if type(validations) is not list:
+            raise ValueError("Lista de validações complementares esperada")
+        checked = set()
+        for row in validations:
+            obj(row, {"indice", "justificativa"})
+            index = row["indice"]
+            if type(index) is not int or not 1 <= index <= len(block["complementos"]) or index in checked:
+                raise ValueError("Índice complementar repetido ou desconhecido")
+            text(row["justificativa"], 1800)
+            if len(row["justificativa"].split()) < 4:
+                raise ValueError("Justifique tecnicamente a validação complementar")
+            checked.add(index)
+        if accepted and checked != set(range(1, len(block["complementos"]) + 1)):
+            raise ValueError("Valide cada afirmação complementar antes de aprovar")
+    if accepted:
+        if synthesis:
+            prose(block)
         quoted = " ".join(packet.quote(cid) for cid in data["suporte"])
         if not numeric_tokens(block["texto"]) <= numeric_tokens(quoted):
             raise ValueError("Valor/unidade do bloco não aparece no suporte auditado")
@@ -142,10 +203,11 @@ def gaps(data, entries, blocks, citations):
             raise ValueError("Lacuna repetida/desconhecida ou estado inválido")
         seen.add(row["id"])
         text(row["parecer"], 1400)
-        minimum = int(row["estado"] == "resolvida")
-        refs(row["blocos"], blocks, minimum=minimum)
-        refs(row["trechos"], citations, minimum=minimum)
-        if minimum and isinstance(blocks, dict):
+        resolved = row["estado"] == "resolvida"
+        refs(row["blocos"], blocks, minimum=int(resolved))
+        complementary = isinstance(blocks, dict) and any(blocks[b].get("base") in {"mista", "conhecimento_tecnico"} for b in row["blocos"])
+        refs(row["trechos"], citations, minimum=int(resolved and not complementary))
+        if resolved and isinstance(blocks, dict):
             related = {c for bid in row["blocos"] for c in blocks[bid]["trechos"]}
             if not set(row["trechos"]) <= related:
                 raise ValueError("Trecho de resolução não pertence ao suporte dos blocos indicados")
