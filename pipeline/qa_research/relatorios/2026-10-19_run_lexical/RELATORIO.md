@@ -1,6 +1,8 @@
-# Relatório parcial — run lexical (Produtos químicos, `qa_research`)
+# Relatório — run lexical (Produtos químicos, `qa_research`)
 
-Instantâneo de 2026-10-19 ~14:57 (-03). A run **ainda está em andamento**; nada aqui é resultado final.
+> **Atualização 2026-10-19 15:46:** a run encerrou às 15:08 sem erro (`interrupcao: null`). Resultado: **documento auditado com 9 capítulos publicados** ([documento_auditado.md](documento_auditado.md)); 16 recortes planejados — 6 `auditado_modelo`, 3 `parcial`, **7 `pendente_execucao` (não entram no documento)**. 105/500 chamadas usadas, 52 falhas de validação. QA ainda não gerada (etapa era só `pesquisa`); validação humana pendente; exaustividade não demonstrada. As seções abaixo são o instantâneo das ~14:57.
+
+Instantâneo de 2026-10-19 ~14:57 (-03), quando a run ainda estava em andamento.
 Tópico: *2.2. Produtos químicos — Produção e Processo*. Etapa: `--stage pesquisa` (gera o documento auditado; a QA vem depois).
 
 ## Configuração
@@ -17,7 +19,7 @@ Tópico: *2.2. Produtos químicos — Produção e Processo*. Etapa: `--stage pe
 | Concluídos parciais (`parcial`) | 2 (R311ca65, R32a4d85) |
 | Aguardando auditoria | 2 (R78dd379, Rac09fbe) |
 | Pendentes de pesquisa (`pendente_execucao`) | 5, mais 1 em andamento sem evidência |
-| Capítulos publicados no `resumo.json` | 0 (o resumo só é regravado ao final da run) |
+| Capítulos publicados no `resumo.json` | 0 no instantâneo (final: 9) |
 | Chamadas usadas | ~100 de 500 |
 
 Os recortes concluídos tratam, por exemplo, de: URS × risco de BaSO₄/CaCO₃; dessulfatação + desaeração reduzindo incrustação e processos aeróbios; desaeração por membranas × scavenger de O₂; dosagem de bissulfito × O₂ dissolvido, pH e corrosão; arranjo SRU → desaerador → dosagem pós-desaerador.
@@ -58,4 +60,4 @@ Mudança no config: `embedding_max_calls` 50.000 → 200.000 em `configs/produto
 
 ## Arquivos neste diretório
 `plano.json`, `eventos.jsonl`, `chamadas_llm.jsonl`, `orcamento.json`, `execucao.json`, `config.json`, `recortes/` (estado de cada recorte), `console_*.log`.
-O documento final (`documento_auditado.md`) ainda não existe; índices (29 GB) e vetores ficam fora do git.
+Também: `documento_auditado.md`, `documento.json`, `evidencias.jsonl`, `cobertura.json`, `resumo.json`, `relatorio.md`. índices (29 GB) e vetores ficam fora do git.
