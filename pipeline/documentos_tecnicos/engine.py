@@ -6,7 +6,7 @@ from pipeline.inventario.llm import BudgetExceeded
 from pipeline.inventario.textutil import atomic_json, norm, read_json, read_jsonl, sha
 from pipeline.qa_v11.contracts import evidence
 from . import contracts as C, prompts as P
-from .profiles import annotate
+from .profiles import source_context
 
 
 class ScopeExceeded(BudgetExceeded):
@@ -73,7 +73,7 @@ class Engine:
                 if chunk['chunk_id'] in known or digest in known:
                     continue
                 next_id += 1
-                source = annotate(evidence(chunk, f'E{next_id}'))
+                source = evidence(chunk, f'E{next_id}')
                 state['evidencias'].append(source)
                 known.update((source['chunk_id'], source['texto_sha256']))
                 trace['incluidos'].append(source['id'])
@@ -103,18 +103,40 @@ class Engine:
             save()
             return state
 
-        def payload():
-            return {'pauta': brief, 'orientacao': state.get('orientacao', ''),
-                    'fontes_originais': state['evidencias'],
-                    'buscas_realizadas': state['consultas_realizadas'],
-                    'documento': state.get('documento'),
-                    'parecer': state['revisoes'][-1] if state['revisoes'] else None,
-                    'pedido_refinador': state.get('pedidos_refinador', [None])[-1],
-                    'cobertura_anterior': previous,
-                    'limites_restantes': {
-                        'rodadas_pesquisa': self.args.max_pesquisas - state['rodadas_pesquisa'],
-                        'fontes': self.args.max_fontes - len(state['evidencias']),
-                        'refinamentos': self.args.max_refinamentos - state['refinamentos']}}
+        def payload(stage):
+            # O histórico completo permanece no checkpoint; cada papel recebe sua tarefa atual.
+            data = {'pauta': {k: brief[k] for k in ('topico', 'subtopico', 'assunto')},
+                    **source_context(state['evidencias'])}
+            review = state['revisoes'][-1] if state['revisoes'] else None
+            review = {k: review[k] for k in ('decisao', 'parecer', 'consultas')} if review else None
+            if stage == 'pesquisa':
+                data.update(
+                    orientacao=state.get('orientacao', ''),
+                    consultas_sugeridas={k: brief.get(k) for k in ('consulta_pt', 'consulta_en', 'termos')},
+                    buscas_realizadas=state['consultas_realizadas'],
+                    parecer=review,
+                    pedido_refinador=state.get('pedidos_refinador', [None])[-1],
+                    cobertura_anterior=previous,
+                    limites_restantes={
+                        'rodadas_pesquisa': max(0, self.args.max_pesquisas - state['rodadas_pesquisa']),
+                        'fontes': max(0, self.args.max_fontes - len(state['evidencias']))})
+            elif stage == 'redacao':
+                data.update(orientacao=state.get('orientacao', ''), cobertura_anterior=previous)
+            elif stage == 'revisao':
+                data.update(documento=state['documento'], parecer_anterior=review,
+                            limites_restantes={
+                                'rodadas_pesquisa': max(0, self.args.max_pesquisas - state['rodadas_pesquisa']),
+                                'fontes': max(0, self.args.max_fontes - len(state['evidencias']))})
+            elif stage == 'refino':
+                data.update(documento=state['documento'], parecer=review,
+                            orientacao=state.get('orientacao', ''),
+                            pedido_refinador=state.get('pedidos_refinador', [None])[-1],
+                            limites_restantes={
+                                'rodadas_pesquisa': max(0, self.args.max_pesquisas - state['rodadas_pesquisa']),
+                                'fontes': max(0, self.args.max_fontes - len(state['evidencias']))})
+            else:
+                raise ValueError(f'Papel de documento desconhecido: {stage}')
+            return data
 
         save()
         while True:
@@ -125,7 +147,7 @@ class Engine:
                 if at_limit and not state['evidencias']:
                     return finish('insuficiente', 'Pesquisa sem fontes úteis disponíveis')
                 # Mesmo após a última busca, o pesquisador examina os achados antes de redigir.
-                action = self.call('pesquisador', P.PESQUISAR, payload(), 'doc_pesquisa',
+                action = self.call('pesquisador', P.PESQUISAR, payload(stage), 'doc_pesquisa',
                                    brief['id'] + ':pesquisa', C.research, 6000)
                 state['investigacao'].append(action)
                 state['orientacao'] = action['orientacao']
@@ -149,7 +171,7 @@ class Engine:
                 role = 'pesquisador' if stage == 'redacao' else 'refinador'
                 prompt = P.REDIGIR if stage == 'redacao' else P.REFINAR
                 validator = C.document if stage == 'redacao' else C.refinement
-                doc = self.call(role, prompt, payload(), 'doc_' + stage, brief['id'] + ':' + stage,
+                doc = self.call(role, prompt, payload(stage), 'doc_' + stage, brief['id'] + ':' + stage,
                                 lambda d: validator(d, state['evidencias']), 14000)
                 if stage == 'refino' and doc.get('acao') == 'pesquisar':
                     state.setdefault('pedidos_refinador', []).append(doc)
@@ -169,7 +191,7 @@ class Engine:
                 state['etapa'] = 'revisao'
                 save()
             elif stage == 'revisao':
-                review = self.call('revisor', P.REVISAR, payload(), 'doc_revisao',
+                review = self.call('revisor', P.REVISAR, payload(stage), 'doc_revisao',
                                    brief['id'] + ':revisao', C.review, 10000)
                 state['revisoes'].append({**review, 'versao': len(state['versoes']) - 1,
                                           'fontes_disponiveis': [e['id'] for e in state['evidencias']]})

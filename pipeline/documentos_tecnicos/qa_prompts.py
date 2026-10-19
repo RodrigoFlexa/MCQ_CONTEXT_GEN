@@ -1,99 +1,164 @@
-"""QA sobre capítulos revisados, com critérios pedagógicos em prosa e saídas pequenas."""
+"""Prompts de QA, resolução independente, revisão e diversidade."""
 from .prompts import BASE
 
-QUALITY = """
-Avalie conhecimento profissional do domínio de óleo e gás, no recorte indicado.
-A pessoa verá SOMENTE a pergunta. O capítulo e as fontes são material do autor/revisor.
-Não exija conhecer documento, arranjo local, etiquetas de equipamento ou lista de autor.
-Se fornecer dados de cenário, ainda deve ser necessário conhecimento técnico além deles.
-Evite finalidade vaga, opinião como fato, várias tarefas desconexas ou conclusão já dada
-no enunciado. Delimite a relação técnica sem tornar a pergunta artificial ou repetitiva.
-Muitas redações e raciocínios equivalentes são aceitáveis. Conclusões essenciais incompatíveis
-exigem condições para distinguir qual vale; não escolha arbitrariamente uma resposta.
-Diagnóstico único precisa de sinais discriminantes; decisão precisa de critério e condições.
-Não force integração nem níveis de dificuldade sem material. Conhecimento condicional é válido.
-Não promova recomendação a obrigação nem inclua norma/valor sem referência aplicável.
-O capítulo revisado ainda pode conter erro: confira as fontes originais. A fonte do exemplo
-de estilo não sustenta fatos do novo item. Concordância entre modelos não prova correção.
-"""
+GENERATE = BASE + """
+# Tarefa
+Crie uma pergunta aberta que avalie uma relação técnica específica ensinada no capítulo
+e ainda não coberta pelos itens aprovados.
 
-QUESTION_SCHEMA = """
-Retorne somente o objeto JSON completo:
-{"status":"ok","pergunta":"pergunta autônoma","resposta":"gabarito técnico",
-"explicacao":"justificativa técnica","competencia":"relação técnica específica avaliada",
+# Desenho da pergunta
+O respondente verá somente o enunciado. Forneça as condições necessárias para responder
+sem conhecer a publicação ou uma instalação particular. Preserve uma exigência real de
+conhecimento profissional além dos dados apresentados. Escolha uma forma adequada à
+competência: explicação, aplicação, comparação ou decisão justificada, por exemplo.
+
+Defina uma resposta e critérios que aceitem explicações tecnicamente equivalentes.
+Se conclusões essenciais incompatíveis forem possíveis, delimite as condições que as
+distinguem. Use as fontes originais para fundamentar o gabarito. Os exemplos orientam
+a apresentação. Cenários hipotéticos devem ter premissas explícitas e consequências
+tecnicamente sustentadas.
+
+# Saída
+Retorne somente JSON:
+{"status":"ok","pergunta":"enunciado autônomo","resposta":"gabarito técnico",
+"explicacao":"justificativa técnica","competencia":"relação técnica avaliada",
 "rubrica":["critério semântico de correção"],"fontes":["E1"]}
-Todos os textos são não vazios; rubrica é lista não vazia de textos. fontes é lista não
-vazia dos IDs recebidos que realmente sustentam o gabarito. Não inclua IDs na pergunta
-ou resposta. Respostas equivalentes são aceitas; a rubrica não é lista incidental do autor.
-Se falta material para um item válido, retorne {"status":"insuficiente","motivo":"lacuna concreta"}.
-Não inclua metadados de execução, julgamentos ou afirmação de aprovação.
+Os textos são não vazios. rubrica é lista não vazia de textos. fontes é lista não vazia
+de IDs recebidos que sustentam o gabarito. Mantenha os IDs somente nos metadados, fora
+da pergunta e da resposta. Se faltar material para um item válido, retorne:
+{"status":"insuficiente","motivo":"lacuna concreta"}
 """
 
-GENERATE = BASE + QUALITY + """
-Crie UMA questão aberta a partir do capítulo técnico revisado e das fontes.
-Escolha uma competência ainda não coberta pelos itens anteriores, com núcleo corrigível.
-Use exemplos próprios/externos apenas para qualidade de apresentação. Não copie fatos,
-cenário ou gabarito. Pode usar cenário hipotético explicitado, com consequências sustentadas.
-""" + QUESTION_SCHEMA
+NUCLEUS = BASE + """
+# Tarefa
+Resolva a pergunta a partir do capítulo e dos trechos originais, sem acesso ao gabarito
+do autor.
 
-NUCLEUS = BASE + QUALITY + """
-Você não recebe o gabarito do autor. Resolva a pergunta com o capítulo e os trechos originais.
-Explique o núcleo esperado, condições faltantes, alternativas legítimas e limites de suporte.
-Se não há evidência suficiente, explicite a lacuna. Não tente adivinhar a intenção do autor.
-Retorne somente JSON {"resposta":"resolução técnica independente com ressalvas necessárias"}.
+# Resposta esperada
+Apresente uma solução técnica justificada, com as condições necessárias e alternativas
+legítimas. Quando as fontes não bastarem ou o enunciado permitir conclusões incompatíveis,
+identifique a informação que falta. A intenção presumida do autor não resolve essa lacuna.
+
+# Saída
+Retorne somente JSON:
+{"resposta":"solução técnica e eventuais condições ou informações faltantes"}
+resposta é texto não vazio.
 """
 
-JUDGE = BASE + QUALITY + """
-Você é o juiz técnico e pedagógico. Examine pergunta, resposta, rubrica e explicação contra
-as fontes originais, não só contra o capítulo ou a lista de referências escolhida pelo autor.
-Examine também a resolução feita sem acesso ao gabarito; ela pode conter erro.
-Seu parecer deve sustentar a decisão com defeitos concretos ou justificativa concreta de
-validade. Confira cobertura das afirmações substantivas, correção técnica, autonomia,
-conhecimento exigido além da premissa e condições de uma correção justa. Não use nota global.
-Falta de apoio para o núcleo exige pesquisar ou rejeitar; problemas de redação/gabarito
-corrigíveis exigem refinar. Não aprove afirmação duvidosa só porque o autor a escreveu.
-Retorne somente JSON completo:
-{"decisao":"aprovar","parecer":"justificativa concreta da decisão","consultas":[]}
-decisao aceita aprovar, refinar, pesquisar ou rejeitar. parecer é texto não vazio;
-consultas é lista de até 3 textos; pesquisar exige ao menos uma consulta. Nos demais, use [].
+JUDGE = BASE + """
+# Tarefa
+Decida se a questão permite avaliar a competência indicada com correção técnica e
+critérios de resposta justos.
+
+# Verificação
+Confira o gabarito e a explicação contra as fontes originais, inclusive condições e
+alcance das afirmações. Examine se a pergunta é suficiente por si só e exige conhecimento
+do domínio além das informações que já entrega.
+
+Aceite paráfrases e raciocínios equivalentes. Se outra conclusão essencial incompatível
+também for defensável, indique a condição que falta. Compare com a resolução independente,
+tratando tanto ela quanto o gabarito como respostas a verificar.
+
+# Decisão
+- aprovar: a questão está sustentada e permite correção adequada.
+- refinar: o material permite corrigir pergunta, gabarito, explicação ou rubrica.
+- pesquisar: falta evidência necessária para decidir ou sustentar o núcleo.
+- rejeitar: há defeito central que impede o uso da candidata no recorte pretendido.
+
+# Parecer e saída
+Justifique a decisão com passagens e fundamentos concretos. Ao solicitar uma alteração,
+explique o problema e o resultado necessário. Preferências estilísticas não devem,
+sozinhas, impedir aprovação.
+Retorne somente JSON:
+{"decisao":"aprovar","parecer":"justificativa concreta","consultas":[]}
+parecer é texto não vazio. consultas é lista de até três textos; pesquisar exige ao
+menos uma consulta. Nos demais casos, use [].
 """
 
-REFINE = BASE + QUALITY + """
-Corrija pergunta, resposta, explicação e rubrica de forma coerente segundo o parecer.
-Pode corrigir o gabarito. Não altere condições para esconder um erro nem acrescente regra
-técnica sem apoio. Preserve a competência quando viável. Se o problema central é
-irremediável com o material, retorne insuficiente. Toda revisão será julgada novamente.
-""" + QUESTION_SCHEMA + """
-Se uma busca complementar puder resolver a lacuna, pode retornar em vez da questão:
-{"status":"pesquisar","motivo":"informação técnica que falta","consultas":["consulta"]}.
-motivo é texto não vazio; consultas é lista de 1 a 3 textos. Não inclua pergunta/gabarito
-nesse objeto de pedido. Haverá no máximo uma busca complementar por candidata.
+REFINE = BASE + """
+# Tarefa
+Corrija a candidata segundo o parecer, mantendo coerência entre pergunta, resposta,
+explicação e rubrica. Preserve a competência quando isso for viável.
+
+# Correção
+Resolva os defeitos de conteúdo e as condições ausentes. O gabarito pode ser corrigido.
+Use as evidências para justificar as mudanças. Se faltar informação decisiva, solicite
+pesquisa; se o material não permitir uma candidata válida, declare insuficiência.
+A nova versão será avaliada novamente.
+
+# Entrega
+Para uma correção completa, retorne somente JSON:
+{"status":"ok","pergunta":"enunciado corrigido","resposta":"gabarito corrigido",
+"explicacao":"justificativa técnica","competencia":"relação técnica avaliada",
+"rubrica":["critério semântico de correção"],"fontes":["E1"]}
+Os textos são não vazios. rubrica é lista não vazia de textos. fontes é lista não vazia
+de IDs recebidos que sustentam o gabarito. Mantenha os IDs fora da pergunta e da resposta.
+Se precisar de pesquisa, retorne:
+{"status":"pesquisar","motivo":"informação decisiva que falta","consultas":["consulta"]}
+motivo é texto não vazio e consultas é lista de um a três textos.
+Se não houver correção viável com o material, retorne:
+{"status":"insuficiente","motivo":"impedimento concreto"}
 """
 
 BLIND = BASE + """
-Você recebe exclusivamente a pergunta. Responda com conhecimento profissional, sem adivinhar
-o autor. Se falta condição decisiva, explique e apresente interpretações plausíveis.
-Separe núcleo, hipótese e detalhe opcional. Não invente referência ou precisão.
-Retorne somente JSON {"resposta":"resposta técnica e eventuais condições faltantes"}.
+# Tarefa
+Responda à pergunta com seu conhecimento profissional do domínio.
+
+# Resposta esperada
+Apresente o núcleo da resposta e as condições relevantes. Se faltar informação decisiva,
+explique o que falta e quais interpretações permanecem possíveis. Diferencie conclusão,
+hipótese e detalhe opcional.
+
+# Saída
+Retorne somente JSON:
+{"resposta":"resposta técnica e eventuais condições faltantes"}
+resposta é texto não vazio.
 """
 
-ADJUDICATE = BASE + QUALITY + """
-Adjudique a resposta do autor e a resposta cega contra a pergunta, rubrica e fontes.
-Nem concordância prova validade nem divergência prova defeito. Paráfrase, detalhe opcional
-e alternativa equivalente não são ambiguidade. Identifique núcleo incompatível igualmente
-defensável, erro de referência ou erro do respondente. Não favoreça o autor.
-Retorne somente JSON completo:
-{"veredito":"equivalentes","parecer":"justificativa com fundamento técnico"}
-veredito aceita equivalentes, parcial_sem_contradicao, erro_respondente, ambiguidade_item,
-erro_referencia ou indeterminado. parecer é texto não vazio. Indeterminado não aprova.
+ADJUDICATE = BASE + """
+# Tarefa
+Determine o significado das concordâncias e divergências entre a resposta do autor e
+a resposta cega, usando a pergunta, a rubrica e as fontes.
+
+# Comparação
+Avalie as duas respostas pelas mesmas evidências. Concordância não comprova correção;
+divergência pode resultar de paráfrase, detalhe opcional, erro de uma resposta ou condição
+ausente no enunciado. Identifique a diferença que importa para a competência avaliada.
+
+# Veredito
+- equivalentes: as respostas apresentam o mesmo núcleo correto.
+- parcial_sem_contradicao: uma resposta é parcial, sem incompatibilidade essencial.
+- erro_respondente: a resposta cega contém erro e a referência continua sustentada.
+- ambiguidade_item: conclusões essenciais incompatíveis são defensáveis no enunciado.
+- erro_referencia: o gabarito ou a rubrica precisam de correção.
+- indeterminado: as informações disponíveis não permitem decidir.
+
+# Saída
+Retorne somente JSON:
+{"veredito":"equivalentes","parecer":"fundamento técnico da classificação"}
+parecer é texto não vazio. Use uma das seis classificações definidas acima.
 """
 
 NOVELTY = BASE + """
-Compare a questão nova com TODOS os itens anteriores fornecidos. Compare competência,
-condições decisivas, relação técnica e núcleo da resposta/rubrica. Trocar nomes/cenário
-não cria novidade; mesmo equipamento pode sustentar competências distintas.
-Retorne somente JSON {"comparacoes":[{"id":"ID recebido","classe":"distinta",
-"parecer":"o que se repete ou acrescenta"}]}.
-Inclua exatamente uma linha por ID anterior. classe aceita redundante, sobreposicao ou
-distinta. parecer é texto não vazio. Sobreposição parcial não exige descarte automático.
+# Tarefa
+Determine se a nova questão acrescenta conhecimento avaliado em relação a cada item
+anterior fornecido.
+
+# Comparação
+Compare a relação técnica, as condições decisivas e o núcleo da resposta e da rubrica.
+Mudanças de nomes ou cenário não bastam para criar novidade. Questões sobre o mesmo
+equipamento podem avaliar competências diferentes.
+
+# Classificação
+- redundante: repete essencialmente a competência e o núcleo de resposta.
+- sobreposicao: compartilha parte do conteúdo e acrescenta uma exigência relevante.
+- distinta: avalia outra relação ou competência técnica.
+
+# Saída
+Retorne somente JSON:
+{"comparacoes":[{"id":"id_anterior","classe":"distinta",
+"parecer":"conteúdo repetido ou acrescentado"}]}
+Inclua exatamente uma comparação por ID anterior recebido. classe deve usar uma das
+três classificações acima e parecer deve ser texto não vazio. Sem itens anteriores,
+a lista pode ser vazia.
 """

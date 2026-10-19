@@ -11,8 +11,8 @@ MODE="${1:-completo}"
 case "$MODE" in plan|documentos|completo) ;;
   *) echo "Modo: plan, documentos ou completo" >&2; exit 2 ;;
 esac
-TOPIC="${DOCS_TOPICO:-Operação de Tanques de Carga}"
-OUT="${DOCS_SAIDA:-pipeline/documentos_tecnicos/saida_tanques_10}"
+TOPIC="${DOCS_TOPICO:-Operação de tanques de carga e lastro}"
+OUT="${DOCS_SAIDA:-pipeline/documentos_tecnicos/saida_tanques_10_prompts_v2}"
 ETAPA="$MODE"
 if [[ "$MODE" == plan ]]; then ETAPA="${DOCS_ETAPA_PLANO:-completo}"; fi
 COMMON=(--saida "$OUT" --topico "$TOPIC" --etapa "$ETAPA" --provider azure

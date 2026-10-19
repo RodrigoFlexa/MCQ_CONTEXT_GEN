@@ -6,12 +6,14 @@ Conforme a atualização do pedido, o modo `completo` produz documentos e tenta 
 
 Esta implementação foi preparada **sem executar testes, plano, geração ou chamadas a modelos localmente**, por orientação do usuário. Os comandos abaixo são para o servidor; ainda não há resultados deste fluxo.
 
+A versão **`pesquisa-documentos-2`** incorpora os [prompts completos revisados](../../docs/pesquisa_prompts_2026_10_18/prompts_completos_revisados.md). Cada chamada recebe a tarefa e o contexto de seu papel, com os perfis de corpus apresentados uma vez por coleção. O revisor confere as conclusões importantes contra os trechos originais e distingue impedimentos materiais de preferências de estilo. O histórico completo permanece nos checkpoints. Essa revisão ainda precisa ser avaliada pelas saídas do servidor.
+
 ## O que foi simplificado
 
 - Os agentes trabalham com trechos originais e prosa, sem grafo de afirmações, etiquetas por frase ou nove campos do juiz.
 - Contratos pequenos: pesquisador devolve ação/orientação/consultas; redator e refinador devolvem título/texto/fontes; revisor e juiz devolvem decisão/parecer/consultas. Os formatos completos estão nos prompts.
-- O pesquisador escolhe novas consultas a partir do que encontrou. Pedidos de evidência do revisor ou refinador retornam à pesquisa, dentro do orçamento. O refinador pode devolver um pedido curto de pesquisa em vez de inventar a correção. Conhecimento paramétrico pode explicar e propor relações; contribuições técnicas são examinadas pelo revisor.
-- O prompt comum recebe instruções por corpus (REGIS, Petrolês, ANP, HSE, BSEE). O gênero e o conteúdo prevalecem sobre o nome da coleção. Fontes continuam podendo estar erradas.
+- O pesquisador escolhe novas consultas a partir do que encontrou. Pedidos de evidência do revisor ou refinador retornam à pesquisa, dentro do orçamento. O refinador pode devolver um pedido curto de pesquisa em vez de inventar a correção. O redator pode usar seus conhecimentos para esclarecer conceitos e conectar ideias; as conclusões técnicas importantes precisam de fundamento e são examinadas pelo revisor.
+- Chamadas com fontes recebem orientações de leitura por corpus (REGIS, Petrolês, ANP, HSE, BSEE), uma vez por coleção presente. O gênero e o conteúdo prevalecem sobre o nome da coleção. Fontes continuam podendo estar erradas.
 - As pautas vêm de `assuntos.json`, com recorte escolhido pelo pesquisador. Não importamos as antigas notas/objetivos ou suas aprovações como verdade. As dez primeiras pautas não genéricas são usadas no piloto; amplie a quantidade para maior cobertura.
 - A organização do capítulo é livre. Opinião isolada, detalhes incidentais de instalação e generalidade vazia não devem sustentar suas conclusões. Conhecimento condicional, fundamentos e exemplos didáticos são permitidos.
 - A recuperação BM25, o índice com contexto vizinho, o cliente Azure e o banco curado de exemplos são reaproveitados. Não foi adicionado framework de agentes, OCR, GPU ou busca web automática.
@@ -47,21 +49,26 @@ git fetch origin
 git switch codex/qa-evidencias-verificadas
 git pull --ff-only origin codex/qa-evidencias-verificadas
 
-# Se precisar preparar as dependências, use o Python do ambiente já configurado:
-python -m pip install -r pipeline/inventario/requirements_azure.txt
+# Um tópico, dez pautas de documentos e meta de dez questões aprovadas.
+# A pasta nova separa esta versão dos experimentos anteriores.
+export DOCS_TOPICO="Operação de tanques de carga e lastro"
+export DOCS_QUANTIDADE=10
+export DOCS_QUESTOES=10
+export DOCS_SAIDA="pipeline/documentos_tecnicos/saida_tanques_10_prompts_v2"
 
 # Só mostra as pautas e os limites; sem API, indexação ou download.
+# Opcional; não inicia a geração.
 bash pipeline/documentos_tecnicos/run_azure.sh plan
 
 # Dez pautas de documentos de tanques e meta de dez questões aprovadas.
 nohup bash pipeline/documentos_tecnicos/run_azure.sh completo \
-  > pipeline/documentos_tecnicos/console_tanques_10.log 2>&1 &
+  > pipeline/documentos_tecnicos/console_tanques_10_prompts_v2.log 2>&1 &
 
 echo "PID: $!"
-tail -F pipeline/documentos_tecnicos/console_tanques_10.log
+tail -F pipeline/documentos_tecnicos/console_tanques_10_prompts_v2.log
 ```
 
-O script prefere `venv/bin/python`; configure `DOCS_PYTHON` se seu ambiente tiver outro caminho. Os exemplos externos são baixados e filtrados somente se o arquivo v11 ainda não existir, no modo completo. Não há download no modo `plan` ou `documentos`.
+O script prefere `venv/bin/python`; configure `DOCS_PYTHON` se seu ambiente tiver outro caminho. Use as dependências e a configuração Azure que já funcionavam no servidor; não foram adicionadas dependências. Os exemplos externos são baixados e filtrados somente se o arquivo v11 ainda não existir, no modo completo. Não há download no modo `plan` ou `documentos`.
 
 Para somente documentos, use **outra saída**:
 
@@ -101,7 +108,7 @@ Código de saída `0`: ambas as metas atingidas sem interrupção; `2`: saída i
 
 ## Arquivos de resultado
 
-Em `pipeline/documentos_tecnicos/saida_tanques_10/`:
+Em `pipeline/documentos_tecnicos/saida_tanques_10_prompts_v2/`:
 
 - `documentos.md` e `leitura/*.md`: índice e capítulos para ler, com estado, referências e pendências.
 - `documentos/*.json`: fontes originais, consultas, orientações do pesquisador, rascunhos, revisões e estado.
@@ -120,7 +127,7 @@ As referências externas são exemplos de formato, nunca fontes factuais das que
 Quando terminar, inclusive se a saída estiver incompleta:
 
 ```bash
-git add pipeline/documentos_tecnicos/saida_tanques_10
+git add pipeline/documentos_tecnicos/saida_tanques_10_prompts_v2
 git commit -m "results: pesquisa de documentos e QA de tanques"
 git push origin codex/qa-evidencias-verificadas
 ```

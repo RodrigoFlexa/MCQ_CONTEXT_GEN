@@ -1,25 +1,32 @@
-"""Perfis guiam a leitura; não certificam uma coleção nem bloqueiam gêneros por nome."""
+"""Orientações de leitura apresentadas uma vez por coleção em cada chamada."""
 
 PROFILES = {
-    'regis': 'REGIS: coleção de recuperação de informação. Diferencie explicação técnica, entrevista, '
-             'opinião, hipótese e resultado experimental. Depoimento de especialista não é consenso. '
-             'Verifique fundamento e condições. Não confunda relevância de busca com verdade.',
-    'petroles': 'Petrolês: pode conter números mascarados e publicações concatenadas sem fronteiras '
-                'confiáveis. Não reconstrua valores, equações, autoria ou continuidade entre documentos. '
-                'Use apenas relações compreensíveis e sustentadas pelo texto disponível.',
-    'anp': 'ANP: diferencie descrição de instalação, depoimento, conclusão de investigação, '
-           'recomendação e requisito normativo. Evento observado não prova mecanismo universal. '
-           'Identifique escopo e versão antes de formular obrigação.',
-    'hse': 'HSE: identifique se o documento é orientação, guia de inspeção ou referência regulatória. '
-           'Contexto britânico não constitui automaticamente obrigação brasileira. Um princípio '
-           'de engenharia pode ser transferível se as condições técnicas forem compatíveis.',
-    'bsee': 'BSEE: diferencie incidente, recomendação preventiva e requisito dos EUA. Preserve '
-            'condições do sistema/atividade. Não trate ocorrência isolada como frequência geral '
-            'nem recomendação como norma brasileira.',
+    'regis': """Examine o gênero e a fundamentação de cada passagem. Diferencie explicação técnica,
+resultado de estudo, hipótese e opinião. Uma entrevista pode conter conhecimento útil;
+um depoimento isolado não estabelece consenso nem regra geral.""",
+    'petroles': """Considere as limitações da extração: podem existir números mascarados, referências
+ausentes e publicações concatenadas sem fronteiras confiáveis. Use as informações
+que permanecem compreensíveis, preservando lacunas de valores, autoria e continuidade.""",
+    'anp': """Diferencie descrição de instalação, depoimento, conclusão de investigação, recomendação
+e requisito. Preserve o alcance do caso e a condição das conclusões. Obrigações exigem
+referência, escopo e versão aplicáveis.""",
+    'hse': """Identifique se o material é orientação técnica, guia de inspeção ou referência regulatória.
+Examine as condições de aplicação dos princípios de engenharia. Mantenha explícito
+quando uma exigência depende do contexto britânico.""",
+    'bsee': """Diferencie ocorrência relatada, recomendação preventiva e requisito. Preserve o sistema,
+a atividade e as condições descritas. Mantenha explícito quando uma exigência depende
+do contexto regulatório dos Estados Unidos.""",
 }
 
 
-def annotate(evidence):
-    collection = evidence.get('metadados', {}).get('collection') or ''
-    return {**evidence, 'orientacao_leitura': PROFILES.get(collection.casefold(),
-            'Origem sem perfil específico: examine gênero, autoria, evidência, escopo e limitações.')}
+def source_context(evidences):
+    """Preserva trechos e proveniência; separa a orientação comum da coleção."""
+    sources, profiles = [], {}
+    for evidence in evidences:
+        sources.append({k: v for k, v in evidence.items() if k != 'orientacao_leitura'})
+        collection = evidence.get('metadados', {}).get('collection') or ''
+        key = collection.casefold()
+        profiles.setdefault(key, {'colecao': collection or 'origem desconhecida',
+                                  'orientacao': PROFILES.get(key,
+                                      'Examine gênero, autoria, fundamento, escopo e limitações.')})
+    return {'fontes_originais': sources, 'orientacoes_corpus': list(profiles.values())}

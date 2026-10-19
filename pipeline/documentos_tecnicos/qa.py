@@ -3,6 +3,7 @@ import copy
 
 from pipeline.inventario.textutil import atomic_json, read_json
 from . import contracts as C, qa_prompts as P
+from .profiles import source_context
 
 
 QUESTION_KEYS = ('status', 'pergunta', 'resposta', 'explicacao', 'competencia', 'rubrica', 'fontes', 'motivo')
@@ -42,9 +43,12 @@ def generate(engine, document, qid, previous, examples):
         save()
         return state
 
-    def material():
-        return {'pauta': document['pauta'], 'capitulo_revisado': document['documento'],
-                'fontes_originais': state['evidencias']}
+    def material(include_chapter=True):
+        data = {'pauta': {k: document['pauta'][k] for k in ('topico', 'subtopico', 'assunto')},
+                **source_context(state['evidencias'])}
+        if include_chapter:
+            data['capitulo_revisado'] = document['documento']
+        return data
 
     save()
     while True:
@@ -72,7 +76,7 @@ def generate(engine, document, qid, previous, examples):
             save()
         elif stage == 'juiz':
             judgment = engine.call('revisor', P.JUDGE,
-                                   {'material': material(), 'questao': state['questao'],
+                                   {'material': material(include_chapter=False), 'questao': state['questao'],
                                     'resolucao_sem_gabarito': state['nucleo'],
                                     'calibracao_defeitos': examples.anchors()},
                                    'qa_juiz', qid + ':juiz',
@@ -99,7 +103,7 @@ def generate(engine, document, qid, previous, examples):
             if state['refinamentos'] >= engine.args.max_refinamentos_qa:
                 return finish('reprovada', 'Limite de refinamentos; consulte os pareceres')
             revised = engine.call('refinador', P.REFINE,
-                                  {'material': material(), 'questao': state['questao'],
+                                  {'material': material(include_chapter=False), 'questao': state['questao'],
                                    'parecer': state['feedback']},
                                   'qa_refino', qid + ':refino',
                                   lambda d: C.question_refinement(d, state['evidencias']), 9000)
@@ -129,7 +133,7 @@ def generate(engine, document, qid, previous, examples):
             save()
         elif stage == 'adjudicacao':
             comparison = engine.call('revisor', P.ADJUDICATE,
-                                     {'material': material(), 'questao': state['questao'],
+                                     {'material': material(include_chapter=False), 'questao': state['questao'],
                                       'resposta_cega': state['cego']},
                                      'qa_adjudicacao', qid + ':adjudicacao', C.adjudication, 7000)
             state.setdefault('adjudicacoes', []).append({**comparison, 'cego': state['cego'],
