@@ -42,10 +42,19 @@ class LocalE5:
     para cada consulta, sem misturar os dois espaços vetoriais.
     """
     def __init__(self, directory, offline=True, threads=4, device="cpu"):
+        # Algumas versões do transformers consultam adapter_config no Hub mesmo
+        # com local_files_only. Um snapshot explícito evita essa consulta.
+        model_path = LOCAL_MODEL
+        if offline:
+            cache_root = Path(os.environ.get("HF_HUB_CACHE", str(Path(os.environ.get("HF_HOME", str(Path.home() / ".cache" / "huggingface"))) / "hub")))
+            snapshot = cache_root / ("models--" + LOCAL_MODEL.replace("/", "--")) / "snapshots" / LOCAL_REVISION
+            if not snapshot.is_dir():
+                raise ValueError("Modelo E5 não disponível no cache local. Prepare os pesos nesta máquina antes da triagem.")
+            model_path = str(snapshot)
         import torch
         from sentence_transformers import SentenceTransformer
         torch.set_num_threads(threads)
-        self.model = SentenceTransformer(LOCAL_MODEL, revision=LOCAL_REVISION,
+        self.model = SentenceTransformer(model_path, revision=LOCAL_REVISION,
             local_files_only=offline, device=device, trust_remote_code=False)
         self.model.max_seq_length = 512
         self.protocol = {"model": LOCAL_MODEL, "revision": LOCAL_REVISION,

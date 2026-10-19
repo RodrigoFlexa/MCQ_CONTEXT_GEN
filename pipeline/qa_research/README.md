@@ -1,5 +1,10 @@
 # Pesquisa no corpus → documento auditado → QA curta
 
+**Para a próxima execução de Produtos químicos, use o [fluxo documental distribuído v2](DOCUMENTO_DISTRIBUIDO.md)**
+e o notebook `documento_produtos_quimicos.ipynb`. O pacote já preparado localmente
+acompanha o Git; no servidor rodam somente as chamadas Azure e a coordenação do
+documento. As instruções abaixo descrevem o fluxo anterior, que também possui QA.
+
 Implementação nova para geração de **pergunta e resposta**, sem alternativas de
 múltipla escolha, datasets externos ou questões de exemplo nos prompts. A API e o
 notebook usam o mesmo motor; o notebook é a entrada recomendada para acompanhar as etapas.

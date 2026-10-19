@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import re
+import time
 import unicodedata
 from pathlib import Path
 
@@ -57,12 +58,25 @@ def slug(text, n=48):
     return s[:n].strip('-') or 'x'
 
 
+def _replace_file(tmp, path):
+    # OneDrive/antivírus podem bloquear a troca por milissegundos no Windows.
+    # Só repetimos bloqueios transitórios conhecidos; outros erros permanecem.
+    for attempt in range(6):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError as exc:
+            if getattr(exc, 'winerror', None) not in {5, 32} or attempt == 5:
+                raise
+            time.sleep(.05 * 2 ** attempt)
+
+
 def atomic_json(path, data):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + '.tmp')
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
-    os.replace(tmp, path)
+    _replace_file(tmp, path)
 
 
 def read_json(path, default=None):
@@ -79,7 +93,7 @@ def write_jsonl(path, rows):
     with tmp.open('w', encoding='utf-8') as f:
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + '\n')
-    os.replace(tmp, path)
+    _replace_file(tmp, path)
 
 
 def read_jsonl(path):

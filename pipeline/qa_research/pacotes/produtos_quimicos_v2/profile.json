@@ -1,0 +1,803 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "2.2. Produtos químicos — Produção e Processo",
+    "escopo": "As questões devem abordar a seleção, aplicação, dosagem, armazenamento, manuseio, monitoramento de desempenho e compatibilidade dos produtos químicos utilizados em FPSOs, incluindo aqueles empregados no processamento do óleo, no tratamento da água produzida para descarte, no condicionamento da água do mar para injeção no reservatório — inclusive em sistemas de remoção de sulfato (SRU) e desaeração —, no tratamento do gás, como inibidores de corrosão e MEG, e na prevenção de hidratos, incrustações, corrosão, emulsões, espuma, depósitos e crescimento microbiológico em sistemas topside e subsea."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 500,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "OLEO_EMULSOES",
+      "grupo": "Processamento do óleo",
+      "titulo": "Seleção, dosagem e desempenho de desemulsificantes",
+      "foco": "emulsões, separação óleo/água, testes e condições de aplicação",
+      "termos": [
+        "desemuls",
+        "demulsif",
+        "emulsion breaker",
+        "bottle test",
+        "teste de garrafa"
+      ],
+      "consultas": [
+        "FPSO desemulsificante dosagem emulsão separação óleo água teste garrafa",
+        "crude oil demulsifier dosage emulsion separation bottle test"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "água/óleo",
+          "óleo/água",
+          "water-in-oil",
+          "asfalten",
+          "asphalten"
+        ]
+      ]
+    },
+    {
+      "id": "OLEO_ESPUMA",
+      "grupo": "Processamento do óleo",
+      "titulo": "Controle de espuma no processamento do óleo e gás",
+      "foco": "antiespumante, dosagem, efeitos colaterais e monitoramento",
+      "termos": [
+        "antiespum",
+        "anti-espum",
+        "antifoam",
+        "anti-foam",
+        "defoamer",
+        "espuma"
+      ],
+      "consultas": [
+        "antiespumante separador petróleo dosagem espuma desempenho",
+        "oil gas separator antifoam defoamer dosing performance"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "antiespum",
+          "anti-espum",
+          "antifoam",
+          "defoamer"
+        ]
+      ]
+    },
+    {
+      "id": "AGUA_PRODUZIDA",
+      "grupo": "Água produzida para descarte",
+      "titulo": "Químicos no tratamento da água produzida para descarte",
+      "foco": "coagulação, floculação, desemulsificação reversa e desempenho",
+      "termos": [
+        "coagulan",
+        "floculan",
+        "polieletrol",
+        "polyelectroly",
+        "reverse emulsion",
+        "água produzida",
+        "produced water"
+      ],
+      "consultas": [
+        "água produzida descarte coagulante floculante dosagem compatibilidade",
+        "produced water discharge reverse emulsion coagulant flocculant"
+      ],
+      "context_groups": [
+        [
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "production water",
+          "óleo/água",
+          "oil/water",
+          "oil-water",
+          "deoleifica",
+          "petróleo",
+          "petroleum",
+          "oilfield"
+        ]
+      ]
+    },
+    {
+      "id": "AGUA_SRU",
+      "grupo": "Água do mar para injeção",
+      "titulo": "Seleção e compatibilidade de químicos em sistemas SRU",
+      "foco": "remoção de sulfato, membranas, anti-incrustantes e cloro",
+      "termos": [
+        "sulfate removal",
+        "sulphate removal",
+        "dessulfat",
+        "desulfat",
+        "remoção de sulfato",
+        "antiscalant",
+        "nanofiltra"
+      ],
+      "consultas": [
+        "SRU remoção sulfato membrana antincrustante cloro compatibilidade",
+        "sulfate removal unit membrane antiscalant chlorine compatibility"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "nanofiltra",
+          "sulfate removal",
+          "sulphate removal",
+          "remoção de sulfato",
+          "URS",
+          "SRU",
+          "bário",
+          "barium"
+        ]
+      ]
+    },
+    {
+      "id": "AGUA_OXIGENIO",
+      "grupo": "Água do mar para injeção",
+      "titulo": "Desaeração, sequestrante de oxigênio e corrosão",
+      "foco": "mecanismos, ponto de injeção, dosagem e limitações",
+      "termos": [
+        "desaera",
+        "deaerat",
+        "bissulfito",
+        "bisulfite",
+        "oxygen scaveng",
+        "sequestrante de oxig"
+      ],
+      "consultas": [
+        "desaeração água mar injeção bissulfito oxigênio dosagem corrosão",
+        "seawater injection deaeration oxygen scavenger bisulfite dose"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "desaera",
+          "deaera",
+          "bissulfito",
+          "bisulfite",
+          "oxygen scavenger",
+          "sequestrante de oxigênio",
+          "sequestrantes de oxigênio",
+          "corrosão",
+          "corrosion"
+        ]
+      ]
+    },
+    {
+      "id": "AGUA_MICROBIOLOGIA",
+      "grupo": "Água do mar para injeção",
+      "titulo": "Controle microbiológico e programa de biocidas na água de injeção",
+      "foco": "microbiologia, biofilme, cloração e compatibilidade",
+      "termos": [
+        "biocid",
+        "biofilm",
+        "biofilme",
+        "sulfate reducing",
+        "sulfato-redutor",
+        "hipoclorito",
+        "hypochlorite",
+        "biodispers"
+      ],
+      "consultas": [
+        "biocida água mar injeção biofilme dosagem compatibilidade SRU",
+        "seawater injection biocide biofilm chlorine dosing compatibility"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "corrosão",
+          "corrosion",
+          "sulfate-reducing",
+          "sulfate reducing",
+          "bactérias redutoras de sulfato",
+          "bactéria redutora de sulfato"
+        ]
+      ]
+    },
+    {
+      "id": "GAS_MEG_HIDRATOS",
+      "grupo": "Tratamento do gás",
+      "titulo": "MEG e prevenção de hidratos em topside e subsea",
+      "foco": "inibição, condições de aplicação, regeneração e sais",
+      "termos": [
+        "monoetileno",
+        "monoethylene",
+        "hydrate inhib",
+        "hidrato",
+        "MEG",
+        "glycol regeneration",
+        "regeneração de glicol"
+      ],
+      "consultas": [
+        "MEG monoetilenoglicol hidratos regeneração sais subsea",
+        "MEG monoethylene glycol hydrate inhibition regeneration salts subsea"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "metano",
+          "methane",
+          "MEG",
+          "monoetileno",
+          "monoethylene",
+          "hydrate inhibitor",
+          "inibidor de hidrato"
+        ]
+      ]
+    },
+    {
+      "id": "GAS_CORROSAO",
+      "grupo": "Tratamento do gás",
+      "titulo": "Inibidores de corrosão e outros químicos no tratamento do gás",
+      "foco": "seleção, aplicação e interação com glicóis e outros produtos",
+      "termos": [
+        "corrosion inhib",
+        "inibidor de corros",
+        "amine",
+        "amina",
+        "H2S scaveng",
+        "sequestrante de h2s"
+      ],
+      "consultas": [
+        "tratamento gás inibidor corrosão compatibilidade MEG amina",
+        "gas treatment corrosion inhibitor compatibility MEG amine scavenger"
+      ],
+      "context_groups": [
+        [
+          "CO2",
+          "CO₂",
+          "H2S",
+          "H₂S",
+          "dióxido de carbono",
+          "carbon dioxide",
+          "sulfeto de hidrogênio",
+          "hydrogen sulfide",
+          "gasoduto",
+          "gas pipeline",
+          "gás natural",
+          "natural gas",
+          "wet gas",
+          "sour gas",
+          "gas treatment",
+          "tratamento de gás",
+          "condensado",
+          "condensate"
+        ]
+      ]
+    },
+    {
+      "id": "DEPOSITOS",
+      "grupo": "Topside e subsea",
+      "titulo": "Prevenção química de incrustações e depósitos em topside/subsea",
+      "foco": "incrustantes, parafinas, asfaltenos, mecanismos e aplicação",
+      "termos": [
+        "scale inhib",
+        "inibidor de incrust",
+        "parafin",
+        "wax inhib",
+        "asphalten",
+        "asfalten",
+        "squeeze"
+      ],
+      "consultas": [
+        "inibidor incrustação parafina asfalteno depósito topside subsea",
+        "scale wax asphaltene inhibitor deposition topside subsea"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "asfalten",
+          "asphalten",
+          "parafina",
+          "paraffin",
+          "scale inhibitor",
+          "inibidor de incrustação",
+          "inibidores de incrustação"
+        ]
+      ]
+    },
+    {
+      "id": "COMPATIBILIDADE",
+      "grupo": "Gestão e interação dos produtos",
+      "titulo": "Compatibilidade entre produtos químicos e materiais",
+      "foco": "interação entre programas químicos, precipitação e perda de desempenho",
+      "termos": [
+        "compatibil",
+        "chemical interact",
+        "cross reaction",
+        "reações cruzadas",
+        "elastomer",
+        "elastômer"
+      ],
+      "consultas": [
+        "compatibilidade produtos químicos petróleo biocida inibidor desemulsificante",
+        "production chemical compatibility interactions biocide inhibitor demulsifier"
+      ],
+      "context_groups": [
+        [
+          "químic",
+          "chemical",
+          "inibidor",
+          "inhibitor",
+          "biocid",
+          "sequestrante",
+          "scavenger",
+          "MEG",
+          "glicol",
+          "glycol",
+          "metanol",
+          "methanol",
+          "hipoclor",
+          "hypochlor",
+          "peróxido",
+          "peroxide",
+          "desemuls",
+          "demulsif",
+          "antiespum",
+          "anti-espum",
+          "antifoam",
+          "corrosão",
+          "corrosion"
+        ],
+        [
+          "compatib",
+          "interaç",
+          "interac",
+          "interaction",
+          "mistur",
+          "mixtur",
+          "precipit",
+          "elastomer",
+          "estabil",
+          "stability",
+          "synerg",
+          "sinerg"
+        ]
+      ],
+      "exclude_context": [
+        "pavimenta",
+        "paviment",
+        "asfalto modificado",
+        "asphalt binder",
+        "mistura asfáltica"
+      ],
+      "post_context_groups": [
+        [
+          "produtos químicos",
+          "production chemical",
+          "inibidor",
+          "inhibitor",
+          "biocid",
+          "desemuls",
+          "demulsif",
+          "coagul",
+          "flocul",
+          "scavenger",
+          "sequestrante",
+          "MEG",
+          "glicol",
+          "glycol",
+          "metanol",
+          "methanol",
+          "hipoclor",
+          "hypochlor",
+          "antiespum",
+          "anti-espum",
+          "antifoam",
+          "defoam",
+          "surfactant",
+          "tensoativ"
+        ]
+      ]
+    },
+    {
+      "id": "ARMAZENAMENTO",
+      "grupo": "Armazenamento e manuseio",
+      "titulo": "Armazenamento e manuseio de químicos em instalações offshore",
+      "foco": "segregação, estabilidade, transporte, contenção e manuseio",
+      "termos": [
+        "armazen",
+        "storage",
+        "handling",
+        "manuseio",
+        "segrega",
+        "safety data",
+        "ficha de segurança"
+      ],
+      "consultas": [
+        "produtos químicos offshore armazenamento manuseio segregação segurança",
+        "offshore chemical storage handling segregation containment safety data"
+      ],
+      "context_groups": [
+        [
+          "químic",
+          "chemical",
+          "inibidor",
+          "inhibitor",
+          "biocid",
+          "sequestrante",
+          "scavenger",
+          "MEG",
+          "glicol",
+          "glycol",
+          "metanol",
+          "methanol",
+          "hipoclor",
+          "hypochlor",
+          "peróxido",
+          "peroxide",
+          "desemuls",
+          "demulsif",
+          "antiespum",
+          "anti-espum",
+          "antifoam",
+          "corrosão",
+          "corrosion",
+          "ácido",
+          "acid",
+          "soda",
+          "hazardous substance",
+          "dangerous substance",
+          "produtos perigosos"
+        ],
+        [
+          "armazen",
+          "estocag",
+          "storage",
+          "handling",
+          "manuse",
+          "segrega",
+          "containment",
+          "contenção",
+          "transport",
+          "safety data",
+          "ficha de segurança",
+          "FISPQ"
+        ]
+      ],
+      "exclude_context": [
+        "fotogr",
+        "photograph",
+        "biblioteca",
+        "library preservation"
+      ],
+      "post_context_groups": [
+        [
+          "produtos químicos",
+          "production chemical",
+          "inibidor",
+          "inhibitor",
+          "biocid",
+          "desemuls",
+          "demulsif",
+          "coagul",
+          "flocul",
+          "scavenger",
+          "sequestrante",
+          "MEG",
+          "glicol",
+          "glycol",
+          "metanol",
+          "methanol",
+          "hipoclor",
+          "hypochlor",
+          "antiespum",
+          "anti-espum",
+          "antifoam",
+          "defoam",
+          "substâncias químicas",
+          "chemical storage",
+          "chemical handling",
+          "hazardous substance",
+          "dangerous substance",
+          "produtos perigosos",
+          "corrosivo",
+          "corrosive",
+          "soda cáustica",
+          "sodium hydroxide",
+          "ácido clorídrico",
+          "hydrochloric",
+          "ácido sulfúrico",
+          "sulfuric",
+          "sulphuric",
+          "MSDS",
+          "SDS",
+          "FISPQ",
+          "ficha de segurança"
+        ]
+      ]
+    },
+    {
+      "id": "MONITORAMENTO",
+      "grupo": "Monitoramento e dosagem",
+      "titulo": "Monitoramento do desempenho e ajuste de dosagem dos químicos",
+      "foco": "residual químico, indicadores, ensaios, injeção e confiabilidade da medição",
+      "termos": [
+        "chemical residual",
+        "residual quím",
+        "residual de",
+        "corrosion coupon",
+        "cupom",
+        "dosagem",
+        "chemical injection",
+        "monitoramento"
+      ],
+      "consultas": [
+        "monitoramento desempenho químico residual dosagem corrosão biocida FPSO",
+        "production chemical performance monitoring residual dosage injection corrosion"
+      ],
+      "context_groups": [
+        [
+          "petróleo",
+          "petrole",
+          "oilfield",
+          "oil field",
+          "offshore",
+          "FPSO",
+          "topside",
+          "crude oil",
+          "óleo cru",
+          "óleo bruto",
+          "água produzida",
+          "produced water",
+          "água de produção",
+          "água do mar",
+          "seawater",
+          "sea water",
+          "gas natural",
+          "natural gas",
+          "gasoduto",
+          "pipeline",
+          "flow assurance",
+          "corrosão",
+          "corrosion",
+          "chemical injection",
+          "injeção química",
+          "injeção de produtos químicos"
+        ],
+        [
+          "químic",
+          "chemical",
+          "inibidor",
+          "inhibitor",
+          "biocid",
+          "sequestrante",
+          "scavenger",
+          "MEG",
+          "glicol",
+          "glycol",
+          "metanol",
+          "methanol",
+          "hipoclor",
+          "hypochlor",
+          "peróxido",
+          "peroxide",
+          "desemuls",
+          "demulsif",
+          "antiespum",
+          "anti-espum",
+          "antifoam",
+          "corrosão",
+          "corrosion"
+        ]
+      ],
+      "post_context_groups": [
+        [
+          "produtos químicos",
+          "production chemical",
+          "inibidor",
+          "inhibitor",
+          "biocid",
+          "desemuls",
+          "demulsif",
+          "coagul",
+          "flocul",
+          "scavenger",
+          "sequestrante",
+          "MEG",
+          "glicol",
+          "glycol",
+          "metanol",
+          "methanol",
+          "hipoclor",
+          "hypochlor",
+          "antiespum",
+          "anti-espum",
+          "antifoam",
+          "defoam",
+          "residual quím",
+          "chemical residual",
+          "dosag",
+          "dosing",
+          "TRO",
+          "residual oxidant"
+        ]
+      ]
+    }
+  ]
+}

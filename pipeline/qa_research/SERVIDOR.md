@@ -1,4 +1,10 @@
-# Gerar o documento de 2.2. Produtos químicos no servidor
+# Próxima execução: fluxo documental v2
+
+Use [DOCUMENTO_DISTRIBUIDO.md](DOCUMENTO_DISTRIBUIDO.md): o pacote de Produtos químicos
+já vai preparado pelo Git. Esse fluxo dispensa corpus bruto, indexação e embeddings
+no servidor e gera somente o documento. As instruções abaixo são do fluxo anterior.
+
+# Fluxo anterior: documento de 2.2. Produtos químicos no servidor
 
 Para poupar CPU e disco do servidor, prefira **preparar o pacote fora dele e
 executar com `--pack`**. Veja o fluxo em [`PREPROCESSAMENTO.md`](PREPROCESSAMENTO.md),
