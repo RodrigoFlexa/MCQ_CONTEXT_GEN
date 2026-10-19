@@ -1,5 +1,9 @@
 # Recuperação híbrida para o levantamento de contexto
 
+É possível preparar todos os índices em outra máquina e carregar o pacote pronto
+com `--pack`, mantendo este fluxo de consulta. A triagem E5 opcional reduz o acervo
+antes dos embeddings Azure. Veja [`PREPROCESSAMENTO.md`](PREPROCESSAMENTO.md).
+
 Versão `qa-research-1.1-hybrid`. Os perfis de Produtos químicos agora habilitam a
 recuperação híbrida e usam novas pastas de saída, sem misturar checkpoints da versão BM25.
 

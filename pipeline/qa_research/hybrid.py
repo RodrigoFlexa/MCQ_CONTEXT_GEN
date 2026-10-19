@@ -73,6 +73,23 @@ class VectorIndex:
         import faiss
         faiss.omp_set_num_threads(self.config.vector_threads)
         config = self.config
+        prepared = getattr(self.lexical, "prepared_vector", None)
+        if getattr(self.lexical, "is_prepared", False):
+            if prepared is None:
+                raise ValueError("Pacote sem FAISS/Azure pronto. Finalize-o na máquina de preparação; não há reconstrução automática no servidor.")
+            self.info = prepared["info"]
+            if self.info["protocol"]["embedding"] != self.embedder.protocol:
+                raise ValueError("Protocolo de consulta Azure difere dos vetores do pacote (modelo, versão, endpoint ou tokenização)")
+            try:
+                self.index = faiss.read_index(str(prepared["path"]))
+            except Exception as exc:
+                raise ValueError("FAISS não conseguiu abrir o pacote; confira a versão indicada em pack.json") from exc
+            if self.index.ntotal != self.lexical.info["chunks"] or self.index.d != config.embedding_dimensions:
+                raise ValueError("FAISS do pacote incompatível com o corpus/dimensões")
+            if hasattr(self.index, "nprobe"):
+                self.index.nprobe = min(config.vector_nprobe, self.index.nlist)
+            self.progress("FAISS preparado carregado: nenhum texto do corpus será enviado para embeddings")
+            return self.info
         identity = {"version": "faiss-hybrid-v1", "corpus": self.lexical.info["signature"],
                     "embedding": self.embedder.protocol, "flat_threshold": config.vector_flat_threshold,
                     "train_size": config.vector_train_size, "faiss_version": faiss.__version__}

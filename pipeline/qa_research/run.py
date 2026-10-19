@@ -18,12 +18,16 @@ from .runtime import PersistentBudget, make_clients
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def load_config(path, output=None, manifest=None):
+def load_config(path, output=None, manifest=None, pack=None):
     data = json.loads(Path(path).read_text(encoding="utf-8-sig"))
     if output:
         data["output"] = output
     if manifest is not None:
         data["manifest"] = manifest
+    if pack is not None:
+        data["prepared_pack"] = pack
+    if data.get("prepared_pack") and manifest is not None:
+        raise ValueError("Use --pack ou --manifest; o pacote já contém o corpus")
     config = Config(**data)
     def absolute(value):
         p = Path(value)
@@ -32,6 +36,8 @@ def load_config(path, output=None, manifest=None):
     config.origins = [absolute(p) for p in config.origins]
     if config.manifest:
         config.manifest = absolute(config.manifest)
+    if config.prepared_pack:
+        config.prepared_pack = absolute(config.prepared_pack)
     return config.validate()
 
 
@@ -39,7 +45,7 @@ def implementation_hash():
     digest = hashlib.sha256()
     for path in sorted(Path(__file__).parent.glob("*.py")):
         digest.update(path.name.encode())
-        digest.update(path.read_bytes())
+        digest.update(path.read_text(encoding="utf-8").encode("utf-8"))
     return digest.hexdigest()
 
 
@@ -47,6 +53,12 @@ def inspect(config):
     result = {"topico": config.topic, "limites": config.identity(),
               "origens": [], "manifest": config.manifest,
               "observacao": "Sem chamada de modelo, download ou indexação. Recortes serão propostos na pesquisa."}
+    if config.prepared_pack:
+        from .portable import inspect_pack
+        result["pacote"] = inspect_pack(config.prepared_pack)
+        result["origens"] = []
+        result["manifest"] = None
+        return result
     for origin in config.origins:
         root = Path(origin)
         result["origens"].append({"path": origin, "existe": root.is_dir(),
@@ -65,11 +77,25 @@ def execute(config, stage="completo", clients=None, index=None, progress=print):
     out = Path(config.output)
     with output_lock(out):
         supplied_index = index is not None
-        index = index or CorpusIndex(config.index_dir, config.origins, config.manifest)
-        progress("Verificando corpus e preparando/reutilizando índice lexical")
+        if index is None:
+            if config.prepared_pack:
+                from .portable import PreparedCorpusIndex
+                index = PreparedCorpusIndex(config.prepared_pack, config.index_dir, progress=progress)
+            else:
+                index = CorpusIndex(config.index_dir, config.origins, config.manifest)
+        progress("Abrindo pacote preparado" if config.prepared_pack else
+                 "Verificando corpus e preparando/reutilizando índice lexical")
         info = index.build()
+        if (not supplied_index and config.retrieval_mode == "hybrid"
+                and getattr(index, "is_prepared", False) and index.prepared_vector is None):
+            raise ValueError("Pacote sem FAISS/Azure pronto. Finalize-o na máquina de preparação antes da pesquisa híbrida")
+        selected_topic = info.get("topic_selection", {}).get("profile", {}).get("topic")
+        if selected_topic and selected_topic != config.topic:
+            raise ValueError("Acervo filtrado para outro tópico/escopo. Prepare um pacote compatível ou use o acervo completo")
         identity = {"version": VERSION, "implementation": implementation_hash(),
                     "config": config.identity(), "corpus_signature": info["signature"]}
+        if info.get("portable_pack"):
+            identity["pack_signature"] = info["portable_pack"]["signature"]
         fingerprint = sha(json.dumps(identity, sort_keys=True, ensure_ascii=False), 64)
         record = read_json(out / "execucao.json")
         if record and record["fingerprint"] != fingerprint:
@@ -133,10 +159,11 @@ def main(argv=None):
     parser.add_argument("--config", required=True, help="Arquivo JSON com tópico e limites")
     parser.add_argument("--output", help="Sobrescreve somente a pasta de saída")
     parser.add_argument("--manifest", help="Manifesto do corpus completo; sobrescreve o campo do JSON")
+    parser.add_argument("--pack", help="Pacote preparado: não lê nem reindexa arquivos de origem")
     parser.add_argument("--stage", choices=("indice", "pesquisa", "qa", "completo"), default="completo")
     parser.add_argument("--plan", action="store_true")
     args = parser.parse_args(argv)
-    config = load_config(args.config, args.output, args.manifest)
+    config = load_config(args.config, args.output, args.manifest, args.pack)
     if args.plan:
         print(json.dumps(inspect(config), ensure_ascii=False, indent=2))
         return 0

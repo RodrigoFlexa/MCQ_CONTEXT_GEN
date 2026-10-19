@@ -103,6 +103,15 @@ Interrupção por orçamento e pendência de execução retornam código 2. Não
 por falta de unidades aprováveis é registrado no resumo, sem fabricar itens. Os estados
 `auditado_modelo` e `aprovada_modelo` não significam validação humana.
 
+## Preparação fora do servidor
+
+Use `--pack` para reutilizar textos, proveniência, BM25 e FAISS sem repetir
+fragmentação ou embeddings dos documentos no servidor. A preparação pode conservar
+todo o acervo ou aplicar triagem opcional BM25 + E5 local antes do Azure.
+Comandos e transferência: [`PREPROCESSAMENTO.md`](PREPROCESSAMENTO.md).
+Os pacotes de dados ficam separados do Git. Um pacote só lexical exige finalização
+explícita antes de uma pesquisa híbrida.
+
 ## Verificação
 
 ```powershell

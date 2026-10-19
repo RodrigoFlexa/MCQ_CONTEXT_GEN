@@ -1,5 +1,10 @@
 # Gerar o documento de 2.2. Produtos químicos no servidor
 
+Para poupar CPU e disco do servidor, prefira **preparar o pacote fora dele e
+executar com `--pack`**. Veja o fluxo em [`PREPROCESSAMENTO.md`](PREPROCESSAMENTO.md),
+incluindo a exportação de um índice existente sem reler o corpus bruto. Os comandos
+abaixo com `--manifest` continuam válidos e preparam/verificam índices no servidor.
+
 Use a raiz do checkout e o ambiente Azure que já funciona no servidor. Os comandos
 abaixo usam o caminho registrado no projeto, `/home/gbs2/MCQ_CONTEXT_GEN`, e
 `venv/bin/python`. Ajuste esses dois caminhos se a instalação for diferente.

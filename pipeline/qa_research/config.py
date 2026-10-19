@@ -17,6 +17,7 @@ class Config:
     output: str
     origins: list = field(default_factory=lambda: list(DEFAULT_ORIGINS))
     manifest: str | None = None
+    prepared_pack: str | None = None
     index_dir: str = "pipeline/qa_research/.local/index"
     provider: str = "azure"
     models: dict = field(default_factory=lambda: {
@@ -104,14 +105,23 @@ class Config:
         protected = [Path(p).resolve() for p in [*self.origins, self.index_dir]]
         if self.manifest:
             protected.append(Path(self.manifest).resolve().parent)
+        if self.prepared_pack:
+            protected.append(Path(self.prepared_pack).resolve())
         for path in protected:
             if output == path or output in path.parents or path in output.parents:
                 raise ValueError(f"output deve ficar separado das entradas e do índice: {path}")
-        if not self.origins and not self.manifest:
-            raise ValueError("Informe origins ou manifest")
+        if not self.origins and not self.manifest and not self.prepared_pack:
+            raise ValueError("Informe origins, manifest ou prepared_pack")
         return self
 
     def identity(self):
         # Aumentar apenas o orçamento/concorrência não muda o experimento retomado.
-        return {k: v for k, v in asdict(self).items()
-                if k not in ("max_calls", "embedding_max_calls", "workers", "timeout", "output")}
+        result = {k: v for k, v in asdict(self).items()
+                  if k not in ("max_calls", "embedding_max_calls", "workers", "timeout", "output")}
+        if self.prepared_pack:
+            # A identidade do pacote entra pela assinatura verificada, não pelo
+            # caminho Windows/Linux nem por entradas que não serão consultadas.
+            for key in ("origins", "manifest", "index_dir", "prepared_pack"):
+                result.pop(key, None)
+            result["prepared_pack"] = True
+        return result
