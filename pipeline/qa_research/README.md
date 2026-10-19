@@ -62,10 +62,14 @@ nas `origins` e declara **cobertura parcial**. Não indexa notas, fatos extraíd
 documentos gerados ou perguntas como fontes primárias. O manifesto tem prioridade
 sobre as seleções; versões antigas não se misturam à coleção verificada.
 
-O recuperador desta versão é **SQLite FTS5/BM25**, sem download de embeddings. As
-consultas multilíngues vêm do pesquisador; não se afirma que existe busca semântica
-quando ela não foi executada. Vizinhos só são incorporados com limites documentais
-conhecidos. TXT concatenado não recebe páginas ou fronteiras inventadas.
+O padrão agora é **BM25 + embeddings Azure text-embedding-3-large + FAISS + fusão RRF
+e reranqueamento por LLM**. O deployment de embeddings é `embedding-3-large-global`
+com 3.072 dimensões, já utilizado no projeto. O perfil maior recupera até 80 candidatos
+de cada canal, reranqueia 50 e entrega até oito principais por consulta. A preparação
+vetorial é persistente e reutilizada. Consulte [`HIBRIDA.md`](HIBRIDA.md) para cache,
+limites, orçamento e avaliação. O modo `bm25` fica disponível explicitamente como controle.
+Vizinhos só são incorporados com limites documentais conhecidos. TXT concatenado não
+recebe páginas ou fronteiras inventadas.
 
 Teses, dissertações e documentos estrangeiros permanecem consultáveis. O filtro é
 por afirmação: resultado experimental conserva condições; opinião/hipótese não vira
@@ -85,11 +89,15 @@ ser traduzido para compreensão, mas a evidência literal continua no original.
 - `cobertura.json`, `resumo.json`, `relatorio.md`: alcance e limitações da execução.
 - `chamadas/`: prompts, entradas e saídas por chamada; material para auditoria.
 - `orcamento.json`: tentativas reservadas cumulativamente, inclusive reparos.
+- `recuperacoes/`: canais lexical/vetorial, fusão e decisões do reranqueador.
+- `chamadas_embeddings.jsonl` e `orcamento_embeddings.json`: uso e orçamento dos embeddings.
 
 Repita o mesmo comando para retomar a mesma saída. Configuração, corpus e implementação
 são vinculados por assinatura; mudança material exige uma nova pasta. Pode aumentar
 `max_calls` ou mudar `workers` sem invalidar a identidade. Não execute simultaneamente
 duas instâncias na mesma saída. Cada índice fixa seu snapshot de corpus.
+O orçamento `embedding_max_calls` também pode aumentar na retomada. `--stage indice`
+prepara apenas os índices; `--stage pesquisa` os prepara/reutiliza e gera o documento.
 
 Interrupção por orçamento e pendência de execução retornam código 2. Não atingir a meta
 por falta de unidades aprováveis é registrado no resumo, sem fabricar itens. Os estados

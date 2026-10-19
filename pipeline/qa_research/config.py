@@ -8,7 +8,7 @@ DEFAULT_ORIGINS = ["pipeline/inventario/" + name for name in (
     "saida_ultimos_5_topicos_v4_nano_low")]
 
 ROLES = ("planejador", "pesquisador", "redator", "auditor", "extrator",
-         "autor_qa", "respondente", "adversario", "novidade")
+         "autor_qa", "respondente", "adversario", "novidade", "reranqueador")
 
 
 @dataclass
@@ -36,6 +36,25 @@ class Config:
     max_calls: int = 400
     max_attempts: int = 3
     timeout: int = 180
+    retrieval_mode: str = "hybrid"
+    embedding_model: str = "text-embedding-3-large"
+    embedding_deployment: str = "embedding-3-large-global"
+    embedding_dimensions: int = 3072
+    embedding_model_version: str = "1"
+    embedding_batch_size: int = 64
+    embedding_batch_tokens: int = 60000
+    embedding_window_tokens: int = 8191
+    embedding_overlap_tokens: int = 128
+    embedding_max_calls: int = 50000
+    lexical_candidates: int = 80
+    dense_candidates: int = 80
+    rerank_candidates: int = 50
+    rrf_constant: int = 60
+    max_chunks_per_document: int = 3
+    vector_flat_threshold: int = 20000
+    vector_train_size: int = 50000
+    vector_nprobe: int = 32
+    vector_threads: int = 4
 
     def validate(self):
         if not isinstance(self.topic, dict):
@@ -45,7 +64,11 @@ class Config:
                 raise ValueError(f"topic.{key} deve ser texto não vazio")
         for key in ("initial_facets", "max_facets", "research_rounds", "queries_per_round",
                     "chunks_per_query", "max_evidence", "max_atoms_per_facet", "max_candidates",
-                    "target_qa", "answer_words", "workers", "max_calls", "max_attempts", "timeout"):
+                    "target_qa", "answer_words", "workers", "max_calls", "max_attempts", "timeout",
+                    "embedding_dimensions", "embedding_batch_size", "embedding_batch_tokens",
+                    "embedding_window_tokens", "embedding_max_calls", "lexical_candidates",
+                    "dense_candidates", "rerank_candidates", "rrf_constant", "max_chunks_per_document",
+                    "vector_flat_threshold", "vector_train_size", "vector_nprobe", "vector_threads"):
             if type(getattr(self, key)) is not int or getattr(self, key) < 1:
                 raise ValueError(f"{key} deve ser inteiro positivo")
         if type(self.max_repairs) is not int or self.max_repairs < 0:
@@ -56,6 +79,21 @@ class Config:
             raise ValueError("target_qa não pode exceder max_candidates")
         if self.provider not in ("azure", "openai"):
             raise ValueError("provider deve ser azure ou openai")
+        if self.retrieval_mode not in ("hybrid", "bm25"):
+            raise ValueError("retrieval_mode deve ser hybrid ou bm25")
+        if self.embedding_model != "text-embedding-3-large" or self.embedding_dimensions != 3072:
+            raise ValueError("Este protocolo usa text-embedding-3-large com 3072 dimensões")
+        if not self.embedding_deployment.strip() or not self.embedding_model_version.strip():
+            raise ValueError("Informe deployment e versão declarada dos embeddings")
+        if (type(self.embedding_overlap_tokens) is not int or
+                not 0 <= self.embedding_overlap_tokens < self.embedding_window_tokens <= 8191):
+            raise ValueError("Janela/sobreposição dos embeddings inválidas")
+        if self.embedding_batch_size > 64 or not self.embedding_window_tokens <= self.embedding_batch_tokens <= 100000:
+            raise ValueError("Lotes de embeddings: até 64 entradas e 100000 tokens; devem comportar uma janela")
+        if self.rerank_candidates > self.lexical_candidates + self.dense_candidates:
+            raise ValueError("rerank_candidates excede candidatos possíveis")
+        if self.vector_train_size < 10000:
+            raise ValueError("vector_train_size deve ser >= 10000 para treinamento IVF-PQ")
         if set(self.models) != set(ROLES):
             raise ValueError(f"models deve configurar exatamente os papéis {ROLES}")
         for role, spec in self.models.items():
@@ -76,4 +114,4 @@ class Config:
     def identity(self):
         # Aumentar apenas o orçamento/concorrência não muda o experimento retomado.
         return {k: v for k, v in asdict(self).items()
-                if k not in ("max_calls", "workers", "timeout", "output")}
+                if k not in ("max_calls", "embedding_max_calls", "workers", "timeout", "output")}

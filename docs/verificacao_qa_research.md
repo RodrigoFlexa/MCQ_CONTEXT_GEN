@@ -1,5 +1,15 @@
 # Verificação da implementação — 19/10/2026
 
+## Atualização da busca híbrida
+
+Na versão `qa-research-1.1-hybrid`, passaram **110 testes**, incluindo 22 novos testes
+de embeddings, fusão, reranqueamento e integração com pesquisa/QA. Os novos testes usam
+FAISS real (Flat e IVF-PQ), com embeddings e avaliações LLM simulados. Não houve
+chamada real ao Azure nem demonstração de ganho de relevância com o modelo real.
+O perfil de Produtos químicos usa busca híbrida por padrão e nova saída
+`saida_produtos_quimicos_hibrido`. O restante deste relatório documenta a verificação
+anterior do fluxo inicial, incluindo a recuperação BM25 sobre as seleções locais.
+
 O novo motor está em `pipeline/qa_research/`, com notebook `pesquisa_e_qa.ipynb`.
 O plano metodológico está em `plano_qa_research.md` e o uso em
 `../pipeline/qa_research/README.md`.

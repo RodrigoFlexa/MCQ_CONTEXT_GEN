@@ -92,6 +92,7 @@ def export_run(config, index_info, interrupted=None):
         body.append(f"- [{eid}] {source.get('title', 'Título indisponível')}. {metadata}.")
     (out / "documento_auditado.md").write_text("\n".join(body) + "\n", encoding="utf-8")
     budget = read_json(out / "orcamento.json") or {"tentativas_reservadas": 0}
+    embedding_budget = read_json(out / "orcamento_embeddings.json") or {"tentativas_reservadas": 0}
     failed = any(c["erro"] or c["status"] in ("nao_investigado", "pendente_execucao") for c in coverage)
     pending_qa = any(q["status"] == "pendente_validacao" for q in questions)
     summary = {"topico": config.topic["titulo"], "recortes_planejados": len(coverage),
@@ -104,6 +105,9 @@ def export_run(config, index_info, interrupted=None):
         "interrupcao": interrupted, "pendencias_execucao": failed or pending_qa or bool(invalid) or bool(interrupted),
         "bloqueados_integridade": invalid,
         "tentativas_api_cumulativas": budget["tentativas_reservadas"],
+        "tentativas_embeddings_cumulativas": embedding_budget["tentativas_reservadas"],
+        "retrieval_mode": config.retrieval_mode,
+        "indice_hibrido_pronto": index_info.get("retrieval_mode") == "hybrid",
         "corpus_bruto_completo": index_info.get("corpus_bruto_completo", False),
         "validacao_humana": "pendente", "exaustividade": "não demonstrada"}
     atomic_json(out / "resumo.json", summary)
@@ -112,6 +116,8 @@ def export_run(config, index_info, interrupted=None):
         f"- Unidades extraídas: {len(all_units)}; elegíveis: {summary['unidades_elegiveis']}.",
         f"- QA aprovadas pelo modelo: {len(accepted)}; meta: {config.target_qa}.",
         f"- Tentativas de API cumulativas: {summary['tentativas_api_cumulativas']}.",
+        f"- Tentativas de embeddings cumulativas: {summary['tentativas_embeddings_cumulativas']}.",
+        f"- Recuperação: {config.retrieval_mode}; índice híbrido pronto: {summary['indice_hibrido_pronto']}.",
         f"- Corpus bruto completo disponível: {summary['corpus_bruto_completo']}.",
         "- Validação humana: pendente. Exaustividade: não demonstrada.", "",
         "A ausência de uma alternativa encontrada não garante unicidade universal. "

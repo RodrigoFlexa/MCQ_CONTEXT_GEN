@@ -60,11 +60,13 @@ def inspect(config):
 
 def execute(config, stage="completo", clients=None, index=None, progress=print):
     config.validate()
-    if stage not in ("pesquisa", "qa", "completo"):
-        raise ValueError("stage deve ser pesquisa, qa ou completo")
+    if stage not in ("indice", "pesquisa", "qa", "completo"):
+        raise ValueError("stage deve ser indice, pesquisa, qa ou completo")
     out = Path(config.output)
     with output_lock(out):
+        supplied_index = index is not None
         index = index or CorpusIndex(config.index_dir, config.origins, config.manifest)
+        progress("Verificando corpus e preparando/reutilizando índice lexical")
         info = index.build()
         identity = {"version": VERSION, "implementation": implementation_hash(),
                     "config": config.identity(), "corpus_signature": info["signature"]}
@@ -72,7 +74,7 @@ def execute(config, stage="completo", clients=None, index=None, progress=print):
         record = read_json(out / "execucao.json")
         if record and record["fingerprint"] != fingerprint:
             raise ValueError("Configuração, implementação ou corpus mudaram. Use nova saída para preservar a rastreabilidade.")
-        atomic_json(out / "execucao.json", {"fingerprint": fingerprint, **identity})
+        atomic_json(out / "execucao.json", {**(record or {}), "fingerprint": fingerprint, **identity})
         atomic_json(out / "config.json", asdict(config))
         atomic_json(out / "indice.json", info)
         owned_clients = clients is None
@@ -80,23 +82,45 @@ def execute(config, stage="completo", clients=None, index=None, progress=print):
         if stage == "qa" and not (out / "plano.json").exists():
             raise ValueError("Execute --stage pesquisa antes de --stage qa")
         interruption = None
+        hybrid_index = None
         try:
-            if clients is None:
+            if clients is None and stage != "indice":
                 clients = make_clients(config, budget)
-            engine = ResearchPipeline(config, index, clients, progress=progress)
+            if not supplied_index and config.retrieval_mode == "hybrid":
+                from .embeddings import AzureEmbedder
+                from .hybrid import HybridCorpusIndex, LLMReranker
+                embedding_budget = PersistentBudget(out / "orcamento_embeddings.json", config.embedding_max_calls)
+                embedder = AzureEmbedder(config, embedding_budget)
+                hybrid_index = HybridCorpusIndex(config, index, embedder,
+                    LLMReranker(clients["reranqueador"]) if clients else None, progress=progress)
+                retrieval_fingerprint = sha(json.dumps(embedder.protocol, sort_keys=True), 64)
+                if record and record.get("retrieval_fingerprint", retrieval_fingerprint) != retrieval_fingerprint:
+                    raise ValueError("Protocolo/endpoint dos embeddings mudou; use nova saída")
+                atomic_json(out / "execucao.json", {"fingerprint": fingerprint, **identity,
+                            "retrieval_fingerprint": retrieval_fingerprint})
+                info = hybrid_index.build()
+                index = hybrid_index
+                atomic_json(out / "indice.json", info)
             completed = True
-            if stage in ("pesquisa", "completo"):
-                completed = engine.research()
-            if completed and stage in ("qa", "completo"):
-                completed = engine.generate_qa()
+            if stage != "indice":
+                engine = ResearchPipeline(config, index, clients, progress=progress)
+                if stage in ("pesquisa", "completo"):
+                    completed = engine.research()
+                if completed and stage in ("qa", "completo"):
+                    completed = engine.generate_qa()
             if not completed:
                 interruption = "Orçamento cumulativo de chamadas atingido"
         except BudgetExceeded as exc:
             interruption = str(exc)
+        except KeyboardInterrupt:
+            interruption = "Execução interrompida pelo usuário"
+            raise
         except Exception as exc:
             interruption = type(exc).__name__ + ": " + str(exc)
             raise
         finally:
+            if hybrid_index is not None:
+                hybrid_index.close()
             if owned_clients and clients:
                 for client in clients.values():
                     client.close()
@@ -109,7 +133,7 @@ def main(argv=None):
     parser.add_argument("--config", required=True, help="Arquivo JSON com tópico e limites")
     parser.add_argument("--output", help="Sobrescreve somente a pasta de saída")
     parser.add_argument("--manifest", help="Manifesto do corpus completo; sobrescreve o campo do JSON")
-    parser.add_argument("--stage", choices=("pesquisa", "qa", "completo"), default="completo")
+    parser.add_argument("--stage", choices=("indice", "pesquisa", "qa", "completo"), default="completo")
     parser.add_argument("--plan", action="store_true")
     args = parser.parse_args(argv)
     config = load_config(args.config, args.output, args.manifest)

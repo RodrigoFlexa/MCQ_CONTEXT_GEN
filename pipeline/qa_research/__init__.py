@@ -1,3 +1,3 @@
 """Pesquisa no corpus, documento auditado e QA científica de resposta curta."""
 
-VERSION = "qa-research-1.0"
+VERSION = "qa-research-1.1-hybrid"

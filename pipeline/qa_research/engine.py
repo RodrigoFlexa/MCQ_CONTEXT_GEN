@@ -126,8 +126,12 @@ class ResearchPipeline:
             queries_seen.add(norm(query))
             excluded = {value for e in state["evidencias"]
                         for value in (e["chunk_id"], e.get("content_hash")) if value}
-            chunks = self.index.search(query, limit=self.config.chunks_per_query,
-                                       exclude=excluded, neighbors=True)
+            options = {"limit": self.config.chunks_per_query, "exclude": excluded, "neighbors": True}
+            if getattr(self.index, "contextual", False):
+                chunks = self.index.search_contextual(query, context={
+                    "topico": self.config.topic, "recorte": state["recorte"]}, **options)
+            else:
+                chunks = self.index.search(query, **options)
             trace = {"consulta": query, "retornados": len(chunks), "incluidos": []}
             # Cada vizinho é explicitamente contado no mesmo orçamento de fontes.
             expanded = list(chunks)

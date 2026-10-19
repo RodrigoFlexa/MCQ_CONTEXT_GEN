@@ -38,10 +38,10 @@ nohup "$QA_PYTHON" -u -m pipeline.qa_research.run \
   --config pipeline/qa_research/configs/produtos_quimicos.json \
   --manifest dataset/domain_corpora/manifest.json \
   --stage pesquisa \
-  > pipeline/qa_research/produtos_quimicos_documento.log 2>&1 &
+  > pipeline/qa_research/produtos_quimicos_hibrido_documento.log 2>&1 &
 
 echo "PID: $!"
-tail -F pipeline/qa_research/produtos_quimicos_documento.log
+tail -F pipeline/qa_research/produtos_quimicos_hibrido_documento.log
 ```
 
 `Ctrl+C` encerra o acompanhamento do log; a geração continua no processo iniciado
@@ -58,14 +58,19 @@ capítulo e 500 tentativas de API cumulativas. Não é o piloto reduzido de dois
 Quando o processo terminar, o documento consolidado estará em:
 
 ```text
-pipeline/qa_research/saida_produtos_quimicos/documento_auditado.md
+pipeline/qa_research/saida_produtos_quimicos_hibrido/documento_auditado.md
 ```
 
 Para ler no terminal:
 
 ```bash
-less pipeline/qa_research/saida_produtos_quimicos/documento_auditado.md
+less pipeline/qa_research/saida_produtos_quimicos_hibrido/documento_auditado.md
 ```
+
+A recuperação agora combina BM25, embeddings Azure e reranqueamento. A primeira
+execução prepara o índice vetorial completo; as seguintes reutilizam o cache.
+O deployment é `embedding-3-large-global` para `text-embedding-3-large`, em 3.072 dimensões.
+O limite de evidências é de 64 por recorte. Detalhes em [`HIBRIDA.md`](HIBRIDA.md).
 
 Os arquivos `relatorio.md` e `resumo.json` na mesma pasta mostram capítulos publicados,
 falhas e interrupções. `cobertura.json` apresenta os recortes e lacunas; `recortes/`

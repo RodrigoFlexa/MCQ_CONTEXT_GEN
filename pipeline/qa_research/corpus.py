@@ -352,3 +352,30 @@ class CorpusIndex:
                      duration_seconds=round(time.monotonic() - started, 6))
         self.last_query_trace = trace
         return results
+
+    def iter_records(self, batch_size=256):
+        """Streaming de textos únicos; IDs internos ligam FAISS ao mesmo snapshot."""
+        if self.info is None:
+            raise ValueError("Construa o índice lexical antes de iterar")
+        with closing(sqlite3.connect(self.path.as_uri() + "?mode=ro", uri=True)) as db:
+            cursor = db.execute("SELECT id,body FROM chunks ORDER BY id")
+            while rows := cursor.fetchmany(batch_size):
+                yield rows
+
+    def fetch_ids(self, identifiers, exclude=(), neighbors=False):
+        """Hidrata resultados vetoriais com a mesma proveniência do BM25."""
+        result, excluded = [], set(exclude)
+        with closing(sqlite3.connect(self.path.as_uri() + "?mode=ro", uri=True)) as db:
+            for identifier in identifiers:
+                row = db.execute("SELECT id,digest,payload FROM chunks WHERE id=?", (int(identifier),)).fetchone()
+                if row is None:
+                    raise ValueError("ID vetorial não pertence ao snapshot lexical")
+                chunk = self._hydrate(db, row)
+                if excluded.intersection([chunk["content_hash"], *chunk["chunk_id_aliases"]]):
+                    continue
+                if neighbors:
+                    chunk["_rowid"] = row[0]
+                    chunk["neighbor_chunks"] = self._neighbors(db, chunk, excluded)
+                    del chunk["_rowid"]
+                result.append(chunk)
+        return result

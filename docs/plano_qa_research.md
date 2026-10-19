@@ -2,6 +2,12 @@
 
 Versão de desenho: 19/10/2026. O motor e o notebook deste plano estão em `pipeline/qa_research/`. Este documento não é um relatório de uma pesquisa de produção já executada nem uma certificação humana das saídas.
 
+Atualização da recuperação: a versão `qa-research-1.1-hybrid` implementa BM25 e
+`text-embedding-3-large` via Azure, índice FAISS, fusão RRF e reranqueamento por LLM
+antes da leitura do pesquisador. O protocolo, os limites e os registros de avaliação
+estão em [HIBRIDA.md](../pipeline/qa_research/HIBRIDA.md). Isso amplia os mecanismos
+de recuperação; o ganho de cobertura e pertinência ainda exige avaliação no corpus.
+
 ## 1. Objetivo e decisão de arquitetura
 
 Partimos de um tópico amplo e queremos explorar o conhecimento técnico que o corpus sustenta. O produto final é um conjunto de pares **pergunta objetiva–resposta curta**, com evidências e condições preservadas. Não haverá alternativas de múltipla escolha, questões de datasets externos nem questões de exemplo nos prompts.
