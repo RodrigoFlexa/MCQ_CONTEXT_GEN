@@ -1,5 +1,10 @@
 # Pesquisa no corpus → documento auditado → QA curta
 
+**Para gerar posteriormente um lote de 9 QA a partir de um documento pronto,
+use [QA_LOTE_9.md](QA_LOTE_9.md).** Planejamento e geração usam
+`gpt-5-4-petrobras:high`; verificação e refinamento usam
+`gpt-5-4-petrobras:low`. Essa etapa é independente da pesquisa documental abaixo.
+
 **Para as dez áreas (40 frases), use [DEZ_AREAS.md](DEZ_AREAS.md).** Os perfis têm
 217 recortes definidos manualmente; a preparação local compartilha uma única
 varredura e um E5 com GPU. No servidor:
