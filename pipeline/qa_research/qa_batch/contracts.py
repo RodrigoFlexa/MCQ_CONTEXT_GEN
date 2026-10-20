@@ -33,11 +33,12 @@ def norm(value):
     return " ".join(value.split())
 
 
-def quotes(value, context, *, required=True):
+def quotes(value, context, *, required=True, label="Fundamento"):
     texts(value, nonempty=required)
-    for passage in value:
+    for index, passage in enumerate(value, 1):
         if norm(passage) not in norm(context):
-            raise ValueError("Fundamento deve ser passagem literal do contexto")
+            raise ValueError(f"{label}[{index}]: passagem não literal do contexto: {passage[:180]!r}. "
+                             "Copie um trecho contínuo exatamente como está no contexto, sem paráfrases ou reticências.")
 
 
 def rows(value, ids=IDS):
@@ -84,7 +85,7 @@ def plan(data, context):
         short(row["resposta_esperada"])
         texts(row["condicoes_necessarias"])
         text(row["exigencia_cognitiva"])
-        quotes(row["fundamentos"], context)
+        quotes(row["fundamentos"], context, label=f"Item {row['id']} fundamentos")
         targets.append(norm(row["alvo"]).casefold())
     if len(set(targets)) != 9:
         raise ValueError("Alvos idênticos no plano")
@@ -136,7 +137,8 @@ def review(data, context, question_rows):
         passed = all(row["criterios"].values())
         text(row["motivo"], empty=passed)
         text(row["correcao_sugerida"], empty=True)
-        quotes(row["fundamentos"], context, required=row["criterios"]["fundamento"])
+        quotes(row["fundamentos"], context, required=row["criterios"]["fundamento"],
+               label=f"Item {row['id']} fundamentos")
         check = row["teste_de_unicidade"]
         obj(check, ("outra_resposta_plausivel", "condicao_que_a_exclui"))
         for value in check.values():

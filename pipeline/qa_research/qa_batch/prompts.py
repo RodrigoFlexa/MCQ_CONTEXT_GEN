@@ -56,6 +56,10 @@ Para cada item, confira uma demanda específica, gabarito de até 50 palavras, f
 condições suficientes e ausência de pistas. Uma passagem literal comprova presença no
 documento, mas não torna correta a inferência inversa de um efeito para uma causa.
 
+O contexto_tecnico associa IDs C a passagens integrais do documento. trechos_dos_enunciados
+associa IDs Qn_Sm a partes da pergunta n. Nas referências da saída, selecione esses IDs;
+o código recupera o texto exato. Não recopie, resuma ou parafraseie passagens nesses campos.
+
 Faça um teste de unicidade: considere outra conclusão que explicaria os sinais principais.
 Se houver, registre-a e procure uma condição do enunciado que a exclua. Se essa conclusão
 continuar compatível com todos os dados, marque resposta_determinada como false e deixe
@@ -88,9 +92,10 @@ itens: lista ordenada de nove objetos, cada um com somente:
 - motivo: problema concreto, obrigatório se algum critério for falso, vazio se tudo correto;
 - correcao_sugerida: alteração específica ou motivo da impossibilidade, vazio se desnecessário;
 - teste_de_unicidade: objeto com somente outra_resposta_plausivel (texto) e
-  condicao_que_a_exclui (passagem curta copiada literalmente da pergunta, ou texto vazio);
+  condicao_que_a_exclui (lista dos IDs Qn_Sm da própria pergunta n que excluem
+  a alternativa; lista vazia se não houver condição discriminante);
 - dificuldade_observada: facil, media, dificil ou indeterminada;
-- fundamentos: passagens curtas copiadas literalmente do contexto que sustentam o gabarito;
+- fundamentos: lista de IDs C do contexto que sustentam o gabarito;
   lista não vazia quando fundamento for true, vazia quando não houver suporte.
 diversidade: objeto com somente ok (booleano), ids_conflitantes (lista de IDs únicos;
 vazia se ok, ao menos dois IDs se falso), motivo (obrigatório se falso).

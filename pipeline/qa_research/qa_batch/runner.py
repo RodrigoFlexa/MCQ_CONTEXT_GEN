@@ -8,7 +8,7 @@ from pipeline.inventario.locking import output_lock
 from pipeline.inventario.textutil import atomic_json, read_json, sha
 from ..document.common import ROOT, canonical
 from ..runtime import PersistentBudget
-from . import VERSION, contracts as C, inputs, prompts
+from . import VERSION, contracts as C, inputs, prompts, references, resume
 
 
 def implementation():
@@ -47,7 +47,7 @@ class Runner:
             self.clients[role] = client
         return self.clients[role]
 
-    def call(self, stage, value, validate, *, round_=0):
+    def call(self, stage, value, validate, *, round_=0, decode=None):
         role = "verificacao" if stage == "resolucao_cega" else stage
         system, user = prompts.system(stage), canonical(value)
         key = inputs.digest([stage, round_, self.config.models[role], system, user,
@@ -56,7 +56,7 @@ class Runner:
 
         def strict(response):
             try:
-                validate(response)
+                validate(decode(response) if decode else response)
             except (KeyError, TypeError, IndexError, AttributeError) as exc:
                 raise ValueError("Estrutura inválida: " + str(exc)) from exc
 
@@ -66,14 +66,14 @@ class Runner:
                 raise ValueError("Checkpoint alterado: " + path.name)
             strict(cached["response"])
             self.progress(f"{stage}: checkpoint reutilizado", flush=True)
-            return cached["response"]
+            return decode(cached["response"]) if decode else cached["response"]
         self.progress(f"{stage}: {self.config.models[role]} (rodada {round_ + 1})", flush=True)
         response = self.client(role).json(system, user, tag="qa9_" + stage,
             item=self.config.item, max_tokens=self.config.data["tokens"][role], validate=strict)
         strict(response)
         atomic_json(path, {"key": key, "stage": stage, "round": round_,
                            "response": response, "response_sha256": inputs.digest(response)})
-        return response
+        return decode(response) if decode else response
 
     def run(self):
         selected = inputs.topic(self.config)
@@ -83,10 +83,21 @@ class Runner:
                     "tokens": self.config.data["tokens"]}
         with output_lock(self.output):
             previous = read_json(self.output / "identidade.json")
-            if previous is not None and previous != identity:
+            if previous is not None and not resume.compatible(previous, identity):
                 raise ValueError("Tópico, contexto, prompts, código ou modelos mudaram; use outra saída")
             if previous is None and any((self.output / name).exists() for name in ("chamadas", "qa.json", "resumo.json")):
                 raise ValueError("Saída contém resultados sem identidade; use outra pasta")
+            if previous is not None:
+                finished = resume.completed(self.output, identity, self.config.data["max_refinements"])
+                if finished is not None:
+                    self.progress(f"{self.config.item}: resultado já finalizado ({finished['status']}); preservado.", flush=True)
+                    return finished
+                resume.checkpoints(self.output)
+                if previous != identity:
+                    atomic_json(self.output / "migracoes" / (previous["implementation"][:16] + ".json"),
+                        {"anterior": previous, "atual": identity,
+                         "motivo": "Reparo de referências da auditoria; etapas com a mesma chave são revalidadas e reutilizadas"})
+                    self.progress("Retomada compatível: planejamento, geração e resolução com a mesma chave serão reutilizados.", flush=True)
             atomic_json(self.output / "identidade.json", identity)
             atomic_json(self.output / "entrada.json", {"topic": selected, "documento": source})
             self.budget = PersistentBudget(self.output / "orcamento.json", self.config.data["max_calls"])
@@ -100,6 +111,8 @@ class Runner:
                 self.pipeline(selected, source, summary)
             except BaseException as exc:
                 summary.update(status="interrompido", motivo=str(exc), erro=type(exc).__name__)
+                summary.update(tipo_falha=getattr(exc, "kind", type(exc).__name__),
+                               etapa_falha=getattr(exc, "tag", ""))
                 raise
             finally:
                 summary["tentativas_reservadas"] = self.budget.used
@@ -134,9 +147,14 @@ class Runner:
             # Nenhum gabarito, alvo ou resposta esperada chega ao resolvedor.
             blind_questions = [{k: q[k] for k in ("id", "pergunta")} for q in batch["questoes"]]
             resolution = self.call("resolucao_cega", {**base, "questoes": blind_questions}, C.blind, round_=round_)
-            audit = self.call("verificacao", {**base, "plano": plan, "lote": batch,
+            catalog = references.catalog(context, batch["questoes"])
+            atomic_json(self.output / "referencias" / f"rodada_{round_:02}.json", catalog)
+            audit_base = {**base, "contexto_tecnico": catalog["contexto"]}
+            audit = self.call("verificacao", {**audit_base, "plano": plan, "lote": batch,
+                               "trechos_dos_enunciados": catalog["enunciados"],
                                "resolucao_sem_gabarito": resolution},
-                              lambda d: C.review(d, context, batch["questoes"]), round_=round_)
+                              lambda d: C.review(d, context, batch["questoes"]), round_=round_,
+                              decode=lambda d: references.decode_review(d, catalog))
             atomic_json(self.output / "revisoes" / f"rodada_{round_:02}.json",
                         {"resolucao_sem_gabarito": resolution, "auditoria": audit})
             bad = C.rejected(audit, resolution)

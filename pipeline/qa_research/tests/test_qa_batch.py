@@ -84,6 +84,9 @@ class FakeLLM:
             if self.always_reject or (self.reject and not repaired):
                 result["itens"][6]["criterios"]["resposta_determinada"] = False
                 result["itens"][6].update(motivo="Sinais insuficientes", correcao_sugerida="Delimitar condição")
+            for row in result["itens"]:
+                row["fundamentos"] = [next(iter(payload["contexto_tecnico"]))]
+                row["teste_de_unicidade"]["condicao_que_a_exclui"] = []
             return result
         raise AssertionError(stage)
 

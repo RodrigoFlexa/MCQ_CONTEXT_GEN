@@ -53,7 +53,7 @@ def collect(output, destination):
                         continue
                     shutil.copy2(src, staging / name)
             # Lista explícita: não copiar .env, SQLite, caches nem corpus original.
-            for folder in ("chamadas", "revisoes", "refinamentos"):
+            for folder in ("chamadas", "revisoes", "refinamentos", "referencias", "migracoes"):
                 directory = output / folder
                 if directory.is_symlink():
                     raise ValueError("Diretório de resultados não pode ser link")

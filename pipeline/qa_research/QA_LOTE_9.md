@@ -69,6 +69,59 @@ se os booleanos da auditoria vierem todos positivos. A condição discriminante,
 quando declarada, precisa ser uma passagem da própria pergunta. Essa conferência
 não substitui a avaliação semântica de que a condição realmente exclui a alternativa.
 
+A auditoria agora seleciona IDs de passagens e de partes do enunciado. O código
+recupera os textos originais e mantém a validação literal nos arquivos auxiliares.
+Assim, a API não precisa recitar passagens longas. IDs inexistentes ou pertencentes
+a outra pergunta são rejeitados. Planejamento e geração mantêm os mesmos prompts.
+
+## Retomar os 40 subtópicos
+
+Na raiz do projeto, no servidor:
+
+```bash
+git pull --ff-only
+bash pipeline/qa_research/rodar_qa_todos.sh
+```
+
+O comando confere os 40 documentos, preserva resultados finalizados e retoma
+interrupções na saída existente `saida_qa_lote_9_final_v2/`. Mostra contadores de
+aprovados, pendentes, falhas, preservados e ETA aproximada, calculada com as
+latências registradas. Não refaz pesquisa documental, índices ou embeddings.
+
+Falhas de validação, filtro de conteúdo, orçamento por item ou indisponibilidade
+após as retentativas são registradas e a fila continua. Credenciais inválidas,
+configuração incompatível ou corrupção de checkpoint interrompem para correção.
+Pendências de qualidade continuam pendências; o lote não é aprovado para completar
+a quantidade. O limite cumulativo de 40 tentativas de API por item é preservado.
+
+Opcionalmente, para percorrer somente o trecho a partir de `03_02`:
+
+```bash
+bash pipeline/qa_research/rodar_qa_todos.sh --from-item 03_02
+```
+
+O reparo reconhece a implementação v2 que produziu os resultados existentes.
+Tópico, contexto, modelos e tokens precisam continuar idênticos. Lotes finalizados
+são preservados sem novas chamadas. Nas interrupções, a migração é registrada em
+`migracoes/`; checkpoints com chave idêntica são revalidados e reutilizados.
+Alterações desconhecidas de implementação continuam exigindo saída nova.
+
+Para verificar as entradas sem chamadas de API:
+
+```bash
+python -m pipeline.qa_research.qa_all check
+```
+
+O andamento consolidado fica em `saida_qa_lote_9_final_v2/resumo_todos.json`.
+O código de saída global é 0 para todos aprovados, 2 quando a fila termina com
+pendências/falhas isoladas, 1 para interrupção por erro global e 130 por Ctrl+C.
+
+Ao terminar, o terminal imprime a mensagem com 🙂 e um comando `qa_all collect`
+para coletar **todos os lotes existentes**, inclusive os anteriores à interrupção.
+O snapshot contém um índice, manifestos, resultados e auditorias, sem `.env`,
+SQLite ou caches locais. Depois, execute os comandos `git add`, `git commit` e
+`git push` mostrados. Na máquina local, use `git pull --ff-only`.
+
 ## Conferir sem chamar modelos
 
 Na raiz do projeto, em Windows ou Linux, com o ambiente Python habitual:
@@ -120,7 +173,8 @@ A saída padrão é `pipeline/qa_research/saida_qa_lote_9_final_v2/02_02/`. São
 checkpoints por chamada, orçamento cumulativo e os arquivos auxiliares de cada
 etapa. Interrupções retomam pelo mesmo comando; o limite de 40 tentativas não
 reinicia. Mudanças no contexto, prompts, código, modelos ou effort exigem uma
-nova pasta `--output`, para preservar a identidade dos resultados anteriores.
+nova pasta `--output`, para preservar a identidade dos resultados anteriores,
+exceto a migração compatível explicitamente descrita acima.
 
 Este teste usa o mesmo tópico e o mesmo documento técnico do primeiro piloto,
 com novo planejamento e geração de nove itens (3/3/3). O lote anterior permanece

@@ -5,6 +5,11 @@ use [QA_LOTE_9.md](QA_LOTE_9.md).** Planejamento e geração usam
 `gpt-5-4-petrobras:high`; verificação e refinamento usam
 `gpt-5-4-petrobras:low`. Essa etapa é independente da pesquisa documental abaixo.
 
+**Para continuar QA nos 40 subtópicos**, use
+`bash pipeline/qa_research/rodar_qa_todos.sh`. O comando preserva os lotes
+finalizados, retoma interrupções e mostra progresso/ETA. Os detalhes de retomada
+e coleta de todos os resultados estão em [QA_LOTE_9.md](QA_LOTE_9.md).
+
 Os 40 contextos revisados estão na [versão final para QA](relatorios/dez_areas_final_v1/INDICE.md),
 com [registro editorial separado](relatorios/dez_areas_final_v1/REVISAO.md).
 
