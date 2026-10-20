@@ -1,0 +1,251 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "2.11. Tratamento do Gás produzido",
+    "escopo": "As questões devem abordar os aspectos de projeto, comissionamento, operação, controle, otimização, manutenção e solução de problemas dos sistemas de tratamento do gás produzido em FPSOs, incluindo separação de líquidos e sólidos arrastados, remoção e controle de contaminantes como H₂S, CO₂ e água, avaliação da necessidade e dos processos de adoçamento do gás, desidratação por sistemas como TEG e outras tecnologias aplicáveis, controle do teor de água e ajuste do ponto de orvalho de água, prevenção da formação de hidratos, condensação de água e corrosão, influência da pressão, temperatura, composição do gás e condições de equilíbrio de fases, utilização de scrubbers, filtros, coalescedores, unidades de desidratação e sistemas de regeneração e recuperação de glicol, controle de perdas e contaminação do fluido desidratante, utilização de sistemas de membranas para redução do teor de CO₂ nas correntes destinadas ao gás combustível ou à exportação, considerando requisitos de qualidade do gás, eficiência energética e redução das emissões associadas ao carbono, avaliação da eficiência de separação das membranas, permeabilidade, seletividade, recuperação de hidrocarbonetos, influência da pressão, temperatura e composição da alimentação e gerenciamento das correntes de permeado e não permeado, compressão da corrente rica em CO₂ proveniente das membranas e seu condicionamento para reinjeção no reservatório, incluindo requisitos de pressão, integridade, corrosão, disponibilidade e desempenho dos compressores, monitoramento da qualidade do gás tratado, integração com os sistemas de compressão, reinjeção, gas lift, geração de energia, exportação e flare, dosagem de produtos químicos como inibidores de corrosão e de hidratos, avaliação da capacidade, turndown e estabilidade operacional dos equipamentos, atuação de instrumentos, malhas de controle, alarmes, intertravamentos e sistemas de proteção, comportamento durante partidas, paradas, transientes e condições anormais, identificação das causas de gás fora de especificação, carryover de líquidos, formação de hidratos, corrosão, degradação do desempenho das membranas e perdas de eficiência dos sistemas de desidratação e compressão, além da aplicação de princípios de segurança de processo, integridade, confiabilidade, eficiência energética, controle de emissões e boas práticas de engenharia para assegurar que as diferentes correntes de gás atendam às especificações requeridas para gás combustível, exportação ou reinjeção no reservatório.",
+    "area": "Produção e Processo (Medição Fiscal e Sistema de Alívio)",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 225,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Tratamento do Gás produzido",
+      "titulo": "Separação de líquidos e contaminantes",
+      "foco": "Scrubbers, filtros e coalescedores, arraste de líquidos e sólidos e proteção dos estágios seguintes.",
+      "termos": [
+        "gas treatment",
+        "tratamento de gás",
+        "scrubber",
+        "coalescer"
+      ],
+      "consultas": [
+        "FPSO Tratamento do Gás produzido: Separação de líquidos e contaminantes. Scrubbers, filtros e coalescedores, arraste de líquidos e sólidos e proteção dos estágios seguintes.",
+        "FPSO produced gas scrubber filter coalescer liquid solid removal"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": [],
+      "post_context_groups": [
+        [
+          "scrubber",
+          "gas treatment",
+          "tratamento de gás",
+          "gás produzido",
+          "produced gas",
+          "gas conditioning",
+          "gas liquid",
+          "gas-liquid"
+        ]
+      ]
+    },
+    {
+      "id": "F02",
+      "grupo": "Tratamento do Gás produzido",
+      "titulo": "Adoçamento e gases ácidos",
+      "foco": "H₂S, CO₂, seleção de adoçamento, absorção, regeneração, corrosão e qualidade do gás.",
+      "termos": [
+        "sweetening",
+        "amine",
+        "amina",
+        "acid gas",
+        "h2s"
+      ],
+      "consultas": [
+        "FPSO Tratamento do Gás produzido: Adoçamento e gases ácidos. H₂S, CO₂, seleção de adoçamento, absorção, regeneração, corrosão e qualidade do gás.",
+        "natural gas sweetening amine hydrogen sulfide carbon dioxide removal"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Tratamento do Gás produzido",
+      "titulo": "Desidratação e ponto de orvalho",
+      "foco": "Absorção de água, circulação e regeneração de TEG, ponto de orvalho, perdas e contaminação.",
+      "termos": [
+        "teg",
+        "glycol",
+        "glicol",
+        "dew point",
+        "desidratação de gás"
+      ],
+      "consultas": [
+        "FPSO Tratamento do Gás produzido: Desidratação e ponto de orvalho. Absorção de água, circulação e regeneração de TEG, ponto de orvalho, perdas e contaminação.",
+        "natural gas dehydration TEG regeneration water dew point control"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Tratamento do Gás produzido",
+      "titulo": "Equilíbrio, hidratos e condensação",
+      "foco": "Pressão, temperatura, composição, hidratos, condensação de água e hidrocarbonetos e corrosão.",
+      "termos": [
+        "gas hydrate",
+        "hidrato",
+        "phase envelope",
+        "dew point"
+      ],
+      "consultas": [
+        "FPSO Tratamento do Gás produzido: Equilíbrio, hidratos e condensação. Pressão, temperatura, composição, hidratos, condensação de água e hidrocarbonetos e corrosão.",
+        "natural gas phase equilibrium hydrate prevention condensation corrosion"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F05",
+      "grupo": "Tratamento do Gás produzido",
+      "titulo": "Controle, especificações e interfaces",
+      "foco": "Destino combustível, exportação e reinjeção, malhas, transientes, energia, alarmes e manutenção.",
+      "termos": [
+        "gas treatment",
+        "tratamento de gás",
+        "fuel gas",
+        "export gas"
+      ],
+      "consultas": [
+        "FPSO Tratamento do Gás produzido: Controle, especificações e interfaces. Destino combustível, exportação e reinjeção, malhas, transientes, energia, alarmes e manutenção.",
+        "FPSO gas treatment specification fuel export reinjection control troubleshooting"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}

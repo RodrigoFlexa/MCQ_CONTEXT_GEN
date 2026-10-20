@@ -1,0 +1,202 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "6.6. Sistemas e equipamentos de salvatagem",
+    "escopo": "As questões devem abordar os aspectos de projeto, dimensionamento, distribuição, instalação, comissionamento, operação, inspeção, teste, manutenção, integridade e disponibilidade dos sistemas e equipamentos de salvatagem de FPSOs, incluindo embarcações de sobrevivência e resgate, baleeiras convencionais e de queda livre quando aplicáveis, balsas salva-vidas, rescue boats, dispositivos de lançamento, turcos, guinchos, cabos, ganchos, sistemas de liberação, meios de embarque e recuperação, coletes salva-vidas, boias salva-vidas, aparelhos e dispositivos de sinalização e localização de emergência, iluminação e marcação das rotas de abandono, pontos de reunião, estações de embarque e interfaces com o refúgio temporário, definição da capacidade total e distribuição dos meios de salvatagem em função do POB, localização e acessibilidade dos equipamentos considerando cenários de incêndio, explosão, fumaça, inclinação, adernamento e perda de acesso a determinadas áreas, redundância e independência entre meios primários e alternativos de abandono, critérios de lançamento e operação sob diferentes condições de vento, ondas, corrente, trim e banda, avaliação das zonas de queda e afastamento seguro da unidade, integração com os planos de emergência, muster, abandono e resgate, comunicação e coordenação entre CCR, comando da unidade, equipes de emergência, embarcações de apoio e meios externos de salvamento, prontidão e treinamento das equipes, exercícios simulados, familiarização do pessoal e fatores humanos associados à evacuação e abandono, inspeções periódicas de casco, motores, baterias, combustível, equipamentos de sobrevivência, sistemas de propulsão, freios, guinchos, cabos, ganchos e dispositivos de liberação, testes funcionais e de carga dos sistemas de lançamento e recuperação, controle de validade e condição dos equipamentos portáteis de salvatagem, gestão de falhas, indisponibilidades e medidas compensatórias, avaliação de degradação por corrosão, ambiente marinho, envelhecimento e longos períodos de inatividade, planejamento de manutenção, reparo e substituição de componentes, análise das consequências da perda parcial ou total de um meio de abandono, além da aplicação de princípios de segurança marítima, fatores humanos, confiabilidade, prontidão para emergência e boas práticas de engenharia para assegurar a evacuação, o abandono, a sobrevivência e o resgate seguro das pessoas a bordo do FPSO em diferentes cenários de emergência.",
+    "area": "Segurança Operacional, SGSO, Sistemas de Segurança e Gestão de Riscos",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 200,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Sistemas e equipamentos de salvatagem",
+      "titulo": "Abandono e meios coletivos",
+      "foco": "Baleeiras, balsas, capacidade, localização, lançamento, recuperação e limitações operacionais.",
+      "termos": [
+        "lifeboat",
+        "liferaft",
+        "salvatagem",
+        "abandon ship"
+      ],
+      "consultas": [
+        "FPSO Sistemas e equipamentos de salvatagem: Abandono e meios coletivos. Baleeiras, balsas, capacidade, localização, lançamento, recuperação e limitações operacionais.",
+        "FPSO lifeboat liferaft abandonment capacity location launch recovery"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Sistemas e equipamentos de salvatagem",
+      "titulo": "Proteção individual e resgate",
+      "foco": "Coletes, roupas de imersão, resgate de pessoa ao mar e interação com embarcações de apoio.",
+      "termos": [
+        "life jacket",
+        "immersion suit",
+        "rescue boat",
+        "man overboard"
+      ],
+      "consultas": [
+        "FPSO Sistemas e equipamentos de salvatagem: Proteção individual e resgate. Coletes, roupas de imersão, resgate de pessoa ao mar e interação com embarcações de apoio.",
+        "FPSO lifesaving lifejackets immersion suits rescue boat man overboard"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Sistemas e equipamentos de salvatagem",
+      "titulo": "Rotas, reunião e comunicação",
+      "foco": "Rotas de fuga, pontos de reunião, POB, comunicação, evacuação e critérios de abandono.",
+      "termos": [
+        "muster",
+        "escape route",
+        "evacuation",
+        "abandonment"
+      ],
+      "consultas": [
+        "FPSO Sistemas e equipamentos de salvatagem: Rotas, reunião e comunicação. Rotas de fuga, pontos de reunião, POB, comunicação, evacuação e critérios de abandono.",
+        "FPSO escape evacuation muster station POB communication emergency"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Sistemas e equipamentos de salvatagem",
+      "titulo": "Inspeções, exercícios e prontidão",
+      "foco": "Guinchos, davits, liberação, testes, manutenção, exercícios e indisponibilidades dos meios de salvatagem.",
+      "termos": [
+        "lifesaving",
+        "lifeboat",
+        "salvatagem",
+        "drill"
+      ],
+      "consultas": [
+        "FPSO Sistemas e equipamentos de salvatagem: Inspeções, exercícios e prontidão. Guinchos, davits, liberação, testes, manutenção, exercícios e indisponibilidades dos meios de salvatagem.",
+        "FPSO lifesaving appliance inspection maintenance drill davit release mechanism"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}

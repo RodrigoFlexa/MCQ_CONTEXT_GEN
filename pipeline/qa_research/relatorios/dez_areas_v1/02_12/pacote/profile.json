@@ -1,0 +1,237 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "2.12. Compressão de Gás",
+    "escopo": "As questões devem abordar os aspectos de projeto, comissionamento, operação, controle, otimização, manutenção e solução de problemas dos sistemas de compressão de gás em FPSOs, incluindo compressão do gás produzido desde os níveis de baixa, média e alta pressão até as condições requeridas para gas lift, gás combustível, exportação e reinjeção no reservatório, seleção e aplicação de compressores centrífugos, reciprocantes e de parafuso conforme vazão, razão de compressão, composição do gás e condições operacionais, utilização de configurações em múltiplos estágios com resfriamento intermediário, scrubbers e separação de líquidos entre estágios, influência da pressão, temperatura, peso molecular, densidade, compressibilidade e composição do gás sobre o desempenho dos equipamentos, curvas de desempenho, head, eficiência, potência requerida, capacidade, turndown, surge, stonewall, reciclo e sistemas de controle antissurge em compressores centrífugos, controle de capacidade e clearance em compressores reciprocantes, sistemas de selagem, dry gas seals, óleo lubrificante e sistemas auxiliares, prevenção de carryover de líquidos, vibração, pulsação, sobretemperatura e instabilidades operacionais, tipos usuais de acionadores como turbinas a gás e motores elétricos e seus impactos sobre disponibilidade, eficiência energética, emissões, partida e controle de velocidade, integração dos diferentes estágios e trens de compressão com os sistemas de tratamento de gás, gas lift, exportação, reinjeção, flare e geração de energia, requisitos específicos da compressão para reinjeção de gás em alta pressão no reservatório, atuação de instrumentos, malhas de controle, alarmes, intertravamentos, ESD e sistemas de proteção, sequências de partida, parada, pressurização e despressurização, comportamento durante transientes, trips e mudanças de carga, monitoramento de desempenho, degradação, fouling e eficiência dos compressores, confiabilidade, redundância e disponibilidade dos trens, além da aplicação de princípios de segurança de processo, integridade mecânica, eficiência energética, controle de emissões e boas práticas de engenharia para assegurar compressão segura, estável e eficiente nas diferentes condições de produção e destinos do gás.",
+    "area": "Produção e Processo (Medição Fiscal e Sistema de Alívio)",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 225,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Compressão de Gás",
+      "titulo": "Termodinâmica e estágios",
+      "foco": "Razão de pressão, trabalho, eficiência, estágios, resfriamento e efeito da composição do gás.",
+      "termos": [
+        "compressor",
+        "compression",
+        "compressão",
+        "polytropic"
+      ],
+      "consultas": [
+        "FPSO Compressão de Gás: Termodinâmica e estágios. Razão de pressão, trabalho, eficiência, estágios, resfriamento e efeito da composição do gás.",
+        "gas compression stages pressure ratio polytropic efficiency intercooling"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Compressão de Gás",
+      "titulo": "Mapa e antissurge",
+      "foco": "Surge, choke, mapa de desempenho, reciclo, controle e transientes de carga.",
+      "termos": [
+        "surge",
+        "anti-surge",
+        "antissurge",
+        "compressor map"
+      ],
+      "consultas": [
+        "FPSO Compressão de Gás: Mapa e antissurge. Surge, choke, mapa de desempenho, reciclo, controle e transientes de carga.",
+        "centrifugal gas compressor map surge choke recycle antisurge control"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Compressão de Gás",
+      "titulo": "Auxiliares, selos e lubrificação",
+      "foco": "Selagem, gás de selo, óleo lubrificante, mancais, condicionamento e proteção contra líquidos.",
+      "termos": [
+        "dry gas seal",
+        "seal gas",
+        "lubrication",
+        "compressor"
+      ],
+      "consultas": [
+        "FPSO Compressão de Gás: Auxiliares, selos e lubrificação. Selagem, gás de selo, óleo lubrificante, mancais, condicionamento e proteção contra líquidos.",
+        "offshore compressor dry gas seals seal gas lube oil bearings auxiliaries"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Compressão de Gás",
+      "titulo": "Acionamento e controle",
+      "foco": "Acionadores, controle de capacidade e pressão, interação com geração e processo.",
+      "termos": [
+        "compressor",
+        "gas turbine",
+        "variable speed",
+        "compression"
+      ],
+      "consultas": [
+        "FPSO Compressão de Gás: Acionamento e controle. Acionadores, controle de capacidade e pressão, interação com geração e processo.",
+        "FPSO gas compression driver speed capacity pressure load control"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F05",
+      "grupo": "Compressão de Gás",
+      "titulo": "Partidas, proteção e confiabilidade",
+      "foco": "Permissivos, sequências, vibração, temperatura, trips, manutenção e diagnóstico de perda de desempenho.",
+      "termos": [
+        "compressor",
+        "compression",
+        "compressão",
+        "vibration"
+      ],
+      "consultas": [
+        "FPSO Compressão de Gás: Partidas, proteção e confiabilidade. Permissivos, sequências, vibração, temperatura, trips, manutenção e diagnóstico de perda de desempenho.",
+        "FPSO compressor startup shutdown vibration trips condition monitoring maintenance"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "5.2. Geração e distribuição de energia elétrica",
+    "escopo": "As questões devem abordar os aspectos de projeto, comissionamento, operação, controle, monitoramento, otimização, manutenção, integridade e solução de problemas dos sistemas de geração e distribuição de energia elétrica em FPSOs, incluindo filosofia de geração principal, auxiliar e de emergência, balanço e gerenciamento de cargas, definição da capacidade instalada, reserva girante, redundância, disponibilidade e critérios de N+1, utilização de geradores acionados por turbinas a gás, motores a diesel ou outras máquinas motrizes aplicáveis, geradores de emergência e sistemas de partida, sincronização de geradores, controle de frequência, tensão, potência ativa, potência reativa e fator de potência, compartilhamento de carga entre unidades geradoras, operação em barramentos simples ou seccionados, sistemas de média e baixa tensão, transformadores, switchgears, painéis, centros de controle de motores e redes de distribuição, configuração e operação de bus ties, transferência de cargas e recomposição do sistema elétrico, sistemas de gerenciamento de energia e carga (PMS/EMS), load shedding, load sharing e sequências de partida de grandes consumidores, comportamento do sistema durante partida e parada de compressores, bombas e outros equipamentos de elevada potência, análise e controle de transitórios elétricos, quedas de tensão e frequência, perda de geração, blackouts e black starts, seletividade, coordenação e atuação das proteções elétricas contra sobrecorrente, curto-circuito, falta à terra, potência reversa, sub e sobretensão, sub e sobrefrequência e demais condições anormais, sistemas de aterramento e detecção de falhas à terra, qualidade de energia, harmônicos, desequilíbrio de fases e influência de cargas não lineares e acionamentos de velocidade variável, utilização de UPS, bancos de baterias e sistemas de corrente contínua para alimentação de cargas essenciais e sistemas de controle e segurança, classificação e priorização de consumidores essenciais, emergenciais e não essenciais, interfaces com sistemas de ESD, F&G, telecomunicações, instrumentação, processo e sistemas marítimos, requisitos para equipamentos instalados em áreas classificadas, monitoramento de temperatura, vibração, isolamento e demais parâmetros de condição de geradores, motores, transformadores, cabos e switchgears, inspeção, testes, manutenção preventiva, preditiva e corretiva, análise de falhas e degradação de equipamentos elétricos, avaliação da confiabilidade e disponibilidade do sistema, gestão da demanda e eficiência energética, além da aplicação de princípios de segurança elétrica, continuidade operacional, segurança de processo e boas práticas de engenharia para assegurar o fornecimento seguro, estável, seletivo e confiável de energia elétrica aos diferentes sistemas e consumidores do FPSO.",
+    "area": "Utilidades, geração de energia e sistemas auxiliares",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 270,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Geração e distribuição de energia elétrica",
+      "titulo": "Geração, cargas e redundância",
+      "foco": "Geração principal e emergência, turbinas e diesel, capacidade, demanda, reserva girante e N+1.",
+      "termos": [
+        "power generation",
+        "geração de energia",
+        "gas turbine",
+        "spinning reserve"
+      ],
+      "consultas": [
+        "FPSO Geração e distribuição de energia elétrica: Geração, cargas e redundância. Geração principal e emergência, turbinas e diesel, capacidade, demanda, reserva girante e N+1.",
+        "FPSO electrical generation gas turbine diesel load balance spinning reserve redundancy"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Geração e distribuição de energia elétrica",
+      "titulo": "Sincronismo e compartilhamento",
+      "foco": "Frequência, tensão, potência ativa e reativa, fator de potência, sincronismo e compartilhamento de carga.",
+      "termos": [
+        "synchronization",
+        "load sharing",
+        "reactive power",
+        "sincronismo"
+      ],
+      "consultas": [
+        "FPSO Geração e distribuição de energia elétrica: Sincronismo e compartilhamento. Frequência, tensão, potência ativa e reativa, fator de potência, sincronismo e compartilhamento de carga.",
+        "offshore generator synchronization frequency voltage active reactive power sharing"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Geração e distribuição de energia elétrica",
+      "titulo": "Distribuição e proteções",
+      "foco": "Barramentos, bus ties, transformadores, motores, seletividade, aterramento e proteções elétricas.",
+      "termos": [
+        "switchgear",
+        "bus tie",
+        "electrical protection",
+        "proteção elétrica"
+      ],
+      "consultas": [
+        "FPSO Geração e distribuição de energia elétrica: Distribuição e proteções. Barramentos, bus ties, transformadores, motores, seletividade, aterramento e proteções elétricas.",
+        "FPSO switchgear transformer motor control bus tie selectivity earth fault protection"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Geração e distribuição de energia elétrica",
+      "titulo": "PMS, transientes e blackout",
+      "foco": "PMS, rejeição de cargas, partida de grandes consumidores, perda de geração, blackout e recomposição.",
+      "termos": [
+        "load shedding",
+        "blackout",
+        "black start",
+        "power management"
+      ],
+      "consultas": [
+        "FPSO Geração e distribuição de energia elétrica: PMS, transientes e blackout. PMS, rejeição de cargas, partida de grandes consumidores, perda de geração, blackout e recomposição.",
+        "FPSO power management load shedding large motor starting blackout black start"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F05",
+      "grupo": "Geração e distribuição de energia elétrica",
+      "titulo": "UPS, baterias e sistemas essenciais",
+      "foco": "Cargas essenciais, emergência, UPS, corrente contínua, baterias e interfaces com SIS, ESD e F&G.",
+      "termos": [
+        "ups",
+        "battery",
+        "uninterruptible",
+        "emergency generator"
+      ],
+      "consultas": [
+        "FPSO Geração e distribuição de energia elétrica: UPS, baterias e sistemas essenciais. Cargas essenciais, emergência, UPS, corrente contínua, baterias e interfaces com SIS, ESD e F&G.",
+        "FPSO emergency essential electrical loads UPS batteries DC safety systems"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F06",
+      "grupo": "Geração e distribuição de energia elétrica",
+      "titulo": "Qualidade, condição e manutenção",
+      "foco": "Harmônicos, desequilíbrio, acionamentos, temperatura, isolamento, proteção Ex, manutenção e eficiência energética.",
+      "termos": [
+        "harmonic",
+        "power quality",
+        "insulation",
+        "electrical maintenance"
+      ],
+      "consultas": [
+        "FPSO Geração e distribuição de energia elétrica: Qualidade, condição e manutenção. Harmônicos, desequilíbrio, acionamentos, temperatura, isolamento, proteção Ex, manutenção e eficiência energética.",
+        "FPSO power quality harmonics variable speed drive insulation monitoring maintenance Ex"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "2.5. Sistema de drenagem aberta e fechada",
+    "escopo": "As questões devem abordar o projeto, a construção, o comissionamento, a operação, a manutenção e o descomissionamento dos sistemas de drenagem aberta e drenagem fechada em FPSOs, incluindo critérios de segregação entre correntes, identificação e classificação das fontes de drenagem, coleta de líquidos provenientes de áreas de processo, conveses, equipamentos, tubulações e vasos, dimensionamento e arranjo de tubulações, declividades, selos hidráulicos, caixas e funis de drenagem, tanques e vasos de drenagem aberta e fechada, bombas e sistemas de transferência, ventilação, inertização e controle de pressão, prevenção da entrada e migração de gases e hidrocarbonetos entre áreas, interfaces com sistemas de slop, água oleosa, produção e flare, recuperação e destinação dos líquidos coletados, prevenção de transbordamento, retorno de gás, corrosão, incrustação, obstrução e emissões, filosofia de isolamento e segurança operacional, instrumentação, alarmes e intertravamentos, testes, flushing e verificação de estanqueidade durante o comissionamento, inspeção, limpeza e manutenção dos equipamentos, avaliação de capacidade e desempenho em condições normais, partidas, paradas, upset e emergências, bem como requisitos de segurança, proteção ambiental, integridade e boas práticas de engenharia aplicáveis ao longo do ciclo de vida da unidade.",
+    "area": "Produção e Processo (Medição Fiscal e Sistema de Alívio)",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 225,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Sistema de drenagem aberta e fechada",
+      "titulo": "Segregação e fontes de drenagem",
+      "foco": "Classificação de fontes, drenagem pressurizada, atmosférica, perigosa e não perigosa e riscos de interligação.",
+      "termos": [
+        "open drain",
+        "closed drain",
+        "drenagem aberta",
+        "drenagem fechada"
+      ],
+      "consultas": [
+        "FPSO Sistema de drenagem aberta e fechada: Segregação e fontes de drenagem. Classificação de fontes, drenagem pressurizada, atmosférica, perigosa e não perigosa e riscos de interligação.",
+        "FPSO open closed drain segregation hazardous non hazardous sources"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Sistema de drenagem aberta e fechada",
+      "titulo": "Hidráulica e selos",
+      "foco": "Declividades, dimensionamento, funis, caixas, selos e prevenção de migração de gás, refluxo e transbordamento.",
+      "termos": [
+        "drain",
+        "drenagem",
+        "water seal",
+        "liquid seal",
+        "funil de drenagem"
+      ],
+      "consultas": [
+        "FPSO Sistema de drenagem aberta e fechada: Hidráulica e selos. Declividades, dimensionamento, funis, caixas, selos e prevenção de migração de gás, refluxo e transbordamento.",
+        "offshore drain piping slope liquid seals gas migration hydraulic capacity"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Sistema de drenagem aberta e fechada",
+      "titulo": "Vasos, tanques e transferências",
+      "foco": "Vasos, tanques, bombas, recuperação de hidrocarbonetos e interfaces com água oleosa, slop e flare.",
+      "termos": [
+        "closed drain drum",
+        "open drain tank",
+        "slop",
+        "drain pump"
+      ],
+      "consultas": [
+        "FPSO Sistema de drenagem aberta e fechada: Vasos, tanques e transferências. Vasos, tanques, bombas, recuperação de hidrocarbonetos e interfaces com água oleosa, slop e flare.",
+        "FPSO closed drain drum open drain tank pumps slop recovery"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Sistema de drenagem aberta e fechada",
+      "titulo": "Controle, inertização e transientes",
+      "foco": "Ventilação, inertização, pressão, níveis, alarmes e desempenho em operação normal, upset e emergência.",
+      "termos": [
+        "drain",
+        "drenagem",
+        "blanketing",
+        "venting"
+      ],
+      "consultas": [
+        "FPSO Sistema de drenagem aberta e fechada: Controle, inertização e transientes. Ventilação, inertização, pressão, níveis, alarmes e desempenho em operação normal, upset e emergência.",
+        "offshore closed drain pressure control inerting alarms shutdown upset"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F05",
+      "grupo": "Sistema de drenagem aberta e fechada",
+      "titulo": "Comissionamento e integridade",
+      "foco": "Testes, estanqueidade, flushing, limpeza, obstruções, corrosão, isolamento, manutenção e desativação segura.",
+      "termos": [
+        "drain",
+        "drenagem",
+        "flushing",
+        "leak test"
+      ],
+      "consultas": [
+        "FPSO Sistema de drenagem aberta e fechada: Comissionamento e integridade. Testes, estanqueidade, flushing, limpeza, obstruções, corrosão, isolamento, manutenção e desativação segura.",
+        "FPSO drain system commissioning flushing leak testing corrosion blockage inspection"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}

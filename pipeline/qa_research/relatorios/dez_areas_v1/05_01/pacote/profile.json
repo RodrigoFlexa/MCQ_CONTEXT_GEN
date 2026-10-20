@@ -1,0 +1,272 @@
+{
+  "schema": "document-profile-v2",
+  "topic": {
+    "titulo": "5.1. Sistema de utilidades",
+    "escopo": "As questões devem abordar os aspectos de projeto, comissionamento, operação, controle, monitoramento, otimização, manutenção, integridade e solução de problemas dos principais sistemas de utilidades de FPSOs, excetuando-se os sistemas de geração e distribuição de energia elétrica, incluindo sistemas de ar de instrumento e ar de serviço, compressores, secadores, filtros, vasos pulmão e redes de distribuição, requisitos de pressão, capacidade, qualidade e ponto de orvalho do ar comprimido, geração, armazenamento e distribuição de nitrogênio para inertização, purga, blanketing, preservação e outras aplicações de processo, incluindo tecnologias como geração por membranas ou PSA, controle de pureza e capacidade, sistemas de geração e dosagem de hipoclorito para controle de biofouling em sistemas de água do mar, controle de concentração, dosagem e desempenho, sistemas de captação e distribuição de água do mar para serviços auxiliares, sistemas de água de resfriamento em circuito aberto e fechado, cooling medium e respectivas bombas, trocadores de calor, vasos de expansão e controle de temperatura, sistemas de heating medium e transferência de calor quando aplicáveis, geração de água doce por evaporação, osmose reversa ou outras tecnologias, sistemas de água potável, água de serviço e água técnica, armazenamento, tratamento, desinfecção, pressurização e distribuição, controle da qualidade da água e prevenção de contaminação, sistemas de diesel e outros combustíveis líquidos para consumidores auxiliares, armazenamento, transferência, filtração e distribuição, sistemas de óleo lubrificante e outros fluidos auxiliares quando centralizados, interfaces das utilidades com os sistemas de processo, marine, segurança e acomodação, avaliação de capacidade, demanda normal e de pico, balanço de consumidores, redundância, disponibilidade, turndown e filosofia de equipamentos em operação e reserva, atuação de instrumentos, malhas de controle, alarmes, intertravamentos e sistemas de proteção, sequências de partida e parada, comportamento durante perda parcial ou total de uma utilidade, identificação de consumidores essenciais e impactos de falhas comuns sobre produção e segurança, prevenção de corrosão, incrustação, contaminação, fouling e crescimento microbiológico, monitoramento de desempenho, eficiência energética e consumo de insumos, além da aplicação de princípios de segurança de processo, confiabilidade e boas práticas de engenharia para assegurar o fornecimento contínuo, seguro e adequado das utilidades necessárias à operação do FPSO.",
+    "area": "Utilidades, geração de energia e sistemas auxiliares",
+    "restricoes": "Cenários de FPSO/FSO e sistemas associados. Não confundir operação submarina com perfuração ou intervenção direta com sonda. Não inventar requisitos legais ou limites."
+  },
+  "inputs": {
+    "manifest": "dataset/domain_corpora/manifest.json",
+    "raw_texts": [
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublico(sem IBICT)-SemProcessamento.txt",
+      "dataset/corpus-SemProcessamento-publico-PetrolesHibrido/corpusPublicoIBICT-SemProcessamento.txt"
+    ],
+    "origins": [
+      "pipeline/inventario/saida_sistemas_de_lastro_v4_notas",
+      "pipeline/inventario/saida_mais_4_topicos_v4_nano_low",
+      "pipeline/inventario/saida_ultimos_5_topicos_v4_nano_low"
+    ],
+    "evidence_exports": [
+      "pipeline/qa_research/relatorios/2026-10-19_run_lexical/evidencias.jsonl"
+    ]
+  },
+  "cache_dir": "pipeline/qa_research/.local/document",
+  "selection": {
+    "frontier_per_facet": 64,
+    "sources_per_facet": 36,
+    "max_per_document": 8,
+    "threads": 4,
+    "max_packet_bytes": 20000000,
+    "preferred_context": [
+      "FPSO",
+      "offshore",
+      "oilfield",
+      "production chemical",
+      "químicos de produção",
+      "água produzida",
+      "produced water",
+      "água de injeção",
+      "injection water",
+      "gás natural",
+      "natural gas",
+      "processamento primário"
+    ]
+  },
+  "runtime": {
+    "model": "gpt-5-4-petrobras:low",
+    "workers": 3,
+    "max_calls": 270,
+    "max_attempts": 3,
+    "timeout": 180,
+    "research_rounds": 3,
+    "batch_sources": 6,
+    "writer_sources": 12,
+    "max_blocks": 8,
+    "max_block_words": 220,
+    "audit_repairs": 1,
+    "facet_retry_passes": 1
+  },
+  "facets": [
+    {
+      "id": "F01",
+      "grupo": "Sistema de utilidades",
+      "titulo": "Ar de instrumento e de serviço",
+      "foco": "Compressores, filtros, secadores, vasos, ponto de orvalho, pressão, consumidores e perda de ar.",
+      "termos": [
+        "instrument air",
+        "ar de instrumento",
+        "compressed air",
+        "air dryer"
+      ],
+      "consultas": [
+        "FPSO Sistema de utilidades: Ar de instrumento e de serviço. Compressores, filtros, secadores, vasos, ponto de orvalho, pressão, consumidores e perda de ar.",
+        "FPSO instrument service air compressor dryer receiver pressure dew point"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F02",
+      "grupo": "Sistema de utilidades",
+      "titulo": "Nitrogênio e inertização",
+      "foco": "Geração por membranas ou PSA, pureza, capacidade, armazenamento, purga, inertização e preservação.",
+      "termos": [
+        "nitrogen",
+        "nitrogênio",
+        "psa",
+        "membrane nitrogen"
+      ],
+      "consultas": [
+        "FPSO Sistema de utilidades: Nitrogênio e inertização. Geração por membranas ou PSA, pureza, capacidade, armazenamento, purga, inertização e preservação.",
+        "FPSO nitrogen generation membrane PSA purity inerting purge blanketing"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F03",
+      "grupo": "Sistema de utilidades",
+      "titulo": "Água do mar e hipoclorito",
+      "foco": "Captação para serviços, cloração, concentração, dosagem, biofouling e corrosão.",
+      "termos": [
+        "hypochlorite",
+        "hipoclorito",
+        "electrochlorination",
+        "seawater cooling"
+      ],
+      "consultas": [
+        "FPSO Sistema de utilidades: Água do mar e hipoclorito. Captação para serviços, cloração, concentração, dosagem, biofouling e corrosão.",
+        "FPSO seawater utilities electrochlorination hypochlorite biofouling control"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F04",
+      "grupo": "Sistema de utilidades",
+      "titulo": "Resfriamento e aquecimento",
+      "foco": "Circuitos abertos e fechados, trocadores, expansão, controle térmico, capacidade e fouling.",
+      "termos": [
+        "cooling medium",
+        "heating medium",
+        "água de resfriamento",
+        "heat exchanger"
+      ],
+      "consultas": [
+        "FPSO Sistema de utilidades: Resfriamento e aquecimento. Circuitos abertos e fechados, trocadores, expansão, controle térmico, capacidade e fouling.",
+        "FPSO cooling heating medium closed open loop heat exchanger expansion vessel"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F05",
+      "grupo": "Sistema de utilidades",
+      "titulo": "Água doce, potável e de serviço",
+      "foco": "Geração, osmose, evaporação, desinfecção, pressurização, armazenamento e prevenção de contaminação.",
+      "termos": [
+        "potable water",
+        "fresh water",
+        "água potável",
+        "reverse osmosis"
+      ],
+      "consultas": [
+        "FPSO Sistema de utilidades: Água doce, potável e de serviço. Geração, osmose, evaporação, desinfecção, pressurização, armazenamento e prevenção de contaminação.",
+        "FPSO fresh potable service water reverse osmosis evaporation disinfection storage"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    },
+    {
+      "id": "F06",
+      "grupo": "Sistema de utilidades",
+      "titulo": "Combustíveis, auxiliares e disponibilidade",
+      "foco": "Diesel, lubrificantes, filtração, demanda, redundância, sequências, consumidores essenciais e falhas comuns; geração elétrica em documento próprio.",
+      "termos": [
+        "diesel",
+        "lubricating oil",
+        "fuel system",
+        "utility failure"
+      ],
+      "consultas": [
+        "FPSO Sistema de utilidades: Combustíveis, auxiliares e disponibilidade. Diesel, lubrificantes, filtração, demanda, redundância, sequências, consumidores essenciais e falhas comuns; geração elétrica em documento próprio.",
+        "FPSO diesel lubrication utilities demand redundancy startup failure essential consumers"
+      ],
+      "context_groups": [
+        [
+          "fpso",
+          "offshore",
+          "petróleo",
+          "petroleo",
+          "petroleum",
+          "oil",
+          "gas",
+          "gás",
+          "subsea",
+          "marine",
+          "marítim",
+          "plataforma",
+          "production",
+          "produção"
+        ]
+      ],
+      "exclude_context": []
+    }
+  ]
+}
