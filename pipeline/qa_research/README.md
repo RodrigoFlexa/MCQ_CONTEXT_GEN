@@ -5,6 +5,9 @@ use [QA_LOTE_9.md](QA_LOTE_9.md).** Planejamento e geração usam
 `gpt-5-4-petrobras:high`; verificação e refinamento usam
 `gpt-5-4-petrobras:low`. Essa etapa é independente da pesquisa documental abaixo.
 
+Os 40 contextos revisados estão na [versão final para QA](relatorios/dez_areas_final_v1/INDICE.md),
+com [registro editorial separado](relatorios/dez_areas_final_v1/REVISAO.md).
+
 **Para as dez áreas (40 frases), use [DEZ_AREAS.md](DEZ_AREAS.md).** Os perfis têm
 217 recortes definidos manualmente; a preparação local compartilha uma única
 varredura e um E5 com GPU. No servidor:

@@ -68,8 +68,11 @@ python -m pipeline.qa_research.qa_batch check --item 02_02
 API. Nenhum dos dois carrega modelos de embeddings ou precisa de credenciais.
 
 A entrada padrão é
-`pipeline/qa_research/relatorios/dez_areas_v1/02_02/documento.json`, produzida
-pela coleta dos documentos. Para outro snapshot, use `--document CAMINHO`.
+`pipeline/qa_research/relatorios/dez_areas_final_v1/02_02/documento.json`, da
+versão editorial final dos 40 documentos. Os resultados originais da pesquisa
+permanecem em `relatorios/dez_areas_v1/`. O registro da revisão e as referências
+auxiliares ficam fora dos contextos, em `relatorios/dez_areas_final_v1/REVISAO.md`.
+Para outro snapshot, use `--document CAMINHO`.
 O arquivo precisa manter a estrutura limpa de `documento.json`, sem campos de
 proveniência ou questões. O título é conferido contra o perfil do item.
 
@@ -80,8 +83,8 @@ metadados auxiliares; o planejamento decide se há suporte para nove alvos.
 
 ## Executar posteriormente no servidor
 
-Com o documento coletado no caminho padrão e as mesmas credenciais Azure da
-geração documental:
+Com o projeto atualizado e as mesmas credenciais Azure da geração documental,
+o comando usa diretamente a versão final revisada de Produtos químicos:
 
 ```bash
 git pull
@@ -97,7 +100,7 @@ bash pipeline/qa_research/rodar_qa_lote_9.sh --item 02_02 \
   --document pipeline/qa_research/saida_documento_dez_areas_v1/02_02/documento.json
 ```
 
-A saída padrão é `pipeline/qa_research/saida_qa_lote_9_v1/02_02/`. São gravados
+A saída padrão é `pipeline/qa_research/saida_qa_lote_9_final_v1/02_02/`. São gravados
 checkpoints por chamada, orçamento cumulativo e os arquivos auxiliares de cada
 etapa. Interrupções retomam pelo mesmo comando; o limite de 40 tentativas não
 reinicia. Mudanças no contexto, prompts, código, modelos ou effort exigem uma
