@@ -136,7 +136,7 @@ class Runner:
             resolution = self.call("resolucao_cega", {**base, "questoes": blind_questions}, C.blind, round_=round_)
             audit = self.call("verificacao", {**base, "plano": plan, "lote": batch,
                                "resolucao_sem_gabarito": resolution},
-                              lambda d: C.review(d, context), round_=round_)
+                              lambda d: C.review(d, context, batch["questoes"]), round_=round_)
             atomic_json(self.output / "revisoes" / f"rodada_{round_:02}.json",
                         {"resolucao_sem_gabarito": resolution, "auditoria": audit})
             bad = C.rejected(audit, resolution)

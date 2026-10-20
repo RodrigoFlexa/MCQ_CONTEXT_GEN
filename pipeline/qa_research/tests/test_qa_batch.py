@@ -43,15 +43,19 @@ def resolution():
 
 def review():
     return {"itens": [{"id": i, "criterios": dict.fromkeys(C.CRITERIA, True), "motivo": "",
-             "correcao_sugerida": "", "fundamentos": [PASSAGE]} for i in C.IDS],
+             "correcao_sugerida": "", "fundamentos": [PASSAGE],
+             "teste_de_unicidade": {"outra_resposta_plausivel": "", "condicao_que_a_exclui": ""},
+             "dificuldade_observada": C.expected_difficulty(i)} for i in C.IDS],
             "diversidade": {"ok": True, "ids_conflitantes": [], "motivo": ""}}
 
 
 class FakeLLM:
-    def __init__(self, *, fail=None, reject=False, always_reject=False, ambiguous=False, insufficient=None):
+    def __init__(self, *, fail=None, reject=False, always_reject=False, ambiguous=False, insufficient=None,
+                 competing=False, wrong_level=False):
         self.calls = []
         self.fail, self.reject, self.always_reject = fail, reject, always_reject
         self.ambiguous, self.insufficient = ambiguous, insufficient
+        self.competing, self.wrong_level = competing, wrong_level
 
     def response(self, stage, payload):
         if self.fail == stage:
@@ -72,6 +76,10 @@ class FakeLLM:
             return result
         if stage == "verificacao":
             result = review()
+            if self.competing:
+                result["itens"][6]["teste_de_unicidade"]["outra_resposta_plausivel"] = "Outra causa não excluída"
+            if self.wrong_level:
+                result["itens"][6]["dificuldade_observada"] = "media"
             repaired = "corrigida" in payload["lote"]["questoes"][6]["pergunta"]
             if self.always_reject or (self.reject and not repaired):
                 result["itens"][6]["criterios"]["resposta_determinada"] = False
@@ -148,6 +156,19 @@ class BatchTests(unittest.TestCase):
         self.assertEqual(summary["status"], "pendente_revisao")
         self.assertEqual(summary["ids_pendentes"], [7])
         self.assertFalse((self.config.output / "qa.json").exists())
+
+    def test_audit_findings_block_publication_even_with_all_booleans_true(self):
+        self.config.data["max_refinements"] = 0
+        for field in ("competing", "wrong_level"):
+            with self.subTest(field=field):
+                self.config.output = self.root / field
+                summary, fake = self.run_fake(FakeLLM(**{field: True}))
+                self.assertEqual(summary["status"], "pendente_revisao")
+                self.assertEqual(summary["ids_pendentes"], [7])
+                self.assertEqual(len(fake.calls), 4)
+                self.assertFalse((self.config.output / "qa.json").exists())
+                audit = read_json(self.config.output / "revisoes" / "rodada_00.json")["auditoria"]
+                self.assertTrue(all(audit["itens"][6]["criterios"].values()))
 
     def test_still_bad_after_refinement(self):
         summary, fake = self.run_fake(FakeLLM(always_reject=True))
@@ -350,19 +371,58 @@ class ContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "literal"):
             C.plan(plan(), "Texto sem o fundamento citado")
 
+    def test_discriminating_condition_must_be_in_question_not_only_context(self):
+        data = review()
+        check = data["itens"][6]["teste_de_unicidade"]
+        check.update(outra_resposta_plausivel="Outra causa", condicao_que_a_exclui=PASSAGE)
+        with self.assertRaisesRegex(ValueError, "literal da pergunta"):
+            C.review(data, PASSAGE, batch()["questoes"])
+        check["condicao_que_a_exclui"] = "simulada 7"
+        C.review(data, PASSAGE, batch()["questoes"])
+        self.assertEqual(C.rejected(data, resolution()), [])
+
+    def test_competing_response_without_exclusion_is_rejected(self):
+        data = review()
+        data["itens"][8]["teste_de_unicidade"]["outra_resposta_plausivel"] = "Outra explicação"
+        C.review(data, PASSAGE, batch()["questoes"])
+        self.assertEqual(C.rejected(data, resolution()), [9])
+
+    def test_observed_difficulty_does_not_inherit_requested_level(self):
+        for observed in ("facil", "media", "indeterminada"):
+            with self.subTest(observed=observed):
+                data = review()
+                data["itens"][7]["dificuldade_observada"] = observed
+                C.review(data, PASSAGE, batch()["questoes"])
+                self.assertEqual(C.rejected(data, resolution()), [8])
+
+    def test_audit_requires_new_fields_and_valid_observed_level(self):
+        for field in ("teste_de_unicidade", "dificuldade_observada"):
+            data = review()
+            del data["itens"][0][field]
+            with self.assertRaises(ValueError):
+                C.review(data, PASSAGE, batch()["questoes"])
+        data = review()
+        data["itens"][0]["dificuldade_observada"] = "alta"
+        with self.assertRaisesRegex(ValueError, "Dificuldade observada"):
+            C.review(data, PASSAGE, batch()["questoes"])
+        data = review()
+        data["itens"][0]["teste_de_unicidade"]["condicao_que_a_exclui"] = "simulada 1"
+        with self.assertRaisesRegex(ValueError, "resposta concorrente"):
+            C.review(data, PASSAGE, batch()["questoes"])
+
     def test_incomplete_audit_boolean_conflicts_and_blind_consistency(self):
         invalid = review()
         invalid["itens"].pop()
         with self.assertRaises(ValueError):
-            C.review(invalid, PASSAGE)
+            C.review(invalid, PASSAGE, batch()["questoes"])
         invalid = review()
         invalid["itens"][0]["criterios"]["foco"] = "true"
         with self.assertRaises(ValueError):
-            C.review(invalid, PASSAGE)
+            C.review(invalid, PASSAGE, batch()["questoes"])
         invalid = review()
         invalid["diversidade"] = {"ok": False, "ids_conflitantes": [1], "motivo": "Repetição"}
         with self.assertRaises(ValueError):
-            C.review(invalid, PASSAGE)
+            C.review(invalid, PASSAGE, batch()["questoes"])
         invalid = resolution()
         invalid["resolucoes"][0]["outras_respostas"] = ["Outra conclusão"]
         with self.assertRaises(ValueError):

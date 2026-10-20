@@ -1,3 +1,3 @@
 """Um lote de nove QA a partir de um documento técnico, sem busca no corpus."""
 
-VERSION = "qa-batch-v1"
+VERSION = "qa-batch-v2"

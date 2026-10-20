@@ -49,9 +49,12 @@ def rows(value, ids=IDS):
         raise ValueError("IDs devem ser únicos, completos e ordenados: " + str(list(ids)))
 
 
+def expected_difficulty(item_id):
+    return "facil" if item_id <= 3 else "media" if item_id <= 6 else "dificil"
+
+
 def difficulty(row):
-    expected = "facil" if row["id"] <= 3 else "media" if row["id"] <= 6 else "dificil"
-    if row["dificuldade"] != expected:
+    if row["dificuldade"] != expected_difficulty(row["id"]):
         raise ValueError("Dificuldade incompatível com o ID")
 
 
@@ -119,11 +122,14 @@ def blind(data):
             raise ValueError("Resolução determinada não pode declarar alternativas ou condições ausentes")
 
 
-def review(data, context):
+def review(data, context, question_rows):
     obj(data, ("itens", "diversidade"))
     rows(data["itens"])
+    rows(question_rows)
+    enunciados = {q["id"]: q["pergunta"] for q in question_rows}
     for row in data["itens"]:
-        obj(row, ("id", "criterios", "motivo", "correcao_sugerida", "fundamentos"))
+        obj(row, ("id", "criterios", "motivo", "correcao_sugerida", "fundamentos",
+                  "teste_de_unicidade", "dificuldade_observada"))
         obj(row["criterios"], CRITERIA)
         if any(type(v) is not bool for v in row["criterios"].values()):
             raise ValueError("Cada critério deve ser booleano")
@@ -131,6 +137,18 @@ def review(data, context):
         text(row["motivo"], empty=passed)
         text(row["correcao_sugerida"], empty=True)
         quotes(row["fundamentos"], context, required=row["criterios"]["fundamento"])
+        check = row["teste_de_unicidade"]
+        obj(check, ("outra_resposta_plausivel", "condicao_que_a_exclui"))
+        for value in check.values():
+            text(value, empty=True)
+        condition = check["condicao_que_a_exclui"].strip()
+        if condition:
+            if not check["outra_resposta_plausivel"].strip():
+                raise ValueError("Condição discriminante exige uma resposta concorrente")
+            if norm(condition) not in norm(enunciados[row["id"]]):
+                raise ValueError("Condição discriminante deve ser passagem literal da pergunta")
+        if row["dificuldade_observada"] not in {"facil", "media", "dificil", "indeterminada"}:
+            raise ValueError("Dificuldade observada inválida")
     diversity = data["diversidade"]
     obj(diversity, ("ok", "ids_conflitantes", "motivo"))
     if type(diversity["ok"]) is not bool:
@@ -146,6 +164,15 @@ def review(data, context):
 
 def rejected(audit, resolution):
     bad = {r["id"] for r in audit["itens"] if not all(r["criterios"].values())}
+    # A decisão também respeita os achados estruturados, mesmo se os booleanos
+    # vierem complacentes ou em desacordo com o restante da própria auditoria.
+    for row in audit["itens"]:
+        check = row["teste_de_unicidade"]
+        if (check["outra_resposta_plausivel"].strip()
+                and not check["condicao_que_a_exclui"].strip()):
+            bad.add(row["id"])
+        if row["dificuldade_observada"] != expected_difficulty(row["id"]):
+            bad.add(row["id"])
     bad.update(r["id"] for r in resolution["resolucoes"] if r["status"] != "respondida")
     bad.update(audit["diversidade"]["ids_conflitantes"])
     return sorted(bad)
