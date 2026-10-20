@@ -1,0 +1,55 @@
+# Perguntas e respostas
+
+## 1. Fácil
+
+Qual órgão conduz o licenciamento ambiental federal das atividades de exploração e produção offshore, conforme o enquadramento legal aplicável?
+
+**Resposta:** O Ibama conduz o licenciamento ambiental federal das atividades de exploração e produção offshore, conforme o enquadramento legal aplicável.
+
+## 2. Fácil
+
+O que é água produzida em um sistema de produção de óleo e gás?
+
+**Resposta:** É a corrente aquosa separada da mistura óleo-água proveniente do poço após a segregação do hidrocarboneto.
+
+## 3. Fácil
+
+Qual é a função de uma condicionante no licenciamento ambiental?
+
+**Resposta:** É uma obrigação vinculada à licença para prevenir, mitigar, compensar, monitorar ou demonstrar controle de impactos e riscos dentro do escopo autorizado.
+
+## 4. Média
+
+Se a mesma água produzida, sem mudança relevante de composição, deixar de ter como destino o descarte ambiental e passar à reinjeção, o que muda no requisito de qualidade?
+
+**Resposta:** Passa a ser exigida compatibilidade com o sistema de injeção e com a formação receptora; atender ao descarte, por si só, não garante adequação à reinjeção.
+
+## 5. Média
+
+No mesmo sistema de produção, mantendo o mesmo destino da corrente e o mesmo arranjo geral de tratamento, o que acontece com a carga de tratamento quando aumenta a produção de água?
+
+**Resposta:** A carga de tratamento aumenta, com elevação da carga hidráulica e do volume a tratar.
+
+## 6. Média
+
+Para comparar o desempenho de emissões de GEE entre dois ativos ou entre dois períodos, qual condição metodológica mínima deve ser mantida?
+
+**Resposta:** A mesma fronteira de inventário, o mesmo tratamento dos eventos episódicos e o mesmo conjunto de correntes gasosas consideradas.
+
+## 7. Difícil
+
+Em uma mesma linha de tratamento, a água produzida mantém composição global comparável, mas, após mudança operacional, passa por mais bombas e válvulas antes da separação; a piora observada ocorre na remoção de óleo disperso. Qual mecanismo físico explica essa perda de desempenho?
+
+**Resposta:** A formação de emulsões mais estáveis por maior cisalhamento, com gotículas menores e óleo disperso mais persistente, prejudicando separação gravitacional, flotação e polimento.
+
+## 8. Difícil
+
+Comparando dois períodos de um FPSO, o consumo de combustível e a geração de energia permanecem semelhantes; no período pior, aumentam a indisponibilidade de compressão e tratamento de gás, e os picos de emissão coincidem com alívios, partidas e instabilidade ou apagamento do flare. O que melhor explica o aumento de CO2e?
+
+**Resposta:** Predominam emissões de metano sem combustão, por venting e/ou flare degradado, associadas à indisponibilidade de compressão e tratamento de gás.
+
+## 9. Difícil
+
+Durante a remoção mecânica de incrustações ou carepas secas com suspeita de radioatividade, há geração de particulados respiráveis. Qual interpretação de risco e enquadramento passa a ser necessária?
+
+**Resposta:** Além da exposição externa, torna-se crítico o risco de contaminação interna por inalação, exigindo avaliação e enquadramento específicos para radioatividade.

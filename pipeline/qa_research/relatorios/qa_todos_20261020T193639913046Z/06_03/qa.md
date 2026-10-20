@@ -1,0 +1,55 @@
+# Perguntas e respostas
+
+## 1. Fácil
+
+O que diferencia SIMOPS de uma simples coincidência no tempo entre duas operações independentes?
+
+**Resposta:** SIMOPS existe quando há acoplamento de risco: eventos de uma operação podem afetar pessoas, equipamentos ou meio ambiente da outra; simultaneidade, sozinha, não basta.
+
+## 2. Fácil
+
+Qual é a função da PTW como mecanismo de coordenação em SIMOPS?
+
+**Resposta:** A PTW identifica perigos previsíveis, define precauções, comunica-as aos envolvidos e coordena atividades diferentes para evitar conflitos entre operação, manutenção e executantes.
+
+## 3. Fácil
+
+Qual é a diferença funcional entre uma barreira preventiva e uma barreira mitigadora em SIMOPS?
+
+**Resposta:** A barreira preventiva reduz a chance de o evento ocorrer; a mitigadora reduz o dano após a perda de controle.
+
+## 4. Média
+
+Em um FPSO com vasos separadores do processamento primário operando por separação gravitacional, qual consequência operacional é esperada se condições marítimas adversas agitarem excessivamente os fluidos?
+
+**Resposta:** A agitação favorece remistura das fases, desestabiliza a interface, dificulta o controle, pode gerar alarmes incorretos de nível e, em casos desfavoráveis, levar a shutdown.
+
+## 5. Média
+
+Se, em uma SIMOPS, o mecanismo dominante da interferência for o compartilhamento de área, quais controles tendem a ser centrais?
+
+**Resposta:** Controle de acesso, demarcação e comunicação.
+
+## 6. Média
+
+Se duas barreiras de segurança em uma SIMOPS compartilham a mesma pessoa, área, fonte de energia ou linha de comunicação, o que isso indica sobre sua independência funcional?
+
+**Resposta:** Indica que sua independência funcional pode ser menor do que aparenta.
+
+## 7. Difícil
+
+Em uma SIMOPS, a PTW é o instrumento formal de coordenação entre operação, manutenção e executantes. Se perigos discutidos no campo não constam na permissão, a revalidação ocorre com falhas de questionamento e comunicação, e a PTW não está integrada aos certificados e isolamentos ou não foi atualizada após mudança de escopo, o que isso indica sobre a PTW?
+
+**Resposta:** Que a PTW perdeu efetividade como barreira de coordenação, por desalinhamento entre o controle formal e a execução real; ela deixou de refletir os perigos e interfaces reais da atividade.
+
+## 8. Difícil
+
+Em uma análise de SIMOPS, duas atividades parecem controladas isoladamente. Quando executadas juntas, porém, degradam barreiras críticas comuns, restringem acesso e resposta a emergências, e essas barreiras não permanecem eficazes nas condições presentes. Como deve ser classificada a compatibilidade dessa combinação?
+
+**Resposta:** Incompatível nas condições presentes, exigindo replanejamento ou não continuidade da combinação.
+
+## 9. Difícil
+
+Durante um offloading entre FPSO e navio aliviador, as condições ambientais mudam ao longo da operação, a forma de amarração é relevante, observam-se alteração do movimento relativo entre as unidades, aumento dos esforços e redução das margens operacionais, sem evidência de falha primária de medição ou de conexão. Que mecanismo explica a mudança do perfil de risco?
+
+**Resposta:** A interação hidrodinâmica entre as unidades; mudanças ambientais e da amarração alteram movimento relativo, esforços e margens operacionais, podendo justificar avaliar desconexão de emergência.

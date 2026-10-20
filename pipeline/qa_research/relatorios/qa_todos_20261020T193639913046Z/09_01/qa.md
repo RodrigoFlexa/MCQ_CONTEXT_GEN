@@ -1,0 +1,55 @@
+# Perguntas e respostas
+
+## 1. Fácil
+
+Em um FPSO, qual é a função principal do tanque de carga e qual é a do slop tank?
+
+**Resposta:** O tanque de carga armazena principalmente o produto líquido apto à exportação; o slop tank recebe temporariamente água suja e resíduos oleosos antes de tratamento e descarte.
+
+## 2. Fácil
+
+No apoio offshore, o que é logística reversa, ou backload?
+
+**Resposta:** É o fluxo de retorno, normalmente por embarcações supridoras, de materiais, equipamentos, embalagens e resíduos da unidade para terra, para reciclagem, reutilização, manutenção, reparo ou disposição final.
+
+## 3. Fácil
+
+Qual é a função logística principal de um PSV no suprimento offshore?
+
+**Resposta:** É a embarcação mais recorrente para suprimento offshore, combinando área de convés para carga seca com tanques para granéis líquidos e outros insumos operacionais.
+
+## 4. Média
+
+Em um mesmo cenário modelado de atendimento offshore com restrição de embarcações ou capacidade logística, custo de espera não uniforme entre demandas e penalidades altas por atraso, qual política tende a ser mais coerente: FIFO ou priorização por criticidade?
+
+**Resposta:** Priorização por criticidade; nesse mesmo cenário modelado, ela tende a ser mais coerente que FIFO e pode reduzir o custo de atendimento.
+
+## 5. Média
+
+Em uma unidade offshore, um item tem baixa frequência de consumo, mas sua falta compromete segurança, produção ou restauração de função, e o reabastecimento é difícil ou demorado. Que tratamento logístico esse item tende a exigir?
+
+**Resposta:** Mesmo com baixo consumo, ele tende a exigir estoque local ou tratamento prioritário, pela alta consequência da ruptura e pela dificuldade de reposição.
+
+## 6. Média
+
+Em um FPSO, entregas logísticas ocorrem junto com outras operações simultâneas que disputam recursos físicos e organizacionais; se essa coordenação é inadequada, o que tende a acontecer com a previsibilidade do atendimento e a capacidade necessária para manter o mesmo nível de serviço?
+
+**Resposta:** Aumentam esperas, reprogramações e a variabilidade do atendimento; a previsibilidade cai e pode ser necessária mais capacidade para manter o mesmo nível de serviço.
+
+## 7. Difícil
+
+Durante a aproximação de um PSV a uma unidade, a embarcação deixa de manter posição e passa a ficar governada principalmente por vento, ondas e corrente, sem sinais principais de erro de navegação ou manobra, má visibilidade ou uso ineficaz de radar, e sem operação de reboque ou manuseio de âncoras. Qual mecanismo de colisão e qual causa da perda de controle se ajustam ao quadro?
+
+**Resposta:** Colisão de deriva, mais compatível com perda de propulsão, porque a embarcação deixou de manter posição e passou a ficar sob ação predominante do ambiente.
+
+## 8. Difícil
+
+À noite, com visibilidade limitada, várias unidades semelhantes na área e baixa familiaridade da tripulação com o local, a aeronave segue comandável, mas a unidade de destino não é confirmada com identificação positiva e a aproximação deixa de permanecer estabilizada. Qual decisão operacional se impõe?
+
+**Resposta:** Arremeter ou replanejar a operação. Sem identificação positiva da unidade e sem aproximação estabilizada, o pouso não deve prosseguir.
+
+## 9. Difícil
+
+Uma programação de PSV foi otimizada, em caso específico, para custo mínimo com premissas próprias do modelo. Ao levá-la para atendimento no entorno de um FPSO, a operação real exige posicionamento seguro e convivência com outras atividades simultâneas do campo. O custo mínimo basta para validá-la?
+
+**Resposta:** Não. Além do custo, a programação precisa ser executável na interface marítima real, com posicionamento seguro e compatibilidade com as demais operações do campo.
