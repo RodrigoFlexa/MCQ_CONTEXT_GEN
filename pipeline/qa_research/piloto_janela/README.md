@@ -56,6 +56,30 @@ Saída em `relatorios/experimento_exemplos_<data>/`: uma subpasta por condição
 `QUESTOES.md`) e `COMPARACAO.md` lado a lado. A métrica nova é a semelhança lexical entre cada questão
 gerada e os exemplos recebidos naquela chamada, para medir cópia.
 
+## Experimento de modos: planejamento e redação juntos x separados
+
+Usa a condição C (3 exemplos do especialista), 4 questões por janela e pelo menos 1 difícil, nas
+mesmas 40 janelas do experimento de exemplos.
+
+| Modo | Chamadas por janela | Prompts |
+|---|---:|---|
+| `junto` | 1 | `prompt_janela_qa_11.md` |
+| `separado` | 2 | `prompt_janela_planejamento_qa_11.md` (escolhe alvos, sem exemplos) e `prompt_janela_redacao_qa_11.md` (redige a partir do plano, com os exemplos), como no lote 9 |
+
+Os prompts v11 trazem a régua de dificuldade da `qa_v7`, com a resposta sempre curta (até 50 palavras):
+fácil (pergunta direta, sem cenário, até 35 palavras), média (aplicar uma relação a uma condição dada,
+até 60) e difícil (até 90), em duas formas: diagnóstico ou decisão num único mecanismo, ou integração de
+duas relações que se explicam, mascaram ou limitam. Também proíbem perguntas que pedem listas ou o que
+foi "citado".
+
+```bash
+bash pipeline/qa_research/rodar_experimento_modos.sh --limite 2   # teste rápido: 12 chamadas
+bash pipeline/qa_research/rodar_experimento_modos.sh              # completo: 120 chamadas
+```
+
+A comparação (`COMPARACAO.md`) acrescenta: janelas com ao menos uma difícil, palavras da pergunta por
+nível, porcentagem acima do tamanho pedido e itens do plano descartados na redação.
+
 ## Levar os resultados do servidor para a sua máquina
 
 ```bash

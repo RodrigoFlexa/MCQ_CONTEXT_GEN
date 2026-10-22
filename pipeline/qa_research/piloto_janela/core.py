@@ -21,16 +21,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 QA = ROOT / "pipeline" / "qa_research"
 PROMPT = QA / "prompt_janela_qa_10.md"
+PROMPT_JUNTO = QA / "prompt_janela_qa_11.md"
+PROMPT_PLANO = QA / "prompt_janela_planejamento_qa_11.md"
+PROMPT_REDACAO = QA / "prompt_janela_redacao_qa_11.md"
 DOCS = QA / "relatorios" / "dez_areas_final_v2"
 PROGRAMA = QA / "configs" / "dez_areas_v1" / "programa.json"
 
 STATUS = ("ok", "parcial", "sem_questoes")
+MODOS = ("junto", "separado")
+CAMPOS_PLANO = ("id", "dificuldade", "tipo_demanda", "alvo", "resposta_esperada", "condicoes_necessarias",
+                "exigencia_cognitiva", "fundamentos")
+NUMERAIS = {1: "uma difícil", 2: "duas difíceis", 3: "três difíceis", 4: "quatro difíceis"}
+NUMERAIS_M = {1: "um difícil", 2: "dois difíceis", 3: "três difíceis", 4: "quatro difíceis"}
 DIFICULDADES = ("facil", "media", "dificil")
 DEMANDAS = ("recordar", "inferir", "diagnosticar", "comparar", "decidir")
 ROTULOS = ("A1", "F", "A2")
 CAMPOS = ("id", "dificuldade", "tipo_demanda", "conhecimento", "pergunta", "resposta", "fundamentos")
 SEM_PREFERENCIA = "Nenhuma preferência."
 ALVO_DIFICULDADE = {"facil": 0.5, "media": 0.3, "dificil": 0.2}
+TETO_PERGUNTA = {"facil": 35, "media": 60, "dificil": 90}  # tamanho pedido no prompt v11, só medido
 
 
 # ------------------------------------------------------------------ utilidades
@@ -97,24 +106,30 @@ def render_janela(jan: list[tuple[str, dict]]) -> str:
     return "\n\n".join(f"[{r}] {b['titulo_capitulo']} / {b['subtitulo']}\n{b['texto']}" for r, b in jan)
 
 
-def carregar_prompt(minimo: int, maximo: int, caminho: Path = PROMPT) -> tuple[str, str, str]:
+def carregar_prompt(minimo: int, maximo: int, caminho: Path = PROMPT, min_dificeis: int = 0) -> tuple[str, str, str]:
     texto = caminho.read_text(encoding="utf-8")
+    if "{{MINIMO_DIFICEIS_TEXTO" in texto and min_dificeis not in NUMERAIS:
+        raise ValueError(f"{caminho.name} exige --min-dificeis entre 1 e 4")
     pos = texto.find("\n<tema>")
     if pos < 0:
         raise ValueError("Prompt sem a seção de dados <tema>")
     system = (texto[:pos].strip()
               .replace("{{MINIMO_QUESTOES}}", str(minimo))
               .replace("{{MINIMO_MENOS_UM}}", str(minimo - 1))
-              .replace("{{MAXIMO_QUESTOES}}", str(maximo)))
+              .replace("{{MAXIMO_QUESTOES}}", str(maximo))
+              .replace("{{QUANTIDADE}}", str(minimo) if minimo == maximo else f"de {minimo} a {maximo}")
+              .replace("{{MINIMO_DIFICEIS_TEXTO}}", NUMERAIS.get(min_dificeis, ""))
+              .replace("{{MINIMO_DIFICEIS_TEXTO_M}}", NUMERAIS_M.get(min_dificeis, "")))
     if "{{" in system:
         raise ValueError("Marcador não preenchido nas instruções: " + re.findall(r"\{\{\w+\}\}", system)[0])
     return system, texto[pos:].strip(), sha(texto)
 
 
-def preencher(modelo_usuario: str, t: dict, orientacao: str, existentes: str, jan, exemplos: str = "") -> str:
+def preencher(modelo_usuario: str, t: dict, orientacao: str, existentes: str, jan, exemplos: str = "",
+              plano: str = "") -> str:
     valores = {"AREA": t["area"], "TEMA": t["tema"], "FRASE_ESPECIALISTA_COM_PODEM": t["escopo"],
                "ORIENTACAO_DIFICULDADE": orientacao, "QUESTOES_EXISTENTES": existentes,
-               "EXEMPLOS": exemplos, "JANELA": render_janela(jan)}
+               "EXEMPLOS": exemplos, "PLANO": plano, "JANELA": render_janela(jan)}
     out = modelo_usuario
     for k, v in valores.items():
         out = out.replace("{{" + k + "}}", v)
@@ -144,7 +159,32 @@ def existentes_por_foco(anteriores: Path | None) -> dict:
 
 
 # ------------------------------------------------------------------ validação estrutural
-def validar(data: dict, minimo: int, maximo: int) -> None:
+def _fundamentos(fs, k: int, nome: str = "Questão") -> None:
+    if not isinstance(fs, list) or not fs:
+        raise ValueError(f"{nome} {k}: informe ao menos um fundamento.")
+    for f in fs:
+        if not isinstance(f, dict) or set(f) != {"bloco", "trecho"} or f["bloco"] not in ROTULOS \
+                or not isinstance(f["trecho"], str) or not f["trecho"].strip():
+            raise ValueError(f"{nome} {k}: fundamento deve ser {{\"bloco\": A1|F|A2, \"trecho\": texto}}.")
+
+
+def _quantidade(status: str, n: int, dificeis: int, minimo: int, maximo: int, min_dificeis: int,
+                vazio: str, motivo: str, nome: str) -> None:
+    if n > maximo:
+        raise ValueError(f"Entregue no máximo {maximo} {nome}.")
+    completo = n >= minimo and dificeis >= min_dificeis
+    if status == "ok" and not completo:
+        exig = f"pelo menos {minimo} {nome}" + (f" com {min_dificeis} difícil(eis)" if min_dificeis else "")
+        raise ValueError(f"status ok exige {exig}; caso contrário, use parcial e explique em motivo.")
+    if status == "parcial" and (n == 0 or completo):
+        raise ValueError(f"status parcial exige de 1 a {maximo} {nome} sem atingir a quantidade ou a difícil exigida.")
+    if status == vazio and n:
+        raise ValueError(f"status {vazio} exige lista vazia.")
+    if status != "ok" and not motivo.strip():
+        raise ValueError("Explique em motivo por que [F] não sustenta mais.")
+
+
+def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0) -> None:
     """Somente formato: erros aqui fazem o cliente pedir ao modelo a correção do JSON."""
     if not isinstance(data, dict) or set(data) != {"status", "motivo", "questoes"}:
         raise ValueError("Use exatamente as chaves status, motivo e questoes.")
@@ -153,17 +193,6 @@ def validar(data: dict, minimo: int, maximo: int) -> None:
         raise ValueError("status deve ser ok, parcial ou sem_questoes.")
     if not isinstance(motivo, str) or not isinstance(qs, list):
         raise ValueError("motivo deve ser texto e questoes deve ser lista.")
-    n = len(qs)
-    if n > maximo:
-        raise ValueError(f"Entregue no máximo {maximo} questões.")
-    if status == "ok" and n < minimo:
-        raise ValueError(f"status ok exige pelo menos {minimo} questões; com menos, use parcial e explique em motivo.")
-    if status == "parcial" and not 1 <= n < minimo:
-        raise ValueError(f"status parcial exige de 1 a {minimo - 1} questões.")
-    if status == "sem_questoes" and n:
-        raise ValueError("status sem_questoes exige lista de questões vazia.")
-    if status != "ok" and not motivo.strip():
-        raise ValueError("Explique em motivo por que [F] não sustenta mais questões.")
     for k, q in enumerate(qs, 1):
         if not isinstance(q, dict) or set(q) != set(CAMPOS):
             raise ValueError(f"Questão {k}: use exatamente os campos {', '.join(CAMPOS)}.")
@@ -176,13 +205,64 @@ def validar(data: dict, minimo: int, maximo: int) -> None:
         for campo in ("conhecimento", "pergunta", "resposta"):
             if not isinstance(q[campo], str) or not q[campo].strip():
                 raise ValueError(f"Questão {k}: {campo} vazio.")
-        fs = q["fundamentos"]
-        if not isinstance(fs, list) or not fs:
-            raise ValueError(f"Questão {k}: informe ao menos um fundamento.")
-        for f in fs:
-            if not isinstance(f, dict) or set(f) != {"bloco", "trecho"} or f["bloco"] not in ROTULOS \
-                    or not isinstance(f["trecho"], str) or not f["trecho"].strip():
-                raise ValueError(f"Questão {k}: fundamento deve ser {{\"bloco\": A1|F|A2, \"trecho\": texto}}.")
+        _fundamentos(q["fundamentos"], k)
+    _quantidade(status, len(qs), sum(q["dificuldade"] == "dificil" for q in qs), minimo, maximo, min_dificeis,
+                "sem_questoes", motivo, "questões")
+
+
+def validar_plano(data: dict, minimo: int, maximo: int, min_dificeis: int = 0) -> None:
+    if not isinstance(data, dict) or set(data) != {"status", "motivo", "itens"}:
+        raise ValueError("Use exatamente as chaves status, motivo e itens.")
+    status, motivo, itens = data["status"], data["motivo"], data["itens"]
+    if status not in ("ok", "parcial", "sem_alvos"):
+        raise ValueError("status deve ser ok, parcial ou sem_alvos.")
+    if not isinstance(motivo, str) or not isinstance(itens, list):
+        raise ValueError("motivo deve ser texto e itens deve ser lista.")
+    for k, it in enumerate(itens, 1):
+        if not isinstance(it, dict) or set(it) != set(CAMPOS_PLANO):
+            raise ValueError(f"Item {k}: use exatamente os campos {', '.join(CAMPOS_PLANO)}.")
+        if it["id"] != k:
+            raise ValueError(f"Item {k}: id deve ser {k}.")
+        if it["dificuldade"] not in DIFICULDADES or it["tipo_demanda"] not in DEMANDAS:
+            raise ValueError(f"Item {k}: dificuldade ou tipo_demanda inválido.")
+        for campo in ("alvo", "resposta_esperada", "exigencia_cognitiva"):
+            if not isinstance(it[campo], str) or not it[campo].strip():
+                raise ValueError(f"Item {k}: {campo} vazio.")
+        if not isinstance(it["condicoes_necessarias"], list) or \
+                not all(isinstance(c, str) for c in it["condicoes_necessarias"]):
+            raise ValueError(f"Item {k}: condicoes_necessarias deve ser lista de textos.")
+        _fundamentos(it["fundamentos"], k, "Item")
+    _quantidade(status, len(itens), sum(i["dificuldade"] == "dificil" for i in itens), minimo, maximo,
+                min_dificeis, "sem_alvos", motivo, "alvos")
+
+
+def validar_redacao(data: dict, ids: list[int]) -> None:
+    if not isinstance(data, dict) or set(data) != {"status", "motivo", "questoes"}:
+        raise ValueError("Use exatamente as chaves status, motivo e questoes.")
+    status, motivo, qs = data["status"], data["motivo"], data["questoes"]
+    if status not in STATUS or not isinstance(motivo, str) or not isinstance(qs, list):
+        raise ValueError("status deve ser ok, parcial ou sem_questoes; motivo texto; questoes lista.")
+    vistos = []
+    for q in qs:
+        if not isinstance(q, dict) or set(q) != {"id", "pergunta", "resposta"}:
+            raise ValueError("Cada questão deve ter exatamente id, pergunta e resposta.")
+        if q["id"] not in ids or q["id"] in vistos:
+            raise ValueError(f"id {q['id']} não está no plano ou está repetido.")
+        vistos.append(q["id"])
+        for campo in ("pergunta", "resposta"):
+            if not isinstance(q[campo], str) or not q[campo].strip():
+                raise ValueError(f"Questão {q['id']}: {campo} vazio.")
+    if vistos != sorted(vistos):
+        raise ValueError("Mantenha a ordem do plano.")
+    n = len(qs)
+    if status == "ok" and n != len(ids):
+        raise ValueError("status ok exige todos os itens do plano; caso contrário, use parcial e explique.")
+    if status == "parcial" and not 1 <= n < len(ids):
+        raise ValueError("status parcial exige ao menos um e não todos os itens.")
+    if status == "sem_questoes" and n:
+        raise ValueError("status sem_questoes exige lista vazia.")
+    if status != "ok" and not motivo.strip():
+        raise ValueError("Explique em motivo os IDs deixados de fora e o impedimento.")
 
 
 # ------------------------------------------------------------------ métricas descritivas
@@ -231,9 +311,16 @@ class Piloto:
                  workers: int = 4, limite: int | None = None, docs: Path = DOCS, prompt: Path = PROMPT,
                  client=None, dry_run: bool = False, progress=print, condicao: str = "A",
                  janelas_por_item: int | None = None, externos: Path | None = None,
-                 especialista: Path | None = None):
+                 especialista: Path | None = None, modo: str = "junto", min_dificeis: int = 0,
+                 prompt_plano: Path = PROMPT_PLANO, prompt_redacao: Path = PROMPT_REDACAO):
         if minimo < 1 or maximo < minimo:
             raise ValueError("Use 1 <= minimo <= maximo")
+        if modo not in MODOS:
+            raise ValueError(f"Modo desconhecido: {modo}")
+        if not 0 <= min_dificeis <= minimo:
+            raise ValueError("Use 0 <= min_dificeis <= minimo")
+        self.modo, self.min_dificeis = modo, min_dificeis
+        self.prompt_plano, self.prompt_redacao = Path(prompt_plano), Path(prompt_redacao)
         from . import exemplos as ex
         if condicao not in ex.CONDICOES:
             raise ValueError(f"Condição desconhecida: {condicao}")
@@ -248,13 +335,28 @@ class Piloto:
         self.client, self.dry_run, self.progress = client, dry_run, progress
         self.lock = threading.Lock()
 
+    def _prompts(self) -> dict:
+        """Instruções (system), modelo dos dados (user) e hash de cada etapa do modo."""
+        if self.modo == "junto":
+            etapas = {"junto": self.prompt}
+        else:
+            etapas = {"planejamento": self.prompt_plano, "redacao": self.prompt_redacao}
+        return {nome: carregar_prompt(self.minimo, self.maximo, caminho, self.min_dificeis)
+                for nome, caminho in etapas.items()}
+
     def _config(self, prompt_sha: str) -> None:
+        etapas = ({"junto": self.prompt} if self.modo == "junto" else
+                  {"planejamento": self.prompt_plano, "redacao": self.prompt_redacao})
         cfg = {"schema": "piloto-janela-v1", "modelo": self.modelo, "minimo": self.minimo,
                "maximo": self.maximo, "max_tokens": self.max_tokens, "orientacao": self.orientacao,
                "anteriores": str(self.anteriores) if self.anteriores else None,
                "documentos": self.docs.resolve().relative_to(ROOT).as_posix(),
-               "prompt": self.prompt.resolve().relative_to(ROOT).as_posix(), "prompt_sha256": prompt_sha,
+               "prompt": {k: v.resolve().relative_to(ROOT).as_posix() for k, v in etapas.items()}
+               if self.modo == "separado" else self.prompt.resolve().relative_to(ROOT).as_posix(),
+               "prompt_sha256": prompt_sha,
                "condicao": self.condicao, "janelas_por_item": self.janelas_por_item}
+        if self.modo != "junto" or self.min_dificeis:
+            cfg.update(modo=self.modo, min_dificeis=self.min_dificeis)
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -304,7 +406,9 @@ class Piloto:
                                           self.pool_externos, self.banco_especialista)
 
     def run(self) -> dict:
-        system, modelo_usuario, prompt_sha = carregar_prompt(self.minimo, self.maximo, self.prompt)
+        prompts = self._prompts()
+        prompt_sha = sha("|".join(p[2] for p in prompts.values()))
+        system, modelo_usuario = prompts[next(iter(prompts))][:2]
         self._carregar_exemplos()
         self._config(prompt_sha)
         anteriores = existentes_por_foco(self.anteriores)
@@ -324,6 +428,8 @@ class Piloto:
         inicio, feitos, falhas = time.time(), 0, 0
 
         def um(t):
+            if self.modo == "separado":
+                return self._gerar_separado(t, cliente, prompts, prompt_sha, anteriores)
             return self._gerar(t, cliente, system, modelo_usuario, prompt_sha, anteriores)
 
         with ThreadPoolExecutor(max_workers=max(1, self.workers)) as pool:
@@ -356,12 +462,61 @@ class Piloto:
         inicio = time.time()
         try:
             data = cliente.json(system, user, tag="piloto_janela", max_tokens=self.max_tokens,
-                                validate=lambda d: validar(d, self.minimo, self.maximo), item=t["item"])
+                                validate=lambda d: validar(d, self.minimo, self.maximo, self.min_dificeis),
+                                item=t["item"])
         except Exception as exc:  # noqa: BLE001 - a janela fica pendente para nova tentativa
-            atomic_json(self.saida / t["item"] / "falhas" / f"{t['foco']:03d}.json",
-                        {"erro": type(exc).__name__, "mensagem": str(exc)[:2000],
-                         "em": datetime.now(timezone.utc).isoformat()})
+            self._falha(t, exc)
             return False
+        return self._salvar(t, jan, exemplos, user, prompt_sha, inicio, data["status"], data["motivo"],
+                            data["questoes"])
+
+    def _falha(self, t, exc) -> None:
+        atomic_json(self.saida / t["item"] / "falhas" / f"{t['foco']:03d}.json",
+                    {"erro": type(exc).__name__, "mensagem": str(exc)[:2000],
+                     "em": datetime.now(timezone.utc).isoformat()})
+
+    def _gerar_separado(self, t, cliente, prompts, prompt_sha, anteriores) -> bool:
+        jan = janela(t["blocos"], t["foco"])
+        exemplos = self._exemplos(t)
+        linhas = anteriores.get((t["item"], t["foco"]), [])
+        existentes = "\n".join(linhas) or "Nenhuma."
+        sys_p, mod_p, _ = prompts["planejamento"]
+        sys_r, mod_r, _ = prompts["redacao"]
+        user_p = preencher(mod_p, t["tema"], self.orientacao, existentes, jan)
+        inicio = time.time()
+        try:
+            plano = cliente.json(sys_p, user_p, tag="piloto_planejamento", max_tokens=self.max_tokens,
+                                 validate=lambda d: validar_plano(d, self.minimo, self.maximo, self.min_dificeis),
+                                 item=t["item"])
+            redacao = {"status": "sem_questoes", "motivo": "plano sem alvos", "questoes": []}
+            user_r = ""
+            if plano["itens"]:
+                para_redacao = [{k: it[k] for k in ("id", "dificuldade", "alvo", "resposta_esperada",
+                                                    "condicoes_necessarias", "fundamentos")} for it in plano["itens"]]
+                user_r = preencher(mod_r, t["tema"], self.orientacao, existentes, jan, self.ex.render(exemplos),
+                                   json.dumps(para_redacao, ensure_ascii=False, indent=2))
+                ids = [it["id"] for it in plano["itens"]]
+                redacao = cliente.json(sys_r, user_r, tag="piloto_redacao", max_tokens=self.max_tokens,
+                                       validate=lambda d: validar_redacao(d, ids), item=t["item"])
+        except Exception as exc:  # noqa: BLE001
+            self._falha(t, exc)
+            return False
+        por_id = {it["id"]: it for it in plano["itens"]}
+        questoes = [{"id": q["id"], "dificuldade": por_id[q["id"]]["dificuldade"],
+                     "tipo_demanda": por_id[q["id"]]["tipo_demanda"], "conhecimento": por_id[q["id"]]["alvo"],
+                     "pergunta": q["pergunta"], "resposta": q["resposta"],
+                     "fundamentos": por_id[q["id"]]["fundamentos"]} for q in redacao["questoes"]]
+        dificeis = sum(q["dificuldade"] == "dificil" for q in questoes)
+        status = ("ok" if len(questoes) >= self.minimo and dificeis >= self.min_dificeis
+                  else "parcial" if questoes else "sem_questoes")
+        motivo = " | ".join(m for m in (plano["motivo"], redacao["motivo"]) if m.strip())
+        return self._salvar(t, jan, exemplos, user_p + "\n" + user_r, prompt_sha, inicio, status, motivo, questoes,
+                            extra={"status_plano": plano["status"], "status_redacao": redacao["status"],
+                                   "itens_planejados": len(plano["itens"]),
+                                   "itens_descartados_redacao": len(plano["itens"]) - len(questoes),
+                                   "plano": plano})
+
+    def _salvar(self, t, jan, exemplos, user, prompt_sha, inicio, status, motivo, questoes, extra=None) -> bool:
         textos = {r: b["texto"] for r, b in jan}
         foco = t["blocos"][t["foco"]]
         registro = {
@@ -369,13 +524,14 @@ class Piloto:
             "titulo_capitulo": foco["titulo_capitulo"], "subtitulo": foco["subtitulo"],
             "janela": [{"rotulo": r, "indice": b["indice"], "subtitulo": b["subtitulo"]} for r, b in jan],
             "palavras_janela": sum(palavras(b["texto"]) for _, b in jan),
-            "modelo": self.modelo, "condicao": self.condicao, "prompt_sha256": prompt_sha,
+            "modelo": self.modelo, "modo": self.modo, "condicao": self.condicao, "prompt_sha256": prompt_sha,
             "usuario_sha256": sha(user), "segundos": round(time.time() - inicio, 2),
             "exemplos": [{"id": e["id"], "fonte": e["fonte"], "dificuldade": e["dificuldade"]} for e in exemplos],
-            "status": data["status"], "motivo": data["motivo"],
+            "status": status, "motivo": motivo,
             "questoes": [{**q, "verificacoes": {**verificar(q, textos), "semelhanca_exemplos":
                           semelhanca(q["pergunta"] + " " + q["resposta"], exemplos)}}
-                         for q in data["questoes"]],
+                         for q in questoes],
+            **(extra or {}),
         }
         atomic_json(self._arquivo(t), registro)
         falha = self.saida / t["item"] / "falhas" / f"{t['foco']:03d}.json"
@@ -411,6 +567,14 @@ def _metricas(janelas: list[dict], questoes: list[dict]) -> dict:
         "semelhanca_exemplos_media": round(sum(_sem(q) for q in questoes) / nq, 3) if nq else 0,
         "semelhanca_exemplos_max": max((_sem(q) for q in questoes), default=0),
         "semelhanca_exemplos_ge_030_pct": _pct(sum(_sem(q) >= 0.3 for q in questoes), nq),
+        "janelas_com_dificil_pct": _pct(sum(any(q["dificuldade"] == "dificil" for q in j["questoes"])
+                                            for j in janelas), len(janelas)),
+        "itens_descartados_redacao": sum(j.get("itens_descartados_redacao", 0) for j in janelas),
+        "palavras_pergunta_por_nivel": {d: round(sum(q["verificacoes"]["palavras_pergunta"] for q in questoes
+                                                     if q["dificuldade"] == d) / dif[d], 1) if dif[d] else 0
+                                        for d in DIFICULDADES},
+        "acima_do_teto_pct": _pct(sum(q["verificacoes"]["palavras_pergunta"] > TETO_PERGUNTA[q["dificuldade"]]
+                                      for q in questoes), nq),
     }
 
 
@@ -425,7 +589,7 @@ def _uso(saida: Path) -> dict:
         return u
     for linha in path.read_text(encoding="utf-8").splitlines():
         r = json.loads(linha)
-        if r.get("tag") != "piloto_janela":
+        if not str(r.get("tag", "")).startswith("piloto_"):
             continue
         u["prompt_tokens"] += r.get("prompt_tokens", 0) or 0
         u["completion_tokens"] += r.get("completion_tokens", 0) or 0
@@ -480,6 +644,7 @@ def resumir(saida: Path) -> dict:
 def _markdown(saida: Path, resumo: dict, janelas: list[dict]) -> None:
     t = resumo["total"]
     linhas = ["# Piloto de geração por janela", "",
+              f"Modo: {(resumo['config'] or {}).get('modo', 'junto')} · "
               f"Condição: {(resumo['config'] or {}).get('condicao', 'A')} · "
               f"Modelo: `{(resumo['config'] or {}).get('modelo')}` · mínimo {(resumo['config'] or {}).get('minimo')}"
               f" · máximo {(resumo['config'] or {}).get('maximo')} questões por janela.", "",
@@ -542,12 +707,19 @@ DESCRICAO_CONDICOES = {
 }
 
 
-def comparar(raiz: Path, condicoes=("A", "B", "C", "D")) -> dict:
+DESCRICAO_MODOS = {
+    "junto": "planejamento e redação no mesmo prompt",
+    "separado": "planejamento e redação em chamadas separadas",
+}
+
+
+def comparar(raiz: Path, condicoes=("A", "B", "C", "D"), descricoes=None, titulo=None) -> dict:
     raiz = Path(raiz)
+    descricoes = descricoes or {**DESCRICAO_CONDICOES, **DESCRICAO_MODOS}
     res = {c: resumir(raiz / c) for c in condicoes if (raiz / c / "config.json").exists()}
-    linhas = ["# Experimento de exemplos de forma", "",
-              "Mesmas janelas em todas as condições; só muda o bloco `<exemplos_de_forma>`.", "",
-              "| Métrica | " + " | ".join(f"{c}: {DESCRICAO_CONDICOES[c]}" for c in res) + " |",
+    linhas = [f"# {titulo or 'Experimento de exemplos de forma'}", "",
+              "Mesmas janelas em todas as variantes.", "",
+              "| Métrica | " + " | ".join(f"{c}: {descricoes.get(c, c)}" for c in res) + " |",
               "|---|" + "---:|" * len(res)]
 
     def linha(nome, f):
@@ -572,6 +744,11 @@ def comparar(raiz: Path, condicoes=("A", "B", "C", "D")) -> dict:
               lambda m: f"{m['semelhanca_exemplos_media']} / {m['semelhanca_exemplos_max']}"),
         linha("Semelhança ≥ 0,30 (%)", lambda m: m["semelhanca_exemplos_ge_030_pct"]),
         linha("Segundos por janela", lambda m: m["segundos_por_janela"]),
+        linha("Janelas com ao menos uma difícil (%)", lambda m: m.get("janelas_com_dificil_pct", 0)),
+        linha("Palavras da pergunta: fácil / média / difícil",
+              lambda m: " / ".join(str(m.get("palavras_pergunta_por_nivel", {}).get(d, 0)) for d in DIFICULDADES)),
+        linha("Acima do tamanho pedido (%) · 35/60/90", lambda m: m.get("acima_do_teto_pct", 0)),
+        linha("Itens do plano descartados na redação", lambda m: m.get("itens_descartados_redacao", 0)),
     ]
     linhas += ["| Quase duplicadas (pares) | " + " | ".join(str(r["quase_duplicadas"]["pares"]) for r in res.values())
                + " |",

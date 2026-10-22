@@ -193,5 +193,102 @@ class ExemplosTests(unittest.TestCase):
         self.assertEqual(len(core.selecionar_focos(57, 20)), 20)
 
 
+class ClienteModos(ClienteFalso):
+    """Responde às três etapas: junto, planejamento e redação."""
+
+    def __init__(self, n=4, dificeis=1, descartar=0):
+        super().__init__(n)
+        self.dificeis, self.descartar, self.tags = dificeis, descartar, []
+
+    def _trecho(self, user):
+        texto_f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d\]|\n</janela>)", user, re.S).group(1)
+        return " ".join(texto_f.split()[:8])
+
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        self.chamadas += 1
+        self.tags.append(tag)
+        self.usuarios.append(user)
+        trecho = self._trecho(user)
+        difs = ["dificil"] * self.dificeis + ["facil"] * (self.n - self.dificeis)
+        if tag == "piloto_redacao":
+            plano = json.loads(re.search(r"<plano>\n(.+?)\n</plano>", user, re.S).group(1))
+            manter = plano[: len(plano) - self.descartar]
+            data = {"status": "ok" if len(manter) == len(plano) else ("parcial" if manter else "sem_questoes"),
+                    "motivo": "" if len(manter) == len(plano) else "item sem pergunta válida",
+                    "questoes": [{"id": it["id"], "pergunta": f"P {it['id']} {trecho}?", "resposta": "R."}
+                                 for it in manter]}
+        elif tag == "piloto_planejamento":
+            data = {"status": "ok", "motivo": "", "itens": [
+                {"id": k, "dificuldade": difs[k - 1], "tipo_demanda": "diagnosticar", "alvo": f"alvo {k}",
+                 "resposta_esperada": "R.", "condicoes_necessarias": [], "exigencia_cognitiva": "x",
+                 "fundamentos": [{"bloco": "F", "trecho": trecho}]} for k in range(1, self.n + 1)]}
+        else:
+            data = {"status": "ok", "motivo": "", "questoes": [
+                {"id": k, "dificuldade": difs[k - 1], "tipo_demanda": "recordar", "conhecimento": f"c {k}",
+                 "pergunta": f"P {k} {trecho}?", "resposta": "R.", "fundamentos": [{"bloco": "F", "trecho": trecho}]}
+                for k in range(1, self.n + 1)]}
+        if validate:
+            validate(data)
+        return data
+
+
+class ModosTests(unittest.TestCase):
+    def q(self, k, dif):
+        return {"id": k, "dificuldade": dif, "tipo_demanda": "recordar", "conhecimento": "c", "pergunta": "p",
+                "resposta": "r", "fundamentos": [{"bloco": "F", "trecho": "t"}]}
+
+    def test_exige_dificil(self):
+        sem = {"status": "ok", "motivo": "", "questoes": [self.q(k, "facil") for k in range(1, 5)]}
+        with self.assertRaises(ValueError):
+            core.validar(sem, 4, 4, 1)
+        core.validar({**sem, "status": "parcial", "motivo": "foco sem mecanismo"}, 4, 4, 1)
+        com = {"status": "ok", "motivo": "", "questoes": [self.q(1, "dificil")] + [self.q(k, "facil") for k in range(2, 5)]}
+        core.validar(com, 4, 4, 1)
+        with self.assertRaises(ValueError):
+            core.validar({**com, "status": "parcial", "motivo": "x"}, 4, 4, 1)
+
+    def test_validar_redacao(self):
+        core.validar_redacao({"status": "ok", "motivo": "", "questoes": [
+            {"id": 1, "pergunta": "p", "resposta": "r"}, {"id": 2, "pergunta": "p", "resposta": "r"}]}, [1, 2])
+        for ruim in ({"status": "ok", "motivo": "", "questoes": [{"id": 1, "pergunta": "p", "resposta": "r"}]},
+                     {"status": "parcial", "motivo": "x", "questoes": [{"id": 4, "pergunta": "p", "resposta": "r"}]},
+                     {"status": "parcial", "motivo": "x", "questoes": [{"id": 2, "pergunta": "p", "resposta": "r"},
+                                                                       {"id": 1, "pergunta": "p", "resposta": "r"}]}):
+            with self.assertRaises(ValueError):
+                core.validar_redacao(ruim, [1, 2, 3])
+
+    def test_prompts_v11(self):
+        for caminho in (core.PROMPT_JUNTO, core.PROMPT_PLANO, core.PROMPT_REDACAO):
+            system, usuario, _ = core.carregar_prompt(4, 4, caminho, 1)
+            self.assertNotIn("{{", system)
+        system, _, _ = core.carregar_prompt(4, 4, core.PROMPT_JUNTO, 1)
+        self.assertIn("elabore 4 questões", system)
+        self.assertIn("pelo menos uma difícil", system)
+        with self.assertRaises(ValueError):
+            core.carregar_prompt(4, 4, core.PROMPT_JUNTO, 0)
+
+    def test_experimento_modos(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            raiz = Path(tmp)
+            junto, sep = ClienteModos(), ClienteModos(descartar=1)
+            comum = dict(minimo=4, maximo=4, min_dificeis=1, condicao="C", janelas_por_item=3,
+                         progress=lambda *a, **k: None)
+            core.Piloto(raiz / "junto", ["01_01"], "falso:low", modo="junto", prompt=core.PROMPT_JUNTO,
+                        client=junto, **comum).run()
+            core.Piloto(raiz / "separado", ["01_01"], "falso:low", modo="separado", client=sep, **comum).run()
+            self.assertEqual(junto.tags, ["piloto_janela"] * 3)
+            self.assertEqual(sorted(sep.tags), ["piloto_planejamento"] * 3 + ["piloto_redacao"] * 3)
+            self.assertTrue(all("<exemplos_de_forma>" in u for u, tg in zip(sep.usuarios, sep.tags)
+                                if tg == "piloto_redacao"))
+            self.assertTrue(all("<exemplos_de_forma>" not in u for u, tg in zip(sep.usuarios, sep.tags)
+                                if tg == "piloto_planejamento"))
+            res = core.comparar(raiz, ("junto", "separado"), titulo="teste")
+            self.assertEqual(res["junto"]["total"]["questoes"], 12)
+            self.assertEqual(res["separado"]["total"]["questoes"], 9)
+            self.assertEqual(res["separado"]["total"]["itens_descartados_redacao"], 3)
+            self.assertEqual(res["junto"]["total"]["janelas_com_dificil_pct"], 100.0)
+            self.assertEqual(res["separado"]["total"]["status"]["parcial"], 3, "3 questões < mínimo de 4")
+
+
 if __name__ == "__main__":
     unittest.main()
