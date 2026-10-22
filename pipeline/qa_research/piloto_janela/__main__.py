@@ -31,11 +31,11 @@ def _comuns(p: argparse.ArgumentParser) -> None:
 
 
 def _piloto(a, saida: Path, condicao: str, janelas_por_item, modo: str = "junto", min_dificeis: int = 0,
-            **kw) -> Piloto:
+            min_medias: int = 0, **kw) -> Piloto:
     return Piloto(saida, a.itens, a.modelo, minimo=a.minimo, maximo=a.maximo, max_tokens=a.max_tokens,
                   orientacao=a.orientacao, anteriores=a.anteriores, workers=a.workers, limite=a.limite,
                   dry_run=a.dry_run, condicao=condicao, janelas_por_item=janelas_por_item, modo=modo,
-                  min_dificeis=min_dificeis, **kw)
+                  min_dificeis=min_dificeis, min_medias=min_medias, **kw)
 
 
 def _pendentes(pasta: Path) -> int:
@@ -51,6 +51,7 @@ def main(argv=None) -> int:
     r.add_argument("--janelas-por-item", type=int, help="usa N focos espaçados ao longo de cada documento")
     r.add_argument("--modo", default="junto", choices=list(MODOS))
     r.add_argument("--min-dificeis", type=int, default=0)
+    r.add_argument("--min-medias", type=int, default=0)
     e = sub.add_parser("experimento", help="roda as condições nas mesmas janelas e compara")
     _comuns(e)
     e.add_argument("--condicoes", nargs="+", default=["A", "B", "C", "D"], choices=["A", "B", "C", "D"])
@@ -59,6 +60,7 @@ def main(argv=None) -> int:
     _comuns(m)
     m.set_defaults(minimo=4, maximo=4)
     m.add_argument("--min-dificeis", type=int, default=1)
+    m.add_argument("--min-medias", type=int, default=1)
     m.add_argument("--condicao", default="C", choices=["A", "B", "C", "D"])
     m.add_argument("--modos", nargs="+", default=list(MODOS), choices=list(MODOS))
     m.add_argument("--janelas-por-item", type=int, default=20)
@@ -80,15 +82,15 @@ def main(argv=None) -> int:
     agora = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     if a.cmd == "run":
         saida = a.saida or QA / "relatorios" / f"piloto_janela_{agora}"
-        kw = {"prompt": PROMPT_JUNTO} if (a.min_dificeis or a.modo == "separado") else {}
-        _piloto(a, saida, a.condicao, a.janelas_por_item, a.modo, a.min_dificeis, **kw).run()
+        kw = {"prompt": PROMPT_JUNTO} if (a.min_dificeis or a.min_medias or a.modo == "separado") else {}
+        _piloto(a, saida, a.condicao, a.janelas_por_item, a.modo, a.min_dificeis, a.min_medias, **kw).run()
         if a.dry_run:
             return 0
         print((saida / "RESUMO.md").read_text(encoding="utf-8"))
     elif a.cmd == "modos":
         saida = a.saida or QA / "relatorios" / f"experimento_modos_{agora}"
         pilotos = [(modo, _piloto(a, saida / modo, a.condicao, a.janelas_por_item, modo, a.min_dificeis,
-                                  prompt=PROMPT_JUNTO)) for modo in a.modos]
+                                  a.min_medias, prompt=PROMPT_JUNTO)) for modo in a.modos]
         for modo, piloto in pilotos:   # valida prompts e exemplos de todos antes de gastar chamadas
             piloto._prompts()
             piloto._carregar_exemplos()

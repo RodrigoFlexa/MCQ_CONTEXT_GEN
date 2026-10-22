@@ -31,8 +31,20 @@ STATUS = ("ok", "parcial", "sem_questoes")
 MODOS = ("junto", "separado")
 CAMPOS_PLANO = ("id", "dificuldade", "tipo_demanda", "alvo", "resposta_esperada", "condicoes_necessarias",
                 "exigencia_cognitiva", "fundamentos")
-NUMERAIS = {1: "uma difícil", 2: "duas difíceis", 3: "três difíceis", 4: "quatro difíceis"}
-NUMERAIS_M = {1: "um difícil", 2: "dois difíceis", 3: "três difíceis", 4: "quatro difíceis"}
+NUM_F = {1: "uma", 2: "duas", 3: "três", 4: "quatro"}
+NUM_M = {1: "um", 2: "dois", 3: "três", 4: "quatro"}
+
+
+def exigencia(min_medias: int, min_dificeis: int, masculino: bool = False) -> str:
+    """Ex.: 'uma média e uma difícil' (questões) ou 'um médio e um difícil' (alvos)."""
+    num = NUM_M if masculino else NUM_F
+    partes = []
+    if min_medias:
+        adj = ("médio" if masculino else "média") if min_medias == 1 else ("médios" if masculino else "médias")
+        partes.append(f"{num[min_medias]} {adj}")
+    if min_dificeis:
+        partes.append(f"{num[min_dificeis]} {'difícil' if min_dificeis == 1 else 'difíceis'}")
+    return " e ".join(partes)
 DIFICULDADES = ("facil", "media", "dificil")
 DEMANDAS = ("recordar", "inferir", "diagnosticar", "comparar", "decidir")
 ROTULOS = ("A1", "F", "A2")
@@ -106,10 +118,11 @@ def render_janela(jan: list[tuple[str, dict]]) -> str:
     return "\n\n".join(f"[{r}] {b['titulo_capitulo']} / {b['subtitulo']}\n{b['texto']}" for r, b in jan)
 
 
-def carregar_prompt(minimo: int, maximo: int, caminho: Path = PROMPT, min_dificeis: int = 0) -> tuple[str, str, str]:
+def carregar_prompt(minimo: int, maximo: int, caminho: Path = PROMPT, min_dificeis: int = 0,
+                    min_medias: int = 0) -> tuple[str, str, str]:
     texto = caminho.read_text(encoding="utf-8")
-    if "{{MINIMO_DIFICEIS_TEXTO" in texto and min_dificeis not in NUMERAIS:
-        raise ValueError(f"{caminho.name} exige --min-dificeis entre 1 e 4")
+    if "{{EXIGENCIA" in texto and (min_dificeis not in NUM_F or min_medias not in (0, *NUM_F)):
+        raise ValueError(f"{caminho.name} exige --min-dificeis entre 1 e 4 (e --min-medias entre 0 e 4)")
     pos = texto.find("\n<tema>")
     if pos < 0:
         raise ValueError("Prompt sem a seção de dados <tema>")
@@ -118,8 +131,8 @@ def carregar_prompt(minimo: int, maximo: int, caminho: Path = PROMPT, min_difice
               .replace("{{MINIMO_MENOS_UM}}", str(minimo - 1))
               .replace("{{MAXIMO_QUESTOES}}", str(maximo))
               .replace("{{QUANTIDADE}}", str(minimo) if minimo == maximo else f"de {minimo} a {maximo}")
-              .replace("{{MINIMO_DIFICEIS_TEXTO}}", NUMERAIS.get(min_dificeis, ""))
-              .replace("{{MINIMO_DIFICEIS_TEXTO_M}}", NUMERAIS_M.get(min_dificeis, "")))
+              .replace("{{EXIGENCIA}}", exigencia(min_medias, min_dificeis))
+              .replace("{{EXIGENCIA_M}}", exigencia(min_medias, min_dificeis, masculino=True)))
     if "{{" in system:
         raise ValueError("Marcador não preenchido nas instruções: " + re.findall(r"\{\{\w+\}\}", system)[0])
     return system, texto[pos:].strip(), sha(texto)
@@ -169,22 +182,23 @@ def _fundamentos(fs, k: int, nome: str = "Questão") -> None:
 
 
 def _quantidade(status: str, n: int, dificeis: int, minimo: int, maximo: int, min_dificeis: int,
-                vazio: str, motivo: str, nome: str) -> None:
+                vazio: str, motivo: str, nome: str, medias: int = 0, min_medias: int = 0) -> None:
     if n > maximo:
         raise ValueError(f"Entregue no máximo {maximo} {nome}.")
-    completo = n >= minimo and dificeis >= min_dificeis
+    completo = n >= minimo and dificeis >= min_dificeis and medias >= min_medias
     if status == "ok" and not completo:
-        exig = f"pelo menos {minimo} {nome}" + (f" com {min_dificeis} difícil(eis)" if min_dificeis else "")
+        exig = f"pelo menos {minimo} {nome}" + (f" com {min_medias} média(s)" if min_medias else "") \
+            + (f" e {min_dificeis} difícil(eis)" if min_dificeis else "")
         raise ValueError(f"status ok exige {exig}; caso contrário, use parcial e explique em motivo.")
     if status == "parcial" and (n == 0 or completo):
-        raise ValueError(f"status parcial exige de 1 a {maximo} {nome} sem atingir a quantidade ou a difícil exigida.")
+        raise ValueError(f"status parcial exige de 1 a {maximo} {nome} sem atingir a quantidade ou as dificuldades exigidas.")
     if status == vazio and n:
         raise ValueError(f"status {vazio} exige lista vazia.")
     if status != "ok" and not motivo.strip():
         raise ValueError("Explique em motivo por que [F] não sustenta mais.")
 
 
-def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0) -> None:
+def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_medias: int = 0) -> None:
     """Somente formato: erros aqui fazem o cliente pedir ao modelo a correção do JSON."""
     if not isinstance(data, dict) or set(data) != {"status", "motivo", "questoes"}:
         raise ValueError("Use exatamente as chaves status, motivo e questoes.")
@@ -207,10 +221,10 @@ def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0) -> None
                 raise ValueError(f"Questão {k}: {campo} vazio.")
         _fundamentos(q["fundamentos"], k)
     _quantidade(status, len(qs), sum(q["dificuldade"] == "dificil" for q in qs), minimo, maximo, min_dificeis,
-                "sem_questoes", motivo, "questões")
+                "sem_questoes", motivo, "questões", sum(q["dificuldade"] == "media" for q in qs), min_medias)
 
 
-def validar_plano(data: dict, minimo: int, maximo: int, min_dificeis: int = 0) -> None:
+def validar_plano(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_medias: int = 0) -> None:
     if not isinstance(data, dict) or set(data) != {"status", "motivo", "itens"}:
         raise ValueError("Use exatamente as chaves status, motivo e itens.")
     status, motivo, itens = data["status"], data["motivo"], data["itens"]
@@ -233,7 +247,8 @@ def validar_plano(data: dict, minimo: int, maximo: int, min_dificeis: int = 0) -
             raise ValueError(f"Item {k}: condicoes_necessarias deve ser lista de textos.")
         _fundamentos(it["fundamentos"], k, "Item")
     _quantidade(status, len(itens), sum(i["dificuldade"] == "dificil" for i in itens), minimo, maximo,
-                min_dificeis, "sem_alvos", motivo, "alvos")
+                min_dificeis, "sem_alvos", motivo, "alvos", sum(i["dificuldade"] == "media" for i in itens),
+                min_medias)
 
 
 def validar_redacao(data: dict, ids: list[int]) -> None:
@@ -311,15 +326,15 @@ class Piloto:
                  workers: int = 4, limite: int | None = None, docs: Path = DOCS, prompt: Path = PROMPT,
                  client=None, dry_run: bool = False, progress=print, condicao: str = "A",
                  janelas_por_item: int | None = None, externos: Path | None = None,
-                 especialista: Path | None = None, modo: str = "junto", min_dificeis: int = 0,
+                 especialista: Path | None = None, modo: str = "junto", min_dificeis: int = 0, min_medias: int = 0,
                  prompt_plano: Path = PROMPT_PLANO, prompt_redacao: Path = PROMPT_REDACAO):
         if minimo < 1 or maximo < minimo:
             raise ValueError("Use 1 <= minimo <= maximo")
         if modo not in MODOS:
             raise ValueError(f"Modo desconhecido: {modo}")
-        if not 0 <= min_dificeis <= minimo:
-            raise ValueError("Use 0 <= min_dificeis <= minimo")
-        self.modo, self.min_dificeis = modo, min_dificeis
+        if min_dificeis < 0 or min_medias < 0 or min_dificeis + min_medias > minimo:
+            raise ValueError("Use min_dificeis + min_medias <= minimo")
+        self.modo, self.min_dificeis, self.min_medias = modo, min_dificeis, min_medias
         self.prompt_plano, self.prompt_redacao = Path(prompt_plano), Path(prompt_redacao)
         from . import exemplos as ex
         if condicao not in ex.CONDICOES:
@@ -341,7 +356,7 @@ class Piloto:
             etapas = {"junto": self.prompt}
         else:
             etapas = {"planejamento": self.prompt_plano, "redacao": self.prompt_redacao}
-        return {nome: carregar_prompt(self.minimo, self.maximo, caminho, self.min_dificeis)
+        return {nome: carregar_prompt(self.minimo, self.maximo, caminho, self.min_dificeis, self.min_medias)
                 for nome, caminho in etapas.items()}
 
     def _config(self, prompt_sha: str) -> None:
@@ -355,8 +370,8 @@ class Piloto:
                if self.modo == "separado" else self.prompt.resolve().relative_to(ROOT).as_posix(),
                "prompt_sha256": prompt_sha,
                "condicao": self.condicao, "janelas_por_item": self.janelas_por_item}
-        if self.modo != "junto" or self.min_dificeis:
-            cfg.update(modo=self.modo, min_dificeis=self.min_dificeis)
+        if self.modo != "junto" or self.min_dificeis or self.min_medias:
+            cfg.update(modo=self.modo, min_dificeis=self.min_dificeis, min_medias=self.min_medias)
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -462,7 +477,8 @@ class Piloto:
         inicio = time.time()
         try:
             data = cliente.json(system, user, tag="piloto_janela", max_tokens=self.max_tokens,
-                                validate=lambda d: validar(d, self.minimo, self.maximo, self.min_dificeis),
+                                validate=lambda d: validar(d, self.minimo, self.maximo, self.min_dificeis,
+                                                           self.min_medias),
                                 item=t["item"])
         except Exception as exc:  # noqa: BLE001 - a janela fica pendente para nova tentativa
             self._falha(t, exc)
@@ -486,7 +502,8 @@ class Piloto:
         inicio = time.time()
         try:
             plano = cliente.json(sys_p, user_p, tag="piloto_planejamento", max_tokens=self.max_tokens,
-                                 validate=lambda d: validar_plano(d, self.minimo, self.maximo, self.min_dificeis),
+                                 validate=lambda d: validar_plano(d, self.minimo, self.maximo, self.min_dificeis,
+                                                                  self.min_medias),
                                  item=t["item"])
             redacao = {"status": "sem_questoes", "motivo": "plano sem alvos", "questoes": []}
             user_r = ""
@@ -507,7 +524,8 @@ class Piloto:
                      "pergunta": q["pergunta"], "resposta": q["resposta"],
                      "fundamentos": por_id[q["id"]]["fundamentos"]} for q in redacao["questoes"]]
         dificeis = sum(q["dificuldade"] == "dificil" for q in questoes)
-        status = ("ok" if len(questoes) >= self.minimo and dificeis >= self.min_dificeis
+        medias = sum(q["dificuldade"] == "media" for q in questoes)
+        status = ("ok" if len(questoes) >= self.minimo and dificeis >= self.min_dificeis and medias >= self.min_medias
                   else "parcial" if questoes else "sem_questoes")
         motivo = " | ".join(m for m in (plano["motivo"], redacao["motivo"]) if m.strip())
         return self._salvar(t, jan, exemplos, user_p + "\n" + user_r, prompt_sha, inicio, status, motivo, questoes,
@@ -567,6 +585,8 @@ def _metricas(janelas: list[dict], questoes: list[dict]) -> dict:
         "semelhanca_exemplos_media": round(sum(_sem(q) for q in questoes) / nq, 3) if nq else 0,
         "semelhanca_exemplos_max": max((_sem(q) for q in questoes), default=0),
         "semelhanca_exemplos_ge_030_pct": _pct(sum(_sem(q) >= 0.3 for q in questoes), nq),
+        "janelas_com_media_pct": _pct(sum(any(q["dificuldade"] == "media" for q in j["questoes"])
+                                          for j in janelas), len(janelas)),
         "janelas_com_dificil_pct": _pct(sum(any(q["dificuldade"] == "dificil" for q in j["questoes"])
                                             for j in janelas), len(janelas)),
         "itens_descartados_redacao": sum(j.get("itens_descartados_redacao", 0) for j in janelas),
@@ -744,7 +764,8 @@ def comparar(raiz: Path, condicoes=("A", "B", "C", "D"), descricoes=None, titulo
               lambda m: f"{m['semelhanca_exemplos_media']} / {m['semelhanca_exemplos_max']}"),
         linha("Semelhança ≥ 0,30 (%)", lambda m: m["semelhanca_exemplos_ge_030_pct"]),
         linha("Segundos por janela", lambda m: m["segundos_por_janela"]),
-        linha("Janelas com ao menos uma difícil (%)", lambda m: m.get("janelas_com_dificil_pct", 0)),
+        linha("Janelas com ao menos uma média / uma difícil (%)",
+              lambda m: f"{m.get('janelas_com_media_pct', 0)} / {m.get('janelas_com_dificil_pct', 0)}"),
         linha("Palavras da pergunta: fácil / média / difícil",
               lambda m: " / ".join(str(m.get("palavras_pergunta_por_nivel", {}).get(d, 0)) for d in DIFICULDADES)),
         linha("Acima do tamanho pedido (%) · 35/60/90", lambda m: m.get("acima_do_teto_pct", 0)),

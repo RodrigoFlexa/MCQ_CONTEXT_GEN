@@ -196,9 +196,9 @@ class ExemplosTests(unittest.TestCase):
 class ClienteModos(ClienteFalso):
     """Responde às três etapas: junto, planejamento e redação."""
 
-    def __init__(self, n=4, dificeis=1, descartar=0):
+    def __init__(self, n=4, dificeis=1, descartar=0, medias=1):
         super().__init__(n)
-        self.dificeis, self.descartar, self.tags = dificeis, descartar, []
+        self.dificeis, self.medias, self.descartar, self.tags = dificeis, medias, descartar, []
 
     def _trecho(self, user):
         texto_f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d\]|\n</janela>)", user, re.S).group(1)
@@ -209,7 +209,7 @@ class ClienteModos(ClienteFalso):
         self.tags.append(tag)
         self.usuarios.append(user)
         trecho = self._trecho(user)
-        difs = ["dificil"] * self.dificeis + ["facil"] * (self.n - self.dificeis)
+        difs = ["dificil"] * self.dificeis + ["media"] * self.medias + ["facil"] * (self.n - self.dificeis - self.medias)
         if tag == "piloto_redacao":
             plano = json.loads(re.search(r"<plano>\n(.+?)\n</plano>", user, re.S).group(1))
             manter = plano[: len(plano) - self.descartar]
@@ -246,6 +246,10 @@ class ModosTests(unittest.TestCase):
         core.validar(com, 4, 4, 1)
         with self.assertRaises(ValueError):
             core.validar({**com, "status": "parcial", "motivo": "x"}, 4, 4, 1)
+        with self.assertRaises(ValueError):
+            core.validar(com, 4, 4, 1, 1)   # falta a média
+        com_media = {**com, "questoes": com["questoes"][:3] + [self.q(4, "media")]}
+        core.validar(com_media, 4, 4, 1, 1)
 
     def test_validar_redacao(self):
         core.validar_redacao({"status": "ok", "motivo": "", "questoes": [
@@ -264,6 +268,10 @@ class ModosTests(unittest.TestCase):
         system, _, _ = core.carregar_prompt(4, 4, core.PROMPT_JUNTO, 1)
         self.assertIn("elabore 4 questões", system)
         self.assertIn("pelo menos uma difícil", system)
+        system, _, _ = core.carregar_prompt(4, 4, core.PROMPT_JUNTO, 1, 1)
+        self.assertIn("sendo pelo menos uma média e uma difícil", system)
+        plano, _, _ = core.carregar_prompt(4, 4, core.PROMPT_PLANO, 1, 1)
+        self.assertIn("sendo pelo menos um médio e um difícil", plano)
         with self.assertRaises(ValueError):
             core.carregar_prompt(4, 4, core.PROMPT_JUNTO, 0)
 
@@ -271,7 +279,7 @@ class ModosTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             raiz = Path(tmp)
             junto, sep = ClienteModos(), ClienteModos(descartar=1)
-            comum = dict(minimo=4, maximo=4, min_dificeis=1, condicao="C", janelas_por_item=3,
+            comum = dict(minimo=4, maximo=4, min_dificeis=1, min_medias=1, condicao="C", janelas_por_item=3,
                          progress=lambda *a, **k: None)
             core.Piloto(raiz / "junto", ["01_01"], "falso:low", modo="junto", prompt=core.PROMPT_JUNTO,
                         client=junto, **comum).run()
@@ -287,6 +295,7 @@ class ModosTests(unittest.TestCase):
             self.assertEqual(res["separado"]["total"]["questoes"], 9)
             self.assertEqual(res["separado"]["total"]["itens_descartados_redacao"], 3)
             self.assertEqual(res["junto"]["total"]["janelas_com_dificil_pct"], 100.0)
+            self.assertEqual(res["junto"]["total"]["janelas_com_media_pct"], 100.0)
             self.assertEqual(res["separado"]["total"]["status"]["parcial"], 3, "3 questões < mínimo de 4")
 
 

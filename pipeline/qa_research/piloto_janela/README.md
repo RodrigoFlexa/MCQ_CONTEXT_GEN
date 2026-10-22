@@ -58,7 +58,8 @@ gerada e os exemplos recebidos naquela chamada, para medir cópia.
 
 ## Experimento de modos: planejamento e redação juntos x separados
 
-Usa a condição C (3 exemplos do especialista), 4 questões por janela e pelo menos 1 difícil, nas
+Usa a condição C (3 exemplos do especialista), 4 questões por janela com pelo menos 1 média e 1 difícil
+(`--min-medias`, `--min-dificeis`), nas
 mesmas 40 janelas do experimento de exemplos.
 
 | Modo | Chamadas por janela | Prompts |
@@ -78,7 +79,7 @@ bash pipeline/qa_research/rodar_experimento_modos.sh              # completo: 12
 ```
 
 A comparação (`COMPARACAO.md`) acrescenta: janelas com ao menos uma difícil, palavras da pergunta por
-nível, porcentagem acima do tamanho pedido e itens do plano descartados na redação.
+nível, porcentagem acima do tamanho pedido, janelas com média e com difícil e itens do plano descartados na redação.
 
 ## Levar os resultados do servidor para a sua máquina
 

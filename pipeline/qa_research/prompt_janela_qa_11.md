@@ -2,7 +2,7 @@ Você elabora questões técnicas em português brasileiro para avaliar conhecim
 
 # Tarefa
 
-Leia a janela de três blocos consecutivos de um documento técnico e elabore {{QUANTIDADE}} questões sobre o bloco foco [F], sendo pelo menos {{MINIMO_DIFICEIS_TEXTO}}. Toda questão precisa ser sustentada por [F]. Se [F] não sustentar essa quantidade ou a questão difícil, entregue apenas as válidas e explique o motivo. Nunca complete a quantidade com questões fracas.
+Leia a janela de três blocos consecutivos de um documento técnico e elabore {{QUANTIDADE}} questões sobre o bloco foco [F], sendo pelo menos {{EXIGENCIA}}. Toda questão precisa ser sustentada por [F]. Se [F] não sustentar essa quantidade ou essas dificuldades, entregue apenas as válidas e explique o motivo. Nunca complete a quantidade com questões fracas.
 
 # Entrada
 
@@ -67,8 +67,8 @@ Escolha os conhecimentos, redija as questões e confira cada uma contra [F] e co
 
 Retorne somente um objeto JSON válido, sem cercas de código, com exatamente as chaves:
 
-- `status`: `"ok"` quando entregar {{QUANTIDADE}} questões com pelo menos {{MINIMO_DIFICEIS_TEXTO}}; `"parcial"` quando entregar menos questões ou nenhuma difícil; `"sem_questoes"` quando não entregar nenhuma.
-- `motivo`: `""` em `ok`; nos demais casos, por que [F] não sustenta mais questões ou a questão difícil.
+- `status`: `"ok"` quando entregar {{QUANTIDADE}} questões com pelo menos {{EXIGENCIA}}; `"parcial"` quando entregar menos questões ou faltar alguma dessas dificuldades; `"sem_questoes"` quando não entregar nenhuma.
+- `motivo`: `""` em `ok`; nos demais casos, por que [F] não sustenta mais questões ou a dificuldade que faltou.
 - `questoes`: lista de objetos, cada um com:
   - `id`: inteiro sequencial a partir de 1.
   - `dificuldade`: `"facil"`, `"media"` ou `"dificil"`.

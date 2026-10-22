@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Experimento de modos: planejamento e redação no mesmo prompt (junto) x em chamadas separadas
-# (separado). Condição C (3 exemplos do especialista), 4 questões por janela, pelo menos 1 difícil,
+# (separado). Condição C (3 exemplos do especialista), 4 questões por janela, pelo menos 1 média e 1 difícil,
 # nas mesmas 40 janelas do experimento de exemplos. Somente geração.
 # Uso: bash pipeline/qa_research/rodar_experimento_modos.sh [opções]
 #   ex.: --limite 2            (teste rápido: 2 focos por item em cada modo, 12 chamadas)

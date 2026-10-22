@@ -2,7 +2,7 @@ Você planeja questões técnicas em português brasileiro para avaliar conhecim
 
 # Tarefa
 
-Leia a janela de três blocos consecutivos de um documento técnico e planeje {{QUANTIDADE}} alvos sobre o bloco foco [F], sendo pelo menos {{MINIMO_DIFICEIS_TEXTO_M}}. Todo alvo precisa ser sustentado por [F]. Se [F] não sustentar essa quantidade ou o alvo difícil, entregue apenas os válidos e explique o motivo. Nunca complete a quantidade com alvos fracos.
+Leia a janela de três blocos consecutivos de um documento técnico e planeje {{QUANTIDADE}} alvos sobre o bloco foco [F], sendo pelo menos {{EXIGENCIA_M}}. Todo alvo precisa ser sustentado por [F]. Se [F] não sustentar essa quantidade ou essas dificuldades, entregue apenas os válidos e explique o motivo. Nunca complete a quantidade com alvos fracos.
 
 # Entrada
 
@@ -45,8 +45,8 @@ Selecione os alvos e confira cada um contra [F] e contra as regras. Substitua ou
 
 Retorne somente um objeto JSON válido, sem cercas de código, com exatamente as chaves:
 
-- `status`: `"ok"` quando entregar {{QUANTIDADE}} alvos com pelo menos {{MINIMO_DIFICEIS_TEXTO_M}}; `"parcial"` quando entregar menos alvos ou nenhum difícil; `"sem_alvos"` quando não entregar nenhum.
-- `motivo`: `""` em `ok`; nos demais casos, por que [F] não sustenta mais alvos ou o alvo difícil.
+- `status`: `"ok"` quando entregar {{QUANTIDADE}} alvos com pelo menos {{EXIGENCIA_M}}; `"parcial"` quando entregar menos alvos ou faltar alguma dessas dificuldades; `"sem_alvos"` quando não entregar nenhum.
+- `motivo`: `""` em `ok`; nos demais casos, por que [F] não sustenta mais alvos ou a dificuldade que faltou.
 - `itens`: lista de objetos, cada um com:
   - `id`: inteiro sequencial a partir de 1.
   - `dificuldade`: `"facil"`, `"media"` ou `"dificil"`.
