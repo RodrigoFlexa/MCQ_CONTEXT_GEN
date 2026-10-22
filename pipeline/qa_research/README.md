@@ -12,6 +12,9 @@ e coleta de todos os resultados estão em [QA_LOTE_9.md](QA_LOTE_9.md).
 
 Os 40 contextos revisados estão na [versão final para QA](relatorios/dez_areas_final_v1/INDICE.md),
 com [registro editorial separado](relatorios/dez_areas_final_v1/REVISAO.md).
+Após a avaliação do especialista, os contextos corrigidos estão na
+[versão v2](relatorios/dez_areas_final_v2/REVISAO_ESPECIALISTA.md) e as questões validadas no
+[repositório definitivo](repositorio_definitivo/README.md); ver [revisão do especialista](revisao_especialista/README.md).
 
 **Para as dez áreas (40 frases), use [DEZ_AREAS.md](DEZ_AREAS.md).** Os perfis têm
 217 recortes definidos manualmente; a preparação local compartilha uma única

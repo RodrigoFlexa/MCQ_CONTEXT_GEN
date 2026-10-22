@@ -1,0 +1,147 @@
+# 6.3. Operações simultâneas – SIMOPS
+
+## Operações simultâneas – SIMOPS
+
+### Identificação de interferências
+
+#### Conceito de SIMOPS e natureza da interferência
+
+Operações simultâneas, ou SIMOPS, são operações independentes cujos eventos podem afetar a segurança de pessoas, equipamentos ou meio ambiente de outra operação. O ponto central não é apenas a coincidência no tempo, mas a existência de acoplamento de risco entre atividades. Esse acoplamento pode ocorrer por compartilhamento de área, utilidades, rotas de fuga, sistemas de processo, equipamentos de içamento, meios de acesso, embarcações, comunicações, equipe operacional ou barreiras de segurança.
+
+Em um FPSO, a interferência pode surgir mesmo quando as tarefas pertencem a disciplinas diferentes, como produção, manutenção, marinha, movimentação de cargas ou apoio por embarcações. Uma atividade pode aumentar a probabilidade de falha da outra, ampliar suas consequências ou reduzir a capacidade de prevenção, controle ou mitigação. Por isso, a identificação de interferências deve buscar dependências físicas, operacionais e organizacionais entre atividades, e não apenas listar trabalhos simultâneos.
+
+Na prática, SIMOPS é um problema de compatibilidade: duas atividades podem ser compatíveis sem restrições, compatíveis com condicionantes, ou incompatíveis enquanto certas barreiras estiverem degradadas ou certas condições operacionais estiverem presentes.
+
+#### Seleção de controles e monitoramento das interfaces
+
+Os controles para interferências raramente são únicos. As listagens disponíveis mostram SIMOPS associada a medidas como APR, permissão de trabalho, restrição de acesso, notificação prévia, comunicação, procedimentos específicos, treinamento e competência, checklist e resposta a emergências. Isso sugere uma arquitetura de defesa em camadas: um controle identifica o risco, outro organiza a execução, outro limita a exposição e outro reduz consequências.
+
+A seleção dos controles deve seguir o mecanismo dominante da interferência. Se o problema é compartilhamento de área, controles de acesso, demarcação e comunicação tendem a ser centrais. Se o problema é degradação de barreira de processo, a decisão depende mais do estado operacional e dos limites de continuidade. Se o problema é coordenação entre disciplinas, briefing, supervisão, passagem de turno e definição clara de interfaces ganham peso.
+
+Em sistemas com automação e controle integrado, o monitoramento correto dos parâmetros e sua medição precisa são essenciais para sustentar decisões operacionais. Estudos aplicados a poços com gas lift contínuo e planta de processo indicam que diferentes partes do sistema podem ter dinâmicas temporais distintas; por isso, a interpretação de interferências deve considerar que uma mudança lenta em um subsistema pode coexistir com resposta rápida em outro.
+
+#### Mapeamento estruturado de atividades, perigos e interfaces
+
+Ferramentas qualitativas como HAZID (Hazard Identification) e APR (Análise Preliminar de Riscos) permitem organizar a identificação de interferências ao relacionar perigo, causas, consequências e medidas de controle ou recomendações. Essa estrutura ajuda a decompor a atividade em elementos observáveis e comparáveis entre diferentes frentes de trabalho.
+
+Quando aplicada a operações simultâneas, a utilidade prática dessa estrutura está em revelar interfaces: quais atividades compartilham área, acesso, comunicação, recursos ou controles; quais consequências podem atingir pessoas ou meio ambiente fora da tarefa principal; e quais medidas precisam permanecer disponíveis para que a combinação continue aceitável. Essa adaptação é metodológica: usa a lógica da análise de perigos para examinar dependências entre tarefas, não apenas o perigo isolado de cada uma.
+
+Nos exemplos de transporte e manuseio de explosivos e de canhoneio, SIMOPS aparece associada a APR, permissão de trabalho, notificação prévia, comunicação, restrição de acesso, procedimentos e treinamento. Isso indica que a identificação de interferências tende a funcionar em conjunto com outros instrumentos operacionais e administrativos, e não como controle isolado.
+
+#### Matrizes de compatibilidade e leitura de risco combinado
+
+Uma matriz de compatibilidade é uma ferramenta de organização usada para comparar pares ou conjuntos de atividades segundo suas interfaces de risco. Ela não substitui a análise qualitativa de perigos, mas ajuda a tornar visível quando a combinação entre tarefas altera o risco total da instalação. Esse uso é uma complementação técnica compatível com a lógica de SIMOPS e de avaliação qualitativa de risco.
+
+A leitura da compatibilidade pode considerar, de forma qualitativa, aspectos como proximidade física, compartilhamento de barreiras, impacto potencial sobre sistemas críticos, restrição de acesso, necessidade de comunicação reforçada e efeito sobre resposta a emergências. Esses critérios não aparecem como lista formal única, mas derivam da necessidade de verificar se eventos de uma operação podem afetar a outra e se as barreiras permanecem eficazes.
+
+O risco combinado aparece quando atividades que, isoladamente, parecem controladas passam a ampliar probabilidade, consequência ou degradação de barreiras quando executadas juntas. Em avaliação qualitativa, essa combinação pode deslocar a condição para aceitável, ALARP (As Low As Reasonably Practicable, tão baixo quanto razoavelmente praticável) ou inaceitável, exigindo mitigação adicional, replanejamento ou não continuidade da combinação analisada nas condições presentes.
+
+#### Competência para reconhecer interfaces entre atividades
+
+A identificação de interferências depende de pessoas capazes de reconhecer interfaces entre tarefas, entender os procedimentos envolvidos e perceber quando uma atividade afeta outra. Há diferença entre conhecer procedimentos isolados e ter competência para interpretar como duas operações se acoplam em termos de risco. Essa distinção é especialmente importante em SIMOPS, porque o perigo relevante pode estar na interação entre atividades independentes.
+
+A matriz de competência deve cobrir as atividades efetivamente executadas, incluindo interfaces entre helicóptero, offloading, manutenção e transferências internas, conforme a função de cada equipe. Esse resultado é específico do caso, mas ilustra como lacunas de treinamento podem criar zonas cegas na leitura das interfaces operacionais.
+
+### Planejamento e autorização
+
+#### O que são SIMOPS e por que exigem planejamento integrado
+
+Operações simultâneas, ou SIMOPS (Simultaneous Operations), são a condução de operações independentes cujos eventos podem afetar a segurança das pessoas, dos equipamentos ou do meio ambiente de outra operação. A definição abrange casos usuais como produção, perfuração e execuções de projeto, mas não se limita a esses exemplos. Em um FPSO, a criticidade surge porque atividades separadas compartilham áreas, utilidades, rotas de fuga, fontes de ignição, sistemas de processo, pessoal e barreiras de segurança.
+
+O problema técnico central não é apenas o risco de cada tarefa isolada, mas a interferência entre tarefas. Uma atividade pode degradar barreiras necessárias a outra, alterar condições do processo, restringir resposta a emergências ou introduzir novas fontes de energia e de ignição. Por isso, o planejamento integrado precisa considerar interfaces entre operação, manutenção, marinha, contratadas e sistemas temporariamente alterados.
+
+Quando há proximidade entre atividades e dependência de barreiras comuns, a coordenação deixa de ser administrativa e passa a ser controle de risco. A compatibilidade entre atividades depende de condições operacionais reais, como estado dos isolamentos, disponibilidade de detecção e combate a incêndio, acessibilidade da área, capacidade de supervisão e robustez da comunicação entre as partes.
+
+#### PTW como mecanismo de coordenação entre operação, manutenção e executantes
+
+A Permissão de Trabalho, PT, também denominada PTW (Permit to Work), é um método para identificar perigos previsíveis de atividades operacionais e de manutenção de alto perigo, especificar precauções e comunicar esses perigos e precauções aos envolvidos. Ela também funciona como meio de comunicação entre gestão local, supervisores, operadores e executantes e como forma de coordenar atividades diferentes para evitar conflitos.
+
+Esse papel é particularmente relevante em SIMOPS. Quando existem trabalhos a quente, entrada em vaso, abertura de linhas com substâncias perigosas ou tarefas que exigem isolamento elétrico ou mecânico, a PTW ajuda a transformar a análise de risco em controles aplicáveis no campo. O mecanismo só funciona se o conteúdo da permissão refletir os perigos reais da tarefa e suas interfaces com outras atividades.
+
+A PTW não substitui avaliação de riscos robusta. A avaliação é que deve indicar quando o trabalho exige controle formal rigoroso e quais medidas são adequadas. Em atividades simultâneas, permissões emitidas sem alinhamento com os riscos discutidos em campo, sem integração com certificados e isolamentos ou sem atualização diante de mudanças de escopo tendem a perder efetividade como barreira de coordenação.
+
+#### Isolamentos de processo e reinstalação segura como pré-condição física do trabalho
+
+A isolação segura e a reinstalação de planta e equipamentos são aspectos centrais do controle de trabalhos perigosos. Em sistemas de processo, um meio efetivo de projetar, aplicar, controlar e revisar isolamentos é crítico para prevenir liberações de hidrocarbonetos e outras substâncias perigosas.
+
+O mecanismo físico do isolamento é separar a frente de trabalho de fontes de pressão, energia, temperatura, inflamáveis, tóxicos ou inventário de processo. Quando o esquema é inadequado, mal selecionado, mal comprovado ou alterado sem controle, pode ocorrer perda de contenção, ingresso inesperado de fluido, exposição de pessoal e formação de atmosfera perigosa.
+
+O planejamento de isolamentos deve considerar avaliação de riscos, seleção do esquema apropriado, papéis e responsabilidades, treinamento e competência, ligação com o processo formal de autorização e monitoramento, auditoria e revisão. Isolamentos de processo costumam estar associados a mudanças temporárias do estado da planta, como manutenção planejada, partida, parada ou recomissionamento. O controle do isolamento e o controle da permissão têm escopos distintos, mas precisam ser coerentes entre si para que a tarefa autorizada corresponda ao estado real da planta.
+
+#### Como selecionar controles e combinar barreiras no planejamento da execução
+
+O planejamento da execução combina barreiras de naturezas diferentes. Em atividades críticas aparecem, como controles preventivos ou mitigadores, reunião antes do começo da atividade, revisão de gestão de mudanças, procedimentos específicos, controle de fontes de ignição, sistemas de comunicação, restrição de acesso, supervisão, treinamento e competência, plano de resposta à emergência e PTW. Em atividades com explosivos ou fontes radioativas surgem ainda APR, DDS (Diálogo Diário de Segurança), notificação prévia, contratada especializada e controles específicos de emergência.
+
+A seleção desses controles depende do mecanismo predominante do perigo. Quando o risco está ligado à energia de processo, isolamento e despressurização tendem a ganhar peso. Quando o mecanismo envolve ignição, tornam-se centrais o controle de fontes de ignição e das condições que favorecem atmosfera inflamável. Quando o problema principal é a interferência entre equipes, sequenciamento, comunicação, restrição de acesso e supervisão passam a ser decisivos. Se a execução depende de especialização, competência e procedimento específico tornam-se condicionantes do trabalho.
+
+Nenhuma barreira isolada garante compatibilidade entre atividades. A eficácia depende da combinação coerente e do estado real das barreiras.
+
+#### Comunicação operacional, reuniões e passagem de turno
+
+A comunicação operacional sustenta o controle das interfaces durante a preparação e a execução. Chamadas operacionais matinais, cronogramas estruturados de reuniões e passagens de turno documentadas são mecanismos para atualizar prioridades, compartilhar mudanças de condição e manter a informação acessível às equipes envolvidas.
+
+O valor técnico dessas rotinas está em reduzir perda de contexto entre turnos, áreas e empresas. Em SIMOPS, parte do risco nasce de dependências implícitas e do que cada grupo presume que os outros saibam. Por isso, reuniões de coordenação, toolbox talks e handovers precisam ser consistentes com a permissão ativa, com o estado dos isolamentos e com as restrições vigentes.
+
+Quando perigos discutidos no campo não aparecem na permissão, ou quando há deficiência de questionamento e comunicação antes da revalidação de permissões em andamento, surge desalinhamento entre controle formal e execução real. Reuniões periódicas de revisão de prioridades também ajudam a reduzir conflitos de agenda, atrasos e retrabalho em atividades de manutenção e embarque afetadas por operações simultâneas.
+
+### Interfaces marítimas e submarinas
+
+#### O que é um FPSO e por que as interfaces marítimas e submarinas importam
+
+FPSO é a sigla de Floating Production, Storage and Offloading, isto é, uma unidade flutuante de produção, armazenamento e transferência de petróleo. Nessa unidade, o topside abriga o sistema de processo que separa e trata os fluidos produzidos pelo campo, enquanto o casco também pode armazenar óleo para posterior transferência a navios aliviadores. Essa arquitetura torna o FPSO um ponto de integração entre poços, equipamentos submarinos, linhas flexíveis, embarcações de apoio e navios de exportação.
+
+As interfaces marítimas e submarinas são tecnicamente relevantes porque conectam três funções distintas: receber a produção do campo, devolver ou exportar correntes tratadas e permitir apoio operacional no mar. Na prática, isso inclui risers e flowlines ligados aos sistemas submarinos, exportação de gás por gasoduto, exportação de óleo por offloading e atuação de embarcações e veículos para inspeção, monitoramento e apoio subsea. Como essas interfaces afetam escoamento, estabilidade operacional e exposição a colisões ou desconexões, sua compreensão é parte do domínio de segurança operacional do FPSO.
+
+#### Como os fluidos entram, são tratados e saem do FPSO
+
+A planta de processamento primário de fluidos do FPSO separa óleo, gás e água e trata cada fase conforme seu destino operacional. O óleo precisa ser enquadrado para transferência; a água produzida é tratada de acordo com o destino, distinguindo-se água para lançamento no mar e água destinada à injeção; o gás, após tratamento, pode seguir diferentes rotas conforme a demanda da instalação.
+
+No arranjo descrito para FPSO, o gás tratado pode ser exportado por gasoduto, utilizado como gás combustível, empregado em gas lift ou reinjetado em reservatório. Parte do gás também pode ser queimada para manter a pressão do sistema em condição normal de operação ou em falha e/ou emergência. Isso mostra que a interface submarina não serve apenas para trazer produção: ela também pode participar da reinjeção e do escoamento de gás.
+
+Siglas úteis nesse contexto incluem BSW, de Basic Sediments and Water, para teor de sedimentos e água; TOG, de teor de óleos e graxas; e PPP, de processamento primário de petróleo.
+
+#### Condições que mudam o comportamento: movimento da unidade, separação e descarte
+
+Em instalações flutuantes de produção, especialmente FPSOs, condições marítimas adversas podem agitar os fluidos dentro dos vasos separadores da planta de processamento primário. Essa agitação excessiva favorece remistura das fases, perturba a separação, pode gerar alarmes incorretos de nível e, em casos desfavoráveis, contribuir para parada de produção por shutdown. O mecanismo é físico: a separação gravitacional depende de tempo de residência e de relativa calma entre fases; quando o fluido volta a se misturar, a interface fica menos estável e o controle se torna mais difícil.
+
+Uma alternativa apresentada para reduzir essa sensibilidade é o uso de tecnologias ciclônicas. Nessas tecnologias, a separação é atribuída à elevada aceleração centrífuga, indicada como muito superior à aceleração gravitacional, com expectativa de menor dependência do movimento da embarcação. Reduções de instrumentos ou custos precisam ser demonstradas para o arranjo, preservando as funções de controle e segurança requeridas.
+
+No contexto de separação submarina subsea, a reinjeção da água oleosa separada é apresentada como forma de reduzir o volume de água a tratar e descartar offshore.
+
+#### Offloading: por que o risco muda durante a operação e o que monitorar tecnicamente
+
+Offloading é a transferência de óleo do FPSO para um navio aliviador. Em arranjos com armazenagem no próprio FPSO, essa operação é parte central da exportação do petróleo. Um modelo probabilístico dinâmico aplicado a um caso na Bacia de Campos tratou o offloading como operação de alto risco no ambiente offshore e considerou que o perfil de risco pode mudar durante a própria operação, cuja duração aproximada foi indicada como da ordem de um dia. Nesse caso, condições ambientais e a forma de realização da amarração influenciaram significativamente o perfil de risco.
+
+Do ponto de vista técnico, isso faz sentido porque offloading combina transferência de hidrocarboneto, interação hidrodinâmica entre unidades flutuantes e dependência de integridade de sistemas de conexão, medição e manobra. Mudanças ambientais ao longo do tempo podem alterar movimento relativo, esforços e margens operacionais. Por isso, a avaliação de risco descrita incluiu identificação de perigos, cenários de falha, probabilidades, consequências e modelagem de mudanças de estado para apoiar decisão sobre desconexão de emergência.
+
+Em um caso investigado, o offloading programado foi postergado por problema no sistema de medição, mostrando que a prontidão dessa operação depende também da disponibilidade funcional de instrumentação e sistemas associados.
+
+#### Embarcações e recursos de apoio: inspeção, monitoramento e interface com o FPSO
+
+As interfaces marítimas e submarinas de um FPSO incluem não só linhas e equipamentos permanentes, mas também meios navais de apoio. DSV, de Diver Support Vessel, e RSV, de ROV Support Vessel, aparecem associados à inspeção e ao monitoramento de dutos submarinos. O RSV opera com ROV, Veículo Operado Remotamente, recurso útil quando a observação e a verificação precisam ser feitas sem intervenção humana direta no ponto submerso.
+
+Esses meios são relevantes porque a integridade de dutos e equipamentos submarinos influencia a continuidade do escoamento, da injeção e das conexões com a unidade flutuante. Em paralelo, o FPSO pode exportar óleo para navios aliviadores e escoar gás por gasoduto. Assim, a unidade se relaciona com infraestrutura submarina fixa e com embarcações que se aproximam para apoio ou transferência de carga.
+
+Do ponto de vista de consequências, a colisão entre a unidade e um elemento externo aparece entre as causas possíveis de acidentes com FPSO. Por isso, a gestão dessas interfaces precisa considerar que aproximação de embarcações, transferência de carga e atividades de inspeção ou monitoramento compartilham o mesmo ambiente operacional.
+
+#### Fatores humanos e coordenação operacional nas interfaces de offloading e marine
+
+A coordenação de SIMOPS depende da distribuição clara de tarefas, autoridade e comunicação entre equipes. Planejamento, controle de manutenção, operação de sistemas e emissão de permissões precisam ter responsáveis capacitados e carga de trabalho compatível. Diferenças de idioma, experiência ou vínculo contratual não devem criar lacunas de informação ou de supervisão. O acúmulo de funções críticas exige avaliar se a mesma pessoa consegue acompanhar os eventos simultâneos e atuar quando houver desvio. Passagem de serviço e registro das condições mantêm a continuidade do controle entre turnos.
+
+### Barreiras e contingências
+
+#### O que são SIMOPS e por que exigem gestão específica de barreiras
+
+SIMOPS, sigla de Simultaneous Operations, são operações independentes executadas ao mesmo tempo cujos eventos podem afetar a segurança de pessoas, equipamentos ou do meio ambiente de outra operação. Em unidades do tipo FPSO (Floating Production, Storage and Offloading) e FSO (Floating Storage and Offloading), isso importa porque produção, manutenção, movimentação de cargas, apoio marítimo, offloading, atividades submarinas e outras frentes podem compartilhar áreas, utilidades, rotas de fuga, comunicações e recursos de resposta. A função de uma barreira de segurança, nesse contexto, é prevenir, controlar ou mitigar um evento indesejado. O risco em SIMOPS cresce quando uma atividade reduz a disponibilidade, a efetividade ou a independência de barreiras necessárias à outra. A questão central, portanto, não é apenas haver duas tarefas simultâneas, mas haver interferência entre seus perigos, consequências ou meios de controle. Quando essa interferência existe, a decisão operacional deve considerar se as barreiras críticas ainda conseguem desempenhar sua função nas condições reais de execução.
+
+#### Identificação de perigos e leitura das barreiras por cenário
+
+Ferramentas qualitativas como HAZID, sigla de Hazard Identification, e APR, Análise Preliminar de Riscos, ajudam a decompor cada atividade em perigo, causa, consequência e controles. Em cenários de manuseio de ferramentas, podem aparecer como controles restrição de acesso, supervisão, teste de segurança do sistema de içamento, treinamento e SOOB. Em perfilagem, canhoneio e manuseio de explosivos, a combinação de APR, DDS (Diálogo Diário de Segurança), permissão de trabalho, procedimentos, comunicação, detecção e combate a incêndio, resposta a emergência e SIMOPS atua como conjunto de barreiras preventivas e mitigadoras. Para fontes radioativas, surgem ainda controle de acesso, sinalização, dosimetria, gestão de contratadas, procedimentos específicos e sistemas de evacuação. A leitura técnica correta é que a robustez não depende de uma barreira isolada, mas da coerência do conjunto diante do cenário. Se um controle humano, procedural ou técnico falha, a severidade remanescente pode exigir restrição imediata da atividade, ainda que outros controles permaneçam disponíveis.
+
+#### Seleção e aplicação prática de barreiras: prevenção, mitigação e contingência
+
+A seleção de barreiras em SIMOPS deve ligar cada perigo aos mecanismos de prevenção e às consequências que ainda precisam ser mitigadas. Como prevenção, aparecem com frequência procedimentos específicos, gestão de mudanças, reuniões prévias, comunicação operacional, treinamento e competência, auditoria de segurança, monitoramento climático, restrição de acesso e controles técnicos do processo ou do poço. Como mitigação, surgem plano de resposta à emergência, simulados, evacuação, proteção ativa e passiva contra fogo, sistemas médicos, MEDEVAC (evacuação médica) e meios de combate a incêndio. Essa separação é importante porque uma barreira preventiva reduz a chance de o evento ocorrer, enquanto a mitigadora reduz o dano após a perda de controle. Em aplicação prática, a equipe deve verificar se as barreiras escolhidas são compatíveis com a atividade simultânea, se continuam disponíveis durante toda a janela operacional e se não dependem do mesmo recurso vulnerável. Quando duas barreiras compartilham a mesma pessoa, a mesma área, a mesma fonte de energia ou a mesma linha de comunicação, a independência funcional pode ser menor do que aparenta.
+
+#### Como a efetividade de barreiras entra na decisão de continuar ou parar
+
+SOOB, sigla usada para Summary of Operational Boundaries, é uma estrutura de decisão aplicada quando a atividade se aproxima de limites de tolerância e a efetividade de certas barreiras pode estar comprometida. Nessa condição, a pergunta técnica deixa de ser apenas se a tarefa estava planejada e passa a ser se as barreiras ainda conseguem prevenir, controlar ou mitigar o cenário perigoso nas condições reais de execução. A lógica física e operacional é direta: quando uma barreira relevante perde efetividade, a capacidade do sistema de evitar perda de controle ou reduzir consequências diminui. Se a redução atingir barreiras críticas para o cenário em curso, a continuidade da atividade fica menos defensável. Como complemento técnico, a degradação pode decorrer de indisponibilidade de equipamento, inibição de sistemas, falhas de comunicação, condições ambientais adversas ou perda de prontidão da equipe, desde que esses elementos sejam barreiras necessárias naquele cenário. Também como complemento técnico, restrições adicionais, redução de escopo, maior monitoramento ou replanejamento podem funcionar como compensação somente quando a capacidade remanescente das barreiras ainda for suficiente para sustentar a atividade.
