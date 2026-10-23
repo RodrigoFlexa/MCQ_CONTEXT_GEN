@@ -2,6 +2,7 @@
 
   python -m pipeline.qa_research.geracao_tipos run [opções]       reclassificação, janelas, compostas, auditoria
   python -m pipeline.qa_research.geracao_tipos relatorio <pasta>  refaz só o relatório
+  python -m pipeline.qa_research.geracao_tipos meta [opções]      v16: gera e audita até N válidas por tópico
 """
 from __future__ import annotations
 
@@ -13,6 +14,8 @@ from pathlib import Path
 from .core import ENCADEAMENTOS, ITENS, MODELOS, QA, Geracao, read_json
 
 ETAPAS = ("reclassificar", "janelas", "compostas", "auditoria", "relatorio")
+# Um tópico por área (02_02 fica de fora: os exemplos curados saíram dele).
+ITENS_META = ("01_01", "02_03", "03_01", "04_02", "05_02", "06_05", "07_04", "08_03", "09_02", "10_01")
 
 
 def main(argv=None) -> int:
@@ -36,7 +39,39 @@ def main(argv=None) -> int:
     rel = sub.add_parser("relatorio")
     rel.add_argument("saida", type=Path)
     rel.add_argument("--piloto", type=Path, default=ENCADEAMENTOS)
+    mt = sub.add_parser("meta")
+    mt.add_argument("--saida", type=Path, help="pasta de resultados; repetir a mesma pasta retoma de onde parou")
+    mt.add_argument("--itens", nargs="+", default=list(ITENS_META),
+                    help="tópicos (padrão: um por área); use 'todos' para os 40")
+    mt.add_argument("--meta", type=int, default=100, help="questões válidas por tópico")
+    mt.add_argument("--max-rodadas", type=int, default=4)
+    mt.add_argument("--max-passagens", type=int, default=3, help="vezes que a mesma janela pode ser usada")
+    mt.add_argument("--reusar", type=Path, default=None, help="rodada com relacoes/ e combinacoes/ a reaproveitar")
+    mt.add_argument("--exemplos", type=Path, help="banco curado (padrão: geracao_tipos/exemplos.json)")
+    mt.add_argument("--workers", type=int, default=8)
+    mt.add_argument("--relatorio", action="store_true", help="só refaz o relatório da pasta")
     a = ap.parse_args(argv)
+
+    if a.cmd == "meta":
+        from .rodadas import MODELOS as MODELOS_META
+        from .rodadas import REUSAR, GeracaoMeta
+        from pipeline.qa_research.piloto_janela.core import PROGRAMA
+        itens = ([r["id"] for r in read_json(PROGRAMA)["items"]] if a.itens == ["todos"] else a.itens)
+        saida = a.saida or QA / "relatorios" / f"geracao_meta_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
+        kw = {"exemplos": a.exemplos} if a.exemplos else {}
+        g = GeracaoMeta(saida, itens, meta=a.meta, max_rodadas=a.max_rodadas, max_passagens=a.max_passagens,
+                        reusar=a.reusar or REUSAR, workers=a.workers, **kw)
+        if a.relatorio:
+            g.relatorio()
+            print(f"Relatório: {saida / 'RELATORIO.md'}")
+            return 0
+        print(f"Saída: {saida}\nTópicos: {itens}\nMeta: {a.meta} válidas por tópico\nModelos: {MODELOS_META}", flush=True)
+        falhas = g.run()
+        print(f"\nRelatório: {saida / 'RELATORIO.md'}")
+        if falhas:
+            print(f"{falhas} unidades falharam; rode de novo com --saida {saida} para tentar só elas.")
+            return 2
+        return 0
 
     if a.cmd == "relatorio":
         cfg = read_json(a.saida / "config.json")

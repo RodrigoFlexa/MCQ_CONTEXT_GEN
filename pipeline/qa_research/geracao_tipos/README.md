@@ -2,6 +2,25 @@
 
 Tipos, marcas e composição: [`../TIPOS_QUESTAO.md`](../TIPOS_QUESTAO.md).
 
+## v16: geração por meta (atual)
+
+`rodadas.py`, comando `meta`, script `rodar_geracao_meta.sh`. Para cada tópico: inventário
+(relações e encadeamentos), compostas, e rodadas de janela (prompt v16, sem decisão) até N questões
+aprovadas pela auditoria (padrão 100), com banco dinâmico de exemplos e contraexemplos.
+
+```bash
+bash pipeline/qa_research/rodar_geracao_meta.sh                                   # 10 tópicos, um por área
+bash pipeline/qa_research/rodar_geracao_meta.sh --itens 08_02 --meta 20 --saida pipeline/qa_research/relatorios/teste_meta
+bash pipeline/qa_research/rodar_geracao_meta.sh --itens todos                     # os 40 tópicos
+bash pipeline/qa_research/rodar_geracao_meta.sh --saida <pasta>                   # retoma
+python -m pipeline.qa_research.geracao_tipos meta --saida <pasta> --relatorio      # refaz o relatório
+```
+
+Saídas: `topicos/<item>/` (relações, encadeamentos, compostas, janelas por rodada, auditoria),
+`aprovadas.jsonl`, `questoes.jsonl`, `banco_dinamico.json`, `exemplos_proposto.json`, `RELATORIO.md`.
+
+## v14/v15: rodada única (comando `run`)
+
 ## Etapas
 
 | Etapa | Modelo padrão | Saída |

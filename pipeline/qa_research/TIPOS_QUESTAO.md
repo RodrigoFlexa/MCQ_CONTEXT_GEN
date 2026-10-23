@@ -64,3 +64,23 @@ das compostas aprovadas pelo auditor):
     diagnóstico (decisão e diagnóstico saem melhor nas compostas);
   - procedimento específico do sistema, não recomendação genérica.
 - **Vaga livre sem conceito** e incentivo explícito a `parcial` em blocos de gestão ou introdutórios.
+
+## Versão 16 (23/10/2026): geração por meta
+
+Resultado da v15 (`relatorios/geracao_tipos_20261023T183239Z`): 52% das questões de janela e 62% das
+compostas aprovadas; decisão na janela ainda em 25% (nas compostas, 55%); o modelo nunca entrega
+`parcial`, então a qualidade fica com o filtro da auditoria.
+
+- **Decisão sai da janela.** Grupos da janela: 1 `conceito`; 1 `mecanismo` ou `consequencia`; 1
+  `diagnostico` ou `procedimento`; 1 livre entre mecanismo, consequência, diagnóstico e procedimento.
+  Decisão só nas compostas. Conceito também não pode pedir sigla nem elemento trivial de fórmula.
+- **Meta por tópico** (`python -m pipeline.qa_research.geracao_tipos meta`, script
+  `rodar_geracao_meta.sh`): para cada tópico, inventário (relações e encadeamentos), compostas, e
+  rodadas de janela até atingir N questões aprovadas (padrão 100). A 1ª rodada passa por todas as
+  janelas; as seguintes voltam às mais produtivas, com as questões já geradas ali em
+  `<questoes_existentes>`, no máximo 3 vezes por janela e 4 rodadas. Quase duplicatas no tópico
+  (Jaccard ≥ 0,6) não contam.
+- **Banco dinâmico ("ad hoc").** Depois de cada auditoria, as aprovadas viram exemplos e as reprovadas
+  viram contraexemplos (com a justificativa do auditor) para as chamadas seguintes, sempre de outros
+  tópicos. Cada chamada recebe um exemplo por tipo, 5 contraexemplos do banco curado e 3 reprovações
+  recentes. No fim, `exemplos_proposto.json` sugere a atualização do banco curado, para revisão.
