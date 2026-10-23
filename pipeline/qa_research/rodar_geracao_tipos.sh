@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Geração híbrida por tipo de questão (pipeline/qa_research/TIPOS_QUESTAO.md):
-#   0. reclassifica por tipo as questões avaliadas no piloto de dificuldade v2
-#   1. janelas com o prompt v14: 4 questões por janela (1 conceito, 1 mecanismo ou consequência,
-#      1 diagnóstico, decisão ou procedimento, 1 livre), todas as janelas do 01_01 e 36 do 02_02
+# Geração híbrida por tipo de questão, v15 (pipeline/qa_research/TIPOS_QUESTAO.md):
+#   1. janelas com o prompt v15: até 4 questões por janela (1 conceito, 1 mecanismo ou consequência,
+#      1 diagnóstico, decisão ou procedimento, 1 livre sem conceito), todas as janelas do 01_01 e 36 do 02_02,
+#      com exemplos e contraexemplos curados (geracao_tipos/exemplos.json) e sem datasets externos
 #   2. compostas: uma questão por encadeamento do inventário (piloto v2)
-#   3. auditoria por gpt-5-4-petrobras:high: tipo, validade da referência e atalho
-#   4. RELATORIO.md
+#   3. auditoria por gpt-5-4-petrobras:high como filtro: tipo, validade da referência e atalho
+#   4. RELATORIO.md e aprovadas.jsonl (só as questões que passaram no filtro)
 # Uso: bash pipeline/qa_research/rodar_geracao_tipos.sh [opções]
 #   ex.: --ec-janelas 2 --limite-compostas 2 --saida <pasta de teste>
 #        --saida <pasta>      (retoma uma execução interrompida)
@@ -19,13 +19,6 @@ if [[ -n "${DOCUMENT_PYTHON:-}" ]]; then
 elif [[ ! -x "$qa_python" ]]; then
     qa_python="$qa_root/venv/bin/python"
     if [[ ! -x "$qa_python" ]]; then qa_python="$(command -v python3)"; fi
-fi
-
-dados=pipeline/qa_references/data
-if [[ ! -s $dados/qa_examples_revisados.jsonl && ! -s $dados/qa_examples_limpos.jsonl ]]; then
-    echo "Exemplos externos ainda não preparados. Rode antes:"
-    echo "  bash pipeline/qa_research/rodar_preparar_exemplos.sh"
-    exit 1
 fi
 
 saida=""

@@ -26,9 +26,11 @@ def main(argv=None) -> int:
                    help="rodada com combinacoes/ e relacoes/ (padrão: piloto de dificuldade v2)")
     r.add_argument("--limite-compostas", type=int, help="usa só os N primeiros encadeamentos de cada documento")
     r.add_argument("--piloto", type=Path, default=ENCADEAMENTOS,
-                   help="piloto com questoes_avaliadas.csv a reclassificar por tipo")
+                   help="piloto com questoes_avaliadas.csv a reclassificar por tipo (etapa reclassificar)")
+    r.add_argument("--exemplos", type=Path, help="banco de exemplos e contraexemplos (padrão: geracao_tipos/exemplos.json)")
     r.add_argument("--workers", type=int, default=6)
-    r.add_argument("--etapas", nargs="+", choices=ETAPAS, default=list(ETAPAS))
+    r.add_argument("--etapas", nargs="+", choices=ETAPAS, default=[e for e in ETAPAS if e != "reclassificar"],
+                   help="reclassificar (as questões do piloto v2) só roda se pedida")
     for papel, padrao in MODELOS.items():
         r.add_argument(f"--modelo-{papel}", default=padrao, help=f"deployment[:esforço] (padrão {padrao})")
     rel = sub.add_parser("relatorio")
@@ -41,16 +43,16 @@ def main(argv=None) -> int:
         g = Geracao(a.saida, itens=cfg["itens"], ec_janelas=cfg["ec_janelas"], modelos=cfg["modelos"],
                     encadeamentos=cfg["encadeamentos"] and Path(cfg["encadeamentos"]),
                     limite_compostas=cfg["limite_compostas"])
-        g.relatorio(a.piloto)
+        g.relatorio(a.piloto if (a.saida / "reclassificacao").exists() else None)
         print(f"Relatório: {a.saida / 'RELATORIO.md'}")
         return 0
 
     saida = a.saida or QA / "relatorios" / f"geracao_tipos_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
     g = Geracao(saida, itens=a.itens, ec_janelas=a.ec_janelas, encadeamentos=a.encadeamentos,
-                limite_compostas=a.limite_compostas, workers=a.workers,
+                limite_compostas=a.limite_compostas, workers=a.workers, **({"exemplos": a.exemplos} if a.exemplos else {}),
                 modelos={p: getattr(a, f"modelo_{p}") for p in MODELOS})
     print(f"Saída: {saida}\nEncadeamentos: {a.encadeamentos}\nModelos: {g.modelos}", flush=True)
-    falhas = g.run(tuple(a.etapas), piloto=a.piloto)
+    falhas = g.run(tuple(a.etapas), piloto=a.piloto if "reclassificar" in a.etapas else None)
     print(f"\nRelatório: {saida / 'RELATORIO.md'}")
     if falhas:
         print(f"{falhas} unidades falharam; rode de novo com --saida {saida} para tentar só elas.")

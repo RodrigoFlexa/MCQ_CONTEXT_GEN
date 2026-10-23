@@ -71,12 +71,33 @@ class TiposTests(unittest.TestCase):
         self.assertTrue(tipos.problemas_tipo("decisao", True, "Num FPSO, X ocorreu. A ação basta?", "Não."))
         self.assertTrue(tipos.problemas_tipo("inexistente", True, "Qual?", "x"))
 
+    def test_regras_v15(self):
+        self.assertTrue(tipos.problemas_tipo("conceito", False, "Com que tipo de referência um KPI compara resultados?", "x"))
+        self.assertTrue(tipos.problemas_tipo("conceito", False, "Qual condição é citada como fator de complexidade?", "x"))
+        self.assertTrue(tipos.problemas_tipo("decisao", True, "Dois sistemas param. Um é crítico e volta rápido; o outro "
+                                             "é menos crítico. Qual deve receber prioridade?", "O crítico."))
+        self.assertFalse(tipos.problemas_tipo("diagnostico", True, "No quadro descrito, com residual baixo, que causa "
+                                              "explica a recontaminação?", "Biofilme."))
+
+    def test_banco_de_exemplos(self):
+        banco = core.carregar_banco()
+        self.assertEqual({e["tipo"] for e in banco["exemplos"]}, set(tipos.TIPOS))
+        txt = core.render_exemplos(banco, "02_02", "simples")
+        self.assertEqual(txt.count("Por que é boa:"), 6)
+        self.assertIn("Problema:", txt)
+        compostas = core.render_exemplos(banco, "02_02", "composta")
+        self.assertNotIn("conceito]", compostas.split("<contraexemplos>")[1])
+
     def test_caracteres_estranhos(self):
         self.assertEqual(tipos.caracteres_estranhos("MEG հետո regenerado"), ["ե", "հ", "ո", "տ"])
         self.assertEqual(tipos.caracteres_estranhos("H₂S, SO₄²⁻, ΔP ≥ 2 °C, 5 µm → queda"), [])
 
     def test_composicao(self):
         self.assertFalse(tipos.problemas_composicao("ok", ["conceito", "mecanismo", "decisao", "conceito"], ""))
+        self.assertTrue(tipos.problemas_composicao("ok", ["conceito", "mecanismo", "decisao", "conceito"], "",
+                                                   maximo=tipos.MAXIMO_V15))
+        self.assertFalse(tipos.problemas_composicao("ok", ["conceito", "mecanismo", "decisao", "procedimento"], "",
+                                                    maximo=tipos.MAXIMO_V15))
         self.assertTrue(tipos.problemas_composicao("ok", ["conceito", "mecanismo", "consequencia", "mecanismo"], ""))
         self.assertTrue(tipos.problemas_composicao("ok", ["conceito", "mecanismo", "decisao"], ""))
         self.assertFalse(tipos.problemas_composicao("parcial", ["conceito", "mecanismo"], "bloco de gestão"))
@@ -124,19 +145,23 @@ class FluxoTests(unittest.TestCase):
             cl = {"geracao": f, "auditoria": f}
             g = core.Geracao(Path(tmp) / "out", ec_janelas=3, encadeamentos=enc, clientes=cl, workers=2,
                              progress=lambda *a, **k: None)
-            self.assertEqual(g.run(piloto=enc), 0)
+            self.assertEqual(g.run(("reclassificar", "janelas", "compostas", "auditoria", "relatorio"), piloto=enc), 0)
             res = json.loads((Path(tmp) / "out" / "resultado.json").read_text(encoding="utf-8"))
             self.assertEqual(res["janelas"]["total"], 6)
             self.assertEqual(res["por_origem"]["janela"]["n"], 24)
             self.assertEqual(res["por_origem"]["composta"]["n"], 4)
             self.assertEqual(res["por_origem"]["janela"]["auditadas"], 24)
             self.assertEqual(res["reclassificacao"]["por_tipo"]["diagnostico"]["n"], 12)
-            self.assertIn("<questoes_ja_geradas>", f.usuarios[-30] if len(f.usuarios) > 30 else f.usuarios[2])
+            prompts = [u for u in f.usuarios if "<janela>" in u]
+            self.assertIn("<exemplos_por_tipo>", prompts[0])
+            self.assertIn("<contraexemplos>", prompts[0])
+            self.assertNotIn("<exemplos_de_forma>", prompts[0])
+            self.assertEqual(res["aprovadas"]["total"], 28)
             self.assertTrue((Path(tmp) / "out" / "RELATORIO.md").exists())
             antes = f.chamadas
             g2 = core.Geracao(Path(tmp) / "out", ec_janelas=3, encadeamentos=enc, clientes=cl,
                               progress=lambda *a, **k: None)
-            self.assertEqual(g2.run(piloto=enc), 0)
+            self.assertEqual(g2.run(("reclassificar", "janelas", "compostas", "auditoria", "relatorio"), piloto=enc), 0)
             self.assertEqual(f.chamadas, antes)
 
 

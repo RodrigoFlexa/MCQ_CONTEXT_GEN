@@ -33,14 +33,34 @@ palavras; nenhum caractere fora do português.
 
 ## Composição
 
-- Por janela (prompt `prompt_janela_qa_14.md`): 4 questões, 1 `conceito`, 1 `mecanismo` ou
-  `consequencia`, 1 `diagnostico`, `decisao` ou `procedimento`, e 1 livre. No máximo 2 do mesmo grupo.
-  Se o bloco foco não sustentar um grupo, a janela sai `parcial`, com o motivo.
+- Por janela (prompt `prompt_janela_qa_15.md`): até 4 questões, 1 `conceito`, 1 `mecanismo` ou
+  `consequencia`, 1 `diagnostico`, `decisao` ou `procedimento`, e 1 livre que não pode ser outro
+  conceito. Duas ou três boas valem mais que quatro com uma fraca: se o bloco foco não sustentar um
+  grupo, a janela sai `parcial`, com o motivo.
 - Compostas: uma por encadeamento; qualquer tipo menos `conceito`.
 
 ## Método híbrido
 
 | Parte | O que gera | Por quê |
 |---|---|---|
-| Janela (EC v14) | questões simples, 4 por chamada | barata (0,25 chamada por questão) e de qualidade equivalente ao inventário nas questões de uma relação |
+| Janela (v15) | questões simples, até 4 por chamada | barata (0,25 chamada por questão) e de qualidade equivalente ao inventário nas questões de uma relação |
 | Encadeamentos do inventário | questões compostas | a janela só vê 3 blocos vizinhos e quase não usa os de apoio; os encadeamentos ligam blocos distantes |
+
+## Versão 15 (23/10/2026)
+
+Mudanças depois do teste `relatorios/geracao_tipos_20261023T171137Z` (42% das questões de janela e 58%
+das compostas aprovadas pelo auditor):
+
+- **Sem datasets externos.** No lugar, um banco curado (`geracao_tipos/exemplos.json`) com uma questão
+  aprovada por tipo (e três compostas), cada uma com o motivo de ser boa, e oito contraexemplos reais com
+  o problema de cada um. A janela recebe exemplos de outro documento, para não induzir cópia.
+- **Auditoria como filtro**: `aprovadas.jsonl` guarda só as questões com referência válida e sem atalho;
+  quando o auditor discorda do tipo, vale o tipo dele (o declarado fica em `tipo_declarado`).
+- **Regras mais duras por tipo**, no prompt e em código:
+  - conceito com resposta única no domínio, sem "que tipo de" e sem perguntar o que é citado;
+  - consequência que não saia da definição dos termos;
+  - decisão com ação técnica específica, sem heurística e sem comparar dois itens pelos atributos para
+    perguntar qual priorizar; quando o bloco não sustenta uma ação específica, preferir procedimento ou
+    diagnóstico (decisão e diagnóstico saem melhor nas compostas);
+  - procedimento específico do sistema, não recomendação genérica.
+- **Vaga livre sem conceito** e incentivo explícito a `parcial` em blocos de gestão ou introdutórios.

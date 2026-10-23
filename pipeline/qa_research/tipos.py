@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from pipeline.qa_research.dificuldade import _sem_acento, problemas_forma
+from pipeline.qa_research.dificuldade import _sem_acento, pergunta_final, problemas_forma
 
 TIPOS = ("conceito", "mecanismo", "consequencia", "diagnostico", "decisao", "procedimento")
 # Composição por janela: 1 de cada grupo + 1 livre (no máximo 2 do mesmo grupo).
@@ -20,6 +20,12 @@ TETO_PERGUNTA = 90
 TETO_CONCEITO = 35
 _LISTA_ABERTA = re.compile(r"\b(que|quais) (aspectos|fatores|elementos|cuidados|itens|pontos|informacoes|"
                            r"condicoes|requisitos|caracteristicas|variaveis)\b|\balem d[aeo]s?\b")
+# Perguntas sobre o que o texto disse ("é citado", "foi mencionado") dependem do documento.
+_CITADO = re.compile(r"\b(e|foi|sao|foram|esta|estao|aparece|aparecem) (citad|mencionad|apontad|listad)")
+_QUE_TIPO = re.compile(r"\b(que|qual) (tipo|tipos|classe|categoria) de\b")
+# Decisão por comparação de dois itens com atributos ("um ... ; o outro ...") tende a entregar a resposta.
+_COMPARACAO = re.compile(r"\b(o outro|a outra|um deles|uma delas|o segundo|a segunda)\b")
+_PRIORIDADE = re.compile(r"\b(qual|quais|que)\b[^?]{0,60}\b(prioridade|priorizad|primeiro|antes)\b")
 # Letras latinas, dígitos, pontuação comum e símbolos técnicos; o resto (ex.: armênio) indica falha de geração.
 _FORA_DO_SCRIPT = re.compile(r"[^\x00-\x7FÀ-ɏ‐-‧°-¿Α-ω⁰-₟"
                              r"←-⇿∀-⋿×÷′″]")
@@ -43,28 +49,41 @@ def problemas_tipo(tipo: str, cenario, pergunta: str, resposta: str) -> list[str
     if n > TETO_PERGUNTA:
         out.append(f"o enunciado tem mais de {TETO_PERGUNTA} palavras")
     final = _sem_acento(pergunta)
+    if _CITADO.search(final):
+        out.append("não pergunte o que é citado, mencionado ou listado: pergunte pelo conhecimento técnico")
     if tipo == "conceito":
         if cenario or n > TETO_CONCEITO:
             out.append(f"conceito é pergunta direta, sem cenário, de até {TETO_CONCEITO} palavras")
         if _LISTA_ABERTA.search(final):
             out.append("conceito não pode pedir 'que aspectos/quais fatores' nem 'além de X': admite várias "
                        "respostas; pergunte por um termo, função, componente, parâmetro ou local único")
+        if _QUE_TIPO.search(final):
+            out.append("conceito não pode pedir 'que tipo de': costuma ser um item de uma lista com outros igualmente "
+                       "corretos; inclua o qualificador que torna a resposta única ou escolha outro conhecimento")
+    if tipo == "decisao" and _COMPARACAO.search(final) and _PRIORIDADE.search(pergunta_final(pergunta)):
+        out.append("decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta "
+                   "só repete os atributos; peça a ação técnica específica")
     if tipo in ("diagnostico", "decisao") and not cenario:
         out.append(f"{tipo} exige cenário: descreva a situação (sinais ou condições) e pergunte pela "
                    f"{'causa' if tipo == 'diagnostico' else 'ação ou critério'}")
     return out
 
 
-def problemas_composicao(status: str, tipos: list[str], motivo: str, total: int = 4) -> list[str]:
-    """Janela: `total` questões com ao menos uma de cada grupo e no máximo duas do mesmo grupo."""
+MAXIMO_V14 = {"conceito": 2, "causal": 2, "aplicado": 2}
+MAXIMO_V15 = {"conceito": 1, "causal": 2, "aplicado": 2}   # a vaga livre não pode ser outro conceito
+
+
+def problemas_composicao(status: str, tipos: list[str], motivo: str, total: int = 4,
+                         maximo: dict = MAXIMO_V14) -> list[str]:
+    """Janela: `total` questões com ao menos uma de cada grupo e no máximo `maximo[grupo]` de cada."""
     por_grupo = {g: sum(GRUPO_DO_TIPO.get(t) == g for t in tipos) for g in GRUPOS}
     out = []
     if len(tipos) > total:
         out.append(f"entregue no máximo {total} questões")
-    excesso = [g for g, n in por_grupo.items() if n > 2]
+    excesso = [g for g, n in por_grupo.items() if n > maximo[g]]
     if excesso:
-        out.append("no máximo duas questões do mesmo grupo (" + ", ".join(
-            f"{g}: {'/'.join(GRUPOS[g])}" for g in excesso) + ")")
+        out.append("excesso de questões no grupo (" + ", ".join(
+            f"{g}: {'/'.join(GRUPOS[g])}, máximo {maximo[g]}" for g in excesso) + ")")
     completa = len(tipos) == total and all(por_grupo.values())
     if status == "ok" and not completa:
         out.append(f"status ok exige {total} questões com ao menos um conceito, um mecanismo ou consequência "

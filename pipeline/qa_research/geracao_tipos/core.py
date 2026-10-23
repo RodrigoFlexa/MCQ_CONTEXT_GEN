@@ -24,11 +24,12 @@ from pathlib import Path
 from pipeline.qa_research.piloto_janela.core import (QA, ROOT, atomic_json, blocos, carregar_prompt, janela,
                                                      palavras, preencher, quase_duplicadas, read_json,
                                                      selecionar_focos, sha, tema, verificar)
-from pipeline.qa_research.tipos import TIPOS, problemas_composicao, problemas_tipo
+from pipeline.qa_research.tipos import MAXIMO_V15, TIPOS, problemas_composicao, problemas_tipo
 
 AQUI = Path(__file__).resolve().parent
 PROMPTS = AQUI / "prompts"
-PROMPT_JANELA = QA / "prompt_janela_qa_14.md"
+PROMPT_JANELA = QA / "prompt_janela_qa_15.md"
+EXEMPLOS = AQUI / "exemplos.json"   # banco curado de exemplos e contraexemplos por tipo
 ITENS = ("01_01", "02_02")
 ENCADEAMENTOS = QA / "relatorios" / "piloto_dificuldade_20261023T053615Z"
 MODELOS = {"geracao": "gpt-5-4-petrobras:high", "auditoria": "gpt-5-4-petrobras:high"}
@@ -70,7 +71,7 @@ def validar_janela(d: dict) -> None:
         problemas += [f"Questão {k} ({q['tipo']}): {m}." for m in
                       problemas_tipo(q["tipo"], q["cenario"], q["pergunta"], q["resposta"])]
     problemas += [m[0].upper() + m[1:] + "." for m in
-                  problemas_composicao(d["status"], [q["tipo"] for q in d["questoes"]], d["motivo"])]
+                  problemas_composicao(d["status"], [q["tipo"] for q in d["questoes"]], d["motivo"], maximo=MAXIMO_V15)]
     if problemas:
         raise ValueError(" ".join(problemas) + " Corrija ou descarte a questão (use parcial e explique em motivo).")
 
@@ -91,6 +92,39 @@ def validar_composta(d: dict) -> None:
         raise ValueError("Corrija: " + "; ".join(p) + ". Se não for possível, use insuficiente.")
 
 
+def carregar_banco(caminho: Path = EXEMPLOS) -> dict:
+    return json.loads(Path(caminho).read_text(encoding="utf-8"))
+
+
+def _escolher(cands: list[dict], item: str) -> dict | None:
+    """Prefere exemplo de outro documento, para não induzir cópia do conteúdo da janela."""
+    outros = [e for e in cands if e["item"] != item]
+    return (outros or cands or [None])[0]
+
+
+def render_exemplos(banco: dict, item: str, composicao: str) -> str:
+    if composicao == "simples":
+        tipos = TIPOS
+        escolhidos = [_escolher([e for e in banco["exemplos"] if e["tipo"] == t and e["composicao"] == "simples"]
+                                or [e for e in banco["exemplos"] if e["tipo"] == t], item) for t in tipos]
+        contra = banco["contraexemplos"]
+    else:
+        escolhidos = [e for e in banco["exemplos"] if e["composicao"] == "composta" and e["item"] != item][:3] \
+            or [e for e in banco["exemplos"] if e["composicao"] == "composta"][:3]
+        contra = [c for c in banco["contraexemplos"] if c["tipo"] != "conceito"]
+    bons = "\n\n".join(f"[{e['tipo']}] Pergunta: {e['pergunta']}\nResposta: {e['resposta']}\nPor que é boa: {e['por_que']}"
+                       for e in escolhidos if e)
+    ruins = "\n\n".join(f"[{c['tipo']}] Pergunta: {c['pergunta']}\nResposta: {c['resposta']}\nProblema: {c['problema']}"
+                        for c in contra)
+    return (f"<exemplos_por_tipo>\n{bons}\n</exemplos_por_tipo>\n\n"
+            f"<contraexemplos>\nNão gere questões como estas.\n\n{ruins}\n</contraexemplos>")
+
+
+def aprovada(q: dict) -> bool:
+    a = q.get("auditoria")
+    return bool(a) and a["referencia_valida"] and not a["atalho"]
+
+
 def validar_lote(d: dict, ids: list[str], chave: str, campos_bool: tuple, campo_tipo: str) -> None:
     av = d.get(chave) if isinstance(d, dict) else None
     if not isinstance(av, list) or [a.get("id") for a in av] != ids:
@@ -106,11 +140,13 @@ def validar_lote(d: dict, ids: list[str], chave: str, campos_bool: tuple, campo_
 class Geracao:
     def __init__(self, saida: Path, *, itens=ITENS, ec_janelas: int = 36, encadeamentos: Path | None = ENCADEAMENTOS,
                  modelos: dict | None = None, workers: int = 6, clientes: dict | None = None,
-                 limpos: Path | None = None, limite_compostas: int | None = None, lote: int = 10, progress=print):
+                 exemplos: Path = EXEMPLOS, limite_compostas: int | None = None, lote: int = 10, progress=print):
         self.saida, self.itens, self.ec_janelas = Path(saida), list(itens), ec_janelas
         self.encadeamentos = Path(encadeamentos) if encadeamentos else None
         self.modelos = {**MODELOS, **(modelos or {})}
-        self.workers, self.clientes, self.limpos, self.lote = workers, dict(clientes or {}), limpos, lote
+        self.workers, self.clientes, self.lote = workers, dict(clientes or {}), lote
+        self.caminho_exemplos = Path(exemplos)
+        self.banco_exemplos = carregar_banco(self.caminho_exemplos)
         self.limite_compostas, self.progress = limite_compostas, progress
         self.lock = threading.Lock()
         self.temas = {i: tema(i) for i in self.itens}
@@ -160,7 +196,9 @@ class Geracao:
                "encadeamentos": (self.encadeamentos.resolve().relative_to(ROOT).as_posix()
                                  if self.encadeamentos and self.encadeamentos.resolve().is_relative_to(ROOT)
                                  else (str(self.encadeamentos) if self.encadeamentos else None)),
-               "limite_compostas": self.limite_compostas}
+               "limite_compostas": self.limite_compostas,
+               "prompt_composta_sha256": sha(prompt("composta")),
+               "exemplos_sha256": sha(self.caminho_exemplos.read_text(encoding="utf-8"))}
         path = self.saida / "config.json"
         if path.exists():
             antigo = {k: v for k, v in read_json(path).items() if k != "criado_em"}
@@ -169,14 +207,6 @@ class Geracao:
                 raise ValueError(f"Configuração diferente da pasta existente ({', '.join(diff)}); use outra --saida")
             return
         atomic_json(path, {**cfg, "criado_em": datetime.now(timezone.utc).isoformat()})
-
-    def _exemplos(self, item: str, semente: int) -> str:
-        from pipeline.qa_research.piloto_janela import exemplos as ex
-        with self.lock:
-            if not hasattr(self, "_pools"):
-                self._pools = ex.carregar_limpos(self.limpos)[0]
-                self._banco = ex.carregar_especialista()
-        return ex.render(ex.exemplos_da_janela("EC", item, semente, self._pools, self._banco))
 
     # -- 1. janelas (questões simples)
     def janelas(self) -> int:
@@ -188,7 +218,8 @@ class Geracao:
         def um(t):
             item, foco = t
             jan = janela(self.docs[item], foco)
-            user = preencher(modelo_usuario, self.temas[item], "", "Nenhuma.", jan, self._exemplos(item, foco))
+            user = preencher(modelo_usuario, self.temas[item], "", "Nenhuma.", jan,
+                             render_exemplos(self.banco_exemplos, item, "simples"))
             try:
                 d = self.cliente("geracao").json(system, user, tag="tipos_janela", max_tokens=16000, item=item,
                                                  validate=validar_janela)
@@ -238,11 +269,10 @@ class Geracao:
                                      "sinal_que_descarta", "condicoes_enunciado", "limites")}
             enc["relacoes"] = [{k: r[k] for k in ("id", "afirmacao", "condicoes", "limites")} for r in e["relacoes"]]
             t_ = self.temas[item]
-            semente = int(hashlib.sha256(e["id"].encode()).hexdigest()[:8], 16) % 100000
             user = "\n\n".join(x for x in (
                 f"<tema>\nÁrea: {t_['area']}\nTema: {t_['tema']}\n</tema>",
                 f"<encadeamento>\n{json.dumps(enc, ensure_ascii=False, indent=2)}\n</encadeamento>",
-                self._exemplos(item, semente), f"<blocos>\n{blocos_txt}\n</blocos>") if x)
+                render_exemplos(self.banco_exemplos, item, "composta"), f"<blocos>\n{blocos_txt}\n</blocos>") if x)
             nome = e["id"].replace(":", "_")
             try:
                 d = self.cliente("geracao").json(system, user, tag="tipos_composta", max_tokens=12000, item=item,
@@ -350,6 +380,12 @@ class Geracao:
         with (self.saida / "questoes.jsonl").open("w", encoding="utf-8", newline="\n") as f:
             for q in banco:
                 f.write(json.dumps(q, ensure_ascii=False) + "\n")
+        # Filtro da auditoria: só entram questões com referência válida e sem atalho; o tipo final é o do auditor
+        # quando ele discorda do declarado.
+        aprovadas = [{**q, "tipo_declarado": q["tipo"], "tipo": q["auditoria"]["tipo_sugerido"]} for q in banco if aprovada(q)]
+        with (self.saida / "aprovadas.jsonl").open("w", encoding="utf-8", newline="\n") as f:
+            for q in aprovadas:
+                f.write(json.dumps(q, ensure_ascii=False) + "\n")
         janelas = [read_json(p) for p in sorted((self.saida / "janelas").glob("*/*.json"))]
         compostas = [read_json(p) for p in sorted((self.saida / "compostas").glob("*.json"))]
 
@@ -361,7 +397,8 @@ class Geracao:
                     "palavras_resposta": round(sum(palavras(q["resposta"]) for q in qs) / n, 1) if n else None,
                     "auditadas": len(a), "tipo_confere": sum(x["tipo_confere"] for x in a),
                     "referencia_invalida": sum(not x["referencia_valida"] for x in a),
-                    "atalho": sum(x["atalho"] for x in a)}
+                    "atalho": sum(x["atalho"] for x in a),
+                    "aprovadas": sum(aprovada(q) for q in qs)}
 
         res = {"modelos": self.modelos, "janelas": {
             "total": len(janelas), "status": dict(Counter(j["status"] for j in janelas)),
@@ -375,6 +412,10 @@ class Geracao:
                                 for o in ("janela", "composta")},
             "por_origem": {o: resumo([q for q in banco if q["origem"] == o]) for o in ("janela", "composta")},
             "por_item": {i: dict(Counter(q["tipo"] for q in banco if q["item"] == i)) for i in self.itens},
+            "aprovadas": {"total": len(aprovadas), "por_origem_item": {f"{o}:{i}": f"{sum(q['origem'] == o and q['item'] == i for q in aprovadas)}/"
+                                                                       f"{sum(q['origem'] == o and q['item'] == i for q in banco)}"
+                                                                       for o in ("janela", "composta") for i in self.itens},
+                          "por_tipo_final": dict(Counter(q["tipo"] for q in aprovadas))},
             "confusao_tipo": dict(Counter(f"{q['tipo']}->{q['auditoria']['tipo_sugerido']}" for q in banco
                                           if "auditoria" in q and not q["auditoria"]["tipo_confere"]).most_common(15)),
             "quase_duplicadas": quase_duplicadas(banco)[:30],
@@ -415,21 +456,24 @@ class Geracao:
                                         for n in ("facil", "media", "dificil")}}
 
     def _markdown(self, res: dict, banco: list[dict], janelas: list[dict]) -> None:
-        l = ["# Geração híbrida por tipo de questão", "",
-             "Janela: prompt v14 (1 conceito, 1 mecanismo ou consequência, 1 diagnóstico, decisão ou procedimento, "
-             "1 livre). Compostas: uma por encadeamento do inventário. Auditoria: " + f"`{res['modelos']['auditoria']}`.", "",
+        l = ["# Geração híbrida por tipo de questão (v15)", "",
+             "Janela: prompt v15 (até 4: 1 conceito, 1 mecanismo ou consequência, 1 diagnóstico, decisão ou procedimento, "
+             "1 livre sem conceito), com exemplos e contraexemplos curados por tipo e sem datasets externos. "
+             "Compostas: uma por encadeamento do inventário. Auditoria como filtro: " + f"`{res['modelos']['auditoria']}`.", "",
+             f"**Aprovadas pelo filtro: {res['aprovadas']['total']}** (referência válida e sem atalho) · "
+             f"por origem e documento: {res['aprovadas']['por_origem_item']} · por tipo final: {res['aprovadas']['por_tipo_final']}.", "",
              f"Janelas: {res['janelas']['total']} ({res['janelas']['status']}); fundamentos literais "
              f"{res['janelas']['fundamentos_literais']}; questões que usam bloco de apoio {res['janelas']['usa_apoio']}. "
              f"Compostas: {res['compostas']}.", "",
-             "| Origem | Tipo | n | com cenário | palavras (perg./resp.) | tipo confere | ref. inválida | atalho |",
-             "|---|---|---|---|---|---|---|---|"]
+             "| Origem | Tipo | n | com cenário | palavras (perg./resp.) | tipo confere | ref. inválida | atalho | aprovadas |",
+             "|---|---|---|---|---|---|---|---|---|"]
         for o in ("janela", "composta"):
             for t in TIPOS + ("**total**",):
                 b = res["por_origem"][o] if t == "**total**" else res["por_origem_tipo"][o][t]
                 if not b["n"]:
                     continue
                 l.append(f"| {o} | {t} | {b['n']} | {b['cenario']} | {b['palavras_pergunta']}/{b['palavras_resposta']} | "
-                         f"{b['tipo_confere']}/{b['auditadas']} | {b['referencia_invalida']} | {b['atalho']} |")
+                         f"{b['tipo_confere']}/{b['auditadas']} | {b['referencia_invalida']} | {b['atalho']} | {b['aprovadas']} |")
         l += ["", f"Tipos por documento: {res['por_item']}.", "",
               f"Combinações de tipos mais comuns por janela: {res['janelas']['combinacoes_de_tipos']}.", "",
               f"Tipo declarado → sugerido pelo auditor (divergências): {res['confusao_tipo']}.", "",
@@ -455,14 +499,15 @@ class Geracao:
         for (o, t), qs in sorted(por_tipo.items()):
             l.append(f"### {o} · {t} ({len(qs)})")
             l.append("")
-            for q in qs[:4]:
+            for q in sorted(qs, key=lambda q: not aprovada(q))[:4]:
                 a = q.get("auditoria", {})
-                marca = ("" if a.get("tipo_confere", True) else f" · auditor: {a.get('tipo_sugerido')}") + \
+                marca = (" · aprovada" if aprovada(q) else " · reprovada") + \
+                        ("" if a.get("tipo_confere", True) else f" · auditor: {a.get('tipo_sugerido')}") + \
                         ("" if a.get("referencia_valida", True) else " · ref. inválida") + (" · atalho" if a.get("atalho") else "")
                 l += [f"**{q['uid']}{marca}** {q['pergunta']}", "", f"- Resposta: {q['resposta']}", ""]
         (self.saida / "RELATORIO.md").write_text("\n".join(l), encoding="utf-8")
 
-    def run(self, etapas=("reclassificar", "janelas", "compostas", "auditoria", "relatorio"), piloto: Path | None = None) -> int:
+    def run(self, etapas=("janelas", "compostas", "auditoria", "relatorio"), piloto: Path | None = None) -> int:
         self.config()
         falhas = 0
         if "reclassificar" in etapas and piloto:

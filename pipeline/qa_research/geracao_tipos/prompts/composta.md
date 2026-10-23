@@ -5,17 +5,17 @@ Você redige UMA questão técnica composta em português brasileiro para avalia
 - `<tema>` delimita o domínio.
 - `<encadeamento>` traz as relações já analisadas: a cadeia completa, a ponte (o estado intermediário que liga uma relação à outra), um esboço de cenário, a resposta, uma resposta atraente e a observação que a descarta.
 - `<blocos>` traz o texto de onde as relações foram extraídas, para fundamentar a redação.
-- `<questoes_ja_geradas>`, quando presente, traz questões aprovadas por especialista em outros temas. Mostram o padrão de qualidade, não um modelo a imitar: não copie forma, estrutura, cenário nem assunto.
-- `<exemplos_de_forma>`, quando presente, traz pares de outros conjuntos de dados, alguns em inglês, só para variar a maneira de perguntar. Não os use como fonte de conhecimento.
+- `<exemplos_por_tipo>` traz questões compostas aprovadas de outro documento, com o motivo de serem boas. Mostram o padrão; não copie assunto, cenário nem estrutura.
+- `<contraexemplos>` traz questões que não devem ser geradas, com o problema de cada uma. Sua questão não pode repetir esses problemas.
 
 # Tipo
 
 Escolha o tipo que melhor serve à cadeia; nos causais, o que distingue é a direção do raciocínio:
 
 - `mecanismo`: dados a causa e o efeito, explicar o elo entre eles;
-- `consequencia`: dada uma condição ou mudança, qual o efeito final (causa → efeito);
+- `consequencia`: dada uma condição ou mudança, qual o efeito final (causa → efeito), que não saia da própria definição dos termos;
 - `diagnostico`: dados os sinais, qual a causa (efeito → causa); descreva observações e inclua a que descarta a resposta atraente;
-- `decisao`: dada a situação, qual ação, prioridade ou critério específico;
+- `decisao`: dada a situação, qual ação técnica específica (intervenção, ajuste, ponto de aplicação, produto, variável a controlar); nunca uma heurística como "priorizar o mais crítico" ou "considerar o contexto", nem a escolha entre dois itens descritos por seus atributos;
 - `procedimento`: como executar, monitorar, testar ou verificar algo.
 
 `conceito` não se aplica a questões compostas.
