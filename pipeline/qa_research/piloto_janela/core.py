@@ -19,11 +19,14 @@ from datetime import datetime, timezone
 from itertools import combinations
 from pathlib import Path
 
+from pipeline.qa_research.dificuldade import problemas_desenho, problemas_forma
+
 ROOT = Path(__file__).resolve().parents[3]
 QA = ROOT / "pipeline" / "qa_research"
 PROMPT = QA / "prompt_janela_qa_10.md"
 PROMPT_JUNTO = QA / "prompt_janela_qa_11.md"
 PROMPT_COMPOSICAO = QA / "prompt_janela_qa_12.md"
+PROMPT_DIFICULDADE = QA / "prompt_janela_qa_13.md"  # rubrica de dificuldade v2 (DIFICULDADE_V2.md)
 COMPOSICAO_PADRAO = {"facil": 1, "media": 2, "dificil": 1}
 PROMPT_PLANO = QA / "prompt_janela_planejamento_qa_11.md"
 PROMPT_REDACAO = QA / "prompt_janela_redacao_qa_11.md"
@@ -213,8 +216,13 @@ def _quantidade(status: str, n: int, dificeis: int, minimo: int, maximo: int, mi
         raise ValueError("Explique em motivo por que [F] não sustenta mais.")
 
 
+def usa_regras_v2(caminho: Path) -> bool:
+    """Prompts com o campo `desenho` seguem a rubrica de dificuldade v2."""
+    return "`desenho`" in Path(caminho).read_text(encoding="utf-8")
+
+
 def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_medias: int = 0,
-            composicao: dict | None = None) -> None:
+            composicao: dict | None = None, regras_v2: bool = False) -> None:
     """Somente formato: erros aqui fazem o cliente pedir ao modelo a correção do JSON."""
     if not isinstance(data, dict) or set(data) != {"status", "motivo", "questoes"}:
         raise ValueError("Use exatamente as chaves status, motivo e questoes.")
@@ -223,9 +231,11 @@ def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_med
         raise ValueError("status deve ser ok, parcial ou sem_questoes.")
     if not isinstance(motivo, str) or not isinstance(qs, list):
         raise ValueError("motivo deve ser texto e questoes deve ser lista.")
+    campos = CAMPOS + (("desenho",) if regras_v2 else ())
+    problemas = []
     for k, q in enumerate(qs, 1):
-        if not isinstance(q, dict) or set(q) != set(CAMPOS):
-            raise ValueError(f"Questão {k}: use exatamente os campos {', '.join(CAMPOS)}.")
+        if not isinstance(q, dict) or set(q) != set(campos):
+            raise ValueError(f"Questão {k}: use exatamente os campos {', '.join(campos)}.")
         if q["id"] != k:
             raise ValueError(f"Questão {k}: id deve ser {k}.")
         if q["dificuldade"] not in DIFICULDADES:
@@ -236,6 +246,12 @@ def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_med
             if not isinstance(q[campo], str) or not q[campo].strip():
                 raise ValueError(f"Questão {k}: {campo} vazio.")
         _fundamentos(q["fundamentos"], k)
+        if regras_v2:
+            problemas += [f"Questão {k}: {m}." for m in
+                          problemas_forma(q["pergunta"], q["resposta"])
+                          + problemas_desenho(q["desenho"], q["dificuldade"], q["resposta"])]
+    if problemas:
+        raise ValueError(" ".join(problemas) + " Corrija essas questões ou descarte-as (use parcial e explique).")
     if composicao:
         _composicao(status, qs, composicao, motivo)
         return
@@ -327,6 +343,7 @@ def verificar(q: dict, textos: dict[str, str]) -> dict:
         "palavras_pergunta": palavras(q["pergunta"]),
         "palavras_resposta": palavras(q["resposta"]),
         "resposta_ate_50": palavras(q["resposta"]) <= 50,
+        "problemas_forma": problemas_forma(q["pergunta"], q["resposta"]),
     }
 
 
@@ -388,6 +405,7 @@ class Piloto:
         self.minimo, self.maximo, self.max_tokens = minimo, maximo, max_tokens
         self.orientacao, self.anteriores = orientacao, (Path(anteriores) if anteriores else None)
         self.workers, self.limite, self.docs, self.prompt = workers, limite, Path(docs), Path(prompt)
+        self.regras_v2 = modo == "junto" and usa_regras_v2(self.prompt)
         self.client, self.dry_run, self.progress = client, dry_run, progress
         self.lock = threading.Lock()
 
@@ -529,7 +547,7 @@ class Piloto:
         try:
             data = cliente.json(system, user, tag="piloto_janela", max_tokens=self.max_tokens,
                                 validate=lambda d: validar(d, self.minimo, self.maximo, self.min_dificeis,
-                                                           self.min_medias, self.composicao),
+                                                           self.min_medias, self.composicao, self.regras_v2),
                                 item=t["item"])
         except Exception as exc:  # noqa: BLE001 - a janela fica pendente para nova tentativa
             self._falha(t, exc)

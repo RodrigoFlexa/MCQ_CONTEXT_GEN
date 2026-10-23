@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
-# Piloto: inventário leve (estilo qa_v7) x configuração EC, com avaliação cega.
-#   1. relações por bloco (gpt-5-4-petrobras:low) nos documentos 01_01 e 02_02
-#   2. combinações de relações por documento (gpt-5-4-petrobras:high)
-#   3-4. 100 questões a partir do inventário (25% fáceis, 50% médias, 25% difíceis A e B)
-#   5. 100 questões sorteadas da configuração EC, na mesma proporção
-#   6. gpt-4-1-nano-petrobras responde sem contexto; gpt-5-4-petrobras:high julga contra a referência
-#   7. RELATORIO.md com a acurácia por método e dificuldade
-# Uso: bash pipeline/qa_research/rodar_piloto_inventario.sh [opções]
-#   ex.: --limite-blocos 6 --total 8 --saida <pasta de teste>   (teste rápido e barato)
-#        --saida <pasta>                                         (retoma uma execução interrompida)
+# Piloto de dificuldade v2 (rubrica em pipeline/qa_research/DIFICULDADE_V2.md): inventário x EC v13.
+#   1. relações por bloco: reaproveitadas da rodada piloto_inventario_20261023T042252Z
+#   2. encadeamentos por documento (gpt-5-4-petrobras:high), base das difíceis B
+#   3-4. inventário: 10 fáceis, 10 médias e uma difícil por janela EC por documento (metade A, metade B),
+#        com reservas usadas só quando o gerador declara um alvo insuficiente
+#   5. EC v13: janelas de 3 blocos (todas do 01_01 e 36 do 02_02), 1 fácil, 2 médias e 1 difícil por janela
+#   6. gpt-4-1-nano-petrobras e gpt-5-4-nano-petrobras:low respondem sem contexto; gpt-5-4-petrobras:high julga
+#   7. RELATORIO.md: acurácia por método e dificuldade, atalho genérico, filtro simulado e histórico da v1
+# Uso: bash pipeline/qa_research/rodar_piloto_dificuldade.sh [opções]
+#   ex.: --limite-blocos 6 --faceis 1 --medias 1 --dificeis 2 --ec-janelas 2 --saida <pasta de teste>
+#        --saida <pasta>      (retoma uma execução interrompida, com a configuração gravada)
 set -uo pipefail
 export PYTHONUTF8=1
 qa_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -34,7 +35,7 @@ for ((i = 0; i < ${#args[@]}; i++)); do
     if [[ "${args[$i]}" == "--saida" ]]; then saida="${args[$((i + 1))]}"; fi
 done
 if [[ -z "$saida" ]]; then
-    saida="pipeline/qa_research/relatorios/piloto_inventario_$(date -u +%Y%m%dT%H%M%SZ)"
+    saida="pipeline/qa_research/relatorios/piloto_dificuldade_$(date -u +%Y%m%dT%H%M%SZ)"
     args+=("--saida" "$saida")
 fi
 
@@ -54,6 +55,6 @@ if [[ $status -eq 0 ]]; then
 elif [[ $status -eq 2 ]]; then
     echo
     echo "Algumas unidades falharam. Para tentar só elas:"
-    echo "  bash pipeline/qa_research/rodar_piloto_inventario.sh --saida $saida"
+    echo "  bash pipeline/qa_research/rodar_piloto_dificuldade.sh --saida $saida"
 fi
 exit $status

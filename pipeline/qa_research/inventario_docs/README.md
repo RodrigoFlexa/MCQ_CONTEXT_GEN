@@ -1,38 +1,52 @@
-# Piloto: inventário leve (estilo qa_v7) x configuração EC
+# Piloto de dificuldade v2: inventário x EC v13
 
-Pergunta do piloto: gerar a partir de notas técnicas (relações e combinações de relações, como no `qa_v7`)
-produz questões realmente mais difíceis do que a configuração atual (janela de 3 blocos, exemplos E+C,
-composição 1 fácil, 2 médias, 1 difícil)? A medida é a acurácia de um modelo pequeno respondendo sem
-contexto, julgada por um modelo forte. Se a dificuldade for real, a acurácia cai de fácil para difícil.
+Rubrica e motivação: [`../DIFICULDADE_V2.md`](../DIFICULDADE_V2.md). Resumo: no piloto v1
+(`relatorios/piloto_inventario_20261023T042252Z`) as difíceis não foram mais difíceis que as fáceis
+para um modelo pequeno sem contexto, porque muitas eram de sim ou não, de escolha entre duas opções
+ou de prudência genérica, e porque o enunciado trazia a interpretação dos sinais. A v2 define a
+difícil pelo trabalho que o enunciado não faz: um passo intermediário oculto e uma resposta atraente
+descartada por uma observação.
+
+## O que muda em relação à v1
+
+| | v1 | v2 |
+|---|---|---|
+| Difícil A | diagnóstico com explicação concorrente | diagnóstico com **resposta atraente** explícita e o sinal que a descarta no enunciado |
+| Difícil B | combinação de relações que "interagem" | **encadeamento**: A → ponte oculta → resposta específica (ou mascaramento) |
+| Forma | livre | pergunta aberta; sem sim/não, escolha binária ou "conclusão sobre a decisão" (checado em código) |
+| Resposta | até 50 palavras | começa pelo elemento decisivo, até 30 palavras |
+| Campo `desenho` | não | passo oculto, resposta atraente e sinal que descarta (obrigatório nas difíceis) |
+| EC | prompt v12 | prompt v13 com a mesma rubrica |
+| Amostra | 100 por método, 24 difíceis | por documento: 10 fáceis, 10 médias e uma difícil por janela EC (60 difíceis por método) |
+| Respondentes | gpt-4-1-nano | gpt-4-1-nano e gpt-5-4-nano:low |
+| Juiz | veredito e referência válida | + `atalho_generico` e veredito por candidato |
 
 ## Etapas
 
 | Etapa | Modelo padrão | Saída |
 |---|---|---|
-| 1. relações por bloco (0 a 8, com trecho literal verificado em código) | `gpt-5-4-petrobras:low` | `relacoes/<item>/<bloco>.json` |
-| 2. combinações de 2 ou 3 relações de blocos diferentes (até 15 por documento) | `gpt-5-4-petrobras:high` | `combinacoes/<item>.json` |
-| 3. alvos: 25% fáceis, 50% médias, 12,5% difíceis A, 12,5% difíceis B, espalhados pelos blocos, sem repetir relação | (código) | `alvos.json` |
-| 4. uma questão por alvo, com os exemplos EC no prompt | `gpt-5-4-petrobras:high` | `questoes/*.json` |
-| 5. amostra de 100 questões EC na mesma proporção de níveis e documentos | (código) | `amostra_ec.json` |
-| 6a. respondente sem contexto | `gpt-4-1-nano-petrobras` | `avaliacao/respostas/` |
-| 6b. juiz contra a referência, em lotes embaralhados, sem ver método nem nível | `gpt-5-4-petrobras:high` | `avaliacao/juiz/` |
-| 7. relatório | (código) | `RELATORIO.md`, `resultado.json`, `questoes_avaliadas.csv` |
-
-Difícil A: diagnóstico ou decisão num único mecanismo, com explicação concorrente descartada por uma
-condição do enunciado. Difícil B: duas ou três relações que interagem (a combinação).
-
-O juiz também marca `referencia_valida = false` quando a pergunta é ambígua, entrega a resposta ou a
-referência está errada; o relatório mostra a acurácia com e sem esses itens.
+| 1. relações por bloco (reaproveitadas da v1 com `--reusar`, o padrão) | `gpt-5-4-petrobras:low` | `relacoes/` |
+| 2. encadeamentos (até 40 por documento) | `gpt-5-4-petrobras:high` | `combinacoes/` |
+| 3. alvos com reservas (difícil A prefere relações de mecanismo e causa) | código | `alvos.json` |
+| 4. uma questão por alvo; reservas só cobrem alvos insuficientes | `gpt-5-4-petrobras:high` | `questoes/` |
+| 5. EC v13 por janela e amostra na mesma composição | `gpt-5-4-petrobras:high` | `ec/`, `amostra_ec.json` |
+| 6. respostas sem contexto e juiz cego em lotes embaralhados | nano 4.1, nano 5.4 low; juiz 5.4 high | `avaliacao/` |
+| 7. relatório | código | `RELATORIO.md`, `resultado.json`, `questoes_avaliadas.csv` |
 
 ## Rodar
 
 ```bash
-bash pipeline/qa_research/rodar_piloto_inventario.sh                                  # piloto completo
-bash pipeline/qa_research/rodar_piloto_inventario.sh --limite-blocos 6 --total 8 \
-     --saida pipeline/qa_research/relatorios/teste_inventario                         # teste barato
-bash pipeline/qa_research/rodar_piloto_inventario.sh --saida <pasta>                  # retoma
-python -m pipeline.qa_research.inventario_docs relatorio <pasta>                       # refaz o relatório
+bash pipeline/qa_research/rodar_piloto_dificuldade.sh                     # piloto completo
+bash pipeline/qa_research/rodar_piloto_dificuldade.sh --limite-blocos 6 --faceis 1 --medias 1 \
+     --dificeis 2 --ec-janelas 2 --saida pipeline/qa_research/relatorios/teste_dificuldade
+bash pipeline/qa_research/rodar_piloto_dificuldade.sh --saida <pasta>     # retoma
+python -m pipeline.qa_research.inventario_docs relatorio <pasta>           # refaz o relatório
 ```
 
-Opções úteis: `--modelo-respondente`, `--modelo-juiz` (e os demais papéis), `--sem-exemplos`,
-`--combinacoes N`, `--ec <questoes.jsonl>` (padrão: o experimento_externos mais recente).
+## Como ler o resultado
+
+- **Gradiente**: a acurácia de R1 deve cair de fácil para difícil. Na v1 ela ficou plana (0,56 a 0,69).
+- **Atalho genérico**: deve ficar perto de zero nas difíceis.
+- **Filtro simulado**: acurácia de R1 nas questões que R2 errou. Se for bem menor que a geral, vale filtrar
+  as difíceis com um modelo pequeno diferente do avaliado (como em Humanity's Last Exam).
+- **Insuficientes por tipo**: quantos alvos o gerador recusou; mostra se o documento sustenta a rubrica.
