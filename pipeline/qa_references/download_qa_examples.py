@@ -69,6 +69,21 @@ CATALOG: list[dict[str, Any]] = [
         "choices_field": "choices",
     },
     {
+        # Perguntas de ciências que exigem combinar dois fatos; 8 alternativas na origem,
+        # das quais só a correta é exportada como resposta.
+        "id": "qasc",
+        "dataset": "allenai/qasc",
+        "config": "default",
+        "split": "train",
+        "license": "CC BY 4.0",
+        "url": "https://huggingface.co/datasets/allenai/qasc",
+        "language": "en",
+        "question_fields": ["question"],
+        "answer_fields": [],
+        "answer_key_field": "answerKey",
+        "choices_field": "choices",
+    },
+    {
         "id": "squad_v2",
         "dataset": "rajpurkar/squad_v2",
         "config": "default",

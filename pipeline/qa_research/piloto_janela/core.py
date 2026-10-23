@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+from collections import Counter
 import json
 import os
 import re
@@ -22,6 +23,8 @@ ROOT = Path(__file__).resolve().parents[3]
 QA = ROOT / "pipeline" / "qa_research"
 PROMPT = QA / "prompt_janela_qa_10.md"
 PROMPT_JUNTO = QA / "prompt_janela_qa_11.md"
+PROMPT_COMPOSICAO = QA / "prompt_janela_qa_12.md"
+COMPOSICAO_PADRAO = {"facil": 1, "media": 2, "dificil": 1}
 PROMPT_PLANO = QA / "prompt_janela_planejamento_qa_11.md"
 PROMPT_REDACAO = QA / "prompt_janela_redacao_qa_11.md"
 DOCS = QA / "relatorios" / "dez_areas_final_v2"
@@ -33,6 +36,14 @@ CAMPOS_PLANO = ("id", "dificuldade", "tipo_demanda", "alvo", "resposta_esperada"
                 "exigencia_cognitiva", "fundamentos")
 NUM_F = {1: "uma", 2: "duas", 3: "três", 4: "quatro"}
 NUM_M = {1: "um", 2: "dois", 3: "três", 4: "quatro"}
+
+
+def texto_composicao(comp: dict) -> str:
+    """Ex.: {'facil': 1, 'media': 2, 'dificil': 1} -> '4 questões: uma fácil, duas médias e uma difícil'."""
+    nomes = {"facil": ("fácil", "fáceis"), "media": ("média", "médias"), "dificil": ("difícil", "difíceis")}
+    partes = [f"{NUM_F[n]} {nomes[d][0] if n == 1 else nomes[d][1]}" for d, n in comp.items() if n]
+    lista = partes[0] if len(partes) == 1 else ", ".join(partes[:-1]) + " e " + partes[-1]
+    return f"{sum(comp.values())} questões: {lista}"
 
 
 def exigencia(min_medias: int, min_dificeis: int, masculino: bool = False) -> str:
@@ -119,8 +130,12 @@ def render_janela(jan: list[tuple[str, dict]]) -> str:
 
 
 def carregar_prompt(minimo: int, maximo: int, caminho: Path = PROMPT, min_dificeis: int = 0,
-                    min_medias: int = 0) -> tuple[str, str, str]:
+                    min_medias: int = 0, composicao: dict | None = None) -> tuple[str, str, str]:
     texto = caminho.read_text(encoding="utf-8")
+    if "{{COMPOSICAO}}" in texto:
+        if not composicao:
+            raise ValueError(f"{caminho.name} exige uma composição de dificuldades")
+        texto = texto.replace("{{COMPOSICAO}}", texto_composicao(composicao))
     if "{{EXIGENCIA" in texto and (min_dificeis not in NUM_F or min_medias not in (0, *NUM_F)):
         raise ValueError(f"{caminho.name} exige --min-dificeis entre 1 e 4 (e --min-medias entre 0 e 4)")
     pos = texto.find("\n<tema>")
@@ -198,7 +213,8 @@ def _quantidade(status: str, n: int, dificeis: int, minimo: int, maximo: int, mi
         raise ValueError("Explique em motivo por que [F] não sustenta mais.")
 
 
-def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_medias: int = 0) -> None:
+def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_medias: int = 0,
+            composicao: dict | None = None) -> None:
     """Somente formato: erros aqui fazem o cliente pedir ao modelo a correção do JSON."""
     if not isinstance(data, dict) or set(data) != {"status", "motivo", "questoes"}:
         raise ValueError("Use exatamente as chaves status, motivo e questoes.")
@@ -220,8 +236,28 @@ def validar(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_med
             if not isinstance(q[campo], str) or not q[campo].strip():
                 raise ValueError(f"Questão {k}: {campo} vazio.")
         _fundamentos(q["fundamentos"], k)
+    if composicao:
+        _composicao(status, qs, composicao, motivo)
+        return
     _quantidade(status, len(qs), sum(q["dificuldade"] == "dificil" for q in qs), minimo, maximo, min_dificeis,
                 "sem_questoes", motivo, "questões", sum(q["dificuldade"] == "media" for q in qs), min_medias)
+
+
+def _composicao(status: str, qs: list[dict], comp: dict, motivo: str) -> None:
+    contagem = {d: sum(q["dificuldade"] == d for q in qs) for d in DIFICULDADES}
+    excesso = [d for d in DIFICULDADES if contagem[d] > comp.get(d, 0)]
+    if excesso:
+        raise ValueError(f"Não ultrapasse a composição pedida ({texto_composicao(comp)}); excesso em: "
+                         + ", ".join(excesso) + ".")
+    exata = all(contagem[d] == comp.get(d, 0) for d in DIFICULDADES)
+    if status == "ok" and not exata:
+        raise ValueError(f"status ok exige exatamente {texto_composicao(comp)}; caso contrário, use parcial.")
+    if status == "parcial" and (not qs or exata):
+        raise ValueError("status parcial exige ao menos uma questão, sem completar a composição.")
+    if status == "sem_questoes" and qs:
+        raise ValueError("status sem_questoes exige lista vazia.")
+    if status != "ok" and not motivo.strip():
+        raise ValueError("Explique em motivo por que [F] não sustenta a composição pedida.")
 
 
 def validar_plano(data: dict, minimo: int, maximo: int, min_dificeis: int = 0, min_medias: int = 0) -> None:
@@ -327,7 +363,8 @@ class Piloto:
                  client=None, dry_run: bool = False, progress=print, condicao: str = "A",
                  janelas_por_item: int | None = None, externos: Path | None = None,
                  especialista: Path | None = None, modo: str = "junto", min_dificeis: int = 0, min_medias: int = 0,
-                 prompt_plano: Path = PROMPT_PLANO, prompt_redacao: Path = PROMPT_REDACAO):
+                 prompt_plano: Path = PROMPT_PLANO, prompt_redacao: Path = PROMPT_REDACAO,
+                 composicao: dict | None = None, limpos: Path | None = None):
         if minimo < 1 or maximo < minimo:
             raise ValueError("Use 1 <= minimo <= maximo")
         if modo not in MODOS:
@@ -335,6 +372,10 @@ class Piloto:
         if min_dificeis < 0 or min_medias < 0 or min_dificeis + min_medias > minimo:
             raise ValueError("Use min_dificeis + min_medias <= minimo")
         self.modo, self.min_dificeis, self.min_medias = modo, min_dificeis, min_medias
+        self.composicao = dict(composicao) if composicao else None
+        if self.composicao and (minimo != sum(self.composicao.values()) or maximo != minimo):
+            raise ValueError("Com composição, use minimo = maximo = total da composição")
+        self.caminho_limpos, self.fonte_externos = (Path(limpos) if limpos else None), None
         self.prompt_plano, self.prompt_redacao = Path(prompt_plano), Path(prompt_redacao)
         from . import exemplos as ex
         if condicao not in ex.CONDICOES:
@@ -356,7 +397,8 @@ class Piloto:
             etapas = {"junto": self.prompt}
         else:
             etapas = {"planejamento": self.prompt_plano, "redacao": self.prompt_redacao}
-        return {nome: carregar_prompt(self.minimo, self.maximo, caminho, self.min_dificeis, self.min_medias)
+        return {nome: carregar_prompt(self.minimo, self.maximo, caminho, self.min_dificeis, self.min_medias,
+                                      self.composicao)
                 for nome, caminho in etapas.items()}
 
     def _config(self, prompt_sha: str) -> None:
@@ -372,6 +414,13 @@ class Piloto:
                "condicao": self.condicao, "janelas_por_item": self.janelas_por_item}
         if self.modo != "junto" or self.min_dificeis or self.min_medias:
             cfg.update(modo=self.modo, min_dificeis=self.min_dificeis, min_medias=self.min_medias)
+        if self.composicao:
+            cfg.update(modo=self.modo, composicao=self.composicao)
+        if self.fonte_externos:
+            arq = Path(self.fonte_externos)
+            cfg["exemplos_externos"] = {"arquivo": arq.resolve().relative_to(ROOT).as_posix()
+                                        if arq.resolve().is_relative_to(ROOT) else str(arq),
+                                        "sha256": hashlib.sha256(arq.read_bytes()).hexdigest()}
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -413,7 +462,9 @@ class Piloto:
     def _carregar_exemplos(self) -> None:
         if self.condicao in ("B", "D") and self.pool_externos is None:
             self.pool_externos = self.ex.carregar_externos(self.caminho_externos)
-        if self.condicao in ("C", "D") and self.banco_especialista is None:
+        if self.condicao in ("E", "EC") and self.pool_externos is None:
+            self.pool_externos, self.fonte_externos = self.ex.carregar_limpos(self.caminho_limpos)
+        if self.condicao in ("C", "D", "EC") and self.banco_especialista is None:
             self.banco_especialista = self.ex.carregar_especialista(self.caminho_especialista)
 
     def _exemplos(self, t) -> list[dict]:
@@ -478,7 +529,7 @@ class Piloto:
         try:
             data = cliente.json(system, user, tag="piloto_janela", max_tokens=self.max_tokens,
                                 validate=lambda d: validar(d, self.minimo, self.maximo, self.min_dificeis,
-                                                           self.min_medias),
+                                                           self.min_medias, self.composicao),
                                 item=t["item"])
         except Exception as exc:  # noqa: BLE001 - a janela fica pendente para nova tentativa
             self._falha(t, exc)
@@ -563,8 +614,13 @@ def _pct(n, d):
     return round(100 * n / d, 1) if d else 0.0
 
 
-def _metricas(janelas: list[dict], questoes: list[dict]) -> dict:
+def _inicio(pergunta: str) -> str:
+    return " ".join(re.findall(r"\w+", normalizar(pergunta))[:2])
+
+
+def _metricas(janelas: list[dict], questoes: list[dict], composicao: dict | None = None) -> dict:
     nq = len(questoes)
+    inicios = Counter(_inicio(q["pergunta"]) for q in questoes)
     dif = {d: sum(q["dificuldade"] == d for q in questoes) for d in DIFICULDADES}
     return {
         "janelas": len(janelas),
@@ -593,6 +649,12 @@ def _metricas(janelas: list[dict], questoes: list[dict]) -> dict:
         "palavras_pergunta_por_nivel": {d: round(sum(q["verificacoes"]["palavras_pergunta"] for q in questoes
                                                      if q["dificuldade"] == d) / dif[d], 1) if dif[d] else 0
                                         for d in DIFICULDADES},
+        "inicios_distintos": len(inicios),
+        "inicio_mais_comum": (f"{inicios.most_common(1)[0][0]} ({_pct(inicios.most_common(1)[0][1], nq)}%)"
+                              if inicios else ""),
+        "composicao_exata_pct": (_pct(sum(all(sum(q["dificuldade"] == d for q in j["questoes"]) == composicao.get(d, 0)
+                                              for d in DIFICULDADES) for j in janelas), len(janelas))
+                                 if composicao else None),
         "acima_do_teto_pct": _pct(sum(q["verificacoes"]["palavras_pergunta"] > TETO_PERGUNTA[q["dificuldade"]]
                                       for q in questoes), nq),
     }
@@ -633,11 +695,14 @@ def resumir(saida: Path) -> dict:
                              "status_janela": j["status"], **q})
     dups = quase_duplicadas(questoes)
     itens = sorted({j["item"] for j in janelas})
+    cfg = read_json(saida / "config.json") if (saida / "config.json").exists() else {}
+    comp = cfg.get("composicao")
     resumo = {
         "saida": saida.resolve().relative_to(ROOT).as_posix() if saida.resolve().is_relative_to(ROOT) else str(saida),
         "config": read_json(saida / "config.json") if (saida / "config.json").exists() else None,
-        "total": _metricas(janelas, questoes),
-        "por_item": {i: _metricas([j for j in janelas if j["item"] == i], [q for q in questoes if q["item"] == i])
+        "total": _metricas(janelas, questoes, comp),
+        "por_item": {i: _metricas([j for j in janelas if j["item"] == i], [q for q in questoes if q["item"] == i],
+                                  comp)
                      for i in itens},
         "quase_duplicadas": {"limiar_jaccard": 0.6, "pares": len(dups),
                              "questoes_envolvidas": len({u for d in dups for u in (d["a"], d["b"])}),
@@ -728,6 +793,8 @@ DESCRICAO_CONDICOES = {
 
 
 DESCRICAO_MODOS = {
+    "E": "6 exemplos externos",
+    "EC": "6 exemplos externos + 3 questões já geradas (especialista)",
     "junto": "planejamento e redação no mesmo prompt",
     "separado": "planejamento e redação em chamadas separadas",
 }
@@ -770,6 +837,9 @@ def comparar(raiz: Path, condicoes=("A", "B", "C", "D"), descricoes=None, titulo
               lambda m: " / ".join(str(m.get("palavras_pergunta_por_nivel", {}).get(d, 0)) for d in DIFICULDADES)),
         linha("Acima do tamanho pedido (%) · 35/60/90", lambda m: m.get("acima_do_teto_pct", 0)),
         linha("Itens do plano descartados na redação", lambda m: m.get("itens_descartados_redacao", 0)),
+        linha("Janelas com a composição exata (%)", lambda m: m.get("composicao_exata_pct")),
+        linha("Inícios de pergunta distintos (2 primeiras palavras)", lambda m: m.get("inicios_distintos", 0)),
+        linha("Início mais comum", lambda m: m.get("inicio_mais_comum", "")),
     ]
     linhas += ["| Quase duplicadas (pares) | " + " | ".join(str(r["quase_duplicadas"]["pares"]) for r in res.values())
                + " |",

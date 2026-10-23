@@ -66,3 +66,32 @@ O fluxo QA completo em [`../fase_4/README.md`](../fase_4/README.md) integra essa
 - [HotpotQA — dataset card](https://huggingface.co/datasets/hotpotqa/hotpot_qa) · [repositório oficial](https://github.com/hotpotqa/hotpot)
 - [BoolQ — dataset card](https://huggingface.co/datasets/google/boolq)
 - [Documentação oficial do Dataset Viewer API](https://huggingface.co/docs/dataset-viewer/en/quick_start)
+
+## Preparar os exemplos do experimento de forma (Pirá, MMMLU PT-BR, ARC-Challenge, QASC)
+
+`preparar_exemplos.py` instala só o que falta, limpa por regras e, opcionalmente, revisa por LLM no Azure.
+
+| Fonte | Idioma | Licença | Observação |
+|---|---|---|---|
+| `pira_ptbr` | PT | CC BY 4.0 | já filtrado por nota de validação humana |
+| `mmmlu_ptbr` | PT | MIT | MMLU traduzido por tradutores profissionais; só física, química, engenharia elétrica, segurança da informação e gestão |
+| `arc_challenge` | EN | CC BY-SA 4.0 | só a alternativa correta vira resposta |
+| `qasc` | EN | CC BY 4.0 | perguntas que combinam dois fatos; só a alternativa correta vira resposta |
+
+1. **Instalação:** cada fonte vai para `data/fontes/<id>.jsonl`. Se já existir, é reaproveitada; se estiver no
+   `qa_examples.jsonl` antigo, é extraída de lá, sem download. MMMLU vem do CSV oficial do Hugging Face.
+2. **Limpeza por regras:** remove dependência de alternativas ("qual das seguintes", "a seguir", "I e II"),
+   de texto ou imagem ("segundo o texto", "figura"), respostas sim/não, numéricas ou fórmulas, lacunas,
+   enunciados que não são perguntas (completar frase), tamanhos fora de 6–90 palavras na pergunta ou acima
+   de 50 na resposta, duplicatas e quase duplicatas. Saída: `data/qa_examples_limpos.jsonl`.
+3. **Revisão por LLM (opcional):** `gpt-5-4-nano-petrobras:low` por padrão (ou `gpt-5-mini-petrobras:low`),
+   em lotes de 25, sobre uma amostra estável de até 600 pares por fonte. Critérios: autonomia, resposta
+   correta e determinada, forma útil (sem trivia, cálculo puro ou opinião) e clareza. Saída:
+   `data/qa_examples_revisados.jsonl`, que o experimento prefere quando existe.
+
+Relatório em `limpeza/RELATORIO.md` (contagem por filtro e fonte, amostras mantidas e removidas).
+
+```bash
+bash pipeline/qa_research/rodar_preparar_exemplos.sh                 # instala, limpa e revisa
+bash pipeline/qa_research/rodar_preparar_exemplos.sh --sem-revisao   # sem LLM
+```

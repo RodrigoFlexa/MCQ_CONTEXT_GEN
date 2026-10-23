@@ -81,6 +81,24 @@ bash pipeline/qa_research/rodar_experimento_modos.sh              # completo: 12
 A comparação (`COMPARACAO.md`) acrescenta: janelas com ao menos uma difícil, palavras da pergunta por
 nível, porcentagem acima do tamanho pedido, janelas com média e com difícil e itens do plano descartados na redação.
 
+## Experimento de exemplos externos (braços E e EC)
+
+Modo junto, composição exata de **1 fácil, 2 médias e 1 difícil** (`prompt_janela_qa_12.md`), nas mesmas 40 janelas.
+
+| Braço | Exemplos por chamada |
+|---|---|
+| `E` | 6 externos limpos, sem rótulo de dificuldade: 2 Pirá, 2 MMMLU PT-BR, 1 ARC-Challenge, 1 QASC |
+| `EC` | os mesmos 6 externos + 3 questões do especialista, em bloco próprio (`<questoes_ja_geradas>`), apresentadas como questões que já geramos, a não imitar |
+
+Antes, prepare os exemplos (ver `pipeline/qa_references/README.md`). A comparação acrescenta janelas com a
+composição exata, inícios de pergunta distintos e o início mais comum.
+
+```bash
+bash pipeline/qa_research/rodar_preparar_exemplos.sh
+bash pipeline/qa_research/rodar_experimento_externos.sh --limite 2   # teste rápido: 8 chamadas
+bash pipeline/qa_research/rodar_experimento_externos.sh              # completo: 80 chamadas
+```
+
 ## Levar os resultados do servidor para a sua máquina
 
 ```bash

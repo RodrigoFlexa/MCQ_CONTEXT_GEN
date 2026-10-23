@@ -6,6 +6,9 @@ B: 3 exemplos de datasets externos, um por dificuldade, de fontes diferentes:
 C: 3 questões aprovadas sem ressalvas pelo especialista, uma por dificuldade, todas de áreas
    diferentes entre si e diferentes da área da janela.
 D: B + C (6 exemplos).
+E: 6 externos limpos (preparar_exemplos.py), sem rótulo de dificuldade: 2 Pirá, 2 MMMLU PT-BR,
+   1 ARC-Challenge e 1 QASC.
+EC: E + 3 questões do especialista, apresentadas como questões já geradas, a não imitar.
 
 A dificuldade nunca é informada ao modelo e a ordem é embaralhada. O sorteio é determinístico por
 janela: B e D recebem os mesmos externos; C e D, as mesmas questões do especialista.
@@ -20,7 +23,19 @@ from pathlib import Path
 
 from .core import QA, ROOT
 
-CONDICOES = ("A", "B", "C", "D")
+CONDICOES = ("A", "B", "C", "D", "E", "EC")
+LIMPOS = ROOT / "pipeline" / "qa_references" / "data" / "qa_examples_limpos.jsonl"
+REVISADOS = ROOT / "pipeline" / "qa_references" / "data" / "qa_examples_revisados.jsonl"
+MISTURA = {"pira_ptbr": 2, "mmmlu_ptbr": 2, "arc_challenge": 1, "qasc": 1}
+COMANDO_PREPARAR = "python -m pipeline.qa_references.preparar_exemplos --revisao-llm"
+CABECALHO_JA_GERADAS = (
+    "Questões que já geramos para outros temas deste mesmo banco e que foram aprovadas por um especialista. "
+    "Elas mostram o padrão de qualidade esperado, não um modelo a imitar: não copie forma, estrutura, cenário "
+    "nem assunto. Imitá-las deixaria o banco repetitivo e poderia reproduzir erros que elas ainda tenham.")
+CABECALHO_EXTERNOS = (
+    "Pares de pergunta e resposta de outros conjuntos de dados e de outros assuntos, alguns em inglês. Use-os "
+    "apenas para variar a maneira de formular perguntas e respostas curtas. Não os use como fonte de "
+    "conhecimento nem copie o assunto.")
 EXTERNOS = ROOT / "pipeline" / "qa_references" / "data" / "qa_examples.jsonl"
 ESPECIALISTA = QA / "repositorio_definitivo" / "questoes.jsonl"
 FONTE_POR_DIFICULDADE = {"facil": "pira_ptbr", "media": "arc_challenge", "dificil": "hotpotqa"}
@@ -96,9 +111,51 @@ def sortear_especialista(banco: list[dict], item: str, foco: int) -> list[dict]:
     raise ValueError(f"{item}: não há questões aprovadas suficientes em áreas distintas")
 
 
+def carregar_limpos(caminho: Path | None = None) -> tuple[dict[str, list[dict]], Path]:
+    """Exemplos externos já limpos; prefere a versão revisada por LLM, se existir."""
+    caminho = caminho or (REVISADOS if REVISADOS.exists() else LIMPOS)
+    if not caminho.exists():
+        raise FileNotFoundError(f"Exemplos externos limpos ausentes em {caminho}. Rode antes:\n  {COMANDO_PREPARAR}")
+    pools: dict[str, list[dict]] = {f: [] for f in MISTURA}
+    with caminho.open(encoding="utf-8") as f:
+        for linha in f:
+            r = json.loads(linha)
+            if r["source"] in pools:
+                pools[r["source"]].append({"id": r["id"], "fonte": r["source"], "pergunta": r["question"],
+                                           "resposta": r["answer"], "licenca": r.get("source_license", "")})
+    if not any(pools.values()):
+        raise ValueError(f"{caminho} não tem exemplos das fontes {', '.join(MISTURA)}")
+    for v in pools.values():
+        v.sort(key=lambda r: r["id"])
+    return pools, caminho
+
+
+def sortear_mistura(pools: dict, item: str, foco: int, mistura: dict = MISTURA) -> list[dict]:
+    """6 externos por janela na proporção da mistura; fonte vazia é completada pelas demais."""
+    rng = _rng("mistura", item, foco)
+    total = sum(mistura.values())
+    plano = [f for f, n in mistura.items() for _ in range(n)]
+    disponiveis = [f for f in mistura if pools.get(f)]
+    escolhidos, vistos = [], set()
+    for k, fonte in enumerate(plano):
+        if not pools.get(fonte):
+            fonte = disponiveis[k % len(disponiveis)]
+        opcoes = [r for r in pools[fonte] if r["id"] not in vistos] or pools[fonte]
+        r = rng.choice(opcoes)
+        vistos.add(r["id"])
+        escolhidos.append({**r, "dificuldade": "", "origem": "mistura"})
+    return escolhidos[:total]
+
+
 def exemplos_da_janela(condicao: str, item: str, foco: int, externos=None, especialista=None) -> list[dict]:
     if condicao not in CONDICOES:
         raise ValueError(f"Condição desconhecida: {condicao}")
+    if condicao in ("E", "EC"):
+        lista = sortear_mistura(externos, item, foco)
+        if condicao == "EC":
+            lista += sortear_especialista(especialista, item, foco)
+        _rng("ordem", condicao, item, foco).shuffle(lista)
+        return lista
     lista = []
     if condicao in ("B", "D"):
         lista += sortear_externos(externos, item, foco)
@@ -111,5 +168,21 @@ def exemplos_da_janela(condicao: str, item: str, foco: int, externos=None, espec
 def render(lista: list[dict]) -> str:
     if not lista:
         return ""
+    if any(e.get("origem") == "mistura" for e in lista):
+        return render_v2(lista)
     pares = "\n\n".join(f"Pergunta: {e['pergunta']}\nResposta: {e['resposta']}" for e in lista)
     return f"<exemplos_de_forma>\n{CABECALHO}\n\n{pares}\n</exemplos_de_forma>"
+
+
+def render_v2(lista: list[dict]) -> str:
+    """Condições E e EC: externos e questões já geradas em blocos separados, sem dificuldade."""
+    def pares(es):
+        return "\n\n".join(f"Pergunta: {e['pergunta']}\nResposta: {e['resposta']}" for e in es)
+    ja = [e for e in lista if e["fonte"] == "especialista"]
+    ext = [e for e in lista if e["fonte"] != "especialista"]
+    blocos = []
+    if ja:
+        blocos.append(f"<questoes_ja_geradas>\n{CABECALHO_JA_GERADAS}\n\n{pares(ja)}\n</questoes_ja_geradas>")
+    if ext:
+        blocos.append(f"<exemplos_de_forma>\n{CABECALHO_EXTERNOS}\n\n{pares(ext)}\n</exemplos_de_forma>")
+    return "\n\n".join(blocos)

@@ -3,6 +3,7 @@
   python -m pipeline.qa_research.piloto_janela run [opções]          uma condição
   python -m pipeline.qa_research.piloto_janela experimento [opções]  condições A, B, C e D
   python -m pipeline.qa_research.piloto_janela modos [opções]        junto x separado (condição C)
+  python -m pipeline.qa_research.piloto_janela externos [opções]     6 externos x 6 externos + especialista
   python -m pipeline.qa_research.piloto_janela resumo <pasta>
   python -m pipeline.qa_research.piloto_janela comparar <pasta do experimento>
 """
@@ -13,7 +14,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .core import DESCRICAO_MODOS, MODOS, PROMPT_JUNTO, QA, SEM_PREFERENCIA, Piloto, comparar, resumir
+from .core import (COMPOSICAO_PADRAO, DESCRICAO_MODOS, MODOS, PROMPT_COMPOSICAO, PROMPT_JUNTO, QA,
+                   SEM_PREFERENCIA, Piloto, comparar, resumir)
 
 
 def _comuns(p: argparse.ArgumentParser) -> None:
@@ -64,6 +66,14 @@ def main(argv=None) -> int:
     m.add_argument("--condicao", default="C", choices=["A", "B", "C", "D"])
     m.add_argument("--modos", nargs="+", default=list(MODOS), choices=list(MODOS))
     m.add_argument("--janelas-por-item", type=int, default=20)
+    x = sub.add_parser("externos", help="6 externos x 6 externos + especialista; modo junto, composição exata")
+    _comuns(x)
+    x.add_argument("--braços", dest="bracos", nargs="+", default=["E", "EC"], choices=["E", "EC"])
+    x.add_argument("--faceis", type=int, default=COMPOSICAO_PADRAO["facil"])
+    x.add_argument("--medias", type=int, default=COMPOSICAO_PADRAO["media"])
+    x.add_argument("--dificeis", type=int, default=COMPOSICAO_PADRAO["dificil"])
+    x.add_argument("--janelas-por-item", type=int, default=20)
+    x.add_argument("--limpos", type=Path, help="arquivo de exemplos externos (padrão: revisados, ou limpos)")
     s = sub.add_parser("resumo", help="recalcula resumo e exportações de uma pasta")
     s.add_argument("pasta", type=Path)
     c = sub.add_parser("comparar", help="recalcula a comparação de um experimento")
@@ -87,6 +97,24 @@ def main(argv=None) -> int:
         if a.dry_run:
             return 0
         print((saida / "RESUMO.md").read_text(encoding="utf-8"))
+    elif a.cmd == "externos":
+        comp = {"facil": a.faceis, "media": a.medias, "dificil": a.dificeis}
+        total = sum(comp.values())
+        a.minimo = a.maximo = total
+        saida = a.saida or QA / "relatorios" / f"experimento_externos_{agora}"
+        pilotos = [(b, _piloto(a, saida / b, b, a.janelas_por_item, "junto", prompt=PROMPT_COMPOSICAO,
+                               composicao=comp, limpos=a.limpos)) for b in a.bracos]
+        for b, piloto in pilotos:   # valida prompts e exemplos de todos antes de gastar chamadas
+            piloto._prompts()
+            piloto._carregar_exemplos()
+            print(f"{b}: exemplos externos de {piloto.fonte_externos}", flush=True)
+        for b, piloto in pilotos:
+            print(f"\n=== Braço {b}: {DESCRICAO_MODOS[b]} ===", flush=True)
+            piloto.run()
+        if a.dry_run:
+            return 0
+        comparar(saida, a.bracos, titulo="Experimento de exemplos externos (modo junto, composição exata)")
+        print((saida / "COMPARACAO.md").read_text(encoding="utf-8"))
     elif a.cmd == "modos":
         saida = a.saida or QA / "relatorios" / f"experimento_modos_{agora}"
         pilotos = [(modo, _piloto(a, saida / modo, a.condicao, a.janelas_por_item, modo, a.min_dificeis,

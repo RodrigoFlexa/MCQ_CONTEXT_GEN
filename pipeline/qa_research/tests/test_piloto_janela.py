@@ -174,15 +174,15 @@ class ExemplosTests(unittest.TestCase):
         raiz = Path(self.tmp.name) / "exp"
         externos = Path(self.tmp.name) / "qa_examples.jsonl"
         clientes = {}
-        for cond in ex.CONDICOES:
+        for cond in ("A", "B", "C", "D"):
             clientes[cond] = ClienteFalso()
             core.Piloto(raiz / cond, ["01_01", "02_02"], "falso:low", janelas_por_item=4, condicao=cond,
                         externos=externos, client=clientes[cond], progress=lambda *a, **k: None).run()
         res = core.comparar(raiz)
-        self.assertEqual(set(res), set(ex.CONDICOES))
+        self.assertEqual(set(res), set(("A", "B", "C", "D")))
         focos = {c: sorted((j["item"], j["foco"]) for j in
                            (json.loads(p.read_text(encoding="utf-8")) for p in (raiz / c).glob("*/janelas/*.json")))
-                 for c in ex.CONDICOES}
+                 for c in ("A", "B", "C", "D")}
         self.assertTrue(all(f == focos["A"] for f in focos.values()))
         self.assertEqual(len(focos["A"]), 8)
         self.assertNotIn("<exemplos_de_forma>", clientes["A"].usuarios[0])
@@ -297,6 +297,71 @@ class ModosTests(unittest.TestCase):
             self.assertEqual(res["junto"]["total"]["janelas_com_dificil_pct"], 100.0)
             self.assertEqual(res["junto"]["total"]["janelas_com_media_pct"], 100.0)
             self.assertEqual(res["separado"]["total"]["status"]["parcial"], 3, "3 questões < mínimo de 4")
+
+
+def limpos_falsos(pasta: Path) -> Path:
+    caminho = pasta / "limpos.jsonl"
+    linhas = [{"id": f"{f}:{k}", "question": f"Pergunta de {f} número {k} sobre física?", "answer": f"Resposta {k}",
+               "source": f, "source_license": "x"} for f in ("pira_ptbr", "mmmlu_ptbr", "arc_challenge") for k in range(4)]
+    caminho.write_text("\n".join(json.dumps(l) for l in linhas), encoding="utf-8")
+    return caminho
+
+
+class ComposicaoTests(unittest.TestCase):
+    COMP = {"facil": 1, "media": 2, "dificil": 1}
+
+    def q(self, k, dif):
+        return {"id": k, "dificuldade": dif, "tipo_demanda": "recordar", "conhecimento": "c", "pergunta": "p",
+                "resposta": "r", "fundamentos": [{"bloco": "F", "trecho": "t"}]}
+
+    def test_texto_e_validacao(self):
+        self.assertEqual(core.texto_composicao(self.COMP), "4 questões: uma fácil, duas médias e uma difícil")
+        ok = {"status": "ok", "motivo": "", "questoes": [self.q(1, "facil"), self.q(2, "media"), self.q(3, "media"),
+                                                          self.q(4, "dificil")]}
+        core.validar(ok, 4, 4, composicao=self.COMP)
+        errados = [
+            {**ok, "questoes": [self.q(1, "facil"), self.q(2, "facil"), self.q(3, "media"), self.q(4, "dificil")]},
+            {**ok, "questoes": ok["questoes"][:3]},
+            {**ok, "status": "parcial", "motivo": "x"},
+        ]
+        for d in errados:
+            with self.assertRaises(ValueError):
+                core.validar(d, 4, 4, composicao=self.COMP)
+        core.validar({"status": "parcial", "motivo": "sem segunda média", "questoes": ok["questoes"][:3]}, 4, 4,
+                     composicao=self.COMP)
+        system, _, _ = core.carregar_prompt(4, 4, core.PROMPT_COMPOSICAO, composicao=self.COMP)
+        self.assertIn("elabore exatamente 4 questões: uma fácil, duas médias e uma difícil", system)
+        self.assertNotIn("{{", system)
+        with self.assertRaises(ValueError):
+            core.carregar_prompt(4, 4, core.PROMPT_COMPOSICAO)
+
+    def test_bracos_externos(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            limpos = limpos_falsos(tmp)
+            pools, _ = ex.carregar_limpos(limpos)
+            banco = ex.carregar_especialista()
+            e = ex.exemplos_da_janela("E", "02_02", 5, pools, banco)
+            ec = ex.exemplos_da_janela("EC", "02_02", 5, pools, banco)
+            self.assertEqual(len(e), 6, "qasc ausente é completado pelas outras fontes")
+            self.assertEqual(sorted(x["id"] for x in ec if x["fonte"] != "especialista"), sorted(x["id"] for x in e))
+            self.assertEqual(sum(x["fonte"] == "especialista" for x in ec), 3)
+            txt = ex.render(ec)
+            self.assertIn("<questoes_ja_geradas>", txt)
+            self.assertIn("não um modelo a imitar", txt)
+            self.assertIn("<exemplos_de_forma>", txt)
+            self.assertEqual(txt.count("Pergunta:"), 9)
+            self.assertNotIn("<questoes_ja_geradas>", ex.render(e))
+            self.assertNotIn("<questoes_ja_geradas>", ex.render(ex.exemplos_da_janela("C", "02_02", 5, pools, banco)),
+                             "condições antigas mantêm o formato anterior")
+            for braco in ("E", "EC"):
+                cli = ClienteModos(dificeis=1, medias=2)
+                core.Piloto(tmp / braco, ["01_01"], "falso:low", minimo=4, maximo=4, condicao=braco, janelas_por_item=2,
+                            prompt=core.PROMPT_COMPOSICAO, composicao=self.COMP, limpos=limpos, client=cli,
+                            progress=lambda *a, **k: None).run()
+            res = core.comparar(tmp, ("E", "EC"), titulo="t")
+            self.assertEqual(res["E"]["total"]["composicao_exata_pct"], 100.0)
+            self.assertEqual(res["EC"]["config"]["exemplos_externos"]["arquivo"], str(limpos))
 
 
 if __name__ == "__main__":
