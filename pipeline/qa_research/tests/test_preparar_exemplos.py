@@ -77,5 +77,43 @@ class RevisaoTests(unittest.TestCase):
         self.assertEqual(contagem[("qasc", "forma")], 1)
 
 
+class RedeTests(unittest.TestCase):
+    def test_espera_em_429_e_falha_isolada(self):
+        import io
+        from urllib.error import HTTPError
+        respostas = [HTTPError("u", 429, "Too Many Requests", {"Retry-After": "7"}, None),
+                     io.BytesIO(b'{"ok": 1}')]
+
+        class Resp:
+            def __init__(self, b):
+                self.b = b
+            def __enter__(self):
+                return self
+            def __exit__(self, *a):
+                return False
+            def read(self):
+                return self.b.read()
+
+        def falso(req, timeout=0):
+            r = respostas.pop(0)
+            if isinstance(r, Exception):
+                raise r
+            return Resp(r)
+
+        esperas = []
+        with mock.patch.object(P, "urlopen", falso):
+            self.assertEqual(P.get_json_paciente("https://exemplo.invalid/x", espera=esperas.append), {"ok": 1})
+        self.assertEqual(esperas, [7.0])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            with mock.patch.object(P, "FONTES_DIR", tmp), mock.patch.object(P, "LEGADO", tmp / "x.jsonl"), \
+                    mock.patch.object(P, "baixar_catalogo", side_effect=RuntimeError("HTTP Error 429")), \
+                    mock.patch.object(P, "baixar_mmmlu", return_value=[par("Por que o gelo flutua na água líquida?", "Porque é menos denso.", "mmmlu_ptbr")]):
+                sit = P.instalar(["qasc", "mmmlu_ptbr"], progresso=lambda *a: None)
+        self.assertEqual(sit["qasc"]["origem"], "falha")
+        self.assertEqual(sit["mmmlu_ptbr"]["origem"], "download")
+
+
 if __name__ == "__main__":
     unittest.main()

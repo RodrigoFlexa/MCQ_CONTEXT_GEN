@@ -50,6 +50,10 @@ FONTES = {
     "qasc": {"idioma": "en", "licenca": "CC BY 4.0"},
 }
 MODELO_REVISAO = "gpt-5-4-nano-petrobras:low"
+# Amostra baixada por fonte paginada (0 = tudo). Precisamos de no máximo 600 pares por fonte, e o
+# Dataset Viewer do Hugging Face limita requisições (HTTP 429): o QASC inteiro exigiria 82 páginas.
+MAX_LINHAS = {"qasc": 1500}
+API_HF = "https://datasets-server.huggingface.co"
 MODELOS_REVISAO = ("gpt-5-4-nano-petrobras", "gpt-5-mini-petrobras")  # deployments disponíveis no Azure
 
 # ---------------------------------------------------------------- filtros por regra
@@ -165,12 +169,61 @@ def baixar_mmmlu() -> list[dict]:
     return out
 
 
+def get_json_paciente(url: str, tentativas: int = 8, espera=time.sleep) -> dict:
+    """GET com espera em HTTP 429/5xx: respeita Retry-After ou aguarda 5, 10, 20... até 120 s."""
+    from urllib.error import HTTPError, URLError
+    ultimo = None
+    for k in range(tentativas):
+        try:
+            with urlopen(Request(url, headers={"User-Agent": "PetroQuest-QA-examples/1.0"}), timeout=90) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except HTTPError as exc:
+            ultimo = exc
+            if exc.code not in (429, 500, 502, 503, 504):
+                raise
+            try:
+                pausa = float(exc.headers.get("Retry-After") or 0)
+            except (TypeError, ValueError):
+                pausa = 0
+            pausa = min(120.0, max(pausa, 5 * 2 ** k))
+        except (URLError, TimeoutError) as exc:
+            ultimo, pausa = exc, min(60.0, 5 * 2 ** k)
+        if k < tentativas - 1:
+            print(f"  aguardando {pausa:.0f} s ({ultimo})", file=sys.stderr, flush=True)
+            espera(pausa)
+    raise RuntimeError(f"Falha ao consultar {url}: {ultimo}")
+
+
+def paginas(entrada: dict, max_linhas: int, pausa: float = 1.0, espera=time.sleep) -> list[dict]:
+    """Linhas do Dataset Viewer em páginas de 100, sorteadas de forma estável, com pausa entre elas."""
+    import random
+    from urllib.parse import urlencode
+    base = {"dataset": entrada["dataset"], "config": entrada["config"], "split": entrada["split"], "length": 100}
+    primeira = get_json_paciente(f"{API_HF}/rows?{urlencode({**base, 'offset': 0})}", espera=espera)
+    total = int(primeira.get("num_rows_total", len(primeira.get("rows", []))))
+    limite = min(max_linhas or total, total)
+    ordem = list(range((total + 99) // 100))
+    random.Random(f"42:{entrada['id']}").shuffle(ordem)
+    linhas, feitas = [], set()
+    for pagina in ordem:
+        if len(linhas) >= limite:
+            break
+        if pagina == 0:
+            linhas.extend(primeira.get("rows", []))
+        else:
+            espera(pausa)
+            linhas.extend(get_json_paciente(f"{API_HF}/rows?{urlencode({**base, 'offset': pagina * 100})}",
+                                            espera=espera).get("rows", []))
+        feitas.add(pagina)
+    return linhas[:limite]
+
+
 def baixar_catalogo(fonte: str) -> list[dict]:
-    """Pirá, ARC-Challenge e QASC pelo downloader existente (Dataset Viewer do Hugging Face)."""
-    from pipeline.qa_references.download_qa_examples import CATALOG, dataset_rows, normalize
+    """Pirá, ARC-Challenge e QASC pelo Dataset Viewer do Hugging Face, normalizados como no downloader."""
+    from pipeline.qa_references.download_qa_examples import CATALOG, normalize
     entrada = next(e for e in CATALOG if e["id"] == fonte)
     out = []
-    for wrapped in dataset_rows(entrada, 2**31 - 1, 42):
+    for wrapped in paginas(entrada, MAX_LINHAS.get(fonte, 0)):
         r = normalize(entrada, wrapped)
         if r:
             rid = r["id"].split(":", 1)[1]
@@ -199,9 +252,15 @@ def instalar(fontes: list[str], forcar: bool = False, progresso=print) -> dict:
             continue
         progresso(f"{fonte}: baixando...")
         inicio = time.time()
-        linhas = baixar_mmmlu() if fonte == "mmmlu_ptbr" else baixar_catalogo(fonte)
-        if not linhas:
-            raise RuntimeError(f"{fonte}: download sem registros")
+        try:
+            linhas = baixar_mmmlu() if fonte == "mmmlu_ptbr" else baixar_catalogo(fonte)
+            if not linhas:
+                raise RuntimeError("download sem registros")
+        except Exception as exc:  # noqa: BLE001 - as demais fontes seguem; repetir o comando tenta de novo
+            situacao[fonte] = {"origem": "falha", "itens": 0, "erro": f"{type(exc).__name__}: {str(exc)[:300]}"}
+            progresso(f"AVISO: {fonte} não foi instalada ({type(exc).__name__}: {str(exc)[:200]}). "
+                      "As outras fontes seguem; rode o mesmo comando depois para tentar de novo.")
+            continue
         _gravar_jsonl(destino, linhas)
         situacao[fonte] = {"origem": "download", "itens": len(linhas), "segundos": round(time.time() - inicio, 1)}
         progresso(f"{fonte}: {len(linhas)} itens baixados")
@@ -355,7 +414,11 @@ def main(argv=None) -> int:
     a = p.parse_args(argv)
 
     situacao = instalar(a.fontes, a.forcar_download)
-    mantidos, motivos, removidos = limpar(a.fontes)
+    instaladas = [f for f in a.fontes if situacao[f]["origem"] != "falha"]
+    if not instaladas:
+        print("Nenhuma fonte instalada; confira a conexão com o Hugging Face e rode de novo.", file=sys.stderr)
+        return 1
+    mantidos, motivos, removidos = limpar(instaladas)
     _gravar_jsonl(LIMPOS, mantidos)
     print(f"Limpos: {len(mantidos)} pares em {LIMPOS.relative_to(ROOT)} "
           f"({dict(Counter(r['source'] for r in mantidos))})")
@@ -367,6 +430,10 @@ def main(argv=None) -> int:
               f"({dict(Counter(r['source'] for r in revisados))})")
     relatorio(situacao, motivos, removidos, mantidos, revisao, revisados)
     print(f"Relatório: {(RELATORIO / 'RELATORIO.md').relative_to(ROOT)}")
+    faltando = [f for f in a.fontes if f not in instaladas]
+    if faltando:
+        print(f"AVISO: fontes não instaladas: {', '.join(faltando)}. O experimento completa a mistura com as "
+              "demais; rode este comando de novo para tentar instalá-las.", file=sys.stderr)
     return 0
 
 
