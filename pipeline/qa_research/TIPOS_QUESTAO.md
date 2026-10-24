@@ -118,3 +118,23 @@ identificadas foram retiradas das aprovadas da v16 (`remocoes_manuais.json`) e v
   aprovada, ela vira o "como poderia ser" da original.
 - **Teste** (`rodar_teste_v18.sh`): reauditoria das aprovadas da v16 com o auditor v2 e geração completa
   em 2 documentos novos (05_01 e 06_01), esperando ~100 questões válidas.
+
+## Versão 19 (24/10/2026): refinador com exemplos, auditor calibrado, deduplicação por sentido
+
+Teste v18 (`relatorios/teste_v18_20261024T043655Z`): 142 válidas em 05_01 e 06_01; na revisão manual,
+~33% boas, ~33% aceitáveis, ~33% fracas; o refinador recuperou 15 de 63 (24%), mas consertava um defeito
+e criava outro (sobretudo "várias respostas") e chegou a inventar uma fórmula aprovada pelo auditor.
+
+- **Refinador** (`prompts/refinador.md`): exemplos de antes e depois para cada motivo (caso específico,
+  resposta vaga, reformula o enunciado, várias respostas, lista genérica), exemplos de descarte (fato
+  inventado, caso sem princípio, mudança só cosmética) e autoverificação antes de responder.
+- **Auditor v3** (`prompts/auditoria_v3.md`): calibração com questões reais aprovadas por engano e com
+  exemplos de aprovação correta; nas refinadas recebe o texto-fonte e reprova com `fora_da_fonte` o que
+  acrescentar fato, valor, fórmula ou mecanismo que o texto não sustente.
+- **Deduplicação por sentido** (`prompts/dedup.md`): no fim de cada tópico, uma chamada ao modelo forte
+  agrupa as aprovadas que avaliam o mesmo conhecimento e mantém a melhor.
+- **Banco herdado limpo**: as 416 aprovadas da v16 reprovadas pelo auditor v2 viraram contraexemplos
+  (`banco_dinamico_auditor_v2.json`); as 10 fracas da amostra do teste v18 foram retiradas
+  (`remocoes_manuais.json`).
+- **Piloto** (`rodar_teste_v19.sh`): reauditoria das aprovadas do teste v18 com o auditor v3 e geração
+  completa em 2 documentos novos (07_03 manutenção, 03_03 tanques de carga e estabilidade).

@@ -66,6 +66,13 @@ class Falso:
                                 "motivo": "reformula_enunciado" if i["id"].endswith("2") else "nenhum",
                                 "justificativa": "j"} for i in itens]}
 
+    def dedup(self, user):
+        itens = json.loads(user)
+        # marca como redundante a 2ª questão em diante quando há pelo menos 3
+        if len(itens) >= 3:
+            return {"grupos": [{"manter": itens[0]["id"], "remover": [itens[1]["id"]], "motivo": "mesmo conhecimento"}]}
+        return {"grupos": []}
+
     def refino(self, user):
         import re as _re
         tipo = _re.search(r"Tipo: (\w+)", user).group(1)
@@ -166,6 +173,26 @@ class ReauditoriaTests(unittest.TestCase):
             self.assertEqual(res["aprovadas_antes"], 10)
             self.assertEqual(res["removidas_manualmente"], 2)
             self.assertTrue((Path(tmp) / "re" / "REAUDITORIA.md").exists())
+
+
+class V19Tests(unittest.TestCase):
+    def test_dedup_e_texto_fonte_nas_refinadas(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Falso()
+            cl = {p: f for p in rodadas.MODELOS}
+            g = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], reusar=None, banco_inicial=None, clientes=cl,
+                                    workers=2, progress=lambda *a, **k: None)
+            self.assertEqual(g.run(), 0)
+            dedup = json.loads((Path(tmp) / "out" / "topicos" / "08_02" / "dedup.json").read_text(encoding="utf-8"))
+            self.assertEqual(len(dedup["grupos"]), 1)
+            res = json.loads((Path(tmp) / "out" / "resultado.json").read_text(encoding="utf-8"))
+            self.assertEqual(sum(b["redundantes"] for b in res["por_rodada"].values()), 1)
+            auditorias = [u for u, tag in zip(f.usuarios, f.tags) if tag == "meta_auditoria"]
+            self.assertTrue(any("texto_fonte" in u for u in auditorias))
+            antes = f.chamadas
+            rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], reusar=None, banco_inicial=None, clientes=cl, workers=2,
+                                progress=lambda *a, **k: None).run()
+            self.assertEqual(f.chamadas, antes)   # dedup não é refeito se as aprovadas não mudaram
 
 
 class AjustesV17Tests(unittest.TestCase):

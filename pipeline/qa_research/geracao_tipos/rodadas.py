@@ -37,15 +37,18 @@ from .core import (CAMPOS, EXEMPLOS, ROTULOS, _texto, carregar_banco, prompt, va
 PROMPT_JANELA = QA / "prompt_janela_qa_18.md"
 TIPOS_JANELA = tuple(t for ts in GRUPOS_V16.values() for t in ts)
 # Inventários já extraídos (relações e encadeamentos), na ordem de preferência.
-REUSAR = (QA / "relatorios" / "geracao_meta_20261024T000315Z", QA / "relatorios" / "piloto_dificuldade_20261023T053615Z")
+REUSAR = (QA / "relatorios" / "teste_v18_20261024T043655Z" / "geracao", QA / "relatorios" / "geracao_meta_20261024T000315Z",
+          QA / "relatorios" / "piloto_dificuldade_20261023T053615Z")
 # Banco dinâmico herdado: aprovadas e reprovadas de rodadas anteriores continuam valendo como exemplos.
-BANCO_INICIAL = (QA / "relatorios" / "geracao_meta_20261024T000315Z" / "banco_dinamico.json",)
+# O da v16 foi limpo com a reauditoria (auditor v2): as aprovadas que ele reprovou viraram contraexemplos.
+BANCO_INICIAL = (QA / "relatorios" / "geracao_meta_20261024T000315Z" / "banco_dinamico_auditor_v2.json",
+                 QA / "relatorios" / "teste_v18_20261024T043655Z" / "geracao" / "banco_dinamico.json")
 MODELOS = {"relacoes": "gpt-5-4-petrobras:low", "combinacoes": "gpt-5-4-petrobras:high",
            "geracao": "gpt-5-4-petrobras:high", "auditoria": "gpt-5-4-petrobras:high",
            "refinador": "gpt-5-mini-petrobras:medium"}
-PROMPT_AUDITORIA = "auditoria_v2"
+PROMPT_AUDITORIA = "auditoria_v3"   # v3: calibração com exemplos reais e checagem contra o texto-fonte
 MOTIVOS = ("nenhum", "caso_especifico", "resposta_vaga", "lista_generica", "reformula_enunciado", "varias_respostas",
-           "prudencia_generica", "trivial", "sim_nao_disfarcado", "tecnicamente_errada")
+           "prudencia_generica", "trivial", "sim_nao_disfarcado", "tecnicamente_errada", "fora_da_fonte")
 # Defeitos que o refinador tenta corrigir (uma vez); os demais são descartados.
 RECUPERAVEIS = ("caso_especifico", "resposta_vaga", "lista_generica", "reformula_enunciado", "varias_respostas")
 LIMIAR_DUPLICATA = 0.6
@@ -185,7 +188,7 @@ class GeracaoMeta:
             f.unlink()
 
     def config(self) -> None:
-        cfg = {"schema": "geracao-meta-v18", "prompt_auditoria_sha256": sha(prompt(PROMPT_AUDITORIA)),
+        cfg = {"schema": "geracao-meta-v19", "prompt_dedup_sha256": sha(prompt("dedup")), "prompt_auditoria_sha256": sha(prompt(PROMPT_AUDITORIA)),
                "prompt_refinador_sha256": sha(prompt("refinador")), "meta": self.meta, "max_rodadas": self.max_rodadas,
                "max_passagens": self.max_passagens, "modelos": self.modelos,
                "prompt_janela_sha256": sha(PROMPT_JANELA.read_text(encoding="utf-8")),
@@ -306,6 +309,8 @@ class GeracaoMeta:
                        "pergunta": q["pergunta"], "resposta": q["resposta"]}
                 if q.get("aprovada"):
                     aprovadas.append({**reg, "por_que": "aprovada pelo auditor: " + a["justificativa"]})
+                elif q.get("redundante"):
+                    continue
                 elif q.get("removida_manual"):
                     reprovadas.append({**reg, "problema": "revisão manual: " + q["removida_manual"], "motivo": "revisao_manual"})
                 elif not q.get("duplicada"):
@@ -450,7 +455,7 @@ class GeracaoMeta:
         return self._paralelo(tarefas, um, f"janelas r{rodada}")
 
     # ---------------------------------------------------------------- banco de questões e auditoria
-    def questoes(self, item: str) -> list[dict]:
+    def questoes(self, item: str, aplicar_dedup: bool = True) -> list[dict]:
         aud = {a["uid"]: a for p in (self._dir(item) / "auditoria").glob("*.json") for a in read_json(p)["avaliacoes"]}
         out = []
         for p in sorted((self._dir(item) / "compostas").glob("*.json")):
@@ -472,10 +477,12 @@ class GeracaoMeta:
             o = por_uid.get(r["original"])
             if r["status"] == "ok" and o:
                 out.append({**{k: o[k] for k in ("item", "rodada", "composicao") if k in o}, "foco": o.get("foco"),
+                            "blocos": o.get("blocos"),
                             "uid": r["original"] + ":ref", "origem": "refinada", "original": r["original"],
                             "origem_original": o["origem"], "tipo": r["tipo"], "cenario": r["cenario"],
                             "pergunta": r["pergunta"], "resposta": r["resposta"]})
         removidas = self._remocoes_manuais()
+        redundantes = self._redundantes(item) if aplicar_dedup else {}
         aceitos, curtas = [], []
         for q in out:   # ordem de geração: a primeira versão de um conhecimento fica, as quase duplicatas saem
             if q["uid"] not in aud:
@@ -484,6 +491,8 @@ class GeracaoMeta:
                                                                      "referencia_valida", "atalho", "justificativa")}
             if q["uid"] in removidas:
                 q["removida_manual"] = removidas[q["uid"]]
+            elif q["uid"] in redundantes:
+                q["redundante"] = redundantes[q["uid"]]
             elif q["auditoria"]["referencia_valida"] and not q["auditoria"]["atalho"]:
                 t = _tokens(q["pergunta"] + " " + q["resposta"])
                 c = _resposta_curta(q["resposta"])
@@ -496,6 +505,58 @@ class GeracaoMeta:
                     if c:
                         curtas.append(c)
         return out
+
+    def _redundantes(self, item: str) -> dict:
+        arq = self._dir(item) / "dedup.json"
+        if not arq.exists():
+            return {}
+        return {u: g["manter"] for g in read_json(arq)["grupos"] for u in g["remover"]}
+
+    def deduplicar(self, itens: list[str] | None = None) -> int:
+        """Uma chamada por tópico: o modelo forte agrupa aprovadas que avaliam o mesmo conhecimento e mantém uma."""
+        system, falhas = prompt("dedup"), 0
+        for item in itens or self.itens:
+            arq = self._dir(item) / "dedup.json"
+            aprov = [q for q in self.questoes_sem_dedup(item) if q.get("aprovada")]
+            uids = sorted(q["uid"] for q in aprov)
+            if arq.exists() and read_json(arq).get("consideradas") == uids:
+                continue
+            if len(aprov) < 2:
+                atomic_json(arq, {"consideradas": uids, "grupos": []})
+                continue
+            ids = {f"Q{k}": q for k, q in enumerate(aprov, 1)}
+            user = json.dumps([{"id": i, "pergunta": q["pergunta"], "resposta": q["resposta"]} for i, q in ids.items()],
+                              ensure_ascii=False)
+
+            def validar(d, ids=ids):
+                gs = d.get("grupos") if isinstance(d, dict) else None
+                if not isinstance(gs, list):
+                    raise ValueError('Retorne {"grupos": [...]}.')
+                vistos = set()
+                for g in gs:
+                    if not isinstance(g, dict) or g.get("manter") not in ids or not isinstance(g.get("remover"), list) \
+                            or any(r not in ids for r in g["remover"]):
+                        raise ValueError("Cada grupo precisa de 'manter' e 'remover' com ids recebidos.")
+                    membros = [g["manter"], *g["remover"]]
+                    if vistos & set(membros) or len(set(membros)) != len(membros):
+                        raise ValueError("Cada id aparece em no máximo um grupo.")
+                    vistos |= set(membros)
+
+            try:
+                d = self.cliente("auditoria").json(system, user, tag="meta_dedup", max_tokens=16000, item=item,
+                                                   validate=validar)
+            except Exception as exc:  # noqa: BLE001
+                self._falha(f"dedup_{item}", exc)
+                falhas += 1
+                continue
+            atomic_json(arq, {"consideradas": uids, "grupos": [
+                {"manter": ids[g["manter"]]["uid"], "remover": [ids[r]["uid"] for r in g["remover"]],
+                 "motivo": g.get("motivo", "")} for g in d["grupos"] if g["remover"]]})
+            self._ok(f"dedup_{item}")
+        return falhas
+
+    def questoes_sem_dedup(self, item: str) -> list[dict]:
+        return self.questoes(item, aplicar_dedup=False)
 
     def _remocoes_manuais(self) -> dict:
         """remocoes_manuais.json na pasta da rodada: questões aprovadas pelo auditor e retiradas na revisão humana."""
@@ -516,12 +577,13 @@ class GeracaoMeta:
 
         def um(lote):
             ids = [f"Q{k}" for k in range(1, len(lote) + 1)]
-            itens = [{"id": i, "tipo_declarado": q["tipo"], "pergunta": q["pergunta"], "resposta_referencia": q["resposta"]}
+            itens = [{"id": i, "tipo_declarado": q["tipo"], "pergunta": q["pergunta"], "resposta_referencia": q["resposta"],
+                      **({"texto_fonte": self._blocos_da_questao(q)} if q["origem"] == "refinada" else {})}
                      for i, q in zip(ids, lote)]
             nome = hashlib.sha256("|".join(q["uid"] for q in lote).encode()).hexdigest()[:16]
             try:
                 d = self.cliente("auditoria").json(
-                    system, json.dumps(itens, ensure_ascii=False), tag="meta_auditoria", max_tokens=12000,
+                    system, json.dumps(itens, ensure_ascii=False), tag="meta_auditoria", max_tokens=16000,
                     validate=lambda d: validar_auditoria(d, ids))
             except Exception as exc:  # noqa: BLE001
                 self._falha(f"auditoria_{nome}", exc)
@@ -597,6 +659,7 @@ class GeracaoMeta:
             falhas += self.auditar(grupo)
             self.progress("   válidas: " + ", ".join(f"{i} {self.validas(i)}" for i in grupo), flush=True)
         if not self.meta:
+            falhas += self.deduplicar()
             self.relatorio()
             return falhas
         for rodada in range(2, self.max_rodadas + 1):
@@ -612,6 +675,7 @@ class GeracaoMeta:
                           flush=True)
             if not any(ganho.values()):
                 break
+        falhas += self.deduplicar()
         self.relatorio()
         return falhas
 
@@ -628,6 +692,7 @@ class GeracaoMeta:
             aud = [q for q in qs if "auditoria" in q]
             return {"geradas": len(qs), "auditadas": len(aud), "aprovadas": sum(bool(q.get("aprovada")) for q in qs),
                     "duplicadas": sum(bool(q.get("duplicada")) for q in qs),
+                    "redundantes": sum(bool(q.get("redundante")) for q in qs),
                     "ref_invalida": sum(not q["auditoria"]["referencia_valida"] for q in aud),
                     "atalho": sum(q["auditoria"]["atalho"] for q in aud),
                     "motivos": dict(Counter(q["auditoria"].get("motivo") or "?" for q in aud))}
@@ -692,13 +757,14 @@ class GeracaoMeta:
     def _markdown(self, res: dict, aprovadas: list[dict]) -> None:
         total = sum(t["validas"] for t in res["topicos"].values())
         com_meta = bool(res["meta"])
-        titulo = (f"# Geração por meta (v18): {res['meta']} questões válidas por tópico" if com_meta
-                  else "# Geração completa (v18): uma passagem por janela e encadeamento, sem meta")
+        titulo = (f"# Geração por meta (v19): {res['meta']} questões válidas por tópico" if com_meta
+                  else "# Geração completa (v19): uma passagem por janela e encadeamento, sem meta")
         resumo = f"**Total: {total} questões válidas em {len(res['topicos'])} tópicos" + (
             f"; {sum(bool(t['atingiu_meta']) for t in res['topicos'].values())} atingiram a meta.**" if com_meta else ".**")
         l = [titulo, "",
-             "Janela com o prompt v18 (sem decisão), compostas a partir dos encadeamentos, auditor v2 (com motivo) como "
-             "filtro, refinador para defeitos recuperáveis e banco dinâmico de exemplos e contraexemplos.", "",
+             "Janela com o prompt v18 (sem decisão), compostas a partir dos encadeamentos, auditor v3 (com motivo, calibração e "
+             "checagem contra o texto-fonte nas refinadas) como filtro, refinador com exemplos de reescrita, deduplicação "
+             "por sentido no fim de cada tópico e banco dinâmico de exemplos e contraexemplos.", "",
              resumo, "",
              "| Tópico | Tema | blocos | encadeamentos | passagens de janela | rodadas | válidas | meta | janela aprov. | compostas aprov. | refinadas aprov. |",
              "|---|---|---|---|---|---|---|---|---|---|---|"]
@@ -712,7 +778,8 @@ class GeracaoMeta:
         for t, b in res["por_tipo"].items():
             l.append(f"| {t} | {b['janela']['aprovadas']}/{b['janela']['geradas']} | {b['composta']['aprovadas']}/{b['composta']['geradas']} |")
         l += ["", "Por rodada (0 = compostas): " + "; ".join(
-            f"r{r}: {b['aprovadas']}/{b['geradas']} (dup. {b['duplicadas']})" for r, b in res["por_rodada"].items()) + ".",
+            f"r{r}: {b['aprovadas']}/{b['geradas']} (dup. {b['duplicadas']}, redund. {b['redundantes']})"
+            for r, b in res["por_rodada"].items()) + ".",
               f"Motivos do auditor: {res['motivos']}.", f"Refinador: {res['refinador']}.",
               f"Banco dinâmico: {res['banco_dinamico']}. Falhas pendentes: {len(res['falhas_pendentes'])}.", "",
               "## Amostra de aprovadas por tópico", ""]
@@ -777,7 +844,7 @@ def reauditar(origem: Path, saida: Path, *, modelo: str = MODELOS["auditoria"], 
            "removidas_motivos": dict(Counter(a["motivo"] for a in rem)), "falhas": falhas}
     atomic_json(saida / "reauditoria.json", res)
     reprov = [(q, feitos[q["uid"]]) for q in aprovadas if q["uid"] in feitos and feitos[q["uid"]]["motivo"] != "nenhum"]
-    linhas = ["# Reauditoria das aprovadas da v16 com o auditor v2", "",
+    linhas = ["# Reauditoria das aprovadas com o auditor atual", "",
               f"Aprovadas antes: {res['aprovadas_antes']}; continuam aprovadas: **{res['aprovadas_agora']}**.",
               f"Motivos: {res['motivos']}.", f"Por tópico (aprovadas agora / antes): {res['por_item']}.",
               f"Removidas na revisão manual: {res['removidas_manualmente']}; o auditor v2 reprova "
@@ -787,3 +854,19 @@ def reauditar(origem: Path, saida: Path, *, modelo: str = MODELOS["auditoria"], 
                    f"- Auditor: {a['justificativa']}", ""]
     (saida / "REAUDITORIA.md").write_text("\n".join(linhas), encoding="utf-8")
     return res
+
+
+def limpar_banco(banco: Path, reauditoria: Path, destino: Path) -> dict:
+    """Aplica uma reauditoria ao banco dinâmico: aprovadas que o auditor novo reprovou viram contraexemplos."""
+    b = read_json(banco)
+    aud = {a["uid"]: a for p in Path(reauditoria).glob("*.json") for a in read_json(p)["avaliacoes"]}
+    mantidas, movidas = [], []
+    for e in b["aprovadas"]:
+        a = aud.get(e["id"])
+        if a and a["motivo"] != "nenhum":
+            movidas.append({**{k: e[k] for k in ("id", "item", "tipo", "composicao", "pergunta", "resposta")},
+                            "problema": a["justificativa"], "motivo": a["motivo"]})
+        else:
+            mantidas.append(e)
+    atomic_json(destino, {"aprovadas": mantidas, "reprovadas": b["reprovadas"] + movidas})
+    return {"aprovadas": len(mantidas), "movidas": len(movidas), "reprovadas": len(b["reprovadas"]) + len(movidas)}
