@@ -78,7 +78,7 @@ class Falso:
         tipo = _re.search(r"Tipo: (\w+)", user).group(1)
         self.n += 1
         p, cen = PERGUNTAS[tipo]
-        return {"status": "ok", "motivo": "", "cenario": cen,
+        return {"status": "ok", "motivo": "", "tipo": tipo, "cenario": cen,
                 "pergunta": p.format(k=f"{self.n} refinada{self.n} delta{self.n}"),
                 "resposta": f"Refinada{self.n} especifica{self.n}."}
 
@@ -149,8 +149,12 @@ class RefinadorTests(unittest.TestCase):
             self.assertGreater(res["refinador"]["aprovadas_apos_refino"], 0)
             banco = json.loads((Path(tmp) / "out" / "banco_dinamico.json").read_text(encoding="utf-8"))
             self.assertTrue(any(c.get("como_corrigir") for c in banco["reprovadas"]))
-            # refinadas não são refinadas de novo
+            # cada questão tem no máximo TENTATIVAS_REFINO refinos; cada chamada vira um arquivo
             self.assertEqual(f.tags.count("meta_refino"), res["refinador"]["tentadas"])
+            self.assertIn(2, {int(k) for k in res["refinador"]["por_tentativa"]})
+            refinos = [u for u, tag in zip(f.usuarios, f.tags) if tag == "meta_refino"]
+            self.assertTrue(all("<ja_cobertas>" in u and "<exemplos_aprovados>" in u for u in refinos))
+            self.assertTrue(any("<historico>" in u for u in refinos))
 
     def test_auditoria_exige_motivo_coerente(self):
         with self.assertRaises(ValueError):

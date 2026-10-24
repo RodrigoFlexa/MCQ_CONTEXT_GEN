@@ -47,12 +47,16 @@ BANCO_INICIAL = (QA / "relatorios" / "geracao_meta_20261024T000315Z" / "banco_di
                  QA / "relatorios" / "teste_v19_20261024T053346Z" / "geracao" / "banco_dinamico.json")
 MODELOS = {"relacoes": "gpt-5-4-petrobras:low", "combinacoes": "gpt-5-4-petrobras:high",
            "geracao": "gpt-5-4-petrobras:high", "auditoria": "gpt-5-4-petrobras:high",
-           "refinador": "gpt-5-mini-petrobras:medium"}
+           "refinador": "gpt-5-4-petrobras:high"}   # v21: refinador forte (experimento teste_refino)
 PROMPT_AUDITORIA = "auditoria_v3"   # v3: calibração com exemplos reais e checagem contra o texto-fonte
 MOTIVOS = ("nenhum", "caso_especifico", "resposta_vaga", "lista_generica", "reformula_enunciado", "varias_respostas",
            "prudencia_generica", "trivial", "sim_nao_disfarcado", "tecnicamente_errada", "fora_da_fonte")
 # Defeitos que o refinador tenta corrigir (uma vez); os demais são descartados.
 RECUPERAVEIS = ("caso_especifico", "resposta_vaga", "lista_generica", "reformula_enunciado", "varias_respostas")
+# v21: o refinador forte tenta todos os motivos, em até TENTATIVAS_REFINO rodadas, com as questões já cobertas.
+REFINAVEIS = RECUPERAVEIS + ("trivial", "prudencia_generica", "sim_nao_disfarcado", "tecnicamente_errada", "fora_da_fonte")
+TENTATIVAS_REFINO = 2
+PROMPT_REFINO = "refinador_v3"
 LIMIAR_DUPLICATA = 0.6
 LIMIAR_RESPOSTA_CURTA = 0.8   # respostas de até 6 termos com a mesma entidade contam como o mesmo conhecimento
 CONTRA_FIXOS = 5        # contraexemplos do banco curado em cada chamada
@@ -120,6 +124,26 @@ def validar_refino(d: dict, tipo: str, original: dict | None = None) -> None:
         raise ValueError("Corrija: " + "; ".join(p) + ". Se não for possível, use descartar.")
     if original and mudanca_cosmetica(original, d):
         raise ValueError("A nova versão é quase igual à original e não remove o defeito apontado: corrija de fato "
+                         "(mude o que a revisão critica) ou use descartar.")
+
+
+def validar_refino_v3(d: dict, tipo_original: str, anterior: dict | None = None) -> None:
+    """Refinador v3: pode mudar o tipo; mesmas checagens de código e de mudança cosmética."""
+    if not isinstance(d, dict) or set(d) != {"status", "motivo", "tipo", "cenario", "pergunta", "resposta"}:
+        raise ValueError("Use exatamente as chaves status, motivo, tipo, cenario, pergunta e resposta.")
+    if d["status"] == "descartar":
+        if not _texto(d["motivo"]):
+            raise ValueError("descartar exige motivo.")
+        return
+    if d["status"] != "ok" or not (_texto(d["pergunta"]) and _texto(d["resposta"])):
+        raise ValueError("status deve ser ok (com pergunta e resposta) ou descartar.")
+    if d["tipo"] not in TIPOS:
+        raise ValueError(f"tipo deve ser um de: {', '.join(TIPOS)}")
+    p = problemas_tipo(d["tipo"], d["cenario"], d["pergunta"], d["resposta"])
+    if p:
+        raise ValueError("Corrija: " + "; ".join(p) + ". Se não for possível, use descartar.")
+    if anterior and mudanca_cosmetica(anterior, d):
+        raise ValueError("A nova versão é quase igual à anterior e não remove o defeito apontado: corrija de fato "
                          "(mude o que a revisão critica) ou use descartar.")
 
 
@@ -203,8 +227,8 @@ class GeracaoMeta:
             f.unlink()
 
     def config(self) -> None:
-        cfg = {"schema": "geracao-meta-v20", "prompt_dedup_sha256": sha(prompt("dedup")), "prompt_auditoria_sha256": sha(prompt(PROMPT_AUDITORIA)),
-               "prompt_refinador_sha256": sha(prompt("refinador")), "meta": self.meta, "max_rodadas": self.max_rodadas,
+        cfg = {"schema": "geracao-meta-v21", "prompt_dedup_sha256": sha(prompt("dedup")), "prompt_auditoria_sha256": sha(prompt(PROMPT_AUDITORIA)),
+               "prompt_refinador_sha256": sha(prompt(PROMPT_REFINO)), "meta": self.meta, "max_rodadas": self.max_rodadas,
                "max_passagens": self.max_passagens, "modelos": self.modelos,
                "prompt_janela_sha256": sha(PROMPT_JANELA.read_text(encoding="utf-8")),
                "prompt_composta_sha256": sha(prompt("composta")),
@@ -491,9 +515,11 @@ class GeracaoMeta:
             r = read_json(p)
             o = por_uid.get(r["original"])
             if r["status"] == "ok" and o:
+                t = r.get("tentativa", 1)
                 out.append({**{k: o[k] for k in ("item", "rodada", "composicao") if k in o}, "foco": o.get("foco"),
-                            "blocos": o.get("blocos"),
-                            "uid": r["original"] + ":ref", "origem": "refinada", "original": r["original"],
+                            "blocos": o.get("blocos"), "tentativa": t,
+                            "uid": r["original"] + (":ref" if t == 1 else f":ref{t}"), "origem": "refinada",
+                            "original": r["original"],
                             "origem_original": o["origem"], "tipo": r["tipo"], "cenario": r["cenario"],
                             "pergunta": r["pergunta"], "resposta": r["resposta"]})
         removidas = self._remocoes_manuais()
@@ -623,40 +649,83 @@ class GeracaoMeta:
         bs = {b["indice"]: b for b in self.docs[item]}
         return "\n\n".join(f"{bs[i]['titulo_capitulo']} / {bs[i]['subtitulo']}\n{bs[i]['texto']}" for i in q.get("blocos", []))
 
-    def refinar(self, itens: list[str] | None = None) -> int:
-        tarefas = []
-        for item in itens or self.itens:
-            for q in self.questoes(item):
-                a = q.get("auditoria")
-                if a and q["origem"] != "refinada" and a.get("motivo") in RECUPERAVEIS and \
-                        not (self._dir(item) / "refinadas" / f"{_nome_arq(q['uid'])}.json").exists():
-                    tarefas.append(q)
-        self.progress(f"   refinador ({self.modelos['refinador']}): {len(tarefas)} questões recuperáveis", flush=True)
-        system = prompt("refinador")
+    def _blocos_ids(self, q: dict) -> set:
+        if q.get("foco") is not None:
+            return {b["indice"] for _, b in janela(self.docs[q["item"]], q["foco"])}
+        return set(q.get("blocos") or [])
 
-        def um(q):
-            a = q["auditoria"]
-            tipo = q["tipo"] if q["tipo"] in TIPOS else a["tipo_sugerido"]
-            user = "\n\n".join((
-                f"<questao>\nTipo: {tipo}\nPergunta: {q['pergunta']}\nResposta: {q['resposta']}\n</questao>",
-                f"<revisao>\nMotivo: {a['motivo']}\nJustificativa: {a['justificativa']}\n</revisao>",
-                f"<blocos>\n{self._blocos_da_questao(q)}\n</blocos>"))
-            nome = f"refino_{_nome_arq(q['uid'])}"
+    def _exemplos_refino(self, q: dict, tipo: str) -> str:
+        pool = [e for e in self.base["exemplos"] + self._dinamico()["aprovadas"]
+                if e.get("tipo") == tipo and e.get("item") != q["item"]]
+        escolhidos = sorted(pool, key=lambda e: _h("ref", q["uid"], e.get("id", e["pergunta"])))[:2]
+        return "\n\n".join(f"Pergunta: {e['pergunta']}\nResposta: {e['resposta']}" for e in escolhidos)
+
+    def refinar(self, itens: list[str] | None = None, tentativa: int = 1) -> int:
+        """v21: refinador forte em todas as reprovadas. Recebe o motivo, os blocos, dois exemplos aprovados do mesmo
+        tipo e as aprovadas que tocam os mesmos blocos (<ja_cobertas>), para que a versão nova avalie conhecimento
+        ainda não coberto. Na 2ª tentativa, parte da versão refinada reprovada, com o histórico."""
+        tarefas, cobertas = [], {}
+        sufixo = "" if tentativa == 1 else f"__{tentativa}"
+        for item in itens or self.itens:
+            qs = self.questoes(item)
+            cobertas[item] = [q for q in qs if q.get("aprovada")]
+            por_uid = {q["uid"]: q for q in qs}
+            for q in qs:
+                if q["origem"] == "refinada":
+                    continue
+                if (self._dir(item) / "refinadas" / f"{_nome_arq(q['uid'])}{sufixo}.json").exists():
+                    continue
+                if tentativa == 1:
+                    a = q.get("auditoria")
+                    if a and a.get("motivo") in REFINAVEIS:
+                        tarefas.append((q, q, a, []))
+                else:
+                    ant = por_uid.get(q["uid"] + (":ref" if tentativa == 2 else f":ref{tentativa - 1}"))
+                    if ant and ant.get("auditoria") and ant["auditoria"].get("motivo") in REFINAVEIS:
+                        hist = [(q, q["auditoria"])] if tentativa == 2 else []
+                        tarefas.append((q, ant, ant["auditoria"], hist))
+        self.progress(f"   refinador ({self.modelos['refinador']}), tentativa {tentativa}: {len(tarefas)} questões", flush=True)
+        system = prompt(PROMPT_REFINO)
+
+        def um(t):
+            q, atual, a, hist = t
+            tipo = atual["tipo"] if atual["tipo"] in TIPOS else a["tipo_sugerido"]
+            alvo = self._blocos_ids(q)
+            cob = [c for c in cobertas[q["item"]] if c["uid"] != atual["uid"] and self._blocos_ids(c) & alvo]
+            partes = [f"<questao>\nTipo: {tipo}\nPergunta: {atual['pergunta']}\nResposta: {atual['resposta']}\n</questao>",
+                      f"<revisao>\nMotivo: {a['motivo']}\nJustificativa: {a['justificativa']}\n</revisao>"]
+            if hist:
+                partes.append("<historico>\n" + "\n\n".join(
+                    f"Versão {k}: {v['pergunta']} → {v['resposta']}\nReprovada por {av['motivo']}: {av['justificativa']}"
+                    for k, (v, av) in enumerate(hist, 1)) + "\n</historico>")
+            partes += ["<ja_cobertas>\n" + ("\n".join(f"- {c['pergunta']} → {c['resposta']}" for c in cob) or "(nenhuma)")
+                       + "\n</ja_cobertas>",
+                       f"<exemplos_aprovados>\n{self._exemplos_refino(q, tipo)}\n</exemplos_aprovados>",
+                       f"<blocos>\n{self._blocos_da_questao(q)}\n</blocos>"]
+            nome = f"refino_{_nome_arq(q['uid'])}{sufixo}"
             try:
-                d = self.cliente("refinador").json(system, user, tag="meta_refino", max_tokens=8000, item=q["item"],
-                                                   validate=lambda d: validar_refino(d, tipo, q))
+                d = self.cliente("refinador").json(system, "\n\n".join(partes), tag="meta_refino", max_tokens=12000,
+                                                   item=q["item"], validate=lambda d: validar_refino_v3(d, tipo, atual))
             except Exception as exc:  # noqa: BLE001
                 if not _filtrado(exc):
                     self._falha(nome, exc)
                     return False
-                d = {"status": "descartar", "motivo": "bloqueado pelo filtro de conteúdo", "cenario": False,
+                d = {"status": "descartar", "motivo": "bloqueado pelo filtro de conteúdo", "tipo": tipo, "cenario": False,
                      "pergunta": "", "resposta": ""}
-            atomic_json(self._dir(q["item"]) / "refinadas" / f"{_nome_arq(q['uid'])}.json",
-                        {"original": q["uid"], "tipo": tipo, "motivo_original": a["motivo"], **d})
+            atomic_json(self._dir(q["item"]) / "refinadas" / f"{_nome_arq(q['uid'])}{sufixo}.json",
+                        {"original": q["uid"], "tentativa": tentativa, "motivo_original": a["motivo"],
+                         "tipo_original": tipo, **d})
             self._ok(nome)
             return True
 
-        return self._paralelo(tarefas, um, "refinador")
+        return self._paralelo(tarefas, um, f"refinador t{tentativa}")
+
+    def refinar_e_auditar(self, itens: list[str] | None = None) -> int:
+        falhas = 0
+        for t in range(1, TENTATIVAS_REFINO + 1):
+            falhas += self.refinar(itens, t)
+            falhas += self.auditar(itens)
+        return falhas
 
     # ---------------------------------------------------------------- execução
     def run(self) -> int:
@@ -670,8 +739,7 @@ class GeracaoMeta:
             falhas += self.compostas(grupo)
             falhas += self.janelas(1, grupo)
             falhas += self.auditar(grupo)
-            falhas += self.refinar(grupo)
-            falhas += self.auditar(grupo)
+            falhas += self.refinar_e_auditar(grupo)
             self.progress("   válidas: " + ", ".join(f"{i} {self.validas(i)}" for i in grupo), flush=True)
         if not self.meta:
             falhas += self.deduplicar()
@@ -683,8 +751,7 @@ class GeracaoMeta:
                 break
             falhas += self.janelas(rodada)
             falhas += self.auditar()
-            falhas += self.refinar()
-            falhas += self.auditar()
+            falhas += self.refinar_e_auditar()
             ganho = {i: self.validas(i) - antes[i] for i in self.itens}
             self.progress("   válidas por tópico: " + ", ".join(f"{i} {self.validas(i)} (+{ganho[i]})" for i in self.itens),
                           flush=True)
@@ -737,7 +804,13 @@ class GeracaoMeta:
         res["refinador"] = {"tentadas": len(refinos), "reescritas": sum(r["status"] == "ok" for r in refinos),
                             "descartadas": sum(r["status"] == "descartar" for r in refinos),
                             "aprovadas_apos_refino": sum(1 for q in todas if q["origem"] == "refinada" and q.get("aprovada")),
-                            "por_motivo": dict(Counter(r["motivo_original"] for r in refinos))}
+                            "por_motivo": dict(Counter(r["motivo_original"] for r in refinos)),
+                            "por_tentativa": {t: {"tentadas": sum(r.get("tentativa", 1) == t for r in refinos),
+                                                  "aprovadas": sum(1 for q in todas if q["origem"] == "refinada"
+                                                                   and q.get("tentativa", 1) == t and q.get("aprovada"))}
+                                              for t in sorted({r.get("tentativa", 1) for r in refinos})},
+                            "tipo_mudou": sum(1 for r in refinos if r["status"] == "ok" and r.get("tipo")
+                                              and r["tipo"] != r.get("tipo_original", r["tipo"]))}
         res["motivos"] = {o: taxa([q for q in todas if q["origem"] == o])["motivos"] for o in ("janela", "composta", "refinada")}
         din = self._dinamico()
         res["banco_dinamico"] = {"aprovadas": len(din["aprovadas"]), "reprovadas": len(din["reprovadas"]),

@@ -196,3 +196,16 @@ refinador padrão da geração final.
 **2ª etapa: braço `forte_cob`.** O refinador forte recebe em `<ja_cobertas>` as aprovadas que tocam os mesmos
 blocos (média de 8 por questão) e deve avaliar conhecimento que nenhuma delas avalia, ou descartar. O ganho
 líquido passou a contar só conhecimento novo (uma por grupo de recuperadas equivalentes).
+
+### Resultado da 2ª etapa e versão 21
+
+| Braço | recuperadas | conhecimento novo | repetem aprovada | revisão manual das novas |
+|---|---|---|---|---|
+| mini | 85/153 | 40 | 45 | ~56% fracas (16) |
+| forte | 122/153 | 24 | 98 | ~31% fracas (16) |
+| **forte_cob** | 96/153 | **54** (92 → 146) | 42 (33 entre recuperadas da mesma rodada) | ~36% boas, ~44% aceitáveis, ~20% fracas (25) |
+
+Com as questões já cobertas, o refinador forte deixa de repetir as aprovadas (só 9 repetem uma aprovada da
+origem) e as novas são melhores que as da geração (~30% fracas no piloto v19). **v21**: o refinador do pipeline
+passa a ser o `forte_cob` (gpt-5-4 high, `refinador_v3`, todos os motivos, `<ja_cobertas>`, exemplos aprovados,
+até 2 tentativas com histórico, tipo pode mudar). No piloto v19 isso leva de 46 para ~73 válidas por tópico.

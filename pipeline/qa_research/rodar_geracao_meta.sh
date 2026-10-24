@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Geração completa, v20 (pipeline/qa_research/TIPOS_QUESTAO.md): gera o que cada documento sustenta, sem meta.
+# Geração completa, v21 (pipeline/qa_research/TIPOS_QUESTAO.md): gera o que cada documento sustenta, sem meta.
 #   1. inventário: relações por bloco e até 25 encadeamentos por documento (reaproveitados quando já existem)
-#   2. em ondas de 5 tópicos: compostas (uma por encadeamento), janelas (uma passagem por janela, prompt v18),
-#      auditor v3, refinador (gpt-5-mini) nas reprovadas recuperáveis e nova auditoria; depois de cada onda, as
-#      aprovadas viram exemplos e as reprovadas contraexemplos para as ondas seguintes (o banco começa com o
-#      herdado da v16, do teste v18 e do piloto v19)
+#   2. em ondas de 5 tópicos: compostas (uma por encadeamento), janelas (uma passagem por janela, prompt v18) e
+#      auditor v3; depois, refinador forte (gpt-5-4 high, prompt refinador_v3) em todas as reprovadas, com as
+#      questões já aprovadas sobre os mesmos blocos, em até 2 tentativas, cada uma seguida de nova auditoria;
+#      entre ondas, as aprovadas viram exemplos e as reprovadas contraexemplos (banco herdado da v16, v18 e v19)
 #   3. deduplicação por sentido em cada tópico, RELATORIO.md, aprovadas.jsonl e exemplos_proposto.json
 # Uso: bash pipeline/qa_research/rodar_geracao_meta.sh [opções]
 #   padrão: um tópico por área (01_01 02_03 03_01 04_02 05_02 06_05 07_04 08_03 09_02 10_01)

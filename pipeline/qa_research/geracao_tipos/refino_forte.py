@@ -28,32 +28,13 @@ from pipeline.qa_research.tipos import TIPOS, problemas_tipo
 
 from .core import EXEMPLOS, _texto, carregar_banco, prompt
 from .rodadas import (BANCO_INICIAL, MODELOS, PROMPT_AUDITORIA, GeracaoMeta, _filtrado, _h, _nome_arq,
-                      mudanca_cosmetica, validar_auditoria)
+                      mudanca_cosmetica, validar_auditoria, validar_refino_v3)
 
 ORIGEM = QA / "relatorios" / "teste_v19_20261024T053346Z" / "geracao"
 BRACOS = {"mini": "gpt-5-mini-petrobras:medium", "forte": "gpt-5-4-petrobras:high"}
 # Braços com sufixo "_cob" recebem as questões já aprovadas sobre os mesmos blocos (<ja_cobertas>).
 MODELOS_BRACO = {"mini": BRACOS["mini"], "forte": BRACOS["forte"], "mini_cob": BRACOS["mini"], "forte_cob": BRACOS["forte"]}
 CHAVES = {"status", "motivo", "tipo", "cenario", "pergunta", "resposta"}
-
-
-def validar_refino_v3(d: dict, tipo_original: str, anterior: dict | None = None) -> None:
-    if not isinstance(d, dict) or set(d) != CHAVES:
-        raise ValueError("Use exatamente as chaves status, motivo, tipo, cenario, pergunta e resposta.")
-    if d["status"] == "descartar":
-        if not _texto(d["motivo"]):
-            raise ValueError("descartar exige motivo.")
-        return
-    if d["status"] != "ok" or not (_texto(d["pergunta"]) and _texto(d["resposta"])):
-        raise ValueError("status deve ser ok (com pergunta e resposta) ou descartar.")
-    if d["tipo"] not in TIPOS:
-        raise ValueError(f"tipo deve ser um de: {', '.join(TIPOS)}")
-    p = problemas_tipo(d["tipo"], d["cenario"], d["pergunta"], d["resposta"])
-    if p:
-        raise ValueError("Corrija: " + "; ".join(p) + ". Se não for possível, use descartar.")
-    if anterior and mudanca_cosmetica(anterior, d):
-        raise ValueError("A nova versão é quase igual à anterior e não remove o defeito apontado: corrija de fato "
-                         "(mude o que a revisão critica) ou use descartar.")
 
 
 class ExperimentoRefino:
