@@ -2,11 +2,12 @@
 
 Tipos, marcas e composição: [`../TIPOS_QUESTAO.md`](../TIPOS_QUESTAO.md).
 
-## v16: geração por meta (atual)
+## v17: geração completa (atual)
 
 `rodadas.py`, comando `meta`, script `rodar_geracao_meta.sh`. Para cada tópico: inventário
-(relações e encadeamentos), compostas, e rodadas de janela (prompt v16, sem decisão) até N questões
-aprovadas pela auditoria (padrão 100), com banco dinâmico de exemplos e contraexemplos.
+(relações e encadeamentos), compostas e uma passagem por janela (prompt v17, sem decisão), em ondas de
+5 tópicos, com auditoria como filtro e banco dinâmico de exemplos e contraexemplos atualizado entre as
+ondas. `--meta N` (opcional) acrescenta rodadas até N válidas por tópico.
 
 ```bash
 bash pipeline/qa_research/rodar_geracao_meta.sh                                   # 10 tópicos, um por área

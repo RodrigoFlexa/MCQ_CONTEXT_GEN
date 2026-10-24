@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
-# Geração por meta, v16 (pipeline/qa_research/TIPOS_QUESTAO.md): para cada tópico, gera e audita até ter
-# N questões válidas (padrão 100).
-#   1. inventário: relações por bloco e encadeamentos (reaproveitados quando já existem)
-#   2. compostas: uma por encadeamento (é onde a decisão é gerada)
-#   3. rodadas de janela (prompt v16, sem decisão) até a meta: a 1ª passa por todas as janelas, as seguintes
-#      voltam às mais produtivas com as questões já geradas ali; até 4 rodadas e 3 passagens por janela
-#   4. auditoria após cada etapa (filtro); aprovadas viram exemplos e reprovadas contraexemplos
-#   5. RELATORIO.md, aprovadas.jsonl e exemplos_proposto.json
+# Geração completa, v17 (pipeline/qa_research/TIPOS_QUESTAO.md): gera o que cada documento sustenta, sem meta.
+#   1. inventário: relações por bloco e até 25 encadeamentos por documento (reaproveitados quando já existem)
+#   2. em ondas de 5 tópicos: compostas (uma por encadeamento), janelas (uma passagem por janela, prompt v17)
+#      e auditoria; depois de cada onda, as aprovadas viram exemplos e as reprovadas contraexemplos para as
+#      ondas seguintes (o banco começa com o da v16)
+#   3. RELATORIO.md, aprovadas.jsonl e exemplos_proposto.json
 # Uso: bash pipeline/qa_research/rodar_geracao_meta.sh [opções]
 #   padrão: um tópico por área (01_01 02_03 03_01 04_02 05_02 06_05 07_04 08_03 09_02 10_01)
-#   ex.: --itens 08_02 --meta 20 --saida <pasta de teste>    (teste barato)
-#        --itens todos                                        (os 40 tópicos)
-#        --saida <pasta>                                      (retoma uma execução interrompida)
+#   ex.: --itens todos                                       (os 40 tópicos)
+#        --itens 08_02 --saida <pasta de teste>              (teste barato)
+#        --meta 100                                          (opcional: rodadas extras até 100 válidas por tópico)
+#        --saida <pasta>                                     (retoma uma execução interrompida)
 set -uo pipefail
 export PYTHONUTF8=1
 qa_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"

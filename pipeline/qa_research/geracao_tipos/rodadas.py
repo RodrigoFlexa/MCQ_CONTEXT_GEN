@@ -1,4 +1,5 @@
-"""Geração por meta (v17): gera e audita em rodadas até cada tópico ter N questões aprovadas.
+"""Geração completa (v17): uma passagem por janela e encadeamento de cada tópico, em ondas de tópicos;
+opcionalmente (meta), rodadas extras até cada tópico ter N questões aprovadas.
 
 Por tópico (documento):
   1. inventário: relações por bloco e encadeamentos (reaproveitados de uma rodada anterior, quando houver);
@@ -90,10 +91,10 @@ def _h(*partes) -> int:
 
 
 class GeracaoMeta:
-    def __init__(self, saida: Path, itens: list[str], *, meta: int = 100, max_rodadas: int = 4,
+    def __init__(self, saida: Path, itens: list[str], *, meta: int | None = None, max_rodadas: int = 4,
                  max_passagens: int = 3, modelos: dict | None = None, reusar=REUSAR, banco_inicial=BANCO_INICIAL,
                  exemplos: Path = EXEMPLOS, combinacoes_por_doc: int = 25, workers: int = 8, lote: int = 10,
-                 clientes: dict | None = None, progress=print):
+                 clientes: dict | None = None, onda: int = 5, progress=print):
         self.saida, self.itens, self.meta = Path(saida), list(itens), meta
         self.max_rodadas, self.max_passagens = max_rodadas, max_passagens
         self.modelos = {**MODELOS, **(modelos or {})}
@@ -108,6 +109,7 @@ class GeracaoMeta:
         self.caminho_exemplos, self.base = Path(exemplos), carregar_banco(exemplos)
         self.combinacoes_por_doc, self.workers, self.lote = combinacoes_por_doc, workers, lote
         self.clientes, self.progress = dict(clientes or {}), progress
+        self.onda = max(1, onda)   # tópicos por onda: o banco dinâmico é atualizado entre uma onda e outra
         self.lock = threading.Lock()
         self.temas = {i: tema(i) for i in self.itens}
         self.docs = {i: blocos(i)[1] for i in self.itens}
@@ -155,7 +157,7 @@ class GeracaoMeta:
                "prompt_janela_sha256": sha(PROMPT_JANELA.read_text(encoding="utf-8")),
                "prompt_composta_sha256": sha(prompt("composta")),
                "exemplos_sha256": sha(self.caminho_exemplos.read_text(encoding="utf-8")),
-               "combinacoes_por_doc": self.combinacoes_por_doc, "banco_inicial": self.n_banco_inicial}
+               "combinacoes_por_doc": self.combinacoes_por_doc, "banco_inicial": self.n_banco_inicial, "onda": self.onda}
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -299,9 +301,9 @@ class GeracaoMeta:
                 f"<contraexemplos>\nNão gere questões como estas.\n\n{ruins}\n</contraexemplos>")
 
     # ---------------------------------------------------------------- 2. compostas
-    def compostas(self) -> int:
+    def compostas(self, itens: list[str] | None = None) -> int:
         system, tarefas = prompt("composta"), []
-        for item in self.itens:
+        for item in itens or self.itens:
             arq = self._dir(item) / "combinacoes.json"
             if not arq.exists():
                 continue
@@ -363,14 +365,15 @@ class GeracaoMeta:
         cands.sort(key=lambda f: (-aprov.get(f, 0) / max(1, len(passagens.get(f, []))), f))
         return cands[: math.ceil(falta / taxa)]
 
-    def janelas(self, rodada: int) -> int:
+    def janelas(self, rodada: int, itens: list[str] | None = None) -> int:
+        itens = itens or self.itens
         system, modelo_usuario, _ = carregar_prompt(4, 4, PROMPT_JANELA)
-        tarefas = [(i, f) for i in self.itens
-                   if rodada == 1 or self.validas(i) < self.meta
+        tarefas = [(i, f) for i in itens
+                   if rodada == 1 or (self.meta and self.validas(i) < self.meta)
                    for f in self.escolher_janelas(i, rodada)
                    if not (self._dir(i) / "janelas" / f"r{rodada}" / f"{f:03d}.json").exists()]
         self.progress(f"3. janelas, rodada {rodada}: {len(tarefas)}", flush=True)
-        anteriores = {i: self._passagens(i) for i in self.itens}
+        anteriores = {i: self._passagens(i) for i in itens}
 
         def um(t):
             item, foco = t
@@ -436,9 +439,9 @@ class GeracaoMeta:
     def validas(self, item: str) -> int:
         return sum(1 for q in self.questoes(item) if q.get("aprovada"))
 
-    def auditar(self) -> int:
+    def auditar(self, itens: list[str] | None = None) -> int:
         pend = []
-        for item in self.itens:
+        for item in itens or self.itens:
             pend += [q for q in self.questoes(item) if "auditoria" not in q]
         pend.sort(key=lambda q: (q["item"], _h("aud", q["uid"])))
         lotes = [pend[i:i + self.lote] for i in range(0, len(pend), self.lote)]
@@ -472,20 +475,30 @@ class GeracaoMeta:
 
     # ---------------------------------------------------------------- execução
     def run(self) -> int:
+        """Sem meta: cada tópico passa uma vez por todas as janelas e encadeamentos, em ondas de tópicos, e o
+        banco dinâmico aprende entre uma onda e outra. Com meta: rodadas extras até a meta (v16)."""
         self.config()
         falhas = self.inventario()
-        falhas += self.compostas()
-        falhas += self.auditar()
-        for rodada in range(1, self.max_rodadas + 1):
+        ondas = [self.itens[k:k + self.onda] for k in range(0, len(self.itens), self.onda)]
+        for n, grupo in enumerate(ondas, 1):
+            self.progress(f"== onda {n}/{len(ondas)}: {', '.join(grupo)}", flush=True)
+            falhas += self.compostas(grupo)
+            falhas += self.janelas(1, grupo)
+            falhas += self.auditar(grupo)
+            self.progress("   válidas: " + ", ".join(f"{i} {self.validas(i)}" for i in grupo), flush=True)
+        if not self.meta:
+            self.relatorio()
+            return falhas
+        for rodada in range(2, self.max_rodadas + 1):
             antes = {i: self.validas(i) for i in self.itens}
-            if rodada > 1 and all(v >= self.meta for v in antes.values()):
+            if all(v >= self.meta for v in antes.values()):
                 break
             falhas += self.janelas(rodada)
             falhas += self.auditar()
             ganho = {i: self.validas(i) - antes[i] for i in self.itens}
             self.progress("   válidas por tópico: " + ", ".join(f"{i} {self.validas(i)} (+{ganho[i]})" for i in self.itens),
                           flush=True)
-            if rodada > 1 and not any(ganho.values()):
+            if not any(ganho.values()):
                 break
         self.relatorio()
         return falhas
@@ -517,7 +530,8 @@ class GeracaoMeta:
                 if (self._dir(item) / "combinacoes.json").exists() else 0,
                 "passagens_janela": sum(len(v) for v in passagens.values()),
                 "rodadas": max((j["rodada"] for v in passagens.values() for j in v), default=0),
-                "validas": sum(bool(q.get("aprovada")) for q in qs), "atingiu_meta": sum(bool(q.get("aprovada")) for q in qs) >= self.meta,
+                "validas": sum(bool(q.get("aprovada")) for q in qs),
+                "atingiu_meta": (sum(bool(q.get("aprovada")) for q in qs) >= self.meta) if self.meta else None,
                 "compostas": taxa([q for q in qs if q["origem"] == "composta"]),
                 "janela": taxa([q for q in qs if q["origem"] == "janela"]),
                 "aprovadas_por_tipo": dict(Counter(q["tipo"] for q in aprovadas if q["item"] == item))}
@@ -557,16 +571,21 @@ class GeracaoMeta:
 
     def _markdown(self, res: dict, aprovadas: list[dict]) -> None:
         total = sum(t["validas"] for t in res["topicos"].values())
-        l = [f"# Geração por meta (v17): {res['meta']} questões válidas por tópico", "",
+        com_meta = bool(res["meta"])
+        titulo = (f"# Geração por meta (v17): {res['meta']} questões válidas por tópico" if com_meta
+                  else "# Geração completa (v17): uma passagem por janela e encadeamento, sem meta")
+        resumo = f"**Total: {total} questões válidas em {len(res['topicos'])} tópicos" + (
+            f"; {sum(bool(t['atingiu_meta']) for t in res['topicos'].values())} atingiram a meta.**" if com_meta else ".**")
+        l = [titulo, "",
              "Janela com o prompt v17 (sem decisão), compostas a partir dos encadeamentos, auditoria como filtro e "
-             "banco dinâmico de exemplos e contraexemplos (herdado das rodadas anteriores).", "",
-             f"**Total: {total} questões válidas em {len(res['topicos'])} tópicos; "
-             f"{sum(t['atingiu_meta'] for t in res['topicos'].values())} atingiram a meta.**", "",
+             "banco dinâmico de exemplos e contraexemplos (herdado das rodadas anteriores e atualizado a cada onda).", "",
+             resumo, "",
              "| Tópico | Tema | blocos | encadeamentos | passagens de janela | rodadas | válidas | meta | janela aprov. | compostas aprov. |",
              "|---|---|---|---|---|---|---|---|---|---|"]
         for i, t in res["topicos"].items():
+            marca = "-" if t["atingiu_meta"] is None else ("✓" if t["atingiu_meta"] else "✗")
             l.append(f"| {i} | {t['tema'][:45]} | {t['blocos']} | {t['encadeamentos']} | {t['passagens_janela']} | {t['rodadas']} | "
-                     f"**{t['validas']}** | {'✓' if t['atingiu_meta'] else '✗'} | {t['janela']['aprovadas']}/{t['janela']['geradas']} | "
+                     f"**{t['validas']}** | {marca} | {t['janela']['aprovadas']}/{t['janela']['geradas']} | "
                      f"{t['compostas']['aprovadas']}/{t['compostas']['geradas']} |")
         l += ["", "| Tipo | janela (aprov./geradas) | compostas (aprov./geradas) |", "|---|---|---|"]
         for t, b in res["por_tipo"].items():

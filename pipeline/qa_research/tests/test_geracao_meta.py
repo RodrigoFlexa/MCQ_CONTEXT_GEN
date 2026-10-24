@@ -103,6 +103,22 @@ class MetaTests(unittest.TestCase):
             self.assertEqual(f.chamadas, antes)
 
 
+class OndasTests(unittest.TestCase):
+    def test_sem_meta_uma_passagem_e_banco_aprende_entre_ondas(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Falso()
+            cl = {p: f for p in rodadas.MODELOS}
+            g = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02", "06_06"], reusar=None, banco_inicial=None, onda=1,
+                                    clientes=cl, workers=2, progress=lambda *a, **k: None)
+            self.assertEqual(g.run(), 0)
+            res = json.loads((Path(tmp) / "out" / "resultado.json").read_text(encoding="utf-8"))
+            self.assertEqual(res["topicos"]["08_02"]["passagens_janela"], 12)   # uma passagem por janela
+            self.assertIsNone(res["topicos"]["08_02"]["atingiu_meta"])
+            janelas = [u for u, tag in zip(f.usuarios, f.tags) if tag == "meta_janela"]
+            self.assertNotIn("aprovada pelo auditor", janelas[0])               # 1ª onda: só o banco curado
+            self.assertIn("aprovada pelo auditor", janelas[-1])                 # 2ª onda: aprendeu com a 1ª
+
+
 class AjustesV17Tests(unittest.TestCase):
     def test_resposta_curta_igual_conta_como_duplicata(self):
         a = rodadas._resposta_curta("A matriz de causa e efeito.")

@@ -84,3 +84,14 @@ compostas aprovadas; decisão na janela ainda em 25% (nas compostas, 55%); o mod
   viram contraexemplos (com a justificativa do auditor) para as chamadas seguintes, sempre de outros
   tópicos. Cada chamada recebe um exemplo por tipo, 5 contraexemplos do banco curado e 3 reprovações
   recentes. No fim, `exemplos_proposto.json` sugere a atualização do banco curado, para revisão.
+
+## Versão 17 (24/10/2026): geração completa sem meta
+
+- **Sem meta obrigatória**: cada tópico passa uma vez por todas as janelas e por todos os encadeamentos;
+  gera o que o documento sustenta. A meta (`--meta N`) continua disponível como opção.
+- **Ondas de 5 tópicos**: compostas, janelas e auditoria por onda; o banco dinâmico (aprovadas como
+  exemplos, reprovadas como contraexemplos) é atualizado entre uma onda e outra, e começa com o banco
+  herdado da v16.
+- O sinal que descarta a alternativa não pode resolver a questão por exclusão (janela e compostas);
+  encadeamentos limitados a 25 por documento; filtro de conteúdo do Azure vira insuficiente;
+  deduplicação também por resposta curta; "citado/mencionado como" barrado.

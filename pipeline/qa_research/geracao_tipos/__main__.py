@@ -43,7 +43,9 @@ def main(argv=None) -> int:
     mt.add_argument("--saida", type=Path, help="pasta de resultados; repetir a mesma pasta retoma de onde parou")
     mt.add_argument("--itens", nargs="+", default=list(ITENS_META),
                     help="tópicos (padrão: um por área); use 'todos' para os 40")
-    mt.add_argument("--meta", type=int, default=100, help="questões válidas por tópico")
+    mt.add_argument("--meta", type=int, default=None,
+                    help="opcional: rodadas extras até N válidas por tópico (padrão: sem meta, uma passagem por janela)")
+    mt.add_argument("--onda", type=int, default=5, help="tópicos por onda; o banco de exemplos é atualizado entre ondas")
     mt.add_argument("--max-rodadas", type=int, default=4)
     mt.add_argument("--max-passagens", type=int, default=3, help="vezes que a mesma janela pode ser usada")
     mt.add_argument("--reusar", type=Path, nargs="+", default=None,
@@ -61,15 +63,18 @@ def main(argv=None) -> int:
         from pipeline.qa_research.piloto_janela.core import PROGRAMA
         itens = ([r["id"] for r in read_json(PROGRAMA)["items"]] if a.itens == ["todos"] else a.itens)
         saida = a.saida or QA / "relatorios" / f"geracao_meta_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
+        if (saida / "config.json").exists() and a.itens == list(ITENS_META):   # retomada: vale a lista gravada
+            itens = read_json(saida / "config.json")["itens"]
         kw = {"exemplos": a.exemplos} if a.exemplos else {}
         g = GeracaoMeta(saida, itens, meta=a.meta, max_rodadas=a.max_rodadas, max_passagens=a.max_passagens,
-                        reusar=a.reusar or REUSAR, workers=a.workers,
+                        reusar=a.reusar or REUSAR, workers=a.workers, onda=a.onda,
                         banco_inicial=BANCO_INICIAL if a.banco_inicial is None else a.banco_inicial, **kw)
         if a.relatorio:
             g.relatorio()
             print(f"Relatório: {saida / 'RELATORIO.md'}")
             return 0
-        print(f"Saída: {saida}\nTópicos: {itens}\nMeta: {a.meta} válidas por tópico\nModelos: {MODELOS_META}", flush=True)
+        print(f"Saída: {saida}\nTópicos: {itens}\nMeta: {a.meta or 'sem meta (uma passagem por janela)'}\n"
+              f"Modelos: {MODELOS_META}", flush=True)
         falhas = g.run()
         print(f"\nRelatório: {saida / 'RELATORIO.md'}")
         if falhas:
