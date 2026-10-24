@@ -138,3 +138,25 @@ e criava outro (sobretudo "várias respostas") e chegou a inventar uma fórmula 
   (`remocoes_manuais.json`).
 - **Piloto** (`rodar_teste_v19.sh`): reauditoria das aprovadas do teste v18 com o auditor v3 e geração
   completa em 2 documentos novos (07_03 manutenção, 03_03 tanques de carga e estabilidade).
+
+## Versão 20 (24/10/2026): ajustes do piloto v19, pronta para a geração final
+
+Piloto v19 (`relatorios/teste_v19_20261024T053346Z`): 104 válidas em 07_03 e 03_03. Na primeira auditoria,
+40% das questões de janela foram aprovadas (88/220); a deduplicação por sentido retirou 50 aprovadas (os
+grupos conferidos eram do mesmo conhecimento em cenários diferentes). O auditor v3 com o texto-fonte
+funcionou: nenhuma refinada aprovada tem fato inventado (9 foram barradas por `fora_da_fonte`). Na revisão
+manual (amostra de 30), ~27% boas, ~43% aceitáveis e ~30% fracas; os defeitos mudaram: quase não há caso
+específico nem resposta vaga, e as fracas são enunciados que entregam a resposta ou a resolvem por eliminação
+e, nas refinadas, artefatos do refinador. As 13 fracas identificadas foram retiradas
+(`geracao/remocoes_manuais.json`, 92 válidas) e viraram contraexemplos.
+
+- **Referência à fonte barrada em código** (`tipos.py`): "nos blocos", "no texto", "no documento", "segundo o
+  texto" e "único sob essas condições" (o refinador chegou a escrever "técnica descrita nos blocos").
+- **Refinador**: mudança só cosmética é recusada em código (pergunta com Jaccard ≥ 0,8 e resposta ≥ 0,6 em
+  relação à original); o exemplo de "várias respostas" agora acrescenta um sinal positivo que separa a causa
+  certa, e não uma lista de condições descartadas (o exemplo antigo ensinava a resolver por eliminação, no
+  máximo uma ou duas condições de descarte); descarte quando a única saída é pôr a pista no enunciado.
+- **Auditor v3**: `reformula_enunciado` também cobre a questão resolvida por eliminação; três novos exemplos
+  de calibração (válvula que só abre ou fecha descrita no enunciado, lista de causas descartadas, referência
+  aos blocos).
+- **Herança**: inventário e banco dinâmico do piloto v19 entram em `REUSAR` e `BANCO_INICIAL`.

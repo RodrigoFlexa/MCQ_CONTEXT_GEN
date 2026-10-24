@@ -19,7 +19,7 @@ O tipo é definido pelo que a pergunta pede e pela forma da resposta; nos causai
 - `caso_especifico`: depende de uma unidade, campo, empresa, episódio ou data específicos (ex.: "no FPSO Frade, para onde seguia o óleo recuperado?"), ou de um fato que só vale para o documento.
 - `resposta_vaga`: a resposta não compromete (ex.: "tende a se alterar", "pode variar", "potencialmente aumentar", "depende das condições").
 - `lista_generica`: a resposta é uma lista de aspectos, fatores ou cuidados, em vez de um elemento técnico decisivo.
-- `reformula_enunciado`: a resposta só repete ou resume as observações, condições ou termos dados no enunciado; ou o enunciado já informa a causa, a ação ou o achado pedido.
+- `reformula_enunciado`: a resposta só repete ou resume as observações, condições ou termos dados no enunciado; ou o enunciado já informa a causa, a ação ou o achado pedido; ou o enunciado descarta todas as alternativas ("considerando que dados, recursos e prioridades estão adequados") e a resposta sai por eliminação.
 - `varias_respostas`: há outras respostas igualmente corretas, falta condição necessária ou a pergunta é ambígua.
 - `prudencia_generica`: a resposta é bom senso, heurística ou princípio de gestão que serviria a quase qualquer situação ("avaliar o contexto", "priorizar o mais crítico", "analisar riscos", "usar modelos mais simples").
 - `trivial`: sai da própria definição dos termos ou é óbvia para qualquer pessoa da área técnica (ex.: "se o tempo de reparo aumenta, a disponibilidade cai").
@@ -36,6 +36,9 @@ Estas questões passaram numa revisão anterior e não deveriam ter passado. Use
 - "Um FPSO com CO2 e H2S passa a perder margem de integridade sem mudança de fluido, pressão ou operação. Qual a causa? → Deterioração da condição dos ativos." → `prudencia_generica`: resposta que serve a qualquer perda de margem.
 - "Água sai do tanque gravitacional com mais óleo; as análises mostram emulsão mais estável, gotas menores e mais sólidos. Qual a causa? → Perda de eficiência por emulsão fina e excesso de sólidos." → `reformula_enunciado`: a causa já está nas observações.
 - "Que base técnica define os cenários com os quais a resposta a incêndio deve ser compatível? → As análises de risco." → `prudencia_generica`: resposta genérica de gestão.
+- "Na documentação a válvula foi especificada com controle de posição, mas no campo ela só responde em 0% ou 100%. Que causa explica a dificuldade de estabilizar a transferência? → Configuração da válvula apenas como abre/fecha." → `reformula_enunciado`: o enunciado já descreve a causa.
+- "O plano macro está estável e o detalhamento offshore muda todo dia. Considerando que governança, dados, prioridades e recursos estão adequados, qual causa explica o padrão? → Interação insuficiente entre planejamento onshore e offshore." → `reformula_enunciado`: resolvida por eliminação, o enunciado descarta todas as outras causas.
+- "Qual técnica descrita nos blocos permite estender a avaliação de detritos? → …" → `caso_especifico`: depende do documento; quem responde não leu os blocos.
 
 E estas foram corretamente aprovadas:
 

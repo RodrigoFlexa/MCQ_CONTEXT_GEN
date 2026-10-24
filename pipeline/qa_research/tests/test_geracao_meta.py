@@ -226,6 +226,26 @@ class AjustesV17Tests(unittest.TestCase):
         self.assertTrue(tipos.problemas_tipo("conceito", False, "Em que equipamento ocorre o fechamento citado como "
                                              "antecedente da segregação?", "ANM."))
 
+    def test_referencia_a_fonte_barrada(self):
+        from pipeline.qa_research.tipos import problemas_tipo
+        self.assertTrue(problemas_tipo("conceito", False, "Qual técnica descrita nos blocos avalia detritos de desgaste?",
+                                       "Ferrografia."))
+        self.assertTrue(problemas_tipo("consequencia", True, "Num FPSO, a linha mudou. Qual efeito técnico, único sob "
+                                       "essas condições, aparece?", "Caminho de comunicação entre sistemas."))
+        self.assertFalse(problemas_tipo("diagnostico", True, "Durante a preparação de uma linha drenada, reaparece fluido "
+                                        "no trecho quando a bomba parte. Qual a causa?", "Válvula de bloqueio passando."))
+
+    def test_refino_cosmetico_recusado(self):
+        orig = {"pergunta": "Que informação do sistema de manutenção serve de base comum ao planejamento e à programação?",
+                "resposta": "As datas programadas das atividades."}
+        d = {"status": "ok", "motivo": "", "cenario": False,
+             "pergunta": "Qual informação do sistema de gestão de manutenção serve de base comum ao planejamento e à programação?",
+             "resposta": "Datas programadas das atividades."}
+        with self.assertRaisesRegex(ValueError, "quase igual"):
+            rodadas.validar_refino(d, "conceito", orig)
+        d2 = {**d, "pergunta": "Que registro do sistema de manutenção permite medir o atraso acumulado do backlog?"}
+        rodadas.validar_refino(d2, "conceito", orig)
+
 
 if __name__ == "__main__":
     unittest.main()

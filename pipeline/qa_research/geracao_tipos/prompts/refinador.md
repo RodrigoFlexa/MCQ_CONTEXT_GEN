@@ -27,10 +27,11 @@ Mantenha o mesmo conhecimento técnico e o mesmo tipo, e corrija o defeito apont
 - Depois: Num FPSO, as amostras na saída do tanque de água potável estão conformes, mas os pontos de consumo de um convés passaram a reprovar logo após uma manutenção que envolveu interligação temporária de redes pressurizadas. Qual causa técnica explica o desvio? → Contaminação cruzada na distribuição de água potável.
 - Por quê: o enunciado não diz mais que a outra rede era não potável; o respondente precisa ligar os sinais.
 
-**Motivo `varias_respostas`** (outras respostas seriam corretas): acrescente as condições que tornam a resposta única, sem dar a resposta.
+**Motivo `varias_respostas`** (outras respostas seriam corretas): acrescente o sinal observável que aponta para a resposta certa e não para as outras, sem dar a resposta.
 - Antes: Na malha de aquecimento de óleo, a temperatura demora a reagir à abertura da válvula e depois ultrapassa o alvo. Qual a causa provável? → Tempo morto da medição combinado com inércia térmica.
-- Depois: …com controlador corretamente sintonizado, atuador e válvula sem atraso, vazão e carga térmica estáveis e medição de temperatura na saída do trocador, qual a causa técnica mais provável desse comportamento? → Tempo morto da medição na saída do trocador combinado com elevada inércia térmica do circuito.
-- Por quê: as condições descartam as outras causas plausíveis (sintonia, válvula, carga).
+- Depois: Na malha de aquecimento de óleo, a posição da válvula acompanha o sinal do controlador sem atraso, mas a temperatura medida na saída do trocador só começa a reagir vários minutos depois e então ultrapassa o alvo. Qual causa técnica explica esse comportamento? → Tempo morto da medição na saída do trocador combinado com elevada inércia térmica do circuito.
+- Por quê: o sinal novo (válvula responde na hora, temperatura só depois) separa a causa certa das outras (válvula, sintonia) sem listar o que está descartado.
+- Não resolva por exclusão: uma lista do tipo "considerando que governança, dados, recursos e prioridades estão adequados" deixa uma única categoria sobrando e o respondente acerta por eliminação. No máximo uma ou duas condições de descarte; o que torna a resposta única deve ser um sinal positivo.
 - Cuidado: ao generalizar uma pergunta (por exemplo, ao tirar um caso específico), confira se ela não passou a admitir várias respostas; esse é o erro mais comum.
 
 **Motivo `lista_generica`** (a resposta enumera aspectos): pergunte pelo elemento decisivo.
@@ -42,11 +43,12 @@ Mantenha o mesmo conhecimento técnico e o mesmo tipo, e corrija o defeito apont
 
 - Fato inventado: "Qual cálculo verifica o impacto de uma bomba no resfriamento? → Q térmica = ΔP_elétrica × f_dissipação". A fórmula não está nos blocos. Nunca acrescente fórmula, valor, norma, equipamento ou mecanismo que os blocos não sustentem: descarte.
 - Sem princípio por trás: "Qual era a capacidade da planta de água do FPSO X?" O dado só vale para aquela unidade e não há princípio a perguntar: descarte.
-- Mudança só cosmética: reescrever com outras palavras sem remover o defeito não é correção: descarte.
+- Mudança só cosmética: reescrever com outras palavras sem remover o defeito não é correção: descarte. Exemplo: "Que informação do sistema de manutenção serve de base comum ao planejamento?" virar "Qual informação do sistema de gestão de manutenção serve de base comum ao planejamento?" com a mesma resposta.
+- Pista no enunciado: se a única forma de tornar a resposta única for pôr no enunciado o dado que a entrega (por exemplo, "considerando que a sucção está no extremo do tanque" para a resposta "alterar o trim"), descarte.
 
 # Antes de responder
 
-Confira a nova versão: (1) o defeito original sumiu? (2) quem não leu o documento chegaria a uma única resposta? (3) a resposta sai do próprio enunciado ou por bom senso? (4) tudo está nos blocos? (5) é pergunta aberta (qual, que, como, onde, quando, quanto, por que), enunciado até 90 palavras e resposta começando pelo elemento decisivo, até 30 palavras? Se alguma conferência falhar, descarte.
+Confira a nova versão: (1) o defeito original sumiu? (2) quem não leu o documento chegaria a uma única resposta? (3) a resposta sai do próprio enunciado ou por bom senso? (4) tudo está nos blocos? (5) a pergunta não menciona blocos, texto, documento nem diz que a resposta é "única"? (6) é pergunta aberta (qual, que, como, onde, quando, quanto, por que), enunciado até 90 palavras e resposta começando pelo elemento decisivo, até 30 palavras? Se alguma conferência falhar, descarte.
 
 # Saída
 

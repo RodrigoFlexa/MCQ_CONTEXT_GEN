@@ -32,6 +32,9 @@ _CASO = re.compile(r"\b(FPSO|FSO|[Pp]lataforma|[Nn]avio|[Uu]nidade|[Cc]ampo|[Bb]
 # Resposta que não se compromete.
 _VAGA = re.compile(r"\btendem? a (se )?(alterar|variar|mudar|modificar)\b|\bpotencialmente\b|\bpodem? (ou nao )?variar\b"
                    r"|\bdependem? d[aeo]s?\b")
+# Referência à fonte: quem responde não leu os blocos nem o documento.
+_FONTE = re.compile(r"\b(n[oa]s? (blocos?|texto|documento)( (acima|fornecid[oa]s?|apresentad[oa]s?))?"
+                    r"|segundo [oa] (texto|documento|blocos?|fonte)|unic[oa] sob (essas|estas) condicoes)\b")
 _SIGLA = re.compile(r"\b(sigla|acronimo|abreviatura|abreviacao)\b")
 _QUE_TIPO = re.compile(r"\b(que|qual) (tipo|tipos|classe|categoria) de\b")
 # Decisão por comparação de dois itens com atributos ("um ... ; o outro ...") tende a entregar a resposta.
@@ -67,6 +70,9 @@ def problemas_tipo(tipo: str, cenario, pergunta: str, resposta: str) -> list[str
     if _VAGA.search(_sem_acento(resposta)):
         out.append("resposta vaga ('tende a se alterar', 'potencialmente', 'depende'): comprometa-se com uma direção, "
                    "um mecanismo ou um elemento concreto")
+    if _FONTE.search(final + " " + _sem_acento(resposta)):
+        out.append("não mencione blocos, texto, documento ou fonte, nem diga que a resposta é única: quem responde "
+                   "não leu o material; escreva a pergunta como se fosse sobre a prática")
     if _CITADO.search(final):
         out.append("não pergunte o que é citado, mencionado ou listado: pergunte pelo conhecimento técnico")
     if tipo == "conceito":

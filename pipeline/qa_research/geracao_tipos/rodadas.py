@@ -37,12 +37,14 @@ from .core import (CAMPOS, EXEMPLOS, ROTULOS, _texto, carregar_banco, prompt, va
 PROMPT_JANELA = QA / "prompt_janela_qa_18.md"
 TIPOS_JANELA = tuple(t for ts in GRUPOS_V16.values() for t in ts)
 # Inventários já extraídos (relações e encadeamentos), na ordem de preferência.
-REUSAR = (QA / "relatorios" / "teste_v18_20261024T043655Z" / "geracao", QA / "relatorios" / "geracao_meta_20261024T000315Z",
+REUSAR = (QA / "relatorios" / "teste_v19_20261024T053346Z" / "geracao",
+          QA / "relatorios" / "teste_v18_20261024T043655Z" / "geracao", QA / "relatorios" / "geracao_meta_20261024T000315Z",
           QA / "relatorios" / "piloto_dificuldade_20261023T053615Z")
 # Banco dinâmico herdado: aprovadas e reprovadas de rodadas anteriores continuam valendo como exemplos.
 # O da v16 foi limpo com a reauditoria (auditor v2): as aprovadas que ele reprovou viraram contraexemplos.
 BANCO_INICIAL = (QA / "relatorios" / "geracao_meta_20261024T000315Z" / "banco_dinamico_auditor_v2.json",
-                 QA / "relatorios" / "teste_v18_20261024T043655Z" / "geracao" / "banco_dinamico.json")
+                 QA / "relatorios" / "teste_v18_20261024T043655Z" / "geracao" / "banco_dinamico.json",
+                 QA / "relatorios" / "teste_v19_20261024T053346Z" / "geracao" / "banco_dinamico.json")
 MODELOS = {"relacoes": "gpt-5-4-petrobras:low", "combinacoes": "gpt-5-4-petrobras:high",
            "geracao": "gpt-5-4-petrobras:high", "auditoria": "gpt-5-4-petrobras:high",
            "refinador": "gpt-5-mini-petrobras:medium"}
@@ -94,7 +96,17 @@ def validar_auditoria(d: dict, ids: list[str]) -> None:
             raise ValueError("motivo 'nenhum' exige referencia_valida true e atalho false (e vice-versa).")
 
 
-def validar_refino(d: dict, tipo: str) -> None:
+def _jaccard(a: str, b: str) -> float:
+    ta, tb = set(_tokens(a)), set(_tokens(b))
+    return len(ta & tb) / max(1, len(ta | tb))
+
+
+def mudanca_cosmetica(original: dict, d: dict) -> bool:
+    """Refinada quase igual à original (mesma pergunta e quase a mesma resposta): não corrige nada."""
+    return _jaccard(original["pergunta"], d["pergunta"]) >= 0.8 and _jaccard(original["resposta"], d["resposta"]) >= 0.6
+
+
+def validar_refino(d: dict, tipo: str, original: dict | None = None) -> None:
     if not isinstance(d, dict) or set(d) != {"status", "motivo", "cenario", "pergunta", "resposta"}:
         raise ValueError("Use exatamente as chaves status, motivo, cenario, pergunta e resposta.")
     if d["status"] == "descartar":
@@ -106,6 +118,9 @@ def validar_refino(d: dict, tipo: str) -> None:
     p = problemas_tipo(tipo, d["cenario"], d["pergunta"], d["resposta"])
     if p:
         raise ValueError("Corrija: " + "; ".join(p) + ". Se não for possível, use descartar.")
+    if original and mudanca_cosmetica(original, d):
+        raise ValueError("A nova versão é quase igual à original e não remove o defeito apontado: corrija de fato "
+                         "(mude o que a revisão critica) ou use descartar.")
 
 
 def _filtrado(exc: Exception) -> bool:
@@ -188,7 +203,7 @@ class GeracaoMeta:
             f.unlink()
 
     def config(self) -> None:
-        cfg = {"schema": "geracao-meta-v19", "prompt_dedup_sha256": sha(prompt("dedup")), "prompt_auditoria_sha256": sha(prompt(PROMPT_AUDITORIA)),
+        cfg = {"schema": "geracao-meta-v20", "prompt_dedup_sha256": sha(prompt("dedup")), "prompt_auditoria_sha256": sha(prompt(PROMPT_AUDITORIA)),
                "prompt_refinador_sha256": sha(prompt("refinador")), "meta": self.meta, "max_rodadas": self.max_rodadas,
                "max_passagens": self.max_passagens, "modelos": self.modelos,
                "prompt_janela_sha256": sha(PROMPT_JANELA.read_text(encoding="utf-8")),
@@ -629,7 +644,7 @@ class GeracaoMeta:
             nome = f"refino_{_nome_arq(q['uid'])}"
             try:
                 d = self.cliente("refinador").json(system, user, tag="meta_refino", max_tokens=8000, item=q["item"],
-                                                   validate=lambda d: validar_refino(d, tipo))
+                                                   validate=lambda d: validar_refino(d, tipo, q))
             except Exception as exc:  # noqa: BLE001
                 if not _filtrado(exc):
                     self._falha(nome, exc)
