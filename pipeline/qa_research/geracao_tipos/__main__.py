@@ -2,7 +2,7 @@
 
   python -m pipeline.qa_research.geracao_tipos run [opções]       reclassificação, janelas, compostas, auditoria
   python -m pipeline.qa_research.geracao_tipos relatorio <pasta>  refaz só o relatório
-  python -m pipeline.qa_research.geracao_tipos meta [opções]      v16: gera e audita até N válidas por tópico
+  python -m pipeline.qa_research.geracao_tipos meta [opções]      v17: gera e audita até N válidas por tópico
 """
 from __future__ import annotations
 
@@ -46,7 +46,10 @@ def main(argv=None) -> int:
     mt.add_argument("--meta", type=int, default=100, help="questões válidas por tópico")
     mt.add_argument("--max-rodadas", type=int, default=4)
     mt.add_argument("--max-passagens", type=int, default=3, help="vezes que a mesma janela pode ser usada")
-    mt.add_argument("--reusar", type=Path, default=None, help="rodada com relacoes/ e combinacoes/ a reaproveitar")
+    mt.add_argument("--reusar", type=Path, nargs="+", default=None,
+                    help="rodadas com relações e encadeamentos a reaproveitar (padrão: geracao_meta v16 e piloto v2)")
+    mt.add_argument("--banco-inicial", type=Path, nargs="*", default=None,
+                    help="banco_dinamico.json herdados (padrão: o da geracao_meta v16); vazio para começar do zero")
     mt.add_argument("--exemplos", type=Path, help="banco curado (padrão: geracao_tipos/exemplos.json)")
     mt.add_argument("--workers", type=int, default=8)
     mt.add_argument("--relatorio", action="store_true", help="só refaz o relatório da pasta")
@@ -54,13 +57,14 @@ def main(argv=None) -> int:
 
     if a.cmd == "meta":
         from .rodadas import MODELOS as MODELOS_META
-        from .rodadas import REUSAR, GeracaoMeta
+        from .rodadas import BANCO_INICIAL, REUSAR, GeracaoMeta
         from pipeline.qa_research.piloto_janela.core import PROGRAMA
         itens = ([r["id"] for r in read_json(PROGRAMA)["items"]] if a.itens == ["todos"] else a.itens)
         saida = a.saida or QA / "relatorios" / f"geracao_meta_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
         kw = {"exemplos": a.exemplos} if a.exemplos else {}
         g = GeracaoMeta(saida, itens, meta=a.meta, max_rodadas=a.max_rodadas, max_passagens=a.max_passagens,
-                        reusar=a.reusar or REUSAR, workers=a.workers, **kw)
+                        reusar=a.reusar or REUSAR, workers=a.workers,
+                        banco_inicial=BANCO_INICIAL if a.banco_inicial is None else a.banco_inicial, **kw)
         if a.relatorio:
             g.relatorio()
             print(f"Relatório: {saida / 'RELATORIO.md'}")

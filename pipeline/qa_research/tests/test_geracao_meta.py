@@ -45,7 +45,7 @@ class Falso:
         self.n += 1
         return {"status": "ok", "motivo": "", "tipo": "decisao", "cenario": True,
                 "pergunta": f"Num FPSO, o residual some cedo no trecho {self.n}. Que ação técnica deve ser executada?",
-                "resposta": f"Limpeza mecânica {self.n}."}
+                "resposta": f"Limpeza{self.n} mecanica{self.n}."}
 
     def janela(self, user):
         texto_f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d\]|\n</janela>)", user, re.S).group(1)
@@ -56,7 +56,7 @@ class Falso:
             p, cen = PERGUNTAS[t]
             qs.append({"id": k, "tipo": t, "cenario": cen, "conhecimento": f"r{self.n}",
                        "pergunta": p.format(k=f"{self.n} alfa{self.n} beta{self.n} gama{self.n}"),
-                       "resposta": f"Elemento {self.n} único.", "fundamentos": [{"bloco": "F", "trecho": trecho}]})
+                       "resposta": f"Elemento{self.n} especifico{self.n}.", "fundamentos": [{"bloco": "F", "trecho": trecho}]})
         return {"status": "ok", "motivo": "", "questoes": qs}
 
     def auditoria(self, user):
@@ -79,7 +79,7 @@ class MetaTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             f = Falso()
             cl = {p: f for p in rodadas.MODELOS}
-            g = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], meta=60, max_rodadas=3, reusar=None, clientes=cl,
+            g = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], meta=60, max_rodadas=3, reusar=None, banco_inicial=None, clientes=cl,
                                     workers=4, progress=lambda *a, **k: None)
             self.assertEqual(g.run(), 0)
             res = json.loads((Path(tmp) / "out" / "resultado.json").read_text(encoding="utf-8"))
@@ -97,10 +97,42 @@ class MetaTests(unittest.TestCase):
             aprov = [json.loads(l) for l in (Path(tmp) / "out" / "aprovadas.jsonl").read_text(encoding="utf-8").splitlines()]
             self.assertEqual(len(aprov), t["validas"])
             antes = f.chamadas
-            g2 = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], meta=60, max_rodadas=3, reusar=None, clientes=cl,
+            g2 = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], meta=60, max_rodadas=3, reusar=None, banco_inicial=None, clientes=cl,
                                      workers=4, progress=lambda *a, **k: None)
             self.assertEqual(g2.run(), 0)
             self.assertEqual(f.chamadas, antes)
+
+
+class AjustesV17Tests(unittest.TestCase):
+    def test_resposta_curta_igual_conta_como_duplicata(self):
+        a = rodadas._resposta_curta("A matriz de causa e efeito.")
+        b = rodadas._resposta_curta("Matriz de causa e efeito")
+        self.assertTrue(a and len(a & b) / len(a | b) >= rodadas.LIMIAR_RESPOSTA_CURTA)
+        self.assertFalse(rodadas._resposta_curta("Porque a menor perda de carga reduz o campo centrífugo e piora a "
+                                                 "separação das gotas de óleo"))
+
+    def test_filtro_de_conteudo_vira_insuficiente(self):
+        class ContentFiltered(Exception):
+            pass
+
+        class Bloqueia(Falso):
+            def composta(self, user):
+                raise ContentFiltered("filtrado")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Bloqueia()
+            cl = {p: f for p in rodadas.MODELOS}
+            g = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], meta=5, max_rodadas=1, reusar=None,
+                                    banco_inicial=None, clientes=cl, workers=2, progress=lambda *a, **k: None)
+            self.assertEqual(g.run(), 0)
+            comp = list((Path(tmp) / "out" / "topicos" / "08_02" / "compostas").glob("*.json"))
+            self.assertTrue(comp)
+            self.assertTrue(all(json.loads(p.read_text(encoding="utf-8"))["status"] == "insuficiente" for p in comp))
+
+    def test_citado_como(self):
+        from pipeline.qa_research import tipos
+        self.assertTrue(tipos.problemas_tipo("conceito", False, "Em que equipamento ocorre o fechamento citado como "
+                                             "antecedente da segregação?", "ANM."))
 
 
 if __name__ == "__main__":

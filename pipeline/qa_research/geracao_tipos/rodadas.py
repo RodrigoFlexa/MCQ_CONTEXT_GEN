@@ -1,4 +1,4 @@
-"""Geração por meta (v16): gera e audita em rodadas até cada tópico ter N questões aprovadas.
+"""Geração por meta (v17): gera e audita em rodadas até cada tópico ter N questões aprovadas.
 
 Por tópico (documento):
   1. inventário: relações por bloco e encadeamentos (reaproveitados de uma rodada anterior, quando houver);
@@ -33,12 +33,16 @@ from pipeline.qa_research.tipos import GRUPOS_V16, MAXIMO_V15, TIPOS, problemas_
 
 from .core import (CAMPOS, EXEMPLOS, ROTULOS, _texto, carregar_banco, prompt, validar_composta, validar_lote)
 
-PROMPT_JANELA = QA / "prompt_janela_qa_16.md"
+PROMPT_JANELA = QA / "prompt_janela_qa_17.md"
 TIPOS_JANELA = tuple(t for ts in GRUPOS_V16.values() for t in ts)
-REUSAR = QA / "relatorios" / "piloto_dificuldade_20261023T053615Z"
+# Inventários já extraídos (relações e encadeamentos), na ordem de preferência.
+REUSAR = (QA / "relatorios" / "geracao_meta_20261024T000315Z", QA / "relatorios" / "piloto_dificuldade_20261023T053615Z")
+# Banco dinâmico herdado: aprovadas e reprovadas de rodadas anteriores continuam valendo como exemplos.
+BANCO_INICIAL = (QA / "relatorios" / "geracao_meta_20261024T000315Z" / "banco_dinamico.json",)
 MODELOS = {"relacoes": "gpt-5-4-petrobras:low", "combinacoes": "gpt-5-4-petrobras:high",
            "geracao": "gpt-5-4-petrobras:high", "auditoria": "gpt-5-4-petrobras:high"}
 LIMIAR_DUPLICATA = 0.6
+LIMIAR_RESPOSTA_CURTA = 0.8   # respostas de até 6 termos com a mesma entidade contam como o mesmo conhecimento
 CONTRA_FIXOS = 5        # contraexemplos do banco curado em cada chamada
 CONTRA_DINAMICOS = 3    # reprovações recentes de outros tópicos
 
@@ -71,19 +75,36 @@ def validar_janela_v16(d: dict) -> None:
         raise ValueError(" ".join(problemas) + " Corrija ou descarte a questão (use parcial e explique em motivo).")
 
 
+def _filtrado(exc: Exception) -> bool:
+    """Bloqueio do filtro de conteúdo do Azure: tentar de novo não adianta."""
+    return type(exc).__name__ == "ContentFiltered"
+
+
+def _resposta_curta(resposta: str) -> frozenset:
+    t = _tokens(resposta.split(";")[0].split(",")[0])
+    return frozenset(t) if 0 < len(t) <= 6 else frozenset()
+
+
 def _h(*partes) -> int:
     return int(hashlib.sha256("|".join(map(str, partes)).encode()).hexdigest()[:12], 16)
 
 
 class GeracaoMeta:
     def __init__(self, saida: Path, itens: list[str], *, meta: int = 100, max_rodadas: int = 4,
-                 max_passagens: int = 3, modelos: dict | None = None, reusar: Path | None = REUSAR,
-                 exemplos: Path = EXEMPLOS, combinacoes_por_doc: int = 40, workers: int = 8, lote: int = 10,
+                 max_passagens: int = 3, modelos: dict | None = None, reusar=REUSAR, banco_inicial=BANCO_INICIAL,
+                 exemplos: Path = EXEMPLOS, combinacoes_por_doc: int = 25, workers: int = 8, lote: int = 10,
                  clientes: dict | None = None, progress=print):
         self.saida, self.itens, self.meta = Path(saida), list(itens), meta
         self.max_rodadas, self.max_passagens = max_rodadas, max_passagens
         self.modelos = {**MODELOS, **(modelos or {})}
-        self.reusar = Path(reusar) if reusar else None
+        self.reusar = [Path(r) for r in ((reusar,) if isinstance(reusar, (str, Path)) else (reusar or ()))]
+        self.banco_inicial = {"aprovadas": [], "reprovadas": []}
+        for arq in ((banco_inicial,) if isinstance(banco_inicial, (str, Path)) else (banco_inicial or ())):
+            if Path(arq).exists():
+                d = read_json(arq)
+                self.banco_inicial["aprovadas"] += d["aprovadas"]
+                self.banco_inicial["reprovadas"] += d["reprovadas"]
+        self.n_banco_inicial = {k: len(v) for k, v in self.banco_inicial.items()}
         self.caminho_exemplos, self.base = Path(exemplos), carregar_banco(exemplos)
         self.combinacoes_por_doc, self.workers, self.lote = combinacoes_por_doc, workers, lote
         self.clientes, self.progress = dict(clientes or {}), progress
@@ -129,12 +150,12 @@ class GeracaoMeta:
             f.unlink()
 
     def config(self) -> None:
-        cfg = {"schema": "geracao-meta-v16", "meta": self.meta, "max_rodadas": self.max_rodadas,
+        cfg = {"schema": "geracao-meta-v17", "meta": self.meta, "max_rodadas": self.max_rodadas,
                "max_passagens": self.max_passagens, "modelos": self.modelos,
                "prompt_janela_sha256": sha(PROMPT_JANELA.read_text(encoding="utf-8")),
                "prompt_composta_sha256": sha(prompt("composta")),
                "exemplos_sha256": sha(self.caminho_exemplos.read_text(encoding="utf-8")),
-               "combinacoes_por_doc": self.combinacoes_por_doc}
+               "combinacoes_por_doc": self.combinacoes_por_doc, "banco_inicial": self.n_banco_inicial}
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -153,14 +174,27 @@ class GeracaoMeta:
         return self.saida / "topicos" / item
 
     def inventario(self) -> int:
-        for item in self.itens:   # reaproveita relações e encadeamentos já extraídos
+        for item in self.itens:   # reaproveita relações e encadeamentos já extraídos (dois formatos de pasta)
             d = self._dir(item)
-            if self.reusar and not (d / "combinacoes.json").exists() \
-                    and (self.reusar / "combinacoes" / f"{item}.json").exists():
-                (d / "relacoes").mkdir(parents=True, exist_ok=True)
-                for p in (self.reusar / "relacoes" / item).glob("*.json"):
-                    shutil.copy2(p, d / "relacoes" / p.name)
-                shutil.copy2(self.reusar / "combinacoes" / f"{item}.json", d / "combinacoes.json")
+            for r in self.reusar:
+                if (d / "combinacoes.json").exists():
+                    break
+                for rel, comb in ((r / "topicos" / item / "relacoes", r / "topicos" / item / "combinacoes.json"),
+                                  (r / "relacoes" / item, r / "combinacoes" / f"{item}.json")):
+                    if comb.exists():
+                        (d / "relacoes").mkdir(parents=True, exist_ok=True)
+                        for p in rel.glob("*.json"):
+                            shutil.copy2(p, d / "relacoes" / p.name)
+                        shutil.copy2(comb, d / "combinacoes.json")
+                        break
+            # relações já extraídas sem encadeamento (ex.: encadeamento truncado) também são aproveitadas
+            for r in self.reusar:
+                origem = r / "topicos" / item / "relacoes"
+                if not (d / "combinacoes.json").exists() and origem.exists():
+                    (d / "relacoes").mkdir(parents=True, exist_ok=True)
+                    for p in origem.glob("*.json"):
+                        if not (d / "relacoes" / p.name).exists():
+                            shutil.copy2(p, d / "relacoes" / p.name)
         system = inv.prompt("relacoes")
         tarefas = [(i, b) for i in self.itens for b in self.docs[i]
                    if not (self._dir(i) / "combinacoes.json").exists()
@@ -177,8 +211,10 @@ class GeracaoMeta:
                 d = self.cliente("relacoes").json(system, user, tag="meta_relacoes", max_tokens=8000, item=item,
                                                   validate=lambda d: inv.validar_relacoes(d, b["texto"]))
             except Exception as exc:  # noqa: BLE001
-                self._falha(nome, exc)
-                return False
+                if not _filtrado(exc):
+                    self._falha(nome, exc)
+                    return False
+                d = {"status": "sem_relacoes", "motivo": "bloqueado pelo filtro de conteúdo", "relacoes": []}
             rels = [{**r, "id": f"B{b['indice']:03d}.R{k}", "bloco": b["indice"]} for k, r in enumerate(d["relacoes"], 1)]
             atomic_json(self._dir(item) / "relacoes" / f"{b['indice']:03d}.json",
                         {"item": item, "bloco": b["indice"], "status": d["status"], "motivo": d["motivo"], "relacoes": rels})
@@ -218,7 +254,8 @@ class GeracaoMeta:
     # ---------------------------------------------------------------- banco dinâmico de exemplos
     def _dinamico(self) -> dict:
         arq = self.saida / "banco_dinamico.json"
-        return read_json(arq) if arq.exists() else {"aprovadas": [], "reprovadas": []}
+        atual = read_json(arq) if arq.exists() else {"aprovadas": [], "reprovadas": []}
+        return {k: self.banco_inicial[k] + atual[k] for k in ("aprovadas", "reprovadas")}
 
     def atualizar_banco(self) -> None:
         aprovadas, reprovadas = [], []
@@ -292,8 +329,11 @@ class GeracaoMeta:
                 d = self.cliente("geracao").json(system, user, tag="meta_composta", max_tokens=12000, item=item,
                                                  validate=validar_composta)
             except Exception as exc:  # noqa: BLE001
-                self._falha(f"composta_{item}_{c['id']}", exc)
-                return False
+                if not _filtrado(exc):
+                    self._falha(f"composta_{item}_{c['id']}", exc)
+                    return False
+                d = {"status": "insuficiente", "motivo": "bloqueado pelo filtro de conteúdo", "tipo": "", "cenario": False,
+                     "pergunta": "", "resposta": ""}
             atomic_json(self._dir(item) / "compostas" / f"{c['id']}.json",
                         {"id": c["id"], "item": item, "blocos": usados, "relacoes": [r["id"] for r in rels], **d})
             self._ok(f"composta_{item}_{c['id']}")
@@ -344,8 +384,10 @@ class GeracaoMeta:
                 d = self.cliente("geracao").json(system, user, tag="meta_janela", max_tokens=16000, item=item,
                                                  validate=validar_janela_v16)
             except Exception as exc:  # noqa: BLE001
-                self._falha(nome, exc)
-                return False
+                if not _filtrado(exc):
+                    self._falha(nome, exc)
+                    return False
+                d = {"status": "sem_questoes", "motivo": "bloqueado pelo filtro de conteúdo", "questoes": []}
             textos = {r: b["texto"] for r, b in jan}
             atomic_json(self._dir(item) / "janelas" / f"r{rodada}" / f"{foco:03d}.json", {
                 "item": item, "foco": foco, "rodada": rodada, "status": d["status"], "motivo": d["motivo"],
@@ -372,7 +414,7 @@ class GeracaoMeta:
                             "rodada": j["rodada"], "foco": j["foco"], "tipo": q["tipo"], "cenario": q["cenario"],
                             "composicao": "simples", "conhecimento": q["conhecimento"], "pergunta": q["pergunta"],
                             "resposta": q["resposta"], "fundamentos": q["fundamentos"], "verificacoes": q["verificacoes"]})
-        aceitos = []
+        aceitos, curtas = [], []
         for q in out:   # ordem de geração: a primeira versão de um conhecimento fica, as quase duplicatas saem
             if q["uid"] not in aud:
                 continue
@@ -380,11 +422,15 @@ class GeracaoMeta:
                                                              "atalho", "justificativa")}
             if q["auditoria"]["referencia_valida"] and not q["auditoria"]["atalho"]:
                 t = _tokens(q["pergunta"] + " " + q["resposta"])
-                if any(t and a and len(t & a) / len(t | a) >= LIMIAR_DUPLICATA for a in aceitos):
+                c = _resposta_curta(q["resposta"])
+                if any(t and a and len(t & a) / len(t | a) >= LIMIAR_DUPLICATA for a in aceitos) or \
+                        (c and any(len(c & b) / len(c | b) >= LIMIAR_RESPOSTA_CURTA for b in curtas)):
                     q["duplicada"] = True
                 else:
                     q["aprovada"] = True
                     aceitos.append(t)
+                    if c:
+                        curtas.append(c)
         return out
 
     def validas(self, item: str) -> int:
@@ -480,7 +526,8 @@ class GeracaoMeta:
         for r in sorted({q["rodada"] for q in todas}):
             res["por_rodada"][r] = taxa([q for q in todas if q["rodada"] == r])
         din = self._dinamico()
-        res["banco_dinamico"] = {"aprovadas": len(din["aprovadas"]), "reprovadas": len(din["reprovadas"])}
+        res["banco_dinamico"] = {"aprovadas": len(din["aprovadas"]), "reprovadas": len(din["reprovadas"]),
+                                 "herdadas": self.n_banco_inicial}
         res["falhas_pendentes"] = sorted(p.stem for p in (self.saida / "falhas").glob("*.json"))
         atomic_json(self.saida / "resultado.json", res)
         self._proposta(aprovadas, todas)
@@ -509,9 +556,12 @@ class GeracaoMeta:
                      "exemplos": exemplos, "contraexemplos": contra})
 
     def _markdown(self, res: dict, aprovadas: list[dict]) -> None:
-        l = [f"# Geração por meta (v16): {res['meta']} questões válidas por tópico", "",
-             "Janela com o prompt v16 (sem decisão), compostas a partir dos encadeamentos, auditoria como filtro e "
-             "banco dinâmico de exemplos e contraexemplos.", "",
+        total = sum(t["validas"] for t in res["topicos"].values())
+        l = [f"# Geração por meta (v17): {res['meta']} questões válidas por tópico", "",
+             "Janela com o prompt v17 (sem decisão), compostas a partir dos encadeamentos, auditoria como filtro e "
+             "banco dinâmico de exemplos e contraexemplos (herdado das rodadas anteriores).", "",
+             f"**Total: {total} questões válidas em {len(res['topicos'])} tópicos; "
+             f"{sum(t['atingiu_meta'] for t in res['topicos'].values())} atingiram a meta.**", "",
              "| Tópico | Tema | blocos | encadeamentos | passagens de janela | rodadas | válidas | meta | janela aprov. | compostas aprov. |",
              "|---|---|---|---|---|---|---|---|---|---|"]
         for i, t in res["topicos"].items():

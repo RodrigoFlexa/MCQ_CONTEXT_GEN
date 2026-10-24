@@ -24,7 +24,8 @@ TETO_CONCEITO = 35
 _LISTA_ABERTA = re.compile(r"\b(que|quais) (aspectos|fatores|elementos|cuidados|itens|pontos|informacoes|"
                            r"condicoes|requisitos|caracteristicas|variaveis)\b|\balem d[aeo]s?\b")
 # Perguntas sobre o que o texto disse ("é citado", "foi mencionado") dependem do documento.
-_CITADO = re.compile(r"\b(e|foi|sao|foram|esta|estao|aparece|aparecem) (citad|mencionad|apontad|listad)")
+_CITADO = re.compile(r"\b(e|foi|sao|foram|esta|estao|aparece|aparecem) (citad|mencionad|apontad|listad)"
+                     r"|\b(citad|mencionad|apontad|listad)[oa]s? como\b")
 _SIGLA = re.compile(r"\b(sigla|acronimo|abreviatura|abreviacao)\b")
 _QUE_TIPO = re.compile(r"\b(que|qual) (tipo|tipos|classe|categoria) de\b")
 # Decisão por comparação de dois itens com atributos ("um ... ; o outro ...") tende a entregar a resposta.
