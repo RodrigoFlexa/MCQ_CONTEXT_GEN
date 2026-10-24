@@ -2,7 +2,8 @@
 
   python -m pipeline.qa_research.geracao_tipos run [opções]       reclassificação, janelas, compostas, auditoria
   python -m pipeline.qa_research.geracao_tipos relatorio <pasta>  refaz só o relatório
-  python -m pipeline.qa_research.geracao_tipos meta [opções]      v17: gera e audita até N válidas por tópico
+  python -m pipeline.qa_research.geracao_tipos meta [opções]      v18: geração completa (ou com meta) com refinador
+  python -m pipeline.qa_research.geracao_tipos reauditar ...      aprovadas de uma rodada anterior x auditor v2
 """
 from __future__ import annotations
 
@@ -55,7 +56,18 @@ def main(argv=None) -> int:
     mt.add_argument("--exemplos", type=Path, help="banco curado (padrão: geracao_tipos/exemplos.json)")
     mt.add_argument("--workers", type=int, default=8)
     mt.add_argument("--relatorio", action="store_true", help="só refaz o relatório da pasta")
+    ra = sub.add_parser("reauditar", help="passa as aprovadas de uma rodada anterior pelo auditor v2")
+    ra.add_argument("--origem", type=Path, default=QA / "relatorios" / "geracao_meta_20261024T000315Z")
+    ra.add_argument("--saida", type=Path, required=True)
+    ra.add_argument("--workers", type=int, default=8)
     a = ap.parse_args(argv)
+
+    if a.cmd == "reauditar":
+        from .rodadas import reauditar
+        res = reauditar(a.origem, a.saida, workers=a.workers)
+        print(f"Reauditoria: {res['aprovadas_agora']}/{res['aprovadas_antes']} continuam aprovadas; "
+              f"removidas manualmente reprovadas agora: {res['removidas_reprovadas_agora']}/{res['removidas_manualmente']}")
+        return 2 if res["falhas"] else 0
 
     if a.cmd == "meta":
         from .rodadas import MODELOS as MODELOS_META

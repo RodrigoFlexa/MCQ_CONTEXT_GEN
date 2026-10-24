@@ -20,7 +20,7 @@ class Falso:
         self.chamadas += 1
         self.usuarios.append(user)
         self.tags.append(tag)
-        d = getattr(self, tag.replace("meta_", ""))(user)
+        d = getattr(self, tag.replace("meta_", "").replace("reauditoria", "auditoria"))(user)
         if validate:
             validate(d)
         return d
@@ -63,7 +63,17 @@ class Falso:
         itens = json.loads(user)
         return {"avaliacoes": [{"id": i["id"], "tipo_confere": True, "tipo_sugerido": i["tipo_declarado"],
                                 "referencia_valida": True, "atalho": i["id"].endswith("2"),
+                                "motivo": "reformula_enunciado" if i["id"].endswith("2") else "nenhum",
                                 "justificativa": "j"} for i in itens]}
+
+    def refino(self, user):
+        import re as _re
+        tipo = _re.search(r"Tipo: (\w+)", user).group(1)
+        self.n += 1
+        p, cen = PERGUNTAS[tipo]
+        return {"status": "ok", "motivo": "", "cenario": cen,
+                "pergunta": p.format(k=f"{self.n} refinada{self.n} delta{self.n}"),
+                "resposta": f"Refinada{self.n} especifica{self.n}."}
 
 
 class MetaTests(unittest.TestCase):
@@ -117,6 +127,45 @@ class OndasTests(unittest.TestCase):
             janelas = [u for u, tag in zip(f.usuarios, f.tags) if tag == "meta_janela"]
             self.assertNotIn("aprovada pelo auditor", janelas[0])               # 1ª onda: só o banco curado
             self.assertIn("aprovada pelo auditor", janelas[-1])                 # 2ª onda: aprendeu com a 1ª
+
+
+class RefinadorTests(unittest.TestCase):
+    def test_refinador_recupera_e_vira_como_corrigir(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Falso()
+            cl = {p: f for p in rodadas.MODELOS}
+            g = rodadas.GeracaoMeta(Path(tmp) / "out", ["08_02"], reusar=None, banco_inicial=None, clientes=cl,
+                                    workers=2, progress=lambda *a, **k: None)
+            self.assertEqual(g.run(), 0)
+            res = json.loads((Path(tmp) / "out" / "resultado.json").read_text(encoding="utf-8"))
+            self.assertGreater(res["refinador"]["tentadas"], 0)
+            self.assertGreater(res["refinador"]["aprovadas_apos_refino"], 0)
+            banco = json.loads((Path(tmp) / "out" / "banco_dinamico.json").read_text(encoding="utf-8"))
+            self.assertTrue(any(c.get("como_corrigir") for c in banco["reprovadas"]))
+            # refinadas não são refinadas de novo
+            self.assertEqual(f.tags.count("meta_refino"), res["refinador"]["tentadas"])
+
+    def test_auditoria_exige_motivo_coerente(self):
+        with self.assertRaises(ValueError):
+            rodadas.validar_auditoria({"avaliacoes": [{"id": "Q1", "tipo_confere": True, "tipo_sugerido": "conceito",
+                                                       "motivo": "nenhum", "referencia_valida": False, "atalho": False}]},
+                                      ["Q1"])
+
+
+class ReauditoriaTests(unittest.TestCase):
+    def test_reauditar_aprovadas_e_removidas(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            orig = Path(tmp) / "orig"
+            orig.mkdir()
+            qs = [{"uid": f"x:{k}", "item": "01_01", "tipo": "conceito", "pergunta": f"Qual termo {k}?", "resposta": "r"}
+                  for k in range(1, 13)]
+            (orig / "aprovadas.jsonl").write_text("\n".join(json.dumps(q) for q in qs[:10]), encoding="utf-8")
+            (orig / "remocoes_manuais.json").write_text(json.dumps({"removidas": [{**q, "motivo": "m"} for q in qs[10:]]}),
+                                                         encoding="utf-8")
+            res = rodadas.reauditar(orig, Path(tmp) / "re", cliente=Falso(), workers=2, progress=lambda *a, **k: None)
+            self.assertEqual(res["aprovadas_antes"], 10)
+            self.assertEqual(res["removidas_manualmente"], 2)
+            self.assertTrue((Path(tmp) / "re" / "REAUDITORIA.md").exists())
 
 
 class AjustesV17Tests(unittest.TestCase):

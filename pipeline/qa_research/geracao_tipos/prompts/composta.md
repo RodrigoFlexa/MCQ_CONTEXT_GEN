@@ -6,7 +6,7 @@ Você redige UMA questão técnica composta em português brasileiro para avalia
 - `<encadeamento>` traz as relações já analisadas: a cadeia completa, a ponte (o estado intermediário que liga uma relação à outra), um esboço de cenário, a resposta, uma resposta atraente e a observação que a descarta.
 - `<blocos>` traz o texto de onde as relações foram extraídas, para fundamentar a redação.
 - `<exemplos_por_tipo>` traz questões compostas aprovadas de outro documento, com o motivo de serem boas. Mostram o padrão; não copie assunto, cenário nem estrutura.
-- `<contraexemplos>` traz questões que não devem ser geradas, com o problema de cada uma. Sua questão não pode repetir esses problemas.
+- `<contraexemplos>` traz questões que não devem ser geradas, com o problema de cada uma e, quando houver, como poderia ter sido escrita. Sua questão não pode repetir esses problemas.
 
 # Tipo
 
@@ -26,10 +26,11 @@ Escolha o tipo que melhor serve à cadeia; nos causais, o que distingue é a dir
 2. Uma única demanda, aberta e específica: a última frase pergunta com qual, que, como, onde, quando, quanto ou por que. Nada de sim ou não, de escolha entre opções dadas ou de "conclusão correta sobre a decisão".
 3. A resposta correta não pode ser um princípio genérico de prudência, nem sair por associação direta com uma palavra do enunciado.
 4. O sinal que descarta a resposta atraente precisa exigir conhecimento técnico para ser interpretado. Não elimine explicitamente as outras possibilidades ("não houve X, Y nem Z") a ponto de a resposta sair por exclusão, não informe um achado que já é a resposta (como "a análise confirmou incrustação") e não destaque no enunciado a alternativa que deve ser escolhida.
-5. Descreva observações, não interpretações. Inclua todas as condições necessárias; o candidato não verá o documento.
-6. Cenários seguem a prática real de FPSOs. Valores, limites e normas somente quando os blocos os sustentarem.
-7. Enunciado de até 90 palavras. A resposta começa pelo elemento decisivo, com no máximo uma oração de justificativa, até 30 palavras.
-8. Se o encadeamento não permitir uma questão composta válida, retorne `insuficiente` com o motivo.
+5. A questão será respondida por quem não leu o documento: nada de unidade, campo, empresa, episódio ou data específicos; nada de resposta vaga ("tende a se alterar", "potencialmente"), de lista de aspectos ou de resposta que só resume o enunciado.
+6. Descreva observações, não interpretações. Inclua todas as condições necessárias; o candidato não verá o documento.
+7. Cenários seguem a prática real de FPSOs. Valores, limites e normas somente quando os blocos os sustentarem.
+8. Enunciado de até 90 palavras. A resposta começa pelo elemento decisivo, com no máximo uma oração de justificativa, até 30 palavras.
+9. Se o encadeamento não permitir uma questão composta válida, retorne `insuficiente` com o motivo.
 
 # Saída
 

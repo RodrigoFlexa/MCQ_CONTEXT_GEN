@@ -26,6 +26,12 @@ _LISTA_ABERTA = re.compile(r"\b(que|quais) (aspectos|fatores|elementos|cuidados|
 # Perguntas sobre o que o texto disse ("é citado", "foi mencionado") dependem do documento.
 _CITADO = re.compile(r"\b(e|foi|sao|foram|esta|estao|aparece|aparecem) (citad|mencionad|apontad|listad)"
                      r"|\b(citad|mencionad|apontad|listad)[oa]s? como\b")
+# Caso específico: unidade, campo ou bacia com nome próprio (ex.: "FPSO Frade", "P-50", "Bacia de Campos").
+_CASO = re.compile(r"\b(FPSO|FSO|[Pp]lataforma|[Nn]avio|[Uu]nidade|[Cc]ampo|[Bb]acia)\s+(?:de\s+|do\s+|da\s+)?"
+                   r"[A-ZÁÉÍÓÚÂÊÔÃÕ][a-zà-ú]+|\bP-\d{2,3}\b|\bem (19|20)\d{2}\b")
+# Resposta que não se compromete.
+_VAGA = re.compile(r"\btendem? a (se )?(alterar|variar|mudar|modificar)\b|\bpotencialmente\b|\bpodem? (ou nao )?variar\b"
+                   r"|\bdependem? d[aeo]s?\b")
 _SIGLA = re.compile(r"\b(sigla|acronimo|abreviatura|abreviacao)\b")
 _QUE_TIPO = re.compile(r"\b(que|qual) (tipo|tipos|classe|categoria) de\b")
 # Decisão por comparação de dois itens com atributos ("um ... ; o outro ...") tende a entregar a resposta.
@@ -54,6 +60,13 @@ def problemas_tipo(tipo: str, cenario, pergunta: str, resposta: str) -> list[str
     if n > TETO_PERGUNTA:
         out.append(f"o enunciado tem mais de {TETO_PERGUNTA} palavras")
     final = _sem_acento(pergunta)
+    caso = _CASO.search(pergunta)
+    if caso:
+        out.append(f"caso específico ('{caso.group(0)}'): quem responde não leu o documento; pergunte pelo princípio "
+                   "técnico, válido em qualquer unidade")
+    if _VAGA.search(_sem_acento(resposta)):
+        out.append("resposta vaga ('tende a se alterar', 'potencialmente', 'depende'): comprometa-se com uma direção, "
+                   "um mecanismo ou um elemento concreto")
     if _CITADO.search(final):
         out.append("não pergunte o que é citado, mencionado ou listado: pergunte pelo conhecimento técnico")
     if tipo == "conceito":

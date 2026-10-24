@@ -95,3 +95,26 @@ compostas aprovadas; decisão na janela ainda em 25% (nas compostas, 55%); o mod
 - O sinal que descarta a alternativa não pode resolver a questão por exclusão (janela e compostas);
   encadeamentos limitados a 25 por documento; filtro de conteúdo do Azure vira insuficiente;
   deduplicação também por resposta curta; "citado/mencionado como" barrado.
+
+## Versão 18 (24/10/2026): prompt, auditor e refinador mais rigorosos
+
+Motivo: numa amostra de 30 aprovadas da v16, só ~27% eram boas e ~37% eram fracas (caso específico como
+"no FPSO Frade", respostas vagas, listas genéricas, respostas que só resumem o enunciado). As 13 fracas
+identificadas foram retiradas das aprovadas da v16 (`remocoes_manuais.json`) e viraram contraexemplos.
+
+- **Prompt v18** (`prompt_janela_qa_18.md`) e compostas: seção "Defeitos que reprovam a questão" (caso
+  específico, resposta vaga, lista genérica, reformula o enunciado, várias respostas, prudência genérica,
+  trivial, sim ou não disfarçado) e autoverificação: um profissional que não leu o documento responderia
+  com segurança e chegaria à mesma resposta? a resposta sai por bom senso? só repete o enunciado?
+- **Código** (`tipos.py`): barra unidade, campo ou bacia com nome próprio ("FPSO Frade", "P-50",
+  "Bacia de Campos") e respostas vagas ("tende a se alterar", "potencialmente", "depende de").
+- **Auditor v2** (`prompts/auditoria_v2.md`): mais exigente ("na dúvida, reprove") e com motivo em
+  categoria fixa; só `motivo = nenhum` é aprovado.
+- **Refinador** (`prompts/refinador.md`, gpt-5-mini): reescreve uma vez as reprovadas por motivo
+  recuperável (caso específico, resposta vaga, lista genérica, reformula o enunciado, várias respostas),
+  usando o texto do bloco; a versão refinada passa pelo código e pelo auditor de novo.
+- **Contraexemplos com "como poderia ser"**: o banco curado tem 4 contraexemplos com a versão corrigida
+  (incluindo o do FPSO Frade), sempre presentes no prompt; no banco dinâmico, quando a versão refinada é
+  aprovada, ela vira o "como poderia ser" da original.
+- **Teste** (`rodar_teste_v18.sh`): reauditoria das aprovadas da v16 com o auditor v2 e geração completa
+  em 2 documentos novos (05_01 e 06_01), esperando ~100 questões válidas.
