@@ -1,12 +1,12 @@
 # Experimento de refino: refinador fraco x forte
 
-Origem: `/home/gbs2/MCQ_CONTEXT_GEN/pipeline/qa_research/relatorios/teste_v19_20261024T053346Z/geracao` (92 aprovadas). Candidatas: 153 originais reprovadas pelo auditor, por motivo: {'reformula_enunciado': 16, 'varias_respostas': 58, 'trivial': 41, 'tecnicamente_errada': 2, 'resposta_vaga': 10, 'lista_generica': 5, 'caso_especifico': 9, 'prudencia_generica': 12}.
-Prompt `refinador_v3.md` (todos os motivos, histórico das versões reprovadas, exemplos aprovados do mesmo tipo); nova auditoria com o auditor v3 e o texto-fonte; ganho líquido depois da deduplicação por sentido contra as aprovadas da origem.
+Origem: `pipeline/qa_research/relatorios/teste_v19_20261024T053346Z/geracao` (92 aprovadas). Candidatas: 153 originais reprovadas pelo auditor, por motivo: {'reformula_enunciado': 16, 'varias_respostas': 58, 'trivial': 41, 'tecnicamente_errada': 2, 'resposta_vaga': 10, 'lista_generica': 5, 'caso_especifico': 9, 'prudencia_generica': 12}.
+Prompt `refinador_v3.md` (todos os motivos, histórico das versões reprovadas, exemplos aprovados do mesmo tipo); nova auditoria com o auditor v3 e o texto-fonte; ganho líquido depois da deduplicação por sentido contra as aprovadas da origem: conta só a recuperada com conhecimento que as aprovadas não cobrem (uma por grupo de recuperadas equivalentes). Braços `_cob` recebem as aprovadas sobre os mesmos blocos.
 
 | Braço | modelo | recuperadas | ganho líquido | por rodada (aprov./reescritas/tentadas, descartadas) |
 |---|---|---|---|---|
-| mini | gpt-5-mini-petrobras:medium | 85/153 | **37** (92 → 129) | r1: 50/153/153, desc. 0; r2: 35/103/103, desc. 0 |
-| forte | gpt-5-4-petrobras:high | 122/153 | **22** (92 → 114) | r1: 86/153/153, desc. 0; r2: 36/67/67, desc. 0 |
+| mini | gpt-5-mini-petrobras:medium | 85/153 | **40** (92 → 132) | r1: 50/153/153, desc. 0; r2: 35/103/103, desc. 0 |
+| forte | gpt-5-4-petrobras:high | 122/153 | **24** (92 → 116) | r1: 86/153/153, desc. 0; r2: 36/67/67, desc. 0 |
 
 Referência: na rodada de origem, o refinador antigo (gpt-5-mini, prompt v19, só motivos recuperáveis) teve 25 aprovadas de 98 reescritas, já descontadas a deduplicação e a revisão manual.
 
@@ -14,7 +14,8 @@ Referência: na rodada de origem, o refinador antigo (gpt-5-mini, prompt v19, s�
 
 - Recuperadas por motivo original: {'reformula_enunciado': '8/16', 'varias_respostas': '36/58', 'trivial': '20/41', 'tecnicamente_errada': '2/2', 'resposta_vaga': '4/10', 'lista_generica': '1/5', 'caso_especifico': '8/9', 'prudencia_generica': '6/12'}
 - Por origem: {'composta': 16, 'janela': 69}; tipo mudou em 22
-- Ganho líquido por tópico: {'03_03': 19, '07_03': 18}
+- Ganho líquido por tópico: {'03_03': 20, '07_03': 20}
+- Conhecimento novo por rodada: {2: 17, 1: 23}; repetem conhecimento já aprovado: {2: 18, 1: 27}
 - Rodada 1, motivos do auditor nas reescritas: {'trivial': 21, 'nenhum': 50, 'varias_respostas': 31, 'reformula_enunciado': 13, 'lista_generica': 9, 'fora_da_fonte': 17, 'caso_especifico': 2, 'tecnicamente_errada': 4, 'prudencia_generica': 5, 'sim_nao_disfarcado': 1}
 - Rodada 2, motivos do auditor nas reescritas: {'nenhum': 35, 'fora_da_fonte': 18, 'reformula_enunciado': 10, 'varias_respostas': 25, 'lista_generica': 3, 'caso_especifico': 1, 'trivial': 5, 'tecnicamente_errada': 4, 'prudencia_generica': 2}
 
@@ -84,7 +85,8 @@ Referência: na rodada de origem, o refinador antigo (gpt-5-mini, prompt v19, s�
 
 - Recuperadas por motivo original: {'reformula_enunciado': '13/16', 'varias_respostas': '46/58', 'trivial': '35/41', 'tecnicamente_errada': '1/2', 'resposta_vaga': '9/10', 'lista_generica': '3/5', 'caso_especifico': '7/9', 'prudencia_generica': '8/12'}
 - Por origem: {'composta': 18, 'janela': 104}; tipo mudou em 70
-- Ganho líquido por tópico: {'03_03': 11, '07_03': 11}
+- Ganho líquido por tópico: {'03_03': 11, '07_03': 13}
+- Conhecimento novo por rodada: {1: 16, 2: 8}; repetem conhecimento já aprovado: {1: 70, 2: 28}
 - Rodada 1, motivos do auditor nas reescritas: {'nenhum': 86, 'varias_respostas': 26, 'prudencia_generica': 3, 'trivial': 17, 'reformula_enunciado': 19, 'caso_especifico': 2}
 - Rodada 2, motivos do auditor nas reescritas: {'reformula_enunciado': 8, 'trivial': 11, 'nenhum': 36, 'varias_respostas': 7, 'prudencia_generica': 4, 'lista_generica': 1}
 

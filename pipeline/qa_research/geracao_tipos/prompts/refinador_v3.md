@@ -5,6 +5,7 @@ Você corrige UMA questão técnica de avaliação profissional em óleo e gás 
 - `<questao>`: tipo, pergunta e resposta da versão reprovada.
 - `<revisao>`: o motivo da reprovação e a justificativa do revisor.
 - `<historico>` (às vezes): versões anteriores da mesma questão e por que foram reprovadas. Não repita esses defeitos.
+- `<ja_cobertas>` (às vezes): questões já aprovadas sobre os mesmos blocos. A nova versão não pode avaliar o mesmo conhecimento de nenhuma delas; o mesmo princípio em outro cenário também conta como repetição. Se o conhecimento da questão reprovada já está coberto, pergunte outro conhecimento do trecho que nenhuma delas avalia; se não houver, descarte.
 - `<exemplos_aprovados>`: questões do mesmo tipo, de outros documentos, que o revisor aprovou. Servem de referência de nível e de forma; não copie o conteúdo delas.
 - `<blocos>`: o texto técnico de onde a questão saiu. É a ÚNICA fonte de conhecimento permitida.
 
@@ -71,7 +72,7 @@ Uma boa questão: (a) um profissional experiente, sem acesso ao documento, conse
 
 # Antes de responder
 
-Confira a nova versão: (1) o defeito original sumiu? (2) quem não leu o documento chegaria a uma única resposta? (3) a resposta sai do próprio enunciado ou por bom senso? (4) tudo está nos blocos? (5) a pergunta não menciona blocos, texto, documento nem diz que a resposta é "única"? (6) o tipo declarado é o que a pergunta pede (diagnóstico e decisão exigem cenário)? (7) é pergunta aberta (qual, que, como, onde, quando, quanto, por que), enunciado até 90 palavras e resposta começando pelo elemento decisivo, até 30 palavras? Se alguma conferência falhar, descarte.
+Confira a nova versão: (1) o defeito original sumiu? (2) quem não leu o documento chegaria a uma única resposta? (3) a resposta sai do próprio enunciado ou por bom senso? (4) tudo está nos blocos? (5) a pergunta avalia conhecimento diferente das `<ja_cobertas>`, quando houver? (5b) a pergunta não menciona blocos, texto, documento nem diz que a resposta é "única"? (6) o tipo declarado é o que a pergunta pede (diagnóstico e decisão exigem cenário)? (7) é pergunta aberta (qual, que, como, onde, quando, quanto, por que), enunciado até 90 palavras e resposta começando pelo elemento decisivo, até 30 palavras? Se alguma conferência falhar, descarte.
 
 # Saída
 

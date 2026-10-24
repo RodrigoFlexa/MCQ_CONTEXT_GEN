@@ -6,7 +6,10 @@
 #     forte = gpt-5-4-petrobras:high
 #   Cada versão volta ao auditor v3 (com o texto-fonte); as reprovadas de novo têm mais uma tentativa.
 #   No fim, deduplicação por sentido contra as 92 aprovadas do piloto, para medir o ganho líquido.
-# Uso: bash pipeline/qa_research/rodar_teste_refino.sh [--saida <pasta>] [--bracos forte] [--rodadas 2]
+#   forte_cob = forte recebendo as questões já aprovadas sobre os mesmos blocos (<ja_cobertas>), para que a
+#   versão recuperada avalie conhecimento novo em vez de repetir o de uma aprovada
+# Uso: bash pipeline/qa_research/rodar_teste_refino.sh [--saida <pasta>] [--bracos forte forte_cob] [--rodadas 2]
+#   2ª etapa (24/10): --saida pipeline/qa_research/relatorios/teste_refino_20261024T161142Z --bracos mini forte forte_cob
 set -uo pipefail
 export PYTHONUTF8=1
 qa_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"

@@ -178,3 +178,21 @@ recuperáveis) passam por dois braços com o mesmo prompt (`prompts/refinador_v3
 Referência: o refinador do piloto (mini, prompt v19, só motivos recuperáveis) recuperou 25 depois da revisão
 manual. Se o braço forte tiver ganho líquido claramente maior e a revisão manual confirmar a qualidade, ele vira o
 refinador padrão da geração final.
+
+### Resultado da 1ª etapa (`relatorios/teste_refino_20261024T161142Z`)
+
+| Braço | recuperadas (auditor) | conhecimento novo (ganho líquido) | repetem uma aprovada | fracas na amostra manual de 16 novas |
+|---|---|---|---|---|
+| mini | 85/153 | 40 | 45 | ~9 (longas, confusas, reformulam o enunciado) |
+| forte | 122/153 | 24 | 98 | ~5 |
+
+- O forte recupera mais e melhor (nenhuma versão barrada por `fora_da_fonte`, contra 35 no mini), mas dois
+  terços das recuperadas repetem o conhecimento de uma questão já aprovada: as janelas se sobrepõem e a questão
+  reprovada costuma ser "irmã" de uma aprovada. Recuperar a forma não cria conhecimento novo.
+- O mini muda mais a pergunta (mais conhecimento novo), mas metade das novas é fraca; o auditor aprova
+  refinadas longas e confusas com facilidade.
+- Nenhum braço descartou nada, apesar do prompt.
+
+**2ª etapa: braço `forte_cob`.** O refinador forte recebe em `<ja_cobertas>` as aprovadas que tocam os mesmos
+blocos (média de 8 por questão) e deve avaliar conhecimento que nenhuma delas avalia, ou descartar. O ganho
+líquido passou a contar só conhecimento novo (uma por grupo de recuperadas equivalentes).

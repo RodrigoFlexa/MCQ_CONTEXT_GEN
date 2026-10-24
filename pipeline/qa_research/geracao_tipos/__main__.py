@@ -64,7 +64,8 @@ def main(argv=None) -> int:
     rf = sub.add_parser("refino", help="experimento: refinadores (fraco e forte) recuperando as reprovadas de uma rodada")
     rf.add_argument("--origem", type=Path, default=QA / "relatorios" / "teste_v19_20261024T053346Z" / "geracao")
     rf.add_argument("--saida", type=Path, required=True)
-    rf.add_argument("--bracos", nargs="+", default=["mini", "forte"], choices=["mini", "forte"])
+    rf.add_argument("--bracos", nargs="+", default=["mini", "forte"], choices=["mini", "forte", "mini_cob", "forte_cob"],
+                    help="_cob: o refinador recebe as questões já aprovadas sobre os mesmos blocos")
     rf.add_argument("--modelo-mini", default="gpt-5-mini-petrobras:medium")
     rf.add_argument("--modelo-forte", default="gpt-5-4-petrobras:high")
     rf.add_argument("--rodadas", type=int, default=2, help="tentativas de refino por questão (com o histórico)")
@@ -74,7 +75,7 @@ def main(argv=None) -> int:
 
     if a.cmd == "refino":
         from .refino_forte import ExperimentoRefino
-        modelos = {"mini": a.modelo_mini, "forte": a.modelo_forte}
+        modelos = {"mini": a.modelo_mini, "forte": a.modelo_forte, "mini_cob": a.modelo_mini, "forte_cob": a.modelo_forte}
         e = ExperimentoRefino(a.saida, origem=a.origem, bracos={b: modelos[b] for b in a.bracos}, rodadas=a.rodadas,
                               workers=a.workers)
         if a.relatorio:

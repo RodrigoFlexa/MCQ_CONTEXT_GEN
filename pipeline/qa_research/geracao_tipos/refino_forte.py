@@ -23,7 +23,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from pipeline.qa_research.piloto_janela.core import QA, ROOT, atomic_json, read_json
+from pipeline.qa_research.piloto_janela.core import QA, ROOT, atomic_json, janela, read_json
 from pipeline.qa_research.tipos import TIPOS, problemas_tipo
 
 from .core import EXEMPLOS, _texto, carregar_banco, prompt
@@ -32,6 +32,8 @@ from .rodadas import (BANCO_INICIAL, MODELOS, PROMPT_AUDITORIA, GeracaoMeta, _fi
 
 ORIGEM = QA / "relatorios" / "teste_v19_20261024T053346Z" / "geracao"
 BRACOS = {"mini": "gpt-5-mini-petrobras:medium", "forte": "gpt-5-4-petrobras:high"}
+# Braços com sufixo "_cob" recebem as questões já aprovadas sobre os mesmos blocos (<ja_cobertas>).
+MODELOS_BRACO = {"mini": BRACOS["mini"], "forte": BRACOS["forte"], "mini_cob": BRACOS["mini"], "forte_cob": BRACOS["forte"]}
 CHAVES = {"status", "motivo", "tipo", "cenario", "pergunta", "resposta"}
 
 
@@ -129,6 +131,24 @@ class ExperimentoRefino:
         escolhidos = sorted(pool, key=lambda e: _h("ref", q["uid"], e.get("id", e["pergunta"])))[:2]
         return "\n\n".join(f"Pergunta: {e['pergunta']}\nResposta: {e['resposta']}" for e in escolhidos)
 
+    def blocos_de(self, q: dict) -> set:
+        if q.get("foco") is not None:
+            return {b["indice"] for _, b in janela(self.g.docs[q["item"]], q["foco"])}
+        return set(q.get("blocos") or [])
+
+    def cobertas(self, braco: str, rodada: int, q: dict) -> list[dict]:
+        """Aprovadas que tocam os mesmos blocos: as da origem e as recuperadas pelo braço nas rodadas anteriores."""
+        alvo = self.blocos_de(q)
+        cands = list(self.aprovadas_origem(q["item"]))
+        orig = {c["uid"]: c for c in self.candidatas()}
+        for r in range(1, rodada):
+            aud = self.auditorias(braco, r)
+            for uid, a in aud.items():
+                v = self.versao(braco, r, uid)
+                if a["motivo"] == "nenhum" and v and uid != q["uid"] and orig.get(uid, {}).get("item") == q["item"]:
+                    cands.append({**orig[uid], "pergunta": v["pergunta"], "resposta": v["resposta"]})
+        return [c for c in cands if self.blocos_de(c) & alvo]
+
     def _estado(self, braco: str, rodada: int, q: dict) -> tuple[dict, dict, list]:
         """Versão a refinar nesta rodada, a revisão dela e o histórico das anteriores."""
         atual = {"tipo": q["tipo"] if q["tipo"] in TIPOS else q["auditoria"]["tipo_sugerido"],
@@ -169,6 +189,10 @@ class ExperimentoRefino:
                 partes.append("<historico>\n" + "\n\n".join(
                     f"Versão {k}: {v['pergunta']} → {v['resposta']}\nReprovada por {a['motivo']}: {a['justificativa']}"
                     for k, (v, a) in enumerate(historico, 1)) + "\n</historico>")
+            if braco.endswith("_cob"):
+                cob = self.cobertas(braco, rodada, q)
+                partes.append("<ja_cobertas>\n" + ("\n".join(f"- {c['pergunta']} → {c['resposta']}" for c in cob)
+                                                     or "(nenhuma)") + "\n</ja_cobertas>")
             partes += [f"<exemplos_aprovados>\n{self.exemplos_para(q, atual['tipo'])}\n</exemplos_aprovados>",
                        f"<blocos>\n{self.g._blocos_da_questao(q)}\n</blocos>"]
             nome = f"refino_{braco}_r{rodada}_{_nome_arq(q['uid'])}"
@@ -302,7 +326,11 @@ class ExperimentoRefino:
         por_motivo = Counter(q["auditoria"]["motivo"] for q in cands)
         base = {i: len(self.aprovadas_origem(i)) for i in self.itens}
         ref = [q for i in self.itens for q in self.questoes[i] if q["origem"] == "refinada"]
-        res = {"origem": str(self.origem), "candidatas": len(cands), "candidatas_por_motivo": dict(por_motivo),
+        try:
+            origem = str(self.origem.resolve().relative_to(ROOT.resolve()))
+        except ValueError:
+            origem = str(self.origem)
+        res = {"origem": origem, "candidatas": len(cands), "candidatas_por_motivo": dict(por_motivo),
                "aprovadas_origem": base, "bracos": {},
                "refinador_da_origem": {"reescritas": len(ref), "aprovadas": sum(1 for q in ref if q.get("aprovada"))}}
         for braco, modelo in self.bracos.items():
@@ -316,20 +344,32 @@ class ExperimentoRefino:
                                 "reescritas": len(ok), "aprovadas": sum(1 for v in ok if aud.get(v["original"], {}).get("motivo") == "nenhum"),
                                 "motivos_auditor": dict(Counter(aud[v["original"]]["motivo"] for v in ok if v["original"] in aud))})
             rec = self.recuperadas(braco)
-            remov = set()
+            nova_por_rodada, dup_por_rodada, liquido = Counter(), Counter(), {}
+            por_uid = {q["uid"]: q for q in rec}
             for item in self.itens:
                 arq = self.saida / braco / f"dedup_{item}.json"
-                if arq.exists():
-                    for g in read_json(arq)["grupos"]:
-                        remov |= set(g["remover"])
-            liquido = {i: (base[i] + sum(q["item"] == i for q in rec)) -
-                          sum(1 for u in remov if u.split(":")[0] == i) - base[i] for i in self.itens}
+                grupo = {}
+                for g in (read_json(arq)["grupos"] if arq.exists() else []):
+                    membros = [g["manter"], *g["remover"]]
+                    com_base = any(u not in por_uid for u in membros)
+                    for u in membros:
+                        grupo[u] = (com_base, g["manter"])
+                liquido[item] = 0
+                for q in rec:
+                    if q["item"] != item:
+                        continue
+                    com_base, manter = grupo.get(q["uid"], (False, q["uid"]))
+                    # nova = conhecimento que as aprovadas da origem não cobrem (uma por grupo de recuperadas)
+                    nova = not com_base and manter == q["uid"]
+                    (nova_por_rodada if nova else dup_por_rodada)[q["rodada_refino"]] += 1
+                    liquido[item] += nova
             res["bracos"][braco] = {
                 "modelo": modelo, "rodadas": rodadas, "recuperadas": len(rec),
                 "recuperadas_por_motivo": {m: f"{sum(q['motivo_original'] == m for q in rec)}/{n}" for m, n in por_motivo.items()},
                 "recuperadas_por_origem": dict(Counter(q["origem_original"] for q in rec)),
                 "tipo_mudou": sum(q["tipo"] != q["tipo_original"] for q in rec),
-                "ganho_liquido_por_topico": liquido, "ganho_liquido": sum(liquido.values())}
+                "ganho_liquido_por_topico": liquido, "ganho_liquido": sum(liquido.values()),
+                "novas_por_rodada": dict(nova_por_rodada), "repetem_aprovadas_por_rodada": dict(dup_por_rodada)}
             with (self.saida / braco / "recuperadas.jsonl").open("w", encoding="utf-8") as f:
                 for q in rec:
                     f.write(json.dumps(q, ensure_ascii=False) + "\n")
@@ -344,7 +384,8 @@ class ExperimentoRefino:
              f"auditor, por motivo: {res['candidatas_por_motivo']}.",
              "Prompt `refinador_v3.md` (todos os motivos, histórico das versões reprovadas, exemplos aprovados do mesmo "
              "tipo); nova auditoria com o auditor v3 e o texto-fonte; ganho líquido depois da deduplicação por sentido "
-             "contra as aprovadas da origem.", "",
+             "contra as aprovadas da origem: conta só a recuperada com conhecimento que as aprovadas não cobrem (uma por "
+             "grupo de recuperadas equivalentes). Braços `_cob` recebem as aprovadas sobre os mesmos blocos.", "",
              "| Braço | modelo | recuperadas | ganho líquido | por rodada (aprov./reescritas/tentadas, descartadas) |",
              "|---|---|---|---|---|"]
         for b, d in res["bracos"].items():
@@ -359,7 +400,9 @@ class ExperimentoRefino:
         for b, d in res["bracos"].items():
             L += [f"## {b}", "", f"- Recuperadas por motivo original: {d['recuperadas_por_motivo']}",
                   f"- Por origem: {d['recuperadas_por_origem']}; tipo mudou em {d['tipo_mudou']}",
-                  f"- Ganho líquido por tópico: {d['ganho_liquido_por_topico']}"]
+                  f"- Ganho líquido por tópico: {d['ganho_liquido_por_topico']}",
+                  f"- Conhecimento novo por rodada: {d['novas_por_rodada']}; repetem conhecimento já aprovado: "
+                  f"{d['repetem_aprovadas_por_rodada']}"]
             for r in d["rodadas"]:
                 L.append(f"- Rodada {r['rodada']}, motivos do auditor nas reescritas: {r['motivos_auditor']}")
             L += ["", "### Amostra de recuperadas", ""]

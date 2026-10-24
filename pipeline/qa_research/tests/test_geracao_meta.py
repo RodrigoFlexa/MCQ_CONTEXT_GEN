@@ -293,6 +293,19 @@ class RefinoForteTests(unittest.TestCase):
             self.assertTrue(any("<exemplos_aprovados>" in u and "<blocos>" in u for tg, u in c.usuarios if tg == "refino_forte"))
             self.assertTrue((Path(t) / "REFINO.md").exists())
 
+    def test_braco_cob_recebe_aprovadas_dos_mesmos_blocos(self):
+        from pipeline.qa_research.geracao_tipos.refino_forte import ExperimentoRefino
+        c = self.Cliente()
+        with tempfile.TemporaryDirectory() as t:
+            e = ExperimentoRefino(Path(t), bracos={"forte_cob": "x"}, rodadas=1, workers=2,
+                                  clientes={"refinador_forte_cob": c, "auditoria": c}, progress=lambda *a, **k: None)
+            q = e.candidatas()[0]
+            cob = e.cobertas("forte_cob", 1, q)
+            self.assertTrue(all(e.blocos_de(x) & e.blocos_de(q) for x in cob))
+            self.assertEqual(e.run(), 0)
+            refinos = [u for tg, u in c.usuarios if tg == "refino_forte"]
+            self.assertTrue(refinos and all("<ja_cobertas>" in u for u in refinos))
+
     def test_validacao_v3(self):
         from pipeline.qa_research.geracao_tipos.refino_forte import validar_refino_v3
         d = {"status": "ok", "motivo": "", "tipo": "diagnostico", "cenario": False,
