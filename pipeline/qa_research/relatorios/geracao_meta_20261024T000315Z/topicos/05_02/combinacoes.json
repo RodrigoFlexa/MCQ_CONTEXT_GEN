@@ -1,0 +1,728 @@
+{
+  "item": "05_02",
+  "observacao": "Foram priorizados encadeamentos realmente sustentados pelas relações e plausíveis em FPSO. Evitei combinações que dependeriam de ajustes numéricos não fornecidos, de arquitetura não explicitada ou cuja resposta final seria apenas um conselho genérico de prudência.",
+  "combinacoes": [
+    {
+      "relacoes": [
+        "B004.R2",
+        "B008.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Sobretensão no fim da partida de grande motor",
+      "ponte": "queda da demanda reativa quando a aceleração se aproxima do fim",
+      "cadeia": "Ao se aproximar da rotação nominal, o motor passa a exigir menos reativos na partida. Na filosofia descrita, isso leva o PMS a reduzir os ajustes temporários de suporte aplicados antes e logo após o fechamento do disjuntor.",
+      "cenario": "Durante a partida de um grande motor com atuação do PMS, houve afundamento de tensão no início, mas perto da rotação final a corrente do motor caiu e a tensão do barramento passou a subir acima do patamar pré-partida. Não houve nova manobra de carga nem inserção adicional de compensação no momento da elevação. O fenômeno aparece no fim da aceleração, não no início.",
+      "resposta": "reduzir os ajustes temporários de suporte do PMS",
+      "resposta_atraente": "inserir mais compensação reativa",
+      "sinal_que_descarta": "a tensão está subindo no fim da aceleração, não afundando",
+      "condicoes_enunciado": [
+        "partida de grande motor sob filosofia com PMS",
+        "motor já próximo da rotação nominal",
+        "elevação de tensão observada ao fim da aceleração"
+      ],
+      "limites": [
+        "a estratégia do PMS foi descrita para uma filosofia específica, não como regra universal",
+        "as relações não definem taxa nem valor numérico para a redução dos ajustes"
+      ],
+      "id": "C1"
+    },
+    {
+      "relacoes": [
+        "B003.R4",
+        "B006.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Bus tie com sincronoscópio correndo",
+      "ponte": "o ângulo de fase está escapando rapidamente por diferença de frequência",
+      "cadeia": "Se houver diferença relevante de frequência entre os lados, o ângulo de fase escapa rapidamente. Em uma interligação entre barramentos energizados, isso leva a fechamento fora de sincronismo, com transitórios severos e risco de perda ampla de cargas.",
+      "cenario": "Dois barramentos energizados serão interligados por bus tie. As tensões estão próximas, mas as frequências indicadas não coincidem e o sincronoscópio acelera em vez de estabilizar. A equipe discute se o efeito seria apenas circulação reativa tolerável.",
+      "resposta": "fechamento fora de sincronismo do bus tie, com transitórios severos",
+      "resposta_atraente": "corrente reativa elevada por diferença de tensão",
+      "sinal_que_descarta": "as tensões estão próximas; o que não está estável é a frequência",
+      "condicoes_enunciado": [
+        "dois barramentos energizados",
+        "manobra de fechamento de bus tie",
+        "diferença relevante de frequência observada"
+      ],
+      "limites": [
+        "os blocos não fornecem tolerâncias numéricas de frequência ou ângulo",
+        "a relação vale para interligação entre barramentos energizados"
+      ],
+      "id": "C2"
+    },
+    {
+      "relacoes": [
+        "B003.R5",
+        "B006.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Tensão casada em frequência, mas fechamento ainda perigoso",
+      "ponte": "a diferença de tensão provocará correntes reativas elevadas no acoplamento",
+      "cadeia": "Quando há diferença de tensão entre gerador e barramento, ou entre dois sistemas a acoplar, circulam correntes elevadas, sobretudo reativas. Numa interligação entre barramentos energizados, isso se manifesta como fechamento com transitório severo mesmo sem grande erro de frequência.",
+      "cenario": "Na tentativa de interligar dois barramentos vivos, as frequências estão muito próximas e estáveis, mas um dos lados está com tensão mais alta. O sincronismo em frequência parece bom e a discussão recai sobre se o problema principal ainda é escorregamento de fase.",
+      "resposta": "correntes reativas elevadas no fechamento do bus tie",
+      "resposta_atraente": "escorregamento rápido de ângulo por diferença de frequência",
+      "sinal_que_descarta": "as frequências já estão muito próximas e estáveis",
+      "condicoes_enunciado": [
+        "interligação de barramentos energizados",
+        "tensões diferentes entre os lados",
+        "frequências já próximas"
+      ],
+      "limites": [
+        "os blocos não quantificam a corrente reativa esperada",
+        "a manobra continua dependente do conjunto completo de condições de sincronismo"
+      ],
+      "id": "C3"
+    },
+    {
+      "relacoes": [
+        "B006.R4",
+        "B007.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Falta em alimentador passa a derrubar barramento com tie fechado",
+      "ponte": "o bus tie criou caminhos adicionais de falta e mudou a base de coordenação da retaguarda",
+      "cadeia": "Com barramento interligado, podem surgir caminhos adicionais de corrente de falta e mudar níveis de curto-circuito, sensibilidades e tempos de atuação. Se a retaguarda não estiver coordenada com os relés dos alimentadores nessa condição, uma falta em alimentador pode desligar indevidamente todo o barramento ou o transformador.",
+      "cenario": "Com o bus tie fechado para aumentar flexibilidade operacional, uma falta em um alimentador foi detectada e o alimentador abriu, mas também houve desligamento a montante do barramento/transformador. No modo usual seccionado, esse mesmo tipo de evento era isolado localmente. Há registro de atuação do relé do alimentador.",
+      "resposta": "descoordenação da retaguarda com os alimentadores na condição de tie fechado",
+      "resposta_atraente": "falha do relé do alimentador",
+      "sinal_que_descarta": "há registro de atuação do relé do alimentador",
+      "condicoes_enunciado": [
+        "arquitetura com barramentos interligados por bus tie",
+        "falta em alimentador do barramento secundário",
+        "existência de proteção de retaguarda a montante"
+      ],
+      "limites": [
+        "o bloco diz que as mudanças de curto-circuito e sensibilidades podem ocorrer, não que ocorram em todo arranjo",
+        "os blocos não trazem ajustes ou temporizações numéricas"
+      ],
+      "id": "C4"
+    },
+    {
+      "relacoes": [
+        "B006.R5",
+        "B007.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Perda de seletividade após mudar o estado normal do bus tie",
+      "ponte": "a coordenação de proteção ficou baseada num estado elétrico diferente do realmente operado",
+      "cadeia": "O estado aberto ou fechado do bus tie modifica o comportamento elétrico e a base de coordenação das proteções. Se a seletividade não for revista para essa nova base, faltas a jusante deixam de ser isoladas sem desligamentos desnecessários fora da zona defeituosa.",
+      "cenario": "Após mudar a filosofia operacional para usar o bus tie fechado com maior frequência, faltas localizadas passaram a produzir desligamentos mais amplos do que antes. A potência instalada e os equipamentos principais permaneceram os mesmos. Não há indicação de sobrecarga antecedendo os eventos.",
+      "resposta": "a seletividade não foi ajustada para a base com bus tie fechado",
+      "resposta_atraente": "potência instalada insuficiente",
+      "sinal_que_descarta": "os eventos começam com falta localizada, sem evidência de sobrecarga",
+      "condicoes_enunciado": [
+        "existência de bus tie entre barramentos",
+        "mudança do estado operacional usual do tie",
+        "desligamentos mais amplos após faltas a jusante"
+      ],
+      "limites": [
+        "o bloco não define um estado universalmente preferível para o bus tie",
+        "os blocos não fornecem metodologia de coordenação nem ajustes numéricos"
+      ],
+      "id": "C5"
+    },
+    {
+      "relacoes": [
+        "B004.R1",
+        "B008.R1",
+        "B015.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Partida de grande motor com frequência afundando em droop",
+      "ponte": "a solicitação transitória do motor está excedendo o que os geradores remanescentes sustentam confortavelmente",
+      "cadeia": "A partida direta de grande motor impõe corrente elevada, afundamento de tensão e alta demanda de reativos; com geração em droop, também pode aparecer desvio de frequência. Nessa condição, rejeitar rapidamente cargas menos prioritárias reduz a solicitação sobre os geradores que permaneceram conectados e aumenta a chance de preservar funções essenciais.",
+      "cenario": "Durante a partida de um grande motor, a tensão afunda e a frequência começa a cair com os geradores operando em droop. Já foi verificado que não houve curto-circuito no alimentador do motor nem perda prévia adicional de gerador. A equipe precisa de uma ação rápida para estabilizar o sistema sem sacrificar funções essenciais.",
+      "resposta": "load shedding das cargas menos prioritárias",
+      "resposta_atraente": "elevar apenas o setpoint de tensão",
+      "sinal_que_descarta": "há também queda de frequência, indicando problema além de suporte de tensão",
+      "condicoes_enunciado": [
+        "partida de grande motor, preferencialmente direta",
+        "geradores em paralelo com comportamento em droop",
+        "queda simultânea de tensão e frequência"
+      ],
+      "limites": [
+        "os blocos não quantificam o tamanho do afundamento ou da queda de frequência",
+        "o efeito do load shedding é aumento da chance de preservar funções essenciais, não garantia"
+      ],
+      "id": "C6"
+    },
+    {
+      "relacoes": [
+        "B002.R5",
+        "B013.R6"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Back feeding em balanço estacionário não prova recomposição",
+      "ponte": "o estudo disponível cobre só regime permanente, não a dinâmica de black start e recomposição",
+      "cadeia": "Modelagem em regime estacionário, por si só, não descreve recomposição após blackout, black start ou load shedding. Assim, mostrar em balanço estacionário que o back feeding energiza parte da rede não prova que ele substitua a geração principal ou garanta a recomposição da planta.",
+      "cenario": "Um balanço estacionário mostra que a geração de emergência consegue energizar parte do painel principal por um caminho permitido. Após blackout total, alguém conclui que isso basta para demonstrar recuperação completa da planta. A discussão, porém, é sobre retomada pós-blackout, não sobre operação já estabilizada.",
+      "resposta": "falta a comprovação da resposta dinâmica de recomposição e black start",
+      "resposta_atraente": "o back feeding substitui a geração principal",
+      "sinal_que_descarta": "o caso é de recomposição pós-blackout, fenômeno explicitamente transitório",
+      "condicoes_enunciado": [
+        "uso apenas de estudo em regime estacionário",
+        "avaliação de back feeding",
+        "situação discutida de blackout ou black start"
+      ],
+      "limites": [
+        "o bloco ressalta a insuficiência do regime estacionário por si só, não exclui uso combinado com estudos dinâmicos",
+        "o back feeding é ferramenta condicionada ao arranjo, não substituto geral da geração principal"
+      ],
+      "id": "C7"
+    },
+    {
+      "relacoes": [
+        "B002.R5",
+        "B000.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Rejeição de carga em turbina de dois eixos não resolvida por balanço estacionário",
+      "ponte": "a situação relevante é transitória e expõe a turbina de potência a risco de sobrevelocidade",
+      "cadeia": "A rejeição de carga é um fenômeno transitório que não é descrito por modelagem estacionária isolada. Em arranjos de dois eixos para geração elétrica, esse transitório pode exigir maior cuidado de controle e proteção contra sobrevelocidade da turbina de potência.",
+      "cenario": "Só há estudos estacionários disponíveis para um pacote gerador por turbina a gás de dois eixos, e está sendo revisado um cenário de perda súbita de carga. Combustível, lubrificação e resfriamento estão normais. A preocupação é o que acontece imediatamente após a carga desaparecer.",
+      "resposta": "controle e proteção contra sobrevelocidade da turbina de potência",
+      "resposta_atraente": "verificar apenas o balanço de combustível",
+      "sinal_que_descarta": "o evento em análise é rejeição súbita de carga, não limitação de regime permanente",
+      "condicoes_enunciado": [
+        "geração elétrica por turbina a gás de dois eixos",
+        "cenário de rejeição ou perda de carga",
+        "ausência de estudo dinâmico além do estacionário"
+      ],
+      "limites": [
+        "a relação para dois eixos é apresentada como podendo exigir maior cuidado, não como regra absoluta",
+        "os blocos não detalham a estratégia de controle ou proteção"
+      ],
+      "id": "C8"
+    },
+    {
+      "relacoes": [
+        "B000.R7",
+        "B013.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Permissivos de back feeding evitam mais que sobrecarga",
+      "ponte": "sem isolamento válido, a manobra pode criar paralelismo ou retroalimentação indevida",
+      "cadeia": "A geração de emergência só pode realimentar parte do painel principal em configurações específicas de isolamento. Esses permissivos e isolamentos existem para evitar paralelismo indevido, retroalimentação de partes não previstas e energização além da finalidade da fonte emergencial.",
+      "cenario": "Propõe-se usar a geração de emergência para realimentar parte do painel principal, mas o isolamento das fontes principais ainda não foi positivamente confirmado. A carga estimada parece pequena. A dúvida é qual risco técnico os permissivos estão barrando antes mesmo de se discutir carregamento sustentado.",
+      "resposta": "paralelismo indevido ou retroalimentação de trechos não previstos",
+      "resposta_atraente": "apenas exceder a capacidade da fonte emergencial",
+      "sinal_que_descarta": "a incerteza relevante no cenário é o isolamento das fontes, não o valor da carga",
+      "condicoes_enunciado": [
+        "tentativa de back feeding por geração de emergência",
+        "arranjo em que back feeding é possível só sob condições específicas",
+        "isolamento das fontes principais ainda não verificado"
+      ],
+      "limites": [
+        "o bloco não detalha todos os permissivos nem todas as condições de isolamento",
+        "a capacidade de carga continua sendo critério real, mas não é o ponto descartado pelo cenário"
+      ],
+      "id": "C9"
+    },
+    {
+      "relacoes": [
+        "B013.R5",
+        "B017.R2"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Back feeding devolve instrumentos, mas a planta não volta",
+      "ponte": "o painel realimentado não alcança comandos, atuações ou auxiliares essenciais à retomada dos geradores principais",
+      "cadeia": "A utilidade operacional do back feeding depende das cargas efetivamente conectadas ao painel alcançado, dos intertravamentos e da condição dos auxiliares necessários à geração principal. Como cargas de comando de geradores, CLP, supervisão e atuação de válvulas tendem a exigir alta continuidade, a recomposição pode travar mesmo com alguma instrumentação já restaurada.",
+      "cenario": "Após realimentação parcial pela geração de emergência, alguns instrumentos e indicações retornam, mas a sequência de partida dos geradores principais continua sem avançar. A fonte emergencial permanece estável e o segmento realimentado não está pesado. O que falta está mais ligado a comando e atuação do que a potência bruta.",
+      "resposta": "comandos ou auxiliares essenciais aos geradores principais não estão efetivamente atendidos pelo painel realimentado",
+      "resposta_atraente": "falta potência ativa na geração de emergência",
+      "sinal_que_descarta": "o segmento realimentado está leve e já conseguiu restaurar parte da instrumentação",
+      "condicoes_enunciado": [
+        "uso de back feeding na recuperação da planta",
+        "retorno parcial de instrumentação ou supervisão",
+        "falha em avançar na retomada dos geradores principais"
+      ],
+      "limites": [
+        "o bloco não garante que o back feeding seja útil em todo arranjo",
+        "a resposta depende de quais cargas e intertravamentos realmente estão no painel alcançado"
+      ],
+      "id": "C10"
+    },
+    {
+      "relacoes": [
+        "B012.R2",
+        "B016.R5",
+        "B010.R6"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Redundância de supervisão que cai com uma única UPS",
+      "ponte": "a mesma UPS alimenta dois canais que deveriam ser independentes",
+      "cadeia": "Quando duas estações master compartilham o mesmo conjunto UPS, a independência entre canais se reduz. Como a redundância só se materializa com segregação real entre ramos, o que aparece no diagrama como redundante permanece apenas como redundância nominal, sem sobrevivência funcional garantida.",
+      "cenario": "A arquitetura é descrita como redundante, com duas estações master de supervisão. Ainda assim, um único evento em uma UPS derruba a supervisão das duas ao mesmo tempo. Não há evidência de duas falhas independentes e simultâneas nas estações.",
+      "resposta": "redundância apenas nominal, por alimentação comum sem segregação real",
+      "resposta_atraente": "falha simultânea independente das duas estações",
+      "sinal_que_descarta": "um único evento de UPS derrubou ambas as estações",
+      "condicoes_enunciado": [
+        "duas estações master ou canais supostamente redundantes",
+        "mesmo conjunto UPS afetando ambas",
+        "avaliação de sobrevivência funcional da arquitetura"
+      ],
+      "limites": [
+        "os blocos não quantificam o grau de segregação suficiente",
+        "a perda tratada é de independência funcional, não necessariamente de capacidade nominal das fontes"
+      ],
+      "id": "C11"
+    },
+    {
+      "relacoes": [
+        "B010.R2",
+        "B011.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Gerador saudável mecanicamente, mas cai do barramento",
+      "ponte": "a máquina perdeu alimentação de comando, supervisão ou atuação",
+      "cadeia": "A desenergização dos painéis de controle dos geradores em operação pode levar à perda da geração principal. Mesmo mecanicamente disponível, o gerador torna-se incapaz de permanecer conectado ou de ser controlado se perde sua alimentação de comando, supervisão ou atuação.",
+      "cenario": "Os parâmetros do prime mover permanecem normais e a máquina atinge condição mecânica normal, mas, após um distúrbio na alimentação de controle, o gerador em operação não consegue permanecer em linha. Não houve falta inicial no barramento principal. O evento coincide com desenergização dos painéis de controle do gerador.",
+      "resposta": "perda da alimentação de comando, supervisão ou atuação do gerador",
+      "resposta_atraente": "trip mecânico do motor ou da turbina",
+      "sinal_que_descarta": "os parâmetros mecânicos permaneceram normais",
+      "condicoes_enunciado": [
+        "gerador em operação",
+        "desenergização de painel de controle do gerador",
+        "máquina mecanicamente disponível"
+      ],
+      "limites": [
+        "os blocos não afirmam que esse efeito ocorra em qualquer arquitetura",
+        "a relação trata de capacidade de conexão e controle, não da disponibilidade mecânica"
+      ],
+      "id": "C12"
+    },
+    {
+      "relacoes": [
+        "B011.R1",
+        "B010.R6"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Blackout sem falta inicial no barramento principal",
+      "ponte": "a vulnerabilidade está na arquitetura de controle e sua segregação real, não no barramento de potência",
+      "cadeia": "Em FPSOs, um blackout pode ser disparado pela perda de energia de controle mesmo sem falha inicial no barramento de potência. Nessa situação, a investigação correta precisa verificar segregação real, independência das rotas de alimentação e coerência entre projeto e configuração implantada, porque redundância nominal não basta.",
+      "cenario": "Os registros do evento não mostram curto-circuito nem falha inicial no barramento principal antes do blackout. O que aparece antes é perda de energia de controle em parte da arquitetura associada à geração, apesar de diagramas sugerirem redundância. A dúvida é onde concentrar a auditoria técnica.",
+      "resposta": "segregação real e independência das rotas de 24 Vcc, UPS e controle",
+      "resposta_atraente": "somente o barramento principal de potência",
+      "sinal_que_descarta": "não houve falha inicial no barramento de potência",
+      "condicoes_enunciado": [
+        "blackout em FPSO",
+        "ausência de falta inicial no barramento principal",
+        "perda prévia de energia de controle ou supervisão"
+      ],
+      "limites": [
+        "o bloco diz que isso pode ocorrer, não que toda perda de controle gere blackout",
+        "os blocos não fornecem método detalhado de verificação da segregação"
+      ],
+      "id": "C13"
+    },
+    {
+      "relacoes": [
+        "B010.R3",
+        "B011.R3"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "ECOS sem comando de válvulas após falha de UPS A",
+      "ponte": "o cartão-relé do CLP ficou desenergizado na sequência combinada de falhas",
+      "cadeia": "Se parte do controle das válvulas depende da UPS, uma falha nessa UPS pode desenergizar esse controle. Na sequência específica em que a UPS A falha e há perda de energia principal, o cartão-relé do CLP pode ficar desenergizado, inviabilizando o comando de válvulas via ECOS.",
+      "cenario": "Após alarme de falha na UPS A seguido de perda de energia principal na mesma sequência funcional, operadores deixam de comandar válvulas de tanques via ECOS. Não há relato de travamento mecânico generalizado das válvulas, e o problema não se apresenta como simples perda isolada de uma tela de supervisão. A perda está associada ao caminho de alimentação do controle.",
+      "resposta": "desenergização do cartão-relé do CLP que comanda as válvulas via ECOS",
+      "resposta_atraente": "falha apenas de comunicação do ECOS",
+      "sinal_que_descarta": "a perda coincide com falha da UPS A e perda de energia principal na mesma sequência",
+      "condicoes_enunciado": [
+        "parte do controle de válvulas dependente da UPS",
+        "falha da UPS A",
+        "perda de energia principal na mesma sequência funcional"
+      ],
+      "limites": [
+        "a relação do CLP é sustentada para a sequência descrita, não generalizada a qualquer arquitetura",
+        "o bloco sobre UPS relata perda de parte do controle, não necessariamente de todo o sistema"
+      ],
+      "id": "C14"
+    },
+    {
+      "relacoes": [
+        "B012.R3",
+        "B017.R5"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Gerador de emergência parte, mas o disjuntor não permanece fechado",
+      "ponte": "a lógica de reboot mantém um trip ativo contra o disjuntor do gerador de emergência",
+      "cadeia": "Após blackout total, tentativas de restabelecimento podem fracassar se a lógica do VMS continuar enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot. Esse é um caso de falha de lógica impedindo a recomposição mesmo com uma fonte potencialmente disponível.",
+      "cenario": "Depois de blackout total, o gerador de emergência atinge condições normais de operação, mas o fechamento do seu disjuntor não se mantém durante o reboot do sistema de controle. Combustível e disponibilidade mecânica não são a limitação observada. Existe uma fonte, mas a recomposição não avança.",
+      "resposta": "sinal de trip mantido pela lógica do VMS durante o reboot",
+      "resposta_atraente": "indisponibilidade mecânica do gerador de emergência",
+      "sinal_que_descarta": "o gerador de emergência chega a condições normais de operação",
+      "condicoes_enunciado": [
+        "blackout total",
+        "gerador de emergência mecanicamente disponível",
+        "falha de fechamento ou manutenção fechada do disjuntor durante reboot"
+      ],
+      "limites": [
+        "o mecanismo é sustentado por um evento descrito, não como universal para toda arquitetura",
+        "o bloco não detalha toda a lógica do VMS nem os permissivos de fechamento"
+      ],
+      "id": "C15"
+    },
+    {
+      "relacoes": [
+        "B016.R5",
+        "B017.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "UPS saudáveis, mas redundância perdida por concentração de cargas",
+      "ponte": "as cargas críticas deixaram de estar distribuídas corretamente entre ramos redundantes",
+      "cadeia": "Concentrar cargas principais ou estações redundantes no mesmo UPS ou barramento elimina a independência funcional entre os ramos. Por isso, o monitoramento de sistemas essenciais deve verificar não só presença de tensão, mas também a distribuição correta das cargas entre ramos redundantes.",
+      "cenario": "As UPS e baterias mostram tensão e autonomia saudáveis, porém uma auditoria após modificações encontra várias cargas críticas concentradas no mesmo ramo. Nenhum inversor havia falhado no momento da verificação. O problema não estava visível olhando apenas disponibilidade de fonte.",
+      "resposta": "faltou verificar a distribuição correta das cargas entre ramos redundantes",
+      "resposta_atraente": "faltou apenas um teste adicional de capacidade de bateria",
+      "sinal_que_descarta": "as fontes estão saudáveis; a vulnerabilidade encontrada é a concentração de cargas",
+      "condicoes_enunciado": [
+        "arquitetura com ramos redundantes de UPS ou barramentos",
+        "modificações acumuladas na distribuição de cargas",
+        "fontes com indicação normal de tensão ou autonomia"
+      ],
+      "limites": [
+        "os blocos não definem método formal nem periodicidade de verificação",
+        "a perda apontada é de independência funcional, não necessariamente de capacidade nominal"
+      ],
+      "id": "C16"
+    },
+    {
+      "relacoes": [
+        "B017.R6",
+        "B009.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Redundância no papel, fragilizada ao longo da vida",
+      "ponte": "a configuração instalada deixou de refletir a redundância prevista e isso não foi revalidado",
+      "cadeia": "Comissionamento, testes periódicos e gestão de mudanças confirmam se a redundância prevista em projeto está realmente presente na instalação. Como a confiabilidade ao longo da vida depende de inspeção, teste, manutenção e controle de mudanças, a redundância pode se degradar funcionalmente mesmo com o conceito original correto.",
+      "cenario": "Os documentos de projeto mostravam dupla alimentação e contingência para sistemas essenciais, mas, após anos de pequenas alterações, um evento expôs dependências comuns não percebidas. O problema não era ausência de redundância no conceito original. Ele apareceu na configuração efetivamente instalada ao longo do tempo.",
+      "resposta": "falha em testes periódicos e gestão de mudanças da redundância instalada",
+      "resposta_atraente": "erro apenas no projeto conceitual inicial",
+      "sinal_que_descarta": "o arranjo original previa redundância; a fragilidade surgiu após modificações acumuladas",
+      "condicoes_enunciado": [
+        "arquitetura originalmente redundante em projeto",
+        "modificações acumuladas ao longo da vida operacional",
+        "evento revelando dependências comuns"
+      ],
+      "limites": [
+        "os blocos não detalham os procedimentos específicos de comissionamento ou testes",
+        "confirmar a redundância instalada não garante por si só desempenho futuro"
+      ],
+      "id": "C17"
+    },
+    {
+      "relacoes": [
+        "B003.R7",
+        "B009.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Problema só aparece quando os geradores paralelam",
+      "ponte": "a falha depende da interação real entre controles e carga após o sincronismo",
+      "cadeia": "Em múltiplas unidades geradoras, o sincronismo antecede o compartilhamento de carga em paralelo. Se o comportamento anormal só surge nessa condição, ensaios operacionais sob carga aplicável tornam-se relevantes porque algumas falhas só aparecem sob esforço elétrico real e interação entre controles.",
+      "cenario": "Cada gerador opera bem sozinho, mas o comportamento indesejado aparece apenas quando uma segunda unidade é sincronizada e ambas começam a dividir carga. Verificações sem carga e testes isolados não reproduziram o problema. A equipe discute que tipo de verificação ainda falta.",
+      "resposta": "ensaio operacional sob carga e em paralelo",
+      "resposta_atraente": "inspeção visual adicional sem carga",
+      "sinal_que_descarta": "a falha só surge com interação real entre controles e compartilhamento de carga",
+      "condicoes_enunciado": [
+        "múltiplos geradores operando em paralelo",
+        "sincronismo já estabelecido",
+        "anomalia só presente com compartilhamento de carga"
+      ],
+      "limites": [
+        "o bloco sobre ensaio afirma relevância, não que testes sem carga sejam sempre inúteis",
+        "os blocos não definem o procedimento detalhado do ensaio"
+      ],
+      "id": "C18"
+    },
+    {
+      "relacoes": [
+        "B006.R5",
+        "B009.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Mudou a filosofia do tie; faltam bases elétricas atualizadas",
+      "ponte": "a base de coordenação das proteções mudou e precisa estar refletida na documentação elétrica útil",
+      "cadeia": "Como o estado do bus tie altera o comportamento elétrico do sistema e a base de coordenação das proteções, a documentação útil à operação e manutenção precisa refletir isso. Nessa situação, estudo de seletividade e planilha mestra de ajustes tornam-se peças centrais para verificar se a filosofia implantada continua coerente.",
+      "cenario": "Após mudança na filosofia operacional do bus tie, operadores não conseguem confirmar se ajustes de proteção e lógica de operação ainda correspondem ao comportamento elétrico instalado. O problema não é ausência de P&IDs de processo. A dúvida é qual documentação elétrica passou a ser crítica.",
+      "resposta": "estudo de seletividade e planilha mestra de ajustes de proteção atualizados",
+      "resposta_atraente": "apenas P&IDs de processo atualizados",
+      "sinal_que_descarta": "a mudança relevante é no comportamento elétrico e na coordenação das proteções",
+      "condicoes_enunciado": [
+        "existência de bus tie",
+        "mudança da filosofia de operação do tie",
+        "necessidade de conferir coerência de proteções e operação"
+      ],
+      "limites": [
+        "o bloco lista documentação útil, não um inventário normativo exaustivo",
+        "o bloco sobre bus tie não define estado preferencial universal"
+      ],
+      "id": "C19"
+    },
+    {
+      "relacoes": [
+        "B018.R4",
+        "B009.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Isolamento suspeito sem aquecimento anormal em switchgear HV",
+      "ponte": "defeitos localizados no dielétrico podem ser detectados sem intrusão por sinais de descarga parcial",
+      "cadeia": "Em plantas de alta tensão, defeitos localizados em dielétricos emitem sinais detectáveis por técnicas não intrusivas de análise de descargas parciais. No monitoramento de condição de switchgear, medições de tensão transitória à terra e métodos acústicos são meios citados para antecipar essa degradação.",
+      "cenario": "Um alinhamento de switchgear de alta tensão não mostra padrão térmico anormal, mas existe preocupação com degradação do isolamento. Abrir o equipamento de imediato não é a primeira opção. Procura-se um método de monitoramento compatível com defeitos dielétricos localizados.",
+      "resposta": "monitoramento de descargas parciais por métodos TEV ou acústicos",
+      "resposta_atraente": "termografia",
+      "sinal_que_descarta": "não há aquecimento superficial anormal",
+      "condicoes_enunciado": [
+        "switchgear de alta tensão",
+        "suspeita de degradação de isolamento",
+        "preferência por técnica não intrusiva"
+      ],
+      "limites": [
+        "a aplicação de descargas parciais foi explicitamente restringida a plantas de alta tensão",
+        "os blocos não definem critérios de aceitação nem sensibilidade comparativa"
+      ],
+      "id": "C20"
+    },
+    {
+      "relacoes": [
+        "B018.R5",
+        "B009.R3"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Painel sem defeito visível, mas um ponto aquece sob carga",
+      "ponte": "o defeito só aparece sob esforço elétrico real e se manifesta como alta resistência local",
+      "cadeia": "A termografia com equipamento em operação ajuda a identificar aquecimento superficial anormal associado a conexão frouxa, sobrecarga, desbalanceamento ou ponto de alta resistência. Como algumas falhas só aparecem sob carga aplicável, um hotspot localizado sob operação aponta mais para defeito resistivo local do que para conclusão feita em inspeção sem carga.",
+      "cenario": "Um painel de baixa tensão parece normal desenergizado, mas sob carga um terminal aquece mais do que circuitos vizinhos equivalentes. Verificações sem esforço elétrico não reproduzem a anomalia. Busca-se a classe de defeito mais compatível com esse padrão.",
+      "resposta": "ponto de alta resistência, tipicamente por conexão frouxa",
+      "resposta_atraente": "descarga parcial no isolamento",
+      "sinal_que_descarta": "o achado é aquecimento superficial em painel BT sob carga",
+      "condicoes_enunciado": [
+        "painel de baixa tensão em operação",
+        "termografia com aquecimento localizado",
+        "inspeção sem carga sem evidência equivalente"
+      ],
+      "limites": [
+        "a termografia auxilia na detecção, mas não distingue sozinha todas as causas possíveis",
+        "o bloco de ensaio sob carga afirma relevância, não exclusividade"
+      ],
+      "id": "C21"
+    },
+    {
+      "relacoes": [
+        "B020.R3",
+        "B014.R1"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "MW instalados bastam, mas a eletrônica sensível continua instável",
+      "ponte": "cargas não lineares estão gerando distorção harmônica de tensão",
+      "cadeia": "Retificadores e conversores tendem a absorver corrente não senoidal, e essa corrente, ao percorrer a impedância do sistema, gera componentes harmônicas de tensão. Por isso, prevenir ou analisar blackouts e instabilidades não pode se limitar à potência instalada: é preciso olhar qualidade de energia e harmônicos.",
+      "cenario": "Após inclusão de cargas com forte presença de retificadores ou conversores, a tensão RMS e a margem aparente de geração permanecem adequadas, mas equipamentos sensíveis controlados por semicondutores começam a aquecer ou se comportar de forma instável. O problema não se apresenta como falta de potência ativa instalada.",
+      "resposta": "distorção harmônica da tensão causada por cargas não lineares",
+      "resposta_atraente": "falta de potência instalada",
+      "sinal_que_descarta": "há margem aparente de potência e tensão RMS ainda adequada",
+      "condicoes_enunciado": [
+        "presença de cargas não lineares como retificadores ou conversores",
+        "equipamentos sensíveis, especialmente eletrônica por semicondutores",
+        "potência instalada aparentemente suficiente"
+      ],
+      "limites": [
+        "os blocos não quantificam o teor harmônico nem seus efeitos",
+        "a relação aponta relevância da análise, não diagnóstico único para todo sintoma"
+      ],
+      "id": "C22"
+    },
+    {
+      "relacoes": [
+        "B006.R5",
+        "B020.R6"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Qualidade de energia muda com o tie, não com o medidor",
+      "ponte": "o estado real do bus tie está alterando o arranjo elétrico que o estudo deveria representar",
+      "cadeia": "Como o estado do bus tie modifica o comportamento elétrico do sistema, a análise de qualidade de energia e harmônicos precisa representar o arranjo real instalado, e não apenas um diagrama nominal. Se o comportamento aparece e desaparece com a manobra do tie, o erro provável está na representação do sistema, não na simples leitura do medidor.",
+      "cenario": "Um comportamento indesejado de qualidade de energia aparece de forma repetitiva quando o bus tie é fechado e desaparece quando a unidade volta ao modo seccionado. Um estudo anterior baseado em uma condição nominal diferente não previa isso. O medidor de qualidade de energia não apresenta indícios próprios de defeito.",
+      "resposta": "o estudo deve representar o arranjo real, incluindo o estado do bus tie",
+      "resposta_atraente": "defeito no medidor de qualidade de energia",
+      "sinal_que_descarta": "o comportamento acompanha de forma repetitiva a manobra do tie",
+      "condicoes_enunciado": [
+        "existência de bus tie com estados operacionais distintos",
+        "estudo de qualidade de energia ou harmônicos",
+        "comportamento dependente do estado real do tie"
+      ],
+      "limites": [
+        "os blocos não detalham o método de modelagem necessário",
+        "o bloco sobre bus tie não define um estado preferencial universal"
+      ],
+      "id": "C23"
+    },
+    {
+      "relacoes": [
+        "B019.R3",
+        "B005.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Step-out AC longo com sobretensão em carga leve",
+      "ponte": "a potência reativa do cabo tornou-se relevante pelo comprimento e pela tensão operacional",
+      "cadeia": "Em cabos submarinos em corrente alternada, a potência reativa do cabo cresce com o comprimento e com o quadrado da tensão. Em HVAC offshore, isso leva a reavaliar a tensão de operação por balanço entre perdas, potência reativa do cabo e perfil de carga quando surgem sobretensões em step-outs longos.",
+      "cenario": "Um elo offshore em CA com cabo submarino longo apresenta tensão mais alta do que o desejado durante períodos de carga leve, e o efeito piora no step-out mais extenso. A transferência de potência requerida nesse momento é modesta. A pergunta é qual variável de projeto precisa ser reavaliada.",
+      "resposta": "a tensão de operação escolhida para o sistema HVAC",
+      "resposta_atraente": "o ajuste de droop dos geradores locais",
+      "sinal_que_descarta": "o fenômeno acompanha comprimento do cabo e carga leve",
+      "condicoes_enunciado": [
+        "sistema HVAC offshore com cabo submarino longo",
+        "sobretensão ou elevação de tensão em carga leve",
+        "avaliação de escolha da tensão de operação"
+      ],
+      "limites": [
+        "os blocos não fornecem método de cálculo nem valor ótimo de tensão",
+        "o critério é de balanço entre fatores, sem priorização fixa"
+      ],
+      "id": "C24"
+    },
+    {
+      "relacoes": [
+        "B019.R5",
+        "B005.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Oscilações de corrente viram flicker",
+      "ponte": "o problema dominante é estabilização rápida de tensão por suporte dinâmico de reativos",
+      "cadeia": "Variações de corrente podem produzir flutuações de tensão percebidas como flicker. Dispositivos como SVC e STATCOM fornecem ou absorvem potência reativa rapidamente e, com isso, estabilizam a tensão e mitigam flicker.",
+      "cenario": "Oscilações recorrentes de corrente vêm sendo percebidas como cintilação e flutuação de tensão no sistema elétrico offshore. Os controles de compartilhamento de carga entre os geradores locais já foram afinados e não eliminaram o sintoma. O problema dominante não é repartir kW, mas estabilizar tensão rapidamente.",
+      "resposta": "compensação rápida de reativos, como SVC ou STATCOM",
+      "resposta_atraente": "retunar apenas governadores e droop de carga",
+      "sinal_que_descarta": "o sintoma dominante é flicker e flutuação de tensão, não repartição de carga ativa",
+      "condicoes_enunciado": [
+        "presença de variações de corrente com flicker",
+        "necessidade de resposta rápida de tensão",
+        "ajustes de compartilhamento de carga já revistos"
+      ],
+      "limites": [
+        "os blocos não comparam desempenho quantitativo entre SVC e STATCOM",
+        "a relação não torna esses dispositivos obrigatórios em todo caso"
+      ],
+      "id": "C25"
+    },
+    {
+      "relacoes": [
+        "B019.R7",
+        "B005.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Rede offshore passiva a energizar desde terra",
+      "ponte": "a solução precisa sustentar tensão e frequência do lado offshore sem geração local ativa",
+      "cadeia": "Em arranjos em corrente contínua com conversor fonte de tensão, o controle de tensão em faixa estreita é característica técnica da solução. Em alimentação offshore a partir de terra, isso se traduz em VSC-HVDC capaz de controlar potência ativa e reativa e sustentar tensão e frequência em rede passiva.",
+      "cenario": "O lado offshore será energizado a partir de terra antes de existir geração local disponível, de modo que a rede a bordo estará passiva nesse momento. A solução precisa manter tensão e frequência no recebimento offshore. Procura-se a família de conversão adequada, não um compensador local isolado.",
+      "resposta": "VSC-HVDC",
+      "resposta_atraente": "LCC-HVDC",
+      "sinal_que_descarta": "a rede offshore está passiva e precisa sustentação própria de tensão e frequência",
+      "condicoes_enunciado": [
+        "alimentação offshore a partir de terra",
+        "rede offshore passiva",
+        "necessidade de sustentar tensão e frequência no lado offshore"
+      ],
+      "limites": [
+        "as relações valem para o contexto offshore a partir de terra",
+        "o bloco não afirma que outras tecnologias tenham a mesma capacidade em rede passiva"
+      ],
+      "id": "C26"
+    },
+    {
+      "relacoes": [
+        "B003.R7",
+        "B005.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Depois de sincronizar, o problema já é outro",
+      "ponte": "com o paralelismo estabelecido, a questão passou de entrada no barramento para repartição de carga",
+      "cadeia": "Em plantas com múltiplas unidades geradoras, o sincronismo antecede o compartilhamento de carga em paralelo. Uma vez estabelecido o paralelo, quando a necessidade principal passa a ser repartir carga entre geradores locais, a solução se centra em ajustes coordenados de reguladores, excitação e droop.",
+      "cenario": "Um segundo gerador já foi sincronizado com sucesso, o disjuntor fechou e as máquinas permanecem em paralelo sem alarmes imediatos de sincronismo. O problema percebido agora é o mau compartilhamento de carga entre as unidades. A correção buscada não é mais um permissivo de entrada no barramento.",
+      "resposta": "ajustes coordenados de reguladores, excitação e droop",
+      "resposta_atraente": "repetir a checagem de sincronismo",
+      "sinal_que_descarta": "o paralelismo já foi estabelecido com sucesso",
+      "condicoes_enunciado": [
+        "múltiplos geradores em paralelo",
+        "sincronismo já concluído",
+        "problema principal de repartição de carga"
+      ],
+      "limites": [
+        "a relação de ajuste vale quando o problema dominante é compartilhamento de carga",
+        "os blocos não definem pesos ou ajustes numéricos"
+      ],
+      "id": "C27"
+    },
+    {
+      "relacoes": [
+        "B015.R2",
+        "B009.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Esquema de load shedding envelhecido pela configuração instalada",
+      "ponte": "a base de análise de carga ficou desatualizada em relação ao arranjo real",
+      "cadeia": "O load shedding deve se basear em análise de carga atualizada e compatível com a configuração realmente instalada. Como a confiabilidade da distribuição ao longo da vida depende também de inspeção, testes, manutenção e controle de mudanças, um esquema inicialmente correto pode perder eficácia se a base não for atualizada após modificações.",
+      "cenario": "Depois de várias modificações na distribuição, o esquema de load shedding continua atuando, mas os operadores observam que as cargas rejeitadas já não correspondem às prioridades operacionais atuais. O problema surgiu ao longo do tempo, não no primeiro comissionamento. Pergunta-se qual base técnica envelheceu.",
+      "resposta": "a análise de carga atualizada para a configuração realmente instalada",
+      "resposta_atraente": "a definição original das prioridades continua suficiente",
+      "sinal_que_descarta": "a configuração instalada mudou ao longo da vida e as rejeições já não refletem as prioridades atuais",
+      "condicoes_enunciado": [
+        "esquema de load shedding existente",
+        "modificações acumuladas na distribuição elétrica",
+        "prioridades de rejeição já desalinhadas da operação atual"
+      ],
+      "limites": [
+        "o bloco não quantifica a perda de eficácia por análise desatualizada",
+        "a relação vale para revisão ou definição do esquema, não para um arranjo universal"
+      ],
+      "id": "C28"
+    },
+    {
+      "relacoes": [
+        "B009.R6",
+        "B017.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Carga pequena em kW, enorme em consequência",
+      "ponte": "mudança de regime operacional alterou a consequência da perda dessa carga",
+      "cadeia": "Quando envelhecimento, obsolescência, mudança de regime operacional ou alteração de carga mudam probabilidade e consequência das falhas, avaliações baseadas em risco complementam recomendações e histórico. Nessa revisão, a seleção de cargas para 24 Vcc, UPS ou emergência deve seguir a consequência da perda de energia, e não apenas a potência consumida.",
+      "cenario": "Uma carga relativamente pequena passou a ser crítica depois de mudança no regime operacional da unidade, enquanto consumidores maiores seguem mais facilmente rejeitáveis. As rotinas anteriores do fabricante e o histórico antigo não estavam errados, mas já não bastam para a nova situação. O critério de reclassificação é o que se busca.",
+      "resposta": "reavaliação por risco baseada na consequência da perda de energia",
+      "resposta_atraente": "priorização apenas pela potência consumida",
+      "sinal_que_descarta": "a carga é pequena em kW, mas sua perda passou a ter alta consequência",
+      "condicoes_enunciado": [
+        "mudança de regime operacional ou de carga",
+        "necessidade de rever classificação de essencialidade",
+        "carga de baixa potência com consequência elevada de perda"
+      ],
+      "limites": [
+        "a avaliação por risco complementa, não substitui, fabricante e histórico de falhas",
+        "os blocos não fornecem critério numérico de priorização"
+      ],
+      "id": "C29"
+    },
+    {
+      "relacoes": [
+        "B019.R3",
+        "B004.R8"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Elevar a tensão do elo AC longo piorou as excursões",
+      "ponte": "o aumento da tensão elevou a potência reativa do cabo submarino",
+      "cadeia": "Em cabos submarinos em corrente alternada, a potência reativa aumenta com o comprimento do cabo e com o quadrado da tensão operacional. Quando ela cresce, pode ampliar desvios de tensão, perdas e risco de sobretensão, especialmente em step-outs longos.",
+      "cenario": "Em um elo submarino em CA já longo, a tensão operacional foi elevada e, em seguida, períodos de carga leve passaram a mostrar excursões de tensão maiores e maior preocupação com sobretensão. A potência ativa transferida não havia aumentado de forma correspondente. Procura-se o mecanismo elétrico escondido.",
+      "resposta": "aumento da potência reativa do cabo submarino",
+      "resposta_atraente": "falta de potência ativa disponível",
+      "sinal_que_descarta": "o problema piorou ao elevar a tensão, sem aumento correspondente de carga ativa",
+      "condicoes_enunciado": [
+        "cabo submarino em corrente alternada",
+        "step-out longo",
+        "elevação da tensão operacional antes do agravamento"
+      ],
+      "limites": [
+        "os blocos não fornecem fórmula completa nem coeficientes do fenômeno",
+        "os efeitos sobre tensão, perdas e sobretensão não são quantificados"
+      ],
+      "id": "C30"
+    }
+  ]
+}

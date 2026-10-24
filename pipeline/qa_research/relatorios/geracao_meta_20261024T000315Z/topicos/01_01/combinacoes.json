@@ -1,0 +1,777 @@
+{
+  "item": "01_01",
+  "observacao": "Foram propostas 32 combinações. Evitei cadeias que terminassem apenas em prudência genérica e priorizei mecanismos, bases de comparação, criticidade funcional, distinção entre atributos RAM e efeitos operacionais plausíveis em FPSO.",
+  "combinacoes": [
+    {
+      "relacoes": [
+        "B009.R5",
+        "B005.R6",
+        "B010.R3"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Baixa disponibilidade com reparo ativo curto",
+      "ponte": "o tempo dominante da indisponibilidade está nas esperas de acesso, liberação, sobressalente ou mobilização, e não no reparo ativo",
+      "cadeia": "Ao separar reparo ativo de esperas, vê-se que o MTTR puro não é o principal problema. Como a disponibilidade operacional inclui essas esperas no downtime, reforçar a equipe pouco ajuda e o efeito final é downtime logístico/administrativo dominante.",
+      "cenario": "Em falhas repetidas de um mesmo pacote, as ordens mostram horas semelhantes de intervenção técnica, mas dias bem diferentes até o retorno. Em várias ocorrências houve espera por acesso, liberação e peça, e a entrada de mais técnicos não reduziu o tempo total de parada. O equipamento só voltou após essas liberações e recursos.",
+      "resposta": "downtime logístico/administrativo dominante na disponibilidade operacional",
+      "resposta_atraente": "MTTR alto por baixa mantenabilidade do equipamento",
+      "sinal_que_descarta": "as horas de reparo ativo permaneceram semelhantes e mais equipe não encurtou o retorno",
+      "condicoes_enunciado": [
+        "ativo reparável em contexto offshore",
+        "os registros distinguem intervenção técnica de esperas",
+        "a pergunta trata de disponibilidade operacional observada"
+      ],
+      "limites": [
+        "não vale se o reparo ativo também aumentou de forma relevante",
+        "depende de apontamento confiável dos tempos de espera"
+      ],
+      "id": "C1"
+    },
+    {
+      "relacoes": [
+        "B006.R7",
+        "B008.R7"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Redundância aparente com gargalo comum",
+      "ponte": "os dois trens dependem do mesmo gargalo compartilhado de utilidades, controle, descarga ou acesso",
+      "cadeia": "Quando dois trens compartilham um gargalo, o ganho real da redundância fica menor que o sugerido pelo arranjo duplicado. Se esse elemento comum bloqueia a função relevante, ele se torna mais crítico do que o equipamento individual que falha mais.",
+      "cenario": "Dois trens existem e o reserva está disponível, mas nas paradas observadas ambos perdem a função no mesmo evento. As perdas coincidem com uma mesma utilidade ou lógica comum, e não com falha mecânica exclusiva de um dos equipamentos. A produção para mesmo com o equipamento duplicado saudável.",
+      "resposta": "gargalo compartilhado de utilidades/controle/descarga entre os trens",
+      "resposta_atraente": "falta de redundância do equipamento principal",
+      "sinal_que_descarta": "o trem reserva também perde a função no mesmo evento",
+      "condicoes_enunciado": [
+        "há dois trens ou equipamentos em paralelo",
+        "a função de processo relevante é bloqueada quando o recurso comum falha",
+        "o cenário informa que o reserva estava disponível"
+      ],
+      "limites": [
+        "não vale se os trens forem de fato independentes",
+        "o gargalo comum precisa estar explicitamente presente no cenário"
+      ],
+      "id": "C2"
+    },
+    {
+      "relacoes": [
+        "B014.R3",
+        "B011.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Migração do limite para água produzida",
+      "ponte": "a limitação prática da unidade migrou do manuseio de hidrocarbonetos para a capacidade de manejar a fase aquosa",
+      "cadeia": "Com aumento da água produzida, o limitante pode migrar para a fase aquosa. Quando a malha de água perde capacidade, o resultado final pode ser a necessidade de reduzir a vazão total do campo.",
+      "cenario": "A água produzida vem crescendo, enquanto os principais equipamentos de óleo e gás permanecem sem indicação de perda relevante de eficiência. As restrições aparecem quando tratamento, reinjeção ou descarte de água se aproximam do limite operacional. A redução de carga passa a ocorrer nesses momentos.",
+      "resposta": "necessidade de reduzir a vazão total do campo",
+      "resposta_atraente": "gargalo principal no tratamento de óleo ou gás",
+      "sinal_que_descarta": "os sinais de restrição aparecem junto ao limite da malha de água, com óleo e gás ainda estáveis",
+      "condicoes_enunciado": [
+        "há crescimento de água produzida",
+        "a malha de água é relevante para sustentar a produção total",
+        "o cenário mostra que os limites observados estão no manejo da água"
+      ],
+      "limites": [
+        "a migração do gargalo não ocorre em toda unidade",
+        "não identifica sozinho qual equipamento da malha de água é o limitante"
+      ],
+      "id": "C3"
+    },
+    {
+      "relacoes": [
+        "B004.R5",
+        "B010.R1"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Trips de proteção imitando baixa confiabilidade",
+      "ponte": "o sistema está sendo retirado de serviço por atuação de proteção ou falha segura, e não por incapacidade intrínseca de continuar operando",
+      "cadeia": "Um sistema pode ser projetado para falhar de modo seguro mesmo reduzindo a continuidade operacional. Se intertravamentos e funções de proteção estão atuando para evitar estados perigosos, o efeito final observado é indisponibilidade por proteção, não necessariamente piora da confiabilidade do equipamento.",
+      "cenario": "As paradas ocorrem após demandas de proteção, permissivos perdidos ou intertravamentos, sem evidência imediata de dano mecânico. Após eliminar a condição que acionou a proteção, o retorno acontece sem reparo relevante no equipamento principal. O histórico mostra mais shutdowns do que defeitos materiais confirmados.",
+      "resposta": "atuação de intertravamento/função de proteção em modo seguro",
+      "resposta_atraente": "baixa confiabilidade mecânica do equipamento",
+      "sinal_que_descarta": "o retorno ocorre depois de remover a condição de proteção, sem reparo relevante",
+      "condicoes_enunciado": [
+        "há funções de proteção e intertravamentos atuando no sistema",
+        "o cenário informa ausência de dano mecânico confirmado nas ocorrências",
+        "a pergunta trata de perda de continuidade operacional"
+      ],
+      "limites": [
+        "não exclui que possa existir defeito em alguma ocorrência específica",
+        "vale quando a atuação de proteção está de fato registrada"
+      ],
+      "id": "C4"
+    },
+    {
+      "relacoes": [
+        "B008.R7",
+        "B010.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Poucas falhas, alta prioridade",
+      "ponte": "a indisponibilidade do item menos frequente bloqueia uma função crítica do sistema",
+      "cadeia": "Em FPSO, um item com baixa taxa de falha pode ser mais relevante do que outro com mais falhas se sua indisponibilidade bloquear produção, segurança de processo ou exportação. Por isso, a priorização de recuperação deve recair sobre o item que bloqueia a função crítica, considerando também duração da recuperação e restrições compartilhadas.",
+      "cenario": "Um equipamento falha várias vezes, mas existe cobertura por standby e sem impacto material na produção. Outro falha raramente, porém quando sai de serviço a exportação ou a produção para. Os tempos de recuperação desse segundo item também são mais sensíveis a restrições de acesso e liberação.",
+      "resposta": "priorizar o item que bloqueia exportação/produção",
+      "resposta_atraente": "priorizar o equipamento com maior número bruto de falhas",
+      "sinal_que_descarta": "o item mais frequente tem cobertura por standby e não derruba a função principal",
+      "condicoes_enunciado": [
+        "os itens comparados têm impactos funcionais diferentes",
+        "o cenário explicita que um deles bloqueia produção, exportação ou segurança de processo",
+        "há decisão de priorização entre falhas ou recuperações"
+      ],
+      "limites": [
+        "a comparação depende do papel funcional de cada item na unidade",
+        "não fornece uma regra universal de prioridade para outras FPSOs"
+      ],
+      "id": "C5"
+    },
+    {
+      "relacoes": [
+        "B008.R4",
+        "B007.R5",
+        "B007.R7"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "RAM sofisticado com dado errado",
+      "ponte": "os parâmetros de falha e reparo do modelo não aderem à arquitetura, acessibilidade, manutenção e contexto operacional da unidade",
+      "cadeia": "Bancos setoriais ajudam na padronização, mas não substituem dados da própria unidade quando se quer representar condições locais. Como frequências de falha e tempos de reparo variam com a unidade, o valor da modelagem passa a depender mais da aderência dos dados do que da sofisticação isolada do modelo, levando à necessidade final de atualizá-lo com dados locais.",
+      "cenario": "Um modelo RAM detalhado foi montado com dados setoriais e parece consistente no papel, mas os resultados não acompanham a indisponibilidade realmente observada a bordo. As maiores diferenças aparecem em tempos de acesso, mobilização e reparo em arranjos específicos da unidade. Mesmo refinando a estrutura do modelo, a discrepância persiste.",
+      "resposta": "atualizar o RAM com dados locais de falha e reparo da unidade",
+      "resposta_atraente": "aumentar apenas a sofisticação matemática do modelo",
+      "sinal_que_descarta": "o modelo já é detalhado, e a divergência permanece associada a condições locais da unidade",
+      "condicoes_enunciado": [
+        "o objetivo é representar a unidade específica",
+        "há uso predominante de banco setorial em vez de histórico local",
+        "o cenário informa diferenças locais de acesso, arquitetura ou manutenção"
+      ],
+      "limites": [
+        "não invalida o uso de bancos setoriais como apoio comparativo",
+        "depende de existir ou vir a existir dado local minimamente confiável"
+      ],
+      "id": "C6"
+    },
+    {
+      "relacoes": [
+        "B019.R4",
+        "B008.R7"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Ranking corporativo escondendo criticidade local",
+      "ponte": "a criticidade do item é determinada pela função que ele cumpre nesta unidade, e não por um ranking histórico universal",
+      "cadeia": "Dados históricos não geram um ranking de criticidade válido para qualquer FPSO. Se, nesta unidade, a indisponibilidade de um item bloqueia produção, exportação ou segurança de processo, o desfecho correto é tratá-lo como crítico aqui, mesmo que a frota o classifique abaixo.",
+      "cenario": "O ranking corporativo coloca um determinado item em faixa intermediária de criticidade. Nesta FPSO, porém, suas paradas interrompem uma função comum sem cobertura equivalente. Outros itens com mais ocorrências na frota não causam o mesmo bloqueio local.",
+      "resposta": "reclassificar como crítico o item que bloqueia a função principal nesta FPSO",
+      "resposta_atraente": "manter a criticidade definida pelo ranking corporativo da frota",
+      "sinal_que_descarta": "nesta unidade a indisponibilidade do item bloqueia produção/exportação ou segurança de processo",
+      "condicoes_enunciado": [
+        "há ranking histórico corporativo ou setorial",
+        "o cenário descreve papel funcional específico do item na unidade",
+        "o objetivo é definir criticidade local"
+      ],
+      "limites": [
+        "não transforma qualquer desvio local em criticidade alta",
+        "depende de o bloqueio funcional estar claramente descrito"
+      ],
+      "id": "C7"
+    },
+    {
+      "relacoes": [
+        "B001.R2",
+        "B002.R2"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Contagem bruta mascarando desempenho de segurança",
+      "ponte": "para a pergunta de gestão formulada, o indicador correto deve ser expresso como taxa de frequência e não como contagem absoluta",
+      "cadeia": "A forma de expressão do KPI depende do interesse da avaliação. Quando a comparação é de frequência de acidentes ocupacionais, a base correta de exposição é horas-homem, de modo que a leitura final deve usar esse denominador e não o total bruto de casos.",
+      "cenario": "Dois períodos são comparados e um deles teve campanha com muito mais pessoal embarcado e contratados. O número absoluto de ocorrências mudou, mas as horas trabalhadas também mudaram de forma relevante. A pergunta do enunciado será sobre comparação de desempenho de segurança entre períodos.",
+      "resposta": "horas-homem de exposição ao risco como denominador",
+      "resposta_atraente": "número absoluto de acidentes no período",
+      "sinal_que_descarta": "a exposição de pessoal mudou fortemente entre os períodos",
+      "condicoes_enunciado": [
+        "o KPI é de frequência de acidentes ocupacionais",
+        "a comparação é temporal ou entre períodos com exposição diferente",
+        "as horas-homem dos períodos são conhecidas ou estimáveis"
+      ],
+      "limites": [
+        "vale para as taxas de frequência citadas",
+        "não substitui a necessidade de manter o mesmo critério de enquadramento dos casos"
+      ],
+      "id": "C8"
+    },
+    {
+      "relacoes": [
+        "B001.R6",
+        "B002.R6"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Painel em tempo real de energia com métrica errada",
+      "ponte": "a decisão operacional requer um KPI intensivo coerente com a carga e não um valor absoluto",
+      "cadeia": "Painéis em tempo real só ajudam se a métrica for coerente com a decisão. Para energia, o princípio correto é usar indicador intensivo por unidade produzida, de modo que o resultado final a ser buscado é consumo específico e não consumo total.",
+      "cenario": "O painel operacional mostra aumento de consumo de energia ao mesmo tempo em que a taxa de produção foi elevada. O indicador está sendo usado para orientar decisões de carga em tempo real. Não há evidência direta de piora de equipamento no mesmo período.",
+      "resposta": "consumo específico de energia por unidade produzida",
+      "resposta_atraente": "consumo total de energia ou de fuel gas",
+      "sinal_que_descarta": "a produção mudou no mesmo intervalo em que o consumo absoluto subiu",
+      "condicoes_enunciado": [
+        "o painel é usado para decisão operacional em tempo real",
+        "há mudança de produção ou carga",
+        "o KPI analisado é de energia ou consumo correlato"
+      ],
+      "limites": [
+        "não define qual unidade de produção deve ser usada no denominador",
+        "não substitui investigação se também houver evidência de degradação real"
+      ],
+      "id": "C9"
+    },
+    {
+      "relacoes": [
+        "B001.R3",
+        "B003.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Qual indicador ambiental serve ao operador",
+      "ponte": "a finalidade passou a ser acompanhamento operacional em tempo real, não gestão administrativa nem estado do meio",
+      "cadeia": "O mesmo processo pode exigir KPIs diferentes conforme a finalidade. Quando a finalidade é operacional, o grupo ambiental pertinente é o de desempenho operacional, portanto o desfecho correto é selecionar um OPI.",
+      "cenario": "No mesmo dashboard aparecem uma taxa de auditorias concluídas, uma intensidade operacional de emissão/flare e uma medida de condição ambiental externa. O enunciado dirá que a pergunta é qual métrica deve apoiar ajuste operacional imediato. O painel não é para prestação gerencial nem para descrever o estado regional do ambiente.",
+      "resposta": "OPI",
+      "resposta_atraente": "MPI",
+      "sinal_que_descarta": "a decisão pedida é ajuste operacional em tempo real, e não acompanhamento gerencial",
+      "condicoes_enunciado": [
+        "o cenário deixa claro que a finalidade é operação em tempo real",
+        "há mistura de indicadores de gestão, operação e condição ambiental",
+        "o respondente deve escolher a classe adequada"
+      ],
+      "limites": [
+        "não identifica um OPI específico sem as opções do cenário",
+        "não se aplica se a pergunta for sobre estado ambiental ou gestão"
+      ],
+      "id": "C10"
+    },
+    {
+      "relacoes": [
+        "B000.R4",
+        "B016.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Perda de medição essencial sob especificação estreita",
+      "ponte": "a perda da medição essencial reduziu a observabilidade do processo",
+      "cadeia": "Ferramentas online têm mais valor quando as especificações são estreitas e a exigência de segurança é alta. Se uma medição essencial fica ausente ou pouco confiável nesse contexto, o estado intermediário é perda de observabilidade e o resultado final é aumento do risco de processo.",
+      "cenario": "A unidade está operando com margens estreitas de especificação e forte exigência de segurança. Um analisador ou medição essencial ficou indisponível ou passou a gerar leitura pouco confiável, justamente no período de maior necessidade de acompanhamento online. Os demais sistemas seguem em serviço, mas a decisão operacional ficou mais cega.",
+      "resposta": "aumento do risco de processo por perda de observabilidade",
+      "resposta_atraente": "apenas perda de conveniência do dashboard",
+      "sinal_que_descarta": "a medição perdida é essencial e o processo está sob especificação estreita e alta exigência de segurança",
+      "condicoes_enunciado": [
+        "há ferramenta online e medição essencial ao processo",
+        "o processo opera com especificações restritas ou exigência elevada de segurança",
+        "a medição está ausente ou é pouco confiável"
+      ],
+      "limites": [
+        "não quantifica o aumento de risco",
+        "não implica automaticamente parada, apenas maior risco operacional"
+      ],
+      "id": "C11"
+    },
+    {
+      "relacoes": [
+        "B015.R5",
+        "B012.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Queda de vazão com incrustação já formada",
+      "ponte": "a restrição de escoamento já está instalada por obstrução formada",
+      "cadeia": "Quando a incrustação na coluna aumenta a resistência ao fluxo, aparecem alteração de pressão e queda de vazão. Como medidas preventivas atuam antes da perda e medidas corretivas depois que a restrição já compromete a capacidade, o desfecho correto é ação corretiva de remoção/desobstrução.",
+      "cenario": "Um poço apresenta queda de vazão bruta acompanhada de mudança de pressão observada. O problema já está afetando a capacidade de escoamento quando o enunciado começa. A pergunta pedirá a natureza da resposta necessária diante desse estado já instalado.",
+      "resposta": "ação corretiva de remoção/desobstrução da restrição",
+      "resposta_atraente": "reforçar apenas a prevenção química",
+      "sinal_que_descarta": "a queda de vazão e a alteração de pressão já estão presentes, indicando restrição instalada",
+      "condicoes_enunciado": [
+        "o caso é de restrição por incrustação na coluna de produção",
+        "a perda já compromete a vazão",
+        "o enunciado pergunta pela natureza da ação"
+      ],
+      "limites": [
+        "não define qual técnica corretiva será usada",
+        "vale para caso em que a obstrução já esteja formada"
+      ],
+      "id": "C12"
+    },
+    {
+      "relacoes": [
+        "B011.R4",
+        "B014.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Usar a rota de água para sustentar carga",
+      "ponte": "a capacidade da rota alternativa de destino da água produzida ainda controla a vazão total sustentável",
+      "cadeia": "A água produzida pode seguir para reinjeção ou para tratamento e descarte. Como a capacidade dessas rotas influencia diretamente a vazão total sustentada, se a reinjeção limitar e a outra rota estiver disponível dentro das exigências aplicáveis, o efeito final viável é desviar mais água para tratamento/descarte.",
+      "cenario": "A reinjeção de água se aproxima do limite, mas a linha de tratamento e descarte permanece disponível e o enunciado dirá que ela atende às exigências legais para a condição descrita. O restante do processamento primário não mostra restrição equivalente naquele momento. A pergunta será sobre a alavanca operacional específica para sustentar a carga.",
+      "resposta": "desviar mais água produzida para tratamento/descarte, se permitido",
+      "resposta_atraente": "reduzir imediatamente a carga de óleo como única saída",
+      "sinal_que_descarta": "a rota de tratamento e descarte está disponível e admissível para a condição",
+      "condicoes_enunciado": [
+        "unidade marítima com rotas de reinjeção e de tratamento/descarte",
+        "a rota alternativa está operacional e dentro da exigência aplicável",
+        "o gargalo está na destinação da água, não no óleo ou gás"
+      ],
+      "limites": [
+        "não vale se a rota alternativa estiver indisponível ou vedada",
+        "não compara economicamente as duas rotas"
+      ],
+      "id": "C13"
+    },
+    {
+      "relacoes": [
+        "B023.R7",
+        "B010.R5"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Mesmo NPR, prioridades diferentes",
+      "ponte": "o mesmo NPR pode esconder combinações muito diferentes de severidade, ocorrência e detecção",
+      "cadeia": "Combinações distintas de severidade, ocorrência e detecção podem gerar o mesmo NPR. Por isso, quando a decisão prática precisa priorizar recuperação ou tratamento, o desfecho correto é privilegiar o modo que afeta a função mais crítica e com recuperação mais restrita, e não tratar os dois como equivalentes apenas pelo número.",
+      "cenario": "Dois modos de falha receberam o mesmo NPR na planilha. Um deles, porém, quando ocorre, bloqueia uma função principal por período mais longo e com mais restrições de recuperação; o outro tem efeito local e rapidamente contornável. A pergunta pedirá qual deles deve subir na prioridade operacional.",
+      "resposta": "priorizar o modo que bloqueia função crítica e demora mais a recuperar",
+      "resposta_atraente": "tratar os modos como equivalentes porque o NPR é igual",
+      "sinal_que_descarta": "um dos modos bloqueia função principal por mais tempo e com recuperação mais restrita",
+      "condicoes_enunciado": [
+        "a abordagem usa NPR",
+        "o cenário informa que os NPRs são iguais",
+        "há diferença funcional clara entre os efeitos dos modos"
+      ],
+      "limites": [
+        "não substitui análise individual das consequências críticas",
+        "depende de o impacto funcional e a duração de recuperação estarem explicitados"
+      ],
+      "id": "C14"
+    },
+    {
+      "relacoes": [
+        "B005.R1",
+        "B021.R1"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Alta prontidão instantânea, baixa continuidade",
+      "ponte": "estar apto quando requerido não significa conseguir prestar o serviço continuamente ao longo do intervalo",
+      "cadeia": "Disponibilidade trata da aptidão quando necessário, enquanto confiabilidade trata de manter o serviço ao longo do tempo. Se o item aparece normalmente online nas verificações, mas sofre várias interrupções durante a campanha, a conclusão final correta é que o atributo degradado é a confiabilidade.",
+      "cenario": "Nas checagens instantâneas o equipamento quase sempre aparece em serviço. Ainda assim, durante a campanha ocorreram várias interrupções não planejadas, com retomada posterior. A pergunta pedirá qual atributo está pior representado por esse comportamento.",
+      "resposta": "confiabilidade",
+      "resposta_atraente": "disponibilidade",
+      "sinal_que_descarta": "o problema observado é a repetição de interrupções ao longo do intervalo, não a prontidão em um instante",
+      "condicoes_enunciado": [
+        "o item inicia o período em operação",
+        "há registros de várias interrupções ao longo do intervalo",
+        "a pergunta compara atributos de desempenho"
+      ],
+      "limites": [
+        "não implica que a disponibilidade seja necessariamente baixa",
+        "não substitui cálculo quantitativo dos indicadores"
+      ],
+      "id": "C15"
+    },
+    {
+      "relacoes": [
+        "B009.R2",
+        "B004.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Reparo excepcional não é mantenabilidade",
+      "ponte": "o retorno rápido decorreu da execução específica da manutenção, sem mudança na propriedade do sistema e de seu suporte",
+      "cadeia": "Mantenabilidade é uma propriedade do sistema e do arranjo de suporte, enquanto manutenção é a ação física executada. Se um retorno rápido ocorreu por esforço extraordinário, sem mudança de arranjo, meios ou projeto, o resultado correto é reconhecer ação de manutenção bem-sucedida, não aumento da mantenabilidade.",
+      "cenario": "Após uma falha, a recuperação foi muito rápida porque houve mobilização fora do padrão, jornada estendida e foco total da equipe. O projeto do item, sua acessibilidade e o arranjo de suporte não mudaram entre antes e depois do evento. A pergunta será sobre o que de fato foi demonstrado por esse caso.",
+      "resposta": "desempenho da ação de manutenção, não aumento de mantenabilidade",
+      "resposta_atraente": "a mantenabilidade do sistema melhorou",
+      "sinal_que_descarta": "não houve mudança em projeto, acessibilidade ou arranjo de suporte; houve apenas esforço excepcional",
+      "condicoes_enunciado": [
+        "o sistema estava parado e foi restaurado",
+        "não houve alteração de projeto ou suporte de manutenção",
+        "o retorno rápido decorreu de esforço operacional extraordinário"
+      ],
+      "limites": [
+        "não exclui que melhorias de suporte possam alterar mantenabilidade em outros casos",
+        "depende de o cenário explicitar a ausência de mudança estrutural"
+      ],
+      "id": "C16"
+    },
+    {
+      "relacoes": [
+        "B008.R8",
+        "B014.R3",
+        "B012.R5"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Média histórica escondendo migração do gargalo",
+      "ponte": "o verdadeiro gargalo migrou para o manejo da fase aquosa e não aparece nas médias agregadas de falha ou parada",
+      "cadeia": "Monitorar só médias pode mascarar o limitante real. Se o aumento de água produzida deslocou a limitação prática para a fase aquosa, o debottlenecking correto exige localizar ali a variável ou o equipamento limitante antes de escolher qualquer mudança.",
+      "cenario": "O subsistema com maior média histórica de downtime não é o mesmo ponto em que os cortes de carga aparecem agora. As reduções de taxa passam a ocorrer quando o water cut está alto, enquanto os equipamentos principais de hidrocarboneto mantêm comportamento dentro do esperado. A pergunta pedirá onde deve começar o debottlenecking.",
+      "resposta": "localizar na malha de água produzida a variável/equipamento limitante",
+      "resposta_atraente": "atuar primeiro no subsistema com maior média histórica de falhas",
+      "sinal_que_descarta": "os cortes de carga coincidem com water cut alto, não com o subsistema campeão de média histórica",
+      "condicoes_enunciado": [
+        "há crescimento relevante de água produzida",
+        "o cenário informa que as médias históricas apontam para outro subsistema",
+        "a pergunta é sobre debottlenecking"
+      ],
+      "limites": [
+        "não identifica qual item específico da malha de água é o limitante",
+        "a migração do gargalo depende da condição real da unidade"
+      ],
+      "id": "C17"
+    },
+    {
+      "relacoes": [
+        "B017.R2",
+        "B020.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Desvio operado com premissas não validadas",
+      "ponte": "a validação técnica do desvio ou mudança atrasou e as premissas da barreira ficaram desatualizadas",
+      "cadeia": "Dependência de suporte remoto, documentação inacessível ou responsabilidade técnica indefinida atrasam a validação de mudanças diante de desvios. Se a barreira passa a operar com premissas desatualizadas, o efeito final é divergência entre risco real e risco assumido para a operação.",
+      "cenario": "O processo foi mantido em condição desviada enquanto a validação técnica demorava por falta de documentação acessível e indefinição de quem autorizaria a revisão. A barreira citada continua listada nos documentos existentes, mas o contexto operacional já não é exatamente o mesmo. A pergunta pedirá a consequência sobre o risco assumido.",
+      "resposta": "o risco real divergiu do risco assumido para operar",
+      "resposta_atraente": "o risco permaneceu o mesmo porque a barreira segue documentada",
+      "sinal_que_descarta": "a validação da mudança atrasou e as premissas de uso da barreira já não estão atualizadas",
+      "condicoes_enunciado": [
+        "há desvio operacional ou mudança pendente de validação",
+        "existem dificuldades organizacionais de suporte, documentação ou responsabilidade técnica",
+        "a barreira é relevante para o risco do cenário"
+      ],
+      "limites": [
+        "não quantifica a divergência de risco",
+        "depende de a premissa da barreira realmente ter sido alterada pelo desvio"
+      ],
+      "id": "C18"
+    },
+    {
+      "relacoes": [
+        "B020.R6",
+        "B022.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Economia em barreira crítica numa unidade de alta receita",
+      "ponte": "a decisão insuficiente sobre a barreira expõe a unidade a parada ou restrição com consequência econômica elevada",
+      "cadeia": "Decisões insuficientes sobre barreiras críticas podem deslocar custo para perda de produção ou restrição operacional. Em uma unidade de alta produção, uma parada forçada eleva muito a perda potencial porque a receita diária comprometida é maior, levando ao desfecho final de alta perda de receita.",
+      "cenario": "Uma correção em barreira crítica foi adiada sob justificativa de custo imediato. O enunciado informará que a unidade tem alta taxa de produção e que a função protegida pode levar a restrição severa ou parada se o problema evoluir. A pergunta pedirá a principal consequência econômica potencial.",
+      "resposta": "perda potencial elevada de receita diária",
+      "resposta_atraente": "impacto limitado ao custo direto do reparo da barreira",
+      "sinal_que_descarta": "a unidade é de alta produção e a consequência considerada inclui parada ou restrição forçada",
+      "condicoes_enunciado": [
+        "a barreira é crítica para a operação",
+        "a unidade possui produção elevada",
+        "há possibilidade plausível de parada ou restrição caso a decisão seja insuficiente"
+      ],
+      "limites": [
+        "não fornece cálculo econômico universal",
+        "o efeito varia com duração da parada e contexto contratual"
+      ],
+      "id": "C19"
+    },
+    {
+      "relacoes": [
+        "B010.R2",
+        "B022.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Cortar preventiva para elevar disponibilidade",
+      "ponte": "a economia imediata com preventiva ignora custos acumulados de falha",
+      "cadeia": "Aumentar disponibilidade não justifica reduzir preventiva sem avaliação de risco e integridade. Na comparação econômica, o erro final é olhar só o desembolso imediato, quando deveriam entrar também indisponibilidade, correções emergenciais e restrições operacionais.",
+      "cenario": "É proposta uma redução de intervenções preventivas para ganhar horas de operação. A justificativa apresentada usa apenas o esforço e o custo direto da preventiva evitada. O enunciado perguntará qual parcela de custo está sendo omitida nessa lógica.",
+      "resposta": "indisponibilidade, correções emergenciais e restrições operacionais acumuladas",
+      "resposta_atraente": "apenas o custo imediato da preventiva evitada",
+      "sinal_que_descarta": "a proposta mede benefício só pelo ganho imediato de horas operando",
+      "condicoes_enunciado": [
+        "há proposta de reduzir preventiva para elevar disponibilidade",
+        "a comparação é econômica e operacional",
+        "o cenário não apresenta avaliação de risco e integridade já concluída"
+      ],
+      "limites": [
+        "não afirma que toda preventiva seja economicamente ótima",
+        "não define quando uma redução seria aceitável após avaliação adequada"
+      ],
+      "id": "C20"
+    },
+    {
+      "relacoes": [
+        "B007.R6",
+        "B008.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Base setorial em unidade nova",
+      "ponte": "os parâmetros importados podem ser inadequados porque não existe histórico confiável da própria unidade para representar a condição local",
+      "cadeia": "Em unidades novas ou com protótipos, a falta de histórico confiável pode introduzir parâmetros inadequados na análise RAM. Como bancos setoriais não substituem dados da unidade quando o objetivo é representar condições locais, o resultado final esperado é RAM impreciso para a unidade específica.",
+      "cenario": "Uma unidade nova está sendo avaliada e o modelo foi alimentado com banco setorial por ausência de histórico próprio. O enunciado dirá que a intenção é prever comportamento da própria unidade nas suas condições locais. A pergunta será sobre a principal limitação desse resultado.",
+      "resposta": "resultados RAM imprecisos por parâmetros não representativos da unidade",
+      "resposta_atraente": "o banco setorial já basta para representar fielmente a unidade",
+      "sinal_que_descarta": "a unidade é nova e o objetivo é representar suas condições locais, sem histórico confiável próprio",
+      "condicoes_enunciado": [
+        "a unidade é nova ou protótipo",
+        "não há histórico confiável da própria unidade",
+        "o objetivo é previsão local, não apenas comparação setorial"
+      ],
+      "limites": [
+        "não invalida o uso do banco setorial como referência inicial",
+        "a imprecisão depende do quanto a unidade difere do contexto do banco"
+      ],
+      "id": "C21"
+    },
+    {
+      "relacoes": [
+        "B019.R2",
+        "B020.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Histórico aponta função sensível, mas falta ver o estado real",
+      "ponte": "o histórico elevou a atenção sobre uma função ou barreira específica da instalação",
+      "cadeia": "A análise de falhas anteriores ajuda a reconhecer funções sensíveis do processo. Se essa função entra no planejamento operacional, a avaliação correta não pode parar na existência documental da barreira e deve terminar na verificação de seu estado real de desempenho.",
+      "cenario": "Eventos anteriores, próprios ou de instalações similares, repetidamente implicaram uma certa função de processo. Na unidade atual, a barreira associada consta em procedimento e cadastro, mas o enunciado não assume automaticamente seu bom estado. A pergunta pedirá o que ainda precisa ser verificado antes de se considerar o controle efetivo.",
+      "resposta": "o desempenho real da barreira associada, e não só sua existência documental",
+      "resposta_atraente": "a confirmação de que a barreira está listada na documentação",
+      "sinal_que_descarta": "o histórico já mostrou aquela função como sensível, então só a existência documental não basta",
+      "condicoes_enunciado": [
+        "há uso de histórico de falhas ou acidentes anteriores",
+        "a função sensível identificada tem barreira associada",
+        "o contexto é planejamento operacional"
+      ],
+      "limites": [
+        "o histórico apoia, mas não substitui a análise da instalação real",
+        "o cenário precisa associar a barreira à função sensível descrita"
+      ],
+      "id": "C22"
+    },
+    {
+      "relacoes": [
+        "B008.R5",
+        "B009.R5"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Parada total lançada como MTTR",
+      "ponte": "o intervalo registrado inclui esperas e indisponibilidade além da atividade de reparo",
+      "cadeia": "Registrar início da falha e retorno ao estado operacional permite calcular indisponibilidade observada. Mas, para apurar MTTR, é preciso separar os intervalos de reparo das esperas; se isso não for feito, o número final representa downtime total, não MTTR puro.",
+      "cenario": "O sistema registra para cada evento apenas o instante de falha e o instante de retorno. Dentro de vários eventos houve espera por acesso, autorização, sobressalente ou mobilização antes do reparo efetivo. A pergunta pedirá se o intervalo total entre esses dois marcos pode ser usado diretamente como MTTR.",
+      "resposta": "isso mede downtime total; MTTR exige separar o reparo ativo",
+      "resposta_atraente": "usar toda a duração da parada como MTTR",
+      "sinal_que_descarta": "há esperas por acesso, liberação ou peça dentro do mesmo evento registrado",
+      "condicoes_enunciado": [
+        "existem registros de início da falha e retorno à operação",
+        "o cenário informa esperas entre esses marcos",
+        "a pergunta trata da apuração de MTTR"
+      ],
+      "limites": [
+        "o intervalo total ainda é útil para disponibilidade observada",
+        "não define como segmentar os tempos se o registro for pobre"
+      ],
+      "id": "C23"
+    },
+    {
+      "relacoes": [
+        "B006.R7",
+        "B012.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Debottleneck errado em sistema duplicado",
+      "ponte": "o verdadeiro limitante é o recurso compartilhado entre os trens, e não a quantidade de máquinas paralelas",
+      "cadeia": "Se os dois trens compartilham um mesmo gargalo, o ganho real da redundância cai. Como a mudança de debottlenecking deve aliviar precisamente a restrição identificada sem deslocá-la, o desfecho correto é atacar o gargalo comum e não adicionar mais um equipamento igual.",
+      "cenario": "Um sistema com dois trens já mostra que ambos convergem para a mesma utilidade, descarga ou lógica de controle. Mesmo assim, surge proposta de acrescentar mais um equipamento em paralelo. A pergunta pedirá qual mudança realmente alivia a limitação observada.",
+      "resposta": "aliviar o gargalo comum, não adicionar mais equipamento paralelo",
+      "resposta_atraente": "instalar mais um equipamento idêntico em paralelo",
+      "sinal_que_descarta": "os trens existentes já compartilham o mesmo ponto limitante",
+      "condicoes_enunciado": [
+        "há dois trens ou mais em paralelo",
+        "o gargalo compartilhado está identificado no cenário",
+        "a pergunta é sobre medida de debottlenecking"
+      ],
+      "limites": [
+        "não especifica qual intervenção técnica resolve o gargalo",
+        "não vale se o gargalo compartilhado não estiver de fato no recurso comum"
+      ],
+      "id": "C24"
+    },
+    {
+      "relacoes": [
+        "B001.R6",
+        "B000.R3"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "KPI composto não substitui variável de controle",
+      "ponte": "a decisão imediata depende da variável medida, enquanto o KPI apenas resume o efeito dessa variável sobre desempenho",
+      "cadeia": "Mesmo em painel em tempo real, a métrica só ajuda se for coerente com a decisão. Como o KPI não substitui a variável de processo, quando a ação imediata depende da variável controlada o desfecho correto é usar a medição direta dessa variável, e não o KPI agregado.",
+      "cenario": "Um KPI composto de desempenho no painel piora durante a operação, mas a variável de processo usada para controle imediato também está disponível no sistema. O enunciado informará que a decisão pedida é de atuação operacional instantânea sobre o processo. A pergunta será sobre o que deve sustentar essa ação.",
+      "resposta": "a medição direta da variável de processo",
+      "resposta_atraente": "o KPI agregado exibido no painel",
+      "sinal_que_descarta": "a pergunta é sobre ação imediata de processo e a variável direta está disponível",
+      "condicoes_enunciado": [
+        "há KPI em painel em tempo real",
+        "a variável de processo relevante está medida diretamente",
+        "a decisão pedida é operacional e imediata"
+      ],
+      "limites": [
+        "não torna o KPI inútil para monitoramento",
+        "vale quando a variável direta necessária à ação está disponível"
+      ],
+      "id": "C25"
+    },
+    {
+      "relacoes": [
+        "B011.R5",
+        "B013.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Água produzida limitando alocação entre poços",
+      "ponte": "a restrição está em um ponto comum da malha de água produzida",
+      "cadeia": "Quando a malha de água perde capacidade, a vazão total pode precisar ser reduzida. Sendo um ponto comum do sistema em FPSO, uma resposta operacional específica e plausível é redistribuir vazões entre poços para alocar a capacidade disponível.",
+      "cenario": "O pacote comum de manejo de água se aproxima do limite e os poços apresentam cortes de água diferentes entre si. O restante do sistema não mostra a mesma restrição naquele instante. A pergunta pedirá uma resposta operacional de alocação, não uma modificação de longo prazo.",
+      "resposta": "redistribuir vazões entre poços",
+      "resposta_atraente": "manter todos os poços na mesma fração de redução",
+      "sinal_que_descarta": "os poços têm cortes de água diferentes e a restrição está em ponto comum da malha de água",
+      "condicoes_enunciado": [
+        "a limitação está na malha comum de água produzida",
+        "há poços com comportamentos diferentes de produção de água",
+        "a pergunta é sobre resposta operacional imediata em FPSO"
+      ],
+      "limites": [
+        "não afirma que essa seja a única resposta possível",
+        "a viabilidade depende do arranjo de poços e controles disponíveis"
+      ],
+      "id": "C26"
+    },
+    {
+      "relacoes": [
+        "B013.R6",
+        "B022.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Controle tardio virando problema logístico",
+      "ponte": "a falha de autodiagnóstico e de ação contingencial em prazo compatível transformou o caso em correção emergencial",
+      "cadeia": "Falhas de autodiagnóstico e de ação corretiva compatível com o risco podem levar a interdição ou resposta tardia. Além da perda direta de produção, isso desloca o efeito final para impactos indiretos típicos de emergência, como mobilização extraordinária e replanejamento logístico.",
+      "cenario": "Um desvio evoluiu sem autodiagnóstico eficaz e as ações contingenciais vieram tarde para a condição. Quando a resposta começou, já não era mais intervenção rotineira. A pergunta pedirá um impacto econômico indireto plausível além da produção perdida.",
+      "resposta": "mobilização extraordinária e replanejamento logístico",
+      "resposta_atraente": "impacto restrito à eficiência operacional do processo",
+      "sinal_que_descarta": "o caso já entrou em regime de correção emergencial por resposta tardia",
+      "condicoes_enunciado": [
+        "há falha de autodiagnóstico ou contingência em prazo inadequado",
+        "o cenário indica emergência, interdição ou restrição severa",
+        "a pergunta trata de consequência econômica indireta"
+      ],
+      "limites": [
+        "os impactos indiretos citados são exemplos, não lista exaustiva",
+        "não substitui quantificação econômica do caso real"
+      ],
+      "id": "C27"
+    },
+    {
+      "relacoes": [
+        "B010.R4",
+        "B004.R7"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Mesmo número de falhas, pior desempenho por fila",
+      "ponte": "falhas simultâneas formaram fila porque a capacidade das equipes era o gargalo",
+      "cadeia": "Se a capacidade das equipes é o gargalo, falhas simultâneas prolongam a indisponibilidade por fila. Como o desempenho global depende também de quão rápido o sistema volta à operação aceitável, o efeito final correto é reconhecer a capacidade de equipe como limitante do retorno, não uma simples piora da confiabilidade.",
+      "cenario": "Dois períodos mostram contagem parecida de falhas, mas em um deles várias ocorrências coincidiram no tempo. O retorno foi mais lento porque os atendimentos ficaram em sequência. A pergunta pedirá a explicação para o pior desempenho global desse período.",
+      "resposta": "capacidade de equipe de manutenção tornou-se o gargalo do retorno",
+      "resposta_atraente": "a confiabilidade dos equipamentos piorou",
+      "sinal_que_descarta": "a contagem de falhas é semelhante; o que mudou foi a simultaneidade e a espera por atendimento",
+      "condicoes_enunciado": [
+        "há falhas simultâneas ou sobrepostas",
+        "a capacidade das equipes é o recurso limitante",
+        "a comparação é de desempenho global, não só de contagem de falhas"
+      ],
+      "limites": [
+        "não vale se a frequência de falhas também tiver aumentado materialmente",
+        "a fila depende de a equipe ser de fato o gargalo"
+      ],
+      "id": "C28"
+    },
+    {
+      "relacoes": [
+        "B000.R5",
+        "B002.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Piora aparente após mudança de carga",
+      "ponte": "o KPI absoluto reagiu à mudança de carga, regime transiente ou volume processado, e não necessariamente a perda intrínseca de desempenho",
+      "cadeia": "O comportamento do KPI varia com transientes e mudanças de carga. Sem base de referência adequada, a variação absoluta pode refletir apenas carga ou volume processado; assim, o desfecho correto é reconhecer efeito de carga sem normalização, e não degradação estrutural imediata.",
+      "cenario": "Um indicador piora logo após uma elevação de carga ou mudança de regime operacional. O valor analisado está em base absoluta, e não normalizada. Não há no enunciado outro achado independente que confirme degradação física naquele momento.",
+      "resposta": "efeito de carga/volume sem normalização adequada",
+      "resposta_atraente": "degradação estrutural do processo ou do equipamento",
+      "sinal_que_descarta": "a piora começou junto da mudança de carga ou do regime transiente e o indicador está em valor absoluto",
+      "condicoes_enunciado": [
+        "há mudança de carga, transiente ou volume processado",
+        "o KPI é analisado em valor absoluto",
+        "não há confirmação independente de degradação física"
+      ],
+      "limites": [
+        "não prova que não exista degradação; apenas mostra que a leitura absoluta é insuficiente",
+        "a interpretação depende de o cenário explicitar a mudança operacional"
+      ],
+      "id": "C29"
+    },
+    {
+      "relacoes": [
+        "B001.R5",
+        "B012.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Do KPI ruim ao debottleneck correto",
+      "ponte": "o KPI apenas revelou deficiência de desempenho; a restrição específica ainda não foi localizada",
+      "cadeia": "KPIs podem apontar deficiência de desempenho e motivar ação, mas isso não garante qual mudança trará ganho. Em gargalos de processo, o passo final correto é localizar primeiro a variável ou o equipamento limitante antes de escolher a mudança de debottlenecking.",
+      "cenario": "Um KPI agregado de capacidade ou eficiência saiu do patamar esperado, mas o enunciado não traz ainda localização inequívoca do ponto restritivo. Já existe pressão para selecionar uma modificação de processo ou equipamento. A pergunta será sobre o passo técnico necessário antes da escolha da mudança.",
+      "resposta": "localizar primeiro a variável ou o equipamento limitante",
+      "resposta_atraente": "escolher imediatamente a modificação mais 'promissora'",
+      "sinal_que_descarta": "o cenário só traz o KPI agregado ruim, sem localização inequívoca da restrição",
+      "condicoes_enunciado": [
+        "há perda ou restrição de produção indicada por KPI",
+        "a restrição específica ainda não foi localizada",
+        "a pergunta é sobre sequência de decisão em debottlenecking"
+      ],
+      "limites": [
+        "não indica método de localização",
+        "o KPI continua útil como gatilho, mas não substitui a identificação do limitante"
+      ],
+      "id": "C30"
+    },
+    {
+      "relacoes": [
+        "B006.R2",
+        "B007.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "RAM superestima redundância por modelagem simplificada",
+      "ponte": "a lógica funcional do standby e as dependências entre subsistemas não foram representadas no modelo",
+      "cadeia": "O efeito da redundância depende da lógica funcional, do acionamento do reserva e das dependências entre subsistemas. Como a análise RAM exige modelar a lógica funcional e as dependências do sistema, o desfecho correto é explicitar essa lógica no modelo e não manter um paralelo simplificado.",
+      "cenario": "Um estudo tratou um arranjo com equipamento ativo e reserva como se fosse paralelo simples, mas o reserva é acionado por lógica específica e depende de recursos compartilhados. O resultado do modelo ficou otimista frente ao entendimento operacional. A pergunta pedirá o elemento de modelagem que está faltando.",
+      "resposta": "modelar explicitamente a lógica de standby e as dependências do sistema",
+      "resposta_atraente": "manter o bloco paralelo simplificado e só trocar os dados numéricos",
+      "sinal_que_descarta": "o cenário informa standby com lógica própria e recursos compartilhados omitidos no modelo",
+      "condicoes_enunciado": [
+        "há redundância com reserva ou lógica de acionamento específica",
+        "o estudo é uma análise RAM",
+        "existem dependências entre subsistemas ou recursos compartilhados"
+      ],
+      "limites": [
+        "não define qual formalismo de modelagem será usado",
+        "não invalida modelos simples em fase preliminar quando o objetivo for outro"
+      ],
+      "id": "C31"
+    },
+    {
+      "relacoes": [
+        "B006.R3",
+        "B021.R2"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Reserva fria disponível no papel, não na demanda",
+      "ponte": "o item em standby pode falhar em espera, na partida ou na comutação",
+      "cadeia": "Em reserva fria, o item pode sofrer menos desgaste, mas isso não elimina falhas em espera, partida ou comutação. Como disponibilidade exige estar apto quando requerido, o desfecho correto é reconhecer que uma falha de partida/comutação do reserva compromete a disponibilidade apesar da baixa exposição ao desgaste.",
+      "cenario": "O equipamento reserva permanece longos períodos parado e, por isso, é tratado informalmente como 'garantido'. Quando surge a necessidade de assumir carga, porém, o histórico mostra ocorrências de não partida ou de comutação malsucedida. A pergunta pedirá o mecanismo que invalida a confiança excessiva nesse standby.",
+      "resposta": "falha de partida/comutação do reserva comprometendo a disponibilidade",
+      "resposta_atraente": "como o reserva quase não desgasta, sua disponibilidade é praticamente garantida",
+      "sinal_que_descarta": "as falhas aparecem justamente quando o reserva é demandado para assumir carga",
+      "condicoes_enunciado": [
+        "o arranjo é de reserva fria",
+        "a disponibilidade considerada é a aptidão quando requerido",
+        "o cenário informa falhas ao demandar o reserva"
+      ],
+      "limites": [
+        "não exclui outros modos de falha do arranjo",
+        "vale quando o risco relevante está na espera, partida ou comutação"
+      ],
+      "id": "C32"
+    }
+  ]
+}

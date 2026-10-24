@@ -1,0 +1,700 @@
+{
+  "item": "06_05",
+  "observacao": "Foram priorizados 30 encadeamentos com ponte mecanística ou funcional realmente necessária para chegar à resposta, evitando duplicações muito próximas e respostas genéricas de prudência. Algumas relações foram deixadas de fora porque, sem repetir o mesmo mecanismo ou sem cruzamento robusto entre blocos diferentes, a cadeia ficava fraca ou excessivamente óbvia.",
+  "combinacoes": [
+    {
+      "relacoes": [
+        "B000.R4",
+        "B004.R4",
+        "B008.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Mudança de layout torna 2ooN inalcançável e bloqueia ações automáticas",
+      "ponte": "perda de cobertura efetiva na zona após mudança de layout/ventilação",
+      "cadeia": "Alterações de layout ou ventilação podem degradar a cobertura real sem reduzir o número de detectores. Com parte da zona fora da cobertura efetiva, a votação dois-de-N se torna inalcançável e as ações automáticas previstas deixam de liberar.",
+      "cenario": "Após instalação de enclausuramento temporário e barreiras corta-vento em um módulo, a contagem de detectores permaneceu a mesma. Um detector entrou em alarme, mas o fechamento automático associado não ocorreu; os atuadores finais respondem quando comandados em teste e não foi reportada falha no detector que alarmou.",
+      "resposta": "votação 2-de-N inalcançável, impedindo a atuação automática prevista",
+      "resposta_atraente": "falha do detector que entrou em alarme",
+      "sinal_que_descarta": "o detector alarmado e os atuadores finais responderam adequadamente nos testes citados",
+      "condicoes_enunciado": [
+        "FPSO com mudança física ou operacional que alterou ventilação/dispersão",
+        "lógica automática baseada em votação 2-de-N",
+        "existência de ações automáticas associadas à detecção"
+      ],
+      "limites": [
+        "vale quando a mudança afeta a cobertura efetiva da zona",
+        "as ações finais dependem da matriz de causa e efeito configurada"
+      ],
+      "id": "C1"
+    },
+    {
+      "relacoes": [
+        "B019.R3",
+        "B004.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Leitura alta de LIE mascara votação inalcançável",
+      "ponte": "a suficiência da proteção não pode ser inferida pela concentração isolada",
+      "cadeia": "Uma concentração crescente em %LIE aproxima da faixa inflamável, mas não prova proteção suficiente. Se detectores da zona estiverem inibidos, falhos ou fora da área efetiva, a votação dois-de-N pode continuar inalcançável apesar da leitura alta.",
+      "cenario": "Um cabeçote apresenta elevação rápida de %LIE e a discussão operacional passa a tratar isso como evidência de que a proteção automática está garantida. No mesmo cenário, detectores vizinhos da zona aparecem inibidos, falhos ou fora da área efetivamente coberta após mudanças locais.",
+      "resposta": "a votação 2-de-N da zona pode estar inalcançável",
+      "resposta_atraente": "a leitura alta por si só garante proteção automática suficiente",
+      "sinal_que_descarta": "o cenário informa indisponibilidade ou perda de cobertura dos detectores vizinhos",
+      "condicoes_enunciado": [
+        "avaliação de leitura de gás em relação ao LIE",
+        "zona com lógica 2-de-N",
+        "indisponibilidade parcial ou perda de cobertura na zona"
+      ],
+      "limites": [
+        "a relação final é específica para votação 2-de-N",
+        "o bloco de LIE não define cobertura nem tempo de resposta aceitáveis"
+      ],
+      "id": "C2"
+    },
+    {
+      "relacoes": [
+        "B010.R4",
+        "B018.R5"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Contagem total mascara indisponibilidade relevante por zona",
+      "ponte": "a fire zone afetada ficou apenas parcialmente instrumentada",
+      "cadeia": "Inibições sucessivas na mesma zona podem reduzir significativamente a cobertura. Nessa condição, a disponibilidade relevante deixa de ser a global da unidade e passa a ser por zona e por função, porque a área parcialmente instrumentada pode não confirmar o evento nem disparar a lógica requerida.",
+      "cenario": "O supervisório ainda mostra grande número total de detectores disponíveis na unidade. Mesmo assim, uma mesma fire zone acumula inibições sucessivas ao longo de vários dias e a discussão usa a disponibilidade global como argumento de suficiência.",
+      "resposta": "perda da disponibilidade relevante por zona e por função",
+      "resposta_atraente": "a alta disponibilidade global mantém a zona protegida",
+      "sinal_que_descarta": "as inibições estão concentradas na mesma fire zone",
+      "condicoes_enunciado": [
+        "monitoramento operacional com inibições sucessivas na mesma zona",
+        "avaliação da disponibilidade do F&G em operação degradada"
+      ],
+      "limites": [
+        "não quantifica a redução de cobertura",
+        "a análise por zona/função se impõe quando a área fica parcialmente instrumentada"
+      ],
+      "id": "C3"
+    },
+    {
+      "relacoes": [
+        "B012.R2",
+        "B005.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Verificação com portátil não autoriza tratar alarme como falso",
+      "ponte": "a ida a campo para confirmar pode expor a equipe a atmosfera inflamável",
+      "cadeia": "A verificação com detector portátil só tem valor sob condições de entrada, rota e dispersão compatíveis com segurança. Quando essa verificação pode expor pessoas, a resposta operacional deve tratar a detecção como real para minimizar o risco às equipes.",
+      "cenario": "Após um alarme de gás, é proposta uma verificação em campo com detector portátil por rota que cruza a área potencialmente afetada. O cenário informa incerteza sobre dispersão e não traz descarte seguro da presença de atmosfera inflamável antes da entrada da equipe.",
+      "resposta": "tratar a detecção como real para a decisão operacional",
+      "resposta_atraente": "mandar a equipe confirmar antes de mobilizar proteção",
+      "sinal_que_descarta": "a rota e a dinâmica de dispersão ainda podem expor pessoas à atmosfera inflamável",
+      "condicoes_enunciado": [
+        "uso proposto de detector portátil como medida compensatória",
+        "decisão voltada à proteção das equipes",
+        "existência de risco de exposição na rota de entrada"
+      ],
+      "limites": [
+        "não afirma que o portátil seja sempre inadequado",
+        "o critério é de precaução operacional, não de lógica automática"
+      ],
+      "id": "C4"
+    },
+    {
+      "relacoes": [
+        "B002.R2",
+        "B013.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Recomendação de dispersão não implantada gera degradação latente",
+      "ponte": "divergência entre o arranjo analisado como necessário e o arranjo operante",
+      "cadeia": "Recomendações de estudos de dispersão podem fundamentar alocação e testes do F&G. Quando essas recomendações ficam longamente sem implantação, mesmo sem falha aparente imediata, a cobertura real, a confiabilidade da resposta e a consistência com a filosofia de segurança podem se degradar.",
+      "cenario": "Um estudo posterior recomendou mudanças de alocação ou testes de detectores, mas meses se passam sem implementação. Os detectores instalados continuam saudáveis no supervisório e não houve evento recente, o que leva parte da equipe a assumir que nada se perdeu.",
+      "resposta": "degradação latente da cobertura real e da confiabilidade da resposta",
+      "resposta_atraente": "sem falha aparente, não houve perda de barreira",
+      "sinal_que_descarta": "há recomendação de estudo de dispersão pendente por longo período",
+      "condicoes_enunciado": [
+        "existência de recomendações oriundas de estudo de dispersão",
+        "não implantação prolongada dessas recomendações"
+      ],
+      "limites": [
+        "a degradação é possível, não inevitável em todo caso",
+        "o bloco não define quais recomendações têm maior impacto"
+      ],
+      "id": "C5"
+    },
+    {
+      "relacoes": [
+        "B009.R7",
+        "B006.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Mudança aprovada no papel não aderiu ao cenário em campo",
+      "ponte": "a alteração formal não se materializou fisicamente como previsto",
+      "cadeia": "Uma mudança formalmente aprovada pode falhar na implementação em campo. Se a instalação física fica fora das coordenadas estudadas ou não incorpora as recomendações do estudo, a barreira de F&G perde aderência ao cenário para o qual foi concebida.",
+      "cenario": "A documentação e o MOC mostram detectores reposicionados ou acrescentados conforme revisão aprovada. Em walkdown, o arranjo encontrado em campo não corresponde ao aprovado nem às coordenadas usadas no estudo de risco.",
+      "resposta": "perda de aderência da barreira ao cenário estudado",
+      "resposta_atraente": "a conformidade documental basta para manter a aderência",
+      "sinal_que_descarta": "o levantamento em campo diverge do arranjo aprovado",
+      "condicoes_enunciado": [
+        "existência de mudança formalmente aprovada",
+        "falha de implementação em campo identificada"
+      ],
+      "limites": [
+        "a perda de aderência depende de divergência relevante ao cenário estudado",
+        "o bloco não hierarquiza quais recomendações são mais críticas"
+      ],
+      "id": "C6"
+    },
+    {
+      "relacoes": [
+        "B009.R5",
+        "B017.R3"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Descarga de CO2 com registros faltantes mascara falha de implementação",
+      "ponte": "a sequência de confirmações e registros prevista não foi materializada",
+      "cadeia": "No arranjo específico citado, a descarga de CO2 dependia de confirmação local, confirmação do operador e temporização. Se os registros esperados dessas confirmações não aparecem, isso é indício de falha de implementação, e não evidência de que a sequência tenha ocorrido corretamente.",
+      "cenario": "Para um arranjo de CO2, a documentação vigente prevê confirmação local, confirmação posterior no supervisório e temporização antes da descarga. Em um evento, aparece o disparo e depois a indicação de CO2 descarregado, mas os registros esperados das confirmações intermediárias não aparecem.",
+      "resposta": "falha de implementação da lógica/registro previsto da sequência de CO2",
+      "resposta_atraente": "a sequência de dupla confirmação ocorreu e o log é só secundário",
+      "sinal_que_descarta": "faltam justamente os registros que a mudança previa como parte da sequência",
+      "condicoes_enunciado": [
+        "arranjo específico de CO2 com dupla confirmação e temporização",
+        "gestão de mudança previa confirmações e registros correspondentes"
+      ],
+      "limites": [
+        "é um caso específico de CO2, não regra geral para todos os sistemas",
+        "ausência de registros é indício, não prova conclusiva isolada"
+      ],
+      "id": "C7"
+    },
+    {
+      "relacoes": [
+        "B017.R1",
+        "B019.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Detector disponível localmente, mas isolamento atrasado por falha na cadeia",
+      "ponte": "degradação da comunicação entre campo, lógica e interface do operador",
+      "cadeia": "A disponibilidade do detector não garante proteção completa quando a comunicação com a lógica ou a interface do operador está degradada. Nessa condição, falhas de comunicação podem atrasar o isolamento e a mitigação mesmo com o hardware de campo preservado.",
+      "cenario": "O detector em campo sinalizou localmente e é reportado como saudável. Na sala de controle, a indicação esperada ou a trilha de comandos não aparece como deveria, e o isolamento automático só ocorre tardiamente ou após intervenção manual.",
+      "resposta": "falha de comunicação na cadeia F&G, atrasando isolamento/mitigação",
+      "resposta_atraente": "sensor de campo defeituoso",
+      "sinal_que_descarta": "o detector tripou localmente e o hardware de campo está preservado",
+      "condicoes_enunciado": [
+        "detector disponível em campo",
+        "degradação de comunicação com lógica ou interface do operador"
+      ],
+      "limites": [
+        "o bloco não quantifica o atraso",
+        "comunicação é uma causa possível; o cenário deve afastar falha do hardware de campo"
+      ],
+      "id": "C8"
+    },
+    {
+      "relacoes": [
+        "B000.R6",
+        "B015.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Suficiência do estudo antigo não vale após mudança de configuração",
+      "ponte": "a referência de suficiência era válida só para a configuração avaliada",
+      "cadeia": "Quando a cobertura foi julgada suficiente frente ao estudo de risco da própria instalação, essa suficiência vale para aquela configuração específica. Mudanças de layout, ventilação, processo ou risco podem exigir reavaliação da aderência e estudos complementares para confirmar que cobertura e resposta continuam adequadas.",
+      "cenario": "A malha de detectores havia sido aceita pelo estudo de risco original. Depois, a área recebeu mudanças de layout, ventilação ou processo, sem alteração na contagem total de detectores, e o argumento usado é que o estudo antigo continua valendo sem revisão.",
+      "resposta": "reavaliar a aderência do F&G e, se necessário, fazer estudos complementares",
+      "resposta_atraente": "o estudo antigo ainda comprova suficiência",
+      "sinal_que_descarta": "a configuração da área mudou após a base do estudo",
+      "condicoes_enunciado": [
+        "cobertura originalmente avaliada frente ao estudo de risco da própria instalação",
+        "mudanças posteriores de layout, ventilação, processo ou risco"
+      ],
+      "limites": [
+        "a suficiência do estudo vale para a configuração específica avaliada",
+        "a necessidade de estudo complementar é possível, não automática em todo caso"
+      ],
+      "id": "C9"
+    },
+    {
+      "relacoes": [
+        "B000.R3",
+        "B002.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Malha regular não substitui base de dispersão para alocação e testes",
+      "ponte": "é necessário analisar o comportamento provável da nuvem",
+      "cadeia": "Uma malha regular pode ser só ponto de partida, porque não substitui a análise do comportamento provável da nuvem. A partir dessa análise, recomendações de estudos de dispersão podem fundamentar critérios de alocação e testes dos detectores.",
+      "cenario": "A justificativa de posicionamento apresentada para uma área naturalmente ventilada e congestionada é apenas o espaçamento regular dos detectores. Não é mostrada nenhuma base sobre como a nuvem tenderia a se deslocar ou se acumular na área.",
+      "resposta": "usar recomendações de estudo de dispersão para alocação e testes",
+      "resposta_atraente": "aceitar a malha regular como evidência suficiente",
+      "sinal_que_descarta": "a área descrita tem ventilação/geometria que influenciam fortemente o comportamento da nuvem",
+      "condicoes_enunciado": [
+        "definição da malha de detecção de gás",
+        "área onde o comportamento provável da nuvem precisa ser avaliado"
+      ],
+      "limites": [
+        "malha regular pode servir como ponto de partida",
+        "estudo de dispersão pode ser parte da base, não necessariamente a única"
+      ],
+      "id": "C10"
+    },
+    {
+      "relacoes": [
+        "B000.R5",
+        "B009.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Caminho para tomada de ar exige olhar interface com ventilação",
+      "ponte": "a nuvem pode atingir entrada de ar de sistema crítico",
+      "cadeia": "O posicionamento da malha deve considerar locais onde a nuvem pode atingir entradas de ar de sistemas críticos. Como as ações do F&G podem depender de interfaces com ventilação, a verificação não pode parar no painel de alarme.",
+      "cenario": "A análise de dispersão local indica caminho plausível da nuvem até uma tomada de ar de sistema crítico. O debate de projeto, porém, está restrito a sirenes e indicação em painel.",
+      "resposta": "interface/ação do F&G sobre a ventilação do sistema afetado",
+      "resposta_atraente": "apenas alarme ao pessoal é suficiente",
+      "sinal_que_descarta": "o cenário informa possível atingimento de tomada de ar crítica",
+      "condicoes_enunciado": [
+        "avaliação de posicionamento frente a caminho de dispersão",
+        "existência de sistema crítico com tomada de ar exposta"
+      ],
+      "limites": [
+        "o bloco não especifica a ação exata na ventilação",
+        "a conclusão depende de existir interface aplicável entre F&G e ventilação"
+      ],
+      "id": "C11"
+    },
+    {
+      "relacoes": [
+        "B011.R6",
+        "B005.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Confirmação excessiva em módulo semi-confinado aumenta exposição",
+      "ponte": "o vazamento pode evoluir rapidamente sob alta pressão temporal",
+      "cadeia": "Em FPSOs, vazamentos em áreas confinadas ou semi-confinadas tornam crítica a interação entre detecção, resposta humana e barreiras automáticas. Se o procedimento exige confirmação excessiva antes de mobilizar, alarmar ou investigar, a exposição humana pode aumentar.",
+      "cenario": "A primeira indicação ocorre em módulo semi-confinado e o procedimento local condiciona ações mais amplas a confirmação adicional em campo. O cenário destaca que a área permite evolução rápida do vazamento e que a equipe cogita entrar antes da proteção mais abrangente.",
+      "resposta": "aumento da exposição humana durante a resposta",
+      "resposta_atraente": "menos falso alarme torna a resposta mais segura",
+      "sinal_que_descarta": "o cenário explicita área semi-confinada com potencial de evolução rápida",
+      "condicoes_enunciado": [
+        "FPSO com área confinada ou semi-confinada",
+        "procedimento de emergência exigindo confirmação excessiva"
+      ],
+      "limites": [
+        "o bloco não quantifica o aumento de exposição",
+        "a cadeia depende do contexto de alta pressão temporal do vazamento"
+      ],
+      "id": "C12"
+    },
+    {
+      "relacoes": [
+        "B004.R6",
+        "B007.R7"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Bypass e atraso de recomendações tornam a lógica inalcançável no campo",
+      "ponte": "as combinações requeridas para confirmação deixaram de ser materializáveis",
+      "cadeia": "Inibições, bypasses, retirada para manutenção ou atraso na implementação de recomendações reduzem a probabilidade de confirmação do evento a tempo. Por isso, uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados já não conseguem materializar.",
+      "cenario": "A matriz e a votação continuam iguais às do projeto. Porém, alguns detectores estão em bypass, outros fora por manutenção ou aguardando alteração recomendada por estudo, e as confirmações automáticas esperadas deixaram de ocorrer mesmo com indicações locais.",
+      "resposta": "a lógica depende de combinações inalcançáveis pelos detectores reais da zona",
+      "resposta_atraente": "a lógica está válida porque o software não mudou",
+      "sinal_que_descarta": "o arranjo real da zona foi degradado por bypass/manutenção/atraso de recomendação",
+      "condicoes_enunciado": [
+        "existência de inibição, bypass, manutenção ou atraso de recomendação",
+        "lógica dependente de confirmações automáticas"
+      ],
+      "limites": [
+        "o bloco não quantifica a perda de probabilidade de confirmação",
+        "a falha de campo depende da incompatibilidade entre lógica e arranjo real"
+      ],
+      "id": "C13"
+    },
+    {
+      "relacoes": [
+        "B011.R3",
+        "B008.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Matriz intacta no software, mas inexequível sem detectores mínimos",
+      "ponte": "faltam entradas mínimas para gerar automaticamente os comandos da matriz",
+      "cadeia": "A ausência de detectores mínimos em uma zona pode impedir ações lógicas automáticas. Assim, mesmo com a matriz de causa e efeito documentada no sistema, os comandos verificáveis que ela representa não se materializam naquela zona.",
+      "cenario": "A matriz de causa e efeito continua carregada e os atuadores finais respondem quando comandados manualmente. Ao mesmo tempo, a zona está sem parte dos detectores mínimos previstos e as ações automáticas associadas não acontecem.",
+      "resposta": "a matriz C&E ficou inexequível automaticamente nessa zona",
+      "resposta_atraente": "falha do atuador final",
+      "sinal_que_descarta": "os atuadores respondem quando acionados manualmente",
+      "condicoes_enunciado": [
+        "faltam detectores mínimos na zona",
+        "existem ações automáticas previstas na matriz de causa e efeito"
+      ],
+      "limites": [
+        "o bloco não define quantitativamente o mínimo de detectores",
+        "as ações dependem da matriz configurada para aquela zona"
+      ],
+      "id": "C14"
+    },
+    {
+      "relacoes": [
+        "B005.R5",
+        "B014.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "PRE copiou a votação do instrumento e passou a decidir mal",
+      "ponte": "houve confusão entre confirmação automática e resposta humana",
+      "cadeia": "Introduzir princípios de votação instrumentada no procedimento de resposta pode fazer o PRE tratar certas combinações como detecção confirmada. Essa confusão entre lógica automática e resposta humana gera decisões inadequadas.",
+      "cenario": "O PRE passou a exigir combinações de sinais na zona antes de mobilização ou outras ações humanas, espelhando a votação do sistema automático. Uma detecção única em área potencialmente explosiva passa a ser tratada como insuficiente no procedimento.",
+      "resposta": "confusão entre votação instrumentada e procedimento operacional de resposta",
+      "resposta_atraente": "boa padronização do PRE com a lógica automática",
+      "sinal_que_descarta": "o critério de votação está sendo usado para decisão humana, não só para atuação automática",
+      "condicoes_enunciado": [
+        "PRE incorporando critérios de votação instrumentada",
+        "uso desses critérios para resposta humana"
+      ],
+      "limites": [
+        "a observação deriva de caso investigado citado no bloco",
+        "não implica que lógica automática e PRE nunca coincidam"
+      ],
+      "id": "C15"
+    },
+    {
+      "relacoes": [
+        "B015.R1",
+        "B014.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Retirada de inibição sem teste da cadeia não comprova retorno funcional",
+      "ponte": "a funcionalidade precisa ser demonstrada da detecção à ação prevista",
+      "cadeia": "Retirar a inibição ou bloqueio administrativo de um detector ou zona não comprova a barreira. O retorno funcional exige teste da cadeia completa entre detecção, confirmação lógica, alarme, intertravamentos e a resposta prevista.",
+      "cenario": "Após manutenção, um detector ou zona volta ao estado normal no sistema e é liberado administrativamente. O cenário não traz evidência de teste ponta a ponta de alarmes, intertravamentos e demais respostas antes do retorno ao serviço.",
+      "resposta": "teste funcional ponta a ponta da cadeia até a ação prevista",
+      "resposta_atraente": "tirar o bloqueio no supervisório basta para devolver a barreira",
+      "sinal_que_descarta": "houve intervenção/inibição, mas não se menciona teste funcional da cadeia",
+      "condicoes_enunciado": [
+        "detector ou zona esteve inibido/bloqueado",
+        "retorno ao serviço após intervenção"
+      ],
+      "limites": [
+        "o bloco não define método ou frequência do teste",
+        "a profundidade da verificação varia com filosofia e criticidade"
+      ],
+      "id": "C16"
+    },
+    {
+      "relacoes": [
+        "B013.R1",
+        "B016.R5"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Disponibilidade declarada mascara falha latente do arranjo real",
+      "ponte": "a disponibilidade funcional continuada do arranjo efetivamente operado permanece sem comprovação",
+      "cadeia": "Disponibilidade declarada não comprova funcionalidade em elemento crítico. Como falhas latentes do F&G podem só aparecer numa liberação real, testes e manutenção precisam demonstrar a disponibilidade funcional continuada no arranjo efetivamente operado.",
+      "cenario": "Painéis e relatórios mostram alta disponibilidade e ausência de falhas ativas. Ao mesmo tempo, não há evidência recente de testes funcionais compatíveis com o arranjo atual da instalação, embora isso seja usado como prova de barreira íntegra.",
+      "resposta": "a funcionalidade continuada do arranjo real não está comprovada",
+      "resposta_atraente": "alta disponibilidade administrativa prova funcionalidade",
+      "sinal_que_descarta": "há apenas disponibilidade declarada, sem evidência funcional correspondente",
+      "condicoes_enunciado": [
+        "F&G tratado como elemento crítico de segurança",
+        "existem apenas indicadores de disponibilidade declarada"
+      ],
+      "limites": [
+        "o bloco não especifica quais testes comprovam a funcionalidade",
+        "falhas latentes são possibilidade geral, não um modo de falha único"
+      ],
+      "id": "C17"
+    },
+    {
+      "relacoes": [
+        "B008.R5",
+        "B009.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Cenário exige redução rápida; verificar interface com ESD/isolamento",
+      "ponte": "alarme isolado é insuficiente porque é necessária ação automática",
+      "cadeia": "Quando o cenário exige reduzir rapidamente massa liberada, energia disponível ou fontes de ignição, alarme isolado pode ser insuficiente. Nesses casos, as verificações do F&G precisam incluir as interfaces com ESD, isolamento, ventilação ou combate.",
+      "cenario": "Na revisão de cenário, a preocupação principal é reduzir rapidamente inventário liberado e fontes de ignição. Mesmo assim, a checagem feita do F&G se limitou a alarmes e anunciadores.",
+      "resposta": "interface do F&G com ESD/isolamento do processo, não só alarme",
+      "resposta_atraente": "sirene e aviso ao pessoal são suficientes",
+      "sinal_que_descarta": "o cenário explicita necessidade de redução rápida de massa/energia/fontes de ignição",
+      "condicoes_enunciado": [
+        "cenário em que alarme isolado pode ser insuficiente",
+        "existência de respostas automáticas possíveis do F&G"
+      ],
+      "limites": [
+        "as interfaces exatas dependem da filosofia de segurança e do risco",
+        "o bloco cita exemplos de interfaces, sem torná-las universais"
+      ],
+      "id": "C18"
+    },
+    {
+      "relacoes": [
+        "B000.R1",
+        "B007.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Ventilação complexa transforma voto mais rígido em perda de sensibilidade",
+      "ponte": "a cobertura espacial efetiva fica limitada ou deslocada pela dispersão real",
+      "cadeia": "Em módulos naturalmente ventilados ou semiconfinados, vento, recirculação e zonas mortas podem deslocar ou diluir a nuvem e limitar a cobertura efetiva. Se a votação exigir coincidência de mais sinais, a sensibilidade prática tende a cair nessas condições.",
+      "cenario": "Em um módulo naturalmente ventilado, o comportamento da nuvem varia com vento externo e recirculação local. A proposta para reduzir atuações indevidas é exigir mais coincidência de sinais, sem reavaliar a cobertura real frente à dispersão da área.",
+      "resposta": "redução da sensibilidade prática da detecção/atuação",
+      "resposta_atraente": "maior robustez sem efeito colateral importante",
+      "sinal_que_descarta": "o cenário destaca ventilação e recirculação capazes de deslocar e diluir a nuvem",
+      "condicoes_enunciado": [
+        "módulo naturalmente ventilado ou semiconfinado",
+        "proposta de votação com mais coincidência de sinais"
+      ],
+      "limites": [
+        "o bloco não quantifica o efeito da ventilação",
+        "a perda de sensibilidade prática depende de cobertura espacial limitada ou indisponibilidade"
+      ],
+      "id": "C19"
+    },
+    {
+      "relacoes": [
+        "B007.R3",
+        "B005.R2"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Vote 2ooN não autoriza ignorar detecção única na resposta humana",
+      "ponte": "a votação equilibra riscos da automação, não elimina a incerteza operacional",
+      "cadeia": "A lógica de votação busca equilibrar atuar sem necessidade e deixar de atuar automaticamente quando o perigo é real. Para proteger equipes em emergência, porém, qualquer detecção deve ser tratada como real quando o objetivo é minimizar o risco humano.",
+      "cenario": "Uma única detecção aparece e a equipe argumenta que nada deve ser feito porque a lógica automática exige dois sinais. Ao mesmo tempo, discute-se enviar pessoas para avaliar a área e a prioridade declarada é proteger essas equipes.",
+      "resposta": "tratar a detecção única como real para fins operacionais",
+      "resposta_atraente": "aguardar o segundo detector porque a lógica é 2ooN",
+      "sinal_que_descarta": "o objetivo explicitado é proteger as equipes, não autorizar a ação automática do sistema",
+      "condicoes_enunciado": [
+        "lógica automática com votação",
+        "decisão humana em emergência voltada à proteção de equipes"
+      ],
+      "limites": [
+        "votação e decisão operacional não são necessariamente equivalentes",
+        "o bloco não afirma que toda detecção gere a mesma resposta operacional"
+      ],
+      "id": "C20"
+    },
+    {
+      "relacoes": [
+        "B015.R6",
+        "B007.R7"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Mudança de processo torna a lógica correta no papel inaplicável no campo",
+      "ponte": "os detectores instalados já não conseguem materializar as combinações exigidas",
+      "cadeia": "Mudanças de layout, ventilação, processo ou risco podem exigir reavaliação para confirmar cobertura e resposta. Se isso não for feito, uma lógica aparentemente correta pode falhar no campo por depender de combinações inalcançáveis nas condições reais da zona.",
+      "cenario": "A área teve mudança de processo ou ventilação, mas a matriz e a votação foram mantidas como no arranjo anterior. Não há falha declarada de detector, porém as confirmações esperadas pela lógica deixam de ocorrer nas condições reais da zona.",
+      "resposta": "a lógica ficou incompatível com o arranjo real da zona",
+      "resposta_atraente": "se o software não mudou, a função permaneceu válida",
+      "sinal_que_descarta": "o cenário informa mudança relevante na zona sem reavaliação da aderência",
+      "condicoes_enunciado": [
+        "mudança de layout, ventilação, processo ou risco",
+        "ausência de reavaliação da cobertura e resposta"
+      ],
+      "limites": [
+        "a necessidade de reavaliação é apresentada como possível, não automática em todo caso",
+        "a falha de campo depende da incompatibilidade com as condições reais da zona"
+      ],
+      "id": "C21"
+    },
+    {
+      "relacoes": [
+        "B001.R5",
+        "B002.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Detector de calor alto demais atrasa a detecção do evento",
+      "ponte": "perda de sensibilidade dos detectores pontuais de calor pela altura",
+      "cadeia": "Detectores pontuais de calor perdem sensibilidade em grande altura. Na operação, isso reduz a capacidade do F&G de detectar o evento antes de sua evolução, mesmo com a instalação inicial considerada suficiente.",
+      "cenario": "Em um módulo com grande altura, a detecção por calor é pontual e os equipamentos são reportados como saudáveis. Ainda assim, as indicações surgem tardiamente em relação à evolução observada do evento.",
+      "resposta": "sensibilidade insuficiente dos detectores pontuais de calor pela altura de instalação",
+      "resposta_atraente": "falha de manutenção dos detectores",
+      "sinal_que_descarta": "o cenário informa detectores saudáveis e destaca a grande altura como condição relevante",
+      "condicoes_enunciado": [
+        "uso de detectores pontuais de calor",
+        "instalação em grande altura"
+      ],
+      "limites": [
+        "o bloco não define o que é grande altura",
+        "não quantifica a magnitude da perda de sensibilidade"
+      ],
+      "id": "C22"
+    },
+    {
+      "relacoes": [
+        "B008.R2",
+        "B019.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Detecção de gás sem isolamento rápido aponta falha na cadeia de resposta",
+      "ponte": "a sequência esperada de detecção para fechamento das fontes de gás não se completou",
+      "cadeia": "Em boas práticas offshore, a detecção de gás se associa também ao acionamento de válvulas para desligar fontes de gás. Se isso não ocorre, falhas de detecção, comunicação ou lógica podem atrasar o isolamento e a mitigação.",
+      "cenario": "Houve detecção de gás, mas as válvulas destinadas a isolar a fonte só fecharam após comando manual. O cenário informa que as válvulas respondem quando manualmente acionadas, afastando travamento mecânico como primeira hipótese.",
+      "resposta": "falha na cadeia F&G, atrasando o isolamento automático das fontes de gás",
+      "resposta_atraente": "válvula de isolamento travada mecanicamente",
+      "sinal_que_descarta": "as válvulas respondem quando comandadas manualmente",
+      "condicoes_enunciado": [
+        "resposta automática de isolamento de fonte associada à detecção de gás",
+        "evidência de que as válvulas finais funcionam quando comandadas"
+      ],
+      "limites": [
+        "a associação a válvulas de isolamento é apresentada como boa prática citada, não regra universal",
+        "o bloco não isola se a falha foi em detecção, comunicação ou lógica"
+      ],
+      "id": "C23"
+    },
+    {
+      "relacoes": [
+        "B008.R3",
+        "B017.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Indicação existe, mas SDV e corte de energia falham por mapeamento/configuração",
+      "ponte": "há inconsistência entre sinais, lógica e telas, apesar do hardware de campo preservado",
+      "cadeia": "As ações corretivas automáticas do F&G podem incluir fechamento de SDVs e desconexão de fontes de energia inadequadas à área. Mesmo com hardware de campo preservado, perda de comunicação, mapeamento incorreto ou falhas de configuração podem comprometer essa resposta.",
+      "cenario": "O evento é indicado em campo e o hardware local permanece preservado, mas as ações automáticas esperadas sobre SDVs ou alimentação elétrica não ocorrem. Não se encontra falha evidente nos elementos de campo envolvidos.",
+      "resposta": "erro de comunicação, mapeamento ou configuração na interface F&G-atuadores",
+      "resposta_atraente": "falha do detector ou do atuador de campo",
+      "sinal_que_descarta": "o cenário informa indicação de evento e hardware de campo preservados",
+      "condicoes_enunciado": [
+        "existência de ações automáticas como SDV ou corte de energia",
+        "hardware de campo preservado durante o evento"
+      ],
+      "limites": [
+        "as ações automáticas citadas são exemplos, não obrigatórias em todo arranjo",
+        "o bloco não separa o peso de comunicação, mapeamento e configuração"
+      ],
+      "id": "C24"
+    },
+    {
+      "relacoes": [
+        "B010.R1",
+        "B019.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Ajuste copiado de outra unidade viola a base de seleção da lógica",
+      "ponte": "a lógica precisa aderir à filosofia e à matriz da própria unidade",
+      "cadeia": "A seleção da lógica do F&G deve começar pela aderência à filosofia de segurança do operador. Por isso, limiares, votação e respostas devem ser definidos na matriz de causa e efeito da unidade e não copiados como ajustes universais.",
+      "cenario": "Em uma modificação, propõe-se reutilizar limiares de gás e votação de uma instalação irmã por ter hardware semelhante. Não é apresentada demonstração de aderência desses ajustes à filosofia de segurança e à matriz da unidade em questão.",
+      "resposta": "definir limiares, votação e respostas na matriz da própria unidade",
+      "resposta_atraente": "replicar os ajustes da unidade irmã",
+      "sinal_que_descarta": "não há demonstração de aderência à filosofia e à matriz da unidade local",
+      "condicoes_enunciado": [
+        "seleção ou revisão de lógica do F&G",
+        "proposta de copiar ajustes de outra instalação"
+      ],
+      "limites": [
+        "o bloco não fornece valores de ajuste",
+        "a filosofia de segurança do operador não é detalhada nos blocos"
+      ],
+      "id": "C25"
+    },
+    {
+      "relacoes": [
+        "B009.R6",
+        "B005.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Confirmação extra do intertravamento não deve contaminar a resposta humana",
+      "ponte": "a confirmação adicional foi adotada para evitar disparo indevido do sistema de alta consequência",
+      "cadeia": "Intertravamentos com grande consequência podem adotar confirmações adicionais conforme o risco. Se esse mesmo padrão é transferido ao procedimento de emergência para mobilização, alarme geral ou investigação, a exposição humana pode aumentar por confirmação excessiva.",
+      "cenario": "Um intertravamento de alta consequência para pessoas e equipamentos usa confirmação adicional antes de atuar. Em resposta a outro evento, o PRE passa a exigir grau semelhante de confirmação antes de mobilizar proteção ou restringir acesso.",
+      "resposta": "o PRE está aumentando a exposição humana por copiar a confirmação do intertravamento",
+      "resposta_atraente": "é coerente aplicar a mesma confirmação em toda a resposta",
+      "sinal_que_descarta": "a confirmação extra foi justificada pelas consequências do próprio intertravamento, não pela proteção das equipes",
+      "condicoes_enunciado": [
+        "intertravamento de alta consequência com confirmações adicionais",
+        "uso desse mesmo padrão em procedimento de resposta humana"
+      ],
+      "limites": [
+        "confirmações adicionais podem ser adequadas ao sistema de alta consequência",
+        "o bloco não quantifica o aumento de exposição humana"
+      ],
+      "id": "C26"
+    },
+    {
+      "relacoes": [
+        "B004.R5",
+        "B013.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Detector recomendado não instalado mantém lógica no papel e perde função no campo",
+      "ponte": "a função de segurança ficou divergente do arranjo analisado como necessário",
+      "cadeia": "Quando detectores recomendados em estudos não são instalados, a lógica documentada pode continuar intacta, mas a função de segurança perde efetividade no campo. Se essa não implantação se prolonga, a cobertura real, a confiabilidade da resposta e a consistência com a filosofia de segurança podem se degradar.",
+      "cenario": "Estudos de chama ou gás recomendaram detectores adicionais, mas eles não foram instalados. A documentação e a lógica no sistema permanecem sem alteração visível e os detectores existentes seguem saudáveis, o que sustenta a impressão de que a função está preservada.",
+      "resposta": "perda de efetividade da função e degradação da cobertura real no campo",
+      "resposta_atraente": "se a lógica documental está intacta, a função permanece íntegra",
+      "sinal_que_descarta": "os detectores recomendados pelo estudo não foram instalados",
+      "condicoes_enunciado": [
+        "existência de recomendação formal de detectores por estudo",
+        "não instalação desses detectores"
+      ],
+      "limites": [
+        "a degradação é possível, não quantificada",
+        "a perda indicada é de efetividade em campo, não necessariamente falha imediata"
+      ],
+      "id": "C27"
+    },
+    {
+      "relacoes": [
+        "B013.R6",
+        "B016.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Problema mapeado sem falha aparente já corrói a robustez global",
+      "ponte": "degradação conhecida da barreira permanece sem resposta suficiente",
+      "cadeia": "A não implantação prolongada de recomendações pode degradar cobertura, confiabilidade e consistência do F&G mesmo sem falha aparente imediata. Quando problemas conhecidos permanecem mapeados sem resposta suficiente, a robustez global da instalação se reduz.",
+      "cenario": "Recomendações de estudos ou auditorias permanecem abertas por longo período. Não há falha ativa aparente nem evento recente, mas o problema segue mapeado sem resposta efetiva.",
+      "resposta": "redução da robustez global da instalação por degradação conhecida do F&G",
+      "resposta_atraente": "sem falha visível, a robustez não mudou",
+      "sinal_que_descarta": "o cenário mostra problema conhecido e prolongado sem resposta suficiente",
+      "condicoes_enunciado": [
+        "recomendações relevantes abertas por longo período",
+        "problema conhecido mapeado sem resposta suficiente"
+      ],
+      "limites": [
+        "o bloco não quantifica a perda de robustez global",
+        "a relevância depende do papel da barreira degradada"
+      ],
+      "id": "C28"
+    },
+    {
+      "relacoes": [
+        "B016.R1",
+        "B015.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Retorno ao serviço de ECSO não é só tirar o bloqueio administrativo",
+      "ponte": "o retorno deve restabelecer a função de segurança do arranjo afetado",
+      "cadeia": "Se o F&G é tratado como elemento crítico de segurança operacional, disponibilidade e funcionalidade devem ser sustentadas por gestão, testes e manutenção. Por isso, após inibição, falha ou intervenção, o retorno ao serviço não pode ser só retirada de bloqueio administrativo: precisa restabelecer a função de segurança da zona ou arranjo.",
+      "cenario": "Após uma intervenção em elemento crítico do F&G, o status volta a normal e a área é liberada. O cenário não apresenta evidência de que a função da zona ou do arranjo afetado tenha sido restabelecida tecnicamente além da retirada do bloqueio.",
+      "resposta": "restabelecer e comprovar a função de segurança da zona/arranjo antes do retorno",
+      "resposta_atraente": "status administrativo normal encerra o retorno ao serviço",
+      "sinal_que_descarta": "houve intervenção em elemento crítico, mas não há evidência de restabelecimento funcional",
+      "condicoes_enunciado": [
+        "F&G tratado como elemento crítico de segurança operacional",
+        "retorno ao serviço após inibição, falha ou intervenção"
+      ],
+      "limites": [
+        "o bloco não define um roteiro único de retorno ao serviço",
+        "a profundidade da verificação depende da filosofia e criticidade"
+      ],
+      "id": "C29"
+    },
+    {
+      "relacoes": [
+        "B019.R4",
+        "B008.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Sem fonte de ignição identificada, ainda cabe corte automático de energia",
+      "ponte": "o cenário de gás já exige considerar fontes potenciais de ignição",
+      "cadeia": "A análise de um cenário de gás deve considerar a liberação, a dispersão e as possíveis fontes de ignição sem depender da identificação posterior de uma fonte específica. Por isso, ações automáticas podem incluir a desconexão de energia de equipamentos inadequados à área classificada.",
+      "cenario": "Há detecção de gás e dispersão em curso, mas ninguém identificou ainda qual fonte específica poderia iniciar a ignição. Próximo à área, permanecem energizados equipamentos inadequados à área classificada.",
+      "resposta": "desconexão automática de fontes de energia de equipamentos inadequados à área classificada",
+      "resposta_atraente": "esperar localizar a fonte específica antes de cortar energia",
+      "sinal_que_descarta": "o cenário já traz gás dispersando e fontes potenciais energizadas próximas",
+      "condicoes_enunciado": [
+        "cenário de gás detectado com dispersão em curso",
+        "existência de equipamentos energizados inadequados à área classificada"
+      ],
+      "limites": [
+        "a desconexão de energia é citada como exemplo de ação automática",
+        "a aplicabilidade depende da filosofia e da matriz de causa e efeito"
+      ],
+      "id": "C30"
+    }
+  ]
+}
