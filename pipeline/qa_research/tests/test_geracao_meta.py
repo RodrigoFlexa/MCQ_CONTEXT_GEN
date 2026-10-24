@@ -247,5 +247,61 @@ class AjustesV17Tests(unittest.TestCase):
         rodadas.validar_refino(d2, "conceito", orig)
 
 
+class RefinoForteTests(unittest.TestCase):
+    """Experimento de refino sobre o piloto v19 versionado, com clientes falsos."""
+
+    class Cliente:
+        def __init__(self):
+            self.usuarios = []
+
+        def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+            self.usuarios.append((tag, user))
+            if tag == "refino_forte":
+                r = 2 if "<historico>" in user else 1
+                uid = rodadas._h(user) % 100000
+                d = {"status": "ok", "motivo": "", "tipo": "mecanismo", "cenario": False,
+                     "pergunta": (f"Por que o fenômeno {uid} ocorre em separadores {uid}?" if r == 1 else
+                                  f"Na rodada 2, qual elo técnico {uid} explica a corrosão observada em tanques {uid}?"),
+                     "resposta": (f"Porque a causa {uid} atua." if r == 1 else f"Porque a camada aquosa {uid} sustenta pilhas.")}
+            elif tag == "refino_auditoria":
+                itens = json.loads(user)
+                ok = [("rodada 2" in x["pergunta"] or k % 2 == 0) for k, x in enumerate(itens)]
+                d = {"avaliacoes": [{"id": x["id"], "tipo_confere": True, "tipo_sugerido": "mecanismo",
+                                     "motivo": "nenhum" if o else "trivial", "referencia_valida": True,
+                                     "atalho": not o, "justificativa": "j"} for x, o in zip(itens, ok)]}
+                assert all("texto_fonte" in x for x in itens)
+            else:
+                d = {"grupos": []}
+            if validate:
+                validate(d)
+            return d
+
+    def test_rodadas_historico_e_ganho_liquido(self):
+        from pipeline.qa_research.geracao_tipos.refino_forte import ExperimentoRefino
+        c = self.Cliente()
+        with tempfile.TemporaryDirectory() as t:
+            e = ExperimentoRefino(Path(t), bracos={"forte": "x"}, rodadas=2, workers=2,
+                                  clientes={"refinador_forte": c, "auditoria": c}, progress=lambda *a, **k: None)
+            n = len(e.candidatas())
+            self.assertGreater(n, 100)
+            self.assertEqual(e.run(), 0)
+            res = json.loads((Path(t) / "resultado.json").read_text(encoding="utf-8"))
+            b = res["bracos"]["forte"]
+            self.assertEqual(b["recuperadas"], n)        # quem falhou na 1ª foi aprovado na 2ª
+            self.assertEqual(b["ganho_liquido"], n)
+            self.assertTrue(b["rodadas"][1]["tentadas"] > 0)
+            self.assertTrue(any("<exemplos_aprovados>" in u and "<blocos>" in u for tg, u in c.usuarios if tg == "refino_forte"))
+            self.assertTrue((Path(t) / "REFINO.md").exists())
+
+    def test_validacao_v3(self):
+        from pipeline.qa_research.geracao_tipos.refino_forte import validar_refino_v3
+        d = {"status": "ok", "motivo": "", "tipo": "diagnostico", "cenario": False,
+             "pergunta": "Qual a causa da queda de pressão?", "resposta": "Filtro obstruído."}
+        with self.assertRaises(ValueError):   # diagnóstico exige cenário
+            validar_refino_v3(d, "conceito")
+        with self.assertRaises(ValueError):
+            validar_refino_v3({**d, "tipo": "inventado"}, "conceito")
+
+
 if __name__ == "__main__":
     unittest.main()

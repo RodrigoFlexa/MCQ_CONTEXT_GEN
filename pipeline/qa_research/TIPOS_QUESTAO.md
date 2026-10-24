@@ -160,3 +160,21 @@ e, nas refinadas, artefatos do refinador. As 13 fracas identificadas foram retir
   de calibração (válvula que só abre ou fecha descrita no enunciado, lista de causas descartadas, referência
   aos blocos).
 - **Herança**: inventário e banco dinâmico do piloto v19 entram em `REUSAR` e `BANCO_INICIAL`.
+
+## Experimento de refino (24/10/2026): refinador forte x fraco
+
+Pergunta: um refinador forte, com o motivo da reprovação, os blocos e exemplos aprovados, recupera reprovadas
+suficientes para aumentar a taxa de válidas? O experimento (`refino_forte.py`, script `rodar_teste_refino.sh`)
+parte do piloto v19, sem gerar nada novo: as 153 originais reprovadas pelo auditor (todos os motivos, não só os
+recuperáveis) passam por dois braços com o mesmo prompt (`prompts/refinador_v3.md`):
+
+- `mini`: gpt-5-mini-petrobras:medium; `forte`: gpt-5-4-petrobras:high.
+- Prompt v3: exemplos de correção também para trivial, prudência genérica, sim ou não disfarçado,
+  tecnicamente errada e fora da fonte; pode mudar o tipo; recebe dois exemplos aprovados do mesmo tipo (de outros
+  tópicos) e, a partir da 2ª tentativa, o histórico das versões reprovadas.
+- Cada versão passa pelo código e pelo auditor v3 com o texto-fonte; as reprovadas de novo têm mais uma tentativa.
+- Ganho líquido: deduplicação por sentido contra as 92 aprovadas do piloto.
+
+Referência: o refinador do piloto (mini, prompt v19, só motivos recuperáveis) recuperou 25 depois da revisão
+manual. Se o braço forte tiver ganho líquido claramente maior e a revisão manual confirmar a qualidade, ele vira o
+refinador padrão da geração final.

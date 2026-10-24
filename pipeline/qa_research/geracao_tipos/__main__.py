@@ -4,6 +4,7 @@
   python -m pipeline.qa_research.geracao_tipos relatorio <pasta>  refaz só o relatório
   python -m pipeline.qa_research.geracao_tipos meta [opções]      v18: geração completa (ou com meta) com refinador
   python -m pipeline.qa_research.geracao_tipos reauditar ...      aprovadas de uma rodada anterior x auditor v2
+  python -m pipeline.qa_research.geracao_tipos refino ...         experimento: refinador fraco x forte nas reprovadas
 """
 from __future__ import annotations
 
@@ -60,7 +61,32 @@ def main(argv=None) -> int:
     ra.add_argument("--origem", type=Path, default=QA / "relatorios" / "geracao_meta_20261024T000315Z")
     ra.add_argument("--saida", type=Path, required=True)
     ra.add_argument("--workers", type=int, default=8)
+    rf = sub.add_parser("refino", help="experimento: refinadores (fraco e forte) recuperando as reprovadas de uma rodada")
+    rf.add_argument("--origem", type=Path, default=QA / "relatorios" / "teste_v19_20261024T053346Z" / "geracao")
+    rf.add_argument("--saida", type=Path, required=True)
+    rf.add_argument("--bracos", nargs="+", default=["mini", "forte"], choices=["mini", "forte"])
+    rf.add_argument("--modelo-mini", default="gpt-5-mini-petrobras:medium")
+    rf.add_argument("--modelo-forte", default="gpt-5-4-petrobras:high")
+    rf.add_argument("--rodadas", type=int, default=2, help="tentativas de refino por questão (com o histórico)")
+    rf.add_argument("--workers", type=int, default=8)
+    rf.add_argument("--relatorio", action="store_true", help="só refaz o relatório")
     a = ap.parse_args(argv)
+
+    if a.cmd == "refino":
+        from .refino_forte import ExperimentoRefino
+        modelos = {"mini": a.modelo_mini, "forte": a.modelo_forte}
+        e = ExperimentoRefino(a.saida, origem=a.origem, bracos={b: modelos[b] for b in a.bracos}, rodadas=a.rodadas,
+                              workers=a.workers)
+        if a.relatorio:
+            e.relatorio()
+            print(f"Relatório: {a.saida / 'REFINO.md'}")
+            return 0
+        falhas = e.run()
+        print(f"\nRelatório: {a.saida / 'REFINO.md'}")
+        if falhas:
+            print(f"{falhas} unidades falharam; rode de novo com --saida {a.saida} para tentar só elas.")
+            return 2
+        return 0
 
     if a.cmd == "reauditar":
         from .rodadas import reauditar
