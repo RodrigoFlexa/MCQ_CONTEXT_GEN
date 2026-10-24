@@ -378,6 +378,34 @@ class AvaliacaoTests(unittest.TestCase):
             self.assertIn("Por tipo de questão", md)
             self.assertEqual(len((e.saida / "avaliacoes.jsonl").read_text(encoding="utf-8").splitlines()), 11)
 
+    def test_pares_em_sequencia(self):
+        from pipeline.qa_research.geracao_tipos.avaliacao import AvaliacaoModelos
+        ordem = []
+
+        class Registra(self.Cliente):
+            def __init__(self, nome):
+                super().__init__()
+                self.nome = nome
+
+            def json(self, system, user, tag="", **kw):
+                if tag.startswith("resposta_"):
+                    ordem.append(self.nome)
+                return super().json(system, user, tag=tag, **kw)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            r = self._rodada(tmp, n=6)
+            for it in ("01_01", "02_02"):
+                (r / "topicos" / it / "finalizado.json").write_text("{}", encoding="utf-8")
+            cl = {f"resp_{m}": Registra(m) for m in "abcd"}
+            cl["juiz"] = self.Cliente()
+            e = AvaliacaoModelos(r, respondentes={m: m for m in "abcd"}, grupos=[("a", "b"), ("c", "d")], bloco=5,
+                                 workers=2, clientes=cl, progress=lambda *a, **k: None)
+            self.assertEqual(e.run(), 0)
+            self.assertEqual(set(ordem[:24]), {"a", "b"})     # o 1º par termina antes do 2º começar
+            self.assertEqual(set(ordem[24:]), {"c", "d"})
+            res = json.loads((e.saida / "acuracia.json").read_text(encoding="utf-8"))
+            self.assertTrue(all(res["geral"][m]["n"] == 12 for m in "abcd"))
+
     def test_espera_marcador_da_geracao(self):
         from pipeline.qa_research.geracao_tipos.avaliacao import AvaliacaoModelos
         with tempfile.TemporaryDirectory() as tmp:

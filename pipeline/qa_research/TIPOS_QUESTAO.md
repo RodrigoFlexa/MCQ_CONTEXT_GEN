@@ -210,19 +210,21 @@ origem) e as novas são melhores que as da geração (~30% fracas no piloto v19)
 passa a ser o `forte_cob` (gpt-5-4 high, `refinador_v3`, todos os motivos, `<ja_cobertas>`, exemplos aprovados,
 até 2 tentativas com histórico, tipo pode mudar). No piloto v19 isso leva de 46 para ~73 válidas por tópico.
 
-## Geração final com avaliação dos modelos (24/10/2026)
+## Geração final e avaliação dos modelos (24/10/2026)
 
-Script `rodar_geracao_final.sh`: a geração v21 dos 40 tópicos e, em paralelo, a avaliação dos modelos
-(`geracao_tipos/avaliacao.py`).
+Script `rodar_geracao_final.sh`: a geração v21 dos 40 tópicos e, depois que ela termina sem falhas, a avaliação dos
+modelos (`geracao_tipos/avaliacao.py`).
 
-- Sem meta, cada tópico fica pronto ao fim da sua onda: deduplicação do tópico, `topicos/<item>/aprovadas.jsonl`
-  e `finalizado.json`. No fim da geração, `geracao_concluida.json`.
-- A avaliação verifica os tópicos prontos a cada 2 minutos. Respondentes sem contexto (prompt `respondente.md`, até 50
-  palavras): gpt-5-4-nano, gpt-5-4, gpt-5 e gpt-5-nano com esforço low; gpt-4-1 e gpt-4-1-nano sem esforço (não
-  são modelos de raciocínio). Deployment indisponível sai da avaliação com aviso (`modelos_indisponiveis.json`).
+- Cada tópico pronto grava `topicos/<item>/aprovadas.jsonl` (tipo do auditor) e `finalizado.json`; no fim da
+  geração, `geracao_concluida.json`.
+- Respondentes sem contexto (prompt `respondente.md`, até 50 palavras), em pares, os dois do par ao mesmo tempo e um
+  par depois do outro: gpt-5-4-nano + gpt-5-4, depois gpt-5 + gpt-5-nano, por fim gpt-4-1 + gpt-4-1-nano. Os gpt-5
+  com esforço low; os gpt-4-1 sem esforço (não são modelos de raciocínio). Deployment indisponível sai da avaliação
+  com aviso (`modelos_indisponiveis.json`).
 - Juiz gpt-5-4 medium (`juiz_respostas.md`), em lotes de 8 respostas do mesmo modelo, sem saber qual modelo
   respondeu; veredito correta, parcial ou incorreta.
-- `avaliacao/ACURACIA.md` e `acuracia.csv` são regravados a cada lote: acurácia (% corretas) e "com parcial" (parcial
-  vale meio acerto), geral, por tipo e por composição. Consulta: `python -m pipeline.qa_research.geracao_tipos
-  acuracia <saida>`.
+- A cada bloco de 80 questões, `avaliacao/ACURACIA.md` e `acuracia.csv` são regravados: acurácia (% corretas) e
+  "com parcial" (parcial vale meio acerto), geral, por tipo e por composição. Consulta: `python -m
+  pipeline.qa_research.geracao_tipos acuracia <saida>`. Só a avaliação: `rodar_geracao_final.sh --saida <pasta>
+  --so-avaliacao`.
 - Ressalva: o gpt-5-4 também gera, audita e refina as questões; a acurácia dele pode estar inflada.

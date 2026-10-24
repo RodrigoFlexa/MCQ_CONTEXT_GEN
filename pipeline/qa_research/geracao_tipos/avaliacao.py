@@ -39,6 +39,8 @@ RESPONDENTES = {
     "gpt-4-1": "gpt-4-1-petrobras",
     "gpt-4-1-nano": "gpt-4-1-nano-petrobras",
 }
+# Os respondentes rodam em pares, um par depois do outro (os dois modelos do par ao mesmo tempo).
+GRUPOS = (("gpt-5-4-nano", "gpt-5-4"), ("gpt-5", "gpt-5-nano"), ("gpt-4-1", "gpt-4-1-nano"))
 JUIZ = "gpt-5-4-petrobras:medium"
 VEREDITOS = ("correta", "parcial", "incorreta")
 ENCERRADA = "geracao_encerrada"   # marcador gravado pelo script quando o processo de geração termina
@@ -60,7 +62,8 @@ def validar_juiz(d: dict, ids: list[str]) -> None:
 
 class AvaliacaoModelos:
     def __init__(self, rodada: Path, *, respondentes: dict | None = None, juiz: str = JUIZ, lote_juiz: int = 8,
-                 workers: int = 8, intervalo: int = 120, clientes: dict | None = None, progress=print):
+                 workers: int = 8, intervalo: int = 120, clientes: dict | None = None, grupos=None, bloco: int = 80,
+                 progress=print):
         self.rodada = Path(rodada)
         self.saida = self.rodada / "avaliacao"
         self.respondentes = dict(respondentes or RESPONDENTES)
@@ -68,6 +71,9 @@ class AvaliacaoModelos:
         self.workers, self.intervalo = workers, intervalo
         self.clientes, self.progress = dict(clientes or {}), progress
         self.lock = threading.Lock()
+        self.verboso = False
+        self.grupos = [tuple(g) for g in (grupos or GRUPOS)]
+        self.bloco = bloco
         self.vereditos: dict[str, dict[str, str]] = defaultdict(dict)   # modelo -> uid -> veredito
         self.questoes: dict[str, dict] = {}
 
@@ -134,13 +140,12 @@ class AvaliacaoModelos:
         if fora:
             atomic_json(self.saida / "modelos_indisponiveis.json", fora)
 
-    def responder(self) -> int:
-        tarefas = [(m, q) for m in self.respondentes for q in self.questoes.values()
-                   if not self._arq_resposta(m, q["uid"]).exists()]
+    def responder(self, modelos=None, questoes=None) -> int:
+        modelos = [m for m in (modelos or self.respondentes) if m in self.respondentes]
+        qs = list(questoes if questoes is not None else self.questoes.values())
+        tarefas = [(m, q) for q in qs for m in modelos if not self._arq_resposta(m, q["uid"]).exists()]
         if not tarefas:
             return 0
-        self.progress(f"  respostas pendentes: {len(tarefas)} ({len(self.questoes)} questões x {len(self.respondentes)} modelos)",
-                      flush=True)
         system = prompt("respondente")
 
         def um(t):
@@ -161,10 +166,10 @@ class AvaliacaoModelos:
 
         return self._paralelo(tarefas, um, "respostas")
 
-    def julgar(self, final: bool) -> int:
+    def julgar(self, final: bool, modelos=None) -> int:
         """Lotes de `lote_juiz` respostas do mesmo modelo; o resto incompleto só é julgado na passagem final."""
         system, lotes = prompt("juiz_respostas"), []
-        for m in self.respondentes:
+        for m in [m for m in (modelos or self.respondentes) if m in self.respondentes]:
             prontas = sorted((q for q in self.questoes.values()
                               if q["uid"] not in self.vereditos[m] and self._arq_resposta(m, q["uid"]).exists()),
                              key=lambda q: hashlib.sha256(f"{m}|{q['uid']}".encode()).hexdigest())
@@ -174,7 +179,6 @@ class AvaliacaoModelos:
                     lotes.append((m, lote))
         if not lotes:
             return 0
-        self.progress(f"  juiz ({self.juiz}): {len(lotes)} lotes de até {self.lote_juiz} respostas", flush=True)
 
         def um(t):
             m, lote = t
@@ -206,7 +210,7 @@ class AvaliacaoModelos:
         with ThreadPoolExecutor(max_workers=max(1, self.workers)) as pool:
             for k, ok in enumerate(pool.map(funcao, tarefas), 1):
                 falhas += 0 if ok else 1
-                if k % 50 == 0 or k == len(tarefas):
+                if self.verboso and (k % 50 == 0 or k == len(tarefas)):
                     eta = (time.time() - inicio) / k * (len(tarefas) - k)
                     self.progress(f"  {rotulo}: {k}/{len(tarefas)} | falhas {falhas} | restam ~{eta / 60:.1f} min", flush=True)
         return falhas
@@ -287,19 +291,44 @@ class AvaliacaoModelos:
 
     # ---------------------------------------------------------------- execução
     def passagem(self, final: bool) -> int:
+        """Par por par: os dois modelos do par respondem um bloco de questões ao mesmo tempo, o juiz julga os lotes
+        completos e a tabela é regravada; assim a acurácia aparece enquanto as respostas avançam."""
         with self.lock:
             self.questoes = self.carregar_questoes()
-        falhas = self.responder() + self.julgar(final)
+        falhas, qs = 0, list(self.questoes.values())
+        grupos = [g for g in self.grupos if any(m in self.respondentes for m in g)]
+        soltos = [m for m in self.respondentes if not any(m in g for g in grupos)]
+        grupos += [(m,) for m in soltos]
+        for g in grupos:
+            g = tuple(m for m in g if m in self.respondentes)
+            pend = [q for q in qs if any(not self._arq_resposta(m, q["uid"]).exists() or q["uid"] not in self.vereditos[m]
+                                         for m in g)]
+            if pend:
+                self.progress(f"[avaliação] {' + '.join(g)}: {len(pend)} questões pendentes de {len(qs)}", flush=True)
+            inicio = time.time()
+            for k in range(0, len(pend), self.bloco):
+                falhas += self.responder(g, pend[k:k + self.bloco])
+                falhas += self.julgar(False, g)
+                feitos = min(k + self.bloco, len(pend))
+                eta = (time.time() - inicio) / feitos * (len(pend) - feitos)
+                acc = ", ".join(f"{m} {self._acc(m)}" for m in g)
+                self.progress(f"  {' + '.join(g)}: {feitos}/{len(pend)} | acurácia até agora: {acc} | "
+                              f"restam ~{eta / 60:.1f} min", flush=True)
+            falhas += self.julgar(final, g)
         with self.lock:
             self.tabela()
         self.exportar()
         return falhas
 
+    def _acc(self, m: str) -> str:
+        vs = [v for u, v in self.vereditos[m].items() if u in self.questoes]
+        return f"{100 * vs.count('correta') / len(vs):.1f}% ({len(vs)})" if vs else "-"
+
     def run(self, esperar: bool = False) -> int:
         """esperar: repete as passagens enquanto a geração não termina (marcador `geracao_encerrada`)."""
         self.saida.mkdir(parents=True, exist_ok=True)
         atomic_json(self.saida / "config.json", {"respondentes": self.respondentes, "juiz": self.juiz,
-                                                 "lote_juiz": self.lote_juiz})
+                                                 "lote_juiz": self.lote_juiz, "grupos": self.grupos})
         self.checar_modelos()
         self._carregar_vereditos()
         while esperar and not (self.rodada / ENCERRADA).exists():

@@ -81,6 +81,9 @@ def main(argv=None) -> int:
     av.add_argument("--lote-juiz", type=int, default=8, help="respostas por chamada do juiz")
     av.add_argument("--workers", type=int, default=8)
     av.add_argument("--intervalo", type=int, default=120, help="segundos entre verificações de tópicos prontos")
+    av.add_argument("--grupos", nargs="+", default=None,
+                    help="pares de modelos que respondem juntos, um par depois do outro (ex.: gpt-5-4-nano,gpt-5-4 gpt-5,gpt-5-nano)")
+    av.add_argument("--bloco", type=int, default=80, help="questões respondidas por vez antes de julgar e atualizar a tabela")
     av.add_argument("--esperar", action="store_true",
                     help="continua enquanto a geração roda (até existir <saida>/geracao_encerrada)")
     ac = sub.add_parser("acuracia", help="mostra a tabela de acurácia atual")
@@ -93,10 +96,12 @@ def main(argv=None) -> int:
         return 0
 
     if a.cmd == "avaliar":
-        from .avaliacao import JUIZ, RESPONDENTES, AvaliacaoModelos
-        resp = {m: RESPONDENTES[m] for m in (a.modelos or RESPONDENTES)}
+        from .avaliacao import GRUPOS, JUIZ, RESPONDENTES, AvaliacaoModelos
+        grupos = [tuple(g.split(",")) for g in a.grupos] if a.grupos else list(GRUPOS)
+        nomes = a.modelos or [m for g in grupos for m in g]
+        resp = {m: RESPONDENTES[m] for m in nomes}
         e = AvaliacaoModelos(a.saida, respondentes=resp, juiz=a.modelo_juiz or JUIZ, lote_juiz=a.lote_juiz,
-                             workers=a.workers, intervalo=a.intervalo)
+                             workers=a.workers, intervalo=a.intervalo, grupos=grupos, bloco=a.bloco)
         falhas = e.run(esperar=a.esperar)
         if falhas:
             print(f"{falhas} unidades falharam; rode de novo para tentar só elas.")
