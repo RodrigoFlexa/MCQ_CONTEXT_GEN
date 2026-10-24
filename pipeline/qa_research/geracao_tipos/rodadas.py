@@ -740,10 +740,16 @@ class GeracaoMeta:
             falhas += self.janelas(1, grupo)
             falhas += self.auditar(grupo)
             falhas += self.refinar_e_auditar(grupo)
+            if not self.meta:   # sem meta, o tópico fica pronto ao fim da onda (a avaliação dos modelos já pode começar)
+                falhas += self.deduplicar(grupo)
+                self.finalizar(grupo)
             self.progress("   válidas: " + ", ".join(f"{i} {self.validas(i)}" for i in grupo), flush=True)
         if not self.meta:
             falhas += self.deduplicar()
+            self.finalizar(self.itens)
             self.relatorio()
+            if not falhas:
+                atomic_json(self.saida / "geracao_concluida.json", {"em": datetime.now(timezone.utc).isoformat()})
             return falhas
         for rodada in range(2, self.max_rodadas + 1):
             antes = {i: self.validas(i) for i in self.itens}
@@ -758,8 +764,26 @@ class GeracaoMeta:
             if not any(ganho.values()):
                 break
         falhas += self.deduplicar()
+        self.finalizar(self.itens)
         self.relatorio()
+        if not falhas:
+            atomic_json(self.saida / "geracao_concluida.json", {"em": datetime.now(timezone.utc).isoformat()})
         return falhas
+
+    def finalizar(self, itens: list[str]) -> None:
+        """Grava topicos/<item>/aprovadas.jsonl (tipo do auditor) e o marcador finalizado.json, lidos pela avaliação
+        dos modelos (avaliacao.py) enquanto a geração continua nos outros tópicos. Só finaliza tópico sem falha pendente."""
+        pendentes = {p.stem for p in (self.saida / "falhas").glob("*.json")}
+        for item in itens:
+            if any(item in f for f in pendentes):
+                continue
+            aprov = [{**q, "tipo_declarado": q["tipo"], "tipo": q["auditoria"]["tipo_sugerido"]}
+                     for q in self.questoes(item) if q.get("aprovada")]
+            d = self._dir(item)
+            tmp = d / "aprovadas.jsonl.tmp"
+            tmp.write_text("".join(json.dumps(q, ensure_ascii=False) + "\n" for q in aprov), encoding="utf-8")
+            tmp.replace(d / "aprovadas.jsonl")
+            atomic_json(d / "finalizado.json", {"aprovadas": len(aprov), "em": datetime.now(timezone.utc).isoformat()})
 
     # ---------------------------------------------------------------- relatório
     def relatorio(self) -> dict:

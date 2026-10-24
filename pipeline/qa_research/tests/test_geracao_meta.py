@@ -134,6 +134,12 @@ class OndasTests(unittest.TestCase):
             janelas = [u for u, tag in zip(f.usuarios, f.tags) if tag == "meta_janela"]
             self.assertNotIn("aprovada pelo auditor", janelas[0])               # 1ª onda: só o banco curado
             self.assertIn("aprovada pelo auditor", janelas[-1])                 # 2ª onda: aprendeu com a 1ª
+            for item in ("08_02", "06_06"):                                      # tópicos prontos para a avaliação
+                d = Path(tmp) / "out" / "topicos" / item
+                self.assertTrue((d / "finalizado.json").exists())
+                n = len((d / "aprovadas.jsonl").read_text(encoding="utf-8").splitlines())
+                self.assertEqual(n, res["topicos"][item]["validas"])
+            self.assertTrue((Path(tmp) / "out" / "geracao_concluida.json").exists())
 
 
 class RefinadorTests(unittest.TestCase):
@@ -318,6 +324,73 @@ class RefinoForteTests(unittest.TestCase):
             validar_refino_v3(d, "conceito")
         with self.assertRaises(ValueError):
             validar_refino_v3({**d, "tipo": "inventado"}, "conceito")
+
+
+class AvaliacaoTests(unittest.TestCase):
+    class Cliente:
+        def __init__(self, falha=False):
+            self.falha, self.lotes = falha, []
+
+        def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+            if self.falha:
+                raise RuntimeError("DeploymentNotFound")
+            if tag.startswith(("resposta_", "teste_")):
+                d = {"resposta": "Separar óleo, gás e água." if "trifásico" in user else "resposta " + user[:20]}
+            else:
+                itens = json.loads(user)
+                self.lotes.append(len(itens))
+                d = {"avaliacoes": [{"id": x["id"], "veredito": ("correta" if k % 2 == 0 else "parcial"),
+                                     "justificativa": "j"} for k, x in enumerate(itens)]}
+            if validate:
+                validate(d)
+            return d
+
+    def _rodada(self, tmp, itens=("01_01", "02_02"), n=11):
+        r = Path(tmp) / "rod"
+        for it in itens:
+            d = r / "topicos" / it
+            d.mkdir(parents=True)
+            qs = [{"uid": f"{it}:j:{k}", "item": it, "tipo": ("conceito", "diagnostico")[k % 2],
+                   "composicao": "simples", "pergunta": f"Pergunta {it} {k}?", "resposta": "Ref."} for k in range(n)]
+            (d / "aprovadas.jsonl").write_text("\n".join(json.dumps(q) for q in qs), encoding="utf-8")
+        return r
+
+    def test_lotes_tabela_e_modelo_indisponivel(self):
+        from pipeline.qa_research.geracao_tipos.avaliacao import AvaliacaoModelos
+        with tempfile.TemporaryDirectory() as tmp:
+            r = self._rodada(tmp)
+            (r / "topicos" / "01_01" / "finalizado.json").write_text("{}", encoding="utf-8")   # só um tópico pronto
+            juiz = self.Cliente()
+            cl = {"resp_a": self.Cliente(), "resp_b": self.Cliente(falha=True), "juiz": juiz}
+            e = AvaliacaoModelos(r, respondentes={"a": "x:low", "b": "y"}, lote_juiz=5, workers=2, clientes=cl,
+                                 progress=lambda *a, **k: None)
+            e.saida.mkdir(parents=True)
+            e.checar_modelos()
+            self.assertEqual(list(e.respondentes), ["a"])
+            e.passagem(final=False)
+            self.assertEqual(sorted(juiz.lotes), [5, 5])           # 11 respostas: o lote incompleto espera
+            e.passagem(final=True)
+            self.assertEqual(sorted(juiz.lotes), [1, 5, 5])
+            res = json.loads((e.saida / "acuracia.json").read_text(encoding="utf-8"))
+            self.assertEqual(res["geral"]["a"]["n"], 11)
+            self.assertEqual(res["por_tipo"]["conceito"]["a"]["n"], 6)
+            md = (e.saida / "ACURACIA.md").read_text(encoding="utf-8")
+            self.assertIn("Por tipo de questão", md)
+            self.assertEqual(len((e.saida / "avaliacoes.jsonl").read_text(encoding="utf-8").splitlines()), 11)
+
+    def test_espera_marcador_da_geracao(self):
+        from pipeline.qa_research.geracao_tipos.avaliacao import AvaliacaoModelos
+        with tempfile.TemporaryDirectory() as tmp:
+            r = self._rodada(tmp, n=4)
+            for it in ("01_01", "02_02"):
+                (r / "topicos" / it / "finalizado.json").write_text("{}", encoding="utf-8")
+            (r / "geracao_encerrada").write_text("", encoding="utf-8")
+            cl = {"resp_a": self.Cliente(), "juiz": self.Cliente()}
+            e = AvaliacaoModelos(r, respondentes={"a": "x"}, lote_juiz=8, workers=2, intervalo=1, clientes=cl,
+                                 progress=lambda *a, **k: None)
+            self.assertEqual(e.run(esperar=True), 0)
+            res = json.loads((e.saida / "acuracia.json").read_text(encoding="utf-8"))
+            self.assertEqual(res["geral"]["a"]["n"], 8)
 
 
 if __name__ == "__main__":

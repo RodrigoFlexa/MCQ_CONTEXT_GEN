@@ -5,6 +5,8 @@
   python -m pipeline.qa_research.geracao_tipos meta [opções]      v18: geração completa (ou com meta) com refinador
   python -m pipeline.qa_research.geracao_tipos reauditar ...      aprovadas de uma rodada anterior x auditor v2
   python -m pipeline.qa_research.geracao_tipos refino ...         experimento: refinador fraco x forte nas reprovadas
+  python -m pipeline.qa_research.geracao_tipos avaliar ...        respondentes sem contexto + juiz, tabela de acurácia
+  python -m pipeline.qa_research.geracao_tipos acuracia <pasta>   mostra a tabela de acurácia atual
 """
 from __future__ import annotations
 
@@ -71,7 +73,35 @@ def main(argv=None) -> int:
     rf.add_argument("--rodadas", type=int, default=2, help="tentativas de refino por questão (com o histórico)")
     rf.add_argument("--workers", type=int, default=8)
     rf.add_argument("--relatorio", action="store_true", help="só refaz o relatório")
+    av = sub.add_parser("avaliar", help="respondentes sem contexto e juiz sobre as aprovadas de uma rodada")
+    av.add_argument("--saida", type=Path, required=True, help="pasta da rodada de geração")
+    av.add_argument("--modelos", nargs="+", default=None,
+                    help="nomes curtos dos respondentes (padrão: os 6 de avaliacao.RESPONDENTES)")
+    av.add_argument("--modelo-juiz", default=None)
+    av.add_argument("--lote-juiz", type=int, default=8, help="respostas por chamada do juiz")
+    av.add_argument("--workers", type=int, default=8)
+    av.add_argument("--intervalo", type=int, default=120, help="segundos entre verificações de tópicos prontos")
+    av.add_argument("--esperar", action="store_true",
+                    help="continua enquanto a geração roda (até existir <saida>/geracao_encerrada)")
+    ac = sub.add_parser("acuracia", help="mostra a tabela de acurácia atual")
+    ac.add_argument("saida", type=Path)
     a = ap.parse_args(argv)
+
+    if a.cmd == "acuracia":
+        arq = a.saida / "avaliacao" / "ACURACIA.md"
+        print(arq.read_text(encoding="utf-8") if arq.exists() else f"Ainda não há tabela em {arq}")
+        return 0
+
+    if a.cmd == "avaliar":
+        from .avaliacao import JUIZ, RESPONDENTES, AvaliacaoModelos
+        resp = {m: RESPONDENTES[m] for m in (a.modelos or RESPONDENTES)}
+        e = AvaliacaoModelos(a.saida, respondentes=resp, juiz=a.modelo_juiz or JUIZ, lote_juiz=a.lote_juiz,
+                             workers=a.workers, intervalo=a.intervalo)
+        falhas = e.run(esperar=a.esperar)
+        if falhas:
+            print(f"{falhas} unidades falharam; rode de novo para tentar só elas.")
+            return 2
+        return 0
 
     if a.cmd == "refino":
         from .refino_forte import ExperimentoRefino
