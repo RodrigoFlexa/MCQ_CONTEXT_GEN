@@ -7,6 +7,7 @@ Prompt `refinador_v3.md` (todos os motivos, histórico das versões reprovadas, 
 |---|---|---|---|---|
 | mini | gpt-5-mini-petrobras:medium | 85/153 | **40** (92 → 132) | r1: 50/153/153, desc. 0; r2: 35/103/103, desc. 0 |
 | forte | gpt-5-4-petrobras:high | 122/153 | **24** (92 → 116) | r1: 86/153/153, desc. 0; r2: 36/67/67, desc. 0 |
+| forte_cob | gpt-5-4-petrobras:high | 96/153 | **54** (92 → 146) | r1: 68/153/153, desc. 0; r2: 28/85/85, desc. 0 |
 
 Referência: na rodada de origem, o refinador antigo (gpt-5-mini, prompt v19, só motivos recuperáveis) teve 25 aprovadas de 98 reescritas, já descontadas a deduplicação e a revisão manual.
 
@@ -151,3 +152,74 @@ Referência: na rodada de origem, o refinador antigo (gpt-5-mini, prompt v19, s�
 **[07_03 · varias_respostas · diagnostico → mecanismo · r1]**
 - Antes: Em um FPSO, vários itens manuteníveis do mesmo conjunto entram na mesma janela. O plano prevê retirar cada item separadamente, com reaberturas sucessivas do conjunto e maior indisponibilidade total, embora o risco avaliado do conjunto permaneça o mesmo. Qual causa técnica do planejamento explica melhor esse resultado? → Falta de estruturação hierárquica de equipamentos e instalações, impedindo agrupar as intervenções por função.
 - Depois: Por que a estruturação hierárquica de equipamentos e instalações ajuda a reduzir a indisponibilidade quando vários itens manuteníveis de um mesmo conjunto precisam ser tratados na mesma janela? → Porque permite agrupar intervenções por função no mesmo conjunto, evitando retiradas individuais e reaberturas sucessivas que aumentam a indisponibilidade sem reduzir mais o risco.
+
+## forte_cob
+
+- Recuperadas por motivo original: {'reformula_enunciado': '7/16', 'varias_respostas': '39/58', 'trivial': '26/41', 'tecnicamente_errada': '1/2', 'resposta_vaga': '8/10', 'lista_generica': '2/5', 'caso_especifico': '7/9', 'prudencia_generica': '6/12'}
+- Por origem: {'composta': 16, 'janela': 80}; tipo mudou em 68
+- Ganho líquido por tópico: {'03_03': 22, '07_03': 32}
+- Conhecimento novo por rodada: {2: 24, 1: 30}; repetem conhecimento já aprovado: {2: 4, 1: 38}
+- Rodada 1, motivos do auditor nas reescritas: {'reformula_enunciado': 35, 'nenhum': 68, 'varias_respostas': 24, 'trivial': 14, 'lista_generica': 2, 'resposta_vaga': 3, 'prudencia_generica': 3, 'caso_especifico': 4}
+- Rodada 2, motivos do auditor nas reescritas: {'nenhum': 28, 'lista_generica': 3, 'varias_respostas': 14, 'trivial': 14, 'reformula_enunciado': 17, 'caso_especifico': 4, 'prudencia_generica': 2, 'resposta_vaga': 2, 'fora_da_fonte': 1}
+
+### Amostra de recuperadas
+
+**[03_03 · trivial · mecanismo → mecanismo · r1]**
+- Antes: Por que manter pressão positiva controlada durante a inertização limita a entrada de ar no tanque? → Porque a pressão interna acima da externa faz o fluxo tender para fora, reduzindo a infiltração de ar por aberturas e vazamentos.
+- Depois: Durante inspeção, o analisador de oxigênio do gás inerte responde corretamente, mas o alarme de alto oxigênio permaneceu com o mesmo setpoint após mudança do modo operacional. Por que isso pode deixar o sistema inadequadamente protegido? → Porque o setpoint antigo pode alarmar tarde: o oxigênio já terá ultrapassado o critério do novo modo antes da resposta operacional prevista.
+
+**[07_03 · trivial · consequencia → decisao · r1]**
+- Antes: Em um FPSO, passam a existir sobressalentes críticos a bordo, melhor acessibilidade ao equipamento e apoio mais organizado, sem mudar projeto, aplicação ou ambiente do componente. O que acontece com a disponibilidade? → Ela aumenta, pela redução do tempo de recuperação e da indisponibilidade total.
+- Depois: Num FPSO, a criticidade, o modo de falha dominante e as consequências da perda de função já foram definidos, e o histórico fornece MTBF, MTTR e disponibilidade. A equipe quer escolher a periodicidade preventiva só com esses indicadores. Que verificação técnica da própria ação proposta ainda falta? → A eficácia real da intervenção proposta sobre o modo de falha.
+
+**[07_03 · trivial · conceito → mecanismo · r1]**
+- Antes: Na manutenção de um FPSO, qual é o principal produto da programação semanal de curto prazo? → O plano de trabalho para a equipe executante.
+- Depois: Em um FPSO, por que o plano mestre de manutenção não basta, por si só, para definir o trabalho da semana seguinte? → A programação semanal converte o horizonte do plano mestre em intervenções executáveis sob restrições reais de operação, acesso, materiais, recursos, janela climática e liberação operacional.
+
+**[03_03 · varias_respostas · mecanismo → mecanismo · r1]**
+- Antes: Por que o histórico do fluido armazenado precisa ser considerado antes de manutenção e inspeção em tanque? → Porque ele condiciona a atmosfera interna e a presença de água ou depósitos que podem sustentar dano corrosivo oculto.
+- Depois: Em áreas de produção e armazenamento com água produzida e depósitos, falhas no controle de SRB vieram acompanhadas de aumento de H2S. Como isso agrava a integridade além do risco toxicológico? → Alteração dos mecanismos corrosivos; o H2S gerado pelas SRB intensifica a corrosão, sobretudo na presença de água produzida e depósitos.
+
+**[03_03 · reformula_enunciado · decisao → conceito · r2]**
+- Antes: Em um FPSO, um tanque de carga que continha óleo cru foi lavado e depois purgado com gás inerte para inspeção interna. A equipe quer liberar a entrada porque o tanque já está fora de serviço. Nos registros, porém, não aparece conclusão do gas freeing com ar fresco nem medições atmosféricas de liberação. Que preparação atmosférica ainda falta antes da entrada? → Gas freeing/ventilação com ar fresco, seguido de verificação atmosférica de liberação; a purga com gás inerte não torna o tanque apto à entrada.
+- Depois: Durante a preparação de um tanque inertizado para retorno ao serviço, análises confirmam baixo teor de oxigênio no gás fornecido e na atmosfera interna. Na revisão de prontidão, que salvaguarda ainda precisa estar disponível antes da liberação? → Proteção contra sobrepressão e vácuo do tanque; baixo teor de oxigênio controla a composição, mas não protege contra desvios de pressão.
+
+**[03_03 · trivial · consequencia → mecanismo · r1]**
+- Antes: Num FPSO, um tanque de carga já estava em nível muito alto quando a transferência para reduzi-lo passou a apresentar vazão oscilante e pouca resposta na indicação de nível do tanque de origem, apesar de a bomba de stripping seguir em operação. Diante disso, a equipe passou a cogitar manobra para outro tanque. Nesse quadro, como fica a margem disponível contra perda de contenção? → A margem disponível contra perda de contenção está reduzida, porque o tanque segue muito alto enquanto a retirada efetiva ficou menor que a necessária.
+- Depois: Numa transferência interna por stripping, a bomba segue em operação e há escoamento na descarga, mas o nível do tanque de origem responde pouco. Como a vedação deficiente de válvulas pode produzir esse efeito? → Retorno interno ou comunicação indevida entre tanques, desviando parte da vazão e reduzindo a retirada efetiva do tanque de origem.
+
+**[07_03 · reformula_enunciado · mecanismo → diagnostico · r2]**
+- Antes: Por que a manutenção corretiva planejada pode ser tecnicamente aceitável em equipamento de baixa criticidade, quando a função pode ser recomposta após a falha? → Porque a perda temporária da função é tolerável ou recuperável sem impacto desproporcional, e a recomposição após a falha limita a consequência.
+- Depois: Na revisão do plano de um item crítico do FPSO, os modos de falha já foram identificados, mas a equipe não consegue sustentar se a intervenção preventiva deve ocorrer em semanas ou meses. Que base técnica está faltando para definir essa periodicidade? → Dados de confiabilidade do item, especialmente seu histórico de falha, para sustentar o intervalo preventivo.
+
+**[03_03 · trivial · mecanismo → mecanismo · r1]**
+- Antes: Por que o monitoramento do gás inerte precisa confirmar a capacidade de resposta dos alarmes, e não só o teor de oxigênio? → Porque só um alarme responsivo detecta a subida de oxigênio acima do aceitável a tempo de acionar a resposta operacional prevista.
+- Depois: Por que, numa inspeção do sistema de gás inerte, não basta comprovar que o alarme de alto O2 soa quando estimulado; é preciso confirmar também o ponto de atuação e a resposta operacional prevista? → Da salvaguarda completa: sem ponto de atuação adequado ao modo e resposta operacional definida, o alarme só anuncia o desvio e pode não impedir gás fora de especificação.
+
+**[07_03 · resposta_vaga · conceito → mecanismo · r2]**
+- Antes: Qual condição das populações analisadas é necessária para comparar indicadores de confiabilidade? → Compatibilidade técnica entre as populações analisadas.
+- Depois: Um item reparável passou vários dias indisponível por espera logística entre falhas. Por que usar o tempo corrido do período, em vez do tempo efetivamente operado, distorce o MTBF observado? → Porque o MTBF usual usa o tempo de operação acumulado; incluir paradas no numerador eleva artificialmente o indicador.
+
+**[03_03 · tecnicamente_errada · diagnostico → diagnostico · r1]**
+- Antes: Após manutenção em um tanque de carga inertizado, surgiram deformações localizadas em chapas. Na inspeção, havia evidência de isolamento incorreto ou reinstalação inadequada na rota de vent/alívio. O tanque possuía vent automático e monitoramento com alarme de pressão. Nesse quadro, que falha adicional explica tecnicamente o dano estrutural? → Falha do alarme de pressão ou ausência de resposta ao alarme, pois o vent automático torna insuficiente atribuir a deformação apenas ao bloqueio do vent.
+- Depois: Em um FPSO, um tanque de carga inertizado está em descarga contínua. O nível cai como previsto, a rota de vent/alívio está disponível e, ainda assim, a pressão do tanque cai progressivamente até vácuo. Que falha técnica explica melhor esse comportamento? → Reposição insuficiente de gás inerte: a vazão ou a pressão de IG não acompanham o volume retirado na descarga.
+
+**[07_03 · varias_respostas · decisao → mecanismo · r1]**
+- Antes: Em um FPSO em vida tardia, a degradação cresce, o programa de inspeção ficou para trás e campanhas sucessivas geram grande volume de dados. O backlog de inspeção aumenta, diagramas e referências de integridade deixam de acompanhar os achados, e a proposta da equipe é ampliar ainda mais a coleta. Para restaurar a eficácia da gestão de corrosão e integridade, que presença técnica contínua deve ser estabelecida? → Presença continuada de engenheiro de inspeção ou função equivalente, para preservar conhecimento do ativo, atualizar diagramas e converter achados em ações executadas.
+- Depois: Em um FPSO em vida tardia, a degradação cresce, o programa de inspeção atrasou e novas campanhas ampliam o volume de dados. Mesmo assim, diagramas e referências de integridade deixam de acompanhar os achados e o backlog aumenta. Por que ampliar ainda mais a coleta não tende a resolver esse quadro? → Sobrecarga da capacidade contínua de análise e resposta, porque sem gerir os dados com continuidade eles não viram atualização do conhecimento do ativo nem ações executadas.
+
+**[03_03 · caso_especifico · conceito → mecanismo · r2]**
+- Antes: Qual cabeçalho de gás inerte é usado na inertização inicial de um tanque previamente gas free antes da introdução de óleo? → Clean inert gas header.
+- Depois: Em uma instalação em que a ventilação dos tanques compartilha a rede de gás inerte, por que a mudança de carregamento para descarga tende a restringir a operabilidade? → Porque no carregamento a rede alivia a atmosfera excedente, e na descarga repõe gás inerte para manter pressão positiva; uma única linha limita esses caminhos independentes.
+
+**[07_03 · varias_respostas · consequencia → diagnostico · r1]**
+- Antes: Em um FPSO, projetos offshore passam a consumir leitos, recursos especializados e capacidade das equipes de manutenção, além de gerar carga extra de reparos e recondicionamento. O que acontece com a manutenção planejada? → A manutenção planejada perde espaço para demandas concorrentes, favorecendo a formação de novo backlog.
+- Depois: Numa unidade envelhecida, o programa de inspeção foi ampliado e o volume de relatórios cresceu. As inspeções de campo seguem ocorrendo, mas as respostas aos achados se acumulam e o backlog de inspeção não recua. Que mecanismo técnico explica esse quadro? → Sobrecarga da capacidade de gerir e analisar continuamente os dados de inspeção, limitando a resposta aos achados.
+
+**[07_03 · reformula_enunciado · decisao → procedimento · r1]**
+- Antes: Em um FPSO, o efetivo de manutenção embarcado é reduzido. Após intervenção, um sistema crítico que já possui monitoramento remoto voltou ao serviço, e a mesma equipe enxuta permanecerá na semana seguinte. A filosofia operacional da unidade já admite, para alguns ativos, distribuição das atividades técnicas além do efetivo embarcado. No período inicial de observação desse retorno, como deve ser estruturado o acompanhamento? → Acompanhamento onshore articulado com a equipe embarcada, aproveitando o monitoramento remoto no período inicial após a reentrada em serviço.
+- Depois: Após intervenção em um equipamento crítico do FPSO, o ensaio local foi aprovado. Em operação, porém, sua função depende de permissivos, intertravamentos e suprimentos externos ao próprio equipamento. Que verificação deve complementar o retorno ao serviço? → Teste pós-manutenção das interfaces com processo, utilidades, automação e proteção, confirmando compatibilidade e estabilidade na operação inicial.
+
+**[03_03 · varias_respostas · diagnostico → mecanismo · r1]**
+- Antes: Num FPSO monohull, durante carregamento e descarga, o teor de O2 de um tanque inertizado sobe nos períodos de maior movimento da embarcação e volta a estabilizar quando a solicitação diminui. A pressão e a qualidade do gás inerte no header permanecem normais; a linha conectada ao tanque foi testada estanque e não houve manobra de ventilação. Que causa específica explica melhor esse comportamento? → Abertura de trinca estrutural existente por tensões cíclicas, permitindo ingresso de oxigênio.
+- Depois: Por que falhas no controle de bactérias redutoras de sulfato em áreas de produção e armazenamento agravam também a integridade, além do risco toxicológico? → Porque elevam o H2S, que na presença de água produzida e depósitos altera e pode intensificar mecanismos corrosivos.
