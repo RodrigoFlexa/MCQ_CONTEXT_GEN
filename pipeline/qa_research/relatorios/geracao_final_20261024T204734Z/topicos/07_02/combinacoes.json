@@ -1,0 +1,445 @@
+{
+  "item": "07_02",
+  "observacao": "Foram priorizados encadeamentos com ponte dedutível a partir de observações plausíveis em FPSO, evitando respostas genéricas de prudência. Onde a distinção entre causa elétrica, digital ou de governança exige múltiplas barreiras, isso foi explicitado nas condições e limites.",
+  "combinacoes": [
+    {
+      "relacoes": [
+        "B003.R4",
+        "B015.R3",
+        "B014.R7"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Perda simultânea de SCADA, ESD e mitigação com sinais elétricos locais",
+      "ponte": "dependência comum da alimentação ininterrupta/UPS",
+      "cadeia": "Como o SCADA depende de energia confiável, a falha da alimentação de suporte pode retirar energia ao mesmo tempo de controle, shutdown de emergência e mitigação. Se isso coincide com fumaça, arco elétrico e atuação de proteções, a leitura correta é falha da infraestrutura de energia, não comprometimento do controle.",
+      "cenario": "Durante um evento, perderam-se ao mesmo tempo supervisão SCADA, funções de shutdown de emergência e parte da mitigação de emergência. Houve fumaça local, arco elétrico e atuação de proteções na área da UPS. Não foram observadas alterações de lógica, setpoints ou comandos não autorizados antes da perda.",
+      "resposta": "Falha da UPS/infraestrutura de energia comum aos sistemas.",
+      "resposta_atraente": "Ataque cibernético ao sistema de controle.",
+      "sinal_que_descarta": "Fumaça, arco elétrico e atuação de proteções locais, junto da perda simultânea de sistemas na mesma alimentação.",
+      "condicoes_enunciado": [
+        "Há SCADA na arquitetura",
+        "Controle, ESD e mitigação dependem de alimentação ininterrupta comum",
+        "O cenário inclui sinais físicos locais na UPS ou alimentação associada"
+      ],
+      "limites": [
+        "A inferência vale quando os sistemas compartilham a mesma alimentação ou dependência equivalente",
+        "Sem sinais físicos locais, a diferenciação para comprometimento digital fica menos conclusiva"
+      ],
+      "id": "C1"
+    },
+    {
+      "relacoes": [
+        "B009.R4",
+        "B010.R1",
+        "B008.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "VPN válida mascarando o risco do notebook de manutenção",
+      "ponte": "a proteção do canal não garante a integridade do dispositivo conectado",
+      "cadeia": "Mesmo com VPN, a segurança da conexão continua dependente do estado do dispositivo de origem. Se o acesso usa notebook temporário de manutenção, o resultado específico pode ser introdução de software não autorizado, versão incompatível ou alteração não rastreada no ambiente operacional.",
+      "cenario": "Um fornecedor acessou remotamente por VPN aprovada, com autenticação válida e túnel estável durante toda a janela autorizada. Após a intervenção, apareceram ferramentas/arquivos de diagnóstico não previstos e uma versão diferente do utilitário passou a responder no ambiente atendido. O acesso foi feito a partir de notebook de manutenção.",
+      "resposta": "Introdução de software ou versão incompatível a partir do notebook de manutenção.",
+      "resposta_atraente": "Falha na VPN ou na criptografia do canal.",
+      "sinal_que_descarta": "A sessão foi autenticada e o túnel VPN permaneceu estável e protegido durante a atividade.",
+      "condicoes_enunciado": [
+        "O acesso é remoto e usa VPN",
+        "O acesso é de fornecedor/terceiro",
+        "Foi usado notebook ou dispositivo temporário de manutenção"
+      ],
+      "limites": [
+        "A cadeia não identifica qual software específico foi introduzido",
+        "Ela vale para risco de endpoint comprometido, desatualizado ou mal controlado, não para provar malware em todos os casos"
+      ],
+      "id": "C2"
+    },
+    {
+      "relacoes": [
+        "B010.R3",
+        "B004.R3",
+        "B007.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Sessão autorizada de terceiro com efeito de ataque",
+      "ponte": "o acesso do terceiro ultrapassou o escopo operacional compatível com a tarefa",
+      "cadeia": "O acesso remoto de terceiros deve ser delimitado pela necessidade operacional e pelo escopo da atividade. Quando a sessão autorizada foge desse escopo, o efeito operacional pode ser o mesmo de um ataque externo, e a leitura correta passa a ser desvio de escopo a verificar contra a janela e o ativo autorizado.",
+      "cenario": "Um fornecedor foi liberado para diagnóstico remoto em ativo específico. O registro de sessão mostra acesso individual rastreável, dentro da janela aprovada, mas com atuação em menus e ativos não previstos para o diagnóstico; depois houve desabilitação de alarmes. Não houve evidência de acessibilidade direta da internet ao ambiente operacional.",
+      "resposta": "Desvio de escopo/permissões excessivas no acesso do terceiro.",
+      "resposta_atraente": "Invasão externa por credencial roubada.",
+      "sinal_que_descarta": "O registro de sessão individual mostra a atuação ocorrendo dentro da própria sessão autorizada, mas fora do escopo previsto.",
+      "condicoes_enunciado": [
+        "Há acesso remoto de terceiro",
+        "Existe escopo definido para a atividade",
+        "Há registro de sessão suficiente para comparar janela, ativo e atuação"
+      ],
+      "limites": [
+        "A cadeia indica desvio de escopo, não distingue sozinha erro de má-fé",
+        "Depende de registros de sessão confiáveis"
+      ],
+      "id": "C3"
+    },
+    {
+      "relacoes": [
+        "B006.R1",
+        "B013.R6",
+        "B016.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Sem patch validado do fornecedor: contenção pela conectividade",
+      "ponte": "o patch imediato ainda não é viável ou seguro para o ativo embarcado/legado",
+      "cadeia": "Quando a correção depende de o fornecedor informar patch e estratégia estável, o ativo pode permanecer exposto sem remediação imediata aplicável. Nessa condição, a resposta técnica mais sustentada é conter por isolamento adicional e restrição de conectividade até existir correção compatível.",
+      "cenario": "Saiu alerta de vulnerabilidade para componente embarcado de um sistema legado do FPSO. O fornecedor ainda não confirmou versão estável aplicável nem estratégia de atualização, e a próxima janela de manutenção é curta. O ativo continua em operação.",
+      "resposta": "Isolamento adicional e redução/restrição de conectividade como medida compensatória.",
+      "resposta_atraente": "Aplicar imediatamente qualquer atualização mais recente disponível.",
+      "sinal_que_descarta": "O fornecedor ainda não confirmou patch estável aplicável nem estratégia de remediação.",
+      "condicoes_enunciado": [
+        "O ativo é embarcado ou legado",
+        "A remediação depende de informação/orientação do fornecedor",
+        "O patch imediato não está disponível, não é viável ou não é seguro"
+      ],
+      "limites": [
+        "A medida é transitória, até existir remediação compatível",
+        "Ela reduz exposição, mas não remove a vulnerabilidade original"
+      ],
+      "id": "C4"
+    },
+    {
+      "relacoes": [
+        "B006.R2",
+        "B016.R4",
+        "B013.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Firmware mais novo sem validação: remediação que cria defeito",
+      "ponte": "a compatibilidade da mudança não foi validada para o ambiente crítico",
+      "cadeia": "Como firmware proprietário não pode ser alterado livremente sem risco adicional e, em ambiente crítico, a remediação depende de compatibilidade e disponibilidade, instalar a versão mais recente sem validação pode trocar uma exposição por indisponibilidade ou comportamento imprevisto do controle.",
+      "cenario": "Após um CVE público, surge proposta de instalar no controlador a versão mais recente baixada do portal do fabricante. O equipamento usa firmware proprietário, a função é crítica para o processo e o fornecedor ainda não confirmou a versão qualificada para aquela aplicação. A janela de manutenção é restrita.",
+      "resposta": "Indisponibilidade ou comportamento não previsto do sistema de controle.",
+      "resposta_atraente": "Eliminar a vulnerabilidade sem impacto operacional relevante.",
+      "sinal_que_descarta": "A versão qualificada/compatível para aquela aplicação ainda não foi confirmada.",
+      "condicoes_enunciado": [
+        "O software/firmware é proprietário e embarcado",
+        "O ativo tem papel crítico no processo",
+        "A versão mais recente seria aplicada sem validação de compatibilidade"
+      ],
+      "limites": [
+        "O efeito é possível, não garantido em todos os produtos",
+        "A cadeia vale para aplicação sem validação, não para atualização qualificada"
+      ],
+      "id": "C5"
+    },
+    {
+      "relacoes": [
+        "B001.R3",
+        "B021.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Muitos sensores, pouca consistência: por que a analítica falha",
+      "ponte": "a heterogeneidade dos controladores empurra a integração para uma etapa de normalização/coerência",
+      "cadeia": "Quando fornecedores usam modelos de dados diferentes, a integração tende a migrar para a camada supervisória. Sem coerência semântica, temporal e operacional nessa integração, analytics e modelos preditivos continuam frágeis mesmo com muitos sensores.",
+      "cenario": "A unidade recebe dados de controladores de vários fornecedores. Há grande quantidade de sensores, mas a mesma variável chega com convenções, unidades e contextos operacionais diferentes; os diagnósticos preditivos divergem entre áreas. Não faltam pontos de medição.",
+      "resposta": "Coerência semântica, temporal e operacional dos dados integrados.",
+      "resposta_atraente": "Instalar mais sensores ou retreinar apenas o modelo.",
+      "sinal_que_descarta": "As divergências aparecem apesar de já haver muitos sensores e decorrem de convenções, unidades e contextos distintos.",
+      "condicoes_enunciado": [
+        "Há controladores de fornecedores diferentes",
+        "Existe integração de dados para analytics/modelos",
+        "O cenário evidencia inconsistências de significado, tempo ou contexto"
+      ],
+      "limites": [
+        "A cadeia não especifica o método exato de normalização",
+        "Ela não elimina a necessidade de sensores; apenas mostra que sensor não basta"
+      ],
+      "id": "C6"
+    },
+    {
+      "relacoes": [
+        "B000.R4",
+        "B020.R5",
+        "B001.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Onde nasce a fronteira crítica no arranjo borda-SCADA-nuvem",
+      "ponte": "os dados estão saindo da camada de controle para supervisão e consumidores analíticos",
+      "cadeia": "Se a arquitetura híbrida converte estados do processo em dados e os distribui por brokers, e o SCADA compõe a camada supervisória, a fronteira crítica aparece justamente no ponto em que esses dados deixam o controle para abastecer SCADA e aplicações externas.",
+      "cenario": "Um controlador de borda publica dados do processo para um broker consumido por aplicações analíticas e, ao mesmo tempo, alimenta o SCADA local em tempo real. O ERP ainda recebe apenas relatórios posteriores. A intervenção pedida é definir onde tratar arquiteturalmente a interconexão mais sensível.",
+      "resposta": "No ponto de interconexão do edge/broker onde dados saem do controle para SCADA e analytics.",
+      "resposta_atraente": "Na aplicação corporativa ou no ERP.",
+      "sinal_que_descarta": "O mesmo fluxo já alimenta o SCADA local em tempo real antes de chegar ao ambiente corporativo.",
+      "condicoes_enunciado": [
+        "Há arquitetura híbrida com edge/controller, broker e aplicações analíticas",
+        "O SCADA faz parte da camada supervisória",
+        "Os dados saem da camada de controle para outros consumidores"
+      ],
+      "limites": [
+        "A localização exata depende da implementação física",
+        "A cadeia identifica a fronteira funcional, não um equipamento único obrigatório"
+      ],
+      "id": "C7"
+    },
+    {
+      "relacoes": [
+        "B020.R5",
+        "B021.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Aplicação quase no controle: o problema não é falta de sensor",
+      "ponte": "a aplicação está próxima o suficiente do processo para influenciar decisões operacionais frequentes",
+      "cadeia": "Em arquiteturas híbridas, dados de sensores e controladores podem chegar rapidamente a aplicações analíticas. Quando essa aplicação fica próxima do controle do processo, o ponto crítico passa a ser atraso de comunicação, sincronismo e comportamento na perda de conectividade.",
+      "cenario": "Uma aplicação online passou a sugerir ajustes operacionais frequentes a partir de dados trazidos por brokers a partir dos controladores. Os sinais existem e chegam, mas as recomendações oscilam quando há atraso de enlace e retomada de comunicação. O debate interno está focado em comprar mais instrumentação.",
+      "resposta": "Atraso de comunicação, qualidade de sincronismo e comportamento na perda de conectividade.",
+      "resposta_atraente": "Quantidade insuficiente de sensores.",
+      "sinal_que_descarta": "Os sinais já existem; a oscilação acompanha atraso e retomada do enlace.",
+      "condicoes_enunciado": [
+        "Há arquitetura híbrida com fluxo de dados do controle para aplicação",
+        "A aplicação influencia ou pretende influenciar decisões frequentes",
+        "O sistema é crítico ou próximo do controle do processo"
+      ],
+      "limites": [
+        "A relação não define métricas de latência ou sincronismo aceitáveis",
+        "O peso do problema depende da proximidade funcional da aplicação com o controle"
+      ],
+      "id": "C8"
+    },
+    {
+      "relacoes": [
+        "B018.R5",
+        "B022.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Recomendação analítica lida como comando",
+      "ponte": "a saída analítica não substitui decisão operacional nem comando de controle",
+      "cadeia": "Analytics e edge ampliam observação e previsão, mas não substituem monitoramento de segurança nem decisão operacional. Sem treinamento para distinguir recomendação analítica de comando de controle, o operador pode agir como se a aplicação comandasse a planta.",
+      "cenario": "Após a implantação de uma aplicação analítica, um alerta em tela semelhante à HMI foi seguido de ajuste manual imediato no processo. Os logs do controlador não mostram comando automático emitido pela aplicação. O episódio ocorreu durante uso normal da interface.",
+      "resposta": "Falta de capacidade para diferenciar recomendação analítica de comando de controle.",
+      "resposta_atraente": "Defeito do algoritmo que comandou a planta sozinho.",
+      "sinal_que_descarta": "Os logs não mostram atuação automática do controlador pela aplicação.",
+      "condicoes_enunciado": [
+        "Há analytics/edge/digitalização com alertas ou recomendações",
+        "O operador visualiza a saída da aplicação",
+        "Não houve atuação automática do sistema de controle pela aplicação"
+      ],
+      "limites": [
+        "A cadeia trata de interpretação humana da saída analítica",
+        "Ela não prova que o modelo estava correto; só explica o mecanismo do erro de ação"
+      ],
+      "id": "C9"
+    },
+    {
+      "relacoes": [
+        "B003.R5",
+        "B002.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "UPS íntegra não contém propagação entre domínios",
+      "ponte": "continuidade elétrica de supervisão não é barreira lógica de contenção",
+      "cadeia": "O backup de energia mantém SCADA comunicando e supervisionando, mas não substitui a segmentação. Se um problema percorre domínios de criticidade distinta, o que faltou foi contenção arquitetural dos caminhos de propagação.",
+      "cenario": "Durante um incidente de rede, o SCADA permaneceu energizado e comunicando graças ao backup. Mesmo assim, o problema alcançou outros ativos conectados em domínios distintos. A discussão posterior focou em ampliar a autonomia das baterias.",
+      "resposta": "Segmentação lógica/arquitetural entre domínios críticos.",
+      "resposta_atraente": "Maior autonomia da UPS.",
+      "sinal_que_descarta": "A supervisão já permaneceu energizada; o problema foi a propagação entre domínios.",
+      "condicoes_enunciado": [
+        "Há SCADA com suporte por backup de energia",
+        "O incidente se propagou entre domínios com criticidade distinta",
+        "O enunciado mostra que a alimentação não foi a causa da propagação"
+      ],
+      "limites": [
+        "A segmentação reduz propagação, mas não remove a vulnerabilidade de origem",
+        "A cadeia trata de contenção, não de continuidade elétrica"
+      ],
+      "id": "C10"
+    },
+    {
+      "relacoes": [
+        "B014.R3",
+        "B018.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Barreiras independentes no papel, acopladas pela mesma UPS",
+      "ponte": "as barreiras compartilham um modo de falha comum na alimentação",
+      "cadeia": "Quando barreiras distintas dependem da mesma UPS, a UPS vira modo de falha comum. A perda dessa alimentação pode degradar simultaneamente a operação normal e as funções instrumentadas de proteção que se imaginavam independentes.",
+      "cenario": "Após um evento elétrico, perderam-se ao mesmo tempo funções de operação normal e funções instrumentadas de proteção. Na revisão do arranjo, verificou-se que ambas eram sustentadas pela mesma alimentação ininterrupta. Não houve indício de mudança de lógica.",
+      "resposta": "Dependência comum da mesma UPS como modo de falha comum.",
+      "resposta_atraente": "Falha simultânea independente de software ou ataque coordenado.",
+      "sinal_que_descarta": "As funções distintas compartilhavam a mesma alimentação ininterrupta.",
+      "condicoes_enunciado": [
+        "Funções/barreiras distintas compartilham a mesma UPS",
+        "Houve perda de alimentação ou evento associado",
+        "Não há evidência de alteração indevida de lógica"
+      ],
+      "limites": [
+        "A cadeia se aplica ao compartilhamento de alimentação",
+        "Ela não identifica o componente específico que falhou dentro da UPS"
+      ],
+      "id": "C11"
+    },
+    {
+      "relacoes": [
+        "B019.R2",
+        "B014.R7"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Dupla conversão mascarando a origem real da perda",
+      "ponte": "perturbação instantânea de entrada não deveria acoplar diretamente à carga como primeira hipótese",
+      "cadeia": "Como a dupla conversão reduz o acoplamento direto entre perturbações da entrada e a carga, a perda simultânea acompanhada de fumaça, arco e proteções aponta primeiro para falha da infraestrutura de UPS, não para afundamento externo da rede ou comprometimento do controle.",
+      "cenario": "A UPS online de dupla conversão vinha atravessando variações curtas da fonte sem perda perceptível nas cargas digitais. Em um evento posterior, houve perda simultânea de sistemas na mesma alimentação, com fumaça local, arco na seção da UPS e atuação de proteções. O time inicial tratou o caso como distúrbio da rede externa.",
+      "resposta": "Falha da infraestrutura/UPS, provavelmente interna ao sistema de alimentação.",
+      "resposta_atraente": "Afundamento externo da rede de alimentação.",
+      "sinal_que_descarta": "Houve fumaça, arco e atuação de proteções locais na própria UPS.",
+      "condicoes_enunciado": [
+        "A UPS é de dupla conversão on-line",
+        "As cargas afetadas compartilham essa alimentação",
+        "Há sinais físicos locais de falha na UPS"
+      ],
+      "limites": [
+        "A cadeia não aponta o componente interno exato",
+        "Ela depende da correta identificação da topologia e dos sinais locais"
+      ],
+      "id": "C12"
+    },
+    {
+      "relacoes": [
+        "B009.R6",
+        "B005.R3",
+        "B007.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "O que realmente torna a sessão remota perigosa",
+      "ponte": "o risco da sessão é dominado pelas permissões efetivas e pelo tipo de ativo alcançado",
+      "cadeia": "No acesso remoto a IACS, o risco não depende só do canal, mas das permissões disponíveis. Se a sessão alcança privilégio de engenharia em ativo capaz de alterar lógica, permissivos ou intertravamentos, a governança exigida é muito mais restritiva que para consulta.",
+      "cenario": "Um fornecedor conectou-se por método remoto aprovado e com identidade individual. A conta usada permitia alterar configuração e lógica do ativo atendido, que interfere em permissivos do processo. O debate ficou centrado apenas em qual VPN foi usada.",
+      "resposta": "Privilégio de engenharia sobre ativo capaz de alterar lógica/permissivos/intertravamentos.",
+      "resposta_atraente": "O simples fato de o acesso ser remoto.",
+      "sinal_que_descarta": "A conta não era apenas consultiva; permitia mudanças de configuração e lógica.",
+      "condicoes_enunciado": [
+        "Há sessão remota em IACS",
+        "A conta possui privilégio de engenharia",
+        "O ativo alcançado pode alterar lógica, permissivos ou intertravamentos"
+      ],
+      "limites": [
+        "A cadeia explica por que o risco é alto, não qual tecnologia específica usar",
+        "Ela não substitui a avaliação da condição do dispositivo conectado"
+      ],
+      "id": "C13"
+    },
+    {
+      "relacoes": [
+        "B005.R5",
+        "B004.R3"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Mudança remota que parece ataque, mas nasce na governança",
+      "ponte": "quem aprovou também implementou e validou a mesma mudança",
+      "cadeia": "Quando a segregação de funções é quebrada, a mesma pessoa pode aprovar, implementar e validar uma mudança sem contraponto. Se esse acesso é legítimo porém excessivo, o efeito operacional pode parecer ataque externo, embora a falha real esteja na governança da mudança.",
+      "cenario": "Durante suporte remoto, a mesma pessoa abriu a solicitação, executou a alteração e registrou a validação. Depois apareceram mudança de setpoint e parada indevida, sem evidência de exposição direta do sistema à internet. Os registros associam a atuação a uma conta autorizada.",
+      "resposta": "Ausência de segregação de funções na mudança.",
+      "resposta_atraente": "Ataque externo sofisticado.",
+      "sinal_que_descarta": "A mesma pessoa aprovou, implementou e validou usando conta autorizada.",
+      "condicoes_enunciado": [
+        "Existe processo de mudança ou equivalente",
+        "A mesma pessoa aprovou, implementou e validou",
+        "O acesso utilizado era legítimo/autorizado"
+      ],
+      "limites": [
+        "A cadeia revela a falha de governança, não prova intenção maliciosa",
+        "Ela não se aplica quando a exceção à segregação é formalmente compensada por outra validação efetiva"
+      ],
+      "id": "C14"
+    },
+    {
+      "relacoes": [
+        "B012.R5",
+        "B013.R1"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Alerta Treck não é confirmação de comprometimento",
+      "ponte": "o alerta só indica possibilidade, não presença confirmada do componente afetado",
+      "cadeia": "Um alerta sobre vulnerabilidades na pilha Treck não confirma comprometimento em todos os ativos. Por isso, o primeiro passo técnico é confirmar quais ativos usam o componente afetado e qual é sua exposição real.",
+      "cenario": "Chegou alerta amplo sobre vulnerabilidades Treck em dispositivos embarcados do setor de energia. Na lista interna do FPSO há muitos ativos conectados, mas ainda não se sabe quais realmente usam a pilha afetada. Não há evidência de exploração no momento.",
+      "resposta": "Confirmar ativo a ativo o uso do componente afetado e a exposição real.",
+      "resposta_atraente": "Tratar todos os ativos conectados como comprometidos e atualizar de imediato.",
+      "sinal_que_descarta": "Ainda não se sabe quais ativos realmente usam a pilha afetada.",
+      "condicoes_enunciado": [
+        "Há alerta sobre Treck TCP/IP",
+        "A presença do componente nos ativos ainda não foi confirmada",
+        "Não existe evidência de exploração já ocorrida no cenário"
+      ],
+      "limites": [
+        "A cadeia é específica ao raciocínio de alerta amplo sem confirmação de componente",
+        "Ela descreve o primeiro passo técnico, não todo o plano de tratamento"
+      ],
+      "id": "C15"
+    },
+    {
+      "relacoes": [
+        "B001.R5",
+        "B003.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "IIoT adicionado e tráfego novo: telemetria ou deriva arquitetural?",
+      "ponte": "a nova interface ampliou a fronteira IT/OT e precisa de justificativa operacional",
+      "cadeia": "Ao incorporar IIoT e comunicações máquina-nuvem, as fronteiras IT/OT se ampliam. Se surgem fluxos entre domínios sem finalidade operacional identificada, o achado correto é deriva arquitetural: o fluxo deixou de ser necessário ou não foi devidamente justificado.",
+      "cenario": "Após instalar um gateway IIoT, apareceram novos fluxos saindo do domínio operacional para ambiente analítico. A operação não reconhece uso atual para parte desses dados, embora o gateway esteja ativo e sem falha aparente. As barreiras permaneceram como no desenho anterior.",
+      "resposta": "Fluxo entre domínios sem necessidade operacional justificada.",
+      "resposta_atraente": "Pico normal de telemetria sem relevância arquitetural.",
+      "sinal_que_descarta": "A operação não reconhece finalidade atual para parte dos fluxos observados.",
+      "condicoes_enunciado": [
+        "Foi adicionada interface IIoT/edge/máquina-nuvem",
+        "Há monitoração dos fluxos reais entre domínios",
+        "Não existe caso de uso operacional identificado para parte do tráfego"
+      ],
+      "limites": [
+        "A cadeia depende da comparação entre arquitetura planejada e operação real",
+        "Ela não define sozinha qual barreira adicional deve ser implementada"
+      ],
+      "id": "C16"
+    },
+    {
+      "relacoes": [
+        "B004.R5",
+        "B007.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Procedimento existe, mas o acesso continua frágil",
+      "ponte": "a eficácia precisa ser verificada como capacidade de gestão, não como papel assinado",
+      "cadeia": "Se a cibersegurança de IACS é parte de um sistema de gestão, procedimento escrito sozinho não basta. A verificação da eficácia dos controles de acesso precisa mostrar autoavaliação estruturada, plano de melhoria e inspeções proporcionais à criticidade.",
+      "cenario": "A unidade possui procedimento formal de concessão de acesso, mas uma revisão encontrou contas privilegiadas antigas ainda ativas. Os responsáveis informam que o procedimento foi seguido e aprovado documentalmente. Não há evidência de autoavaliação estruturada nem de verificações proporcionais à criticidade.",
+      "resposta": "Autoavaliação estruturada, plano de melhoria e inspeções/verificações proporcionais.",
+      "resposta_atraente": "Emitir um procedimento mais detalhado.",
+      "sinal_que_descarta": "O procedimento já existia e mesmo assim havia contas privilegiadas antigas ativas.",
+      "condicoes_enunciado": [
+        "Há controles de acesso em IACS",
+        "Existe procedimento documentado",
+        "Há evidência de estado de acesso ineficaz, como contas antigas ativas"
+      ],
+      "limites": [
+        "A cadeia não prescreve tecnologia nem periodicidade",
+        "Ela trata de verificação de eficácia, não do desenho completo do controle"
+      ],
+      "id": "C17"
+    },
+    {
+      "relacoes": [
+        "B001.R4",
+        "B002.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Uma única alteração em interconexão alcançando segurança e elétrico",
+      "ponte": "o ponto de interconexão concentrava conectividade além do necessário entre domínios",
+      "cadeia": "Quando um ponto concentra trocas entre controladores, supervisão e consumidores externos, ele requer tratamento arquitetural específico. Se, além disso, controle de processo, funções independentes de proteção, segurança e sistemas elétricos compartilham conectividade além do necessário, uma única falha ou erro ali amplia consequências para todos.",
+      "cenario": "Uma mudança em um ponto que concentrava troca de dados entre controladores, supervisão e consumidores externos foi seguida por efeito percebido em controle, alarmes de segurança e supervisão elétrica. A alteração ocorreu em um único local da arquitetura. Não houve indício de perda de energia na mesma janela.",
+      "resposta": "Interconexão concentradora com conectividade compartilhada além do necessário entre domínios.",
+      "resposta_atraente": "Falha isolada do historiador ou da aplicação externa.",
+      "sinal_que_descarta": "O efeito alcançou também funções de segurança e supervisão elétrica a partir de uma única alteração arquitetural.",
+      "condicoes_enunciado": [
+        "Existe ponto de interconexão concentrando trocas entre controladores, supervisão e consumidores externos",
+        "Domínios de controle, proteção/segurança e elétrico compartilham conectividade além do necessário",
+        "Não há confusão com perda de energia no mesmo evento"
+      ],
+      "limites": [
+        "A cadeia não define qual tratamento arquitetural específico faltou",
+        "A ampliação de consequências depende das interdependências reais entre os domínios"
+      ],
+      "id": "C18"
+    }
+  ]
+}

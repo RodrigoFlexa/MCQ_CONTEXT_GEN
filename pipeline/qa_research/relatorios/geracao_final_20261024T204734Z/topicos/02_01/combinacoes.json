@@ -1,0 +1,413 @@
+{
+  "item": "02_01",
+  "observacao": "Foram priorizados encadeamentos sustentados por mecanismo, posição do ponto de medição, correções de propriedades e reconciliação de offloading. Evitei combinações cuja resposta final fosse apenas prudência genérica ou uma lista aberta de cuidados.",
+  "combinacoes": [
+    {
+      "relacoes": [
+        "B000.R3",
+        "B022.R5",
+        "B023.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Produção fiscal a montante não fecha o alívio sozinha",
+      "ponte": "o tanque de carga desacopla temporalmente a produção medida da entrega ao navio aliviador",
+      "cadeia": "Medir fiscalmente o óleo antes da estocagem tende a separar a apuração fiscal das variações do sistema de carga. Como o tanque desacopla produção e entrega, o fechamento do alívio precisa relacionar o volume transferido ao inventário inicial e final e às entradas e saídas do armazenamento na janela do offloading.",
+      "cenario": "O FPSO usa medição fiscal de óleo em linha antes dos tanques de carga. Durante uma janela de offloading, o total produzido fiscalmente no período não coincide com o volume bombeado ao navio aliviador. O enunciado informa que há tanque de estocagem entre a produção e a entrega.",
+      "resposta": "Inventário inicial e final dos tanques e entradas/saídas do armazenamento na janela do alívio.",
+      "resposta_atraente": "Usar apenas a produção fiscalizada no mesmo período.",
+      "sinal_que_descarta": "O ponto fiscal está a montante da estocagem e existe tanque entre produção e transferência.",
+      "condicoes_enunciado": [
+        "FPSO com medição fiscal de óleo em linha a montante da estocagem",
+        "Reconciliação de um evento de offloading",
+        "Tanque de carga entre a produção medida e a entrega ao comprador"
+      ],
+      "limites": [
+        "A separação da apuração fiscal em relação ao sistema de carga é apresentada como tendência, não como separação absoluta",
+        "A cadeia trata do fechamento do balanço da transferência, não invalida a medição fiscal",
+        "Os blocos não fornecem método matemático nem tolerâncias de aceitação"
+      ],
+      "id": "C1"
+    },
+    {
+      "relacoes": [
+        "B000.R3",
+        "B022.R6",
+        "B023.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Condensado aos tanques entra no balanço do alívio",
+      "ponte": "houve entrada adicional no estoque transferível durante a própria janela do offloading",
+      "cadeia": "Quando a medição fiscal de óleo fica antes da estocagem, ela não acompanha automaticamente as variações do sistema de carga. Se o condensado do processamento de gás for encaminhado aos tanques de óleo, essa rota muda as entradas do estoque e o fechamento do alívio passa a exigir que tais entradas sejam relacionadas ao inventário inicial e final.",
+      "cenario": "Em um offloading, o volume bombeado não fecha com uma conta feita apenas com estoque inicial e final. No mesmo período, o enunciado informa que o condensado do processamento de gás foi direcionado aos tanques de óleo. A medição fiscal de óleo permanece em linha, a montante da estocagem.",
+      "resposta": "As entradas ao armazenamento durante o alívio, inclusive o condensado desviado aos tanques.",
+      "resposta_atraente": "Considerar só inventário inicial e final dos tanques.",
+      "sinal_que_descarta": "Houve encaminhamento de condensado aos tanques na mesma janela do offloading.",
+      "condicoes_enunciado": [
+        "FPSO com medição fiscal de óleo a montante da estocagem",
+        "Existência de condensado do processamento de gás",
+        "Condensado encaminhado aos tanques de óleo durante a janela do alívio"
+      ],
+      "limites": [
+        "O bloco só afirma que a rota do condensado modifica as entradas do balanço; não quantifica o efeito",
+        "A cadeia vale para o fechamento do balanço da transferência",
+        "Os blocos não detalham o método de reconciliação"
+      ],
+      "id": "C2"
+    },
+    {
+      "relacoes": [
+        "B000.R4",
+        "B024.R6",
+        "B009.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "No offloading, a vazão bruta pode deixar de ser a transferência líquida",
+      "ponte": "a própria operação de transferência passou a contaminar a representatividade da vazão medida",
+      "cadeia": "Quando a medição oficial ocorre durante o offloading, a operação de transferência entra no próprio evento medido. Se há partidas, paradas, troca de tanque, gás livre, água arrastada ou interface, a vazão medida deixa de representar sozinha a transferência líquida de óleo, e a quantidade transferida passa a depender também das correções de propriedades e da representatividade da amostra para água e sedimentos.",
+      "cenario": "O arranjo aprovado mede o óleo durante o offloading. No evento descrito, houve partida, parada, troca de tanque e passagem de interface, com registro de gás livre na linha. O enunciado pergunta o que o total bruto da linha não consegue representar sozinho.",
+      "resposta": "A transferência líquida de óleo corrigida, com representatividade de água e sedimentos.",
+      "resposta_atraente": "O volume total transferido indicado pelo medidor principal.",
+      "sinal_que_descarta": "Foram observados transientes, gás livre e interface durante o próprio evento medido.",
+      "condicoes_enunciado": [
+        "Medição oficial de óleo realizada durante o offloading",
+        "Ocorrência de partida/parada, troca de tanque, gás livre, água arrastada ou interface",
+        "Escoamento contínuo em linha com apuração dinâmica"
+      ],
+      "limites": [
+        "Os blocos não quantificam o erro introduzido por cada perturbação",
+        "A cadeia não define critério de aceitação para os transientes",
+        "A resposta depende do contexto de medição dinâmica de óleo"
+      ],
+      "id": "C3"
+    },
+    {
+      "relacoes": [
+        "B021.R7",
+        "B022.R5",
+        "B000.R8"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Tanque entre produção e entrega obriga vínculo explícito da custódia",
+      "ponte": "há inventários e fluxos entre o ponto de produção medido e a fronteira em que o contrato considera o produto entregue",
+      "cadeia": "A fronteira de custódia deve estar associada ao ponto em que o contrato considera o produto entregue, enquanto a produção fiscalizada segue a fronteira regulatória. Como o tanque desacopla produção e entrega, o contrato e o arranjo aprovado precisam vincular o ponto de medição à fronteira de transferência considerando os inventários e fluxos existentes entre eles.",
+      "cenario": "A equipe quer usar o ponto de medição da produção como referência para a entrega comercial do óleo. O enunciado informa que existe tanque de carga entre esse ponto e o embarque ao navio aliviador, e que o contrato define a entrega em outra fronteira. Pergunta-se o que precisa ficar explicitamente amarrado no arranjo.",
+      "resposta": "Os inventários e fluxos entre o ponto medido e a fronteira contratual de transferência.",
+      "resposta_atraente": "O volume fiscal da produção, por ser o mesmo óleo que depois será exportado.",
+      "sinal_que_descarta": "Há tanque entre a produção medida e a entrega, e o contrato define a entrega em outra fronteira.",
+      "condicoes_enunciado": [
+        "Existência de contrato de transferência de custódia",
+        "Tanque de carga entre produção medida e entrega",
+        "Comparação entre fronteira fiscal da produção e fronteira contratual de custódia"
+      ],
+      "limites": [
+        "O bloco não especifica como calcular os inventários e fluxos entre os pontos",
+        "A localização exata da custódia depende do arranjo aprovado da unidade",
+        "A cadeia não presume que os pontos nunca possam coincidir; apenas nega equivalência automática"
+      ],
+      "id": "C4"
+    },
+    {
+      "relacoes": [
+        "B001.R4",
+        "B000.R2"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Ponto fiscal de gás não pode ficar antes do condicionamento efetivo",
+      "ponte": "somente após separação e condicionamento a corrente fica previsível para medição fiscal",
+      "cadeia": "Separação e condicionamento transformam uma corrente multifásica e variável em uma corrente mais previsível para medição. Por isso, na produção de gás natural, o ponto de medição fiscal deve ser posicionado imediatamente após essas instalações e antes de qualquer transferência, processamento ou transporte.",
+      "cenario": "No ponto cogitado para a medição fiscal de gás há registros de líquido arrastado e chegada instável da corrente. A jusante ainda existem instalações de separação e condicionamento antes da transferência. O enunciado pergunta onde o ponto oficial deve ficar.",
+      "resposta": "Imediatamente após a separação e o condicionamento e antes de qualquer transferência, processamento ou transporte.",
+      "resposta_atraente": "Manter o ponto atual e escolher um medidor mais robusto.",
+      "sinal_que_descarta": "O ponto cogitado ainda recebe corrente sem separação e condicionamento suficientes.",
+      "condicoes_enunciado": [
+        "Produção de gás natural",
+        "Finalidade fiscal",
+        "Existência de instalações de separação e condicionamento a jusante do ponto cogitado"
+      ],
+      "limites": [
+        "O bloco não detalha exceções normativas",
+        "A cadeia não identifica um tipo específico de medidor",
+        "Não há critério quantitativo de quão previsível a corrente deve estar"
+      ],
+      "id": "C5"
+    },
+    {
+      "relacoes": [
+        "B024.R5",
+        "B008.R3",
+        "B020.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Composição desatualizada torna suspeita a medição inferencial de gás",
+      "ponte": "a composição usada no algoritmo deixou de representar o gás real medido",
+      "cadeia": "Para gás natural, a quantidade convertida depende de algoritmo porque a densidade depende de pressão, temperatura e composição. Se o regulamento prevê análises periódicas e uma nova análise registra mudança de composição, essa variação precisa ser compensada nas medições subsequentes; caso contrário, a medição inferencial torna-se suspeita por usar composição não representativa do gás real.",
+      "cenario": "O sistema fiscal de gás mantém compensação automática de pressão e temperatura, e o sinal do medidor principal permanece estável. Uma nova análise de composição registra mudança relevante, mas o cálculo continua usando a composição anterior. Pergunta-se por que o resultado convertido passa a ser suspeito.",
+      "resposta": "O algoritmo ficou com composição desatualizada, tornando incorretas densidade e conversão do gás.",
+      "resposta_atraente": "Deriva do medidor principal de vazão.",
+      "sinal_que_descarta": "O sinal primário está estável e a única mudança reportada é a nova composição do gás.",
+      "condicoes_enunciado": [
+        "Medição de gás natural com cálculo inferencial",
+        "Regulamento prevendo análises periódicas de composição",
+        "Nova análise com variação de composição registrada"
+      ],
+      "limites": [
+        "O bloco não especifica o algoritmo de cálculo",
+        "A suspeição do resultado não identifica, sozinha, o valor do erro",
+        "A exigência de compensar a composição depende da previsão regulatória citada"
+      ],
+      "id": "C6"
+    },
+    {
+      "relacoes": [
+        "B016.R5",
+        "B008.R2"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Compensar P e T sem z mascara erro de conversão em gás fiscal",
+      "ponte": "o resultado convertido depende do modelo e dos instrumentos auxiliares, não apenas do medidor principal",
+      "cadeia": "Ao converter vazão para condições de referência, o resultado passa a depender de variáveis auxiliares e do modelo de correção. Assim, em medição fiscal de gás natural, não basta compensar automaticamente pressão e temperatura: a variação do coeficiente de compressibilidade decorrente dessas variáveis também precisa entrar no cálculo.",
+      "cenario": "O sistema fiscal de gás mostra compensação automática de pressão e temperatura funcionando, e não há indicação de falha do medidor principal. Mesmo assim, o cálculo de volume corrigido mantém compressibilidade fixa ao longo das variações de operação. O enunciado pede o elemento que está faltando na compensação.",
+      "resposta": "A atualização da compressibilidade z coerente com as variações de pressão e temperatura.",
+      "resposta_atraente": "Recalibrar apenas o medidor principal de vazão.",
+      "sinal_que_descarta": "O problema descrito está na lógica de conversão, apesar de P e T estarem sendo lidos e o medidor principal estar íntegro.",
+      "condicoes_enunciado": [
+        "Sistema de medição fiscal de gás natural",
+        "Conversão de vazão para condições de referência",
+        "Compensação automática de pressão e temperatura existente"
+      ],
+      "limites": [
+        "A relação é específica para medição fiscal de gás natural",
+        "O bloco não fornece equação nem modelo de z",
+        "A cadeia não quantifica o impacto da omissão de z no resultado final"
+      ],
+      "id": "C7"
+    },
+    {
+      "relacoes": [
+        "B002.R2",
+        "B001.R5",
+        "B005.R3"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Instabilidade após manobra de válvula imita problema de composição",
+      "ponte": "o escoamento está chegando ao medidor com assimetria, swirl ou pulsação introduzidos a montante",
+      "cadeia": "Válvulas, curvas, reduções e outros acidentes de linha a montante podem introduzir assimetria, swirl e pulsação. Como a seleção do medidor de gás depende também de como o escoamento chega ao elemento primário ou ao corpo do medidor, sinais como sensibilidade excessiva a mudanças de vazão e resposta instável após manobras de válvula apontam para inadequação hidráulica do arranjo, não para composição do gás.",
+      "cenario": "Após mudanças mecânicas a montante do skid, a medição de gás passou a reagir demais a pequenas mudanças de vazão e a oscilar depois de manobras de válvula. A composição medida permanece sem alteração relevante. O enunciado pergunta qual mecanismo escondido é mais compatível com o quadro.",
+      "resposta": "Perturbação hidráulica a montante, com swirl/assimetria/pulsação na chegada ao medidor.",
+      "resposta_atraente": "Mudança de composição do gás.",
+      "sinal_que_descarta": "A composição está estável e a instabilidade aparece após manobras de válvula e alterações mecânicas a montante.",
+      "condicoes_enunciado": [
+        "Medição de gás natural",
+        "Existência de válvulas/curvas/reduções ou outros elementos perturbadores a montante",
+        "Observação de instabilidade após manobras e alta sensibilidade à vazão"
+      ],
+      "limites": [
+        "O bloco não atribui cada perturbação hidráulica a um elemento específico",
+        "Os sinais de monitoramento são indiretos e não provam, sozinhos, não conformidade regulatória",
+        "A cadeia não identifica um medidor específico"
+      ],
+      "id": "C8"
+    },
+    {
+      "relacoes": [
+        "B024.R1",
+        "B006.R1",
+        "B009.R3"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Total bruto de linha não é a quantidade de custódia em óleo",
+      "ponte": "o volume observado precisa ser convertido e depurado de água e sedimentos com base representativa",
+      "cadeia": "Na transferência de custódia, a vazão instantânea sozinha não basta para representar o volume transferido de modo tecnicamente rastreável. Em petróleo líquido, o volume observado varia com a temperatura e pode incluir água e sedimentos; por isso, em escoamento contínuo, a quantidade transferida depende não só do medidor principal, mas também das correções de propriedades e da representatividade da amostra para água e sedimentos.",
+      "cenario": "Durante um offloading de óleo, a discussão se apoia apenas no volume acumulado pelo medidor principal da linha. O enunciado informa que ainda não há base concluída de correções de propriedades e que a amostragem proporcional à vazão é incerta. Pergunta-se qual quantidade ainda não pode ser afirmada a partir do total bruto sozinho.",
+      "resposta": "O volume líquido padrão de óleo, corrigido e representativo quanto a água e sedimentos.",
+      "resposta_atraente": "O volume bruto acumulado na linha.",
+      "sinal_que_descarta": "Faltam correções de propriedades e amostragem representativa de água e sedimentos.",
+      "condicoes_enunciado": [
+        "Transferência de custódia de óleo em linha",
+        "Escoamento contínuo",
+        "Ausência ou incerteza em correções de propriedades e/ou amostragem representativa"
+      ],
+      "limites": [
+        "Os blocos não especificam o método de correção nem a fórmula",
+        "A cadeia vale para petróleo e derivados líquidos no contexto descrito",
+        "Não são fornecidos critérios quantitativos de rastreabilidade técnica"
+      ],
+      "id": "C9"
+    },
+    {
+      "relacoes": [
+        "B007.R5",
+        "B006.R7"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Estratificação em tanque compromete a correção para a referência",
+      "ponte": "temperatura e densidade medidas deixaram de representar adequadamente o conteúdo usado no cálculo",
+      "cadeia": "Em tanques, estratificação térmica, água livre, emulsão e deformações geométricas podem alterar a representatividade das variáveis do cálculo estático. Como a correção de volume e densidade depende da temperatura observada, da densidade do produto e do fator tabelado aplicável, a perda de representatividade dessas variáveis contamina o volume corrigido para a referência.",
+      "cenario": "A reconciliação do offloading inclui cálculo estático em tanque. O enunciado informa presença de estratificação térmica e indicação de água livre no fundo antes da comparação de volumes. Pergunta-se qual parte do cálculo fica comprometida antes mesmo de aplicar a tabela de correção.",
+      "resposta": "A representatividade da temperatura e da densidade usadas para corrigir o volume à referência.",
+      "resposta_atraente": "Somente a tabela de capacidade do tanque.",
+      "sinal_que_descarta": "Foram observadas estratificação térmica e água livre, sinais que afetam as variáveis medidas, não apenas a geometria da tabela.",
+      "condicoes_enunciado": [
+        "Uso de cálculo estático em tanque",
+        "Presença de estratificação térmica, água livre ou emulsão",
+        "Necessidade de corrigir volume/densidade para condição de referência"
+      ],
+      "limites": [
+        "O bloco não quantifica o efeito isolado de cada fator sobre o resultado",
+        "A cadeia não exclui problemas geométricos do tanque; apenas mostra que não são a única hipótese",
+        "Os blocos não detalham a fórmula de correção"
+      ],
+      "id": "C10"
+    },
+    {
+      "relacoes": [
+        "B001.R4",
+        "B004.R4"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Finalidade oficial empurra a arquitetura multifásica para separação prévia",
+      "ponte": "a corrente precisa ser tornada mais previsível antes do ponto oficial de medição",
+      "cadeia": "Separação e condicionamento transformam uma corrente multifásica variável em uma corrente mais previsível para medição. Por isso, quando a finalidade é fiscal ou de custódia e o escoamento continua multifásico, a arquitetura tende a deslocar a solução para separação e condicionamento antes do ponto oficial, em vez de depender diretamente do MPFM.",
+      "cenario": "Um MPFM já existe em um subsistema, e propõe-se usá-lo diretamente como ponto oficial de medição. No ponto proposto, a corrente segue multifásica e variável. O enunciado pede a mudança arquitetural mais consistente com essa finalidade.",
+      "resposta": "Separação e condicionamento antes do ponto oficial de medição.",
+      "resposta_atraente": "Manter o MPFM diretamente como solução oficial do ponto.",
+      "sinal_que_descarta": "A corrente no ponto proposto continua multifásica e a finalidade passou a ser fiscal/custódia.",
+      "condicoes_enunciado": [
+        "Escoamento multifásico no ponto proposto",
+        "Finalidade metrológica fiscal ou de transferência de custódia",
+        "Arquitetura ainda sem separação/condicionamento suficientes a montante"
+      ],
+      "limites": [
+        "O bloco fala em tendência arquitetural, não em regra absoluta",
+        "A cadeia não afirma proibição universal de toda tecnologia multifásica",
+        "Os blocos não detalham o arranjo de separação e condicionamento"
+      ],
+      "id": "C11"
+    },
+    {
+      "relacoes": [
+        "B005.R2",
+        "B003.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Mudança de rotas e by-pass corrói apropriação por diferença",
+      "ponte": "o caminho real do fluido deixou de coincidir com a segregação metrológica presumida pela arquitetura",
+      "cadeia": "A documentação técnica precisa demonstrar coerência entre a arquitetura escolhida e o caminho real do fluido em modos como recirculação e mudança de rota. Em um FPSO com múltiplas correntes, se manifolds, linhas de teste, by-pass e redistribuição alteram os caminhos hidráulicos sem segregação metrológica suficiente, cresce o risco de inadequação da apropriação por diferença.",
+      "cenario": "O FPSO recebe correntes múltiplas e opera com linhas de teste, manifolds e by-pass durante mudanças de rota. A arquitetura de apropriação permanece simplificada, sem nova segregação metrológica. O enunciado pergunta qual risco metrológico específico aumenta.",
+      "resposta": "Inadequação da apropriação por diferença entre origens sem segregação metrológica suficiente.",
+      "resposta_atraente": "Apenas maior incerteza do medidor fiscal compartilhado.",
+      "sinal_que_descarta": "O problema descrito são mudanças de caminho hidráulico entre origens, não só o desempenho do medidor compartilhado total.",
+      "condicoes_enunciado": [
+        "FPSO com múltiplas correntes misturadas antes do ponto fiscal",
+        "Operação com manifolds, linhas de teste, by-pass ou redistribuição de correntes",
+        "Ausência de segregação metrológica suficiente entre as origens"
+      ],
+      "limites": [
+        "A relação fala em aumento de risco, não em inadequação inevitável em todos os casos",
+        "Os sinais documentais não provam, por si só, não conformidade regulatória",
+        "O bloco não fornece critério quantitativo de segregação suficiente"
+      ],
+      "id": "C12"
+    },
+    {
+      "relacoes": [
+        "B005.R5",
+        "B001.R7"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Novos poços e rearranjos exigem reavaliar medidor e trecho",
+      "ponte": "a faixa operacional e as perturbações hidráulicas esperadas deixaram de ser as mesmas da seleção original",
+      "cadeia": "Em FPSO, mudanças de campanha, recebimento de novos poços e rearranjos de processo podem alterar a faixa operacional. Como a seleção do sistema de medição combina finalidade, fase medida, faixa esperada e sensibilidade do medidor a perturbações hidráulicas, essas mudanças exigem reavaliar a adequação do medidor e do trecho instalado.",
+      "cenario": "Após entrada de novos poços e rearranjo de processo, a unidade passou a operar em outra faixa de vazão e com novas perturbações de escoamento. Os instrumentos ainda estão dentro do prazo de calibração. O enunciado pergunta qual ação técnica específica se torna necessária.",
+      "resposta": "Reavaliar a adequação do princípio do medidor e do trecho instalado à nova faixa e às novas perturbações.",
+      "resposta_atraente": "Manter o arranjo inalterado até vencer a calibração.",
+      "sinal_que_descarta": "Mudaram a faixa operacional e o contexto hidráulico, não apenas o tempo desde a última calibração.",
+      "condicoes_enunciado": [
+        "FPSO com entrada de novos poços, mudança de campanha ou rearranjo de processo",
+        "Alteração da faixa operacional esperada",
+        "Impacto potencial de perturbações hidráulicas no sistema"
+      ],
+      "limites": [
+        "O bloco não especifica qual variação de faixa dispara a reavaliação",
+        "A cadeia não determina a solução final, apenas a necessidade de reavaliação",
+        "Os blocos não hierarquizam os critérios de seleção"
+      ],
+      "id": "C13"
+    },
+    {
+      "relacoes": [
+        "B012.R3",
+        "B014.R6"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Calibração fora da faixa representativa não reproduz o campo",
+      "ponte": "a condição de calibração não é suficientemente similar à condição de serviço",
+      "cadeia": "Quando a calibração é feita com fluido e condição diferentes da aplicação, podem surgir curvas ou fatores distintos, inclusive por diferenças de pressão e número de Reynolds. Por isso, uma referência adequada fora da faixa representativa do campo pode não reproduzir o comportamento observado em serviço.",
+      "cenario": "Um medidor de líquido para transferência foi calibrado em instalação com fluido e regime de pressão diferentes dos do offloading real. Em campo, o fator observado não repete o comportamento do laboratório. O enunciado pergunta por que o resultado de calibração não pode ser transferido automaticamente.",
+      "resposta": "Porque fluido, pressão e Reynolds da calibração não representam o serviço, alterando a curva ou o fator aplicável.",
+      "resposta_atraente": "Porque o laboratório tinha incerteza nominal maior.",
+      "sinal_que_descarta": "A divergência descrita é de fluido e condição de serviço, não de mera classe de incerteza declarada.",
+      "condicoes_enunciado": [
+        "Calibração realizada com fluido e/ou condição diferentes da aplicação",
+        "Comparação entre comportamento em laboratório e em campo",
+        "Uso do medidor em serviço de transferência de líquido"
+      ],
+      "limites": [
+        "O bloco não quantifica quanto de diferença de condição já altera a curva",
+        "A cadeia não define qual instalação é superior em termos absolutos",
+        "Os blocos não fornecem critério numérico de similaridade representativa"
+      ],
+      "id": "C14"
+    },
+    {
+      "relacoes": [
+        "B011.R3",
+        "B012.R4"
+      ],
+      "tipo": "mascaramento",
+      "titulo": "Diferença entre sentidos no prover não é ruído aleatório",
+      "ponte": "o arranjo bidirecional expõe uma tendência dependente do sentido de escoamento",
+      "cadeia": "No arranjo bidirecional, a esfera percorre o volume calibrado nos dois sentidos, o que permite comparar os sentidos de operação e reduzir a influência de tendências de um único sentido. Por isso, quando surge diferença repetitiva entre ida e volta, ela deve entrar na avaliação como tendência entre sentidos de vazão, e não ser tratada como simples dispersão aleatória.",
+      "cenario": "Em um ball prover bidirecional, as passagens em um sentido repetem um resultado sistematicamente diferente das passagens no sentido oposto. A repetição aparece em várias corridas, sem indicação de evento único. O enunciado pede a leitura correta desse padrão.",
+      "resposta": "Tendência entre sentidos de vazão, variável relevante da avaliação de calibração.",
+      "resposta_atraente": "Ruído aleatório sem valor diagnóstico.",
+      "sinal_que_descarta": "A diferença é repetitiva e associada ao sentido, não uma dispersão sem padrão.",
+      "condicoes_enunciado": [
+        "Uso de provador bidirecional de esfera",
+        "Comparação entre corridas nos dois sentidos",
+        "Diferença repetitiva entre os sentidos"
+      ],
+      "limites": [
+        "A comparação entre sentidos reduz tendências de um único sentido, mas não elimina todos os erros",
+        "O bloco não fornece critério numérico para aceitar ou rejeitar a tendência observada",
+        "A cadeia vale no contexto de avaliação de medidores e provadores de líquidos"
+      ],
+      "id": "C15"
+    },
+    {
+      "relacoes": [
+        "B011.R6",
+        "B012.R5"
+      ],
+      "tipo": "encadeamento",
+      "titulo": "Mudança mecânica a montante altera a prova pelo caminho hidráulico",
+      "ponte": "perfil de escoamento, perdas locais ou repetibilidade de detecção passaram a mudar a resposta observada",
+      "cadeia": "O desempenho real do provador bidirecional depende, entre outros fatores, das condições hidráulicas do sistema e da detecção da esfera. Se alterações no perfil de velocidade, nas perdas de carga locais ou na repetibilidade da detecção ocorrerem após mudança mecânica, muda também a relação entre indicação e vazão real observada na prova.",
+      "cenario": "Após uma alteração mecânica a montante, o comportamento do provador passou a mudar e a repetibilidade da detecção da esfera piorou. O volume calibrado do provador não foi redefinido no enunciado. Pergunta-se qual mecanismo físico liga a intervenção ao desvio observado na prova.",
+      "resposta": "Mudança do perfil/perdas locais e da repetibilidade de detecção, alterando a relação entre indicação e vazão real.",
+      "resposta_atraente": "Falha apenas do software de totalização.",
+      "sinal_que_descarta": "O desvio apareceu após intervenção mecânica e veio junto com piora da repetibilidade de detecção da esfera.",
+      "condicoes_enunciado": [
+        "Uso de provador bidirecional em líquido",
+        "Alteração mecânica a montante do sistema",
+        "Observação de piora na repetibilidade da detecção da esfera"
+      ],
+      "limites": [
+        "O bloco não separa quantitativamente o efeito de cada variável hidráulica",
+        "A cadeia não afirma que o volume calibrado esteja incorreto; aponta o mecanismo mais compatível",
+        "Não há critério numérico de aceitação no material fornecido"
+      ],
+      "id": "C16"
+    }
+  ]
+}
