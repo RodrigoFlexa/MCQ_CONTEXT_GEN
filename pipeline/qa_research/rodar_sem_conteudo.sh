@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Geração sem documentos, seguida da mesma avaliação dos seis modelos da run final.
-# Repetir --saida retoma. --plano não chama modelos. --sem-avaliacao gera somente.
+# Geração bruta sem documentos ou filtros. --avaliar habilita a avaliação posterior, sem alterar o banco.
+# Repetir --saida retoma. --plano não chama modelos. O padrão é somente gerar.
 set -euo pipefail
 export PYTHONUTF8=1
 qa_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -13,8 +13,8 @@ if [[ ! -x "$qa_python" ]]; then
     qa_python="$qa_root/venv/bin/python"
     if [[ ! -x "$qa_python" ]]; then qa_python="$(command -v python3)"; fi
 fi
-saida="pipeline/qa_research/relatorios/sem_conteudo_$(date -u +%Y%m%dT%H%M%SZ)"
-avaliar=1
+saida="pipeline/qa_research/relatorios/sem_conteudo_bruto_$(date -u +%Y%m%dT%H%M%SZ)"
+avaliar=0
 so_avaliacao=0
 plano=0
 lote_juiz=8
@@ -23,7 +23,8 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --saida) saida="${2:?Informe a pasta de saída}"; shift 2 ;;
         --sem-avaliacao) avaliar=0; shift ;;
-        --so-avaliacao) so_avaliacao=1; shift ;;
+        --avaliar) avaliar=1; shift ;;
+        --so-avaliacao) so_avaliacao=1; avaliar=1; shift ;;
         --lote-juiz) lote_juiz="${2:?Informe o tamanho do lote}"; shift 2 ;;
         --plano) plano=1; args+=("$1"); shift ;;
         *) args+=("$1"); shift ;;
@@ -50,7 +51,7 @@ if [[ $status -eq 0 ]]; then
 else
     echo "Execução incompleta. Veja $saida/RELATORIO.md. Retome com a mesma saída:"
     printf '  bash pipeline/qa_research/rodar_sem_conteudo.sh --saida %q\n' "$saida"
-    echo "Se um limite foi atingido, aumente --max-lotes, --max-sem-progresso ou --max-chamadas."
+    echo "Se um limite foi atingido, aumente --max-lotes ou --max-chamadas."
 fi
 echo
 echo "Coleta no servidor (resumo e questões):"

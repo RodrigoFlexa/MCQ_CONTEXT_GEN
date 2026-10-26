@@ -100,12 +100,14 @@ class AvaliacaoModelos:
 
     # ---------------------------------------------------------------- dados
     def carregar_questoes(self) -> dict[str, dict]:
-        """Tópicos prontos (finalizado.json); sem marcadores, o aprovadas.jsonl da rodada (rodada antiga)."""
+        """Lê aprovadas das runs filtradas ou todas as geradas do baseline bruto, sem alterar o banco."""
         out = {}
+        cfg = read_json(self.rodada / "config.json") if (self.rodada / "config.json").exists() else {}
+        banco = "questoes.jsonl" if cfg.get("schema") == "geracao-sem-conteudo-v2" else "aprovadas.jsonl"
         prontos = sorted((self.rodada / "topicos").glob("*/finalizado.json")) if (self.rodada / "topicos").exists() else []
-        arquivos = [p.parent / "aprovadas.jsonl" for p in prontos]
-        if not prontos and (self.rodada / "aprovadas.jsonl").exists():
-            arquivos = [self.rodada / "aprovadas.jsonl"]
+        arquivos = [p.parent / banco for p in prontos]
+        if not prontos and (self.rodada / banco).exists():
+            arquivos = [self.rodada / banco]
         for arq in arquivos:
             if arq.exists():
                 for linha in arq.read_text(encoding="utf-8").splitlines():
