@@ -1,4 +1,5 @@
 """Os dois respondentes trabalham no mesmo grupo, em paralelo, sem ver MCQ ou gabarito."""
+import csv
 from pathlib import Path
 
 from pipeline.inventario.locking import output_lock
@@ -6,6 +7,8 @@ from pipeline.inventario.textutil import atomic_json, read_json
 from pipeline.qa_research.geracao_tipos.avaliacao import AvaliacaoModelos, JUIZ
 from pipeline.qa_research.geracao_tipos.core import prompt
 from .core import ler_linhas, sha, agora
+from .extracao import jsonl
+from .revisadas import CONJUNTO_AUTORAL, ROTULOS
 
 RESPONDENTES = {'gpt-5-4-nano': 'gpt-5-4-nano-petrobras:low', 'gpt-5-4': 'gpt-5-4-petrobras:low'}
 
@@ -18,6 +21,47 @@ class AvaliacaoObrigatoria(AvaliacaoModelos):
         if missing:
             raise RuntimeError('Respondente obrigatório indisponível: '+', '.join(sorted(missing)))
 
+    def tabela(self):
+        res = super().tabela()
+        groups = {}
+        for key in dict.fromkeys(q.get('conjunto_especialista', CONJUNTO_AUTORAL) for q in self.questoes.values()):
+            models = {}
+            for model in self.respondentes:
+                vs = [v for uid, v in self.vereditos[model].items() if uid in self.questoes
+                      and self.questoes[uid].get('conjunto_especialista', CONJUNTO_AUTORAL) == key]
+                n, c, p = len(vs), vs.count('correta'), vs.count('parcial')
+                models[model] = {'n': n, 'corretas': c, 'parciais': p,
+                    'acuracia': round(100*c/n, 1) if n else None,
+                    'com_parcial': round(100*(c+.5*p)/n, 1) if n else None}
+            groups[key] = models
+        res['por_conjunto_especialista'] = groups
+        atomic_json(self.saida/'acuracia.json', res)
+        with (self.saida/'acuracia_por_conjunto.csv').open('w', encoding='utf-8-sig', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['conjunto_especialista', 'rotulo', 'modelo', 'julgadas', 'acuracia',
+                             'com_parcial', 'corretas', 'parciais'])
+            for key, models in groups.items():
+                for model, d in models.items():
+                    writer.writerow([key, ROTULOS[key], model, d['n'], d['acuracia'], d['com_parcial'], d['corretas'], d['parciais']])
+        report = self.saida/'ACURACIA.md'
+        lines = ['', '## Por conjunto de origem', '',
+                 '| Conjunto | Modelo | Julgadas | Acurácia (%) | Com parcial (%) |', '|---|---|---:|---:|---:|']
+        for key, models in groups.items():
+            for model, d in models.items():
+                lines.append(f"| {ROTULOS[key]} | {model} | {d['n']} | {d['acuracia']} | {d['com_parcial']} |")
+        report.write_text(report.read_text(encoding='utf-8')+'\n'.join(lines)+'\n', encoding='utf-8')
+        return res
+
+    def exportar(self):
+        super().exportar()
+        target = self.saida/'avaliacoes.jsonl'
+        rows = ler_linhas(target)
+        for row in rows:
+            q = self.questoes[row['uid']]
+            row.update({k: q.get(k) for k in ('conjunto_especialista', 'fonte_uid', 'agrupamento_original',
+                                             'subtopico_original', 'revisao_humana')})
+        jsonl(target, rows)
+
 
 def avaliar(saida, *, workers=8, lote_juiz=8, clientes=None, progress=print):
     saida = Path(saida)
@@ -28,10 +72,11 @@ def avaliar(saida, *, workers=8, lote_juiz=8, clientes=None, progress=print):
     fingerprint = sha(approved)
     directory = saida/'avaliacao'
     with output_lock(directory):
-        protocol = {'schema': 'avaliacao-especialista-v1', 'aprovadas_sha256': fingerprint,
+        protocol = {'schema': 'avaliacao-especialista-v2', 'aprovadas_sha256': fingerprint,
                     'respondentes': RESPONDENTES, 'juiz': JUIZ, 'lote_juiz': lote_juiz,
                     'prompt_respondente_sha256': sha(prompt('respondente')),
-                    'prompt_juiz_sha256': sha(prompt('juiz_respostas'))}
+                    'prompt_juiz_sha256': sha(prompt('juiz_respostas')),
+                    'codigo_sha256': sha(Path(__file__).read_text(encoding='utf-8'))}
         ppath = directory/'protocolo_experimento.json'
         old = read_json(ppath)
         if old is not None and old != protocol:

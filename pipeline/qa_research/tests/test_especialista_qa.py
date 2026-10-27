@@ -260,7 +260,7 @@ class ExtractionTests(Fixture):
 
     def test_entrada_real_confere_com_as_dez_contagens(self):
         data = M.read_json(M.ENTRADA.parent/'extracao.json')
-        rows = M.ler_linhas(M.ENTRADA)
+        rows = M.ler_linhas(M.ENTRADA_AUTORAL)
         self.assertEqual(len(rows), 2546)
         self.assertEqual(len(data['agrupamentos']), 10)
         self.assertEqual(sum(r['quantidade_declarada'] for r in data['agrupamentos']), 2546)

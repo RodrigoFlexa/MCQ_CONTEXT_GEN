@@ -1,5 +1,6 @@
 """Extrair DOCX localmente, converter/validar no servidor e avaliar as QAs aprovadas."""
 import argparse
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -12,6 +13,9 @@ def main(argv=None):
     ex = sub.add_parser('extrair', help='extração local determinística, sem API')
     ex.add_argument('--docx', type=Path, required=True)
     ex.add_argument('--saida', type=Path, default=ENTRADA.parent)
+    rev = sub.add_parser('extrair-revisadas', help='curadoria humana e extração do DOCX revisado, sem API')
+    rev.add_argument('--docx', type=Path, required=True)
+    rev.add_argument('--saida', type=Path, default=ENTRADA.parent/'revisadas')
     cv = sub.add_parser('converter')
     cv.add_argument('--saida', type=Path)
     cv.add_argument('--entrada', type=Path, default=ENTRADA)
@@ -34,6 +38,11 @@ def main(argv=None):
         d = extrair(a.docx, a.saida)
         print(f"Extraídas: {d['questoes_extraidas']}; elegíveis: {d['elegiveis']}; pendentes: {d['pendentes']}")
         return 0
+    if a.cmd == 'extrair-revisadas':
+        from .revisadas import extrair_revisadas
+        d = extrair_revisadas(a.docx, a.saida)
+        print(f"MCQs: {d['total_mcq']}; selecionadas: {d['selecionadas']}; excluídas: {d['excluidas']}")
+        return 0
     if a.cmd == 'avaliar':
         from .avaliacao import avaliar
         return avaliar(a.saida, workers=a.workers, lote_juiz=a.lote_juiz)
@@ -45,6 +54,7 @@ def main(argv=None):
     c = ConverterEspecialista(saida, entrada=a.entrada, base=a.base, sem_contexto=a.sem_contexto,
                             workers=a.workers, max_chamadas=a.max_chamadas, limite=a.limite)
     print(f'Saída: {saida}\nQuestões selecionadas: {len(c.rows)} de {len(c.todas)}', flush=True)
+    print('Por conjunto: '+str(dict(Counter(r['conjunto_especialista'] for r in c.rows))), flush=True)
     if a.plano:
         print('Somente planejamento: sem API ou criação da saída; o servidor lê a entrada extraída, sem precisar do DOCX.')
         return 0

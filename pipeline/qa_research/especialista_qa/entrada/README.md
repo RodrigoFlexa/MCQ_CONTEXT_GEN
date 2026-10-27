@@ -1,4 +1,21 @@
-# Entrada extraída do DOCX do especialista
+# Entradas estruturadas dos especialistas
+
+fontes.json é a entrada padrão do pipeline: combina 2.546 MCQs autorais com
+446 MCQs revisadas e aprovadas sem observações adicionais, totalizando 2.992.
+Os JSONLs já estão no Git e podem ser lidos diretamente no servidor.
+Não é preciso transferir os DOCXs.
+
+- questoes_mcq.jsonl: documento autoral, preservado como extraído inicialmente.
+- revisadas/aprovadas_mcq.jsonl: somente as 446 selecionadas do novo DOCX.
+- revisadas/curadoria.csv: conferência dos pareceres e seleção das 1.000 MCQs.
+- revisadas/curadoria_todas.jsonl: conteúdo completo e rastreabilidade das 1.000.
+- revisadas/extracao.json: critérios, contagens e SHA-256 do segundo DOCX.
+
+conjunto_especialista diferencia autoral_especialista de mcq_revisada_aprovada
+na conversão, na junção e na avaliação. O parecer humano é preservado e não
+substitui a validação automática da QA convertida.
+
+## Documento autoral
 
 Origem: DATASET MÚLTIPLA ESCOLHA NOVO AGRUPAMENTO 28 05 26.docx.
 Extração determinística do OOXML, sem chamadas de modelo.

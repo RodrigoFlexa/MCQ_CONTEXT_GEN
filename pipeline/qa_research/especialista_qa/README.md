@@ -4,27 +4,51 @@ Converte os MCQs do documento fornecido em QAs abertas, valida a conversão e
 classifica cada questão nos seis tipos e nos 40 subtópicos do programa.
 O agrupamento original do DOCX é preservado separadamente da classificação.
 
-A extração local encontrou **2.546 questões**, com as dez contagens conferindo
-com os cabeçalhos do documento. Todas têm alternativas e um único gabarito
-identificado por marcação explícita. Isso verifica a estrutura de entrada,
-**não significa que todas serão aprovadas como QA**.
+A entrada padrão reúne **2.992 MCQs candidatas** de duas origens:
+
+| Origem | Candidatas | Identificador |
+|---|---:|---|
+| Documento autoral do especialista | 2.546 | autoral_especialista |
+| Questoes_100_por_topico_revisadas.docx | 446 de 1.000 | mcq_revisada_aprovada |
+
+Todas as candidatas têm alternativas e um único gabarito explícito. Isso
+verifica a estrutura de entrada, **não significa aprovação do QA convertido**.
+O manifesto entrada/fontes.json referencia os dois JSONLs sem duplicar o
+primeiro banco. Nenhum DOCX ou biblioteca do Word é necessário no servidor.
+
+No DOCX revisado entram somente pareceres cujo conteúdo completo é
+"aprovada", "aprovado" ou "aprovar", admitindo pontuação e espaços. Aprovações
+com qualquer observação adicional, ressalvas, descartes e pareceres
+indeterminados ficam fora. É uma seleção conservadora: uma observação pode
+ser apenas descritiva, mas não se presume uma aprovação sem ressalvas.
+Não há comparação de similaridade nesta seleção.
+
+Foram selecionadas 446; excluídas 554: 277 descartadas/reprovadas, 272 com
+observações/ressalvas e 5 pareceres indeterminados. Quatro aprovações foram
+recuperadas reconhecendo grafias incorretas do rótulo "Comentário"; o texto
+do parecer não foi corrigido. entrada/revisadas/curadoria.csv permite conferir
+as 1.000 decisões; curadoria_todas.jsonl preserva também as MCQs completas.
+Os hashes dos DOCXs e os parágrafos de origem acompanham os registros.
 
 ## Executar no servidor
 
-O arquivo do Downloads já foi extraído em entrada/questoes_mcq.jsonl, com
-alternativas, gabarito, justificativa quando existe e proveniência. O servidor
-não precisa do DOCX original nem de bibliotecas do Word.
+As duas entradas estruturadas já estão versionadas, incluindo alternativas,
+gabarito, justificativa quando existe, agrupamento original e proveniência.
+O subtópico original do DOCX revisado também é preservado quando presente;
+KPI não possui subtítulo próprio no corpo do documento e mantém esse campo
+vazio, enquanto a classificação nos 40 itens é feita pelo modelo.
 
     cd /home/gbs2/MCQ_CONTEXT_GEN
     git pull --ff-only origin codex/qa-evidencias-verificadas
     bash pipeline/qa_research/rodar_especialista_qa.sh \
-      --saida pipeline/qa_research/relatorios/especialista_qa_v1
+      --saida pipeline/qa_research/relatorios/especialista_qa_v2
 
 Esse comando executa:
 
 1. Conversão e classificação por gpt-5-4-petrobras:high.
 2. Validação separada por gpt-5-4-petrobras:high, recebendo original e QA candidata.
-3. Exportação somente das aprovadas para o banco de QAs do especialista.
+3. Exportação somente dos QAs válidos, preservando o identificador de origem
+   e o parecer humano da MCQ em campos separados da validação automática.
 4. Montagem dos três conjuntos para a comparação posterior.
 5. Respostas sem contexto por gpt-5-4-nano-petrobras:low e
    gpt-5-4-petrobras:low no mesmo grupo, em paralelo; juiz
@@ -38,9 +62,9 @@ conversão ou avaliação; os gráficos locais têm dependências adicionais.
 Para deixar em segundo plano:
 
     nohup bash pipeline/qa_research/rodar_especialista_qa.sh \
-      --saida pipeline/qa_research/relatorios/especialista_qa_v1 \
-      > pipeline/qa_research/relatorios/especialista_qa_v1.console.log 2>&1 &
-    tail -F pipeline/qa_research/relatorios/especialista_qa_v1.console.log
+      --saida pipeline/qa_research/relatorios/especialista_qa_v2 \
+      > pipeline/qa_research/relatorios/especialista_qa_v2.console.log 2>&1 &
+    tail -F pipeline/qa_research/relatorios/especialista_qa_v2.console.log
 
 Ctrl+C encerra apenas o acompanhamento do log quando iniciado por nohup.
 
@@ -59,6 +83,16 @@ Piloto com as primeiras 10 questões, incluindo avaliação pelos dois modelos:
 Use outra saída para a execução completa. A retomada sem --limite preserva a
 seleção inicial do piloto. --sem-avaliacao executa somente conversão e junção;
 --so-avaliacao retoma apenas as respostas e o julgamento.
+
+Para testar especificamente a nova origem, use uma saída própria:
+
+    bash pipeline/qa_research/rodar_especialista_qa.sh \
+      --entrada pipeline/qa_research/especialista_qa/entrada/revisadas/aprovadas_mcq.jsonl \
+      --saida pipeline/qa_research/relatorios/especialista_revisada_piloto \
+      --limite 10
+
+Use a saída especialista_qa_v2 para o conjunto completo. Entradas e regras
+mudaram: pastas de execuções v1 não podem ser usadas para retomar esta versão.
 
 ## Regras da conversão e validação
 
@@ -85,8 +119,10 @@ seleção inicial do piloto. --sem-avaliacao executa somente conversão e junç�
 - Não há deduplicação de QAs válidas. Questões parecidas continuam no conjunto
   para que a redundância possa ser medida depois, sem alterar o baseline bruto.
 
-Aprovação é automática, pelo modelo e pelas regras, sem comprovação documental
-nem revisão humana. O código não certifica normas, dosagens ou limites do MCQ.
+A aprovação do QA convertido é automática, pelo modelo e pelas regras, sem
+comprovação documental. A aprovação humana já existente refere-se à MCQ
+original e não garante aprovação da conversão. O código não certifica normas,
+dosagens ou limites do MCQ.
 Detalhes, originais e justificativas ficam nos arquivos auxiliares de auditoria,
 fora do texto da pergunta e da resposta usados pelos respondentes.
 
@@ -97,12 +133,18 @@ alternativas, gabarito, resposta de referência ou justificativa do especialista
 O juiz recebe a resposta de referência e a resposta candidata, sem o nome do
 respondente no conteúdo julgado. A tabela é atualizada por blocos:
 
-    cat pipeline/qa_research/relatorios/especialista_qa_v1/avaliacao/ACURACIA.md
+    cat pipeline/qa_research/relatorios/especialista_qa_v2/avaliacao/ACURACIA.md
 
 A etapa avalia as QAs aprovadas do especialista, não refaz automaticamente as
 respostas dos bancos anteriores. Os dois deployments são obrigatórios: falha
 ou indisponibilidade de um deles resulta em execução incompleta, em vez de
 sucesso silencioso com apenas um modelo.
+
+Além do resultado geral, avaliacao/acuracia.json contém
+por_conjunto_especialista. ACURACIA.md e acuracia_por_conjunto.csv separam os
+denominadores e as acurácias das duas origens para cada respondente.
+avaliacoes.jsonl inclui a origem, o subtópico original e o parecer humano
+para análises posteriores; esses metadados não são enviados aos respondentes.
 
 ## Retomada e limites
 
@@ -133,7 +175,9 @@ O manifesto bancos/manifesto.json aponta para:
 
 O novo conjunto é um arquivo separado; os dois bancos anteriores não são
 modificados. IDs e hashes permitem conferir a integridade e a proveniência.
-A quantidade de especialistas aprovada será conhecida após a execução real.
+A quantidade de QAs aprovada em cada origem será conhecida após a execução
+real. Ambos os grupos de especialistas entram no conjunto ampliado; os três
+conjuntos da comparação anterior continuam sendo os mesmos.
 
 ## Gráficos depois de coletar os resultados
 
@@ -141,7 +185,7 @@ Depois do commit/push no servidor e pull local, em um Python com NumPy,
 scikit-learn, Matplotlib, PyTorch, Transformers e o mesmo E5 local já usado:
 
     python -m pipeline.qa_research.especialista_qa graficos \
-      --saida pipeline/qa_research/relatorios/especialista_qa_v1
+      --saida pipeline/qa_research/relatorios/especialista_qa_v2
 
 Gera PNG/SVG de similaridade lexical/semântica e vocabulário dos três bancos,
 com TTR, MATTR, comprimentos e contagens. Usa a mesma tokenização e a lista
@@ -162,13 +206,14 @@ Não há download automático de modelo nem uso de API para esses gráficos.
 - conversoes/ e validacoes/: saídas originais dos dois estágios.
 - bancos/com_contexto_com_especialista.jsonl e bancos/manifesto.json: junção e três conjuntos.
 - resultado.json e RELATORIO.md: contagens, tipos e resumo.
+- por_conjunto_especialista nos resumos: seleção e aprovação separadas por origem.
 - avaliacao/: respostas dos dois modelos, vereditos do juiz e tabela de acurácia.
 - .local/ contém caches e respostas brutas de API, ignorados pelo Git.
 
 Ao terminar, o script mostra a mensagem de conclusão e os comandos de coleta:
 
-    git add -- pipeline/qa_research/relatorios/especialista_qa_v1
-    git commit -m "Resultados: especialista_qa_v1"
+    git add -- pipeline/qa_research/relatorios/especialista_qa_v2
+    git commit -m "Resultados: especialista_qa_v2"
     git push origin codex/qa-evidencias-verificadas
 
 Na máquina local:
@@ -181,3 +226,12 @@ Para repetir a extração de outro DOCX com o mesmo formato, sem API:
 
 Gabaritos ausentes/conflitantes e estruturas não reconhecidas ficam em pendencias.jsonl;
 não são adivinhados. A extração também registra divergências de contagem por agrupamento.
+
+Para reproduzir a curadoria do segundo documento, sem API:
+
+    python -m pipeline.qa_research.especialista_qa extrair-revisadas \
+      --docx "Comentários especialista/Questoes_100_por_topico_revisadas.docx"
+
+O servidor lê somente as 446 selecionadas. Os 1.000 registros de curadoria
+são auxiliares e não são enviados ao conversor. O leitor verifica novamente
+o parecer humano antes de qualquer chamada, mesmo em uma entrada JSONL avulsa.

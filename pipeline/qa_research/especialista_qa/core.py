@@ -14,10 +14,12 @@ from pipeline.inventario.textutil import atomic_json, read_json, squash
 from pipeline.qa_research.dificuldade import problemas_forma
 from pipeline.qa_research.tipos import TIPOS
 from .extracao import jsonl
+from .revisadas import ler_entradas, ROTULOS
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
-ENTRADA = HERE/'entrada/questoes_mcq.jsonl'
+ENTRADA_AUTORAL = HERE/'entrada/questoes_mcq.jsonl'
+ENTRADA = HERE/'entrada/fontes.json'
 BASE = ROOT/'pipeline/qa_research/relatorios/geracao_final_20261024T204734Z/aprovadas.jsonl'
 SEM_CONTEXTO = ROOT/'pipeline/qa_research/relatorios/sem_conteudo_bruto_v1/questoes.jsonl'
 MODELOS = {'converter': 'gpt-5-4-petrobras:high', 'validar': 'gpt-5-4-petrobras:high'}
@@ -108,7 +110,7 @@ class ConverterEspecialista:
                  workers=8, max_chamadas=20000, limite=None, clientes=None, progress=print):
         self.saida, self.entrada = Path(saida), Path(entrada)
         self.base, self.sem_contexto = Path(base), Path(sem_contexto)
-        self.todas = ler_linhas(self.entrada)
+        self.todas = ler_entradas(self.entrada)
         if not self.todas or len({r['uid'] for r in self.todas}) != len(self.todas):
             raise ValueError('Entrada vazia ou com IDs repetidos')
         for r in self.todas:
@@ -136,10 +138,11 @@ class ConverterEspecialista:
         self.interromper = threading.Event()
 
     def config(self):
-        cfg = {'schema': 'especialista-qa-v1', 'entrada_sha256': sha(self.todas),
+        cfg = {'schema': 'especialista-qa-v2', 'entrada_sha256': sha(self.todas),
                'uids': [r['uid'] for r in self.rows], 'catalogo': self.catalogo, 'modelos': MODELOS,
                'prompts_sha256': {k: sha(v) for k, v in self.prompts.items()},
                'codigo_sha256': sha(Path(__file__).read_text(encoding='utf-8')),
+               'curadoria_sha256': sha((HERE/'revisadas.py').read_text(encoding='utf-8')),
                'regras_forma_sha256': sha((ROOT/'pipeline/qa_research/dificuldade.py').read_text(encoding='utf-8')),
                'normalizacao_sha256': sha((ROOT/'pipeline/inventario/textutil.py').read_text(encoding='utf-8')),
                'base_sha256': sha(ler_linhas(self.base)), 'sem_contexto_sha256': sha(ler_linhas(self.sem_contexto)),
@@ -189,6 +192,7 @@ class ConverterEspecialista:
                                    'motivos': row['problemas_extracao']})
                 return True
             original = {'agrupamento_original': row['agrupamento_original'], 'enunciado': row['enunciado'],
+                        'subtopico_original': row.get('subtopico_original'),
                         'alternativas': {k: v['texto'] for k, v in row['alternativas'].items()},
                         'gabarito': row['gabarito'], 'resposta_original': row['resposta_original'],
                         'justificativa_original': row['justificativa_original']}
@@ -214,6 +218,9 @@ class ConverterEspecialista:
                             'motivos': audit['motivos']+issues, 'validacao': audit, 'problemas_codigo': issues,
                             'qa': {**classified, 'uid': row['uid']+':qa', 'origem': 'especialista_convertida',
                                    'tipo_declarado': qa['tipo'], 'fonte_uid': row['uid'],
+                                   'conjunto_especialista': row['conjunto_especialista'],
+                                   'revisao_humana': row.get('revisao_humana'),
+                                   'subtopico_original': row.get('subtopico_original'),
                                    'agrupamento_id': row['agrupamento_id'], 'agrupamento_original': row['agrupamento_original'],
                                    'aprovada': valid}}
             atomic_json(final, decision)
@@ -234,11 +241,16 @@ class ConverterEspecialista:
             name = self.nome(row['uid'])
             d = read_json(self.saida/'processadas'/name) or {'uid': row['uid'], 'status': 'falha',
                 'motivos': [(read_json(self.saida/'falhas'/name) or {}).get('mensagem', 'Não processada')]}
-            decisions.append({**d, 'fonte': row['fonte'], 'numero_original': row['numero_original']})
+            decisions.append({**d, 'fonte': row['fonte'], 'numero_original': row['numero_original'],
+                              'conjunto_especialista': row['conjunto_especialista'],
+                              'subtopico_original': row.get('subtopico_original'),
+                              'revisao_humana': row.get('revisao_humana')})
             if d['status'] == 'aprovada':
                 approved.append(d['qa'])
             q = d.get('qa') or {}
             review.append({'uid': row['uid'], 'agrupamento_original': row['agrupamento_original'],
+                'subtopico_original': row.get('subtopico_original'), 'conjunto_especialista': row['conjunto_especialista'],
+                'parecer_humano': (row.get('revisao_humana') or {}).get('parecer_original'),
                 'numero_original': row['numero_original'], 'status': d['status'], 'enunciado_original': row['enunciado'],
                 'resposta_original': row['resposta_original'], 'pergunta_qa': q.get('pergunta'),
                 'resposta_qa': q.get('resposta'), 'item': q.get('item'), 'tipo': q.get('tipo'),
@@ -254,14 +266,23 @@ class ConverterEspecialista:
                    'status': dict(Counter(d['status'] for d in decisions)),
                    'por_tipo': dict(Counter(q['tipo'] for q in approved)),
                    'por_subtopico': dict(Counter(q['item'] for q in approved))}
+        summary['por_conjunto_especialista'] = {key: {
+            'rotulo': ROTULOS[key], 'selecionadas': sum(r['conjunto_especialista'] == key for r in self.rows),
+            'aprovadas_qa': sum(q['conjunto_especialista'] == key for q in approved),
+            'status': dict(Counter(d['status'] for d in decisions if d['conjunto_especialista'] == key))}
+            for key in dict.fromkeys(r['conjunto_especialista'] for r in self.rows)}
         atomic_json(self.saida/'resultado.json', summary)
         lines = ['# Conversão das questões do especialista', '',
             f"Questões selecionadas: {len(self.rows)} de {len(self.todas)}. Aprovadas automaticamente: **{len(approved)}**.", '',
             'O agrupamento original é preservado; o subtópico no catálogo de 40 itens é atribuído separadamente. '
-            'A validação usa o original e o conhecimento do modelo, sem comprovação documental nem revisão humana. '
+            'A validação do QA usa o original e o conhecimento do modelo, sem comprovação documental. '
+            'A aprovação humana da MCQ revisada é preservada separadamente e não equivale à aprovação do QA convertido. '
             'Pergunta e resposta aprovadas não são reescritas pelo auditor. Não há deduplicação de questões válidas.', '',
             '| Situação | Quantidade |', '|---|---:|']
         lines += [f'| {k} | {v} |' for k, v in summary['status'].items()]
+        lines += ['', '| Conjunto | MCQs selecionadas | QAs aprovadas |', '|---|---:|---:|']
+        lines += [f"| {d['rotulo']} | {d['selecionadas']} | {d['aprovadas_qa']} |"
+                  for d in summary['por_conjunto_especialista'].values()]
         lines += ['', 'Consulte revisao_conversoes.csv e decisoes.jsonl para a rastreabilidade e os motivos de reprovação.', '']
         (self.saida/'RELATORIO.md').write_text('\n'.join(lines), encoding='utf-8')
         return summary
@@ -289,6 +310,7 @@ class ConverterEspecialista:
                 'path': path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path),
                 'questoes': len(rows), 'conteudo_sha256': sha(rows)})
         manifest = {'schema': 'comparacao-tres-bancos-v1', 'bancos': bancos, 'especialista_aprovadas': len(expert),
+                    'especialista_por_conjunto': dict(Counter(q['conjunto_especialista'] for q in expert)),
                     'deduplicacao': False, 'observacao': 'Bancos têm tamanhos diferentes; comparar TTR com cautela e usar MATTR. '
                     'Origem, filtros e processo também diferem. Coincidências textuais não são removidas.'}
         atomic_json(self.saida/'bancos/manifesto.json', manifest)
