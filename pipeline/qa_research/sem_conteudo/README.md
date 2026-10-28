@@ -1,5 +1,8 @@
 # Geração bruta sem conteúdo externo
 
+Para completar o baseline até **4.111 questões** e avaliar sua dificuldade,
+use [README_FULL.md](README_FULL.md). O fluxo abaixo documenta a geração inicial.
+
 Gera **2.818 questões nos mesmos 40 subtópicos** da run
 geracao_final_20261024T204734Z, com a mesma quantidade final por subtópico:
 62 em Gestão do Desempenho, 159 em Produtos químicos, 70 em Offloading etc.
