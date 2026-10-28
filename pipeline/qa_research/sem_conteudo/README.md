@@ -1,5 +1,8 @@
 # Geração bruta sem conteúdo externo
 
+Para avaliar **somente a amostra fixa de 1.000 questões** dos gráficos, sem
+gerar questões novas, use [README_AMOSTRA.md](README_AMOSTRA.md).
+
 Para completar o baseline até **4.111 questões** e avaliar sua dificuldade,
 use [README_FULL.md](README_FULL.md). O fluxo abaixo documenta a geração inicial.
 
