@@ -300,8 +300,9 @@ class ConverterEspecialista:
                    'status': dict(Counter(d['status'] for d in decisions)),
                    'por_tipo': dict(Counter(q['tipo'] for q in approved)),
                    'por_subtopico': dict(Counter(q['item'] for q in approved))}
+        rotulos = getattr(self, 'rotulos', ROTULOS)
         summary['por_conjunto_especialista'] = {key: {
-            'rotulo': ROTULOS[key], 'selecionadas': sum(r['conjunto_especialista'] == key for r in self.rows),
+            'rotulo': rotulos[key], 'selecionadas': sum(r['conjunto_especialista'] == key for r in self.rows),
             'aprovadas_qa': sum(q['conjunto_especialista'] == key for q in approved),
             'status': dict(Counter(d['status'] for d in decisions if d['conjunto_especialista'] == key))}
             for key in dict.fromkeys(r['conjunto_especialista'] for r in self.rows)}

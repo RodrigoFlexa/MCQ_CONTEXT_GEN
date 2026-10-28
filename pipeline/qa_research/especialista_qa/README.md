@@ -1,5 +1,9 @@
 # Questões do especialista em QA aberto
 
+Para a seleção ampliada de MCQs sem reprovação explícita, usando comentários
+do especialista e refatoração limitada, veja [a versão v3](README_V3.md).
+As instruções abaixo descrevem o experimento histórico v2.
+
 Converte os MCQs do documento fornecido em QAs abertas, valida a conversão e
 classifica cada questão nos seis tipos e nos 40 subtópicos do programa.
 O agrupamento original do DOCX é preservado separadamente da classificação.

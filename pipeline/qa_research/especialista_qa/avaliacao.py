@@ -15,6 +15,8 @@ from .core import ler_linhas, sha, agora
 from .extracao import jsonl
 from .revisadas import CONJUNTO_AUTORAL, ROTULOS
 
+ROTULOS = {**ROTULOS, 'mcq_revisada_nao_reprovada': 'MCQs revisadas sem reprovação explícita'}
+
 RESPONDENTES = {'gpt-5-4-nano': 'gpt-5-4-nano-petrobras:low', 'gpt-5-4': 'gpt-5-4-petrobras:low'}
 
 
@@ -152,6 +154,8 @@ class AvaliacaoObrigatoria(AvaliacaoModelos):
                'por_tipo': {t: agrega(lambda q, t=t: q['tipo'] == t) for t in TIPOS},
                'por_composicao': {c: agrega(lambda q, c=c: q.get('composicao') == c) for c in ('simples', 'composta')},
                'por_conjunto_especialista': groups,
+               'por_faixa_parecer': {key: agrega(lambda q, key=key: q.get('faixa_parecer') == key)
+                    for key in dict.fromkeys(q['faixa_parecer'] for q in self.questoes.values() if q.get('faixa_parecer'))},
                'politica_bloqueios': 'Bloqueios são resultados terminais sem nota técnica; ficam fora do denominador da acurácia e são mostrados na cobertura.'}
         atomic_json(self.saida/'acuracia.json', res)
         self._markdown(res)
@@ -170,6 +174,14 @@ class AvaliacaoObrigatoria(AvaliacaoModelos):
         for key, models in groups.items():
             for model, d in models.items():
                 lines.append(f"| {ROTULOS[key]} | {model} | {d['n']} | {d['acuracia']} | {d['com_parcial']} |")
+        if res['por_faixa_parecer']:
+            lines += ['', '## Por faixa do parecer humano', '',
+                      '| Parecer da MCQ | Modelo | Julgadas | Acurácia (%) | Com parcial (%) |', '|---|---|---:|---:|---:|']
+            labels = {'aprovacao_simples': 'Aprovação simples', 'aprovacao_com_observacoes': 'Aprovação com observações',
+                      'parecer_sem_aprovacao_explicita': 'Sem aprovação explícita'}
+            for key, models in res['por_faixa_parecer'].items():
+                for model, d in models.items():
+                    lines.append(f"| {labels.get(key, key)} | {model} | {d['n']} | {d['acuracia']} | {d['com_parcial']} |")
         lines += ['', '## Cobertura da avaliação', '', res['politica_bloqueios'], '',
                   '| Modelo | Total | Processadas | Julgadas | Bloqueio respondente | Bloqueio juiz | Cobertura (%) |',
                   '|---|---:|---:|---:|---:|---:|---:|']
@@ -185,7 +197,7 @@ class AvaliacaoObrigatoria(AvaliacaoModelos):
         for row in rows:
             q = self.questoes[row['uid']]
             row.update({k: q.get(k) for k in ('conjunto_especialista', 'fonte_uid', 'agrupamento_original',
-                                             'subtopico_original', 'revisao_humana')})
+                                             'subtopico_original', 'revisao_humana', 'faixa_parecer', 'fluxo_conversao')})
             for model in self.respondentes:
                 row['status_avaliacao_'+model] = self.estados[model].get(row['uid'], 'pendente')
         jsonl(target, rows)

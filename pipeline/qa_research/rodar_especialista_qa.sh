@@ -15,6 +15,7 @@ avaliar=1
 so_avaliacao=0
 plano=0
 lote_juiz=8
+conversao=converter
 args=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -22,6 +23,7 @@ while [[ $# -gt 0 ]]; do
         --sem-avaliacao) avaliar=0; shift ;;
         --so-avaliacao) so_avaliacao=1; shift ;;
         --lote-juiz) lote_juiz="${2:?Informe o lote}"; shift 2 ;;
+        --revisadas-v3) conversao=refinar-revisadas; shift ;;
         --plano) plano=1; args+=("$1"); shift ;;
         *) args+=("$1"); shift ;;
     esac
@@ -31,7 +33,7 @@ if [[ $so_avaliacao -eq 1 && ( $avaliar -eq 0 || $plano -eq 1 ) ]]; then
 fi
 status=0
 if [[ $so_avaliacao -eq 0 ]]; then
-    "$qa_python" -u -m pipeline.qa_research.especialista_qa converter --saida "$saida" "${args[@]}" || status=$?
+    "$qa_python" -u -m pipeline.qa_research.especialista_qa "$conversao" --saida "$saida" "${args[@]}" || status=$?
 fi
 if [[ $plano -eq 1 ]]; then exit "$status"; fi
 if [[ $status -eq 0 && $avaliar -eq 1 ]]; then
@@ -42,7 +44,11 @@ if [[ $status -eq 0 ]]; then
     echo "O código acabou de rodar no terminal :)"
 else
     echo "Execução incompleta. Consulte $saida/RELATORIO.md e as pastas de falhas."
-    printf 'Retomada: bash pipeline/qa_research/rodar_especialista_qa.sh --saida %q\n' "$saida"
+    if [[ "$conversao" == refinar-revisadas ]]; then
+        printf 'Retomada: bash pipeline/qa_research/rodar_especialista_qa.sh --revisadas-v3 --saida %q\n' "$saida"
+    else
+        printf 'Retomada: bash pipeline/qa_research/rodar_especialista_qa.sh --saida %q\n' "$saida"
+    fi
 fi
 echo "Coleta no servidor:"
 printf '  cat %q %q\n' "$saida/RELATORIO.md" "$saida/resultado.json"

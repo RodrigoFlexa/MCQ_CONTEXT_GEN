@@ -62,9 +62,16 @@ class RetomadaTests(Fixture):
         if not (source/'config.json').exists():
             self.skipTest('Snapshot da execução não disponível')
         shutil.copytree(source/'processadas', self.out/'processadas')
-        shutil.copytree(source/'falhas', self.out/'falhas')
+        if (source/'falhas').exists():
+            shutil.copytree(source/'falhas', self.out/'falhas')
         shutil.copyfile(source/'config.json', self.out/'config.json')
         name = 'especialista_g07_0148.json'
+        # O snapshot publicado pode já estar concluído. Reconstitui só a pendência
+        # a partir da evidência arquivada, na cópia temporária do teste.
+        archived = M.read_json(source/'bloqueadas'/name)
+        if archived:
+            (self.out/'processadas'/name).unlink(missing_ok=True)
+            M.atomic_json(self.out/'falhas'/name, archived['evidencia'])
         (self.out/'conversoes').mkdir()
         shutil.copyfile(source/'conversoes'/name, self.out/'conversoes'/name)
         before = {p.name: p.read_bytes() for p in (self.out/'processadas').glob('*.json')}
