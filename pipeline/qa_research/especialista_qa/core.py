@@ -26,6 +26,9 @@ MODELOS = {'converter': 'gpt-5-4-petrobras:high', 'validar': 'gpt-5-4-petrobras:
 CAMPOS = {'item', 'tipo', 'cenario', 'composicao', 'pergunta', 'resposta'}
 CRITERIOS = {'fiel_gabarito', 'autonoma', 'sem_resposta_no_enunciado', 'univoca',
              'correcao_tecnica', 'escopo_correto', 'pergunta_aberta', 'sem_informacao_inventada'}
+# Implementação que produziu especialista_qa_v2. Somente a retomada de bloqueios muda;
+# prompts, classificações, seleção e regras de aprovação precisam continuar idênticos.
+CORE_COMPATIVEL = {'9dc4a64e297e31d20ff5050c3ea7a836a8dae70cb6d34a48163529e800853ad9'}
 
 
 def agora():
@@ -148,8 +151,20 @@ class ConverterEspecialista:
                'base_sha256': sha(ler_linhas(self.base)), 'sem_contexto_sha256': sha(ler_linhas(self.sem_contexto)),
                'deduplicacao': False, 'agrupamento_original_preservado': True}
         old = read_json(self.saida/'config.json')
-        if old and {k: v for k, v in old.items() if k != 'criado_em'} != cfg:
-            raise ValueError('Configuração, entrada ou bancos mudaram; use outra --saida')
+        if old:
+            previous = {k: v for k, v in old.items() if k != 'criado_em'}
+            changed = {k for k in previous.keys() | cfg.keys() if previous.get(k) != cfg.get(k)}
+            if changed:
+                if changed != {'codigo_sha256'} or previous.get('codigo_sha256') not in CORE_COMPATIVEL:
+                    raise ValueError('Configuração, entrada ou bancos mudaram; use outra --saida')
+                compatibility = self.saida/'compatibilidade_retomada.json'
+                record = read_json(compatibility) or {}
+                if record and record.get('config_original_sha256') != sha(old):
+                    raise ValueError('Configuração original diverge da retomada registrada')
+                atomic_json(compatibility, {'config_original_sha256': sha(old),
+                    'codigo_original_sha256': previous['codigo_sha256'], 'codigo_atual_sha256': cfg['codigo_sha256'],
+                    'motivo': 'Retomada compatível: filtros de conteúdo viram exclusões documentadas; decisões já salvas são preservadas.',
+                    'primeira_retomada_em': record.get('primeira_retomada_em', agora())})
         if not old:
             atomic_json(self.saida/'config.json', {**cfg, 'criado_em': agora()})
         atomic_json(self.saida/'limites_execucao.json', {'max_chamadas': self.max_chamadas})
@@ -186,7 +201,13 @@ class ConverterEspecialista:
             return True
         if self.interromper.is_set():
             return False
+        stage = 'converter'
         try:
+            previous_failure = read_json(self.saida/'falhas'/name)
+            if previous_failure and previous_failure.get('erro') == 'ContentFiltered':
+                # O bloqueio já foi confirmado pelo provedor; não reenviar nem reformular.
+                stage = 'validar' if (self.saida/'conversoes'/name).exists() else 'converter'
+                return self.registrar_bloqueio(row, name, stage, previous_failure)
             if row['status_extracao'] != 'ok':
                 atomic_json(final, {'uid': row['uid'], 'status': 'pendente_extracao',
                                    'motivos': row['problemas_extracao']})
@@ -207,6 +228,7 @@ class ConverterEspecialista:
             else:
                 qa = conversion['qa']
                 apath = self.saida/'validacoes'/name
+                stage = 'validar'
                 audit = read_json(apath)
                 if audit is None:
                     audit = self.chamar('validar', {**payload, 'qa': qa}, row, lambda d: validar_auditoria(d, self.ids))
@@ -227,6 +249,9 @@ class ConverterEspecialista:
             (self.saida/'falhas'/name).unlink(missing_ok=True)
             return True
         except Exception as exc:
+            if type(exc).__name__ == 'ContentFiltered':
+                return self.registrar_bloqueio(row, name, stage,
+                    {'uid': row['uid'], 'erro': type(exc).__name__, 'mensagem': str(exc)[:1500]})
             atomic_json(self.saida/'falhas'/name, {'uid': row['uid'], 'erro': type(exc).__name__, 'mensagem': str(exc)[:1500]})
             if type(exc).__name__ == 'BudgetExceeded' or getattr(exc, 'kind', None) == 'fatal':
                 with self.lock:
@@ -234,6 +259,15 @@ class ConverterEspecialista:
                         self.interromper.set()
                         atomic_json(self.saida/'interrupcao.json', {'erro': type(exc).__name__, 'mensagem': str(exc)[:1500]})
             return False
+
+    def registrar_bloqueio(self, row, name, stage, evidence):
+        record = {'uid': row['uid'], 'status': 'excluida_filtro_conteudo', 'etapa': stage,
+                  'motivos': ['Bloqueio do provedor; QA não aprovada e não enviada aos respondentes.'],
+                  'evidencia': evidence}
+        atomic_json(self.saida/'bloqueadas'/name, record)
+        atomic_json(self.saida/'processadas'/name, record)
+        (self.saida/'falhas'/name).unlink(missing_ok=True)
+        return True
 
     def exportar(self):
         approved, decisions, review = [], [], []
@@ -278,6 +312,7 @@ class ConverterEspecialista:
             'A validação do QA usa o original e o conhecimento do modelo, sem comprovação documental. '
             'A aprovação humana da MCQ revisada é preservada separadamente e não equivale à aprovação do QA convertido. '
             'Pergunta e resposta aprovadas não são reescritas pelo auditor. Não há deduplicação de questões válidas.', '',
+            'Bloqueios de conteúdo são exclusões documentadas em bloqueadas/, sem nova tentativa e sem aprovação presumida.', '',
             '| Situação | Quantidade |', '|---|---:|']
         lines += [f'| {k} | {v} |' for k, v in summary['status'].items()]
         lines += ['', '| Conjunto | MCQs selecionadas | QAs aprovadas |', '|---|---:|---:|']
@@ -321,7 +356,7 @@ class ConverterEspecialista:
             self.config()
             self.interromper.clear()
             (self.saida/'interrupcao.json').unlink(missing_ok=True)
-            for directory in ('processadas', 'conversoes', 'validacoes', 'falhas', 'chamadas'):
+            for directory in ('processadas', 'conversoes', 'validacoes', 'falhas', 'chamadas', 'bloqueadas'):
                 (self.saida/directory).mkdir(parents=True, exist_ok=True)
             marker = self.saida/'conversao_concluida.json'
             marker.unlink(missing_ok=True)

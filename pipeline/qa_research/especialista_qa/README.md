@@ -32,6 +32,26 @@ Os hashes dos DOCXs e os parágrafos de origem acompanham os registros.
 
 ## Executar no servidor
 
+### Finalizar a execução especialista_qa_v2 já publicada
+
+    git pull --ff-only origin codex/qa-evidencias-verificadas && \
+    bash pipeline/qa_research/rodar_especialista_qa.sh \
+      --saida pipeline/qa_research/relatorios/especialista_qa_v2
+
+Este comando retoma a mesma pasta: preserva as 798 QAs aprovadas e as 2.991
+decisões já concluídas. A única falha ContentFiltered conhecida vira uma
+exclusão documentada em bloqueadas/, sem reenviar a questão ao provedor.
+Depois monta os três bancos e executa os dois respondentes em paralelo,
+seguindo até o julgamento das respostas. Não use uma pasta nova para esta
+retomada nem --so-avaliacao antes de concluir a conversão.
+
+A compatibilidade é restrita ao hash da implementação que produziu esta
+run. Entrada, catálogo, modelos, prompts, regras de aprovação e baselines
+precisam permanecer idênticos. config.json original é preservado e
+compatibilidade_retomada.json documenta o código usado na retomada.
+
+### Nova execução
+
 As duas entradas estruturadas já estão versionadas, incluindo alternativas,
 gabarito, justificativa quando existe, agrupamento original e proveniência.
 O subtópico original do DOCX revisado também é preservado quando presente;
@@ -146,6 +166,22 @@ denominadores e as acurácias das duas origens para cada respondente.
 avaliacoes.jsonl inclui a origem, o subtópico original e o parecer humano
 para análises posteriores; esses metadados não são enviados aos respondentes.
 
+Filtros de conteúdo são resultados terminais em qualquer etapa: nunca são
+contornados por reformulação, divisão de lote ou novas tentativas. Na
+conversão/validação, a questão fica excluída do banco aprovado. Nos respondentes
+ou no juiz, o bloqueio é registrado por questão/modelo com veredito null;
+não é transformado em acerto nem erro técnico. A acurácia usa apenas respostas
+julgadas; total, processadas, não avaliadas e cobertura são apresentados
+separadamente, inclusive por origem. Um bloqueio do juiz abrange todo o lote
+enviado e preserva as respostas existentes.
+
+avaliacao_concluida.json só é criado quando ambos os modelos têm uma resposta
+ou bloqueio registrado para cada QA e cada caso tem julgamento ou bloqueio
+terminal. O status indica concluida ou concluida_com_bloqueios. Falhas de
+autenticação, rede ou formato não viram exclusões: mantêm a execução incompleta
+e podem ser retomadas pelo mesmo comando. Respostas e julgamentos salvos não
+são refeitos.
+
 ## Retomada e limites
 
 Repita o mesmo comando com a mesma --saida. Conversões, validações e decisões
@@ -162,6 +198,10 @@ existente. Não há chamada paga na extração, planejamento ou testes offline.
 Alterar entrada, catálogo, código, prompts ou bancos de referência exige nova
 saída. Um bloqueio impede processos simultâneos na mesma pasta. Falhas retornam
 código 2 e preservam progresso. A avaliação só começa com conversão concluída.
+
+A única exceção para mudança de código é a retomada compatível descrita acima:
+ela aceita a implementação original conhecida da run v2, mantendo o restante
+do protocolo e todas as decisões já concluídas.
 
 ## Três conjuntos preparados
 

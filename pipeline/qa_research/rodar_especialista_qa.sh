@@ -46,6 +46,10 @@ else
 fi
 echo "Coleta no servidor:"
 printf '  cat %q %q\n' "$saida/RELATORIO.md" "$saida/resultado.json"
+if [[ $avaliar -eq 1 ]]; then
+    echo "Acurácia e cobertura por modelo (bloqueios aparecem separados):"
+    printf '  cat %q\n' "$saida/avaliacao/ACURACIA.md"
+fi
 echo "Commit e push dos resultados:"
 printf '  git add -- %q\n' "$saida"
 printf '  git commit -m %q\n' "Resultados: $(basename "$saida")"
