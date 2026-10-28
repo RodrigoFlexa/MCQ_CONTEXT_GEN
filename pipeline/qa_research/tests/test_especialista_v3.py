@@ -125,6 +125,7 @@ class V3Tests(Fixture):
         self.assertEqual(self.runner(m).run(), 0)
         self.assertEqual(m.calls, [])
         self.assertEqual(C.read_json(self.out/'resultado.json')['reaproveitadas_v2'], 175)
+        self.assertIn('| MCQs revisadas sem reprovação explícita | 175 | 175 |', (self.out/'RELATORIO.md').read_text(encoding='utf-8'))
         self.assertEqual(semear_avaliacao(self.out), 175)
 
         class OnlyProbe:

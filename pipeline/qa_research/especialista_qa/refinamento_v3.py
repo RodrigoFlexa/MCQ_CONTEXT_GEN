@@ -171,7 +171,9 @@ class RefinarRevisadas(C.ConverterEspecialista):
                 'aprovadas_qa': summary['aprovadas'], 'status': summary['status']}}
         atomic_json(self.saida/'resultado.json', summary)
         report = self.saida/'RELATORIO.md'
-        report.write_text(report.read_text(encoding='utf-8')+f"\nReaproveitadas da v2: {summary['reaproveitadas_v2']}. Novas aprovadas na v3: {summary['novas_aprovadas_v3']}.\n"
+        lines = report.read_text(encoding='utf-8').splitlines()
+        lines = [f"| {ROTULO} | {len(self.rows)} | {summary['aprovadas']} |" if line.startswith('| '+ROTULO+' |') else line for line in lines]
+        report.write_text('\n'.join(lines)+f"\n\nReaproveitadas da v2: {summary['reaproveitadas_v2']}. Novas aprovadas na v3: {summary['novas_aprovadas_v3']}.\n"
             'O parecer técnico foi enviado ao conversor e ao validador. Tentativas e correções ficam em tentativas/.\n', encoding='utf-8')
         return summary
 
