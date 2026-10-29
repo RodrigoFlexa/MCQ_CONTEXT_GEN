@@ -1,0 +1,11 @@
+{
+  "uid": "concisa_livre:07_02:j:r1:016:4:ref",
+  "uid_original": "07_02:j:r1:016:4:ref",
+  "modelo": "gpt-5-4-nano",
+  "braco": "concisa_livre",
+  "resposta": "Reduza a exposição eliminando conectividade IP direta entre a origem remota (red corporativa/Internet) e a rede de controle: use uma arquitetura com **rede de controle isolada** e **acesso remoto apenas via um bastion/jump host** em **DMZ**.\n\nArranjo recomendado (sem aplicar a atualização):\n1) **Segmente a rede** em pelo menos três zonas:\n   - **Rede de acesso remoto (origem)** (ex.: onshore/NOC).\n   - **DMZ de gerenciamento** (zona intermediária).\n   - **Rede de controle** (onde estão os dispositivos vulneráveis).\n2) **Interponha um bastion/jump server** na DMZ de gerenciamento e desabilite qualquer rota/IP que permita que o acesso remoto chegue diretamente aos dispositivos na rede de controle.\n3) Estabeleça o acesso do usuário/monitoramento remoto **até o bastion** por um túnel **VPN** (ou canal equivalente) terminando apenas no bastion.\n4) Configure **firewall/ACLs com “default deny”** entre DMZ e rede de controle, permitindo **somente** os fluxos estritamente necessários (portas/protocolos do software de gerenciamento) **com origem limitada** ao **IP do bastion** (e, se possível, ao host/usuário do VPN).\n5) No caminho do bastion para os dispositivos:\n   - Proíba/negue tráfego de gerência direto proveniente da origem remota.\n   - Se existir opção, use **proxy/broker de sessão** (ex.: RDP/SSH/app mgmt via jump) para que o tráfego real de sessão não “encoste” exposto na rede de controle a origens externas.\n6) Se houver acesso remoto eventual “por sessões”, mantenha **as regras de entrada na rede de controle estritamente temporizadas/monitoradas** (ativadas apenas durante a janela de atendimento, quando aplicável), sem manter portas abertas de forma permanente.\n\nCom esse arranjo, os dispositivos vulneráveis continuam com a falha de TCP/IP não corrigida, mas deixam de ficar **diretamente alcançáveis** pela rede remota, reduzindo significativamente a superfície de ataque ao permitir conexões apenas a partir de um único ponto controlado (bastion) e apenas nos fluxos necessários.",
+  "status_avaliacao": "respondida",
+  "palavras": 288,
+  "reaproveitada": false,
+  "acima_limite_solicitado": false
+}

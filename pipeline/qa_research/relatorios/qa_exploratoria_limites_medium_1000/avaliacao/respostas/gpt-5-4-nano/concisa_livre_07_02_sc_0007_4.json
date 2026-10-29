@@ -1,0 +1,11 @@
+{
+  "uid": "concisa_livre:07_02:sc:0007:4",
+  "uid_original": "07_02:sc:0007:4",
+  "modelo": "gpt-5-4-nano",
+  "braco": "concisa_livre",
+  "resposta": "A primeira causa técnica a investigar é a **alteração nas regras do firewall que passou a bloquear/descartar o tráfego de comunicação SCADA↔PLC (portas/protocolos e o sentido de retorno)**. \n\nApós as novas regras, é esperado que os PLCs continuem energizados, mas **as atualizações de telas** e **comandos autorizados** dependem de comunicação IP entre supervisório e rede de controle; se o firewall passou a negar a troca de pacotes (TCP/UDP) do protocolo usado (ex.: portas do driver/OPC/Modbus/Protocolo proprietário), o supervisório não recebe telemetria e não consegue entregar comandos.\n\nPara confirmar primeiro:\n1) Verificar nos logs do firewall se há **drops/denies** originados do supervisório para os **IPs dos PLCs** (e o tráfego de retorno).\n2) Validar se as **regras permitem explicitamente** o **protocolo** e as **portas** usadas para: \n   - aquisição/atualização (PLC→SCADA) e\n   - envio de comandos (SCADA→PLC).\n3) Confirmar se a alteração envolveu **endereçamento/NAT** ou mudança de destino/origem (IP/rota), pois isso também pode impedir a correspondência das regras.\n4) Confirmar que o firewall é **stateful** e que as políticas não impedem o **tráfego estabelecido/retorno** (não basta liberar apenas um sentido).\n\nSe o firewall estiver descartando as sessões/portas corretas, essa é a causa mais provável e prioritária, pois explica simultaneamente “telas não atualizam” e “comandos não chegam ao processo” mesmo com os PLCs energizados.",
+  "status_avaliacao": "respondida",
+  "palavras": 210,
+  "reaproveitada": false,
+  "acima_limite_solicitado": false
+}

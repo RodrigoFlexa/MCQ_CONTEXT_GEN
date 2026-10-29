@@ -1,0 +1,11 @@
+{
+  "uid": "concisa_livre:01_01:c:C31",
+  "uid_original": "01_01:c:C31",
+  "modelo": "gpt-5-4",
+  "braco": "concisa_livre",
+  "resposta": "O ajuste correto é substituir o **paralelo simples** por uma **redundância em espera (standby)** com **dependências explícitas**.\n\nEm termos de modelagem, isso significa:\n\n1. **Modelar o trem reserva como standby, e não como paralelo ativo**\n   - O trem reserva não contribui continuamente para a função; ele só assume após falha do trem em operação e após atendimento dos **permissivos de partida**.\n   - Portanto, a transferência para o reserva deve ter **cobertura de comutação/partida menor que 100%**, representando a possibilidade de o reserva **não partir** ou **não assumir a carga** quando demandado.\n   - Se aplicável ao nível de detalhe do estudo, incluir também a indisponibilidade por falha latente em standby e a lógica/tempo de acionamento.\n\n2. **Modelar as utilidades e a alimentação de controle compartilhadas como dependência comum aos dois trens**\n   - Se ambos perdem a função quando falta a mesma utilidade ou a mesma alimentação de controle, isso não pode ficar implícito como se os trens fossem independentes.\n   - Essas funções de suporte devem entrar **em série com a função dos dois trens** ou como **causas comuns explícitas**, de modo que sua perda derrube simultaneamente o trem titular e o reserva.\n\n3. **Se o método atual não representar essa lógica, usar uma modelagem dependente de estado**\n   - Um RBD de paralelo simples superestima a disponibilidade porque assume independência e sucesso automático do backup.\n   - Para esse caso, o mais adequado é um modelo com **standby + cobertura de partida/comutação + dependências de suporte**, via **RBD com lógica de standby**, ou, se necessário, **Markov/Petri net** para captar a sequência operacional.\n\nEm resumo: o modelo deve deixar de ser **1oo2 paralelo independente** e passar a ser **1 ativo + 1 reserva em standby com cobertura de partida/comutação e falhas por causa comum nas utilidades e no controle**. É esse ajuste que reduz a disponibilidade prevista para um valor mais aderente à operação.",
+  "status_avaliacao": "respondida",
+  "palavras": 310,
+  "reaproveitada": false,
+  "acima_limite_solicitado": false
+}

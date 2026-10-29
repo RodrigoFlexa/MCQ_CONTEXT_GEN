@@ -1,0 +1,11 @@
+{
+  "uid": "concisa_livre:06_05:j:r1:017:3:ref",
+  "uid_original": "06_05:j:r1:017:3:ref",
+  "modelo": "gpt-5-4-nano",
+  "braco": "concisa_livre",
+  "resposta": "A causa técnica mais provável é uma **mudança “pulando” o estado intermediário por ordem de execução/scan e perda do evento de borda (edge) no controlador**, fazendo com que os **registros temporais e as indicações associadas aos estados intermediários não sejam disparados**.\n\nEm sistemas PLC/supervisório, quando os “estados intermediários” e seus timestamps dependem de **detecção de transição (ex.: flanco de 0→1) ou de latching** por um bloco de lógica (sequenciador/alarmes/eventos), esse disparo só ocorre se o estado intermediário **permanecer válido por pelo menos um ciclo de varredura (ou até o momento em que o bloco de monitoração/evento é executado)**. Após a alteração da sequência, se o controlador passa a atualizar:\n- o **contato de disparo** e\n- as variáveis/flags que representam “confirmação local” e/ou “entrada no estado seguinte”\n**na mesma varredura (ou em uma ordem em que o estado intermediário seja sobrescrito/normalizado antes do bloco que grava timestamps ser avaliado)**, então o supervisório (mesmo recebendo “na hora esperada”) tende a enxergar apenas a **condição final**. Assim, os **estados intermediários e seus registros temporais previstos não aparecem**, e a **indicação final só surge depois**, quando ocorre uma nova avaliação que volta a expor o estado final de forma observável (por próximo scan/evento ou por atualização periódica).\n\nEm resumo: **condição de corrida/atualização no mesmo ciclo de varredura que elimina o tempo de vida observável do estado intermediário para o mecanismo de detecção de transição**, suprimindo os timestamps intermediários e atrasando a atuação/indicação final no supervisório.",
+  "status_avaliacao": "respondida",
+  "palavras": 242,
+  "reaproveitada": false,
+  "acima_limite_solicitado": false
+}

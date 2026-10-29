@@ -1,0 +1,11 @@
+{
+  "uid": "concisa_livre:especialista_revisada:0045:qa",
+  "uid_original": "especialista_revisada:0045:qa",
+  "modelo": "gpt-5-4",
+  "braco": "concisa_livre",
+  "resposta": "Deve ser feita uma análise de desempenho fim a fim da comunicação, focada em latência, jitter e ocupação real da rede por classe de tráfego, e não apenas na taxa nominal de banda.\n\nA avaliação técnica correta é verificar, para cada transferência crítica entre PLC, rack remoto de I/O, analisador e estação de operação:\n\n1. o tempo de atualização exigido pelo processo;\n2. o tempo efetivo de cada etapa da cadeia, na ordem em que ocorre:\n   - aquisição/produção do dado no dispositivo;\n   - ciclo de comunicação do rack remoto ou do analisador;\n   - tempos de transmissão na rede;\n   - atrasos em switches, filas e store-and-forward;\n   - concorrência com mensagens periódicas novas;\n   - tempo de processamento e varredura do PLC;\n   - tempo de atualização da estação de operação;\n3. a carga média e, principalmente, a carga de pico em cada enlace, incluindo overhead de protocolo, tamanho dos quadros, periodicidade, bursts e sincronismo entre mensagens;\n4. o pior caso de latência e jitter para o tráfego crítico, comparando com o limite admissível.\n\nO objetivo é separar dois cenários:\n\n- Se os enlaces estiverem realmente saturados ou muito próximos da saturação, e o atraso vier predominantemente do tempo de serialização/fila por excesso de ocupação, aumento de banda pode ajudar.\n- Se o problema vier de comportamento temporal da rede e dos dispositivos — por exemplo, ciclos de polling/scan, rajadas periódicas, disputa entre mensagens, ausência de priorização, filas em switches, arquitetura da topologia ou parâmetros de atualização muito agressivos — aumentar só a banda pode não resolver ou resolver pouco.\n\nNa prática, essa avaliação deve determinar se o gargalo é de capacidade ou de determinismo. Portanto, o que deve ser realizado é uma análise de orçamento de latência fim a fim com medição de utilização, filas e jitter em condição de pior caso, para concluir se o atraso é causado por insuficiência de banda ou por configuração/arquitetura/priorização do tráfego.",
+  "status_avaliacao": "respondida",
+  "palavras": 315,
+  "reaproveitada": false,
+  "acima_limite_solicitado": false
+}

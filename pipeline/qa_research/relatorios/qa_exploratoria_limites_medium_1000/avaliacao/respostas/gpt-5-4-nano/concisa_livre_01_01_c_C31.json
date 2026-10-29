@@ -1,0 +1,11 @@
+{
+  "uid": "concisa_livre:01_01:c:C31",
+  "uid_original": "01_01:c:C31",
+  "modelo": "gpt-5-4-nano",
+  "braco": "concisa_livre",
+  "resposta": "Ajustar a modelagem de “paralelo simples” para um arranjo de **standby** (reserva que só pode assumir sob demanda), incluindo **dependências comuns** de utilidade e alimentação de controle.\n\nNa prática, substituir o modelo “dois trens em paralelo” por uma lógica do tipo **1oo2 com reserva em espera** (cold/hot standby conforme o que o FPSO requer), em que:\n\n1) **O trem em operação** é o único que garante a função no estado normal.\n2) O **trem reserva** é modelado como **indisponível para exercer a função** até ocorrer perda do trem ativo **e** serem atendidos os **permissivos de partida** (ou seja, até que exista “demanda” de comutação).\n3) A **comutação/partida do reserva** deve ser representada explicitamente como transição (com possibilidade de falha de partida/start logic, se houver cobertura de partida no RAM; se não houver dados, ao menos remover a contribuição do reserva enquanto não houver permissivos).\n4) A **utilidade** e a **alimentação de controle** compartilhadas devem ser modeladas como um **bloco comum (com falha comum)** em série com a capacidade dos dois trens, de forma que uma falha nesses itens reduza a disponibilidade de ambos simultaneamente.\n\nEsse ajuste elimina o “benefício” artificial do paralelo simples (que assume utilidade e controle disponíveis para ambos independentemente) e faz a disponibilidade do sistema refletir que o segundo trem só passa a contribuir **após** a condição de comutação e com a mesma dependência de utilidades/controle.",
+  "status_avaliacao": "respondida",
+  "palavras": 229,
+  "reaproveitada": false,
+  "acima_limite_solicitado": false
+}
