@@ -195,6 +195,28 @@ diversidade de modelos, e chamadas separadas não provam independência de erros
 
 ## Mecanismo documental
 
+O planejador exige listas de **1 a 6 strings** em `consultas` e `termos` por
+recorte. Esses limites estão explícitos no prompt; pares PT/EN são produzidos na
+etapa posterior de consultas. Erros de validação identificam recorte, campo e
+quantidade/tipo recebido para orientar as tentativas de reparo.
+
+Respostas rejeitadas geram arquivos em `diagnosticos/`, incluídos na coleta dos
+resultados. Registram erros e estrutura (tipos/quantidades), sem copiar o texto
+das respostas nem as evidências. Se o reparo funcionar, o estado passa a
+`reparado`, inclusive na retomada da mesma chamada. As respostas brutas continuam
+em `.local/brutas/` somente no servidor.
+
+Para repetir o piloto que parou em `Consultas/termos inválidos`, atualize o código
+e use uma saída nova, pois o contrato do prompt mudou:
+
+```bash
+git pull --ff-only origin codex/qa-evidencias-verificadas
+export DOCUMENT_PYTHON="$PWD/.venv-documento/bin/python"
+bash pipeline/qa_research/rodar_piloto_cobertura_v2.sh \
+  --item 02_02 --manifest dataset/professional_corpora_v2/manifest.json \
+  --output pipeline/qa_research/saida_cobertura_v2/02_02_ptbr_plano_corrigido
+```
+
 1. Planejador extrai até 12 recortes com âncoras literais na frase do especialista.
 2. Consultas PT/EN recuperam fontes do manifesto. Cada recorte conserva até 36
    passagens, com limite por documento; rodadas seguintes procuram material adicional.

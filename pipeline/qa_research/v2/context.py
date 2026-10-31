@@ -15,12 +15,22 @@ from .language import POLICY, QUERIES, validate_pairs, bilingual_search, audit_b
 def validate_plan(data, selected, maximum):
     rows=data.get('recortes');unique(rows)
     require(1<=len(rows)<=maximum,'Quantidade inválida de recortes')
+    errors=[]
     for r in rows:
         require(all(text(r.get(k)) for k in ('titulo','foco','ancora')),'Recorte incompleto')
         require(r['ancora'] in selected['frase_especialista'],'Âncora não pertence à frase do especialista')
         require(type(r.get('essencial')) is bool,'essencial deve ser booleano')
         for key in ('consultas','termos'):
-            require(isinstance(r.get(key),list) and 1<=len(r[key])<=6 and all(text(s) for s in r[key]),'Consultas/termos inválidos')
+            value=r.get(key)
+            location=f'recortes.{r["id"]}.{key}'
+            if not isinstance(value,list):
+                errors.append(f'{location}: esperado array JSON de 1 a 6 strings; recebido {type(value).__name__}. Use ["..."]; não use objeto PT/EN.')
+            elif not 1<=len(value)<=6:
+                errors.append(f'{location}: esperado de 1 a 6 strings; recebido {len(value)} itens. Reduza ou complete essa lista.')
+            else:
+                invalid=[i for i,s in enumerate(value) if not text(s)]
+                if invalid:errors.append(f'{location}: itens {invalid} devem ser strings não vazias, sem objetos ou null.')
+    require(not errors,' | '.join(errors[:4]))
 
 
 def flatten(document):

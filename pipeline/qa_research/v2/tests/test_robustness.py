@@ -14,6 +14,9 @@ from pipeline.qa_research.v2.install_corpora import install,collect,CATALOG,erro
 from pipeline.qa_research.v2.language import (bilingual_search,validate_pairs,lint_ptbr,detect_language,audit_blocks)
 from pipeline.qa_research.v2.questions import validate_qa_audit,QA_CRITERIA
 from pipeline.qa_research.v2.tests.test_protocol import fixture_manifest
+from pipeline.qa_research.v2.common import Calls,topic
+from pipeline.qa_research.v2.context import validate_plan
+from pipeline.qa_research.v2.__main__ import load_config,DEFAULT_CONFIG
 
 
 class RobustnessTests(unittest.TestCase):
@@ -41,6 +44,39 @@ class RobustnessTests(unittest.TestCase):
     def test_query_pairs_cannot_drop_english_or_repeat_same_query(self):
         for pairs in ([{'pt':'consulta técnica brasileira'}],[{'pt':'chemical dosing system','en':'chemical dosing system'}]):
             with self.assertRaises(ValueError):validate_pairs({'pares':pairs},3)
+
+    def test_plan_repair_identifies_field_and_count(self):
+        row=dict(id='R01',titulo='Espuma',foco='Controle da espuma',ancora='espuma',essencial=True,
+            consultas=['espuma']*7,termos={'pt':['espuma'],'en':['foam']})
+        with self.assertRaises(ValueError) as raised:validate_plan({'recortes':[row]},topic('02_02'),12)
+        message=str(raised.exception)
+        self.assertIn('R01.consultas',message);self.assertIn('7 itens',message)
+        self.assertIn('R01.termos',message);self.assertIn('dict',message)
+
+    def test_failed_validation_is_collectible_without_source_text(self):
+        value={'recortes':[dict(id='R01',titulo='Espuma',foco='Controle da espuma',ancora='espuma',
+            essencial=True,consultas=['EXEMPLO_PRIVADO']*7,termos=['espuma'])]}
+        class InvalidClient:
+            def json(self,system,user,validate,**kwargs):
+                validate(value)
+        config=load_config(DEFAULT_CONFIG)
+        calls=Calls(self.root/'output',config,{'plan':InvalidClient()})
+        check=lambda d:validate_plan(d,topic('02_02'),12)
+        with redirect_stdout(io.StringIO()),self.assertRaisesRegex(ValueError,'R01.consultas'):
+            calls.call('plan','instruções',{},check)
+        files=list((self.root/'output/diagnosticos').glob('*.json'))
+        self.assertEqual(len(files),1)
+        saved=files[0].read_text(encoding='utf-8')
+        self.assertNotIn('EXEMPLO_PRIVADO',saved)
+        self.assertEqual(json.loads(saved)['falhas'][0]['estrutura']['recortes']['items'][0]['consultas']['count'],7)
+        class ValidClient:
+            def json(self,system,user,validate,**kwargs):
+                corrected=copy.deepcopy(value);corrected['recortes'][0]['consultas']=['controle de espuma']
+                validate(corrected);return corrected
+        resumed=Calls(self.root/'output',config,{'plan':ValidClient()})
+        with redirect_stdout(io.StringIO()):resumed.call('plan','instruções',{},check)
+        repaired=json.loads(files[0].read_text(encoding='utf-8'))
+        self.assertEqual(repaired['status'],'reparado');self.assertEqual(len(repaired['falhas']),1)
 
     def test_ptbr_allows_industry_terms_but_flags_regional_words(self):
         self.assertFalse(lint_ptbr('A equipe acompanha a vazão durante o offloading no FPSO.'))

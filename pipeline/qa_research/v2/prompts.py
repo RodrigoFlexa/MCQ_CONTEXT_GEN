@@ -12,7 +12,13 @@ integral do especialista. Recortes são organização interna, nunca novos subt�
 Extraia aspectos, sistemas, mecanismos e práticas que a frase solicita. Não force
 matriz de correntes sobre gestão, SMS ou logística. Proponha entre 2 e max_facets
 recortes sem repetição. Cada ancora deve ser uma citação literal da frase.
-Marque essencial somente o necessário para atender o escopo. Consultas em PT/EN.
+Marque essencial somente o necessário para atender o escopo.
+CONTRATO OBRIGATÓRIO EM CADA RECORTE:
+- consultas: array JSON com 1 a 6 strings não vazias, nunca objeto com chaves pt/en.
+- termos: array JSON com 1 a 6 strings não vazias, nunca objetos ou null.
+- Nenhuma dessas listas pode exceder 6 itens, mesmo se houver mais palavras úteis.
+As consultas deste plano são sementes de pesquisa. Uma etapa posterior produz os
+pares PT/EN obrigatórios; não transforme consultas em um dicionário de idiomas.
 JSON {"recortes":[{"id":"R01","titulo":"...","foco":"...","ancora":"...",
 "essencial":true,"consultas":["..."],"termos":["..."]}]}.
 '''

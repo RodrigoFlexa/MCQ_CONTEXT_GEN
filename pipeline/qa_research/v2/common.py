@@ -54,6 +54,15 @@ def topic(item):
     raise ValueError('Subtópico desconhecido: '+item)
 
 
+def response_shape(value,depth=0):
+    """Diagnóstico de contrato sem reproduzir evidências ou texto gerado."""
+    if isinstance(value,dict):
+        return {k:response_shape(v,depth+1) for k,v in list(value.items())[:30]} if depth<5 else {'type':'object','fields':list(value)[:30]}
+    if isinstance(value,list):
+        return {'type':'array','count':len(value),'items':[response_shape(v,depth+1) for v in value[:12]] if depth<5 else []}
+    return {'type':type(value).__name__,'characters':len(value) if isinstance(value,str) else None}
+
+
 class Calls:
     def __init__(self, output, config, clients=None):
         self.output,self.config=Path(output),config
@@ -80,8 +89,18 @@ class Calls:
             validate(prior['response']);return prior['response']
         print(f'[{role}] iniciando chamada',flush=True)
         with self.lock: client=self.client(role)
+        diagnostic=self.output/'diagnosticos'/(role+'_'+identity+'.json')
+        failures=(read_json(diagnostic) or {}).get('falhas',[])
+        def checked(data):
+            try:validate(data)
+            except ValueError as exc:
+                failures.append(dict(erro=str(exc),estrutura=response_shape(data)))
+                atomic_json(diagnostic,dict(role=role,model=self.config['models'][role],
+                    status='resposta_rejeitada',falhas=failures))
+                raise
         response=client.json(system,json.dumps(payload,ensure_ascii=False),tag='v2_'+role,
-                                        max_tokens=tokens,validate=validate)
+                                        max_tokens=tokens,validate=checked)
+        if failures:atomic_json(diagnostic,dict(role=role,model=self.config['models'][role],status='reparado',falhas=failures))
         atomic_json(path,dict(role=role,model=self.config['models'][role],system=system,request=payload,response=response))
         return response
 
