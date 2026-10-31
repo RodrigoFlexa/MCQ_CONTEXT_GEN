@@ -9,9 +9,10 @@ from pipeline.inventario.llm import ContentFiltered, CallFailed
 from .common import TYPES, require, text, unique, ids, exact_rows, approved, digest, jaccard
 from .context import flatten
 from . import prompts as P
+from .language import lint_ptbr
 
 UNIT_CRITERIA=('fiel','atomica','condicoes_preservadas','alvos_sustentados')
-QA_CRITERIA=('sustentada','correta','determinada','autonoma','sem_pistas','alvo_preservado','classe_confere','composicao_confere')
+QA_CRITERIA=('sustentada','correta','determinada','autonoma','sem_pistas','alvo_preservado','classe_confere','composicao_confere','pt_br','terminologia_br')
 ROUTES=('aprovar','reescrever','replanejar','lacuna_documental','descartar')
 
 
@@ -88,6 +89,7 @@ def validate_candidate(d,target,refine=False):
     require(len(d['pergunta'].split())<=90 and len(d['resposta'].split())<=50,'Enunciado/gabarito excede limite')
     # Mesmo filtro de forma já utilizado no projeto; gabarito atual limitado a 30 palavras.
     issues=problemas_tipo(d['tipo'],d['cenario'],d['pergunta'],d['resposta'])
+    issues+=lint_ptbr(d['pergunta']+' '+d['resposta'])
     require(not issues,'; '.join(issues))
 
 

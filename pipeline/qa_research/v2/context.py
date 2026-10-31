@@ -9,6 +9,7 @@ from pipeline.qa_research.document.common import Packet, citations_for, source_r
 from pipeline.qa_research.document.runner import Runner
 from .common import digest, require, text, unique, ids, exact_rows
 from . import prompts as P
+from .language import POLICY, QUERIES, validate_pairs, bilingual_search, audit_blocks, language_counts
 
 
 def validate_plan(data, selected, maximum):
@@ -78,10 +79,20 @@ class Router:
         role={'research':'doc_research','write':'doc_write','audit':'doc_audit',
               'dedup':'dedup','gaps':'coverage','discover':'doc_research'}[stage]
         payload=json.loads(user)
+        system+='\n'+POLICY
         if stage=='write':
             payload['orientacoes_revisao_global']=self.feedback
             system+='\nAtenda as orientacoes_revisao_global sem trocar o escopo nem inventar fundamento.'
         return self.calls.call(role,system,payload,validate,max_tokens)
+
+
+def review_document(selected,plan,facets,blocks,knowledge,calls,work):
+    linguistic=audit_blocks(blocks,calls)
+    atomic_json(work/'revisao_ptbr.json',linguistic)
+    byid={b['id']:b for b in blocks}
+    review=calls.call('coverage',P.COVERAGE,dict(entrada=selected,plano=plan,blocos=blocks,conhecimentos_anteriores=knowledge),
+        lambda d:validate_review(d,facets,byid))
+    return {**review,'correcoes':review['correcoes']+linguistic['correcoes']}
 
 
 def generate(selected,manifest,output,config,calls):
@@ -102,13 +113,13 @@ def generate(selected,manifest,output,config,calls):
             if review:
                 r=next(r for r in review['cobertura'] if r['id']==f['id'])
                 queries=r['proximas_consultas']+queries
-            for query in queries[:config['queries_per_facet']]:
-                rows=index.search(query,limit=config['retrieval_candidates'],
-                    exclude=seen_chunks[f['id']])
-                traces.append(index.last_query_trace)
-                for row in rows:
-                    s=source_record(row)
-                    if s['id'] not in {v['id'] for v in fresh}: fresh.append(s)
+            bilingual=calls.call('queries',QUERIES,dict(entrada=selected,recorte=f,consultas_e_lacunas=queries,
+                limite=config['queries_per_facet']),lambda d:validate_pairs(d,config['queries_per_facet']))
+            rows,query_traces=bilingual_search(index,bilingual['pares'],config['retrieval_candidates'],seen_chunks[f['id']])
+            traces.extend({**t,'recorte':f['id']} for t in query_traces)
+            for row in rows:
+                s=source_record(row)
+                if s['id'] not in {v['id'] for v in fresh}: fresh.append(s)
             # O teto limita o pacote ativo, não impede investigar uma lacuna nova.
             # Prioriza as fontes recém-recuperadas; as rodadas anteriores continuam auditáveis.
             selected_sources=[];counts={}
@@ -124,13 +135,15 @@ def generate(selected,manifest,output,config,calls):
         work=output/f'rodada_{round_no:02}'
         require(any(evidence.values()),'Nenhuma passagem recuperada; amplie o corpus ou as consultas antes de redigir')
         atomic_json(work/'recuperacoes.json',traces)
+        atomic_json(work/'idiomas_busca.json',dict(consultas_por_idioma={lang:sum(t['query_language']==lang for t in traces) for lang in ('pt','en')},
+            passagens_selecionadas_por_idioma=language_counts([r for rows in evidence.values() for r in rows]),
+            nota='Identificação de idioma é estatística; não exclui fontes. Originais não são traduzidos nem alterados.'))
         p=packet(work/'pacote',selected,facets,evidence,config)
         summary=Runner(p,work/'documental',client=Router(calls,feedback),budget=calls.budget).run()
         require(summary['status']=='concluido','Documento com processamento pendente: '+summary['status'])
         final=read_json(work/'documental'/'documento.json')
         blocks=flatten(final);byid={b['id']:b for b in blocks}
-        review=calls.call('coverage',P.COVERAGE,dict(entrada=selected,plano=plan,blocos=blocks,conhecimentos_anteriores=knowledge),
-                           lambda d:validate_review(d,facets,byid))
+        review=review_document(selected,plan,facets,blocks,knowledge,calls,work)
         atomic_json(work/'revisao_global.json',review)
         missing=[r['id'] for r in review['cobertura'] if not r['coberto'] and
                  next(f for f in facets if f['id']==r['id'])['essencial']]
@@ -151,8 +164,7 @@ def generate(selected,manifest,output,config,calls):
             c['blocos']=[b for bi,b in enumerate(c['blocos']) if f'B{ci+1:03}_{bi+1:03}' not in excluded]
         final['capitulos']=[c for c in final['capitulos'] if c['blocos']]
         blocks=flatten(final);byid={b['id']:b for b in blocks}
-        review=calls.call('coverage',P.COVERAGE,dict(entrada=selected,plano=plan,blocos=blocks,conhecimentos_anteriores=knowledge),
-            lambda d:validate_review(d,facets,byid))
+        review=review_document(selected,plan,facets,blocks,knowledge,calls,work)
         reason='revisao_final_apos_exclusoes'
     atomic_json(output/'documento.json',final)
     md=['# '+final['titulo']]
@@ -163,6 +175,7 @@ def generate(selected,manifest,output,config,calls):
     report=dict(status='concluido' if reason=='cobertura_suficiente' else 'parcial',motivo_parada=reason,
         historico=history,revisao=review,corpus=info,documento_sha256=digest(final),
         blocos_excluidos=sorted(excluded),qa_elegivel=bool(flatten(final)) and not review['correcoes'] and not review['repeticoes'],
+        ptbr_revisado=True,
         aprovacao='auditado_modelo; revisão humana pendente')
     atomic_json(output/'cobertura.json',report)
     return final,report

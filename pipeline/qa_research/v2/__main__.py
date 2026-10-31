@@ -12,6 +12,7 @@ from pipeline.domain_corpora.io_utils import file_hash
 from . import VERSION
 from .common import ROOT, Calls, digest, require, topic, load_examples
 from . import context, questions
+from .language import audit_blocks
 
 DEFAULT_CONFIG=ROOT/'pipeline/qa_research/v2/piloto_02_02.json'
 
@@ -27,7 +28,7 @@ def load_config(path):
         require(type(config.get(k)) is int and config[k]>=0,'Parâmetro não negativo esperado: '+k)
     for k in ('unit_coverage','demand_coverage'):
         require(isinstance(config.get(k),(int,float)) and 0<config[k]<=1,'Cobertura inválida: '+k)
-    roles=('plan','doc_research','doc_write','doc_audit','coverage','units','unit_audit',
+    roles=('plan','queries','locale','doc_research','doc_write','doc_audit','coverage','units','unit_audit',
            'qa_plan','qa_author','qa_solver','qa_audit','qa_refine','dedup')
     require(set(config['models'])==set(roles),'Configure todos os papéis explicitamente')
     for spec in config['models'].values():
@@ -104,6 +105,10 @@ def execute(selected,manifest,output,config,stage='all',document=None,example_pa
             if stage in ('all','qa'):
                 require(doc_report.get('qa_elegivel',True),'Revisão global ainda tem conflitos; QA bloqueada')
                 check_document(doc,selected)
+                if not doc_report.get('ptbr_revisado'):
+                    linguistic=audit_blocks(context.flatten(doc),calls)
+                    atomic_json(output/'revisao_contexto_externo_ptbr.json',linguistic)
+                    require(not linguistic['correcoes'],'Contexto externo precisa de revisão em português brasileiro antes da QA')
                 summary['questoes']=questions.generate(doc,output/'questoes',config,calls,examples)
             reports=[summary[k] for k in ('contexto','questoes') if k in summary and summary[k]]
             summary['status']='concluido' if reports and all(r['status']=='concluido' for r in reports) else 'parcial'

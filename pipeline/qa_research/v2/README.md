@@ -33,13 +33,45 @@ Coleta somente fontes oficiais delimitadas: ABB Production Handbook, treinamento
 Kimray, Emerson/Fisher Control Valve Handbook, guias Offshore Norge, IMCA Safety
 Flashes e IOGP Process Safety Fundamentals. Os limites são **por fonte**. Não é
 espelhamento integral nem corpus exaustivo. `install_report.json` registra erros,
-limites e páginas restantes; `manifest.json` só fica utilizável sem erros.
+limites e páginas restantes; `manifest.json` distingue acervo utilizável com avisos
+de instalação bloqueada.
 
 Se um portal bloquear acesso, examine o relatório. Repita o comando para reutilizar
-downloads verificados por hash. Para aceitar **explicitamente** a parcela obtida,
-repita com `--allow-errors`: erros continuam registrados, coleções vazias são
-omitidas e a cobertura continua parcial. Nenhuma coleção utilizável mantém ready=false.
+downloads verificados por hash. Para aceitar **explicitamente** um acervo com fonte
+selecionada vazia, repita com `--allow-errors`: erros continuam registrados,
+coleções vazias são omitidas e a cobertura continua parcial. Sem nenhuma coleção
+utilizável, o manifesto mantém ready=false.
 Não execute o instalador enquanto uma geração usa esse mesmo manifesto.
+
+### Atualização de robustez: AES, retomada e estado do acervo
+
+O ambiente agora instala **`pypdf[crypto]`**, incluindo suporte a AES. O instalador
+verifica as dependências antes de alterar o manifesto e informa o Python que deve
+receber a instalação. Isso corrige `cryptography>=3.1 is required for AES algorithm`.
+PDF que realmente exige senha continua registrado como inacessível.
+
+Na versão atual, falha isolada de um documento **não bloqueia** uma fonte que já
+tem documentos íntegros. O manifesto pode indicar `ready=true` e
+`status=ready_with_warnings`, mantendo erros, categorias e ações recomendadas no
+relatório. Dependência ausente, corrupção ou fonte selecionada vazia bloqueiam.
+`--strict` restaura o bloqueio por qualquer erro; `--allow-errors` permite aceitar
+explicitamente fontes ausentes. Nenhuma dessas opções produz um acervo exaustivo.
+
+Para reparar o download já feito no servidor, sem baixar novamente o acervo:
+
+```bash
+git pull --ff-only origin codex/qa-evidencias-verificadas
+export DOCUMENT_PYTHON="$PWD/.venv-documento/bin/python"
+"$DOCUMENT_PYTHON" -m pip install -r pipeline/qa_research/v2/requirements.txt
+bash pipeline/qa_research/instalar_corpus_profissional_v2.sh \
+  --output dataset/professional_corpora_v2 --retry-failed
+```
+
+Essa retomada usa `install_report.json`, tenta somente URLs antes reprovadas e
+preserva as demais coleções verificadas por hash, mesmo se o manifesto anterior
+estiver `ready=false`. Em recoleta normal, originais são reutilizados e novas
+extrações também possuem cache por hash/revisão. Uma falha de rede não apaga os
+documentos válidos anteriores. Não altere o diretório de origem do download.
 
 Dados ficam em `dataset/` (fora do Git), preservando números, texto original,
 fronteiras documentais e páginas conhecidas. HTML sem paginação tem page=null.
@@ -78,13 +110,51 @@ Verificar recuperação antes de gastar chamadas Azure:
 ```bash
 .venv-documento/bin/python -m pipeline.qa_research.v2.search \
   --manifest dataset/professional_corpora_v2/manifest.json \
-  --query "chemical dosing produced water FPSO" --limit 5
+  --query "dosagem química água produzida" \
+  --query-en "chemical dosing produced water" --limit 5
 ```
 
 O piloto usa **BM25/FTS5**, com índice persistente e fronteiras documentais; não
 calcula embeddings nem afirma executar busca híbrida. O manifesto também pode
 ser usado pelo `CorpusIndex` existente. A arquitetura permite acrescentar canais
 semânticos depois de medir as lacunas do piloto; este teste controla a recuperação lexical.
+
+### Recuperação bilíngue e escrita em português brasileiro
+
+Cada rodada normaliza as consultas iniciais e as lacunas em pares explícitos
+`pt`/`en`, validados antes da busca. O limite configura **pares**, não uma lista
+que pode cortar todas as consultas inglesas. Ambos os idiomas são sempre
+consultados; os rankings são combinados por RRF antes da seleção de passagens.
+Os originais permanecem intactos. BM25 não traduz sozinho e ainda depende dos
+termos/sinônimos gerados; não é busca semântica multilíngue.
+
+Novas extrações registram idioma e confiança com detecção estatística determinística.
+Fontes antigas com idioma desconhecido são identificadas durante a recuperação.
+O idioma nunca é, isoladamente, um filtro de exclusão. Idiomas diferentes de PT/EN
+podem estar no acervo, mas a consulta bilíngue não garante sua recuperação.
+Cada rodada entrega `idiomas_busca.json` e consultas/resultados com idioma em
+`recuperacoes.json`, para conferir a contribuição efetiva de materiais ingleses.
+
+Redação e auditoria recebem orientação de português brasileiro e uso profissional
+do Brasil. Há revisão linguística explícita por bloco e critérios obrigatórios
+`pt_br` e `terminologia_br` na auditoria das questões. Regionalismos como caudal,
+equipa e controlo geram revisão; termos consolidados como offloading, topside,
+subsea e siglas podem permanecer. Não há substituição cega de palavras, alteração
+das evidências literais nem conversão automática de requisitos estrangeiros.
+A revisão de tradução técnica permanece no auditor que recebe as fontes originais.
+
+Esta atualização altera prompts, papéis e identidade do experimento. Use uma
+**saída nova para geração**; o corpus baixado pode ser reparado no mesmo lugar:
+
+```bash
+bash pipeline/qa_research/rodar_piloto_cobertura_v2.sh \
+  --item 02_02 --manifest dataset/professional_corpora_v2/manifest.json \
+  --output pipeline/qa_research/saida_cobertura_v2/02_02_ptbr
+```
+
+Consultas usam `gpt-5-4-petrobras:low`; revisão linguística usa
+`gpt-5-4-petrobras:medium`. Parecer do modelo e detecção estatística não substituem
+a revisão humana de terminologia pelo especialista.
 
 ## Planejar e executar o piloto
 

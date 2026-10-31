@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import importlib.util
 from collections import deque
 from html.parser import HTMLParser
 from pathlib import Path
@@ -14,6 +15,46 @@ from pipeline.domain_corpora.io_utils import HTTP, atomic_json, file_hash
 from pipeline.domain_corpora.extract import pdf_pages, accepted_pages
 from pipeline.domain_corpora.manifest import load_manifest
 from pipeline.inventario.locking import output_lock
+from .language import detect_language
+
+EXTRACTION_REVISION='professional-pages-v2.2-language'
+
+
+def collection_files(collection):
+    return collection.get('files',[]) if collection['format']=='petroles_txt' else [collection]
+
+
+def same_content(a,b):
+    return a['format']==b['format'] and sorted(f['sha256'] for f in collection_files(a))==sorted(f['sha256'] for f in collection_files(b))
+
+
+def error_record(source,url,exc):
+    message=str(exc)
+    category='download_or_extraction'
+    action='Repetir a coleta; verificar URL e conectividade.'
+    if isinstance(exc,ImportError) or 'cryptography' in message or 'AES algorithm' in message:
+        category='missing_dependency'
+        action='Instalar requirements.txt do v2, que inclui pypdf[crypto], no mesmo Python da coleta.'
+    elif 'protegido' in message.casefold() or 'password' in message.casefold():
+        category='password_protected';action='Documento exige senha; não será desbloqueado pelo coletor.'
+    elif isinstance(exc,TimeoutError) or 'timed out' in message:
+        category='timeout';action='Repetir --retry-failed ou aumentar --timeout.'
+    return dict(source=source,url=url,error=message[:600],category=category,action=action)
+
+
+def existing_records(root,source):
+    """Admite somente coleção cujo hash foi publicado no relatório anterior."""
+    report=root/'install_report.json'
+    if not report.exists(): return []
+    data=json.loads(report.read_text(encoding='utf-8'))
+    entry=next((c for c in data.get('collections',[]) if c['id']==source),None)
+    if not entry:return []
+    path=(root/entry['path']).resolve()
+    if not path.is_relative_to(root) or not path.is_file() or file_hash(path)!=entry['sha256']:
+        raise ValueError('Coleção anterior corrompida; não será reutilizada: '+source)
+    rows=[json.loads(s) for s in path.read_text(encoding='utf-8').splitlines() if s.strip()]
+    if any(r.get('collection')!=source for r in rows):raise ValueError('Proveniência anterior inválida')
+    return rows
 
 CATALOG = {
  'abb': {'seeds':['https://library.e.abb.com/public/34d5b70e18f7d6c8c1257be500438ac3/Oil%20and%20gas%20production%20handbook%20ed3x0_web.pdf'],
@@ -83,10 +124,13 @@ def permitted(url, spec):
             and any(p.path.startswith(s) for s in spec['scope']))
 
 
-def collect(source, root, http, limit=30, max_pages=100, depth=2):
+def collect(source, root, http, limit=30, max_pages=100, depth=2, retry_urls=None):
     spec = CATALOG[source]
-    queue, seen, records, errors = deque((u,0) for u in spec['seeds']), set(), [], []
-    while queue and len(seen) < max_pages and len({r['document_id'] for r in records}) < limit:
+    previous=existing_records(root,source)
+    records=list(previous) if retry_urls is not None else []
+    queue,seen,errors=deque((u,0) for u in (retry_urls if retry_urls is not None else spec['seeds'])),set(),[]
+    reused=0
+    while queue and len(seen)<max_pages and (retry_urls is not None or len({r['document_id'] for r in records})<limit):
         url, level = queue.popleft()
         url = urldefrag(url)[0]
         if url in seen or not permitted(url, spec): continue
@@ -100,6 +144,14 @@ def collect(source, root, http, limit=30, max_pages=100, depth=2):
             if not permitted(meta['final_url'], spec):
                 raise ValueError('Redirecionamento saiu do catálogo permitido')
             with raw.open('rb') as stream: is_pdf=stream.read(5)==b'%PDF-'
+            cache=root/source/'extracted'/(uid+'.json')
+            if cache.exists():
+                try:saved=json.loads(cache.read_text(encoding='utf-8'))
+                except json.JSONDecodeError:saved={}  # reextrai do original íntegro
+                if (saved.get('revision')==EXTRACTION_REVISION and saved.get('raw_sha256')==meta['sha256']
+                        and saved.get('rows_sha256')==hashlib.sha256(json.dumps(saved.get('rows'),sort_keys=True,ensure_ascii=False).encode()).hexdigest()):
+                    records=[r for r in records if r['document_id']!=uid]+saved['rows'];reused+=1
+                    print(f'[{source}] documento normalizado reutilizado',flush=True);continue
             if is_pdf:
                 pages = list(pdf_pages(raw))
                 title = Path(urlsplit(url).path).name
@@ -121,15 +173,25 @@ def collect(source, root, http, limit=30, max_pages=100, depth=2):
                     url=='https://kimray.com/kimray-training'): continue
             base = dict(collection=source,document_id=uid,title=title,url=url,
                         source_sha256=meta['sha256'],source_kind='original',
-                        source_boundary='known_document',language='not_verified',
+                        source_boundary='known_document',language='und',
                         jurisdiction=spec['jurisdiction'],document_type=spec['kind'],
                         license=spec['rights'],extraction_issues=issues)
-            records.extend({**base,**p} for p in pages)
+            normalized=[]
+            for page in pages:
+                signal=detect_language(page['text'])
+                normalized.append({**base,**page,'language':signal['language'],'language_detection':signal})
+            atomic_json(cache,dict(revision=EXTRACTION_REVISION,raw_sha256=meta['sha256'],rows=normalized,
+                rows_sha256=hashlib.sha256(json.dumps(normalized,sort_keys=True,ensure_ascii=False).encode()).hexdigest()))
+            records=[r for r in records if r['document_id']!=uid]+normalized
             print(f'[{source}] {len({r["document_id"] for r in records})}/{limit}: {title}',flush=True)
         except Exception as exc:
-            errors.append({'source':source,'url':url,'error':str(exc)[:600]})
+            errors.append(error_record(source,url,exc))
             print(f'[{source}] falha registrada: {type(exc).__name__}',flush=True)
-    return records, errors, {'visited':len(seen),'remaining_urls':len(queue),'document_limit':limit}
+    # Recoleta incompleta nunca apaga documentos anteriores íntegros.
+    have={r['document_id'] for r in records}
+    records.extend(r for r in previous if r['document_id'] not in have)
+    return records, errors, {'visited':len(seen),'remaining_urls':len(queue),'document_limit':limit,
+        'normalized_reused':reused,'previous_documents_preserved':len({r['document_id'] for r in previous}-have)}
 
 
 def force(root, http, record_id='10775273'):
@@ -173,35 +235,65 @@ def force(root, http, record_id='10775273'):
     return {'id':'force','format':'pages_jsonl','path':'force/pages.jsonl','sha256':file_hash(dest),'documents':len(documents),'pages':pages_written}
 
 
-def install(root, sources, http, limit=30, max_pages=100, depth=2, base=None, allow_errors=False, with_force=False):
+def install(root, sources, http, limit=30, max_pages=100, depth=2, base=None, allow_errors=False, with_force=False,
+            retry_failed=False,strict=False):
     root=Path(root).resolve()
+    if base and Path(base).resolve().parent==root:raise ValueError('O manifesto base deve ficar separado da instalação de destino')
     with output_lock(root):
-        collections,errors,discovery=[],[],{}
+        prior=json.loads((root/'install_report.json').read_text(encoding='utf-8')) if (root/'install_report.json').exists() else {}
+        if retry_failed and not prior:raise ValueError('--retry-failed exige install_report.json anterior')
+        collections,errors,discovery=[],[],dict(prior.get('discovery',{}))
+        for c in prior.get('collections',[]):
+            if all((root/f['path']).is_file() and file_hash(root/f['path'])==f['sha256'] for f in collection_files(c)):collections.append(c)
+            else:raise ValueError('Coleção anterior mudou; preserve o acervo e instale em outro destino: '+c['id'])
+        processed=set(sources)
+        errors.extend(e for e in prior.get('errors',[]) if e.get('source') not in processed)
         # Invalida uma instalação anterior ANTES de alterar arquivos.
         atomic_json(root/'manifest.json',{'schema':'petroquest-professional-corpora-v1','ready':False})
         for source in sources:
-            records,failures,trace=collect(source,root,http,limit,max_pages,depth)
+            urls=None
+            if retry_failed:
+                urls=[e['url'] for e in prior.get('errors',[]) if e.get('source')==source and e.get('url')]
+                # Relatórios copiados de Markdown também podem ser diagnosticados sem visitar outro domínio.
+                urls=[re.sub(r'^\[[^\]]*\]\((https://[^)]+)\)$',r'\1',u) for u in urls]
+                if not urls:continue
+                if any(not permitted(u,CATALOG[source]) for u in urls):raise ValueError('URL de retomada fora do catálogo')
+            records,failures,trace=collect(source,root,http,limit,max_pages,depth,retry_urls=urls)
             errors.extend(failures);discovery[source]=trace
             if not records:
                 errors.append({'source':source,'error':'Nenhum documento utilizável'});continue
             path=root/source/'pages.jsonl';path.parent.mkdir(parents=True,exist_ok=True)
-            path.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in records),encoding='utf-8')
+            tmp=path.with_suffix('.tmp');tmp.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in records),encoding='utf-8');tmp.replace(path)
+            collections=[c for c in collections if c['id']!=source]
             collections.append({'id':source,'format':'pages_jsonl','path':path.relative_to(root).as_posix(),
                 'sha256':file_hash(path),'documents':len({r['document_id'] for r in records})})
-        if with_force: collections.append(force(root,http))
+        if with_force:
+            try:
+                entry=force(root,http);collections=[c for c in collections if c['id']!='force']+[entry]
+            except Exception as exc:errors.append(error_record('force','https://zenodo.org/records/10775273',exc))
         if base:
             _,old=load_manifest(base)
             for c in old:
                 c=dict(c)
-                if c['id'] in {x['id'] for x in collections}: raise ValueError('Coleção duplicada: '+c['id'])
+                if c['id'] in {x['id'] for x in collections}:
+                    if same_content(c,next(x for x in collections if x['id']==c['id'])):continue
+                    raise ValueError('Coleção duplicada diferente: '+c['id'])
                 if c['format']=='pages_jsonl': c['path']=os.path.relpath(c.pop('resolved_path'),root).replace(os.sep,'/')
                 else:
                     c['files']=[{**{k:v for k,v in f.items() if k!='resolved_path'},
                         'path':os.path.relpath(f['resolved_path'],root).replace(os.sep,'/')} for f in c['files']]
                 collections.append(c)
-        result={'schema':'petroquest-professional-corpora-v1','ready':bool(collections) and (not errors or allow_errors),
+        expected=set(prior.get('selected_sources',[]))|set(sources)
+        if with_force:expected.add('force')
+        missing=sorted(expected-{c['id'] for c in collections})
+        blocking=[e for e in errors if e.get('category')=='missing_dependency']
+        usable=bool(collections) and not blocking and (not missing or allow_errors) and (not strict or not errors)
+        result={'schema':'petroquest-professional-corpora-v1','ready':usable,
             'partial':True,'sample':False,'coverage':'Acervo delimitado; limites de descoberta e erros no relatório',
-            'collections':collections,'selected_sources':sources,'errors':errors,'discovery':discovery}
+            'collections':collections,'selected_sources':sorted(expected),'errors':errors,'discovery':discovery,
+            'status':'ready_with_warnings' if usable and errors else ('ready' if usable else 'blocked'),
+            'missing_sources':missing,'blocking_errors':blocking,
+            'readiness_policy':'Uma falha documental não invalida coleções íntegras; dependências ausentes e fontes vazias bloqueiam. --strict bloqueia qualquer erro.'}
         atomic_json(root/'install_report.json',result);atomic_json(root/'manifest.json',result)
         return result
 
@@ -209,23 +301,36 @@ def install(root, sources, http, limit=30, max_pages=100, depth=2, base=None, al
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,default=Path('dataset/professional_corpora_v2'))
-    p.add_argument('--sources',nargs='+',choices=sorted(CATALOG),default=['abb','kimray','emerson','offshorenorge','imca','iogp'])
+    p.add_argument('--sources',nargs='+',choices=sorted(CATALOG))
     p.add_argument('--max-documents',type=int,default=30)
     p.add_argument('--max-pages',type=int,default=100)
     p.add_argument('--depth',type=int,default=2)
     p.add_argument('--base-manifest',type=Path)
     p.add_argument('--allow-errors',action='store_true')
+    p.add_argument('--retry-failed',action='store_true',help='Reprocessa somente URLs com falha e preserva as coleções já baixadas')
+    p.add_argument('--strict',action='store_true',help='Bloqueia o manifesto se qualquer documento falhar')
     p.add_argument('--with-force',action='store_true',help='Download explícito adicional de aproximadamente 6,1 GB em CSV')
     p.add_argument('--ca-file')
     p.add_argument('--timeout',type=int,default=30)
     p.add_argument('--retries',type=int,default=2)
     p.add_argument('--plan',action='store_true')
     a=p.parse_args(argv)
+    if a.sources is None:
+        if a.retry_failed and (a.output/'install_report.json').is_file():
+            previous=json.loads((a.output/'install_report.json').read_text(encoding='utf-8'))
+            a.sources=[s for s in previous.get('selected_sources',[]) if s in CATALOG]
+        else:a.sources=list(CATALOG)
     if min(a.max_documents,a.max_pages,a.timeout,a.retries)<1 or a.depth<0: p.error('Limites inválidos')
     if a.plan:
         print(json.dumps({s:CATALOG[s] for s in a.sources},ensure_ascii=False,indent=2));return 0
+    missing=[name for name in ('pypdf','cryptography','langdetect') if importlib.util.find_spec(name) is None]
+    if missing:
+        import sys
+        print('Dependências ausentes:',', '.join(missing))
+        print('Use o mesmo Python: '+sys.executable+' -m pip install -r pipeline/qa_research/v2/requirements.txt')
+        return 2
     result=install(a.output,a.sources,HTTP(ca_file=a.ca_file,timeout=a.timeout,retries=a.retries),a.max_documents,a.max_pages,a.depth,
-                   a.base_manifest,a.allow_errors,a.with_force)
+                   a.base_manifest,a.allow_errors,a.with_force,a.retry_failed,a.strict)
     print('Manifesto:',a.output/'manifest.json','| erros:',len(result['errors']))
     return 0 if result['ready'] else 2
 

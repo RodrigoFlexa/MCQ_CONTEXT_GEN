@@ -42,6 +42,8 @@ class Client:
         if role=='plan':
             d={'recortes':[dict(id='R01',titulo='Controle da espuma',foco='controle da espuma',ancora='espuma',
                 essencial=True,consultas=['tratamento químico espuma'],termos=['espuma'])]}
+        elif role=='queries':d=dict(pares=[dict(pt='tratamento químico espuma',en='chemical foam treatment')])
+        elif role=='locale':d=dict(avaliacoes=[dict(id=b['id'],pt_br=True,terminologia_br=True,motivo='Português brasileiro adequado.') for b in p['blocos']])
         elif role in ('doc_research','doc_write','doc_audit') or (role=='coverage' and 'lacunas' in p) or (role=='dedup' and 'pares' in p):
             stage={'doc_write':'write','doc_audit':'audit','coverage':'gaps','dedup':'dedup'}.get(role,
                 'research' if 'fontes' in p else 'discover')
