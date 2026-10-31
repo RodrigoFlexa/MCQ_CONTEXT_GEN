@@ -178,7 +178,7 @@ class CorpusIndex:
                     files.extend({"path": str(item["resolved_path"]), "sha256": item["sha256"]}
                                  for item in collection["files"])
             chunks = _manifest_chunks(collections)
-            coverage, complete = "verified_manifest", not manifest_data.get("sample", False)
+            coverage, complete = "verified_manifest", not (manifest_data.get("sample", False) or manifest_data.get("partial", False))
         else:
             selection_paths = _selection_files(self.origins)
             if not selection_paths:
@@ -186,7 +186,7 @@ class CorpusIndex:
             files = [{"path": str(path), "sha256": _file_hash(path)} for path in selection_paths]
             chunks = _saved_chunks(selection_paths)
             coverage, complete = "saved_selections_partial", False
-        fingerprint = _digest(_json({"version": _VERSION, "files": files,
+        fingerprint = _digest(_json({"version": _VERSION, "files": files, "complete": complete,
                                      "chunk_words": _CHUNK_WORDS, "stride": _STRIDE}))
         # Each corpus snapshot has its own immutable location. A different run
         # may share the cache root without silently changing this instance's DB.
@@ -264,7 +264,7 @@ class CorpusIndex:
                     "corpus_bruto_completo": complete, "sources": files,
                     "index_path": str(self.path),
                     "warnings": ([] if complete else [
-                        "Cobertura parcial: somente trechos originais de seleções salvas; ausência de resultados não demonstra ausência no corpus completo."]),
+                        "Cobertura parcial dos materiais originais disponíveis; ausência de resultados não demonstra ausência no corpus completo."]),
                     "neighbors": "same_document_known_boundaries_only"}
         except BaseException:
             db.close()

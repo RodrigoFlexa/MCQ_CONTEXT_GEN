@@ -9,12 +9,14 @@ REQUIRED={'petroles','anp','hse','bsee','regis'}
 
 def load_manifest(path,allow_sample=False,verify=True):
     path=Path(path).resolve();manifest=json.loads(path.read_text(encoding='utf-8'))
-    if manifest.get('schema')!='petroquest-domain-corpora-v1':raise ValueError('Versão do manifesto de corpora desconhecida')
+    schema=manifest.get('schema')
+    if schema not in ('petroquest-domain-corpora-v1','petroquest-professional-corpora-v1'):raise ValueError('Versão do manifesto de corpora desconhecida')
     if manifest.get('ready') is not True:raise ValueError('Instalação incompleta. Consulte install_report.json e repita o instalador')
     if manifest.get('sample') and not allow_sample:raise ValueError('Corpus de teste/amostra. Instale sem limite para produção ou explicite --allow-sample-corpus')
     collections=manifest.get('collections',[])
     ids=[c['id'] for c in collections]
-    if len(ids)!=len(set(ids)) or set(ids)!=REQUIRED:raise ValueError('São necessárias Petrolês + ANP + HSE + BSEE + REGIS, sem duplicatas')
+    if not ids or len(ids)!=len(set(ids)):raise ValueError('Coleções vazias ou duplicadas')
+    if schema=='petroquest-domain-corpora-v1' and set(ids)!=REQUIRED:raise ValueError('São necessárias Petrolês + ANP + HSE + BSEE + REGIS, sem duplicatas')
     result=[]
     for collection in collections:
         item=dict(collection)

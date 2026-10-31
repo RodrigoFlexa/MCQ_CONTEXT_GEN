@@ -13,6 +13,9 @@ O objetivo aqui é conseguir montar o notebook de pipeline de questões
   relatados". O modelo deve sintetizar, explicar e complementar conceitos;
   a origem complementar é declarada internamente e revisada separadamente.
 - Não inventar dados empíricos, dosagens, limites, normas ou suporte documental.
-  Não incluir datasets externos de questões nem exemplos de QA nos prompts.
+- Questões anteriores e datasets externos podem orientar exemplos de forma nos
+  prompts de QA, com origem registrada e separados do suporte factual. Conforme
+  orientação posterior do usuário, não baixar nem modificar os datasets externos
+  de questões neste trabalho; arquivos existentes podem ser lidos explicitamente.
 - Ao terminar a geração no servidor, mostrar "O código acabou de rodar no terminal"
   com uma carinha feliz e os comandos concretos de coleta, commit e push dos resultados.

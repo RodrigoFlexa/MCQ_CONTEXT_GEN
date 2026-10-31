@@ -29,7 +29,7 @@ def new_state(facet):
 
 
 class Runner:
-    def __init__(self, packet, output, overrides=None, client=None, progress=print, reuse=None):
+    def __init__(self, packet, output, overrides=None, client=None, progress=print, reuse=None, budget=None):
         self.packet, self.output = packet, Path(output).resolve()
         self.settings = {**packet.profile["runtime"], **(overrides or {})}
         for k in ("workers", "max_calls", "max_attempts", "research_rounds", "batch_sources", "writer_sources", "max_blocks"):
@@ -37,6 +37,7 @@ class Runner:
                 raise ValueError("Configuração inteira positiva esperada: " + k)
         self.client, self.progress = client, progress
         self.reuse = reuse
+        self.external_budget = budget
         self.lock = threading.Lock()
         self.api_slots = threading.BoundedSemaphore(self.settings["workers"])
         self.timings = {}
@@ -370,7 +371,7 @@ class Runner:
             if self.reuse:
                 from .reuse import reuse_research
                 reuse_research(self.packet, self.reuse, self.output, self.states, self.save)
-            self.budget = PersistentBudget(self.output / "orcamento.json", self.settings["max_calls"])
+            self.budget = self.external_budget or PersistentBudget(self.output / "orcamento.json", self.settings["max_calls"])
             if owned_client:
                 try:
                     load_dotenv(ROOT / "pipeline")

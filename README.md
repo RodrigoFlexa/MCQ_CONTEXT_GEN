@@ -1,5 +1,9 @@
 # MCQ_CONTEXT_GEN
 
+**Piloto novo por cobertura:** [contexto + QA v2](pipeline/qa_research/v2/README.md),
+com instalador de corpus profissional e teste isolado em Produtos químicos (02_02).
+O fluxo anterior permanece disponível.
+
 Pesquisa e geração de questões em português no domínio de óleo e gás. O fluxo atual
 de **pergunta e resposta curta** está em [`pipeline/qa_research`](pipeline/qa_research/README.md):
 tópico → recortes → pesquisa no corpus → documento auditado → unidades de conhecimento → QA.
