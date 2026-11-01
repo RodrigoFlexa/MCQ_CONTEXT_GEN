@@ -1,0 +1,105 @@
+# 2.2. Produtos químicos
+
+## 2.2. Produtos químicos
+
+## Condicionamento da água do mar para injeção no reservatório, incluindo SRU e desaeração
+
+Na água do mar destinada à injeção, os produtos químicos exercem função de condicionamento da corrente antes da entrada na formação. Em termos funcionais, enquadram-se como químicos adicionados à água do mar ou à água-fonte antes da injeção. Nesse serviço, a seleção do produto não pode ser feita apenas pela eficácia química isolada: ela precisa considerar a etapa do processo em que a dosagem será aplicada, a interação com os equipamentos de tratamento e o efeito esperado sobre a continuidade operacional do sistema de injeção.
+
+Entre as funções químicas tipicamente associadas a esse serviço estão biocidas, inibidores de corrosão, inibidores de incrustação, antiespumantes, removedores de oxigênio, floculantes, produtos de tratamento de água, reguladores de pH e removedores de cloro. A relevância de cada grupo depende da configuração do tratamento a bordo, da qualidade da água captada e do arranjo de injeção adotado no FPSO.
+
+### Controle microbiológico da água do mar
+
+O controle microbiológico é um dos pontos centrais no condicionamento da água do mar. O hipoclorito é usado em água do mar para prevenir o crescimento de algas e bactérias em equipamentos e tubulações, como trocadores de calor com água do mar. Esse hipoclorito pode ser produzido por eletrólise da própria água do mar para geração de cloro. Há variantes de processo em que eletrodos de cobre adicionam sais de cobre à solução, aumentando a efetividade.
+
+Além do hipoclorito, biocidas são usados como químicos preventivos para limitar atividade microbiológica em sistemas de produção de óleo e gás, incluindo bactérias, fungos e algas. Um problema particularmente importante é o crescimento de bactérias redutoras de sulfato, que podem produzir sulfeto de hidrogênio e obstruir filtros. Em sistemas de água de injeção, isso afeta não só a qualidade da água tratada, mas também a confiabilidade de filtração, de linhas e de equipamentos subsequentes.
+
+### Desaeração e controle de oxigênio
+
+Quando a água do mar é usada para injeção em reservatório, a redução do oxigênio dissolvido passa a ser etapa relevante do tratamento. Nesse contexto, emprega-se um desaerador para reduzir o teor de oxigênio da água antes da injeção. O desaerador é projetado para operar com strip gas e vácuo. A presença de oxigênio é indesejável porque pode favorecer crescimento microbiológico no reservatório; por isso, a eficiência dessa etapa influencia diretamente o desempenho do sistema de injeção.
+
+A compatibilidade entre a desaeração e os químicos aplicados antes ou depois dessa etapa é importante. Produtos usados para biocontrole, condicionamento da água e proteção de integridade não devem comprometer a remoção de gases, gerar efeitos colaterais operacionais nem transferir instabilidade para bombas, linhas e pontos de injeção.
+
+### SRU, compatibilidade e continuidade operacional
+
+Em arranjos com SRU, a compatibilidade química ganha ainda mais importância, porque o tratamento deixa de ser apenas uma sequência de dosagens e passa a depender do comportamento integrado entre pré-tratamento, remoção de sulfato, desaeração e bombeio de injeção. Nessa condição, a escolha do químico deve levar em conta não apenas a função principal — por exemplo, controlar microrganismos, incrustação ou corrosão —, mas também o risco de interferência no desempenho de separação, filtração, membranas, remoção de oxigênio e estabilidade operacional do sistema.
+
+Isso exige atenção especial aos pontos de injeção, à ordem de contato entre produtos, ao tempo de residência disponível e à possibilidade de incompatibilidade entre oxidantes, removedores, dispersões coloidais e outros aditivos de tratamento de água. Uma dosagem tecnicamente adequada em um trecho pode ser inadequada em outro se provocar consumo indesejado do reagente, formação de subprodutos, aumento de tendência a fouling ou perda de desempenho em equipamentos a jusante.
+
+### Monitoramento de desempenho
+
+O desempenho do tratamento químico da água do mar para injeção não deve ser avaliado apenas pelo consumo do produto. O monitoramento precisa verificar se a função pretendida está sendo atingida no processo real: contenção do crescimento microbiológico, manutenção das condições de tratamento, preservação da estabilidade operacional e ausência de efeitos adversos sobre filtração, SRU, desaeração e sistema de injeção. Também é necessário observar se a química aplicada está coerente com a integridade dos materiais e com a estratégia global de tratamento da água.
+
+Em termos práticos, o condicionamento químico da água do mar em FPSOs é uma atividade de equilíbrio entre proteção microbiológica, controle de corrosão e incrustação, compatibilidade com as etapas de tratamento e manutenção da confiabilidade do sistema de injeção. Quando esse equilíbrio não é alcançado, a consequência tende a aparecer como perda de desempenho de tratamento, obstrução de filtros, instabilidade operacional e maior exposição de equipamentos e linhas a mecanismos de degradação.
+
+## 2.2. Produtos químicos no tratamento do gás, incluindo inibidores de corrosão e MEG
+
+No tratamento do gás em FPSOs, os produtos químicos cumprem funções diferentes e devem ser selecionados pelo mecanismo de atuação e pelo ponto do processo em que de fato controlam o problema. Em uma **classificação de uso e reporte** adotada nas referências consultadas, entram como **gas treatment chemicals** os produtos empregados na **desidratação do gás natural** e na **remoção de CO2 e/ou H2S**. Nessa mesma lógica de classificação, os químicos injetados em linhas para **controle de hidratos** podem aparecer em categoria separada de reporte. Isso não reduz sua relevância operacional: em FPSOs, o controle de hidratos permanece diretamente ligado à garantia de escoamento, à continuidade da produção e à integridade das linhas e equipamentos associados ao gás.
+
+## Funções principais no tratamento do gás
+
+Na desidratação, o **TEG** é usado para secar o gás. Em sistemas de remoção de gases ácidos, o tratamento envolve solventes do tipo **amina** e seu respectivo circuito de regeneração. Já na prevenção de hidratos em flowlines e risers, as referências disponíveis indicam o uso de **metanol** ou **MEG**. A formação de hidratos depende da **composição**, da **temperatura** e da **pressão**. Trata-se de compostos cristalinos formados em estruturas de água; quando se formam e congelam, podem danificar equipamentos e dutos.
+
+As condições de risco mudam com o arranjo do sistema. Em risers usuais, a condição crítica descrita ocorre principalmente quando a produção para e a temperatura começa a cair. Em flowlines mais longas, expostas a água do mar fria ou a ambientes muito frios, a formação de hidratos pode ocorrer também em operação normal, exigindo injeção contínua de metanol. Quando aplicável, o metanol pode ser separado e reciclado. O uso de modelos de predição de hidratos ajuda a identificar quando o risco existe e pode apoiar a redução da injeção ou o adiamento da despressurização.
+
+## Inibidores de corrosão e sua diferença em relação ao MEG/metanol
+
+Além do controle de hidratos, sistemas de gás podem exigir **inibidores de corrosão**. A função desses produtos não se confunde automaticamente com a de **MEG** ou **metanol**. MEG e metanol são aplicados principalmente para reduzir o risco de hidrato e, conforme a referência consultada, também podem contribuir para prevenir corrosão em linhas com água presente. Já o inibidor de corrosão dedicado é selecionado para atuar onde existe **fase aquosa** e potencial corrosivo, de modo a proteger o sistema metálico nas regiões efetivamente expostas.
+
+Por isso, a seleção não deve partir apenas do nome do produto, mas da condição de processo que se deseja controlar. Se o problema dominante é a janela termodinâmica de hidrato, o foco recai sobre MEG ou metanol. Se há exposição relevante de superfícies metálicas a água com potencial corrosivo, pode ser necessário um inibidor específico, inclusive em arranjos em que o sistema já utiliza glicol ou outros solventes de tratamento. Em FPSOs, essa distinção é importante para evitar a interpretação de que o uso de MEG ou metanol substitui, por si só, toda necessidade de proteção anticorrosiva.
+
+O **ponto de aplicação** também é decisivo. Para controle de hidratos, a injeção precisa alcançar a fase e a região do sistema em que a água está presente e onde o resfriamento ou a despressurização elevam o risco de formação. Para inibidores de corrosão, o ponto de dosagem precisa favorecer contato com a região molhada que concentra o risco corrosivo. Em ambos os casos, uma dosagem deslocada do ponto crítico pode manter consumo químico sem entregar o efeito esperado no campo.
+
+## Compatibilidade com TEG, MEG, aminas e o circuito de processo
+
+A compatibilidade deve ser verificada em nível de sistema. Em circuitos de **TEG**, **MEG** e **amina**, o desempenho do tratamento depende não só da absorção ou da injeção, mas também do comportamento do produto ao longo da regeneração, das perdas por arraste e da interação com outras correntes do processo. Em FPSOs, isso é particularmente sensível porque desidratação, compressão, flare, regeneração e utilidades estão fortemente acoplados. Uma incompatibilidade pode degradar a eficiência do tratamento do gás e, ao mesmo tempo, criar restrições em outras etapas operacionais.
+
+Esse cuidado vale também para inibidores de corrosão aplicados em sistemas de gás. A seleção precisa considerar a convivência com glicóis, aminas, hidrocarbonetos, água associada e materiais do sistema, para reduzir risco de contaminação cruzada, perda de eficiência química ou aumento de perdas para outras correntes.
+
+## Monitoramento de desempenho, perdas e regeneração
+
+O monitoramento não deve se limitar ao consumo total do produto. Em sistemas com **TEG**, **MEG** e aminas, o acompanhamento operacional deve incluir o comportamento da regeneração e das correntes gasosas associadas. Há pontos típicos com potencial de perda química e emissão, como **flash tank**, **regenerador** e **stripping gas** em unidades de TEG, MEG e amina.
+
+Na regeneração de **TEG**, a quantificação de emissões associadas ao stripping gas requer medição, ou outra quantificação confiável, da vazão de gás que entra no regenerador. Para regeneração de **MEG**, as referências apontam o uso de ferramentas de cálculo dedicadas ou simulação de processo. Para regeneração de **amina**, a quantificação depende de método específico da instalação, com acurácia passível de documentação. Na prática, esse controle ajuda a distinguir consumo efetivo de perdas por arraste, degaseificação, ventilação ou instabilidade do circuito de regeneração.
+
+Para **inibidores de corrosão** e para **MEG/metanol**, o acompanhamento de desempenho deve verificar se o produto está chegando ao ponto de atuação e se as perdas para outras correntes permanecem sob controle. Isso é relevante tanto para desempenho do tratamento do gás quanto para inventário químico e para a rastreabilidade de correntes que podem migrar para outros sistemas da unidade.
+
+## Consequências operacionais
+
+Quando a seleção, a dosagem e o monitoramento são inadequados, o resultado pode aparecer como problema de escoamento, aumento de perdas químicas, instabilidade no tratamento do gás ou transferência do problema para etapas vizinhas do processo. Em contrapartida, quando o químico é escolhido pelo mecanismo correto, aplicado no ponto certo e acompanhado ao longo do circuito, aumenta-se a previsibilidade operacional do FPSO e reduz-se a chance de que hidratos, corrosão ou perdas no sistema de regeneração comprometam a produção.
+
+## 2.2. Produtos químicos — Prevenção de hidratos, incrustações, corrosão, emulsões, espuma, depósitos e crescimento microbiológico em sistemas topside e subsea
+
+Em FPSOs, a prevenção química desses mecanismos precisa ser tratada ao longo de toda a rota dos fluidos, do poço e sistema subsea até o processamento topside e a exportação. Como essas unidades tipicamente concentram o processo no convés e, em muitos casos, recebem produção de poços subsea, o desempenho dos produtos químicos depende não só da escolha do produto, mas também do ponto de injeção, do tempo de contato, da qualidade da mistura e do comportamento operacional do sistema.
+
+## Aplicação em sistemas topside e subsea
+
+Nos arranjos subsea, é comum a injeção a partir do topside por linhas dedicadas de serviço/MEG e de injeção química, com válvulas associadas na árvore submarina; a localização e a nomenclatura desses pontos podem variar conforme o arranjo do equipamento subsea. Isso é importante porque, em subsea, o produto químico normalmente precisa atuar antes que o fluido esfrie excessivamente, antes de regiões de queda de pressão ou antes de trechos com maior tendência a deposição e corrosão. Em topside, por outro lado, há mais opções de redistribuição, ajuste fino, inspeção e confirmação de efeito no processo.
+
+A distinção prática é que, em subsea, a prevenção tende a ser mais antecipatória e dependente de continuidade de injeção, integridade das linhas químicas e previsibilidade térmica e hidráulica. Em topside, a atuação costuma ser mais acessível ao operador, porém sujeita a forte influência de transientes, como partida, parada, slugging e upset de processo, que alteram mistura, separação, espuma, arraste e tempo de residência.
+
+## Hidratos e incrustações
+
+A prevenção de hidratos é crítica principalmente quando o sistema subsea esfria e permanece em faixa favorável à formação antes que as ações preventivas necessárias sejam executadas. Nessa frente, a estratégia química deve estar integrada ao envelope de pressão e temperatura, ao perfil de resfriamento da linha, ao teor de água livre, ao regime de escoamento e ao plano operacional para partida, parada e reinício. Ferramentas de predição de hidratos ajudam a evitar que o sistema de coleta subsea resfrie além do aceitável sem a proteção correspondente.
+
+Para incrustações, o foco é evitar supersaturação local, mistura incompatível de águas, queda de pressão com flash, aquecimento ou resfriamento que desloquem equilíbrios, e zonas de baixa renovação. A injeção precisa alcançar o ponto onde o risco nasce, e não apenas onde a incrustação se torna visível. Quando a tendência incrustante não é adequadamente controlada, as consequências incluem perda de seção de escoamento, piora de troca térmica, aumento de perda de carga, restrição de válvulas e prejuízo à injetividade ou à capacidade de produção.
+
+## Corrosão, depósitos e crescimento microbiológico
+
+O controle químico de corrosão deve considerar a presença de água, gases ácidos, sais, sólidos, oxigênio onde aplicável, temperatura, velocidade de escoamento e condições de interface. Em produção e exportação, também podem ser usados inibidores de corrosão e biocidas em sistemas de transporte. A efetividade depende da formação e manutenção de uma barreira protetora compatível com o regime do escoamento e com os demais químicos em uso. Em subsea, falhas de continuidade de dosagem ou má distribuição são particularmente críticas, porque a confirmação direta em campo é mais difícil e o acesso para intervenção é limitado.
+
+Depósitos não se limitam a incrustação mineral. Também podem envolver materiais orgânicos, produtos de corrosão e acúmulos associados a incompatibilidade química ou a degradação do próprio sistema. Além de restringirem escoamento e prejudicarem equipamentos, depósitos podem mascarar perda de desempenho de outros químicos, induzir subdepósito e dificultar diagnóstico da causa primária.
+
+O crescimento microbiológico tende a ser mais relevante em circuitos com água, zonas estagnadas, baixa renovação e condições favoráveis à formação de biofilme. Nesses casos, o tratamento químico precisa ser coordenado com limpeza operacional, drenagem, renovação e monitoramento, porque o problema não decorre apenas da presença do microrganismo, mas também das condições que permitem sua fixação e persistência.
+
+## Emulsões, espuma e estabilidade do processo
+
+Emulsões e espuma afetam diretamente separação óleo-água-gás, qualidade dos produtos, capacidade do vaso e estabilidade do controle. O tratamento químico deve ser ajustado ao tipo de emulsão, à energia de mistura imposta pelo processo, ao tempo de residência disponível e à sensibilidade dos equipamentos a arraste e formação de espuma. Dosagem inadequada, ponto de injeção mal posicionado ou combinação incompatível entre químicos pode piorar a separação em vez de melhorá-la, inclusive por estabilização indesejada da emulsão ou aumento da espuma.
+
+Como variações de inflow, slugging, startup e upset alteram a resposta do processo, o programa químico não deve ser tratado como parâmetro fixo. A gestão operacional precisa combinar previsão, monitoramento de restrições, observação de tendência e ações corretivas para manter o sistema próximo de sua condição ótima sem transferir o problema de um equipamento ou trecho para outro.
+
+## Monitoramento e interfaces operacionais
+
+O monitoramento de desempenho deve relacionar o objetivo químico com o efeito observado no sistema: estabilidade térmica e hidráulica para hidratos, tendência de deposição, integridade de materiais, eficiência de separação, formação de espuma, condição microbiológica e impacto em equipamentos a jusante. Em linhas de exportação, químicos adicionados ao fluxo podem incluir inibidores de hidrato, redutores de atrito, inibidores de corrosão e biocidas; quando esses produtos seguem para instalações a jusante, a interface operacional deve considerar a informação sobre o conteúdo químico da corrente, inclusive pela presença de água residual associada ao óleo exportado.
+
+Em síntese, a prevenção química em topside e subsea é eficaz quando combina seleção compatível, injeção no ponto correto, continuidade operacional, acompanhamento de transientes e verificação sistemática do efeito real sobre escoamento, separação, integridade e exportação. Sem esse encadeamento, é comum haver alívio local de um mecanismo com agravamento de outro, como melhora aparente de escoamento acompanhada de piora de corrosão, separação ou deposição.
