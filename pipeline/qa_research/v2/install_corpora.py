@@ -18,7 +18,7 @@ from pipeline.inventario.locking import output_lock
 from .language import detect_language
 from .navigation import feed_links, navigation_reason
 
-EXTRACTION_REVISION='professional-pages-v2.3-navigation'
+EXTRACTION_REVISION='professional-pages-v2.4-technical-body'
 
 
 def collection_files(collection):
@@ -58,6 +58,24 @@ def existing_records(root,source):
     return rows
 
 CATALOG = {
+ 'dupont': {'seeds':[
+        'https://www.dupont.com/content/dam/water/amer/us/en/water/public/documents/en/DWS-Oil-Gas-Injection-Water-Br-45-D03549-en.pdf',
+        'https://www.dupont.com/content/dam/water/amer/us/en/water/public/documents/en/RO-NF-FilmTec-Manual-45-D01504-en.pdf'],
+        'hosts':['www.dupont.com'],'scope':['/content/dam/water/'],
+        'kind':'manual_fabricante','jurisdiction':'not_specified',
+        'rights':'DuPont: acesso público, direitos reservados; condições e parâmetros específicos dos produtos descritos'},
+ 'bakerhughes': {'seeds':[
+        'https://dam.bakerhughes.com/m/74838446cbc54945/original/Corrosion-inhibition-used-for-a-wet-gas-system-treated-with-meg-cs.pdf'],
+        'hosts':['dam.bakerhughes.com'],'scope':['/m/74838446cbc54945/original/'],
+        'kind':'caso_fabricante','jurisdiction':'AU',
+        'rights':'Baker Hughes: acesso público, direitos reservados; resultados do caso não são metas universais'},
+ 'slb_chemicals': {'seeds':[
+        'https://www.slb.com/products-and-services/innovating-in-oil-and-gas/well-production/production-chemicals-and-services/demulsifiers',
+        'https://www.slb.com/products-and-services/innovating-in-oil-and-gas/well-production/production-chemicals-and-services/bacteria-management'],
+        'hosts':['www.slb.com'],
+        'scope':['/products-and-services/innovating-in-oil-and-gas/well-production/production-chemicals-and-services/'],
+        'kind':'guia_fabricante','jurisdiction':'not_specified',
+        'rights':'SLB: acesso público, direitos reservados; separar orientação técnica de alegações comerciais'},
  'abb': {'seeds':['https://library.e.abb.com/public/34d5b70e18f7d6c8c1257be500438ac3/Oil%20and%20gas%20production%20handbook%20ed3x0_web.pdf'],
          'hosts':['new.abb.com','library.e.abb.com'], 'kind':'manual_industrial',
          'scope':['/oil-and-gas/production-book','/public/'], 'jurisdiction':'not_specified',
@@ -94,7 +112,10 @@ class HTML(HTMLParser):
         if tag in ('br','p','div','li','h1','h2','h3','tr'): self.handle_data('\n')
         if tag in ('meta','link','img','input','br','hr','source','wbr'): return
         skip = tag in ('script','style','nav','header','footer','form','noscript','svg')
-        main = tag in ('main','article') or attrs.get('id') in ('content-core','main-content')
+        classes=set(attrs.get('class','').split())
+        # Cards de conteúdo relacionado não substituem o corpo técnico da página.
+        main = (tag=='main' or (tag=='article' and not classes.intersection({'related-resource','card','resource-card'}))
+                or attrs.get('id') in ('content-core','main-content') or 'article-rte' in classes)
         self.stack.append((tag, skip, main))
         self.skip += skip
         self.in_main += main

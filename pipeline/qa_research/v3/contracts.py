@@ -1,7 +1,7 @@
 """Contratos pequenos, com localização de erro; conteúdo é julgado na revisão."""
 import re
 
-VERSION = 'v3-contracts-2-context'
+VERSION = 'v3-contracts-3-context'
 TYPES = ('conceito','mecanismo','consequencia','diagnostico','decisao','procedimento')
 CRITERIA = ('fundamentada','correta','autonoma','determinada','sem_pistas','classe','composicao','pt_br','distinta','escopo')
 
@@ -33,10 +33,12 @@ def refs(v, allowed, location, empty=False):
     require((bool(v) or empty) and len(set(v))==len(v) and set(v)<=set(allowed),location+': referências vazias, repetidas ou desconhecidas')
 
 
-def pairs(v, location, empty=False):
+def pairs(v, location, empty=False, max_words=16):
     require(isinstance(v,list) and (bool(v) or empty),location+': esperado array de pares pt/en')
     for p in v:
         require(isinstance(p,dict) and text(p.get('pt')) and text(p.get('en')) and p['pt'].casefold()!=p['en'].casefold(),location+': cada par precisa de consultas distintas pt/en')
+        require(all(len(p[lang].split())<=max_words for lang in ('pt','en')),location+': consultas curtas de até '+str(max_words)+' palavras por idioma')
+    require(len(v)<=3,location+': no máximo três pares pt/en')
 
 
 def plan(d, entrada):
@@ -68,10 +70,20 @@ def review(d, sections, points):
         require(isinstance(r.get('correcao'),str),r['id']+'.correcao: string esperada')
         require(r['decisao']!='corrigir' or text(r['correcao']),r['id']+': indique a correção necessária')
         pairs(r.get('consultas'),r['id']+'.consultas',empty=True)
+        strings(r.get('limites'),'seção.limites')
+        gaps=r.get('lacunas_essenciais')
+        require(isinstance(gaps,list),r['id']+'.lacunas_essenciais: esperado array')
+        require(all(isinstance(g,dict) and g.get('ponto') in points and text(g.get('descricao')) for g in gaps),
+            r['id']+'.lacunas_essenciais: ponto conhecido e descrição obrigatórios')
+        require(len({g['ponto'] for g in gaps})==len(gaps),r['id']+': lacunas essenciais repetidas')
     for p in d['cobertura']:
         require(p.get('estado') in ('atendido','parcial','ausente') and text(p.get('motivo')),p['id']+': cobertura inválida')
         refs(p.get('secoes'),sections,p['id']+'.secoes',empty=p['estado']=='ausente')
     strings(d.get('omissoes_escopo'),'omissoes_escopo')
+    coverage={p['id']:p for p in d['cobertura']}
+    for r in d['secoes']:
+        for gap in r['lacunas_essenciais']:
+            require(coverage[gap['ponto']]['estado']!='atendido',gap['ponto']+': lacuna essencial contradiz cobertura atendida')
 
 
 def candidate(q, sections, points):

@@ -33,31 +33,46 @@ Os resultados publicados não demonstram a qualidade deste pipeline em óleo e g
 A busca do pipeline continua nos corpus locais instalados; esta alteração não
 instala um serviço de pesquisa na internet nem amplia silenciosamente o acervo.
 
-## Procedimento
+## Aprendizado do segundo piloto
 
-1. Planejar seções e pontos ancorados na frase integral. Gerar consultas PT/EN
-   específicas sobre mecanismos, condições e decisões, sem inventar subtópicos.
-2. Recuperar candidatas nas coleções, excluir navegação/extrações anormais e ler
-   a pertinência das passagens integrais. Distinguir evidência direta, apoio
-   conceitual e coincidência de termos; registrar aplicabilidade e limites.
-3. Se houver lacuna e consulta útil, fazer uma busca complementar. Sem passagem
-   nova, parar a pesquisa da seção. Se não houver evidência direta, registrar
-   pendência e não escrever uma seção apenas com conhecimento genérico do modelo.
-4. Escrever a seção com explicações causais, condições, critérios e consequências.
-   Complementos conceituais e lacunas são auxiliares. Dados, limites, dosagens e
-   obrigações normativas exigem suporte. Documento estrangeiro não cria obrigação
-   brasileira; documento sobre um equipamento não sustenta outro por analogia.
-5. Revisar o conjunto quanto a suporte, aplicabilidade, profundidade, cobertura,
-   coerência e PT-BR. Mencionar um termo não equivale a ensinar o ponto solicitado.
-6. Corrigir apenas seções com problemas, uma vez; pesquisar novamente somente se
-   o parecer indicar consultas. Reavaliar. Preservar seções boas e registrar
-   pendências, sem ciclo indefinido de pesquisa ou reescrita.
+A coleta `piloto_fluxo_v3_02_02_20261101T041303` produziu seis rascunhos corrigidos,
+mas a regra “qualquer lacuna rejeita a seção” descartou todos. O parecer indicava
+conteúdo útil e dez pontos atendidos/dez parciais. A regra estava incorreta para
+esse objetivo: qualidade do conteúdo e completude do escopo são decisões distintas.
+Também houve falso positivo editorial no uso físico de “o trecho realmente protegido”.
 
-A correção pode acrescentar uma busca dirigida, além das duas buscas máximas da
-pesquisa inicial. Seleção usa o modelo de redação; revisão mantém seu modelo
-próprio. Não há novo catálogo de modelos ou nova biblioteca de orquestração.
-Falhas de transporte continuam com até duas tentativas por chamada lógica e o
-orçamento cumulativo já existente. Essas tentativas não são rodadas de pesquisa.
+## Procedimento atual
+
+1. Planejar seções e pontos ancorados na frase integral. Gerar expressões técnicas
+   PT/EN curtas (preferência 3–12, máximo 16 palavras), com uma necessidade por
+   consulta. Descrições não ampliam o pedido com dados quantitativos universais.
+2. Recuperar e selecionar até 12 candidatas por seção. A seleção retorna somente
+   as úteis (até oito e até duas de apoio), com pontos sustentados e aplicabilidade.
+   Não pede justificativa para cada rejeição nem propõe novas consultas.
+3. Escrever a seção, explicando mecanismos, condições, critérios e consequências.
+   As fontes devem sustentar diretamente parte do conteúdo. Complementos e limites
+   ficam nos auxiliares. Sem evidência direta, registrar pendência.
+4. Revisar o conjunto separando: (a) erros técnicos/editoriais que exigem reparo;
+   (b) lacunas essenciais que tornam pontos parciais/ausentes; (c) limites opcionais
+   que não rejeitam conteúdo correto. Uma seção liberada pode ter cobertura parcial.
+5. Somente lacunas essenciais com consultas úteis motivam uma busca complementar.
+   Avaliar apenas passagens inéditas. Sem suporte direto novo, manter o texto
+   aprovado e registrar pendência; não repetir a escrita.
+6. Corrigir erros/editorial uma vez; completar lacunas somente quando há evidência
+   nova. Preservar as evidências anteriores e o texto correto. Se houver alteração,
+   revisar o conjunto novamente. Uma correção técnica que falha não libera o erro;
+   uma tentativa de ampliar cobertura que falha preserva a versão já aprovada.
+
+Há uma pesquisa inicial e, no máximo, uma complementação por seção, após a revisão.
+Não existe expansão adicional na seleção nem uma terceira pesquisa durante a
+correção. Seleção usa o modelo de redação. Falhas de transporte continuam com até
+duas tentativas por chamada lógica; isso não é rodada adicional de pesquisa.
+
+O corpus recebeu fontes profissionais direcionadas, documentadas em
+[FONTES_QUIMICA.md](FONTES_QUIMICA.md). São orientações de fabricante, manual e caso
+operacional, com limites de aplicabilidade. Não são evidência universal para FPSOs,
+nem fornecem normas brasileiras por inferência. A instalação é explícita e mantém
+separados os corpus factuais e os datasets de questões.
 
 ## Parada e passagem para questões
 

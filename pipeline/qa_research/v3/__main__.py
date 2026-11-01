@@ -4,6 +4,7 @@ import asyncio
 import json
 import shlex
 import shutil
+from collections import Counter
 from pathlib import Path
 
 from pipeline.domain_corpora.io_utils import file_hash
@@ -19,12 +20,16 @@ DEFAULT=Path(__file__).with_name('piloto.json')
 
 def configuration(path=DEFAULT, overrides=None):
     config=json.loads(Path(path).read_text(encoding='utf-8-sig'));config.update(overrides or {})
+    config.setdefault('selection_candidates',12)
+    config.setdefault('max_support_sources',2)
     for k in ('workers','max_calls','request_timeout','heartbeat','output_tokens','retry_tokens','max_input_chars',
-              'sections','sources_per_section','max_per_document','retrieval_candidates','section_words',
+              'sections','sources_per_section','max_per_document','retrieval_candidates','selection_candidates','section_words',
               'batch_size','max_batches','min_questions','patience'):
         C.require(type(config.get(k)) is int and config[k]>0,'Configuração inteira positiva esperada: '+k)
     C.require(config['batch_size']<=8,'batch_size deve ser no máximo 8')
     C.require(config['retry_tokens']>=config['output_tokens'],'retry_tokens deve ser >= output_tokens')
+    C.require(config['selection_candidates']<=24,'selection_candidates deve ser no máximo 24')
+    C.require(type(config['max_support_sources']) is int and config['max_support_sources']>=0,'max_support_sources deve ser inteiro não negativo')
     C.require(set(config.get('models',{}))==set(P.PROMPTS),'Configure os sete papéis de modelos')
     for value in config['models'].values():
         C.require(isinstance(value,str) and ':' in value and value.rsplit(':',1)[1] in ('low','medium','high'),'Modelo deve ser deployment:low|medium|high')
@@ -44,6 +49,18 @@ def markdown(output, summary):
             if q else 'Geração de questões não solicitada nesta execução.',
         '', 'Aprovação automática; validação pelo especialista pendente.',
         'Pontos ausentes do documento e perguntas não cobertas permanecem nos relatórios auxiliares.']
+    if d:
+        counts=Counter(p['estado'] for p in d.get('cobertura',[]))
+        lines+=['',f"Cobertura: {counts['atendido']} atendidos, {counts['parcial']} parciais, {counts['ausente']} ausentes.",
+            'Parada documental: '+d.get('motivo_parada','não informada')+'.',
+            'Elegível para questões: '+('sim' if d.get('qa_elegivel') else 'não')+'.',
+            'Texto liberado: `contexto/documento.md`. Todos os rascunhos: `contexto/rascunho_para_revisao.md`.']
+        pending=[r for r in d.get('pendencias',[]) if r['qualidade']=='corrigir' or r['lacunas_essenciais']]
+        if pending:
+            lines+=['','Pendências documentais:']
+            for row in pending:
+                lines+=['','- '+row['secao']+': '+row['motivo']]
+                lines += ['  - '+g['ponto']+': '+g['descricao'] for g in row['lacunas_essenciais']]
     if summary.get('erro'):lines+=['','Interrupção: '+summary['erro']]
     if q.get('por_classe'):
         lines+=['','| Classe | Admitidas |','|---|---:|']
@@ -63,6 +80,10 @@ async def execute(entrada, manifest, output, config, stage='context', example_pa
         previous=read_json(output/'identidade.json')
         C.require(previous is None or previous==identity,'Subtópico/versão mudou; use uma saída nova')
         atomic_json(output/'identidade.json',identity)
+        atomic_json(output/'preparacao_corpus.json',dict(manifest_sha256=file_hash(manifest),
+            ready=m.get('ready'),partial=m.get('partial'),selected_sources=m.get('selected_sources',[]),
+            errors=m.get('errors',[]),discovery=m.get('discovery',{}),
+            collections=[{k:c[k] for k in ('id','format','documents','sha256') if k in c} for c in m.get('collections',[])]))
         summary=dict(status='em_andamento',etapa=stage,entrada=entrada,inicio=stamp(),config=config,corpus=corpus_identity)
         calls=None
         try:
@@ -117,7 +138,7 @@ def collect(output, destination):
     with output_lock(output):
         C.require((output/'resumo.json').is_file(),'Saída sem resumo; aguarde a execução terminar')
         summary=read_json(output/'resumo.json')
-        candidates=[output/n for n in ('identidade.json','resumo.json','RELATORIO.md','orcamento.json','chamadas_llm.jsonl')]
+        candidates=[output/n for n in ('identidade.json','preparacao_corpus.json','resumo.json','RELATORIO.md','orcamento.json','chamadas_llm.jsonl')]
         for part in ('contexto','questoes'):
             if part=='questoes' and summary.get('questoes',{}).get('status') in (None,'bloqueado'):continue
             candidates.extend(p for p in (output/part).glob('*') if p.is_file())

@@ -32,7 +32,7 @@ class ServerError(Exception): status_code=500
 class Model:
     def __init__(self):
         self.inputs=[];self.fail=set();self.refine=False;self.bad_section=None;self.writer_failed=None
-        self.long_sections=False;self.regional=False;self.relevance='direta';self.gaps=[]
+        self.long_sections=False;self.regional=False;self.relevance='direta';self.gaps=[];self.essential=False;self.correction_failed=False
     async def __call__(self,role,messages,tokens):
         p=json.loads(messages[1]['content'])
         selecting='candidatas' in p and 'secao' in p
@@ -40,8 +40,8 @@ class Model:
         if role in self.fail:raise ServerError('erro simulado')
         if p.get('tarefa'):return response({'ok':True})
         if selecting:
-            return response(dict(avaliacoes=[dict(id=s['id'],pertinencia=self.relevance,motivo='Passagem técnica simulada',
-                aplicabilidade='Tratamento químico no processo simulado') for s in p['candidatas']],lacunas=[],consultas=[]))
+            return response(dict(selecionadas=[dict(id=s['id'],pertinencia=self.relevance,pontos=p['secao']['pontos'],
+                aplicabilidade='Tratamento químico no processo simulado') for s in p['candidatas'][:p['limite']]],lacunas=[]))
         if role=='plan':
             d=dict(pontos=[dict(id='P1',ancora='espuma',descricao='Controle da espuma',prioritario=True),
                 dict(id='P2',ancora='dosagem',descricao='Ajuste da dosagem',prioritario=True)],
@@ -50,18 +50,26 @@ class Model:
         elif role=='write':
             sid=p['secao']['id']
             if sid==self.writer_failed:raise ServerError('seção temporariamente indisponível')
+            if 'anterior' in p and self.correction_failed:raise ServerError('correção temporariamente indisponível')
             d=dict(titulo=p['secao']['titulo'],texto='O tratamento químico reduz a formação de espuma. A dosagem acompanha as condições do processo.',
                 fontes=[p['fontes'][0]['id']] if p['fontes'] else [],complementos=[],lacunas=self.gaps)
             if self.long_sections:d['texto']+=' A equipe acompanha a aplicação durante a operação normal do processo.'*40
             if self.regional:d['texto']='A equipa verifica o caudal de água durante a operação.'
+            if 'anterior' in p and any('EVIDENCIA_NOVA' in s['texto'] for s in p['fontes']):
+                d['texto']+=' O residual confirmado orienta o ajuste da dosagem.'
+                d['fontes']=[s['id'] for s in p['fontes']]
         elif role=='review':
             sections=p['secoes_enviadas'];mapping={s['id']:s['pontos'] for s in p['sumario']}
             coverage=[]
             for point in p['checklist']:
                 used=[s['id'] for s in sections if point['id'] in mapping[s['id']]]
-                coverage.append(dict(id=point['id'],estado='atendido' if used else 'ausente',secoes=used,motivo='Parecer simulado'))
+                missing=self.essential and point['id']=='P2' and not any('residual confirmado' in s['texto'] for s in sections)
+                coverage.append(dict(id=point['id'],estado='parcial' if missing and used else 'atendido' if used else 'ausente',secoes=used,motivo='Parecer simulado'))
             d=dict(secoes=[dict(id=s['id'],decisao='corrigir' if s['id']==self.bad_section else 'liberar',
-                motivo='Parecer técnico simulado',correcao='Corrigir o conteúdo técnico' if s['id']==self.bad_section else '',consultas=[]) for s in sections],
+                motivo='Parecer técnico simulado',correcao='Corrigir o conteúdo técnico' if s['id']==self.bad_section else '',
+                consultas=[dict(pt='criterioespecifico bombeamento residual',en='specificcriterion pump residual')] if self.essential and s['id']=='S2' and 'residual confirmado' not in s['texto'] else [],
+                lacunas_essenciais=[dict(ponto='P2',descricao='Critério de ajuste aplicado')] if self.essential and s['id']=='S2' and 'residual confirmado' not in s['texto'] else [],
+                limites=s.get('lacunas',[])) for s in sections],
                 cobertura=coverage,omissoes_escopo=[])
         elif role=='author':
             qs=[]
@@ -163,6 +171,9 @@ class FlowTests(unittest.TestCase):
         self.run_flow();destination=self.root/'snapshot';collect(self.output,destination)
         self.assertFalse((destination/'.local').exists())
         self.assertTrue((destination/'questoes/qa.csv').exists())
+        preparation=read_json(destination/'preparacao_corpus.json')
+        self.assertEqual(preparation['manifest_sha256'],file_hash(self.manifest))
+        self.assertEqual(preparation['collections'][0]['id'],'manual')
         for path in destination.rglob('*'):
             if path.is_file():self.assertNotIn('ORIGINAL_PRIVADO',path.read_text(encoding='utf-8-sig'))
         manifest=read_json(destination/'manifest_resultados.json')
@@ -211,12 +222,62 @@ class FlowTests(unittest.TestCase):
         self.assertFalse(any(r in ('write','review','author') for r,_,_ in self.model.inputs))
         self.assertTrue((self.output/'contexto/documento.md').exists())
 
-    def test_declared_gap_blocks_release_even_if_reviewer_misses_it(self):
-        self.model.gaps=['Falta evidência para condições de aplicação']
+    def test_optional_limits_do_not_veto_sound_document(self):
+        self.model.gaps=['Não há faixas quantitativas universais por fabricante']
         result=self.run_flow()
-        self.assertFalse(result['contexto']['qa_elegivel'])
-        self.assertEqual(sum(r=='write' for r,_,_ in self.model.inputs),4)
+        self.assertTrue(result['contexto']['qa_elegivel'],result)
+        self.assertEqual(sum(r=='write' for r,_,_ in self.model.inputs),2)
+        self.assertEqual(result['contexto']['secoes_liberadas'],2)
+
+    def test_essential_gap_preserves_good_text_but_blocks_qa_without_new_evidence(self):
+        self.model.essential=True
+        result=self.run_flow()
+        self.assertEqual(result['status'],'parcial',result)
+        self.assertEqual(result['contexto']['secoes_liberadas'],2)
+        self.assertEqual(result['contexto']['prioritarios_pendentes'],['P2'])
+        self.assertEqual(sum(r=='write' for r,_,_ in self.model.inputs),2)
+        self.assertEqual(sum(r=='select' for r,_,_ in self.model.inputs),2)
+        self.assertEqual(sum(r=='review' for r,_,_ in self.model.inputs),1)
         self.assertFalse(any(r=='author' for r,_,_ in self.model.inputs))
+
+    def add_specific_evidence(self):
+        path=self.manifest.with_name('pages.jsonl')
+        extra=dict(collection='manual',document_id='specific',title='Critério específico simulado',
+            text=('EVIDENCIA_NOVA criterioespecifico residual bombeamento verificacao controle acompanhamento leitura. '*15),
+            page=1,source_boundary='known_document',language='pt',url='https://example.org/specific')
+        with path.open('a',encoding='utf-8') as stream:stream.write(json.dumps(extra)+'\n')
+        manifest=read_json(self.manifest);manifest['collections'][0]['sha256']=file_hash(path);atomic_json(self.manifest,manifest)
+
+    def test_only_section_with_new_direct_support_is_completed_and_reviewed(self):
+        self.add_specific_evidence();self.model.essential=True
+        result=self.run_flow()
+        self.assertEqual(result['status'],'concluido',result)
+        self.assertEqual(sum(r=='select' for r,_,_ in self.model.inputs),3)
+        self.assertEqual(sum(r=='write' for r,_,_ in self.model.inputs),3)
+        self.assertEqual(sum(r=='review' for r,_,_ in self.model.inputs),2)
+        corrected=[p for r,p,_ in self.model.inputs if r=='write' and 'anterior' in p]
+        self.assertEqual([p['secao']['id'] for p in corrected],['S2'])
+        self.assertGreater(len(corrected[0]['fontes']),len(corrected[0]['anterior']['fontes']),
+            'Complementação conserva evidência anterior e acrescenta suporte novo')
+
+    def test_failed_coverage_improvement_preserves_previously_sound_section(self):
+        self.add_specific_evidence();self.model.essential=True;self.model.correction_failed=True
+        result=self.run_flow()
+        self.assertEqual(result['status'],'parcial',result)
+        self.assertEqual(result['contexto']['secoes_liberadas'],2)
+        self.assertFalse(result['contexto']['qa_elegivel'])
+        self.assertIn('P2',result['contexto']['prioritarios_pendentes'])
+        self.assertEqual(sum(r=='review' for r,_,_ in self.model.inputs),1)
+
+    def test_failed_technical_repair_excludes_bad_section_but_preserves_draft(self):
+        self.model.bad_section='S2';self.model.correction_failed=True
+        result=self.run_flow(stage='context')
+        self.assertEqual(result['contexto']['secoes_liberadas'],1,result)
+        self.assertEqual(result['contexto']['secoes_para_revisao'],2)
+        released=(self.output/'contexto/documento.md').read_text(encoding='utf-8')
+        draft=(self.output/'contexto/rascunho_para_revisao.md').read_text(encoding='utf-8')
+        self.assertNotIn('Tratamento 2',released)
+        self.assertIn('Tratamento 2',draft)
 
     def test_default_execution_stops_at_document_and_does_not_read_examples(self):
         with redirect_stdout(io.StringIO()),patch('pipeline.qa_research.v3.__main__.load_examples',side_effect=AssertionError('não ler QA')):

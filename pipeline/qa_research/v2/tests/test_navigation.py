@@ -8,11 +8,26 @@ from pathlib import Path
 from unittest.mock import patch
 
 from pipeline.domain_corpora.io_utils import file_hash,atomic_json
-from pipeline.qa_research.v2.install_corpora import install,CATALOG
+from pipeline.qa_research.v2.install_corpora import install,CATALOG,HTML,permitted
 from pipeline.qa_research.v2.navigation import feed_links
 
 
 class NavigationTests(unittest.TestCase):
+    def test_related_article_cards_do_not_replace_technical_body(self):
+        parser=HTML()
+        parser.feed('<nav>Menu</nav><section class="article-rte"><h2>Demulsification</h2>'
+            '<p>The chemical destabilizes the emulsion.</p></section>'
+            '<article class="related-resource"><p>Marketing case titles</p></article>')
+        self.assertIn('destabilizes',parser.text())
+        self.assertNotIn('Marketing',parser.text())
+        self.assertNotIn('Menu',parser.text())
+
+    def test_targeted_sources_have_allowed_seeds_and_bounded_hosts(self):
+        for name in ('dupont','bakerhughes','slb_chemicals'):
+            spec=CATALOG[name]
+            self.assertTrue(all(permitted(url,spec) for url in spec['seeds']))
+            self.assertFalse(permitted('https://example.org/unrelated',spec))
+
     def test_rss_atom_and_entity_rejection(self):
         self.assertEqual(feed_links('<rss><channel><item><title>A</title><link>https://example.org/a</link></item></channel></rss>'),['https://example.org/a'])
         self.assertEqual(feed_links('<feed xmlns="http://www.w3.org/2005/Atom"><entry><link href="https://example.org/a"/><link rel="self" href="https://example.org/api"/></entry></feed>'),['https://example.org/a'])

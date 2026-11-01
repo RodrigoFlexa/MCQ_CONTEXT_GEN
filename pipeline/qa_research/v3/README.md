@@ -1,172 +1,146 @@
-# Contexto e questões por seções e lotes — v3
+# Documento técnico primeiro — fluxo v3
 
-Entrada: tópico, subtópico e frase integral do especialista. A execução padrão
-termina no documento, para leitura e avaliação antes de qualquer questão.
+Entrada: tópico, subtópico e frase integral do especialista. O comando padrão
+termina no documento para leitura. Questões exigem solicitação explícita e um
+contexto completo, tecnicamente liberado e compatível com o critério atual.
 
-Fluxo: **planejar → buscar e selecionar → escrever → revisar → corrigir uma vez**.
-A busca mantém BM25 e fusão RRF das consultas PT/EN. Uma leitura de pertinência
-seleciona passagens aplicáveis ao processo/equipamento da seção, antes da redação.
-Se faltarem evidências, faz no máximo uma busca complementar; sem passagens novas,
-não repete a seleção. Na correção documental, pode fazer uma busca dirigida ao
-parecer, sem novo ciclo de expansão. Sem evidência direta, registra a seção pendente.
-Não acrescenta agentes, banco vetorial ou biblioteca de orquestração.
+**Planejar → buscar/selecionar → escrever → revisar → complementar/corrigir uma vez.**
 
-RSS/Atom são usados para descobrir documentos individuais. A busca também exclui
-feeds antigos e títulos anormais do acervo instalado; o reparo abaixo limpa a
-coleção publicada, preservando downloads e os documentos individuais íntegros.
+## O que mudou após o segundo piloto
 
-A fundamentação e os limites dessa adaptação estão em [METODO.md](METODO.md).
+A qualidade das afirmações e a cobertura do escopo são avaliadas separadamente.
+Uma seção correta pode ser publicada mesmo com cobertura parcial. Lacuna essencial
+mantém a pendência do ponto e bloqueia QA; limite opcional não rejeita a seção.
+Uma afirmação errada ou não sustentada continua exigindo correção.
 
-## Instalar e conferir no servidor
+Consultas PT/EN usam expressões técnicas curtas, de preferência 3–12 palavras e no
+máximo 16 por idioma. A busca mantém BM25/RRF, com uma oportunidade inicial para
+cada coleção. A seleção lê até 12 candidatas por seção, retorna somente as úteis,
+e permite até duas passagens de apoio. Não preenche quantidade com material genérico.
 
-Na raiz do checkout, após encerrar uma execução anterior que não deseja continuar:
+A pesquisa inicial faz uma seleção, sem expandir a própria busca. Depois da revisão,
+uma lacuna essencial com consultas úteis pode motivar uma única complementação.
+Somente passagens inéditas são avaliadas. Se não houver evidência direta nova,
+o conteúdo correto é preservado e não é reescrito. Erros/editorial são corrigidos
+uma vez com as fontes existentes, mesmo quando a busca adicional não ajuda.
+
+A verificação editorial permite o uso físico de “trecho” e detecta metalinguagem
+como “a base disponível” e “o conjunto disponível sustenta”. A redação deve explicar
+termos profissionais e evitar repetir os mesmos fundamentos em todas as seções.
+
+## Preparar o servidor e complementar o corpus
+
+Na raiz do repositório:
 
 ```bash
 git pull --ff-only origin codex/qa-evidencias-verificadas
 export DOCUMENT_PYTHON="$PWD/.venv-documento/bin/python"
 "$DOCUMENT_PYTHON" -m pip install -r pipeline/qa_research/v3/requirements.txt
 
-bash pipeline/qa_research/rodar_piloto_fluxo_v3.sh \
-  --item 02_02 --manifest dataset/professional_corpora_v2/manifest.json \
-  --output pipeline/qa_research/saida_fluxo_v3/02_02_documento_02 --check
-```
-
-Se o ambiente tiver outro nome, ajuste somente `DOCUMENT_PYTHON`. Requer Python
-3.10+ e as mesmas credenciais Azure/CA do projeto. Não muda endpoint nem certificado.
-`--check` verifica o manifesto e testa redação e revisão; nas etapas com QA,
-testa também resolução. São duas ou três chamadas lógicas, registradas
-no mesmo orçamento. Não gera contexto nem questões. `--plan` mostra somente a
-entrada/configuração, sem criar saídas ou acessar a API.
-
-O corpus já instalado é reutilizado. Não há download ou alteração de datasets de QA.
-O instalador de documentos profissionais existente permanece separado e pode ser
-usado para reparar o acervo antes de iniciar a geração. Para corrigir a IMCA já
-instalada, sem reinstalar outras coleções ou baixar datasets de questões:
-
-```bash
 "$DOCUMENT_PYTHON" -m pipeline.qa_research.v2.install_corpora \
-  --output dataset/professional_corpora_v2 --sources imca \
-  --max-documents 30 --max-pages 100 --depth 3
+  --output dataset/professional_corpora_v2 \
+  --sources dupont bakerhughes slb_chemicals \
+  --max-documents 3 --max-pages 5 --depth 0
 ```
 
-Não use `--retry-failed` nesse reparo: o feed antigo foi registrado como sucesso.
-O coletor reextrai os originais em cache e segue os links individuais. Erros de
-rede ficam em `install_report.json`; a execução pode manter documentos anteriores
-íntegros. `navigation_excluded.json` registra os itens antigos retirados do índice.
-As outras coleções do manifesto são preservadas. Confira o relatório se o corpus
-continuar sem material para algum ponto: geração não cria suporte que falta.
+São cinco documentos/páginas profissionais selecionados para as lacunas de
+SRU/membranas, corrosão em gás com MEG, desemulsificação e controle microbiológico.
+O catálogo e os limites de aplicação estão em [FONTES_QUIMICA.md](FONTES_QUIMICA.md).
+Outras coleções íntegras do manifesto são preservadas; downloads já verificados são
+reutilizados. Nenhum dataset externo de questões é baixado ou alterado.
 
-## Rodar o piloto
+Confira `dataset/professional_corpora_v2/install_report.json`. Falhas de coleta
+ficam registradas; a geração ainda pode retornar parcial se faltar evidência.
+`--retry-failed` permite repetir as URLs que falharem. O reparo de feed IMCA do
+piloto anterior não precisa ser repetido para instalar essas três coleções.
+
+Use Python 3.10+ e as mesmas credenciais Azure/CA do projeto. Se o ambiente tiver
+outro nome, ajuste somente `DOCUMENT_PYTHON`.
+
+## Executar o novo piloto somente documental
+
+Use uma saída nova, preservando os pilotos anteriores:
 
 ```bash
 bash pipeline/qa_research/rodar_piloto_fluxo_v3.sh \
   --item 02_02 --manifest dataset/professional_corpora_v2/manifest.json \
-  --output pipeline/qa_research/saida_fluxo_v3/02_02_documento_02 --stage context
-```
+  --output pipeline/qa_research/saida_fluxo_v3/02_02_documento_03 \
+  --stage context --check
 
-Em segundo plano, sem perder a execução ao desconectar do SSH:
-
-```bash
 nohup bash pipeline/qa_research/rodar_piloto_fluxo_v3.sh \
   --item 02_02 --manifest dataset/professional_corpora_v2/manifest.json \
-  --output pipeline/qa_research/saida_fluxo_v3/02_02_documento_02 --stage context \
-  > piloto_documento_02_02.log 2>&1 &
-tail -f piloto_documento_02_02.log
+  --output pipeline/qa_research/saida_fluxo_v3/02_02_documento_03 \
+  --stage context > piloto_documento_02_02_03.log 2>&1 &
+tail -f piloto_documento_02_02_03.log
 ```
 
-Use uma única execução por saída. Repita o mesmo comando para retomar. Chamadas
-validadas e lotes concluídos são reutilizados; tentativas gastas não são zeradas.
-Uma pendência de QA interrompe o lote e preserva os anteriores; na retomada, as
-respostas intermediárias validadas também são reutilizadas. Se precisar ampliar o
-orçamento cumulativo, acrescente `--max-calls 160` explicitamente.
+`--check` testa redação e revisão com duas chamadas curtas. `--plan` mostra somente
+a configuração, sem API nem escrita. O notebook `piloto_fluxo_v3.ipynb` chama a CLI
+com `--stage context`. Uma única execução pode escrever em cada saída.
 
-`--stage context` é o padrão. Depois de avaliar o documento, `--stage qa` solicita
-explicitamente questões e utiliza o documento desta saída,
-conferindo seu conteúdo com o que foi revisado e com a rastreabilidade. Uma alteração
-manual do documento exige nova geração/revisão. QA só inicia com todas as seções
-liberadas, todos os pontos atendidos, nenhuma omissão do escopo e revisão sob o
-critério atual. `--stage all` também respeita esse bloqueio, mas não é o comando
-recomendado para este piloto. Documentos da revisão anterior precisam ser revistos.
-Mudanças de conteúdo, modelos ou
-prompts criam versões por etapa e preservam o histórico; escopo/schema diferentes
-exigem outra saída. Alterações em concorrência, timeout e progresso não invalidam
-as respostas concluídas. Mudança no corpus refaz sua verificação antes da API.
+Repita o mesmo comando para retomar. Chamadas compatíveis concluídas são reutilizadas;
+o orçamento gasto não é zerado. Mudanças em prompts, modelos de conteúdo, critério
+ou corpus criam uma nova versão documental; resultados antigos não viram novos.
+Alterações em workers, timeout e progresso não repetem trabalho já concluído.
 
-## Limites e decisões
+## Ler o resultado e coletar
 
-- Duas requisições simultâneas; atualização a cada 30 segundos com a etapa e tempo
-  de espera atual. O terminal explica o motivo de cada repetição real. `--verbose`
-  mostra também números de tentativas e limites de tokens; o JSONL registra sempre
-  os detalhes, mesmo no modo normal.
-- Prazo de 300 segundos por tentativa de requisição, incluindo cancelamento via
-  cliente assíncrono. Espera por vaga é contabilizada separadamente.
-- No máximo duas tentativas por chamada lógica. Orçamento inicial: 16.000 tokens;
-  truncagem usa 32.000 na tentativa restante. SDK sem retentativas adicionais.
-- Revisão documental conjunta: técnica, suporte, cobertura e PT-BR. Se a entrada
-  ultrapassar o teto configurado, divide por seções completas e faz coerência final.
-- Na redação, pacotes grandes recebem sumário/metadados compactos e seleção por
-  tamanho serializado. Passagens são mantidas inteiras ou excluídas com motivo;
-  o texto original e a frase do especialista não são cortados. O ajuste fica em
-  `contexto/versoes/.../entradas/`, incluído na coleta. Os pacotes que já cabem
-  permanecem iguais para reutilizar chamadas compatíveis em uma retomada.
-- Uma rodada de correção documental. Uma entrega parcial preserva seções boas para
-  leitura, mas bloqueia toda geração de QA. Lacunas declaradas pelo redator também
-  impedem liberação; revisão não se resume a procurar palavras do checklist.
-- Até 24 candidatas por seleção, com oportunidade para diferentes coleções e limite
-  por documento. Até oito passagens pertinentes por seção. A seleção usa o deployment
-  de redação, sem um novo papel configurável; os parâmetros continuam em `piloto.json`.
-- Meta inicial de 40 questões, cobertura dos pontos prioritários liberados, até
-  12 lotes/96 candidatas novas e 120 tentativas externas incluindo falhas/preflight.
-- Saturação: dois lotes sem novas admitidas, após dar oportunidade a todas as seções.
-- As seis classes e a composição simples/composta são preservadas. Duplicatas são
-  verificadas dentro/entre lotes na revisão. Não há seis questões obrigatórias por ponto.
-- Lacunas encontradas na QA são registradas para a próxima versão documental.
+- `RELATORIO.md`: estado, cobertura por ponto, motivo de parada e pendências essenciais.
+- `preparacao_corpus.json`: coleções verificadas, hashes e diagnóstico da instalação,
+  incluído na coleta sem passagens originais.
+- `contexto/documento.md`: seções tecnicamente liberadas, inclusive quando o escopo
+  global ainda é parcial. Lacunas e referências ficam nos auxiliares.
+- `contexto/rascunho_para_revisao.md`: todos os últimos rascunhos, inclusive seções
+  rejeitadas. Serve para análise; nunca alimenta automaticamente QA.
+- `contexto/cobertura.json`: elegibilidade de QA, cobertura publicada e cobertura
+  antes da exclusão das seções, limites opcionais e lacunas essenciais.
+- `contexto/versoes/.../`: plano, buscas, seleção, rastreabilidade e rascunhos.
+  `revisao_*_modelo.json` preserva o parecer antes da verificação editorial local.
 
-Configuração em `piloto.json`. Os limites são hipóteses do piloto, sem garantia de
-quantidade, duração ou validação científica. `concluido` exige cobertura documental completa e, quando QA é solicitada, a meta configurada;
-`parcial` e `interrompido` não são apresentados como sucesso. Aprovação por modelo
-continua sujeita à avaliação pelo especialista.
-
-Somente quando QA é solicitada e o contexto é elegível, exemplos curados existentes
-de outros subtópicos são lidos por padrão. Arquivos
-adicionais podem ser indicados com `--examples /caminho/existente.jsonl`; a opção
-substitui a lista padrão. Somente pergunta/resposta/tipo e origem são utilizados.
-Os exemplos ficam separados do corpus factual e nunca são enviados ao resolvedor.
-
-## Resultados e coleta
-
-Leia `RELATORIO.md` e `resumo.json`. O contexto está em `contexto/documento.md` e
-`documento.json`; fontes/pareceres/cobertura ficam nos auxiliares. As questões estão
-em `questoes/qa.csv`, `admitidas.json` e `decisoes.json`. As versões mantêm seu histórico.
-`contexto/versoes/.../selecao.json` registra pertinência, aplicabilidade, lacunas e
-buscas complementares. `buscas.json` inclui também as consultas da correção.
-Rascunhos e correções ficam em `secoes/`, incluídos na coleta para análise; não são
-o documento liberado. Títulos e níveis de subtítulos são padronizados por código.
-As respostas brutas e as evidências originais ficam somente em `.local/` no servidor.
-Coletas de execuções somente documentais não carregam questões de execuções antigas.
-
-Ao terminar aparece `O código acabou de rodar no terminal 🙂`, o estado real e os
-comandos de coleta/commit/push com um destino novo. Retorno 0 indica conclusão; 2,
-parcial/interrupção. Também pode coletar manualmente após a execução encerrar:
+As passagens originais e as respostas brutas ficam em `.local/` no servidor e são
+excluídas da coleta. Coletas somente documentais não incluem questões antigas.
+Ao terminar, aparece “O código acabou de rodar no terminal 🙂” com o estado real e
+os comandos concretos de coleta/commit/push. Retorno 0 significa concluído; 2,
+parcial ou interrompido. Exemplo de coleta, após o processo encerrar:
 
 ```bash
 "$DOCUMENT_PYTHON" -m pipeline.qa_research.v3 \
-  --output pipeline/qa_research/saida_fluxo_v3/02_02_documento_02 \
-  --collect pipeline/qa_research/relatorios/piloto_fluxo_v3_02_02_01
-git add -- pipeline/qa_research/relatorios/piloto_fluxo_v3_02_02_01
-git commit -m "Resultados do piloto fluxo v3 - 02_02"
+  --output pipeline/qa_research/saida_fluxo_v3/02_02_documento_03 \
+  --collect pipeline/qa_research/relatorios/piloto_documento_02_02_03
+git add -- pipeline/qa_research/relatorios/piloto_documento_02_02_03
+git commit -m "Resultados do piloto documental 03 - 02_02"
 git push origin codex/qa-evidencias-verificadas
 ```
 
-A coleta é imutável e verifica hashes. Exclui credenciais, cache, respostas brutas e
-passagens originais do corpus. O notebook `piloto_fluxo_v3.ipynb` apenas chama a CLI.
+A coleta é imutável: use um destino ainda inexistente. O arquivo de rascunhos deve
+ser lido junto ao relatório para distinguir texto publicado de conteúdo pendente.
 
-## Testes offline
+## Critérios, limites e QA
+
+Há no máximo uma complementação e uma correção por seção. Uma entrega pode ser
+útil e parcial. Sem novas evidências, repetir redação não fecha lacunas essenciais.
+Duas requisições simultâneas, prazo de 300 segundos por tentativa e no máximo duas
+tentativas por chamada lógica. O SDK não adiciona outra camada de repetição.
+Heartbeat mostra a fase atual a cada 30 segundos; `--verbose` exibe os detalhes
+operacionais. O JSONL sempre registra tentativas e uso de tokens.
+
+Parâmetros em `piloto.json`: 12 candidatas por seleção, até oito passagens úteis,
+até duas de apoio, 700 palavras como referência por seção e orçamento cumulativo
+de 120 tentativas. Uma complementação conserva as evidências anteriores e pode
+acrescentar até oito passagens; o empacotamento mantém as passagens integrais e
+registra qualquer exclusão por tamanho. A seleção usa o modelo de redação; a revisão
+mantém seu próprio modelo. Não há novos agentes ou biblioteca de orquestração.
+
+`--stage qa` confere integridade, versão, todas as seções liberadas, todos os pontos
+atendidos e ausência de lacunas essenciais/omissões. `--stage all` também respeita
+a barreira; o piloto recomendado continua somente documental. QA conserva as seis
+classes e os lotes de até oito candidatas com resolução sem gabarito e revisão.
+Exemplos curados existentes só são lidos quando QA é solicitada e o contexto é
+elegível; permanecem separados do suporte factual e do resolvedor.
+
+A fundamentação da pesquisa está em [METODO.md](METODO.md). Testes offline verificam
+fluxo e contratos; a qualidade técnica/didática precisa ser avaliada no piloto real.
 
 ```bash
 python -m unittest discover -s pipeline/qa_research/v3/tests -v
 ```
-
-Testes simulados verificam contratos, fluxo, retomada, parcial, bloqueio técnico,
-refino, duplicatas, erro 500, truncagem e cancelamento por prazo. Não medem a qualidade
-do conteúdo produzido pelo deployment real; essa medição pertence ao piloto.

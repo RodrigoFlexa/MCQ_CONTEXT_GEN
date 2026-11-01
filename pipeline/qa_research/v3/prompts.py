@@ -13,36 +13,46 @@ quantidade_secoes é uma referência, não motivo para cortar o pedido.
 Liste os pontos solicitados com âncoras literais na frase. Associe todos os pontos
 às seções. Seções são organização editorial do mesmo subtópico. Planeje consultas
 equivalentes pt/en por seção, ambas explícitas. De 1 a 3 pares por seção.
-Cada consulta deve responder uma necessidade técnica concreta: como funciona,
-quando aplicar, o que acompanhar ou qual condição muda uma decisão. Evite juntar
+Consultas são expressões de busca de 3 a 12 palavras (máximo 16), não perguntas
+longas: um serviço ou mecanismo por consulta, com termos profissionais e sinônimos.
+Exemplos de FORMA: "inibidor corrosão gás úmido monitoramento" / "wet gas corrosion
+inhibitor monitoring". Não acrescente FPSO em toda consulta quando offshore ou o
+processo já delimita o assunto. Cada consulta atende uma necessidade técnica. Evite juntar
 todo o subtópico numa consulta ou acrescentar aplicações que o especialista não pediu.
+Defina a seção principal de cada explicação para evitar repetir fundamentos em
+todas as seções. A síntese final integra decisões e interações, sem reensinar todos
+os mecanismos. Descrições do checklist não ampliam a frase com dosagens universais,
+matrizes de fabricante, normas ou comparações empíricas não solicitadas.
 JSON {"pontos":[{"id":"P01","ancora":"citação literal","descricao":"...",
 "prioritario":true}],"secoes":[{"id":"S01","titulo":"...","pontos":["P01"],
 "consultas":[{"pt":"consulta técnica brasileira","en":"technical English query"}]}]}.
 '''
 
-SELECT = BASE + '''Selecione evidências para a seção ANTES da redação. Avalie cada
-passagem integral, não apenas palavras no título ou a reputação da instituição.
-direta: explica mecanismo, condição, critério ou prática efetivamente aplicável ao
-escopo da seção. apoio: ajuda a explicar um conceito, sem sustentar a prática alvo.
-descartar: coincidência de palavras, índice, notícia genérica ou outro equipamento.
-Documento de emissões não demonstra eficiência de tratamento. Procedimento de
-abastecimento de aeronave não define projeto de tanque de produto químico no FPSO.
-Não transforme recomendação estrangeira em obrigação brasileira. Descreva em
-aplicabilidade o processo/equipamento e os limites que a redação deve respeitar.
-Pontos sem evidência adequada entram em lacunas; se útil proponha até três consultas
-pt/en específicas para encontrá-la. Não invente fontes nem reescreva as passagens.
-Prefira utilidade técnica e complementaridade a quantidade. Responda todos os IDs.
-JSON {"avaliacoes":[{"id":"E...","pertinencia":"direta|apoio|descartar",
-"motivo":"justificativa curta","aplicabilidade":"condições e limites"}],
-"lacunas":["P01"],"consultas":[{"pt":"...","en":"..."}]}.
+SELECT = BASE + '''Selecione SOMENTE passagens úteis para os pontos da seção.
+Leia a passagem integral. direta: sustenta mecanismo, condição, critério ou prática
+no processo/equipamento pedido; apoio: apenas explica um conceito de suporte.
+Passagens genéricas, outro equipamento, índice ou coincidência de palavras ficam
+fora de selecionadas. Não preencha a quantidade por obrigação. Não copie passagens.
+Documento de emissões não demonstra eficiência de tratamento. Recomendação de
+abastecimento de aeronave não define tanque químico de FPSO. Uma lição de bilge
+não é evidência geral para química de produção; seu uso se limita ao caso descrito.
+Registre pontos realmente sustentados e limites de aplicabilidade numa frase curta.
+Selecione no máximo limite passagens, com até max_apoio de apoio. Uma passagem
+pode sustentar mais de um ponto, mas não marque toda a seção por um exemplo isolado.
+Lacunas são pontos essenciais do pedido sem suporte, não ausência de dados
+quantitativos universais, parâmetros de fabricante ou aprofundamento opcional.
+Não proponha consultas: a revisão do documento decide se é necessário pesquisar.
+JSON {"selecionadas":[{"id":"E...","pertinencia":"direta|apoio",
+"pontos":["P01"],"aplicabilidade":"processo e limites em frase curta"}],
+"lacunas":["P01"]}.
 '''
 
 WRITE = BASE + '''Leia as passagens e escreva a seção inteira, respeitando o sumário
 e o escopo. Sintetize conhecimento técnico autônomo, didático, com mecanismos,
 condições, critérios e consequências; óleo, gás e FPSOs quando pertinente.
 Use parágrafos e, se útil, subtítulos Markdown. Referências, IDs e comentários sobre
-fontes não entram em texto. Evite 'o trecho', 'a fonte afirma', 'nos ensaios relatados'.
+fontes não entram em texto. Evite relato de leitura, como 'o trecho consultado', 'a fonte afirma' ou
+'nos ensaios relatados'. A palavra trecho pode designar uma tubulação normalmente.
 Use exatamente o título da seção planejada; não repita o título dentro de texto.
 Subtítulos internos começam em ###. Não diga 'referências consultadas/disponíveis',
 'conforme a referência' ou 'as fontes apontam'. Explique diretamente o fenômeno.
@@ -55,11 +65,26 @@ claramente ilustrativos, nunca relatos de campo inventados. Não transfira proje
 ou procedimento de um equipamento para outro sem fundamento. Evidência de reporte
 ambiental não substitui evidência de desempenho operacional. Não force uma seção
 a parecer completa com generalidades: registre lacunas em lacunas, fora do texto.
+Não escreva 'a base disponível', 'o conjunto disponível sustenta' ou 'para esta
+seção, as fontes...'. Descreva conhecimento e condições, não o processo de pesquisa.
+Priorize os pontos atribuídos à seção e evite repetir explicações do sumário.
+Casos de segurança e de bilge só entram quando ensinam diretamente um ponto; não
+devem ocupar o lugar de mecanismos de químicos de produção. Explique termos como
+flushing, cooldown, upset ou small bore na primeira ocorrência, com linguajar do
+Brasil, quando forem necessários à compreensão. Não use inglês para frases inteiras.
 Palavras_alvo é referência de extensão, não obrigação de preencher volume.
 Pode complementar conceitos consolidados: declare cada complemento em complementos.
 Dados empíricos, valores operacionais e requisitos normativos exigem fonte disponível.
+Resultados de caso de fabricante são daquele caso; não os converta em metas de
+FPSOs em geral. Parâmetros de membrana e compatibilidade de produto são específicos
+do material e do modelo, mesmo quando ajudam a explicar o mecanismo geral.
 Fontes contém somente IDs realmente utilizados; não atribua complementos às fontes.
-Em uma correção, atenda o parecer e preserve o conhecimento já correto.
+Em uma correção, atenda o parecer e preserve o conhecimento já correto. Novas
+fontes podem fechar lacunas essenciais. Não reescreva tudo para ocultar limites e
+não remova explicações corretas só porque faltam parâmetros quantitativos.
+Faixas de dosagem, métodos de ensaio, matrizes completas e dados comparativos não
+são requisitos automáticos. Declare como limites quando não são indispensáveis
+aos conceitos e decisões solicitados pelo especialista.
 JSON {"titulo":"...","texto":"...","fontes":["E..."],"complementos":["..."],"lacunas":["..."]}.
 '''
 
@@ -69,7 +94,20 @@ coerência entre seções, repetições, autonomia didática e português brasil
 Julgue profundidade: mencionar um termo não atende um ponto. Para atendido, o leitor
 precisa compreender mecanismos, condições, critérios e consequências relevantes ao
 pedido. Confira se evidências se aplicam ao mesmo processo/equipamento. Examine
-lacunas declaradas pelo redator; não libere cobertura completa com lacuna técnica.
+lacunas declaradas pelo redator e classifique sua relevância para o pedido real.
+Separe QUALIDADE do conteúdo de COMPLETUDE do escopo. liberar significa que as
+afirmações apresentadas são adequadas; pode coexistir com cobertura parcial.
+corrigir somente quando há erro, afirmação não sustentada, incoerência, repetição
+prejudicial ou defeito editorial a reparar. Uma lacuna não torna falso o texto
+correto ao redor. Não peça reescrita apenas para eliminar uma declaração de limite.
+lacunas_essenciais contém apenas ponto do pedido que ainda não foi ensinado;
+não registre lacuna quando outra seção já atende esse ponto no documento enviado.
+marque esse ponto parcial/ausente e proponha consultas curtas PT/EN (até 16 palavras)
+somente se úteis para buscar o suporte faltante. limites são aprofundamentos
+opcionais ou especificidades de produto/fabricante que não impedem a compreensão
+pedida. Não exija doses universais, normas ou ensaios específicos por padrão.
+Não transforme um limite opcional em lacuna essencial. Nunca rebaixe cobertura
+apenas porque faltam números, quando a explicação qualitativa atende o pedido.
 Conhecimento conceitual complementar explica evidências; não substitui toda a base
 profissional da seção. Não libere inventários genéricos sem explicação causal.
 Exija texto autônomo sem relato de leitura e sem atribuições às fontes no corpo.
@@ -83,7 +121,9 @@ usam pares pt/en. Em coerencia_final, fatos já passaram pela revisão com fonte
 verifique interação, cobertura e linguagem sem inventar nova comprovação factual.
 Confira se o checklist deixou algum pedido da frase original de fora.
 JSON {"secoes":[{"id":"S01","decisao":"liberar|corrigir","motivo":"...",
-"correcao":"orientação concreta ou vazio","consultas":[]}],
+"correcao":"reparo do conteúdo ou vazio","consultas":[],
+"lacunas_essenciais":[{"ponto":"P01","descricao":"o que falta ensinar"}],
+"limites":["aprofundamento opcional sem efeito na liberação"]}],
 "cobertura":[{"id":"P01","estado":"atendido|parcial|ausente","secoes":["S01"],
 "motivo":"..."}],"omissoes_escopo":["pedido da frase não representado no checklist"]}.
 '''
