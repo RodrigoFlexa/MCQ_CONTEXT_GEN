@@ -12,6 +12,7 @@ from pipeline.inventario.locking import output_lock
 from pipeline.inventario.textutil import atomic_json, read_json
 from . import VERSION, contracts as C, context, questions, prompts as P
 from .runtime import ROOT, Calls, digest, topic, load_examples, stamp
+from .retrieval import qa_ready
 
 DEFAULT=Path(__file__).with_name('piloto.json')
 
@@ -39,21 +40,22 @@ def markdown(output, summary):
         f"Seções liberadas: {d.get('secoes_liberadas',0)} de {d.get('secoes_planejadas',0)}.",
         f"Questões admitidas pelo modelo: {q.get('admitidas',0)}.",
         f"Tentativas externas cumulativas: {summary.get('tentativas',0)}.",
-        '', 'Motivo de parada das questões: '+q.get('motivo_parada','não concluídas nesta execução')+'.',
+        '', ('Motivo de parada das questões: '+q.get('motivo_parada','não concluídas nesta execução')+'.')
+            if q else 'Geração de questões não solicitada nesta execução.',
         '', 'Aprovação automática; validação pelo especialista pendente.',
         'Pontos ausentes do documento e perguntas não cobertas permanecem nos relatórios auxiliares.']
     if summary.get('erro'):lines+=['','Interrupção: '+summary['erro']]
-    lines+=['','| Classe | Admitidas |','|---|---:|']
-    lines += [f'| {k} | {v} |' for k,v in q.get('por_classe',{}).items()]
+    if q.get('por_classe'):
+        lines+=['','| Classe | Admitidas |','|---|---:|']
+        lines += [f'| {k} | {v} |' for k,v in q['por_classe'].items()]
     (Path(output)/'RELATORIO.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
 
 
-async def execute(entrada, manifest, output, config, stage='all', example_paths=(), transport=None, check=False):
+async def execute(entrada, manifest, output, config, stage='context', example_paths=(), transport=None, check=False):
     output=Path(output).resolve()
     C.require(output!=ROOT and output not in ROOT.parents,'A saída não pode ser raiz ou ancestral do projeto')
     manifest=Path(manifest).resolve()
     C.require(manifest.parent not in (output,*output.parents),'Saída não pode ficar dentro do corpus')
-    examples=load_examples(example_paths,entrada['id'])
     print('[preparação] verificando manifesto e arquivos do corpus',flush=True)
     m,_=await asyncio.to_thread(load_manifest,manifest);corpus_identity=digest(m)
     with output_lock(output):
@@ -61,12 +63,12 @@ async def execute(entrada, manifest, output, config, stage='all', example_paths=
         previous=read_json(output/'identidade.json')
         C.require(previous is None or previous==identity,'Subtópico/versão mudou; use uma saída nova')
         atomic_json(output/'identidade.json',identity)
-        summary=dict(status='em_andamento',entrada=entrada,inicio=stamp(),config=config,corpus=corpus_identity)
+        summary=dict(status='em_andamento',etapa=stage,entrada=entrada,inicio=stamp(),config=config,corpus=corpus_identity)
         calls=None
         try:
             calls=Calls(output,config,transport=transport)
             if check:
-                for role in ('write','review','solve'):
+                for role in (('write','review') if stage=='context' else ('write','review','solve')):
                     await calls.call(role,'disponibilidade',{'tarefa':'Responda ok=true'},
                         lambda d:C.require(d.get('ok') is True,'Esperado ok=true'),system=P.CHECK,tokens=8000)
                 return dict(status='verificado',tentativas=calls.budget.used)
@@ -83,8 +85,13 @@ async def execute(entrada, manifest, output, config, stage='all', example_paths=
                 C.require(digest(doc)==report['documento_sha256']==digest(clean),'Contexto alterado após revisão; gere uma nova versão')
             summary['contexto']=report
             if stage in ('all','qa'):
-                C.require(report['qa_elegivel'],'Nenhuma seção foi liberada para gerar questões')
-                summary['questoes']=await questions.generate(entrada,sections,report,examples,config,calls,output/'questoes')
+                if qa_ready(report):
+                    examples=load_examples(example_paths,entrada['id'])
+                    summary['questoes']=await questions.generate(entrada,sections,report,examples,config,calls,output/'questoes')
+                else:
+                    summary['questoes']=dict(status='bloqueado',admitidas=0,
+                        motivo_parada='contexto_pendente',orientacao='Concluir pesquisa, cobertura e revisão documental antes de gerar questões')
+                    print('[contexto] questões bloqueadas: documento incompleto ou revisão anterior ao critério atual',flush=True)
             reports=[summary[k] for k in ('contexto','questoes') if k in summary]
             summary['status']='concluido' if all(r['status']=='concluido' for r in reports) else 'parcial'
         except (asyncio.CancelledError,KeyboardInterrupt):
@@ -109,14 +116,17 @@ def collect(output, destination):
     C.require(not destination.exists(),'Coleta imutável: escolha destino novo')
     with output_lock(output):
         C.require((output/'resumo.json').is_file(),'Saída sem resumo; aguarde a execução terminar')
+        summary=read_json(output/'resumo.json')
         candidates=[output/n for n in ('identidade.json','resumo.json','RELATORIO.md','orcamento.json','chamadas_llm.jsonl')]
         for part in ('contexto','questoes'):
+            if part=='questoes' and summary.get('questoes',{}).get('status') in (None,'bloqueado'):continue
             candidates.extend(p for p in (output/part).glob('*') if p.is_file())
             report=read_json(output/part/'cobertura.json') or {}
             if report.get('versao'):
                 version=output/part/'versoes'/report['versao']
                 candidates.extend(p for p in version.glob('*.json') if p.is_file())
-                candidates.extend(p for p in (version/'entradas').glob('*.json') if p.is_file())
+                for folder in ('entradas','secoes'):
+                    candidates.extend(p for p in (version/folder).glob('*.json') if p.is_file())
         destination.mkdir(parents=True)
         for path in candidates:
             if path.is_symlink() or path.suffix not in ('.json','.jsonl','.md','.csv'):continue
@@ -131,10 +141,10 @@ def main(argv=None):
     parser.add_argument('--item',default='02_02')
     parser.add_argument('--manifest',type=Path)
     parser.add_argument('--output',type=Path,default=Path('pipeline/qa_research/saida_fluxo_v3/02_02_piloto_01'))
-    parser.add_argument('--stage',choices=('all','context','qa'),default='all')
+    parser.add_argument('--stage',choices=('all','context','qa'),default='context',help='Padrão: somente documento; QA exige solicitação explícita e contexto completo')
     parser.add_argument('--examples',type=Path,action='append',help='Leitura explícita de exemplos existentes')
     parser.add_argument('--plan',action='store_true',help='Mostra configuração, sem chamadas nem escrita')
-    parser.add_argument('--check',action='store_true',help='Verifica corpus/credenciais e os modelos com três chamadas curtas')
+    parser.add_argument('--check',action='store_true',help='Verifica corpus/credenciais e os modelos da etapa solicitada')
     parser.add_argument('--verbose',action='store_true',help='Mostra também limites de tokens e números de tentativas')
     parser.add_argument('--collect',type=Path)
     parser.add_argument('--solver-model',help='deployment:effort explícito')
@@ -153,8 +163,8 @@ def main(argv=None):
         args.output=args.output.parent/(args.item+'_piloto_01')
     examples=args.examples if args.examples is not None else [ROOT/'pipeline/qa_research/geracao_tipos/exemplos.json']
     if args.plan:
-        print(json.dumps(dict(entrada=entrada,config=config,manifest=str(args.manifest),output=str(args.output),
-            exemplos_somente_leitura=[str(p) for p in examples]),ensure_ascii=False,indent=2));return 0
+        print(json.dumps(dict(entrada=entrada,etapa=args.stage,config=config,manifest=str(args.manifest),output=str(args.output),
+            exemplos_somente_leitura=[str(p) for p in examples] if args.stage in ('all','qa') else []),ensure_ascii=False,indent=2));return 0
     C.require(args.manifest is not None,'Informe --manifest do corpus já instalado')
     result=asyncio.run(execute(entrada,args.manifest,args.output,config,args.stage,examples,check=args.check))
     if args.check:

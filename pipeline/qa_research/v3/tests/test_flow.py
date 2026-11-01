@@ -32,11 +32,16 @@ class ServerError(Exception): status_code=500
 class Model:
     def __init__(self):
         self.inputs=[];self.fail=set();self.refine=False;self.bad_section=None;self.writer_failed=None
-        self.long_sections=False;self.regional=False
+        self.long_sections=False;self.regional=False;self.relevance='direta';self.gaps=[]
     async def __call__(self,role,messages,tokens):
-        p=json.loads(messages[1]['content']);self.inputs.append((role,p,tokens))
+        p=json.loads(messages[1]['content'])
+        selecting='candidatas' in p and 'secao' in p
+        self.inputs.append(('select' if selecting else role,p,tokens))
         if role in self.fail:raise ServerError('erro simulado')
         if p.get('tarefa'):return response({'ok':True})
+        if selecting:
+            return response(dict(avaliacoes=[dict(id=s['id'],pertinencia=self.relevance,motivo='Passagem técnica simulada',
+                aplicabilidade='Tratamento químico no processo simulado') for s in p['candidatas']],lacunas=[],consultas=[]))
         if role=='plan':
             d=dict(pontos=[dict(id='P1',ancora='espuma',descricao='Controle da espuma',prioritario=True),
                 dict(id='P2',ancora='dosagem',descricao='Ajuste da dosagem',prioritario=True)],
@@ -46,7 +51,7 @@ class Model:
             sid=p['secao']['id']
             if sid==self.writer_failed:raise ServerError('seção temporariamente indisponível')
             d=dict(titulo=p['secao']['titulo'],texto='O tratamento químico reduz a formação de espuma. A dosagem acompanha as condições do processo.',
-                fontes=[p['fontes'][0]['id']] if p['fontes'] else [],complementos=[] if p['fontes'] else ['Princípio conceitual consolidado.'])
+                fontes=[p['fontes'][0]['id']] if p['fontes'] else [],complementos=[],lacunas=self.gaps)
             if self.long_sections:d['texto']+=' A equipe acompanha a aplicação durante a operação normal do processo.'*40
             if self.regional:d['texto']='A equipa verifica o caudal de água durante a operação.'
         elif role=='review':
@@ -102,7 +107,9 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(result['questoes']['admitidas'],2)
         inputs=copy.deepcopy(self.model.inputs)
         roles=[r for r,_,_ in inputs]
-        self.assertEqual(roles,['plan','write','write','review','author','solve','judge'])
+        self.assertEqual(roles[0],'plan')
+        self.assertCountEqual(roles[1:5],['select','select','write','write'])
+        self.assertEqual(roles[5:],['review','author','solve','judge'])
         payload=next(p for r,p,_ in inputs if r=='solve')
         self.assertEqual(set(payload),{'questoes','contexto'})
         self.assertTrue(all(set(q)=={'id','pergunta'} for q in payload['questoes']))
@@ -122,20 +129,20 @@ class FlowTests(unittest.TestCase):
         roles=[r for r,_,_ in self.model.inputs]
         self.assertEqual(roles.count('refine'),1);self.assertEqual(roles.count('solve'),2);self.assertEqual(roles.count('judge'),2)
 
-    def test_known_technical_problem_excludes_section_but_allows_partial_qa(self):
+    def test_known_technical_problem_excludes_section_and_blocks_qa(self):
         self.model.bad_section='S2';self.config['min_questions']=1
         result=self.run_flow();self.assertEqual(result['status'],'parcial',result)
         self.assertEqual(result['contexto']['secoes_liberadas'],1)
         self.assertIn('P2',result['contexto']['prioritarios_pendentes'])
-        self.assertEqual(result['questoes']['admitidas'],1)
-        author=next(p for r,p,_ in self.model.inputs if r=='author')
-        self.assertEqual([s['id'] for s in author['contexto']],['S1'])
+        self.assertEqual(result['questoes']['admitidas'],0)
+        self.assertEqual(result['questoes']['motivo_parada'],'contexto_pendente')
+        self.assertFalse(any(r=='author' for r,_,_ in self.model.inputs))
         self.assertEqual(sum(r=='write' for r,_,_ in self.model.inputs),3,'Somente a seção problemática é reescrita')
 
     def test_operational_failure_of_section_preserves_other_section(self):
         self.model.writer_failed='S2';self.config['min_questions']=1
         result=self.run_flow();self.assertEqual(result['status'],'parcial',result)
-        self.assertEqual(result['questoes']['admitidas'],1)
+        self.assertEqual(result['questoes']['admitidas'],0)
         self.assertEqual(result['contexto']['erros'][0]['secao'],'S2')
 
     def test_failure_in_qa_resumes_cached_document_and_author(self):
@@ -166,6 +173,18 @@ class FlowTests(unittest.TestCase):
         self.assertEqual([r for r,_,_ in self.model.inputs],['write','review','solve'])
         self.assertFalse((self.output/'contexto').exists())
 
+    def test_context_preflight_does_not_call_solver(self):
+        result=self.run_flow(stage='context',check=True)
+        self.assertEqual(result['status'],'verificado')
+        self.assertEqual([r for r,_,_ in self.model.inputs],['write','review'])
+
+    def test_context_collect_does_not_include_previous_questions(self):
+        self.run_flow()
+        self.run_flow(stage='context')
+        target=self.root/'document_snapshot';collect(self.output,target)
+        self.assertFalse((target/'questoes').exists())
+        self.assertTrue(list((target/'contexto/versoes').glob('*/secoes/*.json')))
+
     def test_plan_is_read_only(self):
         with redirect_stdout(io.StringIO()):self.assertEqual(main(['--plan','--output',str(self.output)]),0)
         self.assertFalse(self.output.exists())
@@ -182,6 +201,37 @@ class FlowTests(unittest.TestCase):
         self.manifest.with_name('pages.jsonl').write_text('arquivo alterado',encoding='utf-8')
         with self.assertRaises(ValueError):self.run_flow()
         self.assertEqual(self.model.inputs,[])
+
+    def test_only_generic_evidence_leaves_report_and_never_writes(self):
+        self.model.relevance='apoio'
+        result=self.run_flow()
+        self.assertEqual(result['status'],'parcial',result)
+        self.assertFalse(result['contexto']['qa_elegivel'])
+        self.assertEqual(result['contexto']['secoes_liberadas'],0)
+        self.assertFalse(any(r in ('write','review','author') for r,_,_ in self.model.inputs))
+        self.assertTrue((self.output/'contexto/documento.md').exists())
+
+    def test_declared_gap_blocks_release_even_if_reviewer_misses_it(self):
+        self.model.gaps=['Falta evidência para condições de aplicação']
+        result=self.run_flow()
+        self.assertFalse(result['contexto']['qa_elegivel'])
+        self.assertEqual(sum(r=='write' for r,_,_ in self.model.inputs),4)
+        self.assertFalse(any(r=='author' for r,_,_ in self.model.inputs))
+
+    def test_default_execution_stops_at_document_and_does_not_read_examples(self):
+        with redirect_stdout(io.StringIO()),patch('pipeline.qa_research.v3.__main__.load_examples',side_effect=AssertionError('não ler QA')):
+            result=asyncio.run(execute(topic('02_02'),self.manifest,self.output,self.config,transport=self.model))
+        self.assertEqual(result['status'],'concluido',result)
+        self.assertNotIn('questoes',result)
+        self.assertFalse(any(r=='author' for r,_,_ in self.model.inputs))
+
+    def test_previous_quality_policy_cannot_unlock_qa(self):
+        self.run_flow(stage='context')
+        path=self.output/'contexto/cobertura.json';report=read_json(path)
+        report.pop('criterio_qualidade');report['qa_elegivel']=True;atomic_json(path,report)
+        result=self.run_flow(stage='qa')
+        self.assertEqual(result['questoes']['motivo_parada'],'contexto_pendente')
+        self.assertFalse(any(r=='author' for r,_,_ in self.model.inputs))
 
     def test_large_review_splits_without_dropping_sources_and_checks_coherence(self):
         self.model.long_sections=True

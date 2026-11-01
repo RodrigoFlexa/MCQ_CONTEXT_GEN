@@ -16,8 +16,9 @@ from pipeline.domain_corpora.extract import pdf_pages, accepted_pages
 from pipeline.domain_corpora.manifest import load_manifest
 from pipeline.inventario.locking import output_lock
 from .language import detect_language
+from .navigation import feed_links, navigation_reason
 
-EXTRACTION_REVISION='professional-pages-v2.2-language'
+EXTRACTION_REVISION='professional-pages-v2.3-navigation'
 
 
 def collection_files(collection):
@@ -126,10 +127,22 @@ def permitted(url, spec):
 
 def collect(source, root, http, limit=30, max_pages=100, depth=2, retry_urls=None):
     spec = CATALOG[source]
-    previous=existing_records(root,source)
+    old=existing_records(root,source)
+    quarantined=[r for r in old if navigation_reason(r)]
+    previous=[r for r in old if not navigation_reason(r)]
+    if quarantined:
+        atomic_json(root/source/'navigation_excluded.json',[
+            dict(document_id=r['document_id'],url=r.get('url'),motivo=navigation_reason(r)) for r in quarantined])
     records=list(previous) if retry_urls is not None else []
     queue,seen,errors=deque((u,0) for u in (retry_urls if retry_urls is not None else spec['seeds'])),set(),[]
     reused=0
+    def discover(links, url, level):
+        for link in links:
+            target=urldefrag(urljoin(url,link))[0]
+            pdf_link='.pdf' in urlsplit(target).path.lower()
+            if (level < depth or pdf_link) and permitted(target,spec) and not re.search(r'\.(jpg|png|svg|mp4|zip|xlsx?)($|\?)',target,re.I):
+                if pdf_link:queue.appendleft((target,level))
+                else:queue.append((target,level+1))
     while queue and len(seen)<max_pages and (retry_urls is not None or len({r['document_id'] for r in records})<limit):
         url, level = queue.popleft()
         url = urldefrag(url)[0]
@@ -149,28 +162,32 @@ def collect(source, root, http, limit=30, max_pages=100, depth=2, retry_urls=Non
                 try:saved=json.loads(cache.read_text(encoding='utf-8'))
                 except json.JSONDecodeError:saved={}  # reextrai do original íntegro
                 if (saved.get('revision')==EXTRACTION_REVISION and saved.get('raw_sha256')==meta['sha256']
+                        and saved.get('links_sha256')==hashlib.sha256(json.dumps(saved.get('links'),ensure_ascii=False).encode()).hexdigest()
                         and saved.get('rows_sha256')==hashlib.sha256(json.dumps(saved.get('rows'),sort_keys=True,ensure_ascii=False).encode()).hexdigest()):
+                    discover(saved.get('links',[]),url,level)
                     records=[r for r in records if r['document_id']!=uid]+saved['rows'];reused+=1
                     print(f'[{source}] documento normalizado reutilizado',flush=True);continue
+            links=[]
+            navigation=False
             if is_pdf:
                 pages = list(pdf_pages(raw))
                 title = Path(urlsplit(url).path).name
             else:
                 if raw.stat().st_size > 20*1024*1024: raise ValueError('HTML maior que 20 MiB')
-                html = HTML(); html.feed(raw.read_text(encoding='utf-8', errors='replace'))
-                title = ' '.join(html.title).strip() or url
-                for link in html.links:
-                    target = urldefrag(urljoin(url, link))[0]
-                    pdf_link='.pdf' in urlsplit(target).path.lower()
-                    if (level < depth or pdf_link) and permitted(target, spec) and not re.search(r'\.(jpg|png|svg|mp4|zip|xlsx?)($|\?)',target,re.I):
-                        if pdf_link: queue.appendleft((target,level))
-                        else: queue.append((target,level+1))
-                pages = [{'page':None,'text':html.text()}]
-                if source=='offshorenorge': continue  # catálogo/detalhe não substitui o PDF do guia
-            pages, issues = accepted_pages(pages)
+                content=raw.read_text(encoding='utf-8', errors='replace')
+                feed=feed_links(content)
+                if feed is not None:
+                    links=feed;title=url;pages=[];navigation=True
+                else:
+                    html=HTML();html.feed(content)
+                    title=' '.join(html.title).strip() or url
+                    links=html.links;pages=[{'page':None,'text':html.text()}]
+                    navigation=source=='offshorenorge' or bool(navigation_reason(dict(url=url,title=title)))
+                discover(links,url,level)
             # Índices de catálogo não contam como documentos técnicos.
             if ((url in spec['seeds'] and source in ('imca','offshorenorge')) or
-                    url=='https://kimray.com/kimray-training'): continue
+                    url=='https://kimray.com/kimray-training'): navigation=True
+            pages,issues=([],[]) if navigation else accepted_pages(pages)
             base = dict(collection=source,document_id=uid,title=title,url=url,
                         source_sha256=meta['sha256'],source_kind='original',
                         source_boundary='known_document',language='und',
@@ -180,7 +197,8 @@ def collect(source, root, http, limit=30, max_pages=100, depth=2, retry_urls=Non
             for page in pages:
                 signal=detect_language(page['text'])
                 normalized.append({**base,**page,'language':signal['language'],'language_detection':signal})
-            atomic_json(cache,dict(revision=EXTRACTION_REVISION,raw_sha256=meta['sha256'],rows=normalized,
+            atomic_json(cache,dict(revision=EXTRACTION_REVISION,raw_sha256=meta['sha256'],rows=normalized,links=links,
+                links_sha256=hashlib.sha256(json.dumps(links,ensure_ascii=False).encode()).hexdigest(),
                 rows_sha256=hashlib.sha256(json.dumps(normalized,sort_keys=True,ensure_ascii=False).encode()).hexdigest()))
             records=[r for r in records if r['document_id']!=uid]+normalized
             print(f'[{source}] {len({r["document_id"] for r in records})}/{limit}: {title}',flush=True)
@@ -191,7 +209,8 @@ def collect(source, root, http, limit=30, max_pages=100, depth=2, retry_urls=Non
     have={r['document_id'] for r in records}
     records.extend(r for r in previous if r['document_id'] not in have)
     return records, errors, {'visited':len(seen),'remaining_urls':len(queue),'document_limit':limit,
-        'normalized_reused':reused,'previous_documents_preserved':len({r['document_id'] for r in previous}-have)}
+        'normalized_reused':reused,'navigation_excluded':len({r['document_id'] for r in quarantined}),
+        'previous_documents_preserved':len({r['document_id'] for r in previous}-have)}
 
 
 def force(root, http, record_id='10775273'):
@@ -261,6 +280,7 @@ def install(root, sources, http, limit=30, max_pages=100, depth=2, base=None, al
             records,failures,trace=collect(source,root,http,limit,max_pages,depth,retry_urls=urls)
             errors.extend(failures);discovery[source]=trace
             if not records:
+                collections=[c for c in collections if c['id']!=source]
                 errors.append({'source':source,'error':'Nenhum documento utilizável'});continue
             path=root/source/'pages.jsonl';path.parent.mkdir(parents=True,exist_ok=True)
             tmp=path.with_suffix('.tmp');tmp.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in records),encoding='utf-8');tmp.replace(path)

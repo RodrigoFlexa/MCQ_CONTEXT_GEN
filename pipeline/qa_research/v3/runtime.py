@@ -87,7 +87,8 @@ class Calls:
         C.require(len(body)+len(system)<=self.config['max_input_chars'],tag+': entrada excedeu max_input_chars; reduza o lote ou divida a revisão')
         key=digest([C.VERSION,self.backend,self.config['models'][role],system,payload])
         path=self.output/'.local'/'chamadas'/(key+'.json')
-        label=f'[{LABELS.get(role,role)}:{tag}]'
+        step='seleção' if system==P.SELECT else LABELS.get(role,role)
+        label=f'[{step}:{tag}]'
 
         def retry_message(reason, action='Repetindo uma vez'):
             self.progress(f'{label} {reason}. {action}.',flush=True)

@@ -1,7 +1,7 @@
 """Contratos pequenos, com localização de erro; conteúdo é julgado na revisão."""
 import re
 
-VERSION = 'v3-contracts-1'
+VERSION = 'v3-contracts-2-context'
 TYPES = ('conceito','mecanismo','consequencia','diagnostico','decisao','procedimento')
 CRITERIA = ('fundamentada','correta','autonoma','determinada','sem_pistas','classe','composicao','pt_br','distinta','escopo')
 
@@ -55,8 +55,9 @@ def plan(d, entrada):
 
 def section(d, sources):
     require(text(d.get('titulo')) and text(d.get('texto')),'seção: titulo e texto obrigatórios')
-    refs(d.get('fontes'),sources,'seção.fontes',empty=True)
+    refs(d.get('fontes'),sources,'seção.fontes')
     strings(d.get('complementos'),'seção.complementos')
+    strings(d.get('lacunas'),'seção.lacunas')
     require(d['fontes'] or d['complementos'],'seção: declare fundamento ou complementos conceituais')
 
 

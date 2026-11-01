@@ -7,23 +7,14 @@ from pathlib import Path
 from pipeline.inventario.llm import BudgetExceeded
 from pipeline.inventario.textutil import atomic_json
 from pipeline.qa_research.corpus import CorpusIndex
-from pipeline.qa_research.v2.language import bilingual_search, lint_ptbr
+from pipeline.qa_research.v2.language import lint_ptbr
 from . import contracts as C, prompts as P
 from .runtime import digest, CallFailure, Fatal
+from .retrieval import prompt_source, research, qa_ready, REVISION
 
 
 def input_size(payload, prompt):
     return len(json.dumps(payload,ensure_ascii=False))+len(prompt)
-
-
-def prompt_source(source):
-    """Metadados completos ficam nos auxiliares; o texto técnico permanece integral."""
-    row={k:source[k] for k in ('id','texto','collection','language','jurisdiction','year',
-        'document_type','page_ini','page_fim') if k in source}
-    title=source.get('title')
-    if isinstance(title,str) and len(title)<=1000:row['title']=title
-    elif title:row['title_omitted_chars']=len(str(title))
-    return row
 
 
 def outline(sections):
@@ -58,27 +49,18 @@ def fit_write(payload, config):
     return compact,detail
 
 
-def retrieve(index, pairs, config, retained=()):
-    hits,traces=bilingual_search(index,pairs,config['retrieval_candidates'])
-    selected=list(retained); counts={}
-    for row in selected:counts[row.get('document_id')]=counts.get(row.get('document_id'),0)+1
-    for row in hits:
-        sid='E'+digest([row['chunk_id'],row['content_hash']])[:20]
-        if any(s['id']==sid for s in selected):continue
-        document=row.get('document_id')
-        if counts.get(document,0)>=config['max_per_document']:continue
-        if len(selected)>=config['sources_per_section']:break
-        selected.append(dict(id=sid,texto=row['texto'],collection=row.get('collection'),
-            document_id=document,chunk_id=row['chunk_id'],language=row.get('language'),
-            title=row.get('title'),url=row.get('url'),page_ini=row.get('page_ini'),
-            page_fim=row.get('page_fim'),source_boundary=row.get('source_boundary')))
-        counts[document]=counts.get(document,0)+1
-    return selected,traces
+def clean_headings(body, section_title, document_title):
+    """Hierarquia de apresentação; não modifica o conteúdo técnico."""
+    lines=body.strip().splitlines()
+    if lines and re.sub(r'^#+\s*','',lines[0]).strip() in (section_title,document_title):lines=lines[1:]
+    levels=[len(m[1]) for line in lines if (m:=re.match(r'^(#{1,6})\s+',line))]
+    shift=max(0,3-min(levels)) if levels else 0
+    return '\n'.join(re.sub(r'^(#{1,6})(?=\s)',lambda m:'#'*min(6,len(m[1])+shift),line) for line in lines).strip()
 
 
 def editor_issues(section):
     body=section['texto'];issues=lint_ptbr(body)
-    if re.search(r'https?://|\bE[a-f0-9]{20}\b|\b(?:o trecho|a fonte afirma|nos ensaios relatados)\b',body,re.I):
+    if re.search(r'https?://|\bE[a-f0-9]{20}\b|\b(?:o trecho|a fonte afirma|nos ensaios relatados|referências? (?:consultadas?|disponíveis)|(?:as? fontes?|as? referências?) (?:apontam|indicam|afirmam)|conforme a referência)\b',body,re.I):
         issues.append('Referências e relato de fonte devem ficar nos auxiliares; redija conhecimento autônomo')
     return issues
 
@@ -86,40 +68,53 @@ def editor_issues(section):
 async def generate(entrada, manifest, config, calls, root, corpus_identity):
     semantic={k:config[k] for k in ('sections','sources_per_section','max_per_document','retrieval_candidates','section_words')}
     version=digest([entrada,corpus_identity,semantic,{k:config['models'][k] for k in ('plan','write','review')},
-        P.PLAN,P.WRITE,P.REVIEW,C.VERSION,Path(__file__).read_text(encoding='utf-8')])[:20]
+        P.PLAN,P.SELECT,P.WRITE,P.REVIEW,C.VERSION,REVISION,Path(__file__).with_name('retrieval.py').read_text(encoding='utf-8'),Path(__file__).read_text(encoding='utf-8')])[:20]
     work=Path(root)/'versoes'/version
     plan=await calls.call('plan','plano',dict(entrada=entrada,quantidade_secoes=config['sections']),lambda d:C.plan(d,entrada))
     atomic_json(work/'plano.json',plan)
     index=CorpusIndex(calls.output/'.local'/'corpus',manifest=manifest)
     print('[busca] verificando e construindo o índice local',flush=True)
     info=await asyncio.to_thread(index.build)
-    pools={};traces=[]
-    for section in plan['secoes']:
-        sources,queries=retrieve(index,section['consultas'],config)
-        pools[section['id']]=sources;traces.extend(dict(secao=section['id'],**t) for t in queries)
-    C.require(any(pools.values()),'Nenhuma passagem recuperada; confira o corpus e as consultas antes de redigir')
-    atomic_json(work/'buscas.json',traces)
-    atomic_json(calls.output/'.local'/'evidencias'/(version+'.json'),pools)
-    errors=[]
+    pools={};traces=[];selections={};errors=[]
+
+    async def search_section(section, previous=(), pairs=None, complement=True):
+        sid=section['id']
+        sources,detail=await research(index,section,entrada,plan['pontos'],config,calls,
+            retained=previous,pairs=pairs,complement=complement)
+        selections[sid+('' if complement else '_correcao')]=detail
+        traces.extend(dict(secao=sid,etapa='inicial' if complement else 'correcao',**t) for t in detail['consultas'])
+        atomic_json(work/'buscas.json',traces)
+        atomic_json(work/'selecao.json',selections)
+        return sources
 
     async def write_one(section, previous=None, report=None):
-        sid=section['id'];sources=pools[sid]
-        if report and report['consultas']:
-            used={s for s in previous['fontes']}
-            sources,_=retrieve(index,report['consultas'],config,retained=[s for s in sources if s['id'] in used])
-            pools[sid]=sources
-        payload=dict(entrada=entrada,sumario=plan['secoes'],secao=section,fontes=sources,
-            palavras_alvo=config['section_words'])
-        if previous:payload.update(anterior=previous,parecer=report)
+        sid=section['id']
         try:
+            sources=pools.get(sid,[])
+            if previous is None:
+                sources=await search_section(section)
+            elif report and report['consultas']:
+                used=set(previous['fontes'])
+                sources=await search_section(section,[s for s in sources if s['id'] in used],report['consultas'],False)
+            pools[sid]=sources
+            C.require(sources,sid+': nenhuma evidência diretamente pertinente; seção pendente de pesquisa')
+            payload=dict(entrada=entrada,sumario=plan['secoes'],secao=section,fontes=sources,
+                palavras_alvo=config['section_words'])
+            if previous:payload.update(anterior=previous,parecer=report)
             payload,sizing=fit_write(payload,config)
             atomic_json(work/'entradas'/(sid+('_correcao' if previous else '')+'.json'),sizing)
             C.require(not sizing.get('erro'),sid+': '+sizing.get('erro',''))
             if sizing['ajustado']:
                 print(f'[contexto:{sid}] pacote ajustado: {sizing["fontes_enviadas"]} passagens integrais para redação; detalhes no relatório de entrada',flush=True)
+            direct={s['id'] for s in payload['fontes'] if s.get('pertinencia')=='direta'}
+            C.require(direct,sid+': nenhuma evidência direta coube no pacote de redação')
+            def validate_written(data):
+                C.section(data,{s['id'] for s in payload['fontes']})
+                C.require(direct.intersection(data['fontes']),sid+': a seção precisa usar evidência direta, não somente apoio genérico')
             result=await calls.call('write',sid+('_correcao' if previous else ''),payload,
-                lambda d:C.section(d,{s['id'] for s in payload['fontes']}))
-            result=dict(id=sid,**{k:result[k] for k in ('titulo','texto','fontes','complementos')})
+                validate_written)
+            result=dict(id=sid,titulo=section['titulo'],**{k:result[k] for k in ('texto','fontes','complementos','lacunas')})
+            result['texto']=clean_headings(result['texto'],section['titulo'],entrada['titulo'])
             atomic_json(work/'secoes'/(sid+('_corrigida' if previous else '_inicial')+'.json'),result)
             return result
         except (Fatal,BudgetExceeded):raise
@@ -189,17 +184,17 @@ async def generate(entrada, manifest, config, calls, root, corpus_identity):
             coverage.update((p['id'],p) for p in coherent['cobertura'])
             omissions.extend(coherent['omissoes_escopo'])
         for sid,s in current.items():
-            issues=editor_issues(s)
+            issues=editor_issues(s)+['Lacuna técnica declarada: '+gap for gap in s.get('lacunas',[])]
             if issues and not decisions[sid].get('operacional'):
-                decisions[sid]=dict(id=sid,decisao='corrigir',motivo='Revisão editorial local',
-                    correcao='; '.join(issues),consultas=[])
+                old=decisions[sid]
+                decisions[sid]=dict(old,decisao='corrigir',motivo=old['motivo']+'; pendências locais',
+                    correcao='; '.join(filter(None,[old['correcao'],*issues])))
         result=dict(secoes=list(decisions.values()),cobertura=list(coverage.values()),omissoes_escopo=sorted(set(omissions)))
         atomic_json(work/('revisao_'+suffix+'.json'),result)
         return result
 
     current=await write_many(plan['secoes'])
-    C.require(current,'Nenhuma seção redigida; consulte chamadas_llm.jsonl e retome')
-    review=await review_all(current,'inicial')
+    review=await review_all(current,'inicial') if current else dict(secoes=[],cobertura=[dict(id=p['id'],estado='ausente',secoes=[],motivo='Sem evidência pertinente ou redação concluída') for p in plan['pontos']],omissoes_escopo=[])
     needed={r['id']:r for r in review['secoes'] if r['decisao']=='corrigir' and not r.get('operacional')}
     if needed:
         fixed=await write_many([s for s in plan['secoes'] if s['id'] in needed],current,needed)
@@ -211,14 +206,17 @@ async def generate(entrada, manifest, config, calls, root, corpus_identity):
     coverage=[]
     for p in review['cobertura']:
         kept=[s for s in p['secoes'] if s in released]
-        coverage.append(dict(p,secoes=kept,estado=p['estado'] if kept==p['secoes'] and kept else 'parcial' if kept else 'ausente'))
+        state=p['estado'] if kept==p['secoes'] and kept else 'parcial' if kept else 'ausente'
+        coverage.append(dict(p,secoes=kept,estado=state,motivo=p['motivo'] if state==p['estado'] else
+            'Cobertura reduzida: seção de suporte não foi liberada. Parecer anterior: '+p['motivo']))
     missing=[p['id'] for p in plan['pontos'] if p['prioritario'] and not any(c['id']==p['id'] and c['estado']=='atendido' for c in coverage)]
     doc=dict(titulo=entrada['titulo'],secoes=[dict(titulo=s['titulo'],texto=s['texto']) for s in sections])
-    report=dict(status='concluido' if not missing and not review['omissoes_escopo'] and len(sections)==len(plan['secoes']) else 'parcial',
+    report=dict(status='concluido' if all(p['estado']=='atendido' for p in coverage) and not review['omissoes_escopo'] and len(sections)==len(plan['secoes']) else 'parcial',
         versao=version,secoes_liberadas=len(sections),secoes_planejadas=len(plan['secoes']),pontos=plan['pontos'],
         cobertura=coverage,prioritarios_pendentes=missing,omissoes_escopo=review['omissoes_escopo'],erros=errors,
-        qa_elegivel=bool(sections),corpus=info,corpus_manifest=corpus_identity,entrada=digest(entrada),
+        criterio_qualidade=REVISION,corpus=info,corpus_manifest=corpus_identity,entrada=digest(entrada),
         documento_sha256=digest(doc),aprovacao='revisão automática; validação pelo especialista pendente')
+    report['qa_elegivel']=qa_ready(report)
     metadata={sid:[{k:v for k,v in s.items() if k!='texto'} for s in pool] for sid,pool in pools.items()}
     atomic_json(calls.output/'.local'/'evidencias'/(version+'.json'),pools)
     atomic_json(work/'rastreabilidade.json',dict(secoes=sections,fontes=metadata))
