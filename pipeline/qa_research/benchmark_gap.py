@@ -16,6 +16,8 @@ SOURCE=Q.C.ROOT/'pipeline/qa_research/relatorios/geracao_final_20261024T204734Z/
 OUT=Q.C.ROOT/'pipeline/qa_research/relatorios/benchmark_gap_full_v1'
 MODELS={'gpt-4-1-nano':'gpt-4-1-nano-petrobras','gpt-4-1-mini':'gpt-4-1-mini-petrobras','gpt-4-1':'gpt-4-1-petrobras'}
 ARMS=('closed_book','open_book')
+# Compatibilidade estrita: correção exclusivamente de serialização CSV/retomada.
+CODIGOS_COMPATIVEIS={'aa9ef045548bc7440b63aea816d35599eb978d28e7bfe563a792ac5f6b958075'}
 
 
 def prompt(name):return (HERE/(name+'.md')).read_text(encoding='utf-8').strip()
@@ -75,6 +77,11 @@ class AvaliacaoGap(Q.AvaliacaoQA):
             'GPT-4.1 Nano/Mini/Full, sem effort; até 100 palavras. Juiz GPT-5.4 medium; braços open/closed-book.'),encoding='utf-8')
 
     def checar_modelos(self):
+        expected=set(self.carregar_questoes())
+        saved={m:{a['uid'] for p in (self.saida/'juiz'/m).glob('*.json') for a in read_json(p)['avaliacoes']} for m in self.respondentes}
+        if all(saved[m]==expected and all(self._arq_resposta(m,u).exists() for u in expected) for m in self.respondentes):
+            self.progress('[RETOMADA] Todas as respostas e notas salvas; sem sondagens ou novas respostas.',flush=True)
+            return
         for m,alias in self.respondentes.items():
             self.progress(f'[DISPONIBILIDADE] {m}: {alias}',flush=True)
             self.cliente('resp_'+m,alias).json(prompt('respondente'),
@@ -108,7 +115,7 @@ class AvaliacaoGap(Q.AvaliacaoQA):
 def salvar_csv(path,rows):
     if not rows:return
     with path.open('w',encoding='utf-8-sig',newline='') as f:
-        w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+        w=csv.DictWriter(f,fieldnames=list(rows[0]),quoting=csv.QUOTE_ALL,escapechar='\\');w.writeheader();w.writerows(rows)
 
 
 def exportar_gap(directory,models):
@@ -197,6 +204,10 @@ def executar(saida=OUT,source=SOURCE,docs=DOCS,workers=8,judge_workers=2,mini=MO
         dependencias={n:Q.C.sha(Path(m.__file__).read_text(encoding='utf-8')) for n,m in [('core',Q),('motor',Q.motor),('base',Q.base),('bloqueios',Q.bloqueios)]})
     with output_lock(saida):
         old=read_json(saida/'config.json')
+        if old is not None and old!=cfg and old.get('codigo') in CODIGOS_COMPATIVEIS and {k:v for k,v in old.items() if k!='codigo'}=={k:v for k,v in cfg.items() if k!='codigo'}:
+            atomic_json(saida/'compatibilidade_retomada.json',dict(codigo_original=old['codigo'],codigo_atual=cfg['codigo'],
+                motivo='Serialização CSV robusta; dados, prompts, modelos e avaliação preservados.'))
+            cfg=old
         if old is not None and old!=cfg:raise ValueError('Protocolo ou dados mudaram; use outra saída')
         if old is None and (saida/'avaliacao').exists():raise ValueError('Pasta sem protocolo, use outra saída')
         if (saida/'questoes.jsonl').exists() and Q.linhas(saida/'questoes.jsonl')!=rows:raise ValueError('Questões salvas alteradas')

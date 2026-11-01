@@ -102,6 +102,18 @@ o .gitignore vigente já exclui cache e respostas brutas locais. Ao trazer a pas
 de resultados para cá, será possível calcular gap, intervalos pareados, transições,
 sustentação e sensibilidade à qualidade dos gabaritos.
 
+### Retomada da falha de exportação CSV (01/11/2026)
+
+Se apareceu `need to escape, but no escapechar set`, atualize o código e repita
+o mesmo comando. A correção preserva controles e aspas usando QUOTE_ALL e escape
+explícito. Ao ler esses CSVs em Python, use `csv.DictReader(..., escapechar='\\')`;
+os JSONL continuam sendo a fonte integral dos textos. A compatibilidade aceita
+somente o hash conhecido da implementação anterior e exige dados, modelos,
+prompts e demais parâmetros idênticos. O protocolo original fica preservado,
+com registro em compatibilidade_retomada.json. Se respostas e notas já estiverem
+completas, nenhuma sondagem ou resposta é refeita; a execução segue para a
+auditoria de sustentação que ainda falta.
+
 Lematização e análise sintática de repetitividade são etapas locais separadas;
 este comando completa os dados que exigem chamadas aos modelos. Não recalcula
 Vendi/Self-BLEU, já disponíveis. A avaliação humana continua pendente até preenchida.

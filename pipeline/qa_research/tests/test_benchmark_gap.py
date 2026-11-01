@@ -172,5 +172,19 @@ class GapTests(unittest.TestCase):
             self.assertEqual(G.main(['--plano','--saida',str(self.out)]),0)
         self.assertFalse(self.out.exists())
 
+    def test_csv_preserva_controles_aspas_e_compatibilidade_estrita(self):
+        data=[dict(texto='Texto com \x00, "aspas"\n e \\barra\r fim')]
+        path=self.root/'controles.csv';G.salvar_csv(path,data)
+        with path.open(encoding='utf-8-sig',newline='') as f:
+            self.assertEqual(list(csv.DictReader(f,escapechar='\\')),data)
+        self.assertEqual(self.run_gap(),0)
+        cfg=G.read_json(self.out/'config.json');cfg['codigo']=next(iter(G.CODIGOS_COMPATIVEIS))
+        G.atomic_json(self.out/'config.json',cfg)
+        before=(self.a.calls,self.b.calls,self.c.calls,self.j.calls,self.f.calls)
+        self.assertEqual(self.run_gap(),0)
+        self.assertEqual((self.a.calls,self.b.calls,self.c.calls,self.j.calls,self.f.calls),before)
+        cfg['limite_palavras']=50;G.atomic_json(self.out/'config.json',cfg)
+        with self.assertRaisesRegex(ValueError,'mudaram'):self.run_gap()
+
 
 if __name__=='__main__':unittest.main()
