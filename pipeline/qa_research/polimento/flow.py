@@ -9,6 +9,8 @@ from pipeline.qa_research.v3.runtime import Calls, CallFailure, Fatal, digest, s
 from . import VERSION, contracts as C, prompts as P
 from .documents import catalog, clean, markdown, validate_changes, apply_changes, diff
 from .research import CombinedIndex, inherited_index, investigate, evidence_payload, public_research
+from .editorial import audit, pending_work
+from .finishing import finish
 
 
 class EditionCalls(Calls):
@@ -42,12 +44,14 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
         base=base['fingerprints'], origem=base['origem'], corpus=manifest_identity, qa_elegivel=False)
     plan, researches, accepted, decisions, errors = None, {}, [], {}, []
     final = None
+    editorial = []
     # Nunca apresentar uma publicação antiga como resultado da versão em andamento.
     for filename in ('documento.json', 'documento.md'):
         (output / filename).unlink(missing_ok=True)
 
     def checkpoint():
         atomic_json(work / 'alteracoes_aprovadas.json', accepted)
+        atomic_json(work / 'acabamento_aprovado.json', editorial)
         atomic_json(work / 'decisoes.json', list(decisions.values()))
         atomic_json(work / 'pesquisas.json', {k: public_research(r) for k, r in researches.items()})
         atomic_json(output / '.local' / 'pesquisas' / (version + '.json'), researches)
@@ -59,7 +63,7 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
         except (Fatal, BudgetExceeded):
             raise
         except (CallFailure, ValueError) as exc:
-            result = dict(id=iid, achados=[], fontes=[], consultas=[], leituras=0, pendencias=[str(exc)])
+            result = dict(id=iid, status='falha_leitura', achados=[], fontes=[], consultas=[], leituras=0, pendencias=[str(exc)])
             errors.append(dict(intervencao=iid, etapa='pesquisa', erro=str(exc)))
         researches[iid] = result
         errors.extend(result.get('erros', []))
@@ -77,7 +81,8 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
 
     async def edit_batch(batch, tag):
         research = {i['id']: researches[i['id']] for i in batch}
-        payload = dict(entrada=base['entrada'], documento=base['documento'], protecoes=base['protecoes'],
+        current = apply_changes(base['documento'], accepted)
+        payload = dict(entrada=base['entrada'], documento=current, protecoes=base['protecoes'],
             intervencoes=batch, achados={k: r['achados'] for k, r in research.items()}, fontes=evidence_payload(research))
         if len(json.dumps(payload, ensure_ascii=False)) + len(P.EDIT) > config['max_input_chars'] and len(batch) > 1:
             middle = len(batch) // 2
@@ -93,7 +98,7 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
             good, bad = [], {}
             for row in items:
                 try:
-                    validate_changes(row, mapping[row['id']], base['documento'],
+                    validate_changes(row, mapping[row['id']], current,
                                      {f['id'] for f in research[row['id']]['achados']})
                     if row['alteracoes']:
                         good.append(row)
@@ -133,6 +138,7 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
     try:
         plan = await calls.call('plan', 'diagnostico', dict(entrada=base['entrada'], documento=base['documento'],
             pontos=base['pontos'], protecoes=base['protecoes'], limite=config['max_interventions'],
+            sinais_editoriais=audit(base['documento']),
             pendencias_anteriores=base['resumo_anterior'].get('recortes_pendentes', []),
             observacao_editorial=base['resumo_anterior'].get('observacao_editorial', '')),
             lambda d: C.diagnosis(d, blocks, chapters, {p['id'] for p in base['pontos']}, config['max_interventions']), system=P.DIAGNOSE)
@@ -159,7 +165,9 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
         for intervention in ordered:
             iid = intervention['id']
             if intervention['tipo'] != 'editorial' and not researches[iid]['achados']:
-                decisions[iid] = dict(id=iid, decisao='sem_alteracao', motivo='Pesquisa não forneceu achados para a intervenção')
+                result = researches[iid]
+                decisions[iid] = dict(id=iid, decisao='sem_alteracao',
+                    motivo='Pesquisa: ' + result.get('status', 'sem_achados') + '. ' + '; '.join(result['pendencias']))
             else:
                 editable.append(intervention)
         for start in range(0, len(editable), config['batch_size']):
@@ -174,11 +182,7 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
                 for row in batch:
                     decisions.setdefault(row['id'], dict(id=row['id'], decisao='pendente', motivo=str(exc)))
         candidate = apply_changes(base['documento'], accepted)
-        final = await calls.call('review', 'coerencia_final', dict(entrada=base['entrada'], documento=candidate,
-            pontos=base['pontos'], protecoes=base['protecoes'], alteracoes=diff(base['documento'], accepted),
-            decisoes=list(decisions.values()), diagnostico=plan),
-            lambda d: C.final_review(d, catalog(candidate)[1], {p['id'] for p in base['pontos']}), system=P.CONSOLIDATE)
-        atomic_json(work / 'coerencia_final.json', final)
+        final = await finish(base, candidate, accepted, decisions, plan, calls, work, editorial)
         state['status'] = 'avaliado'
     except asyncio.CancelledError:
         state.update(status='interrompido', erro='CancelledError: execução interrompida; checkpoints preservados')
@@ -187,17 +191,24 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
         state.update(status='interrompido', erro=type(exc).__name__ + ': ' + str(exc)[:900])
     finally:
         checkpoint()
-        candidate = apply_changes(base['documento'], accepted)
+        technical_candidate = apply_changes(base['documento'], accepted)
+        candidate = apply_changes(technical_candidate, editorial)
         unresolved = [i for i in (plan or {}).get('intervencoes', []) if decisions.get(i['id'], {}).get('decisao') != 'aprovar']
         critical = [i['id'] for i in unresolved if i['tipo'] == 'correcao_tecnica']
         coverage = final['cobertura'] if final else (plan or {}).get('cobertura', [])
-        publishable = state['status'] != 'interrompido' and final is not None and final['protecoes_preservadas'] and not critical and not any(p['critico'] for p in final['problemas'])
-        complete = bool(coverage) and all(p['estado'] == 'atendido' for p in coverage) and not (final or {}).get('omissoes_escopo')
+        problems = list((final or {}).get('problemas', []))
+        problems.extend(p for p in audit(candidate) if p['bloqueante'] and p not in problems)
+        omissions = (final or plan or {}).get('omissoes_escopo', [])
+        publishable = state['status'] != 'interrompido' and final is not None and final['protecoes_preservadas'] and not critical and not any(p['critico'] or p.get('tipo') == 'editorial' for p in problems)
+        complete = bool(coverage) and all(p['estado'] == 'atendido' for p in coverage) and not omissions
         essential = [i['id'] for i in unresolved if i['tipo'] == 'lacuna_essencial']
         state.update(fim=stamp(), tentativas=calls.budget.used, intervencoes_planejadas=len((plan or {}).get('intervencoes', [])),
             intervencoes_aprovadas=len(accepted), alteracoes_aprovadas=len(diff(base['documento'], accepted)),
-            cobertura=coverage, pendencias=unresolved, riscos_tecnicos_pendentes=critical, erros=errors,
-            documento_publicado=publishable, qa_elegivel=bool(publishable and complete and not essential),
+            cobertura=coverage, pendencias=pending_work(unresolved, coverage, omissions, problems),
+            problemas_editoriais=[p for p in problems if p.get('tipo') == 'editorial'],
+            acabamento_alteracoes=len(diff(technical_candidate, editorial)),
+            riscos_tecnicos_pendentes=critical, erros=errors,
+            documento_publicado=publishable, qa_elegivel=bool(publishable and complete and not essential and not problems),
             documento_sha256=digest(clean(candidate)), baseline_sha256=digest(clean(base['documento'])),
             palavras_antes=sum(len(b['texto'].split()) for b in blocks.values()),
             palavras_depois=sum(len(b['texto'].split()) for b in catalog(candidate)[1].values()),
@@ -210,6 +221,7 @@ async def polish(base, global_index, manifest_identity, config, output, transpor
             atomic_json(output / 'documento.json', clean(candidate))
             (output / 'documento.md').write_text(markdown(candidate), encoding='utf-8')
         atomic_json(work / 'comparacao.json', dict(base=base['fingerprints'], alteracoes=diff(base['documento'], accepted),
+            acabamento=diff(technical_candidate, editorial),
             blocos_inalterados=[bid for bid, block in blocks.items() if catalog(candidate)[1].get(bid) == block],
             procedencia='Texto herdado preservado não equivale a nova verificação de todas as suas afirmações'))
         atomic_json(output / 'resumo.json', state)

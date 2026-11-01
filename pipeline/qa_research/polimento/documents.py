@@ -6,8 +6,8 @@ from pathlib import Path
 from pipeline.domain_corpora.io_utils import file_hash
 from pipeline.inventario.textutil import read_json
 from pipeline.qa_research.v3.runtime import digest, topic
-from pipeline.qa_research.v3.review import editor_issues
 from . import contracts as C
+from .editorial import block_issues
 
 
 def catalog(document):
@@ -103,7 +103,7 @@ def validate_changes(proposal, intervention, base, findings):
             C.require(target == 'DOCUMENTO' and C.text(row.get('capitulo')) and C.text(row.get('grupo')), 'Capítulo novo precisa de título e grupo')
         if operation not in ('remover', 'mover', 'renomear_capitulo'):
             C.require(C.text(row.get('subtitulo')) and C.text(row.get('texto')), 'Bloco novo precisa de subtítulo e texto')
-            issues = editor_issues(row)
+            issues = block_issues(row)
             C.require(not issues, '; '.join(issues))
 
 

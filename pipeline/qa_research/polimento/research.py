@@ -102,6 +102,10 @@ def public_research(result):
 async def investigate(intervention, base, index, config, calls):
     findings, sources, traces, reports, pending, errors = [], {}, [], [], [], []
     pairs, done_queries = intervention['consultas'], set()
+    if not pairs:
+        return dict(id=intervention['id'], achados=[], fontes=[], consultas=[], leituras=0,
+            pendencias=[] if intervention.get('tipo') == 'editorial' else ['Pesquisa não executada: consultas ausentes'],
+            erros=[], status='dispensada_editorial' if intervention.get('tipo') == 'editorial' else 'nao_executada')
     seen = set()
     for turn in range(config['research_rounds']):
         pairs = [p for p in pairs if (p['pt'].casefold(), p['en'].casefold()) not in done_queries]
@@ -146,14 +150,21 @@ async def investigate(intervention, base, index, config, calls):
             break
         reports.append(result)
         for finding in result['achados']:
+            if finding['pertinencia'] != 'direta':
+                continue
             if any(digest({k: v for k, v in old.items() if k != 'id'}) == digest(finding) for old in findings):
                 continue
             findings.append(dict(id=intervention['id'] + '_A' + str(len(findings) + 1).zfill(2), **finding))
         pending.extend(result['pendencias'])
-        if result['suficiente']:
+        if result['suficiente'] and findings:
             break
         pairs = result['consultas_adicionais']
-    return dict(id=intervention['id'], achados=findings, fontes=list(sources.values()),
+    status = 'com_achados' if findings else 'sem_evidencia_pertinente' if reports else 'sem_passagens' if done_queries else 'nao_executada'
+    if errors:
+        status = 'parcial' if findings else 'falha_leitura'
+    if not findings:
+        pending.append('Não foi obtida evidência diretamente pertinente ao objetivo: ' + status)
+    return dict(id=intervention['id'], status=status, achados=findings, fontes=list(sources.values()),
                 consultas=traces, leituras=len(reports), pendencias=sorted(set(pending)), erros=errors)
 
 

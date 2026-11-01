@@ -16,6 +16,7 @@ from pipeline.qa_research.polimento import contracts as C
 from pipeline.qa_research.polimento.__main__ import configuration, execute, collect, main, DEFAULT_BASE, DEFAULT_LEGACY, DEFAULT_EXPERT, all_items
 from pipeline.qa_research.polimento.documents import load_base, catalog, apply_changes, validate_changes, clean
 from pipeline.qa_research.polimento.research import inherited_index, source, investigate
+from pipeline.qa_research.polimento.editorial import audit, block_issues
 from pipeline.qa_research.v3.runtime import CallFailure
 
 
@@ -34,6 +35,10 @@ class Model:
         self.partial = False
         self.research_bad = False
         self.cancel = False
+        self.contextual = False
+        self.reject_editorial = False
+        self.missing_queries_once = False
+        self.semantic_repeat = False
 
     async def __call__(self, role, messages, tokens):
         p = json.loads(messages[1]['content'])
@@ -47,11 +52,14 @@ class Model:
                 dict(id='I02', tipo='editorial', prioridade='media', alvos=['B01_02'], pontos=['F1'],
                      objetivo='Clarear a instrução', motivo='Redação pode melhorar', consultas=[])],
                 cobertura=[dict(id='F1', estado='parcial', motivo='Falta aprofundar')], omissoes_escopo=[])
+            if self.missing_queries_once:
+                d['intervencoes'][0]['consultas'] = []
+                self.missing_queries_once = False
         elif role == 'write' and 'intervencao' in p:
             pid = p['fontes'][0]['paragrafos'][0]['id']
             d = dict(suficiente=True, achados=[dict(proposicao='A vazão precisa ser observada após ajustar a bomba.',
                 citacoes=['INVENTADA' if self.research_bad else pid], tipo='explicacao_tecnica', condicoes=['Bomba em operação'],
-                limites=['Princípio qualitativo'])], consultas_adicionais=[], pendencias=[])
+                limites=['Princípio qualitativo'], pertinencia='contextual' if self.contextual else 'direta')], consultas_adicionais=[], pendencias=[])
         elif role == 'write':
             blocks = catalog(p['documento'])[1]
             items = []
@@ -59,6 +67,8 @@ class Model:
                 iid, target = intervention['id'], intervention['alvos'][0]
                 before = blocks[target]
                 body = before['texto'] + (' A equipe observa a resposta da vazão ao ajuste.' if iid == 'I01' else ' A conferência precede a mudança.')
+                if iid == 'E01':
+                    body = before['texto'].replace('No caso relatado, ', '').replace('Explicação repetida sem informação exclusiva.', '')
                 if self.bad_target and iid == 'I02' and 'pareceres' not in p:
                     target = 'B02_01'
                 items.append(dict(id=iid, alteracoes=[dict(operacao='substituir', alvo=target,
@@ -69,14 +79,18 @@ class Model:
         elif 'avaliar' in p:
             d = dict(avaliacoes=[])
             for iid in p['avaliar']:
-                bad = self.reject and iid == 'I01'
+                bad = (self.reject and iid == 'I01') or (self.reject_editorial and iid == 'E01')
                 flags = {k: True for k in C.FLAGS}
                 if bad:
                     flags['sem_perda'] = False
                 d['avaliacoes'].append(dict(id=iid, decisao='rejeitar' if bad else 'aprovar',
                     motivo='Perda de condição' if bad else 'Alteração verificada', correcao='', criterios=flags))
+        elif 'sinais_editoriais' in p and 'pontos' not in p:
+            text = ' '.join(b['texto'] for b in catalog(p['documento'])[1].values())
+            d = dict(problemas=[dict(blocos=['B02_01'], descricao='Repetição semântica com o capítulo anterior')]
+                     if self.semantic_repeat and 'Explicação repetida sem informação exclusiva.' in text else [])
         else:
-            d = dict(protecoes_preservadas=self.protected, problemas=[dict(blocos=['B01_01'], descricao='Condição não preservada', critico=True)] if self.critical else [],
+            d = dict(protecoes_preservadas=self.protected, problemas=[dict(blocos=['B01_01'], descricao='Condição não preservada', critico=True, tipo='tecnico')] if self.critical else [],
                 cobertura=[dict(id='F1', estado='parcial' if self.partial else 'atendido', motivo='Avaliação consolidada')], omissoes_escopo=[])
         return response(d)
 
@@ -175,6 +189,79 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(row['intervencoes_aprovadas'], 2)
         self.assertTrue(row['documento_publicado'])
         self.assertFalse(row['qa_elegivel'])
+        self.assertTrue(any(p['origem'] == 'cobertura' and p['pontos'] == ['F1'] for p in row['pendencias']))
+
+    def test_technical_gap_requires_queries_and_retry_performs_research(self):
+        self.model.missing_queries_once = True
+        row = self.run_flow()['documentos']['02_02']
+        self.assertTrue(row['qa_elegivel'], row)
+        self.assertEqual(sum(role == 'plan' for role, _ in self.model.inputs), 2)
+        self.assertTrue(any('intervencao' in p for role, p in self.model.inputs if role == 'write'))
+
+    def test_contextual_findings_cannot_authorize_technical_inclusion(self):
+        self.model.contextual = True
+        row = self.run_flow()['documentos']['02_02']
+        self.assertFalse(row['qa_elegivel'])
+        self.assertEqual(row['intervencoes_aprovadas'], 1)
+        research = read_json(next((self.output / '02_02/versoes').glob('*/pesquisas.json')))
+        self.assertEqual(research['I01']['status'], 'sem_evidencia_pertinente')
+        self.assertEqual(research['I01']['achados'], [])
+
+    def add_inherited_editorial_problem(self, text):
+        path = self.base / '02_02/documento.json'
+        document = read_json(path)
+        document['capitulos'][1]['blocos'][0]['texto'] = text
+        atomic_json(path, document)
+
+    def test_local_check_finds_reading_report_even_when_model_misses_it(self):
+        self.add_inherited_editorial_problem('No caso relatado, a equipe verifica a vazão.')
+        row = self.run_flow()['documentos']['02_02']
+        self.assertTrue(row['qa_elegivel'], row)
+        self.assertEqual(row['acabamento_alteracoes'], 1)
+        doc = read_json(self.output / '02_02/documento.json')
+        self.assertNotIn('No caso relatado', json.dumps(doc))
+        self.assertTrue(any('problemas_originais' in p for role, p in self.model.inputs if role == 'review'))
+        inputs = copy.deepcopy(self.model.inputs)
+        self.assertTrue(self.run_flow()['documentos']['02_02']['qa_elegivel'])
+        self.assertEqual(inputs, self.model.inputs, 'Retomada também reutiliza acabamento e conferência')
+
+    def test_later_edit_batch_receives_previous_approved_inclusion(self):
+        self.config['batch_size'] = 1
+        row = self.run_flow()['documentos']['02_02']
+        self.assertTrue(row['qa_elegivel'])
+        edits = [p for role, p in self.model.inputs if role == 'write' and 'intervencoes' in p]
+        self.assertIn('A equipe observa a resposta da vazão ao ajuste.', catalog(edits[1]['documento'])[1]['B01_01']['texto'])
+
+    def test_rejected_editorial_repair_is_not_published_despite_positive_final(self):
+        self.add_inherited_editorial_problem('No caso relatado, a equipe verifica a vazão.')
+        self.model.reject_editorial = True
+        row = self.run_flow()['documentos']['02_02']
+        self.assertFalse(row['qa_elegivel'])
+        self.assertFalse(row['documento_publicado'])
+        self.assertTrue(row['problemas_editoriais'])
+        self.assertEqual(row['acabamento_alteracoes'], 0)
+
+    def test_interrupted_editorial_conference_preserves_patch_and_resumes(self):
+        self.add_inherited_editorial_problem('No caso relatado, a equipe verifica a vazão.')
+        self.config['max_calls'] = 7
+        row = self.run_flow()['documentos']['02_02']
+        self.assertEqual(row['status'], 'interrompido', row)
+        self.assertEqual(row['acabamento_alteracoes'], 1)
+        self.assertFalse(row['documento_publicado'])
+        self.config['max_calls'] = 60
+        row = self.run_flow()['documentos']['02_02']
+        self.assertTrue(row['qa_elegivel'], row)
+        self.assertEqual(sum(role == 'write' and p.get('intervencoes', [{}])[0].get('id') == 'E01'
+                             for role, p in self.model.inputs), 1)
+
+    def test_focused_reading_repairs_semantic_repetition_without_local_match(self):
+        self.add_inherited_editorial_problem('Explicação repetida sem informação exclusiva. O conteúdo exclusivo permanece.')
+        self.model.semantic_repeat = True
+        row = self.run_flow()['documentos']['02_02']
+        self.assertTrue(row['qa_elegivel'], row)
+        doc = read_json(self.output / '02_02/documento.json')
+        self.assertIn('O conteúdo exclusivo permanece.', json.dumps(doc, ensure_ascii=False))
+        self.assertEqual(row['acabamento_alteracoes'], 1)
 
     def test_invented_evidence_id_is_rejected(self):
         self.model.research_bad = True
@@ -245,6 +332,25 @@ class FlowTests(unittest.TestCase):
 
 
 class ContractTests(unittest.TestCase):
+    def test_reading_patterns_do_not_confuse_power_supply_with_source_report(self):
+        for text in ['O fabricante consultado recomenda a configuração.', 'No contexto consultado, o resultado é adequado.',
+                     'No caso relatado, o teste funcionou.']:
+            self.assertTrue(block_issues(dict(texto=text)))
+        self.assertFalse(block_issues(dict(texto='A fonte de alimentação fornece energia ao transmissor.')))
+
+    def test_long_duplicate_paragraph_is_blocking_but_shared_terminology_is_not(self):
+        paragraph = ' '.join('palavra' + str(n) for n in range(60))
+        document = dict(capitulos=[dict(blocos=[dict(id='B1', texto=paragraph), dict(id='B2', texto=paragraph)])])
+        self.assertTrue(any(i['bloqueante'] and set(i['blocos']) == {'B1', 'B2'} for i in audit(document)))
+        document['capitulos'][0]['blocos'][1]['texto'] = ' '.join('termo' + str(n) for n in range(60))
+        self.assertFalse(audit(document))
+
+    def test_missing_queries_are_reported_as_not_executed_not_corpus_failure(self):
+        result = asyncio.run(investigate(dict(id='I1', tipo='lacuna_essencial', consultas=[]), {}, None, {}, None))
+        self.assertEqual(result['status'], 'nao_executada')
+        self.assertEqual(result['leituras'], 0)
+        self.assertTrue(result['pendencias'])
+
     def test_failed_followup_keeps_validated_findings_from_first_reading(self):
         class Index:
             def __init__(self): self.turn = 0
@@ -259,7 +365,7 @@ class ContractTests(unittest.TestCase):
                 if self.turn == 2: raise CallFailure('Falha simulada da segunda leitura')
                 data = dict(suficiente=False, achados=[dict(proposicao='Relação validada',
                     citacoes=[payload['fontes'][0]['paragrafos'][0]['id']], tipo='explicacao_tecnica',
-                    condicoes=['Condição explícita'], limites=[])],
+                    condicoes=['Condição explícita'], limites=[], pertinencia='direta')],
                     consultas_adicionais=[dict(pt='outra condição operacional', en='another operating condition')], pendencias=[])
                 validate(data)
                 return data

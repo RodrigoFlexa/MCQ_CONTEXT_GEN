@@ -47,6 +47,7 @@ def report_document(folder, summary):
         '', 'Base: ' + summary['origem'], '',
         f"Intervenções aprovadas: {summary['intervencoes_aprovadas']} de {summary['intervencoes_planejadas']}.",
         f"Alterações aprovadas: {summary['alteracoes_aprovadas']}.",
+        f"Alterações de acabamento: {summary.get('acabamento_alteracoes', 0)}.",
         f"Palavras: {summary['palavras_antes']} → {summary['palavras_depois']}.",
         f"Tentativas externas cumulativas: {summary['tentativas']}.",
         'Documento publicado: ' + ('sim' if summary['documento_publicado'] else 'não; leia documento_para_revisao.md') + '.',
@@ -57,7 +58,7 @@ def report_document(folder, summary):
     if summary.get('erro'):
         lines += ['', 'Interrupção: ' + summary['erro']]
     if summary['pendencias']:
-        lines += ['', 'Intervenções ainda pendentes:']
+        lines += ['', 'Trabalho ainda pendente (intervenções, cobertura, escopo e revisão):']
         lines += ['', *['- ' + r['id'] + ' (' + r['tipo'] + '): ' + r['objetivo'] for r in summary['pendencias']]]
     lines += ['', 'Pareceres, fontes, comparação antes/depois e decisões estão na pasta da versão: `versoes/' + summary['versao'] + '/`.']
     (folder / 'RELATORIO.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')

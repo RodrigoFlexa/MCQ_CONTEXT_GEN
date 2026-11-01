@@ -27,7 +27,7 @@ def diagnosis(data, blocks, chapters, points, limit):
         touched = set(row['alvos']) & set(blocks)
         require(not touched & occupied, row['id'] + ': alvo já atribuído a outra intervenção; agrupe os reparos')
         occupied.update(touched)
-        pairs(row.get('consultas'), row['id'] + '.consultas', empty=True)
+        pairs(row.get('consultas'), row['id'] + '.consultas', empty=row['tipo'] == 'editorial')
     coverage(data.get('cobertura'), points)
     strings(data.get('omissoes_escopo'), 'omissoes_escopo')
 
@@ -39,6 +39,7 @@ def research(data, paragraphs):
         require(isinstance(row, dict) and text(row.get('proposicao')), 'Achado precisa de proposição')
         refs(row.get('citacoes'), paragraphs, 'achado.citacoes')
         require(row.get('tipo') in TYPES, 'Estatuto da afirmação inválido')
+        require(row.get('pertinencia') in ('direta', 'contextual'), 'Declare pertinencia direta ou contextual ao objetivo')
         strings(row.get('condicoes'), 'achado.condicoes')
         strings(row.get('limites'), 'achado.limites')
     pairs(data.get('consultas_adicionais'), 'consultas_adicionais', empty=True)
@@ -70,4 +71,12 @@ def final_review(data, blocks, points):
     for row in data['problemas']:
         require(isinstance(row, dict) and text(row.get('descricao')) and type(row.get('critico')) is bool, 'Problema inválido')
         refs(row.get('blocos'), blocks, 'problema.blocos', empty=True)
+        require(row.get('tipo') in ('editorial', 'tecnico'), 'Problema precisa de tipo editorial ou tecnico')
     strings(data.get('omissoes_escopo'), 'omissoes_escopo')
+
+
+def editorial_review(data, blocks):
+    require(isinstance(data.get('problemas'), list), 'problemas editoriais deve ser array')
+    for row in data['problemas']:
+        require(isinstance(row, dict) and text(row.get('descricao')), 'Descreva o defeito editorial concreto')
+        refs(row.get('blocos'), blocks, 'problema editorial.blocos')

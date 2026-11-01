@@ -13,6 +13,10 @@ modificados. O plano aprovado está em `../PLANO_POLIMENTO_40_CONTEXTOS.md`.
 3. Pesquisar cada necessidade nos índices das evidências originais e do corpus
    instalado. Reutilizar BM25, busca PT/EN e RRF. Ler até oito passagens por rodada,
    no máximo duas rodadas; a segunda exige consulta adicional e passagem inédita.
+   Intervenção técnica exige consulta PT/EN; apenas edição pode dispensar pesquisa.
+   Pesquisa não executada, falta de passagens, leitura malsucedida e falta de
+   evidência pertinente são estados distintos. Achados contextuais não autorizam
+   inclusão factual: somente relações diretamente pertinentes chegam à edição.
 4. Extrair relações, condições, limites e estatuto das afirmações. O modelo cita IDs
    das passagens; o código recupera texto e intervalos, sem exigir cópia literal.
 5. Editar em lotes de duas intervenções. Somente os alvos autorizados podem ser
@@ -20,11 +24,25 @@ modificados. O plano aprovado está em `../PLANO_POLIMENTO_40_CONTEXTOS.md`.
    no diagnóstico. Blocos intocados permanecem idênticos.
    Movimentos preservam integralmente os blocos; títulos de capítulos podem ser
    ajustados sem regenerar seus parágrafos.
+   Cada lote recebe a edição corrente, incluindo as alterações já aprovadas.
 6. Revisar as alterações com as fontes e com o documento consolidado. Perda de
    conhecimento, condição ou correção do especialista impede aprovação. Um reparo
    por intervenção é permitido; aprovações independentes são preservadas.
-7. Conferir coerência, proteções do especialista e cobertura final. Publicar
-   resultado e comparação antes/depois, mantendo explícitas as pendências.
+7. Fazer uma leitura editorial focada do documento inteiro, com o modelo de revisão:
+   comparar capítulos, procurar repetição de ideias, relato de leitura e termos
+   estrangeiros sem explicação. Verificações locais sinalizam expressões explícitas
+   e parágrafos semelhantes; similaridade é pista, não autorização para apagar.
+8. Quando necessário, fazer uma única rodada de acabamento nos blocos identificados,
+   sem novos fatos. Revisar preservação antes de aplicar e conferir novamente o
+   resultado. Defeito persistente fica pendente; não há ciclo até obter aprovação.
+9. Conferir coerência, proteções e cobertura final. O parecer geral não apaga falhas
+   da leitura editorial ou das verificações locais. Relato de fonte, duplicação
+   literal longa ou problema editorial confirmado impede publicar a edição e
+   liberar QA. A versão para revisão permanece disponível.
+
+A lista de pendências reúne intervenções não aprovadas, cobertura parcial/ausente,
+omissões de escopo e problemas de revisão. Aprovar uma inclusão útil não significa
+que todos os objetivos da intervenção tenham sido atendidos.
 
 O revisor de alterações confere os fatos novos e modificados. O texto herdado
 preservado não é apresentado como se cada uma de suas afirmações tivesse passado
@@ -48,6 +66,28 @@ revisão `gpt-5-4-petrobras:high`. O orçamento padrão é de 60 tentativas por 
 cumulativo, incluindo as repetições. São limites de proteção, sem meta de gastar
 essas chamadas. O transporte reutilizado permite até duas tentativas por chamada,
 prazo de 300 segundos e heartbeat a cada 30 segundos.
+Sem defeitos editoriais, a leitura focada acrescenta uma chamada. Se houver reparo,
+há uma escrita, um parecer de preservação e uma conferência adicional. Tudo usa
+o mesmo orçamento, transporte e cache, sem aumentar limites automaticamente.
+
+## Continuar a partir do piloto já aprovado parcialmente
+
+Para preservar as inclusões do lote de 01/11, use-o explicitamente como base.
+O diagnóstico procura as necessidades restantes e as verificações editoriais leem
+o texto completo. Não é uma retomada do cache da implementação anterior: é uma
+nova edição do resultado existente. A base anterior permanece intacta.
+
+```bash
+git pull --ff-only origin codex/qa-evidencias-verificadas
+export DOCUMENT_PYTHON="$PWD/.venv-documento/bin/python"
+nohup bash pipeline/qa_research/rodar_polimento_contextos.sh \
+  --base pipeline/qa_research/relatorios/polimento_3_contextos_20261101T194650 \
+  --items 02_02 03_03 07_01 \
+  --manifest dataset/professional_corpora_v2/manifest.json \
+  --output pipeline/qa_research/saida_polimento/piloto_3_documentos_02 \
+  > polimento_3_documentos_02.log 2>&1 &
+tail -F polimento_3_documentos_02.log
+```
 
 Na raiz do repositório, no servidor:
 
@@ -95,9 +135,14 @@ Começar por `RELATORIO.md` na raiz do lote e pelo relatório de cada item:
 - `documento.md/json`: edição publicada somente quando há revisão final sem
   problemas críticos ou correções técnicas pendentes. Pode estar parcial em cobertura.
 - `versoes/<versao>/comparacao.json`: antes/depois, motivos, evidências citadas,
-  alertas de redução e blocos preservados literalmente.
+  alertas de redução e blocos preservados literalmente. `alteracoes` compara a
+  base com as edições técnicas; `acabamento` compara essa edição com os reparos
+  editoriais subsequentes. As duas fases reconstituem a edição final.
 - `diagnostico.json`, `pesquisas.json`, `decisoes.json` e `coerencia_final.json`:
   plano, relações pesquisadas, avaliações e cobertura estável.
+- `leitura_editorial.json`, `acabamento_editorial.json`, `acabamento_parecer.json`,
+  `acabamento_aprovado.json` e `leitura_editorial_conferencia.json`: defeitos
+  localizados, reparos propostos/aprovados e conferência, quando aplicáveis.
 - `base.json`: hashes, proteções e observações herdadas. `preparacao_corpus.json`
   na raiz registra coleções, hashes e diagnóstico da instalação.
 
