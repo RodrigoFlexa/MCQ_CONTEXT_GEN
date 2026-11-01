@@ -355,7 +355,7 @@ class TransportTests(unittest.TestCase):
     def test_two_truncations_never_enter_a_nested_retry_loop(self):
         count=[]
         async def transport(*args):count.append(1);return response({},'length')
-        with self.assertRaisesRegex(CallFailure,'duas tentativas'):self.run_call(transport)
+        with self.assertRaisesRegex(CallFailure,'2 tentativas'):self.run_call(transport)
         self.assertEqual(len(count),2)
 
     def test_schema_repair_gets_actionable_error_and_then_caches(self):

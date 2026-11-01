@@ -48,9 +48,9 @@ class Model:
                 raise asyncio.CancelledError()
             d = dict(intervencoes=[dict(id='I01', tipo='lacuna_essencial', prioridade='alta', alvos=['B01_01'],
                 pontos=['F1'], objetivo='Explicar a resposta ao ajuste', motivo='Há relação pouco desenvolvida',
-                consultas=[dict(pt='bomba vazão controle', en='pump flow control')]),
+                sub_objetivos=[dict(id='S1', descricao='Explicar a resposta ao ajuste')], consultas=[dict(pt='bomba vazão controle', en='pump flow control')]),
                 dict(id='I02', tipo='editorial', prioridade='media', alvos=['B01_02'], pontos=['F1'],
-                     objetivo='Clarear a instrução', motivo='Redação pode melhorar', consultas=[])],
+                     objetivo='Clarear a instrução', motivo='Redação pode melhorar', sub_objetivos=[], consultas=[])],
                 cobertura=[dict(id='F1', estado='parcial', motivo='Falta aprofundar')], omissoes_escopo=[])
             if self.missing_queries_once:
                 d['intervencoes'][0]['consultas'] = []
@@ -59,7 +59,8 @@ class Model:
             pid = p['fontes'][0]['paragrafos'][0]['id']
             d = dict(suficiente=True, achados=[dict(proposicao='A vazão precisa ser observada após ajustar a bomba.',
                 citacoes=['INVENTADA' if self.research_bad else pid], tipo='explicacao_tecnica', condicoes=['Bomba em operação'],
-                limites=['Princípio qualitativo'], pertinencia='contextual' if self.contextual else 'direta')], consultas_adicionais=[], pendencias=[])
+                limites=['Princípio qualitativo'], pertinencia='contextual' if self.contextual else 'direta',
+                sub_objetivos_atendidos=[] if self.contextual else ['S1'])], consultas_adicionais=[], pendencias=[])
         elif role == 'write':
             blocks = catalog(p['documento'])[1]
             items = []
@@ -76,22 +77,25 @@ class Model:
                     preservacao='Mantém as condições e o mecanismo anteriores.',
                     achados=[a['id'] for a in p['achados'][iid]], complementos=[])], pendencias=[]))
             d = dict(itens=items)
-        elif 'avaliar' in p:
-            d = dict(avaliacoes=[])
-            for iid in p['avaliar']:
-                bad = (self.reject and iid == 'I01') or (self.reject_editorial and iid == 'E01')
+        elif 'intervencoes_e_operacoes_propostas' in p:
+            d = dict(avaliacoes_operacoes=[])
+            for intervention in p['intervencoes_e_operacoes_propostas']:
+                iid = intervention['intervencao_id']
+                bad = (self.reject and iid == 'I01') or (self.reject_editorial and iid.startswith('E'))
                 flags = {k: True for k in C.FLAGS}
                 if bad:
                     flags['sem_perda'] = False
-                d['avaliacoes'].append(dict(id=iid, decisao='rejeitar' if bad else 'aprovar',
-                    motivo='Perda de condição' if bad else 'Alteração verificada', correcao='', criterios=flags))
+                for op in intervention['operacoes']:
+                    d['avaliacoes_operacoes'].append(dict(op_id=op['op_id'], intervencao_id=iid,
+                        decisao='rejeitar' if bad else 'aprovar', motivo='Perda de condição' if bad else 'Alteração verificada',
+                        correcao='', criterios=flags))
         elif 'sinais_editoriais' in p and 'pontos' not in p:
             text = ' '.join(b['texto'] for b in catalog(p['documento'])[1].values())
-            d = dict(problemas=[dict(blocos=['B02_01'], descricao='Repetição semântica com o capítulo anterior')]
+            d = dict(problemas=[dict(blocos=['B02_01'], descricao='Repetição semântica com o capítulo anterior', tipo_defeito='repeticao_entre_capitulos')]
                      if self.semantic_repeat and 'Explicação repetida sem informação exclusiva.' in text else [])
         else:
             d = dict(protecoes_preservadas=self.protected, problemas=[dict(blocos=['B01_01'], descricao='Condição não preservada', critico=True, tipo='tecnico')] if self.critical else [],
-                cobertura=[dict(id='F1', estado='parcial' if self.partial else 'atendido', motivo='Avaliação consolidada')], omissoes_escopo=[])
+                cobertura=[dict(id='F1', estado='parcial' if self.partial else 'atendido', motivo='Avaliação consolidada', evidencia_regressao='')], omissoes_escopo=[])
         return response(d)
 
 
@@ -220,7 +224,9 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(row['acabamento_alteracoes'], 1)
         doc = read_json(self.output / '02_02/documento.json')
         self.assertNotIn('No caso relatado', json.dumps(doc))
-        self.assertTrue(any('problemas_originais' in p for role, p in self.model.inputs if role == 'review'))
+        self.assertTrue(any(i['modo_validacao_suporte'] == 'MODO_PRESERVACAO_EDITORIAL_SEM_FATOS_NOVOS'
+            for role, p in self.model.inputs if role == 'review'
+            for i in p.get('intervencoes_e_operacoes_propostas', []) if i['intervencao_id'].startswith('E')))
         inputs = copy.deepcopy(self.model.inputs)
         self.assertTrue(self.run_flow()['documentos']['02_02']['qa_elegivel'])
         self.assertEqual(inputs, self.model.inputs, 'Retomada também reutiliza acabamento e conferência')
@@ -365,11 +371,12 @@ class ContractTests(unittest.TestCase):
                 if self.turn == 2: raise CallFailure('Falha simulada da segunda leitura')
                 data = dict(suficiente=False, achados=[dict(proposicao='Relação validada',
                     citacoes=[payload['fontes'][0]['paragrafos'][0]['id']], tipo='explicacao_tecnica',
-                    condicoes=['Condição explícita'], limites=[], pertinencia='direta')],
+                    condicoes=['Condição explícita'], limites=[], pertinencia='direta', sub_objetivos_atendidos=['S1'])],
                     consultas_adicionais=[dict(pt='outra condição operacional', en='another operating condition')], pendencias=[])
                 validate(data)
                 return data
-        result = asyncio.run(investigate(dict(id='I1', consultas=[dict(pt='condição técnica', en='technical condition')]),
+        result = asyncio.run(investigate(dict(id='I1', sub_objetivos=[dict(id='S1', descricao='Mecanismo'), dict(id='S2', descricao='Limite')],
+            consultas=[dict(pt='condição técnica', en='technical condition')]),
             dict(entrada={}), Index(), configuration(), Calls()))
         self.assertEqual(len(result['achados']), 1)
         self.assertEqual(result['leituras'], 1)
@@ -414,7 +421,7 @@ class ContractTests(unittest.TestCase):
             self.assertFalse(output.exists())
 
     def test_overlapping_block_interventions_cannot_be_planned(self):
-        row = dict(id='I1', tipo='editorial', prioridade='alta', alvos=['B1'], pontos=['F1'], objetivo='Clareza', motivo='Redação', consultas=[])
+        row = dict(id='I1', tipo='editorial', prioridade='alta', alvos=['B1'], pontos=['F1'], objetivo='Clareza', motivo='Redação', sub_objetivos=[], consultas=[])
         with self.assertRaisesRegex(ValueError, 'outra intervenção'):
             C.diagnosis(dict(intervencoes=[row, dict(row, id='I2')], cobertura=[dict(id='F1', estado='atendido', motivo='Completo')], omissoes_escopo=[]), {'B1'}, {'C1'}, {'F1'}, 6)
 
@@ -422,4 +429,5 @@ class ContractTests(unittest.TestCase):
         flags = {k: True for k in C.FLAGS}
         flags['sem_perda'] = False
         with self.assertRaisesRegex(ValueError, 'contradiz'):
-            C.judgment(dict(avaliacoes=[dict(id='I1', decisao='aprovar', motivo='Teste', correcao='', criterios=flags)]), {'I1'})
+            C.judgment(dict(avaliacoes_operacoes=[dict(op_id='I1_OP01', intervencao_id='I1',
+                decisao='aprovar', motivo='Teste', correcao='', criterios=flags)]), {'I1_OP01': {'intervencao_id': 'I1'}})

@@ -24,7 +24,10 @@ def digest(value):
 def stamp(): return datetime.now(timezone.utc).isoformat()
 
 
-class CallFailure(RuntimeError): pass
+class CallFailure(RuntimeError):
+    def __init__(self, message, attempt_history=None):
+        super().__init__(message)
+        self.attempt_history = list(attempt_history or [])
 class Fatal(CallFailure): pass
 
 
@@ -115,6 +118,20 @@ class Calls:
                 self.progress(f'{label} {state["fase"]} há {elapsed:.0f}s',flush=True)
 
         ticker=asyncio.create_task(heartbeat())
+        attempt_history=[]
+
+        def failure(meta, failure_type, detail='', raw=''):
+            attempt_history.append(dict(attempt=meta['attempt'], failure_type=failure_type,
+                max_tokens_used=meta['max_tokens'], raw_char_len=len(raw), detail=detail))
+            self.log(dict(**meta,ok=False,kind=failure_type,error=detail,
+                attempt_history=list(attempt_history)))
+
+        def exhausted(cls=CallFailure):
+            sequence=' -> '.join(f'[T{r["attempt"]}: {r["failure_type"]}'
+                + (f' ({r["detail"]})' if r['detail'] else '')
+                + f' com {r["max_tokens_used"]} tokens]' for r in attempt_history)
+            return cls(f'{tag}: Falha após {len(attempt_history)} tentativas: {sequence}', attempt_history)
+
         try:
             async with self.slots:
                 queued=round(time.monotonic()-started,2)
@@ -136,12 +153,13 @@ class Calls:
                     except Exception as exc:
                         elapsed=round(time.monotonic()-t0,2)
                         kind='prazo' if isinstance(exc,TimeoutError) else 'transitorio' if is_transient(exc) else 'requisicao'
-                        self.log(dict(**meta,ok=False,kind=kind,error=safe_error(exc),seconds=elapsed))
+                        meta['seconds']=elapsed
+                        failure(meta,'timeout' if kind=='prazo' else 'api_error',safe_error(exc))
                         if attempt<2 and getattr(exc,'status_code',None)==401 and self.refresh():
                             retry_message('Credencial renovada');continue
                         if is_fatal(exc) or (kind=='requisicao' and not is_content_filter(exc)):
-                            self.abort=True;raise Fatal(f'{tag}: {safe_error(exc)}; verifique deployment, credenciais e configuração') from exc
-                        if attempt==2 or is_content_filter(exc):raise CallFailure(f'{tag}: {safe_error(exc)}') from exc
+                            self.abort=True;raise exhausted(Fatal) from exc
+                        if attempt==2 or is_content_filter(exc):raise exhausted() from exc
                         retry_message('Prazo da requisição esgotado' if kind=='prazo' else 'Falha temporária do serviço: '+safe_error(exc))
                         state.update(fase='aguardando nova chamada',inicio_fase=time.monotonic())
                         await asyncio.sleep(min(30,max(1,retry_after(exc))));continue
@@ -153,25 +171,38 @@ class Calls:
                         completion_tokens=getattr(usage,'completion_tokens',0) or 0)
                     atomic_json(self.output/'.local'/'brutas'/f'{key}_{attempt}_{time.time_ns()}.json',dict(**meta,content=content))
                     if finish=='content_filter':
-                        self.log(dict(**meta,ok=False,kind='filtro_conteudo'));raise CallFailure(tag+': filtro de conteúdo')
+                        failure(meta,'api_error','filtro de conteúdo',content);raise exhausted()
                     if finish=='length':
-                        self.log(dict(**meta,ok=False,kind='truncada'))
-                        if attempt==2:raise CallFailure(tag+': resposta truncada após duas tentativas')
+                        failure(meta,'truncation',raw=content)
+                        if attempt==2:raise exhausted()
                         retry_message('Resposta interrompida pelo limite de saída','Repetindo uma vez com mais espaço para a resposta')
                         current=max(current,self.config['retry_tokens']);continue
                     try:
-                        data=json.loads(content);checked(data)
+                        data=json.loads(content)
                     except ValueError as exc:
+                        failure_type='format_error'
+                        validation_error=exc
+                    else:
+                        try:checked(data)
+                        except ValueError as exc:
+                            failure_type='contract_error'
+                            validation_error=exc
+                        else:validation_error=None
+                    if validation_error is not None:
+                        exc=validation_error
                         message=safe_error(exc)
-                        self.log(dict(**meta,ok=False,kind='validacao',error=message))
-                        if attempt==2:raise CallFailure(tag+': '+message) from exc
+                        failure(meta,failure_type,message,content)
+                        if attempt==2:raise exhausted() from exc
+                        if len(content)>35000:
+                            current=max(current,self.config['retry_tokens'])
                         retry_message('Resposta fora do formato esperado: '+message[:250],'Solicitando uma correção de formato')
                         # Reparo compacto: não acrescente a resposta anterior inteira.
                         messages=[dict(role='system',content=system),dict(role='user',content=body),
                             dict(role='user',content='Corrija este erro de contrato e devolva o JSON completo: '+message)]
                         continue
-                    self.log(dict(**meta,ok=True))
-                    atomic_json(path,dict(role=role,tag=tag,request=payload,system=system,response=data))
+                    self.log(dict(**meta,ok=True,attempt_history=list(attempt_history)))
+                    atomic_json(path,dict(role=role,tag=tag,request=payload,system=system,response=data,
+                        attempt_history=attempt_history))
                     self.progress(f'{label} concluído em {seconds:.1f}s',flush=True)
                     return data
         finally:

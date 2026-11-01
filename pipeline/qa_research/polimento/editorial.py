@@ -6,6 +6,7 @@ from pipeline.qa_research.v3.review import editor_issues as inherited_issues
 
 READING = re.compile(
     r'\b(?:fabricante consultado|no contexto consultado|no caso relatado|'
+    r'é descrito como|são citados|outras alternativas citadas são|'
     r'(?:a|esta|essa) fonte (?:afirma|descreve|relata)|'
     r'(?:o|este|esse) (?:trecho|estudo|artigo|documento) (?:consultado|citado|fornecido)|'
     r'(?:nos|os) ensaios relatados|(?:na|a) literatura consultada)\b', re.I)
@@ -30,6 +31,7 @@ def audit(document):
         for block in chapter['blocos']:
             for description in block_issues(block):
                 issues.append(dict(tipo='editorial', blocos=[block['id']], descricao=description,
+                                   tipo_defeito='relato_de_leitura' if description.startswith('Relato de leitura') else 'termo_ingles',
                                    critico=False, bloqueante=True))
             for text in re.split(r'\n\s*\n', block['texto']):
                 tokens = words(text)
@@ -48,6 +50,7 @@ def audit(document):
                 continue
             seen.add(key)
             issues.append(dict(tipo='editorial', blocos=list(key[0]),
+                tipo_defeito='repeticao_entre_capitulos',
                 descricao=('Parágrafo longo duplicado' if exact else 'Possível repetição entre parágrafos; conferir condições e informação exclusiva'),
                 critico=False, bloqueante=exact, similaridade=round(score, 3)))
     return issues

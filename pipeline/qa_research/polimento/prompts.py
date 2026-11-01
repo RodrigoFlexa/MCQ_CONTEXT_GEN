@@ -1,179 +1,189 @@
-"""Uma edição fundamentada do documento existente, sem resumo substituto."""
 from pipeline.qa_research.v3.prompts import BASE
 
-DIAGNOSE = BASE + '''Você prepara o POLIMENTO de um documento técnico existente.
+DIAGNOSE = (
+    BASE
+    + """
+Você prepara o POLIMENTO INCREMENTAL de um documento técnico existente.
 A base já recebeu revisão editorial e correções do especialista. Preserve sua
 profundidade, mecanismos, condições, exceções e distinções úteis. Leia a frase
 integral do especialista e os recortes curados. Não replaneje os temas nem troque
 o documento por uma síntese nova. Conteúdo adequado fica intocado.
-Proponha no máximo limite intervenções, priorizando erro técnico e lacuna essencial.
-Tipos: correcao_tecnica (erro, generalização, condição ou exceção importante ausente),
-lacuna_essencial (parte do pedido não ensinada), aprofundamento (ganho pertinente),
-editorial (clareza, organização, redundância; sem acrescentar fatos).
-Limites opcionais não são lacunas essenciais. Não exija dosagens universais,
-parâmetros de fabricante, normas ou matrizes completas se não forem indispensáveis.
-As protecoes registram correções do especialista que precisam permanecer válidas.
-Use IDs dos blocos para reparos; IDs de capítulo para acrescentar blocos; DOCUMENTO
-somente para capítulo realmente ausente. Uma intervenção pode agrupar reparos
-relacionados. Não atribua o mesmo bloco a intervenções distintas.
-Consultas PT/EN são expressões técnicas específicas, até 16 palavras por idioma,
-no máximo três pares. Para edição puramente editorial podem ser vazias.
-Para qualquer intervenção técnica, ao menos um par é obrigatório. Busque a função
-e o equipamento específico; consultas genéricas sobre o setor não fecham lacunas.
-Leia também redundâncias entre capítulos e relatos de leitura herdados. Priorize
-reparos que tornem o texto autônomo sem apagar condições de aplicação.
-Em cobertura, avalie TODOS os pontos curados sem criar IDs novos. Omissões da frase
-que o mapa não representa ficam em omissoes_escopo, sem esconder o problema.
-Não use quantidade de palavras como medida de qualidade. Não crie defeitos para
-preencher a lista. Retorne um plano compacto, não o documento reescrito.
-JSON {"intervencoes":[{"id":"I01","tipo":"correcao_tecnica|lacuna_essencial|aprofundamento|editorial",
+
+Proponha no máximo o limite configurado de intervenções, priorizando erro técnico e lacuna essencial.
+Tipos permitidos:
+- correcao_tecnica: erro, generalização indevida, condição de processo/FPSO ou exceção importante ausente.
+- lacuna_essencial: parte obrigatória do escopo/frase do especialista ainda não ensinada.
+- aprofundamento: ganho técnico e operacional pertinente ao escopo.
+- editorial: clareza, autonomia textual (remoção de relato de leitura), organização ou eliminação de redundância entre capítulos, sem acrescentar fatos novos.
+
+Regras estritas de decomposição e alvos:
+1. Para toda intervenção técnica (correcao_tecnica, lacuna_essencial, aprofundamento), decomponha o objetivo em 1 a 3 `sub_objetivos` atômicos, concretos e verificáveis (ex.: S1 = mecanismo de atuação, S2 = condição de compatibilidade/limite operacional). Para `editorial`, `sub_objetivos` deve ser `[]`.
+2. Limites opcionais não são lacunas essenciais. Não exija dosagens universais, parâmetros de fabricante, normas ou matrizes completas se não forem indispensáveis.
+3. As `protecoes` registram correções do especialista que precisam permanecer válidas.
+4. Use IDs dos blocos (`B01_01`) para reparos; IDs de capítulo (`C01`) para acrescentar blocos; `DOCUMENTO` somente para capítulo realmente ausente. Não atribua o mesmo bloco a intervenções distintas.
+5. Consultas PT/EN são expressões técnicas específicas (até 16 palavras por idioma, máximo 3 pares), focadas no equipamento, fluido, mecanismo e função operacional. Para `editorial`, `consultas` pode ser `[]`; para intervenções técnicas, ao menos 1 par PT/EN é obrigatório.
+6. Em `cobertura`, avalie TODOS os pontos curados sem criar IDs novos. Respeite o histórico de pontos já atendidos na base: não rebaixe um ponto já atendido para parcial sem apontar exatamente qual parte obrigatória da frase do especialista falta. Omissões da frase que o mapa não representa ficam em `omissoes_escopo`.
+
+Retorne exclusivamente o JSON:
+{"intervencoes":[{"id":"I01","tipo":"correcao_tecnica|lacuna_essencial|aprofundamento|editorial",
 "prioridade":"alta|media|baixa","alvos":["B01_01"],"pontos":["F01"],
 "objetivo":"o que melhorar","motivo":"por que é necessário",
+"sub_objetivos":[{"id":"S1","descricao":"subproblema concreto 1"}],
 "consultas":[{"pt":"...","en":"..."}]}],
 "cobertura":[{"id":"F01","estado":"atendido|parcial|ausente","motivo":"..."}],
-"omissoes_escopo":[]}.
-'''
+"omissoes_escopo":[]}
+"""
+)
 
-RESEARCH = BASE + '''Investigue SOMENTE a necessidade técnica da intervenção.
+RESEARCH = (
+    BASE
+    + """
+Investigue SOMENTE a necessidade técnica da intervenção e seus `sub_objetivos`.
 Você recebe passagens originais herdadas da pesquisa anterior e/ou de coleções
-novas. Origem herdada não significa revisão factual nova. Avalie pertinência,
-estatuto, equipamento, materiais, condições, exceções e limites. Não transforme
-resultado de fabricante em desempenho universal ou recomendação estrangeira em
-obrigação brasileira. Uma referência normativa sem edição/vigência verificada não
-autoriza afirmar que a regra é atual. Relate essa pendência.
-Extraia até oito relações úteis com suas condições e limites.
-Classifique pertinencia=direta somente quando a proposição
-responde concretamente ao objetivo da intervenção. Conteúdo genérico sobre o setor,
-ou que declara não explicar o equipamento procurado, é contextual e não fundamenta
-a inclusão. Se não houver achado direto, suficiente=false e reformule a consulta
-pelo equipamento, sua função e termos técnicos equivalentes PT/EN. Não acumule
-relações laterais para aparentar evidência.
-Cite os IDs de parágrafos fornecidos; não copie citações literais nem invente posições no texto.
-O código recupera a passagem original a partir do ID. suficiente indica
-se os achados permitem melhorar o ponto, não se o tema inteiro ficou exaustivo.
-Se faltar informação central, proponha até três consultas PT/EN curtas (máximo 16
-palavras por idioma). Não repita consultas anteriores nem apenas sinônimos sem
-perspectiva de evidência nova. Não acrescente QA nem exemplos de perguntas.
-Nesta leitura, extraia somente achados das fontes atuais; anteriores serve para
-evitar repetição, não para citar novamente um parágrafo que não foi enviado agora.
-JSON {"suficiente":true,"achados":[{"proposicao":"relação técnica útil",
+profissionais novas. Avalie pertinência, estatuto, equipamento, materiais, condições,
+exceções e limites. Não transforme resultado de fabricante em desempenho universal
+ou recomendação estrangeira em obrigação brasileira. Uma referência normativa sem
+edição/vigência verificada não autoriza afirmar que a regra é atual; relate essa pendência.
+
+Regras estritas de vinculação a `sub_objetivos`:
+1. Extraia até oito relações úteis com suas condições e limites.
+2. Classifique `pertinencia="direta"` SOMENTE quando a proposição responde concretamente a pelo menos um dos `sub_objetivos` listados na intervenção. Informe em `sub_objetivos_atendidos` os IDs exatos (ex.: `["S1"]`) que esse achado sustenta.
+3. Conteúdo tangencial, genérico ou que aborda apenas outro aspecto do sistema (ex.: gestão de mudança quando o sub-objetivo pede restauração de backup) deve receber `pertinencia="contextual"` e `sub_objetivos_atendidos=[]`.
+4. Defina `suficiente=true` somente se TODOS os `sub_objetivos` da intervenção tiverem pelo menos um achado com `pertinencia="direta"`. Se algum sub-objetivo continuar sem cobertura direta, defina `suficiente=false`, indique o que falta em `pendencias` e proponha até três consultas PT/EN curtas (máximo 16 palavras) focadas especificamente nos sub-objetivos descobertos.
+5. Cite apenas os IDs de parágrafos fornecidos nesta leitura; não copie citações literais nem cite parágrafos de rodadas anteriores que não estejam no pacote atual.
+
+Retorne exclusivamente o JSON:
+{"suficiente":true,"achados":[{"proposicao":"relação técnica útil",
 "citacoes":["N...P01"],"tipo":"explicacao_tecnica|resultado_experimental|recomendacao|opiniao|norma|indeterminado",
-"pertinencia":"direta|contextual","condicoes":["..."],"limites":["..."]}],"consultas_adicionais":[],"pendencias":[]}.
-'''
+"pertinencia":"direta|contextual","sub_objetivos_atendidos":["S1"],
+"condicoes":["..."],"limites":["..."]}],"consultas_adicionais":[],"pendencias":[]}
+"""
+)
 
-EDIT = BASE + '''Edite SOMENTE os alvos das intervenções recebidas. O documento
-existente é a base e precisa conservar suas explicações úteis e as protecoes do
-especialista. Não devolva uma reescrita integral, resuma capítulos ou transfira
-conhecimento para notas. Pode corrigir, aprofundar, inserir e remover redundâncias
-com justificativa e preservação da informação. Não há meta de aumentar ou reduzir
-palavras. Cada alteração deve melhorar a necessidade indicada, respeitando o escopo.
-Use os achados, condições e limites fornecidos. Não cite uma fonte que não sustente
-o mecanismo ou o equipamento. Conceitos consolidados podem complementar a explicação:
-declare-os em complementos e não atribua esse conteúdo ao corpus. Dados empíricos,
-números operacionais, dosagens e requisitos normativos exigem suporte disponível.
-Sem suporte útil, deixe alteracoes vazio e explique em pendencias. Não invente
-conteúdo para aparentar que a lacuna foi resolvida. Edição editorial não cria fatos.
-No corpo: texto didático autônomo em PT-BR, sem IDs, citações, referências, relato
-de leitura, pareceres ou lacunas. Explique termos quando necessário. Distinga
-conceitos, mecanismo, condições, critérios, interações e consequências.
-Compare a inclusão com TODO o documento recebido: não repita a mesma explicação
-em capítulos diferentes. Mantenha o mecanismo no capítulo próprio e acrescente
-apenas a interação específica no outro. Preserve condições e exceções exclusivas.
-Não use 'fabricante consultado', 'no contexto consultado', 'no caso relatado' ou
-'a fonte afirma'. Converta em explicação autônoma com material, equipamento e
-limites explícitos; um caso que não pode ser generalizado fica no auxiliar.
-Explique no primeiro uso termos como peso leve (lightweight), esforços cortantes
-(shear forces), momentos fletores (bending moments) e casa de bombas (pump room).
-Operações: substituir/remover têm alvo B; inserir tem alvo B (depois dele) ou C
-(fim do capítulo); novo_capitulo usa DOCUMENTO e informa capitulo/grupo técnicos.
-Para reorganizar sem reescrever, mover usa alvo B e destino C, ambos autorizados;
-renomear_capitulo usa alvo C e novo título em capitulo (grupo é opcional).
-Preservacao explica concretamente onde ficaram mecanismos e condições do original
-ou por que a informação foi descartada. Achados usa somente IDs recebidos. Para
-remover, texto/subtitulo podem ser vazios. Não invente novos IDs de blocos.
-JSON {"itens":[{"id":"I01","alteracoes":[{"operacao":"substituir|inserir|remover|novo_capitulo|mover|renomear_capitulo",
+EDIT = (
+    BASE
+    + """
+Edite SOMENTE os alvos das intervenções recebidas. O documento existente é a base
+e precisa conservar suas explicações úteis e as `protecoes` do especialista.
+Não devolva uma reescrita integral, não resuma capítulos nem transfira conhecimento
+para notas. Não há meta de aumentar ou reduzir palavras.
+
+Regras de suporte e escopo por sub-objetivo:
+1. Resolva apenas os `sub_objetivos_com_suporte` usando os achados, condições e limites fornecidos. Se houver `sub_objetivos_sem_suporte`, registre-os em `pendencias` e NÃO invente nem extrapole fatos laterais para aparentar que foram resolvidos.
+2. Conceitos consolidados de engenharia podem complementar a explicação didática: declare-os em `complementos` e nunca atribua esse conteúdo ao corpus. Dados empíricos, números operacionais, dosagens e requisitos normativos exigem suporte em `achados`. Edição do tipo `editorial` não cria fatos novos (`achados=[]`, `complementos=[]`).
+3. No corpo do texto: escreva texto técnico didático e autônomo em PT-BR, sem IDs, sem citações, sem referências e sem relato de leitura. Proibido usar expressões como 'fabricante consultado', 'no contexto consultado', 'no caso relatado', 'a fonte afirma', 'é descrito como' ou 'são citados'. Converta em explicação direta explicitando a condição de validade, o fluido, o material e o equipamento (ex.: em FPSO).
+4. Compare cada alteração com o restante do documento recebido: não repita a mesma explicação de mecanismo em capítulos diferentes. Mantenha o mecanismo completo no capítulo próprio e mencione apenas a interação operacional específica no outro.
+5. Explique no primeiro uso termos estrangeiros não triviais, mantendo termos consagrados de petróleo (offloading, topside, subsea, pig, squeeze, bottle test) com clareza contextual.
+6. Identifique cada operação com um `op_id` sequencial único (`I01_OP01`, `I01_OP02`, ...).
+   - `substituir` / `remover`: exigem `alvo` de bloco existente (`B...`).
+   - `inserir`: exige `alvo` de bloco (`B...`, insere logo após) ou capítulo (`C...`, insere ao final).
+   - `novo_capitulo`: usa `alvo="DOCUMENTO"` e preenche `capitulo` e `grupo`.
+   - `mover`: usa `alvo` (`B...`) e `destino` (`C...`).
+   - `renomear_capitulo`: usa `alvo` (`C...`) e novo título em `capitulo`.
+7. Em `preservacao`, explique concretamente onde permaneceram todos os mecanismos, condições e exceções do bloco original (ou em qual bloco do documento o conceito já está preservado, no caso de remoção de redundância).
+
+Retorne exclusivamente o JSON:
+{"itens":[{"id":"I01","alteracoes":[{"op_id":"I01_OP01",
+"operacao":"substituir|inserir|remover|novo_capitulo|mover|renomear_capitulo",
 "alvo":"B01_01","subtitulo":"...","texto":"...","motivo":"...",
-"preservacao":"o conhecimento conservado ou a razão de descartar",
-"achados":["I01_A01"],"complementos":[]}],"pendencias":[]}]}.
-Em correção, considere os pareceres e retorne o mesmo formato completo somente
-para os itens indicados, preservando seus objetivos e alvos.
-Mover, renomear e remover não precisam de subtitulo/texto novos.
-'''
+"preservacao":"onde cada mecanismo e condição original foi mantido",
+"achados":["I01_A01"],"complementos":[]}],"pendencias":[]}]}
+"""
+)
 
-REVIEW = BASE + '''Revise as intervenções propostas contra a frase do especialista,
-o documento consolidado, os blocos anteriores, as protecoes e as evidências.
-Não confunda mais palavras ou mais fontes com melhoria. Verifique cada critério:
-correta, suportada, condicoes_preservadas, sem_perda, escopo, autonomia, pt_br.
-Autonomia=false se houver relato de leitura ou referência a fonte consultada,
-inclusive em texto herdado que está sendo reeditado. Verifique repetição com os
-outros capítulos: nova redação não significa informação nova. Exija consolidação
-localizada quando o mesmo mecanismo/condição é repetido sem função didática.
-Uma condensação não pode perder conhecimento útil, condição ou exceção. Confira
-especialmente os alertas de redução e as remoções. Complementos conceituais são
-permitidos, mas valores, dados e normas precisam de fonte. As protecoes são
-obrigações semânticas, não exigência de repetição literal.
-Rejeite generalização indevida de casos, equipamento, material ou contexto. Uma
-coincidência de palavras na evidência não basta. Condição de aplicação ausente
-pode invalidar a afirmação, mesmo se a frase isolada parecer correta.
-Não aprovar quando algum critério for falso. corrigir só para defeito recuperável;
-rejeitar se falta suporte ou o objetivo foi perdido. Limites opcionais não vetam
-explicações corretas. Não peça refazer partes que não foram afetadas.
-JSON {"avaliacoes":[{"id":"I01","decisao":"aprovar|corrigir|rejeitar",
-"motivo":"...","correcao":"reparo concreto ou vazio","criterios":{
-"correta":true,"suportada":true,"condicoes_preservadas":true,"sem_perda":true,
-"escopo":true,"autonomia":true,"pt_br":true}}]}.
-'''
+REVIEW = (
+    BASE
+    + """
+Você é o Auditor Técnico e Editorial Diferencial. Avalie CADA OPERAÇÃO (`op_id`)
+individualmente comparando `estado_anterior_do_bloco` com `estado_proposto_pela_operacao`,
+a frase do especialista, as `protecoes_especialista`, as `evidencias_fornecidas`
+e o `mapa_estrutural_documento_vigente_ANTES_deste_lote`.
 
-CONSOLIDATE = BASE + '''Avalie a edição consolidada, sua frase de escopo, as protecoes
-do especialista e o histórico de intervenções aceitas/rejeitadas. Alterações aceitas
-já passaram por revisão com fontes; esta etapa verifica coerência do documento,
-preservação das correções anteriores, autonomia editorial e cobertura estável.
-Não suponha que a ausência de novos apontamentos prove validação de toda a base
-herdada. Registre contradições, condições omitidas e erros técnicos aparentes.
-Use os sinais editoriais fornecidos para conferir o texto inteiro. Confirme ou
-descarte possíveis repetições com leitura das condições e informações exclusivas;
-não apague diferenças técnicas por similaridade de palavras. Procure também
-repetição semântica mesmo sem sinal automático. Marque tipo=editorial para relato
-de leitura, redundância dispensável, organização ou termo inglês sem explicação;
-tipo=tecnico para defeito factual. A aprovação anterior não dispensa essa leitura.
-Problemas editoriais impedem liberar QA até serem resolvidos. Lacunas pertencem
-à cobertura/omissões; não invente defeito editorial por ausência de conteúdo.
-Critico=true para erro técnico, perda de condição essencial ou reversão de correção
-do especialista que impede usar a edição em QA; lacuna sem afirmação errada deve
-ficar na cobertura, não como erro de todos os parágrafos.
-Avalie exatamente todos os pontos curados, com os mesmos IDs do diagnóstico.
-Omissões de escopo não representadas nesses pontos ficam no auxiliar. Não marque
-atendido só pela presença de um termo. Não exija aprofundamentos opcionais.
-Declare protecoes_preservadas=true somente se todas as correções do especialista
-continuam válidas; sem proteções fornecidas, true. Não ignore uma reversão.
-JSON {"protecoes_preservadas":true,"problemas":[{"blocos":["B01_01"],"descricao":"...","tipo":"tecnico|editorial","critico":true}],
-"cobertura":[{"id":"F01","estado":"atendido|parcial|ausente","motivo":"..."}],
-"omissoes_escopo":[]}.
-'''
+ATENÇÃO A TRÊS REGRAS CRÍTICAS DE JULGAMENTO:
+1. DISTINÇÃO ENTRE BASE ANTERIOR E INSERÇÃO NOVA (`status_existencia_alvo`):
+   - Quando `status_existencia_alvo == "CRIACAO_DE_BLOCO_OU_CAPITULO_NOVO_NESTA_PROPOSTA"`, o bloco proposto NÃO existia no documento antes desta operação. NÃO rejeite uma inserção alegando que ela já consta na proposta que você está avaliando. Só existe repetição se o mesmo mecanismo/conteúdo já constar em outro bloco preexistente listado em `mapa_estrutural_documento_vigente_ANTES_deste_lote` ou `contexto_blocos_vizinhos_no_capitulo`.
+2. DUPLO REGIME DO CRITÉRIO `suportada` (`modo_validacao_suporte`):
+   - Se `modo_validacao_suporte == "MODO_PRESERVACAO_EDITORIAL_SEM_FATOS_NOVOS"` (intervenções editoriais e acabamento): o objetivo é limpar relato de fonte, melhorar clareza ou condensar redundância entre blocos existentes. As afirmações técnicas já pertencem à base herdada! Portanto, marque `suportada=true` desde que a edição NÃO invente fatos, números, normas ou generalizações novas além do que já estava em `estado_anterior_do_bloco`. É PROIBIDO reprovar edição editorial por ausência de `achados` novos para fatos que já estavam no bloco original.
+   - Se `modo_validacao_suporte == "EXIGE_EVIDENCIA_NOVA_PARA_FATOS_NOVOS"`: toda afirmação empírica, parâmetro, condição de equipamento ou mecanismo novo acrescentado ao bloco exige suporte nas `evidencias_fornecidas` (respeitando suas condições e limites) ou declaração legítima em `complementos` para conceitos básicos de engenharia.
+3. JULGAMENTO INDEPENDENTE POR OPERAÇÃO (`op_id`):
+   - Avalie cada `op_id` separadamente. Um defeito em `E01_OP02` NÃO deve reprovar `E01_OP01` se `E01_OP01` estiver correto e autônomo.
+   - Verifique os 7 critérios booleanos para cada `op_id`:
+     * `correta`: tecnicamente exata no domínio de óleo, gás e FPSO.
+     * `suportada`: atende ao regime de suporte acima sem extrapolar evidências.
+     * `condicoes_preservadas`: não converteu caso específico, condição de fluido/pH/pressão ou recomendação localizada em regra universal irrestrita.
+     * `sem_perda`: nenhum mecanismo, exceção ou condição técnica útil do `estado_anterior_do_bloco` foi perdido (ou está explicitamente preservado no bloco irmão indicado em `preservacao`).
+     * `escopo`: pertence estritamente ao subtópico e à frase do especialista.
+     * `autonomia`: `false` se o texto contiver qualquer relato de leitura ('fabricante consultado', 'no contexto consultado', 'no caso relatado', 'a fonte afirma', 'é descrito como', 'são citados').
+     * `pt_br`: português brasileiro técnico natural, com termos estrangeiros novos explicados no primeiro uso.
+   - `decisao="aprovar"` exige todos os 7 critérios `true`. Use `"corrigir"` quando o defeito for recuperável por ajuste localizado no texto (forneça a instrução exata em `correcao`). Use `"rejeitar"` somente quando não houver suporte factual possível ou a operação for irremediavelmente fora de escopo.
 
-EDITORIAL = EDIT + '''Esta é a única rodada de acabamento global. A base recebida
-já contém as alterações técnicas aprovadas. Corrija apenas os problemas editoriais
-indicados, nos blocos autorizados; apenas substituir ou remover são permitidos.
-Não acrescente fatos, doses, limites, normas, exemplos empíricos nem recomendações.
-Não preencha lacunas técnicas nesta etapa. Não apague informação exclusiva para
-reduzir redundância. Em remoção, declare em preservacao o bloco onde permanece
-cada conceito/condição. Retorne todos os itens pedidos; se não houver reparo seguro,
-deixe alteracoes vazio e explique. Achados e complementos devem ser arrays vazios.
-'''
+Retorne exclusivamente o JSON:
+{"avaliacoes_operacoes":[{"op_id":"I01_OP01","intervencao_id":"I01",
+"decisao":"aprovar|corrigir|rejeitar","motivo":"...",
+"correcao":"instrução concreta e localizada para o editor corrigir, ou vazio",
+"criterios":{"correta":true,"suportada":true,"condicoes_preservadas":true,
+"sem_perda":true,"escopo":true,"autonomia":true,"pt_br":true}}]}
+"""
+)
 
-EDITORIAL_AUDIT = BASE + '''Faça uma leitura editorial crítica do documento inteiro.
-Sua tarefa é somente encontrar defeitos concretos de escrita e organização, sem
-avaliar cobertura, completar conteúdo ou emitir um parecer técnico geral.
-1. Compare explicações entre TODOS os capítulos: a mesma ideia foi acrescentada
-duas vezes? Indique os dois blocos e o mecanismo/condição repetido. Recapitulação
-curta com função didática não é defeito; informações exclusivas devem permanecer.
-2. Localize relato de leitura: 'fabricante consultado', 'no contexto consultado',
-'no caso relatado', 'a fonte afirma' e equivalentes. O contexto deve ensinar o
-conceito diretamente, com condições explícitas, sem depender da leitura da fonte.
-3. Confira termos em inglês sem explicação em português brasileiro no primeiro uso.
-Os sinais locais são pistas; procure também falhas que não estejam nesses sinais.
-Ignore aprovações anteriores. Para cada defeito dê IDs de blocos e descreva o
-problema específico e o reparo necessário, sem reescrever o documento. Não crie
-falhas para preencher a resposta e não peça pesquisa por lacunas de conteúdo.
-JSON {"problemas":[{"blocos":["B01_01","B02_01"],"descricao":"defeito e reparo localizado"}]}.
-'''
+EDITORIAL_AUDIT = (
+    BASE
+    + """
+Faça uma leitura editorial crítica do documento inteiro.
+Sua tarefa é SOMENTE encontrar defeitos concretos de escrita, autonomia e redundância,
+sem avaliar cobertura de escopo, sem pedir pesquisa externa e sem reescrever o documento.
+
+Procure especificamente quatro categorias de defeito (`tipo_defeito`):
+1. `repeticao_entre_capitulos`: a mesma explicação de mecanismo ou condição foi repetida em dois capítulos/blocos diferentes sem função didática. Indique exatamente o par de blocos (`["B04_05", "B05_05"]`), qual bloco deve concentrar a explicação principal e qual deve manter apenas a consequência/interação local.
+2. `relato_de_leitura`: expressões que denunciam colagem de fonte, como 'fabricante consultado', 'no contexto consultado', 'no caso relatado', 'a fonte afirma', 'é descrito como muito eficaz', 'são citados produtos', 'outras alternativas citadas são'. Indique o bloco (`["B01_01"]`) e o trecho exato a converter em voz técnica autônoma com condições preservadas.
+3. `termo_ingles`: termo técnico em inglês não trivial usado sem explicação em português brasileiro no primeiro uso (siglas e termos consagrados de uso diário como FPSO, topside, subsea, offloading e pig não são defeito se o contexto estiver claro).
+4. `organizacao`: bloco deslocado de capítulo ou subtítulo incoerente com o conteúdo do bloco.
+
+Regras:
+- Cada item em `problemas` deve listar no máximo 2 ou 3 blocos diretamente acoplados pelo mesmo defeito. Não agrupe o documento inteiro em um único item.
+- Não crie defeitos artificiais para preencher lista. Se o documento estiver limpo, retorne `"problemas": []`.
+
+Retorne exclusivamente o JSON:
+{"problemas":[{"blocos":["B04_05","B05_05"],
+"tipo_defeito":"repeticao_entre_capitulos|relato_de_leitura|termo_ingles|organizacao",
+"descricao":"descrição exata do defeito e como reparar sem perder condições técnicas"}]}
+"""
+)
+
+EDITORIAL = (
+    EDIT
+    + """
+MODO DE MICRO-ACABAMENTO EDITORIAL LOCALIZADO:
+Você está recebendo um micro-lote de acabamento editorial (máximo de 3 blocos acoplados).
+A base recebida já contém as alterações técnicas aprovadas.
+Regras estritas desta etapa:
+1. Corrija APENAS os defeitos editoriais apontados nos blocos autorizados da micro-intervenção (`E01`, `E02`...), usando exclusivamente as operações `substituir` ou `remover`.
+2. É PROIBIDO acrescentar fatos novos, números, dosagens, limites, normas ou recomendações externas. `achados` e `complementos` devem ser obrigatoriamente listas vazias `[]`.
+3. Ao remover relato de leitura ('no contexto consultado', 'é descrito como', etc.), NÃO transforme uma condição específica do fluido/equipamento em verdade universal irrestrita; mantenha a condição técnica explícita na frase (ex.: 'Em sistemas de água do mar com presença de cloro residual...').
+4. Ao eliminar redundância entre dois blocos, preserve 100% das condições exclusivas de cada bloco e declare detalhadamente em `preservacao` em qual bloco cada mecanismo permaneceu.
+"""
+)
+
+CONSOLIDATE = (
+    BASE
+    + """
+Avalie a edição consolidada final contra a frase de escopo do especialista, as
+`protecoes` do especialista, a `cobertura_anterior` e os sinais editoriais locais.
+
+Regras de julgamento final:
+1. Verifique se todas as `protecoes` do especialista continuam semanticamente preservadas (`protecoes_preservadas=true`).
+2. Liste em `problemas` apenas defeitos reais remanescentes no texto atual:
+   - `tipo="editorial"` para relato de leitura residual, duplicação de parágrafos ou falha grave de PT-BR.
+   - `tipo="tecnico"` para contradição interna entre blocos, perda de condição essencial ou erro factual.
+   - Marque `critico=true` para erros técnicos, perda de proteção do especialista ou relato de fonte explícito que impeça publicar o texto para geração de questões.
+3. ESTABILIDADE DA COBERTURA (`cobertura`):
+   - Avalie todos os pontos curados com os mesmos IDs do diagnóstico.
+   - Compare com `cobertura_anterior`: se um ponto já estava `atendido` e nenhuma informação dele foi apagada, mantenha `atendido`. Só rebaixe um ponto de `atendido` para `parcial` se você preencher `evidencia_regressao` explicando exatamente qual requisito obrigatório da frase do especialista está ausente no texto atual. Não exija aprofundamentos opcionais para marcar `atendido`.
+
+Retorne exclusivamente o JSON:
+{"protecoes_preservadas":true,
+"problemas":[{"blocos":["B01_01"],"descricao":"...","tipo":"tecnico|editorial","critico":true}],
+"cobertura":[{"id":"F01","estado":"atendido|parcial|ausente","motivo":"...","evidencia_regressao":""}],
+"omissoes_escopo":[]}
+"""
+)

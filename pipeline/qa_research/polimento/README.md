@@ -19,26 +19,42 @@ modificados. O plano aprovado está em `../PLANO_POLIMENTO_40_CONTEXTOS.md`.
    inclusão factual: somente relações diretamente pertinentes chegam à edição.
 4. Extrair relações, condições, limites e estatuto das afirmações. O modelo cita IDs
    das passagens; o código recupera texto e intervalos, sem exigir cópia literal.
+   Cada intervenção técnica tem de um a três subobjetivos verificáveis. Achados
+   diretos precisam indicar quais deles sustentam. O Python recalcula a cobertura
+   e restringe a segunda leitura aos subobjetivos faltantes, mesmo quando o modelo
+   declara suficiência. Subobjetivos sem suporte viram pendências da edição.
 5. Editar em lotes de duas intervenções. Somente os alvos autorizados podem ser
    substituídos, removidos ou receber inserções. Capítulo novo exige autorização
    no diagnóstico. Blocos intocados permanecem idênticos.
    Movimentos preservam integralmente os blocos; títulos de capítulos podem ser
    ajustados sem regenerar seus parágrafos.
    Cada lote recebe a edição corrente, incluindo as alterações já aprovadas.
-6. Revisar as alterações com as fontes e com o documento consolidado. Perda de
-   conhecimento, condição ou correção do especialista impede aprovação. Um reparo
-   por intervenção é permitido; aprovações independentes são preservadas.
+6. Revisar cada operação pelo seu `op_id`, usando o mapa da base anterior ao lote,
+   o bloco anterior e o estado proposto. Inserções nunca aparecem como já aplicadas
+   nessa base. Aprovações independentes são comitadas antes do único reparo, que
+   recebe apenas os `op_id` a corrigir e o documento já atualizado. Fusões dependentes
+   são avaliadas como transações acopladas para evitar perda de conhecimento.
+   Em edição editorial, suporte significa preservar fatos existentes sem inventar
+   novos; não se exige pesquisa nova para afirmações já presentes no bloco original.
 7. Fazer uma leitura editorial focada do documento inteiro, com o modelo de revisão:
    comparar capítulos, procurar repetição de ideias, relato de leitura e termos
    estrangeiros sem explicação. Verificações locais sinalizam expressões explícitas
    e parágrafos semelhantes; similaridade é pista, não autorização para apagar.
-8. Quando necessário, fazer uma única rodada de acabamento nos blocos identificados,
-   sem novos fatos. Revisar preservação antes de aplicar e conferir novamente o
-   resultado. Defeito persistente fica pendente; não há ciclo até obter aprovação.
+8. Agrupar os defeitos em micro-intervenções `E01`, `E02` etc., com no máximo três
+   blocos por chamada editorial e mantendo juntos os pares com repetição. Cada lote
+   tem revisão por operação, aplicação imediata e no máximo um reparo focalizado.
+   Operações que continuarem reprovadas são descartadas individualmente. A leitura
+   de conferência verifica o documento após os commits de acabamento.
 9. Conferir coerência, proteções e cobertura final. O parecer geral não apaga falhas
    da leitura editorial ou das verificações locais. Relato de fonte, duplicação
    literal longa ou problema editorial confirmado impede publicar a edição e
    liberar QA. A versão para revisão permanece disponível.
+
+`resumo.json`, `relatorio.md` (também disponível como `RELATORIO.md`) e a versão
+para revisão são atualizados em cada etapa e commit. Interrupções preservam os
+apontamentos da leitura editorial e as alterações técnicas e editoriais já
+aprovadas. A consolidação recebe a cobertura inicial e a da base anterior; um ponto
+atendido não regride sem remoção associada ou evidência explícita de regressão.
 
 A lista de pendências reúne intervenções não aprovadas, cobertura parcial/ausente,
 omissões de escopo e problemas de revisão. Aprovar uma inclusão útil não significa
@@ -66,9 +82,19 @@ revisão `gpt-5-4-petrobras:high`. O orçamento padrão é de 60 tentativas por 
 cumulativo, incluindo as repetições. São limites de proteção, sem meta de gastar
 essas chamadas. O transporte reutilizado permite até duas tentativas por chamada,
 prazo de 300 segundos e heartbeat a cada 30 segundos.
-Sem defeitos editoriais, a leitura focada acrescenta uma chamada. Se houver reparo,
-há uma escrita, um parecer de preservação e uma conferência adicional. Tudo usa
-o mesmo orçamento, transporte e cache, sem aumentar limites automaticamente.
+Sem defeitos editoriais, a leitura focada acrescenta uma chamada. Havendo defeitos,
+cada micro-lote acrescenta escrita e revisão, com um único reparo opcional e uma
+conferência global após o acabamento. Tudo usa o mesmo orçamento cumulativo e cache.
+A segunda tentativa de transporte usa `retry_tokens` após truncamento, ou após
+erro de formato/contrato com mais de 35.000 caracteres. O log e a exceção final
+conservam o tipo de falha e o limite de tokens de cada tentativa.
+
+Validação offline (inclui os 29 testes anteriores, as regressões da versão 2.1 e
+o transporte compartilhado com v3):
+
+```bash
+python -m pytest pipeline/qa_research/polimento/tests tests/test_polimento_v21.py pipeline/qa_research/v3/tests -q
+```
 
 ## Continuar a partir do piloto já aprovado parcialmente
 

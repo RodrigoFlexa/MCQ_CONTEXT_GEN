@@ -99,13 +99,23 @@ def public_research(result):
         for p in s['paragrafos']]) for s in result['fontes']])
 
 
+def objective_support(intervention, findings):
+    ids = [s['id'] for s in intervention.get('sub_objetivos', [])]
+    covered = {sid for f in findings if f.get('pertinencia') == 'direta'
+               for sid in f.get('sub_objetivos_atendidos', []) if sid in ids}
+    return dict(sub_objetivos_com_suporte=[sid for sid in ids if sid in covered],
+                sub_objetivos_sem_suporte=[sid for sid in ids if sid not in covered],
+                todos_sub_objetivos_cobertos=set(ids).issubset(covered))
+
+
 async def investigate(intervention, base, index, config, calls):
     findings, sources, traces, reports, pending, errors = [], {}, [], [], [], []
     pairs, done_queries = intervention['consultas'], set()
     if not pairs:
         return dict(id=intervention['id'], achados=[], fontes=[], consultas=[], leituras=0,
             pendencias=[] if intervention.get('tipo') == 'editorial' else ['Pesquisa não executada: consultas ausentes'],
-            erros=[], status='dispensada_editorial' if intervention.get('tipo') == 'editorial' else 'nao_executada')
+            erros=[], status='dispensada_editorial' if intervention.get('tipo') == 'editorial' else 'nao_executada',
+            **objective_support(intervention, []))
     seen = set()
     for turn in range(config['research_rounds']):
         pairs = [p for p in pairs if (p['pt'].casefold(), p['en'].casefold()) not in done_queries]
@@ -115,6 +125,15 @@ async def investigate(intervention, base, index, config, calls):
         hits, queries = await asyncio.to_thread(index.query, pairs, config['retrieval_candidates'])
         traces.extend(dict(rodada=turn + 1, **q) for q in queries)
         selected, counts = [], {}
+        support = objective_support(intervention, findings)
+        # A segunda leitura recebe somente os objetivos ainda sem evidência direta.
+        focused = dict(intervention, sub_objetivos=[s for s in intervention.get('sub_objetivos', [])
+                       if s['id'] in support['sub_objetivos_sem_suporte']]) if turn else intervention
+        def reading_payload(candidate):
+            return dict(schema=VERSION, entrada=base['entrada'], intervencao=focused,
+                sub_objetivos_com_suporte=support['sub_objetivos_com_suporte'],
+                sub_objetivos_sem_suporte=support['sub_objetivos_sem_suporte'],
+                anteriores=findings, fontes=candidate)
         for hit in hits:
             if navigation_reason(hit):
                 continue
@@ -122,8 +141,7 @@ async def investigate(intervention, base, index, config, calls):
             if row['id'] in seen or counts.get(row['document_id'], 0) >= config['max_per_document']:
                 continue
             candidate = selected + [row]
-            payload = dict(schema=VERSION, entrada=base['entrada'], intervencao=intervention,
-                anteriores=findings, fontes=candidate)
+            payload = reading_payload(candidate)
             if len(json.dumps(payload, ensure_ascii=False)) + len(P.RESEARCH) > config['max_input_chars']:
                 continue
             selected.append(row)
@@ -136,11 +154,10 @@ async def investigate(intervention, base, index, config, calls):
         sources.update((s['id'], s) for s in selected)
         seen.update(sources)
         paragraphs = {p['id']: p for s in selected for p in s['paragrafos']}
-        payload = dict(schema=VERSION, entrada=base['entrada'], intervencao=intervention,
-            anteriores=findings, fontes=selected)
+        payload = reading_payload(selected)
         try:
             result = await calls.call('write', intervention['id'] + '_pesquisa_' + str(turn + 1), payload,
-                lambda d: C.research(d, paragraphs), system=P.RESEARCH)
+                lambda d: C.research(d, paragraphs, {s['id'] for s in focused.get('sub_objetivos', [])}), system=P.RESEARCH)
         except (Fatal, BudgetExceeded):
             raise
         except (CallFailure, ValueError) as exc:
@@ -156,16 +173,28 @@ async def investigate(intervention, base, index, config, calls):
                 continue
             findings.append(dict(id=intervention['id'] + '_A' + str(len(findings) + 1).zfill(2), **finding))
         pending.extend(result['pendencias'])
-        if result['suficiente'] and findings:
+        support = objective_support(intervention, findings)
+        if not support['todos_sub_objetivos_cobertos']:
+            result['suficiente'] = False
+        if support['todos_sub_objetivos_cobertos'] and findings:
             break
         pairs = result['consultas_adicionais']
+        if not pairs and support['sub_objetivos_sem_suporte']:
+            # Fallback PT focado sem inventar tradução: conserva a expressão EN
+            # original; o pacote de leitura restringe explicitamente os objetivos.
+            missing = [s for s in intervention['sub_objetivos'] if s['id'] in support['sub_objetivos_sem_suporte']]
+            pairs = [dict(pt=' '.join((s['descricao'] + ' ' + intervention['consultas'][0]['pt']).split()[:16]),
+                          en=intervention['consultas'][0]['en']) for s in missing]
     status = 'com_achados' if findings else 'sem_evidencia_pertinente' if reports else 'sem_passagens' if done_queries else 'nao_executada'
     if errors:
         status = 'parcial' if findings else 'falha_leitura'
     if not findings:
         pending.append('Não foi obtida evidência diretamente pertinente ao objetivo: ' + status)
+    support = objective_support(intervention, findings)
+    pending.extend('Sem suporte direto para ' + s['id'] + ': ' + s['descricao']
+                   for s in intervention.get('sub_objetivos', []) if s['id'] in support['sub_objetivos_sem_suporte'])
     return dict(id=intervention['id'], status=status, achados=findings, fontes=list(sources.values()),
-                consultas=traces, leituras=len(reports), pendencias=sorted(set(pending)), erros=errors)
+                consultas=traces, leituras=len(reports), pendencias=sorted(set(pending)), erros=errors, **support)
 
 
 def evidence_payload(research):

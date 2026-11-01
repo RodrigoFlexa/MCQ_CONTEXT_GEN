@@ -14,7 +14,7 @@ from pipeline.qa_research.corpus import CorpusIndex
 from pipeline.qa_research.v3.runtime import ROOT, Calls, digest, stamp, topic
 from . import VERSION, contracts as C, prompts as P
 from .documents import load_base, clean, markdown, catalog
-from .flow import polish
+from .flow import polish, save_incremental_summary
 
 HERE = Path(__file__).parent
 DEFAULT_BASE = ROOT / 'pipeline/qa_research/relatorios/dez_areas_final_v2'
@@ -43,25 +43,7 @@ def all_items():
 
 
 def report_document(folder, summary):
-    lines = ['# Nova edição do contexto — polimento', '', '**Estado:** ' + summary['status'],
-        '', 'Base: ' + summary['origem'], '',
-        f"Intervenções aprovadas: {summary['intervencoes_aprovadas']} de {summary['intervencoes_planejadas']}.",
-        f"Alterações aprovadas: {summary['alteracoes_aprovadas']}.",
-        f"Alterações de acabamento: {summary.get('acabamento_alteracoes', 0)}.",
-        f"Palavras: {summary['palavras_antes']} → {summary['palavras_depois']}.",
-        f"Tentativas externas cumulativas: {summary['tentativas']}.",
-        'Documento publicado: ' + ('sim' if summary['documento_publicado'] else 'não; leia documento_para_revisao.md') + '.',
-        'Elegível para QA: ' + ('sim, sujeito à validação especializada' if summary['qa_elegivel'] else 'não') + '.',
-        '', 'A preservação de texto herdado não significa que todas as afirmações anteriores foram verificadas novamente.',
-        '', '| Ponto estável | Cobertura | Motivo |', '|---|---|---|']
-    lines += ['| ' + r['id'] + ' | ' + r['estado'] + ' | ' + r['motivo'].replace('|', '/') + ' |' for r in summary['cobertura']]
-    if summary.get('erro'):
-        lines += ['', 'Interrupção: ' + summary['erro']]
-    if summary['pendencias']:
-        lines += ['', 'Trabalho ainda pendente (intervenções, cobertura, escopo e revisão):']
-        lines += ['', *['- ' + r['id'] + ' (' + r['tipo'] + '): ' + r['objetivo'] for r in summary['pendencias']]]
-    lines += ['', 'Pareceres, fontes, comparação antes/depois e decisões estão na pasta da versão: `versoes/' + summary['versao'] + '/`.']
-    (folder / 'RELATORIO.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    save_incremental_summary(folder, summary)
 
 
 async def execute(base_root, legacy_root, expert_file, manifest, output, items, config, transport=None):
