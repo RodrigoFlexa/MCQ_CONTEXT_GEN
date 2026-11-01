@@ -1,0 +1,110 @@
+{
+  "uid": "07_01:j:r1:014:4",
+  "avaliacao": {
+    "cobertura_completa": true,
+    "afirmacoes": [
+      {
+        "afirmacao": "Para localizar a origem do desvio, a verificação técnica deve percorrer a arquitetura de automação como sistema integrado, acompanhando o encadeamento do sinal entre camadas.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B1",
+            "trecho": "No comissionamento, a arquitetura de automação precisa ser verificada como sistema integrado, não apenas como coleção de equipamentos energizados."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "O encadeamento básico começa com a medição das variáveis de processo por sensores e transmissores. Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Em instalações de processo, a automação resulta da integração de dispositivos de campo, sistemas controladores e supervisão."
+          }
+        ],
+        "justificativa": "Os blocos não tratam de um FPSO específico, mas sustentam que a automação deve ser verificada de forma integrada e descrevem o encadeamento do sinal entre camadas. Da combinação dessas evidências decorre diretamente que a busca da origem de um desvio deve percorrer as camadas da arquitetura segundo esse encadeamento, em vez de inspecionar equipamentos isoladamente."
+      },
+      {
+        "afirmacao": "Nesse percurso, deve-se confirmar a medição em campo.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B3",
+            "trecho": "O encadeamento básico começa com a medição das variáveis de processo por sensores e transmissores."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Sensores e transmissores fornecem variáveis medidas, como pressão, nível, temperatura, vazão, posição e velocidade."
+          },
+          {
+            "bloco": "B1",
+            "trecho": "foram descritos testes preliminares da lógica de automação, procedimentos de limpeza e inertização, verificação e calibração de instrumentos e confirmação da comunicação entre equipamentos de campo e PLC antes da entrada de gás natural."
+          }
+        ],
+        "justificativa": "Os blocos colocam a medição por sensores/transmissores como início do encadeamento e citam explicitamente verificação e calibração de instrumentos. Isso sustenta que a checagem técnica deve incluir a confirmação da medição em campo."
+      },
+      {
+        "afirmacao": "Nesse percurso, deve-se confirmar o processamento no PLC/DCS.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B2",
+            "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+          },
+          {
+            "bloco": "B1",
+            "trecho": "O princípio técnico transferível é que testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados e instabilidade inicial de controle."
+          }
+        ],
+        "justificativa": "Os blocos identificam PLC/DCS como a camada que recebe as medições e coordena/genera ações de controle. Também mostram que testes integrados revelam falhas de configuração, sequência e controle nessa camada. Isso sustenta a necessidade de confirmar o processamento no PLC/DCS ao rastrear a origem do desvio."
+      },
+      {
+        "afirmacao": "Nesse percurso, deve-se confirmar a atuação no elemento final.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B2",
+            "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+          },
+          {
+            "bloco": "B1",
+            "trecho": "O princípio técnico transferível é que testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados e instabilidade inicial de controle."
+          }
+        ],
+        "justificativa": "Os blocos definem válvulas, motores e bombas como atuadores/elementos finais e os colocam como executores das ações geradas pelo controlador. Como o próprio material aponta a possibilidade de 'sentido incorreto de atuação', há suporte para que a verificação confirme a atuação no elemento final."
+      },
+      {
+        "afirmacao": "Nesse percurso, deve-se confirmar a apresentação e o comando na supervisão/HMI.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B2",
+            "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+          }
+        ],
+        "justificativa": "Os blocos atribuem à supervisão/HMI tanto a apresentação das condições do processo quanto a interface de atuação do operador. Também afirmam explicitamente que a supervisão pode exibir valores sem representar corretamente o estado físico. Isso sustenta a necessidade de confirmar a camada de apresentação/comando ao investigar divergência entre HMI e comportamento real."
+      }
+    ],
+    "observacoes": "Os blocos sustentam as camadas e a necessidade de verificação integrada do encadeamento do sinal. Há, porém, uma limitação de granularidade: B3 descreve a supervisão 'em paralelo' ao caminho medição-controlador-atuador, de modo que a ordem exata entre atuação e supervisão não é prescrita de forma rígida; o suporte é para incluir ambas as camadas na verificação, não para uma sequência temporal única e exclusiva."
+  },
+  "status": "totalmente_sustentado",
+  "afirmacoes": 5,
+  "sustentada": 5,
+  "contradita": 0,
+  "insuficiente": 0,
+  "fracao_sustentada": 1.0
+}

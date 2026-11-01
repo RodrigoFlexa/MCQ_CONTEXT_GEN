@@ -1,6 +1,6 @@
 # Acurácia dos modelos sem contexto
 
-Atualizado em 2026-11-01T07:04:06.448608+00:00. Questões prontas: 5636 em 40 tópicos. Juiz: `gpt-5-4-petrobras:medium`. GPT-4.1 Nano/Mini/Full, sem effort; até 100 palavras. Juiz GPT-5.4 medium; braços open/closed-book.
+Atualizado em 2026-11-01T14:29:13.354074+00:00. Questões prontas: 5636 em 40 tópicos. Juiz: `gpt-5-4-petrobras:medium`. GPT-4.1 Nano/Mini/Full, sem effort; até 100 palavras. Juiz GPT-5.4 medium; braços open/closed-book.
 Acurácia = % de respostas corretas; "com parcial" conta a parcial como meio acerto.
 
 ## Geral

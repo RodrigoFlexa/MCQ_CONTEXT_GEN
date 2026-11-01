@@ -1,0 +1,87 @@
+{
+  "uid": "07_02:j:r1:001:3:ref",
+  "avaliacao": {
+    "cobertura_completa": true,
+    "afirmacoes": [
+      {
+        "afirmacao": "Os fluxos permitidos nessa interconexão devem ser definidos separando-os por consumidor/destino e pela finalidade operacional (função).",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B2",
+            "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+          }
+        ],
+        "justificativa": "Os blocos associam a interconexão a diferentes consumidores/destinos (supervisão e consumidores externos) e afirmam que o tráfego que cruza a fronteira deve ser definido conforme sua finalidade operacional. A menção a domínios com funções diferentes reforça a separação por função."
+      },
+      {
+        "afirmacao": "Deve-se liberar apenas o tráfego necessário para cruzar essa fronteira.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B2",
+            "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+          }
+        ],
+        "justificativa": "B2 exige definição clara do tráfego que cruza a fronteira, e B3 explicita que conectividade além do necessário aumenta o risco. Em conjunto, isso sustenta a orientação de permitir só o tráfego necessário."
+      },
+      {
+        "afirmacao": "No cenário descrito, o fluxo em tempo real do controlador de borda para o SCADA local deve ser um dos fluxos permitidos.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B2",
+            "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+          }
+        ],
+        "justificativa": "A pergunta já estabelece como premissa o envio ao SCADA local em tempo real. B2 confirma exatamente esse tipo de arquitetura híbrida e afirma que o tráfego da interface deve ser claramente definido. Assim, o fluxo em tempo real para o SCADA local é suportado como um fluxo a ser permitido nesse contexto."
+      },
+      {
+        "afirmacao": "No lado externo via broker MQTT em nuvem, devem ser permitidas apenas as publicações requeridas pelos consumidores externos.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B2",
+            "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+          }
+        ],
+        "justificativa": "Os blocos vinculam a publicação para nuvem a uma interface com consumidores externos e exigem definição clara do tráfego conforme a finalidade operacional, além de advertirem contra conectividade além do necessário. Daí decorre diretamente que, para o broker MQTT, o permitido deve se restringir às publicações necessárias aos consumidores externos."
+      }
+    ],
+    "observacoes": "O suporte para a expressão 'por consumidor' não aparece como formulação normativa literal única; ele decorre da combinação entre a identificação de 'supervisão e consumidores externos' como destinos distintos e a exigência de definir o tráfego pela 'finalidade operacional'. Não há detalhamento nos blocos sobre tópicos MQTT, payloads ou granularidade de publicações."
+  },
+  "status": "totalmente_sustentado",
+  "afirmacoes": 4,
+  "sustentada": 4,
+  "contradita": 0,
+  "insuficiente": 0,
+  "fracao_sustentada": 1.0
+}
