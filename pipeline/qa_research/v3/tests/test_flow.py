@@ -18,6 +18,7 @@ from pipeline.qa_research.v3 import contracts as C
 from pipeline.qa_research.v3 import prompts as P
 from pipeline.qa_research.v3.__main__ import configuration,execute,collect,main
 from pipeline.qa_research.v3.runtime import Calls,CallFailure,topic
+from pipeline.qa_research.v3.context import fit_write,input_size
 
 
 def response(value, finish='stop', raw=None):
@@ -205,6 +206,21 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(result['contexto']['secoes_liberadas'],0,result)
         self.assertFalse(any(r=='author' for r,_,_ in self.model.inputs))
 
+    def test_large_source_metadata_is_packed_before_writing_and_review(self):
+        path=self.manifest.with_name('pages.jsonl')
+        row=json.loads(path.read_text(encoding='utf-8'));row['url']='https://example.org/'+('x'*220000)
+        path.write_text(json.dumps(row)+'\n',encoding='utf-8')
+        manifest=read_json(self.manifest);manifest['collections'][0]['sha256']=file_hash(path);atomic_json(self.manifest,manifest)
+        result=self.run_flow();self.assertEqual(result['status'],'concluido',result)
+        writers=[p for r,p,_ in self.model.inputs if r=='write']
+        self.assertEqual(len(writers),2)
+        self.assertTrue(all('url' not in s for p in writers for s in p['fontes']))
+        version=result['contexto']['versao']
+        size=read_json(self.output/'contexto/versoes'/version/'entradas/S1.json')
+        self.assertGreater(size['caracteres_antes'],self.config['max_input_chars'])
+        self.assertLess(size['caracteres_depois'],self.config['max_input_chars'])
+        self.assertEqual(size['excluidas'],[],'Metadado extenso não deve eliminar a passagem técnica')
+
 
 class TransportTests(unittest.TestCase):
     def setUp(self):
@@ -272,6 +288,22 @@ class TransportTests(unittest.TestCase):
         rows=[dict(id=k,decisao='descartar',motivo='teste',duplicada_de=v,criterios={k:False for k in C.CRITERIA}) for k,v in [('Q1','Q2'),('Q2','Q1')]]
         with self.assertRaisesRegex(ValueError,'admitida'):C.judged({'avaliacoes':rows},{'Q1','Q2'},set())
 
+    def test_human_progress_explains_retry_without_showing_token_configuration(self):
+        shown=[];attempts=[]
+        async def transport(*args):
+            attempts.append(1)
+            if len(attempts)==1:raise ServerError('simulado')
+            return response({'ok':True})
+        async def run():
+            calls=Calls(self.root,self.config,transport=transport,progress=lambda value,**kwargs:shown.append(value))
+            await calls.call('review','teste',{},lambda d:None)
+        asyncio.run(run())
+        self.assertTrue(any('Falha temporária' in s for s in shown))
+        self.assertFalse(any('tokens' in s or 'tentativa 0' in s for s in shown))
+        logs=[json.loads(line) for line in (self.root/'chamadas_llm.jsonl').read_text().splitlines()]
+        self.assertEqual([r['attempt'] for r in logs],[1,2])
+        self.assertTrue(all(r['max_tokens']==16000 for r in logs))
+
     @unittest.skipUnless(importlib.util.find_spec('openai'),'SDK não instalado neste Python; executar também no ambiente do SDK')
     def test_real_async_sdk_adapter_with_mock_http(self):
         import httpx
@@ -300,3 +332,38 @@ class TransportTests(unittest.TestCase):
                 finally:
                     await calls.close();await old.aclose()
         with redirect_stdout(io.StringIO()):asyncio.run(run())
+
+
+class PackingTests(unittest.TestCase):
+    def setUp(self):
+        self.config=configuration()
+        self.payload=dict(entrada=topic('02_02'),sumario=[dict(id='S1',titulo='Tratamento',pontos=['P1'],consultas=[dict(pt='tratamento químico espuma',en='chemical foam treatment')])],
+            secao=dict(id='S1',titulo='Tratamento',pontos=['P1'],consultas=[]),palavras_alvo=700,
+            fontes=[dict(id='E1',texto='Explicação técnica integral.',url='https://example.org/manual')])
+
+    def test_small_packet_is_unchanged_to_reuse_previous_calls(self):
+        packed,detail=fit_write(self.payload,self.config)
+        self.assertIs(packed,self.payload)
+        self.assertFalse(detail['ajustado'])
+
+    def test_huge_metadata_is_removed_without_cutting_technical_text(self):
+        self.payload['fontes'][0].update(url='https://example.org/'+('x'*250000),title='t'*200000)
+        original=copy.deepcopy(self.payload)
+        packed,detail=fit_write(self.payload,self.config)
+        self.assertEqual(packed['fontes'][0]['texto'],original['fontes'][0]['texto'])
+        self.assertEqual(self.payload,original,'Originais devem permanecer intactos')
+        self.assertLessEqual(input_size(packed,P.WRITE),self.config['max_input_chars'])
+        self.assertEqual(detail['excluidas'],[])
+
+    def test_oversized_passage_is_skipped_whole_and_alternative_is_kept(self):
+        self.payload['fontes']=[dict(id='E1',texto='x'*250000),dict(id='E2',texto='Passagem alternativa com condições completas.')]
+        packed,detail=fit_write(self.payload,self.config)
+        self.assertEqual(packed['fontes'],[self.payload['fontes'][1]])
+        self.assertEqual(detail['excluidas'][0]['id'],'E1')
+        self.assertEqual(packed['entrada'],self.payload['entrada'])
+
+    def test_no_fitting_source_is_explicitly_diagnosed(self):
+        self.payload['fontes']=[dict(id='E1',texto='x'*250000)]
+        packed,detail=fit_write(self.payload,self.config)
+        self.assertIn('Nenhuma passagem',detail['erro'])
+        self.assertEqual(packed['fontes'],[])

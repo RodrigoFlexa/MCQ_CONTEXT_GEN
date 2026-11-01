@@ -13,6 +13,8 @@ from pipeline.qa_research.runtime import PersistentBudget
 from . import contracts as C, prompts as P
 
 ROOT=Path(__file__).resolve().parents[3]
+LABELS=dict(plan='planejamento',write='redação',review='revisão',author='questões',
+    solve='resolução',judge='revisão de questões',refine='refino')
 
 
 def digest(value):
@@ -85,6 +87,10 @@ class Calls:
         C.require(len(body)+len(system)<=self.config['max_input_chars'],tag+': entrada excedeu max_input_chars; reduza o lote ou divida a revisão')
         key=digest([C.VERSION,self.backend,self.config['models'][role],system,payload])
         path=self.output/'.local'/'chamadas'/(key+'.json')
+        label=f'[{LABELS.get(role,role)}:{tag}]'
+
+        def retry_message(reason, action='Repetindo uma vez'):
+            self.progress(f'{label} {reason}. {action}.',flush=True)
 
         def checked(data):
             try:
@@ -97,14 +103,15 @@ class Calls:
             try:checked(saved['response'])
             except ValueError:pass
             else:
-                self.progress(f'[{role}:{tag}] reutilizado',flush=True)
+                self.progress(f'{label} resultado anterior reutilizado',flush=True)
                 return saved['response']
-        state={'fase':'fila','tentativa':0};started=time.monotonic()
+        state={'fase':'aguardando vaga','tentativa':0,'inicio_fase':time.monotonic()};started=time.monotonic()
 
         async def heartbeat():
             while True:
                 await asyncio.sleep(self.config['heartbeat'])
-                self.progress(f'[{role}:{tag}] {state["fase"]} | tentativa {state["tentativa"]}/2 | {time.monotonic()-started:.0f}s decorridos',flush=True)
+                elapsed=time.monotonic()-state['inicio_fase']
+                self.progress(f'{label} {state["fase"]} há {elapsed:.0f}s',flush=True)
 
         ticker=asyncio.create_task(heartbeat())
         try:
@@ -114,8 +121,11 @@ class Calls:
                 current=initial
                 for attempt in range(1,3):
                     if self.abort:raise Fatal('Execução interrompida por falha fatal; checkpoints preservados')
-                    self.budget.reserve(); state.update(fase='aguardando resposta',tentativa=attempt)
-                    self.progress(f'[{role}:{tag}] tentativa {attempt}/2 | limite {current} tokens | fila {queued:.1f}s',flush=True)
+                    self.budget.reserve(); state.update(fase='aguardando resposta',tentativa=attempt,inicio_fase=time.monotonic())
+                    if self.config.get('verbose'):
+                        self.progress(f'{label} tentativa {attempt}/2 | limite {current} tokens | fila {queued:.1f}s',flush=True)
+                    elif attempt==1:
+                        self.progress(f'{label} iniciando'+(f' após {queued:.0f}s na fila' if queued>=1 else ''),flush=True)
                     t0=time.monotonic();meta=dict(id=key,role=role,tag=tag,model=self.config['models'][role],
                         attempt=attempt,max_tokens=current,queue_seconds=queued)
                     try:
@@ -126,11 +136,13 @@ class Calls:
                         elapsed=round(time.monotonic()-t0,2)
                         kind='prazo' if isinstance(exc,TimeoutError) else 'transitorio' if is_transient(exc) else 'requisicao'
                         self.log(dict(**meta,ok=False,kind=kind,error=safe_error(exc),seconds=elapsed))
-                        if attempt<2 and getattr(exc,'status_code',None)==401 and self.refresh():continue
+                        if attempt<2 and getattr(exc,'status_code',None)==401 and self.refresh():
+                            retry_message('Credencial renovada');continue
                         if is_fatal(exc) or (kind=='requisicao' and not is_content_filter(exc)):
                             self.abort=True;raise Fatal(f'{tag}: {safe_error(exc)}; verifique deployment, credenciais e configuração') from exc
                         if attempt==2 or is_content_filter(exc):raise CallFailure(f'{tag}: {safe_error(exc)}') from exc
-                        state['fase']='intervalo antes da repetição'
+                        retry_message('Prazo da requisição esgotado' if kind=='prazo' else 'Falha temporária do serviço: '+safe_error(exc))
+                        state.update(fase='aguardando nova chamada',inicio_fase=time.monotonic())
                         await asyncio.sleep(min(30,max(1,retry_after(exc))));continue
                     seconds=round(time.monotonic()-t0,2)
                     choice=response.choices[0];finish=choice.finish_reason
@@ -144,6 +156,7 @@ class Calls:
                     if finish=='length':
                         self.log(dict(**meta,ok=False,kind='truncada'))
                         if attempt==2:raise CallFailure(tag+': resposta truncada após duas tentativas')
+                        retry_message('Resposta interrompida pelo limite de saída','Repetindo uma vez com mais espaço para a resposta')
                         current=max(current,self.config['retry_tokens']);continue
                     try:
                         data=json.loads(content);checked(data)
@@ -151,13 +164,14 @@ class Calls:
                         message=safe_error(exc)
                         self.log(dict(**meta,ok=False,kind='validacao',error=message))
                         if attempt==2:raise CallFailure(tag+': '+message) from exc
+                        retry_message('Resposta fora do formato esperado: '+message[:250],'Solicitando uma correção de formato')
                         # Reparo compacto: não acrescente a resposta anterior inteira.
                         messages=[dict(role='system',content=system),dict(role='user',content=body),
                             dict(role='user',content='Corrija este erro de contrato e devolva o JSON completo: '+message)]
                         continue
                     self.log(dict(**meta,ok=True))
                     atomic_json(path,dict(role=role,tag=tag,request=payload,system=system,response=data))
-                    self.progress(f'[{role}:{tag}] resposta validada em {seconds:.1f}s',flush=True)
+                    self.progress(f'{label} concluído em {seconds:.1f}s',flush=True)
                     return data
         finally:
             ticker.cancel()

@@ -64,13 +64,21 @@ as respostas concluídas. Mudança no corpus refaz sua verificação antes da AP
 
 ## Limites e decisões
 
-- Duas requisições simultâneas; heartbeat a cada 30 segundos com fila/tentativa/tempo.
+- Duas requisições simultâneas; atualização a cada 30 segundos com a etapa e tempo
+  de espera atual. O terminal explica o motivo de cada repetição real. `--verbose`
+  mostra também números de tentativas e limites de tokens; o JSONL registra sempre
+  os detalhes, mesmo no modo normal.
 - Prazo de 300 segundos por tentativa de requisição, incluindo cancelamento via
   cliente assíncrono. Espera por vaga é contabilizada separadamente.
 - No máximo duas tentativas por chamada lógica. Orçamento inicial: 16.000 tokens;
   truncagem usa 32.000 na tentativa restante. SDK sem retentativas adicionais.
 - Revisão documental conjunta: técnica, suporte, cobertura e PT-BR. Se a entrada
   ultrapassar o teto configurado, divide por seções completas e faz coerência final.
+- Na redação, pacotes grandes recebem sumário/metadados compactos e seleção por
+  tamanho serializado. Passagens são mantidas inteiras ou excluídas com motivo;
+  o texto original e a frase do especialista não são cortados. O ajuste fica em
+  `contexto/versoes/.../entradas/`, incluído na coleta. Os pacotes que já cabem
+  permanecem iguais para reutilizar chamadas compatíveis em uma retomada.
 - Uma rodada de correção documental; partes problemáticas ficam fora do contexto
   de QA. As demais podem alimentar uma entrega parcial explicitamente registrada.
 - Meta inicial de 40 questões, cobertura dos pontos prioritários liberados, até

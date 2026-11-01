@@ -116,6 +116,7 @@ def collect(output, destination):
             if report.get('versao'):
                 version=output/part/'versoes'/report['versao']
                 candidates.extend(p for p in version.glob('*.json') if p.is_file())
+                candidates.extend(p for p in (version/'entradas').glob('*.json') if p.is_file())
         destination.mkdir(parents=True)
         for path in candidates:
             if path.is_symlink() or path.suffix not in ('.json','.jsonl','.md','.csv'):continue
@@ -134,6 +135,7 @@ def main(argv=None):
     parser.add_argument('--examples',type=Path,action='append',help='Leitura explícita de exemplos existentes')
     parser.add_argument('--plan',action='store_true',help='Mostra configuração, sem chamadas nem escrita')
     parser.add_argument('--check',action='store_true',help='Verifica corpus/credenciais e os modelos com três chamadas curtas')
+    parser.add_argument('--verbose',action='store_true',help='Mostra também limites de tokens e números de tentativas')
     parser.add_argument('--collect',type=Path)
     parser.add_argument('--solver-model',help='deployment:effort explícito')
     for name in ('max-calls','workers','request-timeout','min-questions','max-batches','batch-size'):
@@ -142,6 +144,7 @@ def main(argv=None):
     if args.collect:
         collect(args.output,args.collect);print('Coleta:',args.collect);return 0
     config=configuration(args.config,{k:getattr(args,k) for k in ('max_calls','workers','request_timeout','min_questions','max_batches','batch_size') if getattr(args,k) is not None})
+    if args.verbose:config['verbose']=True
     if args.solver_model:
         config['models']['solve']=args.solver_model
         C.require(':' in args.solver_model and args.solver_model.rsplit(':',1)[1] in ('low','medium','high'),'Resolvedor: deployment:effort')

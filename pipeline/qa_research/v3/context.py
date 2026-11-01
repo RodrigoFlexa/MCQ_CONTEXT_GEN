@@ -12,6 +12,52 @@ from . import contracts as C, prompts as P
 from .runtime import digest, CallFailure, Fatal
 
 
+def input_size(payload, prompt):
+    return len(json.dumps(payload,ensure_ascii=False))+len(prompt)
+
+
+def prompt_source(source):
+    """Metadados completos ficam nos auxiliares; o texto técnico permanece integral."""
+    row={k:source[k] for k in ('id','texto','collection','language','jurisdiction','year',
+        'document_type','page_ini','page_fim') if k in source}
+    title=source.get('title')
+    if isinstance(title,str) and len(title)<=1000:row['title']=title
+    elif title:row['title_omitted_chars']=len(str(title))
+    return row
+
+
+def outline(sections):
+    return [{k:s[k] for k in ('id','titulo','pontos')} for s in sections]
+
+
+def fit_write(payload, config):
+    """Ajusta a seleção por tamanho serializado, sem cortar passagens ou o escopo."""
+    limit=config['max_input_chars'];before=input_size(payload,P.WRITE)
+    detail=dict(caracteres_antes=before,limite=limit,fontes_antes=len(payload['fontes']),
+        componentes={k:len(json.dumps(v,ensure_ascii=False)) for k,v in payload.items()},excluidas=[])
+    if before<=limit:
+        return payload,dict(detail,ajustado=False,caracteres_depois=before,fontes_enviadas=len(payload['fontes']))
+    compact=dict(payload,sumario=outline(payload['sumario']),
+        secao={k:payload['secao'][k] for k in ('id','titulo','pontos')})
+    compact['fontes']=[prompt_source(s) for s in payload['fontes']]
+    if input_size(compact,P.WRITE)>limit:
+        selected=[]
+        # Reserva espaço para o texto gerado poder ser auditado junto às evidências.
+        target=int(limit*.7)
+        for source in compact['fontes']:
+            candidate=dict(compact,fontes=selected+[source])
+            if input_size(candidate,P.WRITE)<=target:selected.append(source)
+            else:detail['excluidas'].append(dict(id=source['id'],motivo='passagem integral não cabe no orçamento da seção',caracteres=len(source['texto'])))
+        compact['fontes']=selected
+    size=input_size(compact,P.WRITE)
+    detail.update(ajustado=True,caracteres_depois=size,fontes_enviadas=len(compact['fontes']))
+    if size>limit:
+        detail['erro']='Escopo, sumário e orientações excedem o orçamento mesmo sem fontes'
+    elif payload['fontes'] and not compact['fontes']:
+        detail['erro']='Nenhuma passagem integral cabe no pacote; revise a extração ou o orçamento'
+    return compact,detail
+
+
 def retrieve(index, pairs, config, retained=()):
     hits,traces=bilingual_search(index,pairs,config['retrieval_candidates'])
     selected=list(retained); counts={}
@@ -66,8 +112,13 @@ async def generate(entrada, manifest, config, calls, root, corpus_identity):
             palavras_alvo=config['section_words'])
         if previous:payload.update(anterior=previous,parecer=report)
         try:
+            payload,sizing=fit_write(payload,config)
+            atomic_json(work/'entradas'/(sid+('_correcao' if previous else '')+'.json'),sizing)
+            C.require(not sizing.get('erro'),sid+': '+sizing.get('erro',''))
+            if sizing['ajustado']:
+                print(f'[contexto:{sid}] pacote ajustado: {sizing["fontes_enviadas"]} passagens integrais para redação; detalhes no relatório de entrada',flush=True)
             result=await calls.call('write',sid+('_correcao' if previous else ''),payload,
-                lambda d:C.section(d,{s['id'] for s in sources}))
+                lambda d:C.section(d,{s['id'] for s in payload['fontes']}))
             result=dict(id=sid,**{k:result[k] for k in ('titulo','texto','fontes','complementos')})
             atomic_json(work/'secoes'/(sid+('_corrigida' if previous else '_inicial')+'.json'),result)
             return result
@@ -92,9 +143,12 @@ async def generate(entrada, manifest, config, calls, root, corpus_identity):
     def review_payload(sections, coherence=False):
         source_map={s['id']:s for sources in pools.values() for s in sources}
         used={f for s in sections for f in s['fontes']}
-        return dict(entrada=entrada,checklist=plan['pontos'],sumario=plan['secoes'],
+        payload=dict(entrada=entrada,checklist=plan['pontos'],sumario=plan['secoes'],
             secoes_enviadas=sections,fontes=[] if coherence else [source_map[k] for k in sorted(used)],
             modo='coerencia_final' if coherence else 'tecnica_completa')
+        if input_size(payload,P.REVIEW)>config['max_input_chars']:
+            payload.update(sumario=outline(plan['secoes']),fontes=[prompt_source(s) for s in payload['fontes']])
+        return payload
 
     async def review_all(current, suffix):
         groups=[]
