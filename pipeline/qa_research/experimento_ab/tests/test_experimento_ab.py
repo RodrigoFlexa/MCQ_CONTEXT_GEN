@@ -412,3 +412,35 @@ class CLITests(unittest.TestCase):
         self.assertEqual(set(out["bracos"]), {"A", "C", "A_sust"})
         self.assertIn("sustentação: A_sust-A", out["efeitos"])
         self.assertTrue(out["bracos"]["A_sust"]["checagem_sustentacao"]["reparada"] > 0)
+
+
+class EmbedderDiretoTests(unittest.TestCase):
+    def test_sem_tiktoken_cache_e_lotes(self):
+        from types import SimpleNamespace as NS
+
+        class API:
+            def __init__(self):
+                self.chamadas = []
+                self.embeddings = self
+
+            def create(self, model, input, dimensions, encoding_format):
+                self.chamadas.append(list(input))
+                assert all(isinstance(t, str) for t in input)   # texto direto, sem tokens
+                return NS(data=[NS(index=i, embedding=list(Emb(dimensions).encode([t])[0])) for i, t in enumerate(input)],
+                          usage=NS(total_tokens=10))
+
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        api = API()
+        e = C.EmbedderDireto("3-small", tmp, client=api, lote=2)
+        textos = ["a b", "c d", "a b", "e f", "g h"]
+        V = e.encode(textos)
+        self.assertEqual(V.shape, (5, 1536))
+        self.assertTrue(np.allclose(V[0], V[2]))
+        self.assertEqual([len(c) for c in api.chamadas], [2, 2])   # 4 textos únicos em lotes de 2
+        e.encode(textos)
+        self.assertEqual(len(api.chamadas), 2)                      # tudo do cache
+        self.assertTrue((tmp / "chamadas" / "embeddings_3-small.jsonl").exists())
+        with self.assertRaises(ValueError):
+            e.encode(["x" * (C.MAX_CARACTERES + 1)])
+        e.close()

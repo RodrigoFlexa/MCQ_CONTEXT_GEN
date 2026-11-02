@@ -11,7 +11,6 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from types import SimpleNamespace
 
 from pipeline.qa_research.piloto_janela.core import QA, ROOT, atomic_json, blocos, janela, read_json
 
@@ -171,15 +170,117 @@ def cliente_llm(modelo: str, pasta: Path, papel: str):
                      response_dir=Path(pasta) / ".local" / "respostas" / papel)
 
 
-def embedder(nome: str, pasta: Path, max_chamadas: int = 20000, client=None, tokenizer=None):
-    """AzureEmbedder do repositório (cache sqlite por conteúdo, entrada sem truncamento, log de chamadas)."""
-    from pipeline.qa_research.embeddings import AzureEmbedder
-    from pipeline.qa_research.runtime import PersistentBudget
-    e = EMBEDDINGS[nome]
-    cfg = SimpleNamespace(timeout=120, max_attempts=4, embedding_model=e["modelo"], embedding_deployment=e["deployment"],
-                          embedding_dimensions=e["dimensoes"], embedding_model_version="1",
-                          embedding_window_tokens=8191, embedding_overlap_tokens=128, embedding_batch_size=64,
-                          embedding_batch_tokens=60000, index_dir=str(Path(pasta) / ".local" / "indice"),
-                          output=str(Path(pasta)))
-    orc = PersistentBudget(Path(pasta) / ".local" / f"orcamento_embeddings_{nome}.json", max_chamadas)
-    return AzureEmbedder(cfg, orc, client=client, tokenizer=tokenizer)
+MAX_CARACTERES = 20000   # bem abaixo do limite de 8.191 tokens; questões têm poucas centenas de caracteres
+
+
+class EmbedderDireto:
+    """Embeddings Azure de textos curtos, enviados como string (sem tokenizador local e sem tiktoken).
+
+    Cache sqlite por conteúdo (deployment + dimensão + texto), lotes de 64, novas tentativas em erro transitório,
+    orçamento persistente de chamadas e log em <pasta>/chamadas/embeddings_<nome>.jsonl.
+    """
+
+    def __init__(self, nome: str, pasta: Path, max_chamadas: int = 20000, client=None, sleep=None, lote: int = 64):
+        import sqlite3
+        import threading
+        import time
+        from pipeline.qa_research.runtime import PersistentBudget
+        e = EMBEDDINGS[nome]
+        self.nome, self.deployment, self.dimensoes, self.lote = nome, e["deployment"], e["dimensoes"], lote
+        self.sleep = sleep or time.sleep
+        self.lock = threading.RLock()
+        pasta = Path(pasta)
+        if client is None:
+            from pipeline.inventario.llm import load_dotenv
+            load_dotenv(ROOT)
+            from azure_openai_backend import AzureOpenAIBackend, AzureSettings
+            from openai import AzureOpenAI
+            s = AzureSettings.load()
+            s.require()
+            kw = dict(api_key=s.azure_api_key, api_version=s.azure_api_version, timeout=120, max_retries=0)
+            kw["base_url" if s.use_base_url else "azure_endpoint"] = s.azure_endpoint
+            http = AzureOpenAIBackend._build_http_client(s.ca_bundle, 120)
+            if http is not None:
+                kw["http_client"] = http
+            client = AzureOpenAI(**kw)
+        self.client = client
+        self.orcamento = PersistentBudget(pasta / ".local" / f"orcamento_embeddings_{nome}.json", max_chamadas)
+        (pasta / ".local").mkdir(parents=True, exist_ok=True)
+        self.db = sqlite3.connect(pasta / ".local" / f"embeddings_{nome}.sqlite3", check_same_thread=False, timeout=60)
+        self.db.execute("CREATE TABLE IF NOT EXISTS v (k TEXT PRIMARY KEY, x BLOB NOT NULL)")
+        self.db.commit()
+        self.log = pasta / "chamadas" / f"embeddings_{nome}.jsonl"
+
+    def _chave(self, texto: str) -> str:
+        return sha(f"{self.deployment}|{self.dimensoes}|{texto}")
+
+    def _get(self, k):
+        import numpy as np
+        row = self.db.execute("SELECT x FROM v WHERE k=?", (k,)).fetchone()
+        return None if row is None else np.frombuffer(row[0], dtype=np.float32).copy()
+
+    def _pedir(self, textos):
+        import random
+        import time
+        from datetime import datetime, timezone
+        import numpy as np
+        from pipeline.inventario.llm import CallFailed, is_fatal, is_transient, retry_after
+        ultimo = None
+        for tentativa in range(4):
+            self.orcamento.reserve()
+            reg = {"em": datetime.now(timezone.utc).isoformat(), "deployment": self.deployment, "itens": len(textos),
+                   "tentativa": tentativa + 1}
+            inicio = time.monotonic()
+            try:
+                r = self.client.embeddings.create(model=self.deployment, input=list(textos), dimensions=self.dimensoes,
+                                                  encoding_format="float")
+                vals = {}
+                for it in r.data:
+                    v = np.asarray(it.embedding, dtype=np.float32)
+                    if it.index in vals or not 0 <= it.index < len(textos) or v.shape != (self.dimensoes,) \
+                            or not np.isfinite(v).all() or np.linalg.norm(v) < 1e-12:
+                        raise ValueError("Resposta de embeddings inválida")
+                    vals[it.index] = v / np.linalg.norm(v)
+                if len(vals) != len(textos):
+                    raise ValueError("Resposta de embeddings incompleta")
+                reg["tokens"] = getattr(getattr(r, "usage", None), "total_tokens", None)
+                return [vals[i] for i in range(len(textos))]
+            except Exception as exc:  # noqa: BLE001 - classificado abaixo
+                reg["erro"] = f"{type(exc).__name__}: {str(exc)[:300]}"
+                ultimo = exc
+                if is_fatal(exc) or not is_transient(exc) or tentativa == 3:
+                    raise
+            finally:
+                reg["segundos"] = round(time.monotonic() - inicio, 3)
+                self.log.parent.mkdir(parents=True, exist_ok=True)
+                with self.log.open("a", encoding="utf-8") as f:
+                    f.write(json.dumps(reg, ensure_ascii=False) + "\n")
+            self.sleep(min(60, max(retry_after(ultimo), 2 ** tentativa + random.random())))
+        raise CallFailed("Embeddings indisponíveis") from ultimo
+
+    def encode(self, textos):
+        import numpy as np
+        with self.lock:
+            textos = list(textos)
+            if not textos:
+                return np.empty((0, self.dimensoes), dtype=np.float32)
+            for t in textos:
+                if not isinstance(t, str) or not t.strip():
+                    raise ValueError("Embedding de texto vazio não é permitido")
+                if len(t) > MAX_CARACTERES:
+                    raise ValueError(f"Texto longo demais para embedding direto ({len(t)} caracteres)")
+            chaves = [self._chave(t) for t in textos]
+            pend = list(dict.fromkeys(t for t, k in zip(textos, chaves) if self._get(k) is None))
+            for i in range(0, len(pend), self.lote):
+                parte = pend[i:i + self.lote]
+                for t, v in zip(parte, self._pedir(parte)):
+                    self.db.execute("INSERT OR REPLACE INTO v VALUES (?,?)", (self._chave(t), v.astype(np.float32).tobytes()))
+                self.db.commit()
+            return np.stack([self._get(k) for k in chaves])
+
+    def close(self):
+        self.db.close()
+
+
+def embedder(nome: str, pasta: Path, max_chamadas: int = 20000, client=None):
+    return EmbedderDireto(nome, pasta, max_chamadas=max_chamadas, client=client)
