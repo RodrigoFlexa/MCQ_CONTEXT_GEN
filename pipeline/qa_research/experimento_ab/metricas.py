@@ -153,7 +153,7 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
     aprov = C.linhas(gdir / "aprovadas.jsonl")
     bs = {i: blocos(i, docs)[1] for i in gcfg["itens"]}
     res = {"braco": braco, "docs": C.BRACOS[braco.split("_")[0]]["docs"], "unidade": unidade,
-           "sustentacao": bool(gcfg.get("sustentacao"))}
+           "sustentacao": bool(gcfg.get("sustentacao")), "saturacao": bool(gcfg.get("saturacao"))}
 
     # geração
     aud = [q for q in todas if q.get("auditoria")]
@@ -194,6 +194,7 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
                          "usa_apoio": media([any(f["bloco"] != "F" for f in q["fundamentos"]) for q in fund])}
 
     por_q = {q["uid"]: {"braco": braco, "uid": q["uid"], "item": q["item"], "origem": q["origem"], "tipo": q["tipo"],
+                        "rodada": q.get("rodada", 1),
                         "pergunta": q["pergunta"], "resposta": q["resposta"]} for q in aprov}
 
     # avaliação: sustentação e gap
@@ -207,7 +208,8 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
                               "taxa_totalmente_sustentadas": media([v.get("sustentado") for v in por_q.values()]),
                               "fracao_afirmacoes_sustentadas": media([v.get("fracao_afirmacoes_sustentadas") for v in por_q.values()]),
                               "por_origem": {o: media([v.get("sustentado") for v in por_q.values() if v["origem"] == o])
-                                             for o in ("janela", "composta", "refinada")}}
+                                             for o in ("janela", "composta", "refinada")},
+                              "rodadas_extras": media([v.get("sustentado") for v in por_q.values() if (v["rodada"] or 0) > 1])}
     if (adir / "pares.csv").exists():
         with (adir / "pares.csv").open(encoding="utf-8-sig") as f:
             for r in csv.DictReader(f):
@@ -256,6 +258,9 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
     resultado = read_json(gdir / "resultado.json") if (gdir / "resultado.json").exists() else {}
     res["dedup_incremental"] = resultado.get("dedup_incremental")
     res["checagem_sustentacao"] = resultado.get("sustentacao")
+    if resultado.get("saturacao"):
+        s = resultado["saturacao"]
+        res["saturacao_resumo"] = {k: s[k] for k in ("conhecimentos_novos_por_rodada", "focos_por_numero_de_visitas")}
     res["custo"] = _custo([gdir, adir])
     res["stopwords"] = "spacy" if len(STOP_WORDS) > 200 else "lista_interna"
     return res, list(por_q.values())
@@ -265,8 +270,8 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
 def comparar(exp: Path, bracos=None, embedder=None, media_vec=None) -> dict:
     exp = Path(exp)
     res, por_q = {}, {}
-    if bracos is None:   # A-D e, quando existirem, os braços com checagem de sustentação (X_sust)
-        bracos = list(C.BRACOS) + sorted(p.name for p in (exp / "bracos").glob("*_sust") if p.is_dir())
+    if bracos is None:   # A-D e, quando existirem, os braços derivados (X_sat, X_sust, X_sat_sust)
+        bracos = list(C.BRACOS) + sorted(p.name for p in (exp / "bracos").glob("*_*") if p.is_dir())
     for b in bracos:
         if (exp / "bracos" / b / "aprovadas.jsonl").exists():
             res[b], por_q[b] = metricas_braco(exp, b, embedder, media_vec)
@@ -275,8 +280,10 @@ def comparar(exp: Path, bracos=None, embedder=None, media_vec=None) -> dict:
     efeitos = {}
     pares_efeito = dict(EFEITOS)
     for b in por_q:
-        if b.endswith("_sust"):
-            pares_efeito[f"sustentação: {b}-{b.split('_')[0]}"] = (b, b.split("_")[0])
+        if "_" in b and b.rsplit("_", 1)[0] in por_q:
+            origem, suf = b.rsplit("_", 1)
+            nome = {"sust": "sustentação", "sat": "saturação"}[suf]
+            pares_efeito[f"{nome}: {b}-{origem}"] = (b, origem)
     for nome, (x, y) in pares_efeito.items():
         if x in por_q and y in por_q:
             efeitos[nome] = {v: boot_diff([q.get(v) for q in por_q[x]], [q.get(v) for q in por_q[y]],
@@ -305,8 +312,8 @@ def _f(v, pct=False, casas=1):
 def _markdown(exp: Path, out: dict) -> None:
     r = out["bracos"]
     bs = list(r)
-    cab = "| Métrica | " + " | ".join(f"{b} ({r[b]['docs']}, {r[b]['unidade']}{', sust.' if r[b]['sustentacao'] else ''})"
-                                     for b in bs) + " |"
+    cab = "| Métrica | " + " | ".join(f"{b} ({r[b]['docs']}, {r[b]['unidade']}{', sat.' if r[b].get('saturacao') else ''}"
+                                     f"{', sust.' if r[b]['sustentacao'] else ''})" for b in bs) + " |"
     sep = "|---|" + "---|" * len(bs)
 
     def linha(nome, fn):
@@ -326,13 +333,16 @@ def _markdown(exp: Path, out: dict) -> None:
          linha("Aprovação do auditor", lambda x: _f(x["geracao"]["taxa_aprovacao_auditor"], True)),
          linha("Redundância removida", lambda x: _f(x["geracao"]["taxa_redundancia"], True)),
          linha("Conhecimentos por 1.000 palavras", lambda x: f"{x['geracao']['conhecimentos_por_1000_palavras']:.2f}"),
+         linha("Conhecimentos novos por rodada (saturação)", lambda x: " / ".join(
+             str(v) for v in x["saturacao_resumo"]["conhecimentos_novos_por_rodada"].values())),
          linha("Blocos com questão", lambda x: _f(x["cobertura"]["blocos_com_questao"], True)),
          linha("Foco coberto: início/meio/fim do capítulo", lambda x: " / ".join(
              _f(x["cobertura"]["foco_por_posicao_no_capitulo"][p], True, 0) for p in ("inicio", "meio", "fim"))),
          linha("Blocos citados por questão (janela)", lambda x: _f(x["integracao"]["blocos_citados_media"], casas=2)),
          linha("Palavras na resposta", lambda x: _f(x["geracao"]["palavras_resposta_media"], casas=1)),
          linha("**Gabaritos totalmente sustentados**", lambda x: _f(x["sustentacao"]["taxa_totalmente_sustentadas"], True)),
-         linha("Afirmações sustentadas", lambda x: _f(x["sustentacao"]["fracao_afirmacoes_sustentadas"], True))]
+         linha("Afirmações sustentadas", lambda x: _f(x["sustentacao"]["fracao_afirmacoes_sustentadas"], True)),
+         linha("Sustentados nas rodadas extras", lambda x: _f(x["sustentacao"]["rodadas_extras"], True))]
     for m in MODELOS:
         l.append(linha(f"{m}: sem / com contexto (gap)", lambda x, m=m: (
             f"{_f(x['acuracia'][m]['closed'], True)} / {_f(x['acuracia'][m]['open'], True)} "

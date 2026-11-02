@@ -8,6 +8,8 @@
 #   plano                mostra o que será feito, sem chamadas de API
 #   calibracao | geracao | avaliacao | comparacao   só a etapa indicada
 #   sustentacao <BRAÇO>  etapa 4 no braço vencedor (ex.: B): checagem de sustentação, avaliação e comparação
+#   saturacao <BRAÇO>    rodadas extras por foco até saturar (ex.: D -> D_sat), avaliação e comparação
+#                        opções: --max-rodadas N (padrão 5, inclui a 1ª) e --paciencia N (padrão 1)
 # Repetir o mesmo comando retoma de onde parou; nada concluído é refeito. Falhas isoladas são tentadas de novo
 # automaticamente (até 3 vezes por etapa).
 set -uo pipefail
@@ -23,9 +25,9 @@ fi
 etapa="tudo"
 if [[ $# -gt 0 && "$1" != --* ]]; then etapa="$1"; shift; fi
 braco_sust=""
-if [[ "$etapa" == "sustentacao" ]]; then
+if [[ "$etapa" == "sustentacao" || "$etapa" == "saturacao" ]]; then
     braco_sust="${1:-}"
-    if [[ -z "$braco_sust" || "$braco_sust" == --* ]]; then echo "Uso: ... sustentacao <A|B|C|D>"; exit 1; fi
+    if [[ -z "$braco_sust" || "$braco_sust" == --* ]]; then echo "Uso: ... $etapa <braço, ex.: B ou D_sat>"; exit 1; fi
     shift
 fi
 exp="pipeline/qa_research/relatorios/experimento_ab_v1"
@@ -34,6 +36,8 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --experimento) exp="$2"; shift 2 ;;
         --workers) comuns+=(--workers "$2"); shift 2 ;;
+        --max-rodadas) comuns+=(--max-rodadas "$2"); shift 2 ;;
+        --paciencia) comuns+=(--paciencia "$2"); shift 2 ;;
         *) echo "Opção desconhecida: $1"; exit 1 ;;
     esac
 done
@@ -77,7 +81,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -98,7 +102,11 @@ if [[ "$etapa" == "sustentacao" ]]; then
     rodar "etapa 4: sustentação em $braco_sust" sustentacao --braco "$braco_sust" || fim_erro sustentacao
     rodar "avaliar ${braco_sust}_sust" avaliar --braco "${braco_sust}_sust" || fim_erro sustentacao
 fi
-if [[ "$etapa" == "tudo" || "$etapa" == "comparacao" || "$etapa" == "sustentacao" ]]; then
+if [[ "$etapa" == "saturacao" ]]; then
+    rodar "saturação por foco em $braco_sust" saturar --braco "$braco_sust" || fim_erro saturacao
+    rodar "avaliar ${braco_sust}_sat" avaliar --braco "${braco_sust}_sat" || fim_erro saturacao
+fi
+if [[ "$etapa" == "tudo" || "$etapa" == "comparacao" || "$etapa" == "sustentacao" || "$etapa" == "saturacao" ]]; then
     rodar "comparação" comparar || fim_erro comparacao
 fi
 

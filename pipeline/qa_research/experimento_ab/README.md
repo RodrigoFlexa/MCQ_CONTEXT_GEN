@@ -34,6 +34,15 @@ contexto (`geracao.TROCAS_CAPITULO`).
    auditoria de sustentação; se faltar suporte, o reparo recebe as afirmações sem suporte e devolve a resposta mínima
    sustentada (ou descarta só aquela questão). Gera o braço `<X>_sust`, avaliado e comparado com `<X>`.
 
+5. **Saturação por foco** (depois de escolher o braço, desligada por padrão): o braço `<X>_sat` copia a 1ª rodada
+   de `<X>` e volta a cada foco enquanto ele trouxer conhecimento novo. Em cada rodada extra, o gerador recebe as
+   questões já geradas naquele foco; as novas passam por auditoria, refino e deduplicação incremental contra o banco
+   do documento inteiro. Um foco fecha quando uma rodada não traz nenhuma questão aprovada e não redundante
+   (`--paciencia`, padrão 1) ou ao atingir `--max-rodadas` visitas (padrão 5, incluindo a 1ª). Substituições na
+   deduplicação não contam como conhecimento novo. `saturacao.json` traz a curva de conhecimentos novos por rodada
+   e as visitas de cada foco; a comparação `<X>_sat` x `<X>` mostra o que as rodadas extras acrescentam e a
+   sustentação das questões das rodadas extras.
+
 ## Robustez
 
 Toda unidade (bloco, encadeamento, foco, lote de auditoria, questão na deduplicação ou na sustentação, par da
@@ -46,6 +55,7 @@ de novo até 3 vezes por etapa, e repetir o comando retoma sem refazer nada.
 bash pipeline/qa_research/rodar_experimento_ab.sh plano          # sem API
 bash pipeline/qa_research/rodar_experimento_ab.sh                # etapas 0 a 3
 bash pipeline/qa_research/rodar_experimento_ab.sh sustentacao B  # etapa 4 no braço escolhido
+bash pipeline/qa_research/rodar_experimento_ab.sh saturacao D    # saturação por foco no braço escolhido
 ```
 
 Testes offline: `python -m pytest pipeline/qa_research/experimento_ab/tests -q`.

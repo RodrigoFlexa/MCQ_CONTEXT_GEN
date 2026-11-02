@@ -63,6 +63,9 @@ class DedupIncremental:
         """candidatas: aprovadas pelo auditor (antes da deduplicação), na ordem de geração. Retorna falhas."""
         if not candidatas:
             return 0
+        # Já decididas primeiro (na ordem original), depois as pendentes: uma questão nova (de outra rodada, por
+        # exemplo) é sempre comparada com todo o banco já aceito, independentemente da posição na ordem de geração.
+        candidatas = sorted(candidatas, key=lambda q: not self._arq(item, q["uid"]).exists())
         try:
             vetores = centrar(self.embedder.encode([texto_questao(q) for q in candidatas]), self.media)
         except Exception as exc:  # noqa: BLE001 - embeddings indisponíveis: o tópico fica pendente, sem decisões

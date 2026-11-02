@@ -407,10 +407,18 @@ class CLITests(unittest.TestCase):
             antes = f.chamadas
             self.assertEqual(M.main(["sustentacao", "--braco", "A", "--experimento", str(exp), "--workers", "3"]), 0)
             self.assertEqual(f.chamadas, antes)
+            self.assertEqual(M.main(["saturar", "--braco", "A", "--experimento", str(exp), "--workers", "3",
+                                     "--max-rodadas", "2"]), 0)
+            self.assertEqual(read_json(exp / "bracos" / "A_sat" / "config.json")["saturacao"],
+                             {"max_rodadas": 2, "paciencia": 1})
+            with self.assertRaises(SystemExit):
+                M.main(["gerar", "--braco", "A_sat", "--experimento", str(exp)])
             self.assertEqual(M.main(["comparar", "--experimento", str(exp)]), 0)
         out = read_json(exp / "comparacao.json")
-        self.assertEqual(set(out["bracos"]), {"A", "C", "A_sust"})
+        self.assertEqual(set(out["bracos"]), {"A", "C", "A_sust", "A_sat"})
         self.assertIn("sustentação: A_sust-A", out["efeitos"])
+        self.assertIn("saturação: A_sat-A", out["efeitos"])
+        self.assertIn("1", out["bracos"]["A_sat"]["saturacao_resumo"]["conhecimentos_novos_por_rodada"])
         self.assertTrue(out["bracos"]["A_sust"]["checagem_sustentacao"]["reparada"] > 0)
 
 
@@ -444,3 +452,97 @@ class EmbedderDiretoTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             e.encode(["x" * (C.MAX_CARACTERES + 1)])
         e.close()
+
+
+class FalsoSat(Falso):
+    """Rodada 1: questões novas. Rodada 2: focos 'pares' trazem questões novas, 'ímpares' repetem as da 1ª visita.
+    Rodada 3 em diante: todos repetem. O auditor aprova tudo (sem refino), para o ganho ser determinístico."""
+    def __init__(self):
+        super().__init__()
+        self.visitas, self.primeira = {}, {}
+
+    def janela(self, user):
+        f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d+\]|\n</janela>|\n</capitulo>)", user, re.S).group(1)
+        v = self.visitas[f] = self.visitas.get(f, 0) + 1
+        par = int(hashlib.md5(f.encode()).hexdigest(), 16) % 2 == 0
+        if v == 1 or (v == 2 and par):
+            d = super().janela(user)
+            self.primeira.setdefault(f, d)
+            return d
+        return json.loads(json.dumps(self.primeira[f]))
+
+    def auditoria(self, user):
+        itens = json.loads(user)
+        return {"avaliacoes": [{"id": i["id"], "tipo_confere": True, "tipo_sugerido": i["tipo_declarado"],
+                                "referencia_valida": True, "atalho": False, "motivo": "nenhum", "justificativa": "j"}
+                               for i in itens]}
+
+
+class NuncaRedundante(Juiz):
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        self.chamadas += 1
+        r = {"redundante": False, "com": None, "manter": None, "motivo": "outro conhecimento"}
+        if validate:
+            validate(r)
+        return r
+
+
+class SaturacaoTests(unittest.TestCase):
+    def test_focos_saturam_individualmente_e_retomada(self):
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        exp = tmp / "exp"
+        C.preparar_documentos(exp, itens=[ITEM])
+        cal = calibracao_falsa(exp / "calibracao", auto=1.01)
+        f, juiz = FalsoSat(), NuncaRedundante()
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria", "refinador")}
+        cl["dedup_juiz"] = juiz
+
+        def g(nome, sat=None):
+            return GA.GeracaoAB(exp / "bracos" / nome, [ITEM], docs=exp / "docs" / "antigo", unidade="janela", braco=nome,
+                                calibracao=cal, saturacao=sat, clientes=cl, embedder=Emb(), workers=4, **SILENCIO)
+
+        self.assertEqual(g("A").run(), 0)
+        r1 = f.tags.count("meta_janela")
+        shutil.copytree(exp / "bracos" / "A", exp / "bracos" / "A_sat", ignore=shutil.ignore_patterns(
+            "geracao_concluida.json", "aprovadas.jsonl", "finalizado.json", "resultado.json", "config.json", "RELATORIO.md"))
+        sat = g("A_sat", {"max_rodadas": 5, "paciencia": 1})
+        self.assertEqual(sat.run(), 0)
+        _, bs = blocos(ITEM, exp / "docs" / "antigo")
+        pares = {b["indice"] for b in bs if int(hashlib.md5(b["texto"].encode()).hexdigest(), 16) % 2 == 0}
+        res = read_json(exp / "bracos" / "A_sat" / "saturacao.json")
+        novos = res["conhecimentos_novos_por_rodada"]
+        self.assertGreater(novos["1"], 0)
+        self.assertGreater(novos["2"], 0)
+        self.assertEqual(novos["3"], 0)
+        self.assertNotIn("4", novos)                       # parou sozinho, antes do teto de 5
+        for k, v in res["focos"].items():
+            foco = int(k.split(":")[1])
+            self.assertEqual(v["visitas"], 3 if foco in pares else 2, k)
+        # rodada 1 não foi refeita: só as rodadas extras chamaram o gerador
+        self.assertEqual(f.tags.count("meta_janela") - r1, len(bs) + len(pares))
+        aprov_a = {q["uid"] for q in C.linhas(exp / "bracos" / "A" / "aprovadas.jsonl")}
+        aprov_s = {q["uid"] for q in C.linhas(exp / "bracos" / "A_sat" / "aprovadas.jsonl")}
+        self.assertTrue(aprov_a < aprov_s)
+        self.assertTrue((exp / "bracos" / "A_sat" / "geracao_concluida.json").exists())
+        self.assertIn("saturacao", read_json(exp / "bracos" / "A_sat" / "config.json"))
+        self.assertNotIn("saturacao", read_json(exp / "bracos" / "A" / "config.json"))
+        antes = f.chamadas
+        self.assertEqual(g("A_sat", {"max_rodadas": 5, "paciencia": 1}).run(), 0)
+        self.assertEqual(f.chamadas, antes)
+
+    def test_teto_de_rodadas(self):
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        exp = tmp / "exp"
+        C.preparar_documentos(exp, itens=[ITEM])
+        cal = calibracao_falsa(exp / "calibracao", auto=1.01)
+        f = Falso()   # sempre gera questões novas: nunca satura sozinho
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria", "refinador")}
+        cl["dedup_juiz"] = NuncaRedundante()
+        g = GA.GeracaoAB(exp / "bracos" / "A_sat", [ITEM], docs=exp / "docs" / "antigo", unidade="janela", braco="A_sat",
+                         calibracao=cal, saturacao={"max_rodadas": 3}, clientes=cl, embedder=Emb(), workers=4, **SILENCIO)
+        self.assertEqual(g.run(), 0)
+        res = read_json(exp / "bracos" / "A_sat" / "saturacao.json")
+        self.assertEqual(set(res["conhecimentos_novos_por_rodada"]), {"1", "2", "3"})
+        self.assertTrue(all(v["visitas"] <= 3 for v in res["focos"].values()))

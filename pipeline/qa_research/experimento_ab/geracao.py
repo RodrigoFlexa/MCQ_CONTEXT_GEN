@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -108,8 +109,8 @@ class _Preguicoso:
 class GeracaoAB(GeracaoMeta):
     def __init__(self, saida: Path, itens, *, docs: Path, unidade: str, braco: str = "?", reusar=(),
                  calibracao: Path | None = None, dedup: str = "incremental", sustentacao: bool = False,
-                 modelos: dict | None = None, clientes: dict | None = None, embedder=None, workers: int = 8,
-                 progress=print):
+                 saturacao: dict | None = None, modelos: dict | None = None, clientes: dict | None = None,
+                 embedder=None, workers: int = 8, progress=print):
         if unidade not in C.UNIDADES:
             raise ValueError(f"Unidade inválida: {unidade}")
         if dedup not in ("incremental", "llm"):
@@ -125,6 +126,13 @@ class GeracaoAB(GeracaoMeta):
         self.docs = {i: blocos(i, self.docs_dir)[1] for i in self.itens}
         self.docs_sha = {i: C.sha(read_json(self.docs_dir / i / "documento.json")) for i in self.itens}
         self.sustentacao, self.modo_dedup = sustentacao, dedup
+        if saturacao is not None:
+            saturacao = {"max_rodadas": int(saturacao.get("max_rodadas", 5)), "paciencia": int(saturacao.get("paciencia", 1))}
+            if saturacao["max_rodadas"] < 2 or saturacao["paciencia"] < 1:
+                raise ValueError("saturação: max_rodadas >= 2 e paciencia >= 1")
+            if dedup != "incremental":
+                raise ValueError("A saturação usa a deduplicação incremental como sinal de parada")
+        self.saturacao = saturacao
         if unidade == "janela":
             self.prompt_janela = PROMPT_JANELA
         else:
@@ -154,6 +162,8 @@ class GeracaoAB(GeracaoMeta):
                "sustentacao": self.sustentacao,
                "prompt_sustentacao_sha256": C.sha(C.prompt_gap("faithfulness") + C.prompt("reparo_sustentacao"))
                if self.sustentacao else None}
+        if self.saturacao:   # só aparece quando ligada: pastas antigas continuam retomáveis
+            cfg["saturacao"] = self.saturacao
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -183,7 +193,7 @@ class GeracaoAB(GeracaoMeta):
         itens = itens or self.itens
         system, modelo_usuario, _ = carregar_prompt(4, 4, self.prompt_janela)
         tarefas = [(i, f) for i in itens
-                   if rodada == 1 or (self.meta and self.validas(i) < self.meta)
+                   if rodada == 1 or self.saturacao or (self.meta and self.validas(i) < self.meta)
                    for f in self.escolher_janelas(i, rodada)
                    if not (self._dir(i) / "janelas" / f"r{rodada}" / f"{f:03d}.json").exists()]
         self.progress(f"3. {self.unidade}, rodada {rodada}: {len(tarefas)} focos", flush=True)
@@ -215,6 +225,78 @@ class GeracaoAB(GeracaoMeta):
             return True
 
         return self._paralelo(tarefas, um, f"{self.unidade} r{rodada}")
+
+    # ------------------------------------------------------------ saturação por foco
+    def _substituicoes(self, item: str) -> set:
+        pasta = self.saida / "dedup_incremental" / item
+        return {d["uid"] for d in (read_json(p) for p in pasta.glob("*.json")) if d["decisao"] == "substitui"}
+
+    def ganhos(self, item: str) -> dict:
+        """foco -> {rodada: conhecimentos novos}: questões do foco naquela rodada (inclusive refinadas) aprovadas pelo
+        juiz e aceitas pela deduplicação. Substituições contam zero: melhoram uma questão, não trazem conhecimento."""
+        subst = self._substituicoes(item)
+        out = defaultdict(lambda: defaultdict(int))
+        for q in self.questoes(item):
+            if q.get("foco") is not None and q.get("aprovada") and q["uid"] not in subst:
+                out[q["foco"]][q["rodada"]] += 1
+        return out
+
+    def _visitas(self, item: str) -> dict:
+        return {f: sorted(j["rodada"] for j in js) for f, js in self._passagens(item).items()}
+
+    def focos_abertos(self, item: str, rodada: int) -> list[int]:
+        """Um foco volta na rodada r se ainda tem visitas (< max_rodadas) e trouxe conhecimento novo em alguma das
+        últimas `paciencia` rodadas em que foi visitado."""
+        g, vis = self.ganhos(item), self._visitas(item)
+        out = []
+        for f in range(len(self.docs[item])):
+            v = [r for r in vis.get(f, []) if r < rodada]
+            if not v or len(v) >= self.saturacao["max_rodadas"] or v[-1] != rodada - 1:
+                continue
+            if any(g[f][r] > 0 for r in v[-self.saturacao["paciencia"]:]):
+                out.append(f)
+        return out
+
+    def escolher_janelas(self, item: str, rodada: int) -> list[int]:
+        if self.saturacao and rodada > 1:
+            return self.focos_abertos(item, rodada)
+        return super().escolher_janelas(item, rodada)
+
+    def saturar(self) -> int:
+        """Rodadas 2..max: cada foco aberto gera de novo (com as questões já geradas ali em <questoes_existentes>),
+        passa por auditoria, refino e deduplicação; fecha quando não traz conhecimento novo. Retomável: os focos
+        abertos de cada rodada são recalculados dos arquivos."""
+        for rodada in range(2, self.saturacao["max_rodadas"] + 1):
+            abertos = {i: self.focos_abertos(i, rodada) for i in self.itens}
+            n = sum(map(len, abertos.values()))
+            self.progress(f"== saturação, rodada {rodada}: {n} focos abertos", flush=True)
+            if not n:
+                break
+            falhas = self.janelas(rodada)
+            falhas += self.auditar()
+            falhas += self.refinar_e_auditar()
+            falhas += self.deduplicar()
+            if falhas:   # ganhos incompletos: não abre a próxima rodada; repetir o comando retoma daqui
+                return falhas
+            novos = sum(self.ganhos(i)[f][rodada] for i in self.itens for f in abertos[i])
+            self.progress(f"   rodada {rodada}: {novos} conhecimentos novos", flush=True)
+        return 0
+
+    def run(self) -> int:
+        if not self.saturacao or self.sustentacao:
+            return super().run()
+        falhas = super().run()   # rodada 1 (numa cópia de braço já concluído, nenhuma chamada nova)
+        if falhas:
+            return falhas
+        marcador = self.saida / "geracao_concluida.json"
+        marcador.unlink(missing_ok=True)
+        falhas = self.saturar()
+        self.finalizar(self.itens)
+        self.relatorio()
+        if not falhas:
+            from datetime import datetime, timezone
+            atomic_json(marcador, {"em": datetime.now(timezone.utc).isoformat()})
+        return falhas
 
     # ------------------------------------------------------------ sustentação (etapa 4)
     def _arq_sust(self, q: dict) -> Path:
@@ -331,6 +413,19 @@ class GeracaoAB(GeracaoMeta):
                                                           for k in ("nova", "redundante", "substitui")},
                                           "por_via": {k: sum(d["via"] == k for d in dec)
                                                       for k in ("banco_vazio", "abaixo_do_limiar", "automatico", "juiz")}}
+        if self.saturacao or any(r > 1 for item in self.itens for v in self._visitas(item).values() for r in v):
+            por_rodada, focos = defaultdict(int), {}
+            for item in self.itens:
+                g, vis = self.ganhos(item), self._visitas(item)
+                for f, v in vis.items():
+                    focos[f"{item}:{f:03d}"] = {"visitas": len(v), "novos_por_rodada": [g[f][r] for r in v]}
+                    for r in v:
+                        por_rodada[r] += g[f][r]
+            extra["saturacao"] = {"config": self.saturacao, "conhecimentos_novos_por_rodada": dict(sorted(por_rodada.items())),
+                                  "focos_por_numero_de_visitas": dict(sorted(
+                                      Counter(v["visitas"] for v in focos.values()).items())),
+                                  "focos": focos}
+            atomic_json(self.saida / "saturacao.json", extra["saturacao"])
         if self.sustentacao:
             regs = [d for item in self.itens for d in self._registros_sust(item).values()]
             extra["sustentacao"] = {k: sum(d["status"] == k for d in regs)

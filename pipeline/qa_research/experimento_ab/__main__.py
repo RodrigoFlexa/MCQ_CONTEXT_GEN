@@ -7,6 +7,9 @@
   avaliar --braco A     etapa 3: gap com/sem contexto (GPT-4.1 Nano/Mini/4.1) e sustentação dos gabaritos
   comparar              tabela 2x2 com efeitos e IC 95% (COMPARACAO.md)
   sustentacao --braco B etapa 4: checagem de sustentação + resposta mínima sobre as questões do braço (B_sust)
+  saturar --braco D     rodadas extras por foco até saturar (D_sat), sobre a mesma 1ª rodada do braço
+
+Braços derivados combinam sufixos: D_sat (saturação), D_sust (sustentação), D_sat_sust (os dois).
 
 Repetir qualquer comando com a mesma pasta retoma de onde parou; nada já concluído é refeito.
 """
@@ -23,10 +26,23 @@ from . import comum as C
 
 
 def info_braco(nome: str) -> dict:
-    base = nome.split("_")[0]
-    if base not in C.BRACOS:
-        raise SystemExit(f"Braço inválido: {nome} (use A, B, C, D ou <braço>_sust)")
-    return {**C.BRACOS[base], "base": base, "sustentacao": nome.endswith("_sust")}
+    partes = nome.split("_")
+    base, sufixos = partes[0], partes[1:]
+    if base not in C.BRACOS or any(s not in ("sat", "sust") for s in sufixos) or len(set(sufixos)) != len(sufixos):
+        raise SystemExit(f"Braço inválido: {nome} (use A, B, C, D, <braço>_sat, <braço>_sust ou <braço>_sat_sust)")
+    sust = nome.endswith("_sust")
+    return {**C.BRACOS[base], "base": base, "sustentacao": sust, "saturacao": "sat" in sufixos and not sust,
+            "derivado": bool(sufixos)}
+
+
+def _copiar_braco(origem: Path, destino: Path, manter_dedup: bool) -> None:
+    """Cópia de um braço concluído: mesmas questões e caches (nenhuma chamada repetida)."""
+    if not (origem / "geracao_concluida.json").exists():
+        raise SystemExit(f"O braço {origem.name} ainda não concluiu a geração")
+    if not destino.exists():
+        ignorar = ["geracao_concluida.json", "aprovadas.jsonl", "finalizado.json", "resultado.json", "config.json",
+                   "RELATORIO.md", "saturacao.json"] + ([] if manter_dedup else ["dedup_incremental"])
+        shutil.copytree(origem, destino, ignore=shutil.ignore_patterns(*ignorar))
 
 
 def _calibracao(exp: Path) -> Path:
@@ -36,14 +52,14 @@ def _calibracao(exp: Path) -> Path:
     return arq
 
 
-def _gerador(exp: Path, nome: str, workers: int, dedup: str):
+def _gerador(exp: Path, nome: str, workers: int, dedup: str, saturacao: dict | None = None):
     from .geracao import GeracaoAB
     info = info_braco(nome)
     docs = C.docs_do_braco(exp, info["base"])
     if not (exp / "docs" / "manifesto.json").exists():
         raise SystemExit("Documentos não preparados. Rode antes: preparar")
     reusar = []
-    if info["reusar"] and not info["sustentacao"]:
+    if info["reusar"] and not info["derivado"]:
         origem = exp / "bracos" / info["reusar"]
         faltam = [i for i in C.ITENS if not (origem / "topicos" / i / "combinacoes.json").exists()]
         if faltam:
@@ -52,7 +68,8 @@ def _gerador(exp: Path, nome: str, workers: int, dedup: str):
         reusar = [origem]
     return GeracaoAB(exp / "bracos" / nome, C.ITENS, docs=docs, unidade=info["unidade"], braco=nome, reusar=reusar,
                      calibracao=_calibracao(exp) if dedup == "incremental" else None, dedup=dedup,
-                     sustentacao=info["sustentacao"], workers=workers)
+                     sustentacao=info["sustentacao"], saturacao=(saturacao or {}) if info["saturacao"] else None,
+                     workers=workers)
 
 
 def plano(exp: Path) -> None:
@@ -71,7 +88,8 @@ def plano(exp: Path) -> None:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m pipeline.qa_research.experimento_ab", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao"])
+    ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
+                                        "saturar"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -80,6 +98,8 @@ def main(argv=None) -> int:
     ap.add_argument("--por-faixa", type=int, default=8, help="calibração: pares sorteados por faixa de cosseno e modelo")
     ap.add_argument("--recalcular", action="store_true", help="calibração: só recalcula (usa rotulos_humanos.csv)")
     ap.add_argument("--mini-deployment", default="gpt-4-1-mini-petrobras")
+    ap.add_argument("--max-rodadas", type=int, default=5, help="saturação: visitas máximas por foco (inclui a 1ª)")
+    ap.add_argument("--paciencia", type=int, default=1, help="saturação: rodadas seguidas sem conhecimento novo para fechar")
     a = ap.parse_args(argv)
     exp = a.experimento if a.experimento.is_absolute() else C.ROOT / a.experimento
 
@@ -112,7 +132,10 @@ def main(argv=None) -> int:
         return 0
     if not a.braco:
         raise SystemExit("Informe --braco")
+    sat = {"max_rodadas": a.max_rodadas, "paciencia": a.paciencia}
     if a.comando == "gerar":
+        if info_braco(a.braco)["derivado"]:
+            raise SystemExit("Braços derivados são criados com os comandos saturar ou sustentacao")
         g = _gerador(exp, a.braco, a.workers, a.dedup)
         falhas = g.run()
         if falhas:
@@ -121,16 +144,15 @@ def main(argv=None) -> int:
             return 2
         print(f"[{a.braco}] geração concluída: {C.relativo(exp / 'bracos' / a.braco / 'RELATORIO.md')}")
         return 0
-    if a.comando == "sustentacao":
-        origem, nome = exp / "bracos" / a.braco, a.braco + "_sust"
-        if not (origem / "geracao_concluida.json").exists():
-            raise SystemExit(f"O braço {a.braco} ainda não concluiu a geração")
+    if a.comando in ("sustentacao", "saturar"):
+        sufixo = "_sust" if a.comando == "sustentacao" else "_sat"
+        origem, nome = exp / "bracos" / a.braco, a.braco + sufixo
         destino = exp / "bracos" / nome
-        if not destino.exists():   # cópia: mesmas questões e caches; decisões de deduplicação são refeitas
-            shutil.copytree(origem, destino, ignore=shutil.ignore_patterns(
-                "dedup_incremental", "geracao_concluida.json", "aprovadas.jsonl", "finalizado.json", "resultado.json",
-                "config.json", "RELATORIO.md"))
-        g = _gerador(exp, nome, a.workers, a.dedup)
+        info_braco(nome)
+        # sustentação refaz as decisões de deduplicação (o gate remove questões antes dela); saturação as mantém,
+        # porque as rodadas novas são comparadas com o banco da 1ª rodada
+        _copiar_braco(origem, destino, manter_dedup=a.comando == "saturar")
+        g = _gerador(exp, nome, a.workers, a.dedup, saturacao=sat)
         g.config()
         cfg = read_json(destino / "config.json")
         atomic_json(destino / "config.json", {**cfg, "origem": C.relativo(origem)})
@@ -142,6 +164,12 @@ def main(argv=None) -> int:
         return 0
     if a.comando == "avaliar":
         from .avaliacao import executar
+        destino = exp / "avaliacao" / a.braco
+        origem = exp / "avaliacao" / a.braco.rsplit("_", 1)[0]
+        if info_braco(a.braco)["derivado"] and not destino.exists() and (origem / ".local").exists():
+            # braço derivado: reaproveita o cache de chamadas da avaliação de origem (mesma pergunta e mesmo contexto
+            # = mesma chamada; respostas e auditorias das questões em comum não são pagas de novo)
+            shutil.copytree(origem / ".local", destino / ".local")
         st = executar(exp / "bracos" / a.braco, exp / "avaliacao" / a.braco, workers=a.workers,
                       judge_workers=a.judge_workers, mini=a.mini_deployment)
         print(f"[{a.braco}] avaliação {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}")
