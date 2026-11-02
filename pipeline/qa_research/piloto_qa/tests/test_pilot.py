@@ -67,10 +67,14 @@ class GenerationTests(unittest.TestCase):
         q=json.loads((self.out/'aprovadas.jsonl').read_text().splitlines()[0]);self.assertTrue(q['criterios']);self.assertTrue(q['blocos_contexto'])
     def test_duplicates_do_not_fill_quota(self):
         self.model.duplicate=True;r=self.run_gen();self.assertEqual(r['admitidas'],1);self.assertEqual(r['status'],'parcial')
-    def test_repair_failure_keeps_already_admitted_question_and_retries_on_resume(self):
+    def test_invalid_refinement_rejects_only_affected_candidate_and_continues(self):
         self.model.repair=True;self.model.fail_repair=True;r=self.run_gen()
-        self.assertEqual(r['admitidas'],1);self.assertEqual(r['motivo_parada'],'falha_retomavel')
-        self.model.repair=False;self.model.fail_repair=False;r=self.run_gen();self.assertEqual(r['admitidas'],2)
+        self.assertEqual(r['admitidas'],2);self.assertEqual(r['invalidas_contrato'],1)
+        decisions=read_json(self.out/'decisoes.json')
+        self.assertEqual(next(r['decisao'] for r in decisions if r['id']=='T1'),'admitir')
+        self.assertEqual(next(r['decisao'] for r in decisions if r['id']=='T2'),'invalida_contrato')
+        before=len(self.model.inputs);self.assertEqual(self.run_gen()['admitidas'],2)
+        self.assertEqual(len(self.model.inputs),before)
     def test_changed_document_cannot_reuse_old_result(self):
         self.run_gen();self.doc['titulo']='Outra edição'
         with self.assertRaisesRegex(ValueError,'mudou'):self.run_gen()

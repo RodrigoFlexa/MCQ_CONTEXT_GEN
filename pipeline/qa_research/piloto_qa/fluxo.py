@@ -16,13 +16,13 @@ from .similarity import Similarity
 from . import contracts as C
 
 HERE=Path(__file__).parent
-DEFAULT=ROOT/'pipeline/qa_research/saida_piloto_qa/continuo_v2'
+DEFAULT=ROOT/'pipeline/qa_research/saida_piloto_qa/continuo_v3'
 
 
 def config():
     c=load(HERE/'config.json')
     c.pop('questions_per_item');c.pop('max_batches')
-    c.update(schema='qa-continuo-1',context_chars=24000,memory_limit=30,neighbors=5)
+    c.update(schema='qa-continuo-1',context_chars=24000,memory_limit=30,neighbors=5,max_invalid_rounds=3)
     return c
 
 
@@ -104,12 +104,14 @@ def main(argv=None):
     p.add_argument('--items',nargs='+');p.add_argument('--arms',choices=['both','refinado','antigo'],default='both')
     p.add_argument('--max-calls',type=int,default=150);p.add_argument('--memory-limit',type=int,default=30)
     p.add_argument('--patience',type=int,default=3);p.add_argument('--plan',action='store_true')
+    p.add_argument('--max-invalid-rounds',type=int,default=3)
     p.add_argument('--examples',type=Path,action='append',default=[])
     p.add_argument('--collect',type=Path);p.add_argument('--embeddings',action='store_true');p.add_argument('--mini-deployment')
-    args=p.parse_args(argv);c=config();c.update(max_calls=args.max_calls,memory_limit=args.memory_limit,patience=args.patience)
+    args=p.parse_args(argv);c=config();c.update(max_calls=args.max_calls,memory_limit=args.memory_limit,patience=args.patience,
+        max_invalid_rounds=args.max_invalid_rounds)
     if args.items:c['items']=args.items
     C.require(len(c['items'])==len(set(c['items'])) and c['items'],'IDs válidos e únicos')
-    C.require(all(type(c[k]) is int and c[k]>0 for k in ('max_calls','memory_limit','patience')),'Limites positivos obrigatórios')
+    C.require(all(type(c[k]) is int and c[k]>0 for k in ('max_calls','memory_limit','patience','max_invalid_rounds')),'Limites positivos obrigatórios')
     arms=['novo_antigo','novo_refinado'] if args.arms=='both' else ['novo_'+args.arms]
     output=args.output.resolve()
     for protected in (ROOT,HERE,LATEST,OLD):
@@ -133,7 +135,7 @@ def main(argv=None):
         print('O código acabou de rodar no terminal 🙂')
         print('Estado:', 'contextos sem ganho' if complete else 'parcial; consultar resumo e retomar', '|',output)
         if assessed is not None:print('Avaliação:',assessed['status'])
-        target='pipeline/qa_research/relatorios/qa_continuo_v2'
+        target='pipeline/qa_research/relatorios/qa_continuo_v3'
         print(f'"${{DOCUMENT_PYTHON:-python3}}" -m pipeline.qa_research.piloto_qa.fluxo --output "{output}" --collect {target}')
         print('git add -- '+target);print('git commit -m "Resultados QA continuo v2"');print('git push origin codex/qa-evidencias-verificadas')
         return 0 if complete and (assessed is None or assessed['status']=='concluido') else 2

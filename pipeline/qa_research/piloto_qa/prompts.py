@@ -19,6 +19,9 @@ JSON {"alvos":[{"id":"T01","tipo":"mecanismo","composicao":"simples",
 '''
 
 AUTHOR = BASE + '''Redija uma pergunta aberta por alvo recebido, até limite.
+Cada candidata é independente. Evidências podem usar {"passagem":"B001_P001"}
+dos IDs fornecidos; o Python recupera o texto original. Caso use bloco/trecho,
+copie literalmente, sem paráfrases. Não invente passagens nem complete fontes.
 Não copie exemplos; eles não são suporte factual. Não altere alvo, classe ou composição.
 Enunciado autônomo de até 90 palavras, com uma demanda clara. Diagnóstico e decisão
 precisam de cenário com sinais suficientes; não entregue a resposta no cenário.
@@ -39,6 +42,8 @@ e explique em impedimentos. Corrija a pergunta e o mínimo suficiente sem mudar 
 '''
 
 SOLVE = BASE + '''Resolva as perguntas com o contexto recebido, sem gabaritos.
+O contexto pode ser comum às questões; contextos_por_alvo delimita os blocos
+permitidos para cada ID. Responda cada questão independentemente, sem omitir IDs.
 Responda aos componentes pedidos com até 100 palavras. Registre ambiguidade ou
 premissa faltante. Não invente medições nem condições. Não use ferramentas.
 JSON {"resolucoes":[{"id":"T01","resposta":"...","ambiguidades":[]}]}.
