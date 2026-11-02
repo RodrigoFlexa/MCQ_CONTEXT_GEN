@@ -72,7 +72,7 @@ def collect(source,destination):
         for path in source.rglob('*'):
             relative=path.relative_to(source)
             if not path.is_file() or path.is_symlink() or any(p.startswith('.') for p in relative.parts):continue
-            if path.suffix not in ('.json','.jsonl','.md','.csv','.npz'):continue
+            if path.suffix not in ('.json','.jsonl','.md','.csv','.npz','.html'):continue
             target=destination/relative;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(path,target)
         from pipeline.domain_corpora.io_utils import file_hash
         atomic_json(destination/'manifest_resultados.json',dict(schema=VERSION,files={p.relative_to(destination).as_posix():file_hash(p) for p in destination.rglob('*') if p.is_file()}))

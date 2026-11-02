@@ -8,4 +8,4 @@ if [[ ! -x "$qa_python" ]]; then
   echo "Python não encontrado: $qa_python. Defina DOCUMENT_PYTHON."
   exit 1
 fi
-exec "$qa_python" -u -m pipeline.qa_research.piloto_qa "$@"
+exec "$qa_python" -u -m pipeline.qa_research.piloto_qa.fluxo "$@"
