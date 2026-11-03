@@ -1,0 +1,97 @@
+{
+  "item": "07_01",
+  "foco": 29,
+  "rodada": 5,
+  "contexto": {
+    "A1": 28,
+    "F": 29,
+    "A2": 30
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ausência de posicionador e de realimentação contínua, com atuação só em fins de curso, caracteriza válvula implantada como on/off.",
+      "pergunta": "Durante o loop check, uma válvula recebe comandos de 30%, 40% e 50% pela IHM, mas no campo só há uma solenoide e dois fins de curso; não existe posicionador nem realimentação analógica de posição, e a válvula só permanece totalmente aberta ou fechada. Qual divergência de configuração explica esse comportamento?",
+      "resposta": "Válvula implantada como abre/fecha, não modulante.",
+      "explicacao": "Sem posicionador nem feedback contínuo, o elemento final só executa comandos binários, divergindo da previsão de controle de posição contínuo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "válvula prevista para operação remota e com indicação de controle de posição, mas colocada em serviço apenas como totalmente aberta ou fechada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ocorrência registrada só no cronológico, sem estado ativo nem atributos de alarme, indica ponto configurado como evento.",
+      "pergunta": "Na aceitação de um novo ponto de nível alto, a variável cruza o limite e a ocorrência aparece apenas no log cronológico; não entra na lista de alarmes, não cria estado ativo, não exige reconhecimento e o tag no supervisório não possui prioridade nem classe de alarme configuradas. Qual configuração crítica explica esse resultado?",
+      "resposta": "Classificação do ponto como evento, não alarme.",
+      "explicacao": "O ponto registra a ocorrência, mas sem estado nem atributos de alarme no supervisório ele foi tratado como evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "classificação entre alarme e evento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Se campo, I/O e controlador reagem, mas a IHM não atualiza, a divergência está na integração do ponto com o supervisório.",
+      "pergunta": "Durante o loop check, o transmissor varia em campo, o cartão de entrada acompanha, o valor muda no controlador e a lógica local reage; a comunicação do nó está normal, não há simulação nem force, mas em todas as IHMs aquele tag permanece congelado. Que trecho da configuração tem maior probabilidade de divergência?",
+      "resposta": "Integração do ponto entre controlador e supervisório.",
+      "explicacao": "Com campo, I/O, controlador e enlace operantes, o desvio se concentra na configuração que faz a informação chegar ao supervisor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correções para que sinais de campo cheguem à Interface Homem-Máquina (IHM)"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Retorno à condição regular de barreira contingenciada exige prova objetiva do saneamento e revisão da medida compensatória.",
+      "pergunta": "Uma função instrumentada operou degradada com medida compensatória. Após a correção, a ordem de serviço foi encerrada, mas não há registro do teste que comprovou o saneamento e o prazo da compensação já está no limite. Antes de retirar o contingenciamento, o que precisa ser confirmado?",
+      "resposta": "Saneamento comprovado e compatibilidade da compensação com risco e exposição.",
+      "explicacao": "Encerrar a ordem de serviço não comprova recuperação da barreira; o retorno à condição regular exige evidência objetiva e revisão da medida compensatória.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A necessidade de rastreabilidade existe porque uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o retorno à condição regular exige evidência objetiva de saneamento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a medida compensatória, quando usada, continua compatível com o cenário de risco e com o tempo de exposição"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 2,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A renovação real de uma medição no DCS deve ser confirmada pela atualização temporal da tag, não só pelo valor plausível.",
+      "pergunta": "Durante uma manobra, a pressão mostrada no DCS permanece plausível e sem alarmes. Antes de tratar isso como processo estável, qual indicação da própria tag confirma que o valor está sendo renovado pela arquitetura, e não apenas mantido?",
+      "resposta": "O avanço do timestamp de atualização do sinal.",
+      "explicacao": "O bloco focal orienta que, no diagnóstico de arquitetura, não basta olhar o valor instantâneo; é preciso observar a atualização do sinal para diferenciar dado mantido de medição realmente renovada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A coerência entre variáveis relacionadas é uma checagem diagnóstica para identificar medição inconsistente mesmo com tag atualizando.",
+      "pergunta": "A vazão indicada fica inalterada, mas a válvula abre de 20% para 60%, as pressões da linha mudam e o timestamp da tag avança normalmente. Na triagem da arquitetura, que checagem técnica evidencia inconsistência da medição sem depender só do valor instantâneo?",
+      "resposta": "Verificar a coerência com as variáveis de processo relacionadas.",
+      "explicacao": "Com atualização normal, o foco deixa de ser dado retido. O bloco focal indica usar a coerência entre variáveis relacionadas para identificar inconsistência da medição ou da arquitetura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando o estado real chega à I/O mas permissivos e alarmes não acompanham, deve-se suspeitar de bypass na lógica normal de supervisão.",
+      "pergunta": "Após uma intervenção, o contato de campo muda de estado e essa mudança aparece na entrada da remota, mas o permissivo no sistema continua satisfeito e o alarme associado não atua. Qual condição temporária da automação explica melhor esse descolamento?",
+      "resposta": "Bypass da lógica normal de supervisão.",
+      "explicacao": "Se a mudança chega à I/O, campo e entrada estão respondendo. O descolamento em permissivo e alarme aponta para retirada temporária da lógica normal de supervisão por bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Sem integração ao PLC e sem registro temporal confiável, perde-se a observabilidade necessária para reconstruir a sequência causa-efeito.",
+      "pergunta": "Um desvio rápido ocorre, mas a posição de uma válvula local crítica não entra no PLC e as rondas foram anotadas sem horário preciso. Qual limitação técnica impede reconstruir com confiança a ordem causa-efeito do evento?",
+      "resposta": "Falta de registro integrado e carimbado no tempo.",
+      "explicacao": "Sem integração e sem tempo confiável, a percepção do estado fica distribuída e a correlação automática se perde. O bloco focal liga esse problema à disciplina operacional e à forma de registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a percepção do estado global da planta fica distribuída entre a automação e observações complementares"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dependendo da disciplina operacional e da forma de registro"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

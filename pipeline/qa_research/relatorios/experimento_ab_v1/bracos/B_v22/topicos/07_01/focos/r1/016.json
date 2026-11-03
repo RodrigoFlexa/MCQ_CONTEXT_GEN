@@ -1,0 +1,97 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Isolamento de falha no enlace entre controle e supervisão quando a malha continua atuando corretamente.",
+      "pergunta": "Em uma malha automática de pressão, a válvula se reposiciona corretamente às mudanças de carga e a pressão permanece controlada, mas a PV mostrada na HMI congela por alguns segundos e depois salta para o novo valor. Qual elo da arquitetura deve ser investigado primeiro?",
+      "resposta": "Comunicação entre a camada de controle e a supervisão.",
+      "explicacao": "Se a malha continua fechando e o processo responde, medição e atuação seguem válidas no controle. O defeito mais provável está no caminho que leva os dados do controlador para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "comunicação intermitente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de congelamento da variável contínua comum a controle, supervisão e histórico.",
+      "pergunta": "Em um vaso, o visor local de nível sobe continuamente até atuar um switch independente de alto nível, mas a PV contínua fica quase constante no HMI e no historian, e a malha automática não aumenta a descarga. Qual causa específica explica melhor essa divergência?",
+      "resposta": "Sinal contínuo de nível congelado na cadeia de medição.",
+      "explicacao": "A mesma variável contínua alimenta controle, supervisão e histórico. Se todos permanecem estáveis enquanto medições independentes mostram subida real, houve perda de atualização do sinal contínuo usado pela arquitetura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sensores e transmissores fornecem variáveis medidas, como pressão, nível, temperatura, vazão, posição e velocidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": false,
+      "conhecimento": "Dependência de tendências e inferências operacionais da coerência temporal do sinal compartilhado.",
+      "pergunta": "Se o mesmo sinal alimenta HMI, historian e análise de desempenho, o que acontece com as tendências e comparações operacionais quando esse dado perde coerência temporal com o processo real?",
+      "resposta": "Perdem validade e podem induzir conclusões operacionais erradas.",
+      "explicacao": "As camadas de visualização e análise usam a mesma base de sinais. Sem coerência temporal e confiabilidade, as tendências continuam existindo, mas deixam de representar corretamente o processo físico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

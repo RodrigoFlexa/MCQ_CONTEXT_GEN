@@ -1,0 +1,97 @@
+{
+  "item": "07_01",
+  "foco": 29,
+  "rodada": 1,
+  "contexto": {
+    "A1": 28,
+    "F": 29,
+    "A2": 30
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção do modo local/remoto pode bloquear o comando pelo DCS sem impedir a atuação local do elemento final.",
+      "pergunta": "Após manutenção, um atuador responde normalmente aos comandos do painel local e a realimentação muda quando ele é operado em campo, mas nenhum comando da IHM produz movimento; permissivos, ar e alimentação estão normais. Qual causa de configuração explica melhor esse comportamento?",
+      "resposta": "Modo local selecionado.",
+      "explicacao": "O modo local/remoto é uma definição crítica de configuração. Com o equipamento em local, a atuação em campo permanece disponível, mas o comando remoto da IHM deixa de comandar o elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Resposta binária sem posições intermediárias indica divergência entre válvula prevista modulante e implementação abre/fecha.",
+      "pergunta": "Uma válvula indicada na IHM como controle remoto de posição recebe comandos sucessivos de 30%, 40% e 50%, porém em campo ela permanece fechada até saltar para totalmente aberta, sem estabilizar em posições intermediárias, e não há indicação confiável de posição. Qual divergência técnica explica melhor esse quadro?",
+      "resposta": "Implementação abre/fecha, não modulante.",
+      "explicacao": "Os blocos associam perda de coerência entre projeto e implantação ao caso de válvula prevista para controle contínuo, mas colocada em serviço apenas totalmente aberta ou fechada, sem indicação adequada de posição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "válvula prevista para operação remota e com indicação de controle de posição, mas colocada em serviço apenas como totalmente aberta ou fechada, com pendência de indicador de posição."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sinal válido em campo e no I/O, sem reflexo na lógica e na IHM, aponta para erro de configuração ou mapeamento do ponto.",
+      "pergunta": "O transmissor acompanha a variável no campo e o sinal chega corretamente ao cartão de entrada, mas a medição fica congelada na IHM e os alarmes e permissivos associados não reagem. Qual causa de automação explica melhor esse conjunto de sinais?",
+      "resposta": "Mapeamento/configuração incorreta do ponto.",
+      "explicacao": "Com sensor e chegada ao I/O preservados, o descompasso restante está na integração lógica/supervisória do ponto. Os blocos citam essa situação quando a informação de campo não é recebida pelo sistema supervisor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correções para que sinais de campo cheguem à Interface Homem-Máquina (IHM)"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Mudanças sem atualização de documentos e telas degradam a coerência entre representação de engenharia e comportamento real do campo.",
+      "pergunta": "Depois de modificar permissivos e intertravamentos em serviço, os P&IDs e a IHM permanecem na versão anterior. Que efeito isso tende a causar sobre testes e diagnóstico de falhas?",
+      "resposta": "Perda de coerência entre documentos/telas e campo.",
+      "explicacao": "Os blocos ligam mudanças sem fechamento e sem atualização à degradação da confiabilidade informacional da planta, fazendo testes e diagnóstico se apoiarem em representação que pode não refletir o comportamento real.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "além da atualização de P&IDs após modificações."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças sem fechamento adequado degradam a confiabilidade informacional da planta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando isso ocorre, perde-se coerência entre projeto, implementação, operação e manutenção, elevando risco operacional e dificultando diagnóstico de falhas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

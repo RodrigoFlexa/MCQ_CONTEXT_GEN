@@ -1,0 +1,89 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Timestamp parado, validade ruim e incoerência com campo indicam dado congelado na arquitetura, não processo estável.",
+      "pergunta": "Durante uma transferência, a pressão no DCS fica 52,0 bar por 15 minutos. No campo, o indicador local do próprio transmissor varia com a manobra; a vazão associada também muda; o carimbo de atualização da tag não avança e a qualidade do dado está inválida. Qual causa específica explica melhor esse comportamento?",
+      "resposta": "Dado congelado por falha no transporte/processamento do sinal.",
+      "explicacao": "O transmissor local e a variável relacionada acompanham a operação, descartando processo estável. Timestamp parado e dado inválido apontam indisponibilidade na arquitetura que leva ou processa o sinal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Se o campo mede e o comando atua, mas a sala perde a indicação, a perda é de visibilidade.",
+      "pergunta": "Na IHM, a tendência e o valor de um transmissor desaparecem. No campo, a indicação local do instrumento acompanha a variação real, e a válvula dessa malha continua respondendo aos comandos do controlador. Em diagnóstico por camadas, qual tipo de perda está caracterizado?",
+      "resposta": "Perda de visibilidade na supervisão.",
+      "explicacao": "A medição no campo existe e a atuação segue normal. O sintoma está na camada de supervisão/visualização, não na medição nem no comando.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Ativos não integrados ao PLC deslocam a observabilidade para registros manuais e quebram a correlação automática causa-efeito.",
+      "pergunta": "Em uma área onde várias válvulas locais e medições auxiliares não entram no PLC, e as rondas são registradas de forma irregular, qual mecanismo torna mais lenta a descoberta da origem de um desvio de processo?",
+      "resposta": "Dependência de observações manuais sem correlação automática causa-efeito.",
+      "explicacao": "Sem integração, o estado global fica repartido entre automação e observações complementares. Com registros irregulares, a relação entre eventos e desvio precisa ser reconstruída manualmente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito e pode retardar a identificação de desvios"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dashboards com coleta periódica só apoiam decisão operacional após checagem da qualidade das medições.",
+      "pergunta": "Um dashboard alimentado por historian com coleta periódica será usado para decidir uma intervenção, e os gráficos mostram processo aparentemente estável. Que verificação técnica das medições deve ser feita antes de confiar nessa visualização?",
+      "resposta": "Checar normalidade e validade das medições.",
+      "explicacao": "Em coleta periódica, a visualização só sustenta decisão quando os dados são consistentes; por isso, é preciso confirmar a normalidade e a validade antes da interpretação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards, a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

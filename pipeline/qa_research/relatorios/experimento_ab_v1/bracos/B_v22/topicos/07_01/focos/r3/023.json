@@ -1,0 +1,93 @@
+{
+  "item": "07_01",
+  "foco": 23,
+  "rodada": 3,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença funcional entre permissivo de partida e intertravamento de proteção em operação.",
+      "pergunta": "Na partida de uma turbomáquina, a baixa pressão de óleo apenas bloqueia o start. Depois de estabilizada, a pressão cai abaixo do mesmo patamar e não ocorre parada automática nem outro comando protetivo. Qual causa lógica explica essa permanência em operação sem proteção?",
+      "resposta": "Falta intertravamento de parada por baixa pressão de óleo.",
+      "explicacao": "A condição está atuando só como liberação de partida. Para forçar ação protetiva quando a baixa pressão ocorre já em operação, precisa existir intertravamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Intertravamento é a lógica que força uma ação de proteção quando uma condição definida ocorre"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permissivo é a condição que precisa estar satisfeita para permitir partida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de bypass/override por demanda reconhecida sem resposta automática, com elemento final comprovadamente íntegro.",
+      "pergunta": "Em teste de alta-alta nível, o evento aparece no sistema e o transmissor é reconhecido pela lógica. A solenoide e a válvula fecham normalmente por comando manual, mas não recebem o comando automático dessa proteção enquanto dura a intervenção. Qual estado temporário explica esse comportamento?",
+      "resposta": "Bypass/override ativo.",
+      "explicacao": "Como a demanda é reconhecida e o elemento final funciona por comando manual, a falha não está no sensor nem na válvula; a resposta automática foi temporariamente suprimida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "bypass ou override é a supressão temporária de uma entrada, condição ou resposta automática."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em operação real, esses estados alteram a função de barreiras e exigem gestão explícita."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de reavaliar o tempo de exposição quando uma indisponibilidade temporária se prolonga.",
+      "pergunta": "Um detector crítico foi colocado em bypass para uma calibração prevista de 30 minutos, e a permanência em operação foi aceita sem outras falhas associadas. A atividade atrasa e o bypass atravessa todo o turno. Qual parâmetro do cenário deve ser reavaliado para confirmar a validade do contingenciamento?",
+      "resposta": "O tempo de exposição da condição degradada.",
+      "explicacao": "Mantidos os demais fatores, o elemento que mudou foi a duração da exposição ao bypass. A relevância da indisponibilidade depende do tempo em que a condição degradada persiste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a relevância de uma indisponibilidade depende do cenário de risco, da simultaneidade de serviços, do estado de outros elementos de proteção e do tempo em que a condição degradada persiste."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o tempo de exposição é aceitável para o cenário"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reavaliação do impacto combinado de indisponibilidades simultâneas sobre a efetividade das barreiras.",
+      "pergunta": "Uma área já opera com contingência por indisponibilidade temporária de um detector de gás. Durante o mesmo período, fica indisponível o fechamento automático da ventilação que atua no mesmo cenário de acumulação de gás. Qual aspecto técnico precisa ser reavaliado antes de manter a operação?",
+      "resposta": "O impacto combinado na efetividade global das barreiras.",
+      "explicacao": "As duas perdas atuam no mesmo cenário de risco. O foco deixa de ser cada falha isolada e passa a ser a redução conjunta da proteção disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em FPSOs, múltiplas indisponibilidades pequenas podem interagir e reduzir a efetividade global das barreiras."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "há impacto combinado com outras indisponibilidades"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

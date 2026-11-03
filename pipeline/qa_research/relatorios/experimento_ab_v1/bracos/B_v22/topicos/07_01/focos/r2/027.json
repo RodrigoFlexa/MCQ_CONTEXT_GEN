@@ -1,0 +1,77 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 2,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Diferença de objetivo entre teste funcional e proof test em funções instrumentadas de segurança.",
+      "pergunta": "Uma função instrumentada de segurança respondeu corretamente ao cenário previsto em teste funcional, com lógica e comando de saída coerentes. Qual aspecto típico do proof test ainda pode permanecer sem demonstração nessa função?",
+      "resposta": "Falhas perigosas ocultas.",
+      "explicacao": "O teste funcional comprova a resposta automática no cenário exercitado. O proof test tem outro objetivo: revelar falhas perigosas ocultas e demonstrar a capacidade de atuação conforme planejado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes funcionais e proof tests não demonstram a mesma coisa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O teste funcional verifica se um cenário previsto produz a resposta automática esperada no sistema de segurança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O proof test tem alcance diferente: ele busca revelar falhas perigosas ocultas da função instrumentada de segurança e demonstrar a capacidade de atuação da proteção conforme planejado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Registro correto da cobertura quando o proof test é executado por subsistemas ou em momentos diferentes.",
+      "pergunta": "Por restrição operacional, o proof test de uma SIF será feito em datas diferentes para canal de entrada, logic solver e elemento final. Como a cobertura do ensaio deve ser registrada para não ser tratada como prova integral da função?",
+      "resposta": "Por subsistema, indicando até onde houve atuação real.",
+      "explicacao": "Quando o proof test é fracionado, o registro precisa delimitar exatamente o que foi testado em cada parte e até onde as saídas atuaram; ensaio parcial não equivale automaticamente a teste integral.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte do proof test precisa ser feita por subsistema ou em momentos diferentes, por razões operacionais ou de segurança, é essencial explicitar o que foi testado no canal de entrada, no logic solver, nos módulos de saída e no elemento final, inclusive até onde as saídas realmente atuaram."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa condição, um ensaio parcial não equivale automaticamente a um teste integral da função."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de falha na interface entre SIS e ESD de pacote durante teste de trip.",
+      "pergunta": "Em um teste de trip de pacote, a entrada simulada é reconhecida e o SIS entra em estado de trip, mas o comando deveria ser repassado ao ESD do pacote, que acionaria o solenóide local. O ESD não recebe o trip e o solenóide não atua. Qual causa específica explica melhor a falha?",
+      "resposta": "Falha na interface de repasse entre SIS e ESD do pacote.",
+      "explicacao": "Como a entrada foi reconhecida e a lógica do SIS respondeu, a falha está no trecho de interface e repasse do comando até o ESD do pacote, antes da atuação do solenóide local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "isso é especialmente importante quando a proteção depende de interface entre SIS, ESD, F&G e lógicas de pacotes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se o teste não percorre a interface, o repasse de estado, o comando de trip, a atuação do solenóide, a movimentação do elemento final ou a confirmação de retorno associada, o resultado não demonstra essas partes da arquitetura."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

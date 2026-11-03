@@ -1,0 +1,73 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A mesma medição de processo alimenta simultaneamente o controle e a supervisão.",
+      "pergunta": "Um transmissor de pressão permanece comunicando, porém com desvio constante. A HMI passa a mostrar a pressão deslocada e a válvula de controle reage como se esse valor fosse real. Qual elo da arquitetura explica esse erro simultâneo na supervisão e no controle?",
+      "resposta": "A mesma medição alimenta o controlador e a supervisão.",
+      "explicacao": "Na arquitetura descrita, o dado medido segue para o controlador e, em paralelo, para a supervisão. Se a medição está errada, as duas camadas reproduzem o mesmo desvio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses dados alimentam os sistemas controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Análise por historian só é válida com sinais temporalmente coerentes e medições validadas.",
+      "pergunta": "Antes de usar o historian para comparar a resposta de pressão, vazão e abertura de válvula após uma perturbação, o que deve ser verificado na base de sinais para que a análise faça sentido?",
+      "resposta": "Coerência temporal e validação das medições.",
+      "explicacao": "O bloco afirma que tendências, comparações e inferências só fazem sentido com sinais temporalmente coerentes e confiáveis; por isso a validação da medição é etapa necessária antes da análise.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de comunicação com módulo remoto/PLC se manifesta por congelamento de valores e perda de comando remoto.",
+      "pergunta": "Na partida, vários instrumentos de um mesmo módulo continuam energizados e com indicação local normal, mas no supervisório ficam sem atualização ou congelados no último valor, e os comandos remotos associados deixam de atuar. Qual causa mais provável explica esse conjunto de sinais?",
+      "resposta": "Perda de comunicação entre o módulo remoto e o PLC.",
+      "explicacao": "A combinação de instrumentos locais ativos com ausência de atualização, valor congelado e perda de comando remoto caracteriza falha de comunicação da camada remota com o controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses dados alimentam os sistemas controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

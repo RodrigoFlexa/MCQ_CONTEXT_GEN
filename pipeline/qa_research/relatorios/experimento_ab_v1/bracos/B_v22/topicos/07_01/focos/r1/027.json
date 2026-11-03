@@ -1,0 +1,92 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 1,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Distinção entre o objetivo do proof test e do teste funcional em funções instrumentadas de segurança.",
+      "pergunta": "Em uma função instrumentada de segurança, que tipo de falha o proof test procura revelar além da resposta automática verificada em teste funcional?",
+      "resposta": "Falhas perigosas ocultas.",
+      "explicacao": "O bloco distingue os objetivos dos ensaios: o teste funcional confirma a resposta esperada do cenário, enquanto o proof test busca revelar falhas perigosas ocultas da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes funcionais e proof tests não demonstram a mesma coisa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O proof test tem alcance diferente: ele busca revelar falhas perigosas ocultas da função instrumentada de segurança e demonstrar a capacidade de atuação da proteção conforme planejado."
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "conceito não pode pedir 'que aspectos/quais fatores' nem 'além de X': admite várias respostas; pergunte por um termo, função, componente, parâmetro ou local único",
+        "conceito não pode pedir 'que tipo de': costuma ser um item de uma lista com outros igualmente corretos; inclua o qualificador que torna a resposta única ou escolha outro conhecimento"
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade necessária do escopo coberto quando o proof test é executado parcialmente por subsistemas ou em momentos diferentes.",
+      "pergunta": "Por restrição operacional, o proof test de uma função foi dividido: entrada hoje, lógica amanhã e elemento final em outra janela. O que precisa ser explicitado no registro do ensaio para que ele não seja tratado como teste integral?",
+      "resposta": "O escopo testado por subsistema e até onde houve atuação real.",
+      "explicacao": "Quando o proof test é parcial, o bloco exige explicitar o que foi testado em entrada, lógica, saídas e elemento final, inclusive o limite da atuação real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte do proof test precisa ser feita por subsistema ou em momentos diferentes, por razões operacionais ou de segurança, é essencial explicitar o que foi testado no canal de entrada, no logic solver, nos módulos de saída e no elemento final, inclusive até onde as saídas realmente atuaram."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa condição, um ensaio parcial não equivale automaticamente a um teste integral da função."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Limite de cobertura do ensaio quando a interface entre sistemas e a cadeia de atuação final não são percorridas.",
+      "pergunta": "Num shutdown, o teste confirmou a mudança de estado no SIS, mas não percorreu a interface com o ESD do pacote, não acionou o solenóide e a válvula final não se moveu. O que permaneceu sem demonstração pelo ensaio?",
+      "resposta": "A cadeia de interface e atuação até o elemento final.",
+      "explicacao": "Sem percorrer interface, comando de trip, solenóide e movimentação do elemento final, o bloco afirma que essas partes da arquitetura não ficam demonstradas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em FPSOs e outras unidades de processo, isso é especialmente importante quando a proteção depende de interface entre SIS, ESD, F&G e lógicas de pacotes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se o teste não percorre a interface, o repasse de estado, o comando de trip, a atuação do solenóide, a movimentação do elemento final ou a confirmação de retorno associada, o resultado não demonstra essas partes da arquitetura."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Validade da evidência de teste restrita aos canais, vínculos lógicos, saídas e cenários realmente exercitados.",
+      "pergunta": "Após testar com sucesso um único cenário de alto nível que percorreu um canal de entrada, um vínculo lógico e uma saída, qual é a limitação técnica da evidência obtida?",
+      "resposta": "Só cobre os canais, vínculos, saídas e cenários percorridos.",
+      "explicacao": "O bloco limita a evidência aos caminhos realmente exercitados no ensaio; não se pode estender a cobertura aos demais canais, lógicas, saídas ou cenários.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva, mas sua evidência vale apenas para os canais, vínculos lógicos, saídas e cenários realmente percorridos no ensaio."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

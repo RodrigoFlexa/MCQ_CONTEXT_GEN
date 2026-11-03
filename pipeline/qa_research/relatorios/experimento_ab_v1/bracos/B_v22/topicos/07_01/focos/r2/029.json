@@ -1,0 +1,93 @@
+{
+  "item": "07_01",
+  "foco": 29,
+  "rodada": 2,
+  "contexto": {
+    "A1": 28,
+    "F": 29,
+    "A2": 30
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Classificação evento/alarme define registro cronológico versus anúncio ao operador.",
+      "pergunta": "Em teste de alarme alto, a medição ultrapassa o limite e a ocorrência entra apenas no histórico cronológico; não aparece na lista de alarmes, não exige reconhecimento e não há bloqueio de alarme ativo. Qual configuração crítica explica melhor esse comportamento?",
+      "resposta": "Classificação do ponto como evento, não alarme.",
+      "explicacao": "Em F, a classificação entre alarme e evento faz parte da configuração crítica. Se a ocorrência fica só no cronológico, sem anúncio nem reconhecimento e sem bloqueio ativo, o ponto está tratado como evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de condição que só deveria bloquear partida indica intertravamento configurado no lugar de permissivo.",
+      "pergunta": "Uma condição de processo deveria apenas bloquear nova partida de uma bomba até normalizar. Após alteração de lógica, a bomba que já estava em operação desarma imediatamente quando essa condição se perde e só retorna após reset. Qual configuração crítica foi aplicada incorretamente?",
+      "resposta": "Intertravamento em vez de permissivo.",
+      "explicacao": "Permissivo apenas autoriza a partida. Se a perda da condição derruba equipamento em operação e exige reset, o comportamento é de intertravamento, logo a lógica foi configurada com a função errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Comando registrado na IHM sem mudança do bit no controlador aponta erro de mapeamento do caminho supervisório.",
+      "pergunta": "Durante o loop check, a válvula está em remoto e com permissivos satisfeitos. O comando é emitido na IHM e registrado; outros comandos para o mesmo controlador executam normalmente, mas o bit correspondente desse atuador não muda no controlador e a saída para a solenóide permanece inalterada. Qual causa de configuração explica melhor o desvio?",
+      "resposta": "Mapeamento do comando da IHM para a lógica incorreto.",
+      "explicacao": "F e A2 ligam a divergência ao caminho de comando IHM-atuador. Com remoto confirmado e outros comandos do mesmo controlador funcionando, a falha específica está no mapeamento desse comando para a lógica/saída.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correções para que sinais de campo cheguem à Interface Homem-Máquina (IHM) e para que comandos da IHM sejam executados pelos atuadores"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Oscilação apenas em automático, com elemento final íntegro, aponta sintonia configurada incorretamente.",
+      "pergunta": "Após migração de lógica, em manual a válvula responde de forma suave e proporcional. Em automático, a saída do controlador oscila continuamente para mais e para menos ao redor de um valor médio, e a variável acompanha em torno do setpoint, sem bater em fins de curso. Qual configuração crítica explica melhor esse desvio?",
+      "resposta": "Parâmetros de sintonia do controlador inadequados.",
+      "explicacao": "Como a válvula responde bem em manual e a oscilação surge apenas em automático, o desvio está na configuração dos parâmetros do controlador, não no elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "podem coexistir comissionamento incompleto de controles"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}
