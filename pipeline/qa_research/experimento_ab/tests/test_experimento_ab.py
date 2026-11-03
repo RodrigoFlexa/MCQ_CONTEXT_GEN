@@ -606,6 +606,25 @@ class FalsoV22(Falso):
                 "justificativa": "atalho" if atalho else "ok"}
 
 
+class FalsoSegundaChance(FalsoV22):
+    """1ª visita: só questões que o auditor recusa. 2ª visita (segunda chance): uma boa. 3ª: de novo só recusadas,
+    e o foco fecha (a segunda chance é uma só). Compostas: a 1ª tentativa é recusada; a 2ª, aprovada."""
+    def foco(self, user):
+        self.usuarios_foco.append(user)
+        f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d+\]|\n</janela>)", user, re.S).group(1)
+        trecho = " ".join(f.split()[:8])
+        v = self.visitas[f] = self.visitas.get(f, 0) + 1
+        if v == 2:
+            return {"motivo": "", "questoes": [self._q("procedimento", trecho, "F")]}
+        return {"motivo": "", "questoes": [self._q("mecanismo", trecho, "F", extra=" ATALHO")]}
+
+    def composta(self, user):
+        self.usuarios_composta = getattr(self, "usuarios_composta", []) + [user]
+        b1 = re.search(r"\[B1\] [^\n]*\n(.+?)(?:\n\n\[B\d+\]|\n</blocos>)", user, re.S).group(1)
+        extra = "" if "<tentativa_anterior>" in user else " ATALHO"
+        return {"motivo": "", "questoes": [self._q("diagnostico", " ".join(b1.split()[:8]), "B1", extra=extra)]}
+
+
 class V22Tests(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
@@ -661,6 +680,29 @@ class V22Tests(unittest.TestCase):
              "resposta": "Separar fases.", "explicacao": "", "fundamentos": [{"bloco": "A1", "trecho": "texto do apoio"}]}
         self.assertTrue(regua(q, {"F": "texto do foco", "A1": "texto do apoio"}, ("conceito",), "F"))
         self.assertEqual(regua(q, {"F": "texto do foco", "A1": "texto do apoio"}, ("conceito",)), [])
+
+    def test_segunda_chance_unica_para_foco_e_composta_recusados(self):
+        f = FalsoSegundaChance()
+        self.assertEqual(self.g(f).run(), 0)
+        d = self.exp / "bracos" / "B_v22"
+        res = read_json(d / "resultado.json")
+        _, bs = blocos(ITEM, self.exp / "docs" / "refinado")
+        n_cad = len(read_json(d / "topicos" / ITEM / "combinacoes.json")["combinacoes"])
+        # foco: 1ª visita só recusas -> revisita; 2ª rende; 3ª só recusas -> fecha (sem nova segunda chance)
+        vis = {int(k.split(":")[1]): v["visitas"] for k, v in res["saturacao"]["focos"].items()}
+        self.assertEqual(vis, {i: 3 for i in range(len(bs))})
+        self.assertEqual(res["segunda_chance"]["focos"], {"visitas": len(bs), "conhecimentos_novos": len(bs)})
+        segunda = [u for u in f.usuarios_foco if "[recusada (atalho)" in u][0]
+        self.assertIn("ATALHO", segunda.split("<questoes_deste_foco>")[1])
+        # composta: 1ª tentativa recusada, 2ª recebe a anterior com o motivo e é aprovada; não há 3ª
+        self.assertEqual(res["segunda_chance"]["compostas"], {"tentativas": n_cad, "finais": n_cad})
+        t2 = [u for u in f.usuarios_composta if "<tentativa_anterior>" in u]
+        self.assertEqual(len(t2), n_cad)
+        self.assertIn("recusada (atalho)", t2[0].split("<tentativa_anterior>")[1])
+        self.assertEqual(res["por_origem"]["composta"]["finais"], n_cad)
+        antes = f.chamadas
+        self.assertEqual(self.g(f).run(), 0)
+        self.assertEqual(f.chamadas, antes)                       # retomada não refaz nada
 
     def test_falha_do_auditor_isolada_por_questao(self):
         f = FalsoV22(falhar_auditoria="alfa3 ")

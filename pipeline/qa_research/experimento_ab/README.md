@@ -55,10 +55,14 @@ deduplicação, em rodadas por foco até saturar:
 | Exclusões explícitas: nomes comerciais, nomenclatura de projeto, itens de lista, "por que X não garante Y" | Turbiscan, "dirty inert gas header", princípios tautológicos de gestão |
 | Gabarito curto (até 15 palavras) e `explicacao` separada, fora da avaliação | Gabaritos compostos, "causa mais provável" sem suporte, acerto parcial |
 | Auditor por questão, com o texto-fonte e 5 verificações binárias (sem documento, alternativa excluída, atalho, sustentação, elemento único) | Várias respostas plausíveis, atalhos aprovados, auditor sem acesso à fonte |
-| Sem refinador: recusas voltam ao gerador com o motivo, na rodada seguinte do mesmo foco | O refinador descartava 1,2% e reescrevia o resto; 44% do banco final eram reescritas |
+| Sem refinador: a correção é do próprio gerador, que recebe a questão recusada e o motivo, e a nova versão passa de novo por régua, auditor e deduplicação | O refinador descartava 1,2% e reescrevia o resto; 44% do banco final eram reescritas, avaliadas pelo mesmo auditor sem fonte |
 
 Um foco fecha quando o gerador devolve zero questões, quando a visita não traz conhecimento novo aceito
-(`--paciencia`) ou ao atingir `--max-rodadas` visitas. Uma questão inválida nunca afeta as outras: régua e auditor
+(`--paciencia`) ou ao atingir `--max-rodadas` visitas. Exceção (segunda chance, uma vez por foco): uma visita sem
+conhecimento novo, mas com questões recusadas pela régua ou pelo auditor, dá ao foco mais uma visita, em que o
+gerador vê as recusas e os motivos. Uma composta recusada por qualidade ganha uma única segunda tentativa, com a
+questão anterior e o motivo. Redundância e bloqueio de conteúdo não dão segunda chance. `resultado.json` traz
+quanto a segunda chance rendeu (`segunda_chance`). Uma questão inválida nunca afeta as outras: régua e auditor
 decidem questão por questão, e um foco com falha pendente só volta a abrir depois da retomada.
 
 ```bash

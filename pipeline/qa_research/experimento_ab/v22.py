@@ -8,7 +8,9 @@ Mudanças em relação à v21, cada uma ligada a um defeito observado na revisã
   3. gabarito curto (só o elemento decisivo) com a explicação num campo separado, que não entra na avaliação;
   4. auditor por questão, com o texto-fonte e cinco verificações binárias (sem documento, resposta única com a
      alternativa explícita, atalho, sustentação, elemento único);
-  5. sem refinador: questões recusadas voltam ao gerador, com o motivo, na rodada seguinte do mesmo foco.
+  5. sem refinador: a correção é feita pelo próprio gerador, que recebe a questão recusada e o motivo e passa de novo
+     pela régua, pelo auditor e pela deduplicação. Um foco cuja visita não rendeu conhecimento novo, mas teve recusas
+     por qualidade, ganha uma única revisita; uma composta recusada por qualidade ganha uma única segunda tentativa.
 
 Uma questão inválida nunca invalida as outras: a régua e o auditor decidem questão por questão, e cada etapa é um
 arquivo (retomável). Inventário (relações e encadeamentos) e deduplicação incremental são os do experimento A/B.
@@ -133,7 +135,8 @@ class GeracaoV22(GeracaoAB):
                "exemplos_sha256": C.sha(self.caminho_exemplos.read_text(encoding="utf-8")),
                "combinacoes_por_doc": self.combinacoes_por_doc, "reusar_inventario": [str(r) for r in self.reusar],
                "dedup_calibracao": {k: self.calibracao[k] for k in ("embedding", "limiar_auto", "limiar_juiz", "juiz")},
-               "saturacao": self.sat, "onda": self.onda_foco, "por_foco": POR_FOCO, "teto_resposta": TETO_RESPOSTA}
+               "saturacao": self.sat, "onda": self.onda_foco, "por_foco": POR_FOCO, "teto_resposta": TETO_RESPOSTA,
+               "segunda_chance": 1}
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -150,19 +153,27 @@ class GeracaoV22(GeracaoAB):
     def _arq_foco(self, item, r, f) -> Path:
         return self._dir(item) / "focos" / f"r{r}" / f"{f:03d}.json"
 
-    def _arq_composta(self, item, cid) -> Path:
-        return self._dir(item) / "compostas_v22" / f"{cid}.json"
+    def _arq_composta(self, item, cid, tentativa: int = 1) -> Path:
+        pasta = self._dir(item) / "compostas_v22"
+        return (pasta if tentativa == 1 else pasta / f"t{tentativa}") / f"{cid}.json"
+
+    @staticmethod
+    def _prefixo_composta(item, cid, tentativa: int = 1) -> str:
+        return f"{item}:c:{cid}" + ("" if tentativa == 1 else f":t{tentativa}")
 
     def _arq_aud(self, item, uid) -> Path:
         return self._dir(item) / "auditoria_v22" / f"{_nome_arq(uid)}.json"
 
     def questoes(self, item: str, aplicar_dedup: bool = True) -> list[dict]:
         out = []
-        for p in sorted((self._dir(item) / "compostas_v22").glob("*.json"), key=lambda p: int(p.stem[1:])):
-            d = read_json(p)
-            for q in d["questoes"]:
-                out.append(self._registro(item, q, f"{item}:c:{d['id']}:{q['k']}", "composta", 0,
-                                          {"blocos": d["blocos"], "foco": None}))
+        for t in (1, 2):
+            pasta = self._arq_composta(item, "x", t).parent
+            for p in sorted(pasta.glob("*.json"), key=lambda p: int(p.stem[1:])):
+                d = read_json(p)
+                for q in d["questoes"]:
+                    out.append(self._registro(item, q, f"{self._prefixo_composta(item, d['id'], t)}:{q['k']}", "composta",
+                                              0, {"blocos": d["blocos"], "foco": None, "encadeamento": d["id"],
+                                                  "tentativa": t}))
         for p in sorted((self._dir(item) / "focos").glob("r*/*.json"), key=lambda p: (int(p.parent.name[1:]), p.stem)):
             d = read_json(p)
             for q in d["questoes"]:
@@ -224,22 +235,34 @@ class GeracaoV22(GeracaoAB):
         linhas = [f"- {q['conhecimento']} (resposta: {q['resposta']})" for q in self._aceitas(item)]
         return "\n".join(linhas) or "Nenhum ainda."
 
+    @staticmethod
+    def _estado(q) -> str | None:
+        """Como uma questão já proposta aparece para o gerador (None = ainda sem decisão)."""
+        if "pergunta" not in q:
+            return None
+        if q.get("aprovada"):
+            return "aceita"
+        if q["regua"]:
+            return "recusada pela régua: " + q["regua"][0]
+        if q.get("redundante"):
+            return "recusada: repete conhecimento já aceito"
+        if "auditoria" in q:
+            a = q["auditoria"]
+            extra = f" Resposta alternativa apontada: {a['resposta_alternativa']}" if "varias_respostas" in a["falhas"] else ""
+            return f"recusada ({a['motivo']}): {a['justificativa']}{extra}"
+        return None
+
+    @staticmethod
+    def _recusada_por_qualidade(q) -> bool:
+        """Recusa que uma nova tentativa pode corrigir (régua ou auditor); redundância e bloqueio não contam."""
+        if q["regua"]:
+            return True
+        a = q.get("auditoria")
+        return bool(a) and not a["aprovada"] and a["motivo"] != "bloqueio"
+
     def _historico_foco(self, item, foco) -> str:
-        linhas = []
-        for q in self.questoes(item):
-            if q.get("foco") != foco or "pergunta" not in q:
-                continue
-            if q.get("aprovada"):
-                estado = "aceita"
-            elif q["regua"]:
-                estado = "recusada pela régua: " + q["regua"][0]
-            elif q.get("redundante"):
-                estado = "recusada: repete conhecimento já aceito"
-            elif "auditoria" in q:
-                estado = f"recusada ({q['auditoria']['motivo']}): {q['auditoria']['justificativa']}"
-            else:
-                continue
-            linhas.append(f"- [{estado}] {q['pergunta']} → {q['resposta']}")
+        linhas = [f"- [{e}] {q['pergunta']} → {q['resposta']}" for q in self.questoes(item)
+                  if q.get("foco") == foco and (e := self._estado(q))]
         return "\n".join(linhas) or "Nenhuma."
 
     def _tema(self, item) -> str:
@@ -305,8 +328,9 @@ class GeracaoV22(GeracaoAB):
             self._ok(nome)
         return self._auditar_unidade(item, read_json(arq), f"{item}:j:r{rodada}:{foco:03d}", bloco_txt)
 
-    def _composta(self, item: str, c: dict, rels: list[dict]) -> bool:
-        arq, nome = self._arq_composta(item, c["id"]), f"composta_{item}_{c['id']}"
+    def _composta(self, item: str, c: dict, rels: list[dict], tentativa: int = 1) -> bool:
+        arq = self._arq_composta(item, c["id"], tentativa)
+        nome = f"composta_{item}_{c['id']}" + ("" if tentativa == 1 else f"_t{tentativa}")
         bs = {b["indice"]: b for b in self.docs[item]}
         usados = sorted({r["bloco"] for r in rels})
         rot = {f"B{k}": i for k, i in enumerate(usados, 1)}
@@ -316,9 +340,15 @@ class GeracaoV22(GeracaoAB):
             enc = {k: c[k] for k in ("tipo", "titulo", "ponte", "cadeia", "cenario", "resposta", "resposta_atraente",
                                      "sinal_que_descarta", "condicoes_enunciado", "limites") if k in c}
             enc["relacoes"] = [{k: r[k] for k in ("id", "afirmacao", "condicoes", "limites")} for r in rels]
-            user = "\n\n".join((self._tema(item), f"<conhecimentos_cobertos>\n{self._cobertos(item)}\n</conhecimentos_cobertos>",
-                                f"<encadeamento>\n{json.dumps(enc, ensure_ascii=False, indent=2)}\n</encadeamento>",
-                                self._exemplos(item, f"{item}:{c['id']}", composta=True), f"<blocos>\n{bloco_txt}\n</blocos>"))
+            partes = [self._tema(item), f"<conhecimentos_cobertos>\n{self._cobertos(item)}\n</conhecimentos_cobertos>",
+                      f"<encadeamento>\n{json.dumps(enc, ensure_ascii=False, indent=2)}\n</encadeamento>"]
+            if tentativa > 1:
+                anteriores = [f"- [{e}] {q['pergunta']} → {q['resposta']}" for q in self.questoes(item)
+                              if q.get("encadeamento") == c["id"] and q["tentativa"] < tentativa and (e := self._estado(q))]
+                partes.append("<tentativa_anterior>\n" + "\n".join(anteriores) + "\n</tentativa_anterior>")
+            semente = f"{item}:{c['id']}" + ("" if tentativa == 1 else f":t{tentativa}")
+            partes += [self._exemplos(item, semente, composta=True), f"<blocos>\n{bloco_txt}\n</blocos>"]
+            user = "\n\n".join(partes)
             try:
                 d = self.cliente("geracao").json(C.prompt("composta_v22"), user, tag="v22_composta", max_tokens=12000,
                                                  item=item, validate=lambda d: validar_saida(d, 1))
@@ -327,12 +357,28 @@ class GeracaoV22(GeracaoAB):
                     self._falha(nome, exc)
                     return False
                 d = {"questoes": [], "motivo": "bloqueado pelo filtro de conteúdo"}
-            atomic_json(arq, {"item": item, "id": c["id"], "blocos": usados, "rotulos": rot, "motivo": d["motivo"],
+            atomic_json(arq, {"item": item, "id": c["id"], "tentativa": tentativa, "blocos": usados, "rotulos": rot,
+                              "motivo": d["motivo"],
                               "questoes": [{**q, "k": k, "regua": regua(q, textos, TIPOS_COMPOSTA)} if isinstance(q, dict)
                                            else {"k": k, "regua": ["questão não é um objeto"]}
                                            for k, q in enumerate(d["questoes"], 1)]})
             self._ok(nome)
-        return self._auditar_unidade(item, read_json(arq), f"{item}:c:{c['id']}", bloco_txt)
+        return self._auditar_unidade(item, read_json(arq), self._prefixo_composta(item, c["id"], tentativa), bloco_txt)
+
+    def _segundas_compostas(self, item: str, cadeias: list) -> list:
+        """Encadeamentos cuja 1ª tentativa terminou com questão recusada por qualidade (ou cuja 2ª já começou)."""
+        qs = self.questoes(item, aplicar_dedup=False)
+        out = []
+        for t in cadeias:
+            cid = t[0]["id"]
+            if self._arq_composta(item, cid, 2).exists():
+                out.append(t)
+                continue
+            q1 = [q for q in qs if q.get("encadeamento") == cid and q["tentativa"] == 1]
+            completa = all(q["regua"] or "auditoria" in q for q in q1)
+            if q1 and completa and any(self._recusada_por_qualidade(q) for q in q1):
+                out.append(t)
+        return out
 
     # -------------------------------------------------------------- ondas e saturação
     def _ondas(self, unidades: list) -> list[list]:
@@ -387,6 +433,8 @@ class GeracaoV22(GeracaoAB):
         if rodada == 1:
             return list(range(len(self.docs[item])))
         g, vis, out = self.ganhos(item), self._visitas(item), []
+        recusas = Counter((q["foco"], q["rodada"]) for q in self.questoes(item, aplicar_dedup=False)
+                          if q["origem"] == "janela" and self._recusada_por_qualidade(q))
         for f in range(len(self.docs[item])):
             v = [r for r in vis.get(f, []) if r < rodada]
             if not v or v[-1] != rodada - 1 or len(v) >= self.sat["max_rodadas"]:
@@ -397,6 +445,8 @@ class GeracaoV22(GeracaoAB):
                 continue   # o gerador disse que não há mais nada: foco saturado
             if any(g[f][r] > 0 for r in v[-self.sat["paciencia"]:]):
                 out.append(f)
+            elif recusas[(f, rodada - 1)] and sum(g[f][r] == 0 for r in v) == 1:
+                out.append(f)   # segunda chance: visita sem ganho, mas com recusas corrigíveis (uma vez por foco)
         return out
 
     def _documento(self, item: str) -> int:
@@ -409,7 +459,10 @@ class GeracaoV22(GeracaoAB):
         # Falhas ficam isoladas: uma composta ou um foco com falha não impede os demais; o foco com falha só volta
         # a abrir depois que a retomada completar a sua visita (ver _completo).
         falhas = self._rodar_ondas(item, cadeias, lambda t: self._composta(item, *t))
-        self.progress(f"[{item}] compostas: {len(cadeias)} encadeamentos | aceitas {len(self._aceitas(item))}", flush=True)
+        segundas = self._segundas_compostas(item, cadeias)
+        falhas += self._rodar_ondas(item, segundas, lambda t: self._composta(item, *t, tentativa=2))
+        self.progress(f"[{item}] compostas: {len(cadeias)} encadeamentos, {len(segundas)} segundas tentativas | "
+                      f"aceitas {len(self._aceitas(item))}", flush=True)
         for rodada in range(1, self.sat["max_rodadas"] + 1):
             abertos = self.focos_abertos(item, rodada)
             if not abertos:
@@ -449,7 +502,8 @@ class GeracaoV22(GeracaoAB):
         C.gravar_jsonl(self.saida / "questoes.jsonl", todas)
         C.gravar_jsonl(self.saida / "aprovadas.jsonl", aprovadas)
         unidades = [read_json(p) for i in self.itens for p in list((self._dir(i) / "focos").glob("r*/*.json"))
-                    + list((self._dir(i) / "compostas_v22").glob("*.json"))]
+                    + list((self._dir(i) / "compostas_v22").glob("*.json"))
+                    + list((self._dir(i) / "compostas_v22").glob("t*/*.json"))]
 
         def funil(qs):
             aud = [q for q in qs if "auditoria" in q]
@@ -460,13 +514,18 @@ class GeracaoV22(GeracaoAB):
                     "finais": sum(bool(q.get("aprovada")) for q in qs)}
 
         dec = [read_json(p) for i in self.itens for p in (self.saida / "dedup_incremental" / i).glob("*.json")]
-        por_rodada, focos = defaultdict(int), {}
+        por_rodada, focos, revisitas = defaultdict(int), {}, Counter()
         for i in self.itens:
             g, vis = self.ganhos(i), self._visitas(i)
             for f, v in vis.items():
                 focos[f"{i}:{f:03d}"] = {"visitas": len(v), "novos_por_rodada": [g[f][r] for r in v]}
                 for r in v:
                     por_rodada[r] += g[f][r]
+                for anterior, r in zip(v, v[1:]):
+                    if g[f][anterior] == 0:   # revisita depois de uma visita sem ganho (segunda chance)
+                        revisitas["visitas"] += 1
+                        revisitas["conhecimentos_novos"] += g[f][r]
+        segunda = [q for q in todas if q.get("tentativa") == 2]
         res = {"braco": self.braco, "gerador": "v22", "unidade": "janela", "docs": C.relativo(self.docs_dir),
                "total": funil(todas), "por_origem": {o: funil([q for q in todas if q["origem"] == o])
                                                        for o in ("janela", "composta")},
@@ -480,6 +539,10 @@ class GeracaoV22(GeracaoAB):
                                      "por_decisao": {k: sum(d["decisao"] == k for d in dec) for k in ("nova", "redundante", "substitui")},
                                      "por_via": {k: sum(d["via"] == k for d in dec)
                                                  for k in ("banco_vazio", "abaixo_do_limiar", "automatico", "juiz")}},
+               "segunda_chance": {"focos": {"visitas": revisitas["visitas"],
+                                            "conhecimentos_novos": revisitas["conhecimentos_novos"]},
+                                  "compostas": {"tentativas": sum(u.get("tentativa") == 2 for u in unidades),
+                                                "finais": sum(bool(q.get("aprovada")) for q in segunda)}},
                "saturacao": {"config": self.sat, "conhecimentos_novos_por_rodada": dict(sorted(por_rodada.items())),
                              "focos_por_numero_de_visitas": dict(sorted(Counter(v["visitas"] for v in focos.values()).items())),
                              "focos": focos},
@@ -494,6 +557,10 @@ class GeracaoV22(GeracaoAB):
              f"Chamadas do gerador: {res['chamadas']['total']}, das quais {res['chamadas']['vazias']} sem questões; "
              f"questões por chamada: {res['chamadas']['questoes_por_chamada']}.",
              f"Falhas do auditor por verificação: {t['falhas_auditor']}.",
+             f"Segunda chance: {res['segunda_chance']['focos']['visitas']} revisitas de foco após visita sem ganho "
+             f"({res['segunda_chance']['focos']['conhecimentos_novos']} conhecimentos novos); "
+             f"{res['segunda_chance']['compostas']['tentativas']} segundas tentativas de composta "
+             f"({res['segunda_chance']['compostas']['finais']} finais).",
              f"Conhecimentos novos por rodada: {res['saturacao']['conhecimentos_novos_por_rodada']}; "
              f"focos por número de visitas: {res['saturacao']['focos_por_numero_de_visitas']}.",
              f"Tipos finais: {res['tipos_finais']}.", f"Falhas pendentes: {len(res['falhas_pendentes'])}.", "",
