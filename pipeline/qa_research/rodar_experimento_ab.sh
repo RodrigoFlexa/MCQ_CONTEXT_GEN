@@ -15,6 +15,7 @@
 #                        e procedimento, auditor v23) -> <BRAÇO>_v23; avaliação; painel de dificuldade (GPT-5 mini e
 #                        GPT-5.4 sem contexto) em <BRAÇO>, <BRAÇO>_v22 e <BRAÇO>_v23; comparação
 #   painel <BRAÇO>       só o painel de dificuldade de um braço já avaliado, e a comparação
+#   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
 #   antigo               banco antigo: gabarito curto + auditor v23 nas 2156 sustentadas, benchmark_gap e painel
 # Uma trava impede duas execuções no mesmo braço; antes de repetir após interromper, encerre o processo antigo
 # (pkill -f experimento_ab).
@@ -90,7 +91,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -131,6 +132,9 @@ fi
 if [[ "$etapa" == "painel" ]]; then
     rodar "painel de dificuldade em $braco_sust" painel --braco "$braco_sust" || fim_erro painel
 fi
+if [[ "$etapa" == "final" ]]; then
+    rodar "dataset final: montagem, avaliação, painel e relatório" final || fim_erro final
+fi
 if [[ "$etapa" == "antigo" ]]; then
     # 2 chamadas por questão (2156 questões): 16 em paralelo por padrão; um --workers explícito prevalece
     rodar "banco antigo: gabarito curto + auditor v23" antigo --workers 16 || fim_erro antigo
@@ -148,7 +152,10 @@ echo "Resultados:"
 echo "  cat $exp/COMPARACAO.md"
 echo "  cat $exp/calibracao/CALIBRACAO.md"
 echo "Enviar ao GitHub (no servidor):"
-if [[ "$etapa" == "antigo" ]]; then
+if [[ "$etapa" == "final" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/petroquest_final_v1/QUALIDADE.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v1 \"Resultados: dataset final\""
+elif [[ "$etapa" == "antigo" ]]; then
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/banco_antigo_filtrado_v1 \"Resultados: banco antigo filtrado\""
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/benchmark_gap_antigo_filtrado_v1 \"Resultados: avaliação do banco antigo filtrado\""
 else

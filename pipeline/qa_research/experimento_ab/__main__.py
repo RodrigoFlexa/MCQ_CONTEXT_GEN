@@ -16,6 +16,9 @@
                         (--avaliacao <pasta> para qualquer pasta de avaliação, como a do banco antigo)
   antigo                filtra o banco antigo: gabarito curto + auditor v23 nas 2156 sustentadas
   avaliar-antigo        benchmark_gap (mesmo protocolo do full_v1) sobre o banco antigo filtrado
+  final                 dataset final único: reúne v23 (se pronto), v22 e antigo filtrado, exclui os defeitos da
+                        revisão manual, deduplica entre fontes, avalia (com/sem contexto, sustentação, painel)
+                        e escreve petroquest_final_v1/QUALIDADE.md
 
 Braços derivados combinam sufixos: D_sat (saturação), D_sust (sustentação), D_sat_sust (os dois).
 
@@ -118,7 +121,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m pipeline.qa_research.experimento_ab", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
-                                        "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo"])
+                                        "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -174,6 +177,16 @@ def main(argv=None) -> int:
             st = avaliar(workers=a.workers, judge_workers=a.judge_workers, mini=a.mini_deployment)
         print(f"[antigo] avaliação {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
               f"{C.relativo(AVALIACAO)}")
+        return st
+    if a.comando == "final":
+        from .final import SAIDA, executar as final
+        with _trava(exp, "final"):
+            try:
+                st = final(exp, workers=a.workers, judge_workers=a.judge_workers, mini=a.mini_deployment)
+            except ValueError as exc:
+                raise SystemExit(f"[final] {exc}") from exc
+        print(f"[final] {'concluído' if st == 0 else 'incompleto; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA / 'QUALIDADE.md')}")
         return st
     if a.comando == "painel" and a.avaliacao:
         a.braco = a.braco or a.avaliacao.name

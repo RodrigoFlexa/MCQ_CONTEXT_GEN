@@ -951,3 +951,62 @@ class CLIV23Tests(unittest.TestCase):
         self.assertEqual(chamadas, [("painel", exp / "avaliacao" / "B_v23"),
                                     ("painel", C.ROOT / "pipeline/qa_research/relatorios/x"),
                                     ("antigo", 16), ("avaliar-antigo", 5)])
+
+
+class DatasetFinalTests(unittest.TestCase):
+    def test_monta_exclui_deduplica_avalia_e_relata(self):
+        from pipeline.qa_research.experimento_ab.final import DatasetFinal
+        from pipeline.qa_research.tests.test_benchmark_gap import Answer, Faith
+        from pipeline.qa_research.tests.test_especialista_finalizacao import Juiz as JuizResp
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        exp = tmp / "exp"
+        C.preparar_documentos(exp, itens=[ITEM])
+        cal = calibracao_falsa(exp / "calibracao", auto=0.97)
+        docs = exp / "docs" / "refinado"
+
+        def q(k, pergunta, resposta, tipo="diagnostico"):
+            return {"uid": f"{ITEM}:j:r1:{k:03d}:1", "item": ITEM, "tipo": tipo, "cenario": True, "composicao": "simples",
+                    "origem": "janela", "foco": k, "pergunta": pergunta, "resposta": resposta}
+
+        nova = [q(0, "Após trocar o filtro, a pressão cai e a vazão some. Qual a causa?", "Entupimento do elemento."),
+                q(1, "Por que o certificado do fabricante não basta para liberar o equipamento?", "Falta ensaio em campo.")]
+        velha = [q(0, "Após trocar o filtro, a pressão cai e a vazão some. Qual a causa?", "Entupimento do elemento."),
+                 q(2, "Qual técnica acompanha a perda metálica ao longo do tempo com leitura contínua?", "Sonda de resistência elétrica.", "procedimento"),
+                 q(3, "Qual ajuste estabiliza a interface do separador em mar severo?", "Ganho menor no controle de nível.", "decisao")]
+        fontes_ = []
+        for nome, qs, marcador in (("v22", nova, "geracao_concluida.json"), ("antigo", velha, "filtro_concluido.json")):
+            pasta = tmp / nome
+            C.gravar_jsonl(pasta / "aprovadas.jsonl", qs)
+            (pasta / marcador).write_text("{}", encoding="utf-8")
+            fontes_.append({"nome": nome, "pasta": pasta, "marcador": marcador, "docs": docs, "obrigatoria": True})
+        excl = tmp / "exclusoes.json"
+        excl.write_text(json.dumps({"exclusoes": {f"antigo:{ITEM}:j:r1:003:1": "teste"}}), encoding="utf-8")
+        d = DatasetFinal(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),
+                         juiz=NuncaRedundante(), **SILENCIO)
+        self.assertEqual(d.montar(), 0)
+        ds = C.linhas(tmp / "final" / "dataset.jsonl")
+        uids = {x["uid"] for x in ds}
+        self.assertEqual(uids, {f"v22:{ITEM}:j:r1:000:1", f"v22:{ITEM}:j:r1:001:1", f"antigo:{ITEM}:j:r1:002:1"})
+        m = read_json(tmp / "final" / "montagem.json")
+        self.assertEqual(m["por_fonte"]["antigo"], {"reunidas": 3, "excluidas": 1, "redundantes": 1, "finais": 1})
+        self.assertEqual(m["sinalizadas_para_revisao"], [f"v22:{ITEM}:j:r1:001:1"])     # flagrada, não excluída
+        self.assertTrue(all(x["contexto_tecnico"] and x["blocos_contexto"] for x in ds))
+        cl = {"resp_gpt-4-1-nano": Answer(), "resp_gpt-4-1-mini": Answer(), "resp_gpt-4-1": Answer(),
+              "juiz": JuizResp(), "faithfulness": Faith()}
+        self.assertEqual(d.avaliar(workers=2, judge_workers=1, clientes=cl), 0)
+        self.assertEqual(d.painel(workers=2, judge_workers=1, clientes={"resp_gpt-5-mini": Answer(), "resp_gpt-5-4": Answer(),
+                                                                       "juiz": JuizResp()}), 0)
+        res = d.relatorio()
+        self.assertEqual(res["n"], 3)
+        self.assertIsNotNone(res["sustentados"])
+        self.assertIn("gpt-4-1", res["acuracia"])
+        self.assertEqual(res["painel"]["n"], 3)
+        md = (tmp / "final" / "QUALIDADE.md").read_text(encoding="utf-8")
+        self.assertIn("| Dificuldade | GPT-5.4 sem contexto | ↓ |", md)
+        self.assertEqual(d.montar(), 0)                                # retomada: mesmas decisões, mesmo dataset
+        excl.write_text(json.dumps({"exclusoes": {}}), encoding="utf-8")
+        d2 = DatasetFinal(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),
+                          juiz=NuncaRedundante(), **SILENCIO)
+        with self.assertRaises(ValueError):                            # dataset mudou depois de avaliado
+            d2.montar()
