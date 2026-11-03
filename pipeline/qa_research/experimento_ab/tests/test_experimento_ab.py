@@ -1010,3 +1010,23 @@ class DatasetFinalTests(unittest.TestCase):
                           juiz=NuncaRedundante(), **SILENCIO)
         with self.assertRaises(ValueError):                            # dataset mudou depois de avaliado
             d2.montar()
+
+
+class DedupBloqueioTests(unittest.TestCase):
+    def test_bloqueio_do_juiz_vira_decisao_nova_registrada(self):
+        from pipeline.inventario.llm import ContentFiltered
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+
+        class Bloqueia:
+            def json(self, *a, **k):
+                raise ContentFiltered("bloqueio simulado")
+
+        emb = Emb()
+        dd = D.DedupIncremental(tmp, emb, np.zeros(64), limiar_auto=1.01, limiar_juiz=-1.0, juiz=Bloqueia(),
+                                progress=lambda *a, **k: None)
+        qs = [{"uid": f"x:{k}", "pergunta": "Qual a causa da queda de pressão no filtro?", "resposta": f"Entupimento {k}."}
+              for k in range(2)]
+        self.assertEqual(dd.processar("01_01", qs), 0)
+        self.assertEqual(read_json(tmp / "01_01" / "x_1.json")["via"], "bloqueio_juiz")
+        self.assertEqual(dd.redundantes("01_01"), {})

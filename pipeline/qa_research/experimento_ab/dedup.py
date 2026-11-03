@@ -119,7 +119,15 @@ class DedupIncremental:
         cands = [banco[i] for i in ordem[: self.k] if s[i] >= self.limiar_juiz]
         if not cands:
             return {**base, "decisao": "nova", "via": "abaixo_do_limiar"}
-        j = julgar(self.juiz, q, cands, tag="dedup_incremental", item=item)
+        try:
+            j = julgar(self.juiz, q, cands, tag="dedup_incremental", item=item)
+        except Exception as exc:  # noqa: BLE001
+            from pipeline.qa_research.geracao_tipos.rodadas import _filtrado
+            if not _filtrado(exc):
+                raise
+            # o filtro de conteúdo do provedor bloqueia este par de forma permanente: sem o juiz não há prova de
+            # redundância, então a questão fica (decisão conservadora e registrada; repetir não muda o bloqueio)
+            return {**base, "decisao": "nova", "via": "bloqueio_juiz"}
         if not j["redundante"]:
             return {**base, "decisao": "nova", "via": "juiz", "juiz": j}
         if j["manter"] == "nova":
