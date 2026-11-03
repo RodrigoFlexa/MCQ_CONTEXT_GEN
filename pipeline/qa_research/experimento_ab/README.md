@@ -105,7 +105,8 @@ bash pipeline/qa_research/rodar_experimento_ab.sh antigo   # filtro, benchmark_g
 ```
 
 Uma trava fora da pasta do braço (`<experimento>/.travas/`) impede duas execuções no mesmo braço, mesmo que a pasta
-seja apagada no meio de uma execução.
+seja apagada no meio de uma execução. Na v22 e na v23, as questões de uma unidade são auditadas em paralelo, com teto
+de 2 x `--workers` auditorias simultâneas no total. O filtro do banco antigo usa 16 workers por padrão no script.
 
 ## Robustez
 

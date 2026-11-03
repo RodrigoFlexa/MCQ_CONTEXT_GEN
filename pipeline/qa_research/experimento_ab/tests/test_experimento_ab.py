@@ -911,3 +911,43 @@ class TravaTests(unittest.TestCase):
                     pass
             with _trava(tmp, "B"):     # outro braço não é bloqueado
                 pass
+
+
+class CLIV23Tests(unittest.TestCase):
+    def test_comandos_v23_painel_e_antigo_pela_cli(self):
+        from unittest.mock import patch
+        from pipeline.qa_research.experimento_ab import __main__ as M
+        from pipeline.qa_research.experimento_ab import antigo as AN
+        from pipeline.qa_research.experimento_ab import painel as PA
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        exp = tmp / "exp"
+        atual, juiz = {"f": Falso()}, NuncaRedundante()      # v21 para o braço B; v23 depois
+
+        def fabrica(model, effort, cache_path, *a, **kw):
+            return juiz if Path(cache_path).stem == "dedup_juiz" else atual["f"]
+
+        chamadas = []
+        with patch.object(C, "ITENS", (ITEM,)), patch("pipeline.inventario.llm.LLMClient", fabrica), \
+                patch.object(C, "embedder", lambda *a, **k: Emb()), \
+                patch.object(PA, "executar", lambda aval, **kw: chamadas.append(("painel", Path(aval))) or 0), \
+                patch.object(AN.FiltroAntigo, "run", lambda self: chamadas.append(("antigo", self.workers)) or 0), \
+                patch.object(AN, "avaliar", lambda **kw: chamadas.append(("avaliar-antigo", kw["workers"])) or 0):
+            self.assertEqual(M.main(["preparar", "--experimento", str(exp)]), 0)
+            calibracao_falsa(exp / "calibracao", auto=1.01)
+            with self.assertRaises(SystemExit):
+                M.main(["v23", "--braco", "B", "--experimento", str(exp)])          # exige o inventário de B
+            self.assertEqual(M.main(["gerar", "--braco", "B", "--experimento", str(exp), "--workers", "3"]), 0)
+            atual["f"] = FalsoV23()
+            self.assertEqual(M.main(["v23", "--braco", "B", "--experimento", str(exp), "--workers", "3"]), 0)
+            self.assertTrue((exp / "bracos" / "B_v23" / "geracao_concluida.json").exists())
+            with self.assertRaises(SystemExit):
+                M.main(["v23", "--braco", "B_v22", "--experimento", str(exp)])     # só a partir do braço de origem
+            self.assertEqual(M.main(["painel", "--braco", "B_v23", "--experimento", str(exp)]), 0)
+            self.assertEqual(M.main(["painel", "--avaliacao", "pipeline/qa_research/relatorios/x",
+                                     "--experimento", str(exp)]), 0)
+            self.assertEqual(M.main(["antigo", "--experimento", str(exp), "--workers", "16"]), 0)
+            self.assertEqual(M.main(["avaliar-antigo", "--experimento", str(exp), "--workers", "5"]), 0)
+        self.assertEqual(chamadas, [("painel", exp / "avaliacao" / "B_v23"),
+                                    ("painel", C.ROOT / "pipeline/qa_research/relatorios/x"),
+                                    ("antigo", 16), ("avaliar-antigo", 5)])

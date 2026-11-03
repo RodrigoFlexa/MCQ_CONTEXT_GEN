@@ -10,6 +10,7 @@ Cada etapa é um arquivo por questão: repetir o comando retoma de onde parou; u
 from __future__ import annotations
 
 import json
+import threading
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -46,14 +47,22 @@ class FiltroAntigo:
         self.saida, self.fonte, self.gap = Path(saida), Path(fonte), Path(gap)
         self.modelos = {**MODELOS, **(modelos or {})}
         self._clientes, self.workers, self.progress = dict(clientes or {}), workers, progress
+        self._lock, self._feitas = threading.Lock(), 0
 
     def cliente(self, papel: str):
-        if papel not in self._clientes:
-            self._clientes[papel] = C.cliente_llm(self.modelos[papel], self.saida, papel)
-        return self._clientes[papel]
+        with self._lock:   # criação preguiçosa protegida: várias threads pedem o mesmo cliente na largada
+            if papel not in self._clientes:
+                self._clientes[papel] = C.cliente_llm(self.modelos[papel], self.saida, papel)
+            return self._clientes[papel]
+
+    def _avancar(self, total: int) -> None:
+        with self._lock:
+            self._feitas += 1
+            if self._feitas % 100 == 0 or self._feitas == total:
+                self.progress(f"[antigo] {self._feitas}/{total} questões processadas", flush=True)
 
     def candidatas(self) -> list[tuple[dict, str]]:
-        status = {json.loads(l)["uid"]: json.loads(l)["status"] for l in (self.gap / "faithfulness.jsonl").open(encoding="utf-8")}
+        status = {r["uid"]: r.get("status") for r in C.linhas(self.gap / "faithfulness.jsonl")}
         ctx = {d["uid"]: d for d in C.linhas(self.gap / "contextos.jsonl")}
         out = []
         for q in C.linhas(self.fonte):
@@ -119,8 +128,15 @@ class FiltroAntigo:
                                                  or datetime.now(timezone.utc).isoformat()})
         pares = self.candidatas()
         self.progress(f"[antigo] {len(pares)} questões sustentadas para encurtar e auditar", flush=True)
+        self._feitas = 0
+
+        def um(par) -> bool:
+            ok = self.processar(par)
+            self._avancar(len(pares))
+            return ok
+
         with ThreadPoolExecutor(max_workers=self.workers) as pool:
-            falhas = sum(not ok for ok in pool.map(self.processar, pares))
+            falhas = sum(not ok for ok in pool.map(um, pares))
         res = self.relatorio(pares)
         marcador = self.saida / "filtro_concluido.json"
         if falhas:
@@ -130,9 +146,12 @@ class FiltroAntigo:
         return falhas
 
     def relatorio(self, pares) -> dict:
-        aprovadas, auditadas, falhas_aud = [], 0, Counter()
+        aprovadas, auditadas, falhas_aud, bloqueadas = [], 0, Counter(), 0
         for q, _ in pares:
             c, a = self._arq("encurtadas", q["uid"]), self._arq("auditoria", q["uid"])
+            if c.exists() and read_json(c)["curta"] is None:
+                bloqueadas += 1          # filtro de conteúdo ao encurtar: fica fora, registrado
+                continue
             if not (c.exists() and a.exists()):
                 continue
             curta, aud = read_json(c)["curta"], read_json(a)
@@ -145,7 +164,8 @@ class FiltroAntigo:
                                   "tipo": aud.get("tipo_sugerido", q["tipo"])})
         C.gravar_jsonl(self.saida / "aprovadas.jsonl", aprovadas)
         cont = lambda chave: dict(sorted(Counter(chave(q) for q in aprovadas).items()))  # noqa: E731
-        res = {"sustentadas": len(pares), "auditadas": auditadas, "aprovadas": len(aprovadas),
+        res = {"sustentadas": len(pares), "auditadas": auditadas, "bloqueadas_ao_encurtar": bloqueadas,
+               "aprovadas": len(aprovadas),
                "taxa_aprovacao": round(100 * len(aprovadas) / auditadas, 1) if auditadas else None,
                "falhas_auditor": dict(falhas_aud.most_common()), "por_tipo": cont(lambda q: q["tipo"]),
                "por_origem": cont(lambda q: "refinada" if ":ref" in q["uid"] else q["origem"]),

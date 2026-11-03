@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import threading
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -142,6 +143,9 @@ class GeracaoV22(GeracaoAB):
         if self.sat["max_rodadas"] < 1 or self.sat["paciencia"] < 1:
             raise ValueError("max_rodadas e paciencia devem ser >= 1")
         self.onda_foco = max(1, int(onda))
+        # auditorias de uma unidade rodam em paralelo; o semáforo limita as chamadas simultâneas do auditor no total
+        # (2 x workers: com 3 documentos e ondas de 4 focos, a v22 sequencial já fazia até 12 auditorias de uma vez)
+        self._vagas_auditor = threading.BoundedSemaphore(2 * max(1, int(workers)))
 
     # -------------------------------------------------------------- configuração
     def config(self) -> None:
@@ -313,11 +317,18 @@ class GeracaoV22(GeracaoAB):
         return True
 
     def _auditar_unidade(self, item, d, prefixo, blocos_txt) -> bool:
-        ok = True
-        for q in d["questoes"]:
-            if not q["regua"]:
-                ok = self._auditar(item, f"{prefixo}:{q['k']}", q, blocos_txt) and ok
-        return ok
+        """Audita as questões da unidade em paralelo (cada uma é independente e vira um arquivo próprio)."""
+        pendentes = [q for q in d["questoes"] if not q["regua"]
+                     and not self._arq_aud(item, f"{prefixo}:{q['k']}").exists()]
+        if not pendentes:
+            return True
+
+        def auditar(q) -> bool:
+            with self._vagas_auditor:
+                return self._auditar(item, f"{prefixo}:{q['k']}", q, blocos_txt)
+
+        with ThreadPoolExecutor(max_workers=len(pendentes)) as pool:
+            return all(list(pool.map(auditar, pendentes)))
 
     # -------------------------------------------------------------- unidades de geração
     def _foco(self, item: str, rodada: int, foco: int) -> bool:
@@ -326,10 +337,10 @@ class GeracaoV22(GeracaoAB):
         textos = {r: b["texto"] for r, b in jan}
         bloco_txt = "\n\n".join(f"[{r}] {b['titulo_capitulo']} / {b['subtitulo']}\n{b['texto']}" for r, b in jan)
         if not arq.exists():
-            user = "\n\n".join((self._tema(item), f"<conhecimentos_cobertos>\n{self._cobertos(item)}\n</conhecimentos_cobertos>",
+            user = "\n\n".join(filter(None, (self._tema(item), f"<conhecimentos_cobertos>\n{self._cobertos(item)}\n</conhecimentos_cobertos>",
                                 f"<questoes_deste_foco>\n{self._historico_foco(item, foco)}\n</questoes_deste_foco>",
                                 self._exemplos(item, f"{item}:{foco}:r{rodada}", composta=False),
-                                f"<janela>\n{bloco_txt}\n</janela>"))
+                                f"<janela>\n{bloco_txt}\n</janela>")))
             try:
                 d = self.cliente("geracao").json(self.sistema("foco", item), user, tag=f"{self.VERSAO}_foco", max_tokens=16000,
                                                  item=item,
@@ -367,7 +378,7 @@ class GeracaoV22(GeracaoAB):
                 partes.append("<tentativa_anterior>\n" + "\n".join(anteriores) + "\n</tentativa_anterior>")
             semente = f"{item}:{c['id']}" + ("" if tentativa == 1 else f":t{tentativa}")
             partes += [self._exemplos(item, semente, composta=True), f"<blocos>\n{bloco_txt}\n</blocos>"]
-            user = "\n\n".join(partes)
+            user = "\n\n".join(p for p in partes if p)
             try:
                 d = self.cliente("geracao").json(self.sistema("composta", item), user, tag=f"{self.VERSAO}_composta",
                                                  max_tokens=12000,

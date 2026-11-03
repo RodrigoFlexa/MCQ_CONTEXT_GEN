@@ -132,7 +132,8 @@ if [[ "$etapa" == "painel" ]]; then
     rodar "painel de dificuldade em $braco_sust" painel --braco "$braco_sust" || fim_erro painel
 fi
 if [[ "$etapa" == "antigo" ]]; then
-    rodar "banco antigo: gabarito curto + auditor v23" antigo || fim_erro antigo
+    # 2 chamadas por questão (2156 questões): 16 em paralelo por padrão; um --workers explícito prevalece
+    rodar "banco antigo: gabarito curto + auditor v23" antigo --workers 16 || fim_erro antigo
     rodar "banco antigo: benchmark_gap" avaliar-antigo || fim_erro antigo
     rodar "banco antigo: painel de dificuldade" painel --avaliacao pipeline/qa_research/relatorios/benchmark_gap_antigo_filtrado_v1 || fim_erro antigo
 fi

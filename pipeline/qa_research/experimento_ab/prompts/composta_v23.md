@@ -30,6 +30,7 @@ Priorize `decisao` e `procedimento`.
 - `resposta`: SOMENTE o elemento decisivo, em até 15 palavras, sem "porque" e sem lista.
 - `explicacao`: o raciocínio que liga as relações, em até 40 palavras. Não é mostrada a quem responde.
 - `resposta_padrao` e `por_que_nao`: uma frase cada.
+- `cenario`: true quando o enunciado descreve uma situação (sinais, condições ou mudança); `diagnostico` e `decisao` sempre têm cenário.
 - `conhecimento`: a relação técnica avaliada, em uma linha.
 - `fundamentos`: trechos curtos copiados literalmente dos blocos, com o rótulo do bloco (B1, B2, ...).
 

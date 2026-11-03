@@ -15,8 +15,6 @@ recálculo (`calibrar --recalcular`), sem novas chamadas.
 from __future__ import annotations
 
 import csv
-import json
-from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
