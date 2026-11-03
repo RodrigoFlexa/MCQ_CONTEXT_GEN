@@ -59,10 +59,10 @@ def validar_saida(d: dict, maximo: int) -> None:
         raise ValueError("Sem questões, explique o porquê em motivo.")
 
 
-def regua(q, textos: dict, tipos: tuple, rotulo_obrigatorio: str | None = None) -> list[str]:
+def regua(q, textos: dict, tipos: tuple, rotulo_obrigatorio: str | None = None, chaves: tuple = CHAVES) -> list[str]:
     """Checagens determinísticas de uma questão. Lista vazia = segue para o auditor."""
-    if not isinstance(q, dict) or set(q) != set(CHAVES):
-        return [f"use exatamente os campos {', '.join(CHAVES)}"]
+    if not isinstance(q, dict) or set(q) != set(chaves):
+        return [f"use exatamente os campos {', '.join(chaves)}"]
     out = [f"{c} vazio" for c in ("conhecimento", "pergunta", "resposta") if not _texto(q[c])]
     if not isinstance(q["explicacao"], str):
         out.append("explicacao deve ser texto")
@@ -115,6 +115,22 @@ def veredito(d: dict, tipo_declarado: str) -> dict:
 
 # ------------------------------------------------------------------ gerador
 class GeracaoV22(GeracaoAB):
+    VERSAO = "v22"
+    CHAVES, TIPOS_FOCO, TIPOS_COMPOSTA = CHAVES, TIPOS_FOCO, TIPOS_COMPOSTA
+
+    def prompt_nome(self, papel: str) -> str:
+        return f"{papel}_{self.VERSAO}"
+
+    def sistema(self, papel: str, item: str) -> str:
+        """Prompt de sistema de um papel (a v23 acrescenta os exemplos fixos do documento)."""
+        return C.prompt(self.prompt_nome(papel))
+
+    def extra_config(self) -> dict:
+        return {}
+
+    def regua(self, q, textos, tipos, rotulo_obrigatorio=None) -> list[str]:
+        return regua(q, textos, tipos, rotulo_obrigatorio, self.CHAVES)
+
     def __init__(self, saida: Path, itens, *, docs: Path, braco: str = "?", reusar=(), calibracao: Path,
                  saturacao: dict | None = None, onda: int = 4, modelos: dict | None = None, clientes: dict | None = None,
                  embedder=None, workers: int = 8, progress=print):
@@ -129,14 +145,15 @@ class GeracaoV22(GeracaoAB):
 
     # -------------------------------------------------------------- configuração
     def config(self) -> None:
-        cfg = {"schema": "experimento-ab-geracao-v22", "braco": self.braco, "unidade": "janela",
+        cfg = {"schema": f"experimento-ab-geracao-{self.VERSAO}", "braco": self.braco, "unidade": "janela",
                "docs": C.relativo(self.docs_dir), "docs_sha256": self.docs_sha, "modelos": self.modelos,
-               "prompts_sha256": {n: C.sha(C.prompt(n)) for n in ("foco_v22", "composta_v22", "auditoria_v22", "dedup_par")},
+               "prompts_sha256": {n: C.sha(C.prompt(n)) for n in (*(self.prompt_nome(p) for p in ("foco", "composta", "auditoria")),
+                                                                 "dedup_par")},
                "exemplos_sha256": C.sha(self.caminho_exemplos.read_text(encoding="utf-8")),
                "combinacoes_por_doc": self.combinacoes_por_doc, "reusar_inventario": [str(r) for r in self.reusar],
                "dedup_calibracao": {k: self.calibracao[k] for k in ("embedding", "limiar_auto", "limiar_juiz", "juiz")},
                "saturacao": self.sat, "onda": self.onda_foco, "por_foco": POR_FOCO, "teto_resposta": TETO_RESPOSTA,
-               "segunda_chance": 1}
+               "segunda_chance": 1, **self.extra_config()}
         path = self.saida / "config.json"
         if path.exists():
             antigo = read_json(path)
@@ -192,8 +209,8 @@ class GeracaoV22(GeracaoAB):
     def _registro(self, item, q, uid, origem, rodada, extra) -> dict:
         r = {"uid": uid, "item": item, "origem": origem, "rodada": rodada, "composicao":
              "composta" if origem == "composta" else "simples", **extra, "regua": q.get("regua", [])}
-        if isinstance(q, dict) and all(k in q for k in CHAVES):
-            r.update({k: q[k] for k in CHAVES}, tipo_declarado=q["tipo"])
+        if isinstance(q, dict) and all(k in q for k in self.CHAVES):
+            r.update({k: q[k] for k in self.CHAVES}, tipo_declarado=q["tipo"])
         aud = self._arq_aud(item, uid)
         if not r["regua"] and aud.exists():
             a = read_json(aud)
@@ -218,7 +235,7 @@ class GeracaoV22(GeracaoAB):
             escolhidos = sorted(pool, key=lambda e: _h(semente, e["id"]))[:3]
         else:
             escolhidos = []
-            for t in TIPOS_FOCO:
+            for t in self.TIPOS_FOCO:
                 pool = [e for e in ex if e["tipo"] == t and e["item"] != item and e.get("composicao", "simples") == "simples"]
                 pool = pool or [e for e in ex if e["tipo"] == t]
                 pool = [e for e in pool if e["tipo"] == t]
@@ -279,7 +296,8 @@ class GeracaoV22(GeracaoAB):
         user = json.dumps({"tipo_declarado": q["tipo"], "pergunta": q["pergunta"], "resposta_referencia": q["resposta"],
                            "explicacao_do_autor": q["explicacao"], "blocos": blocos_txt}, ensure_ascii=False)
         try:
-            d = self.cliente("auditoria").json(C.prompt("auditoria_v22"), user, tag="v22_auditoria", max_tokens=6000,
+            d = self.cliente("auditoria").json(C.prompt(self.prompt_nome("auditoria")), user, tag=f"{self.VERSAO}_auditoria",
+                                               max_tokens=6000,
                                                item=item, validate=validar_auditoria)
             rec = {"uid": uid, **veredito(d, q["tipo"])}
         except Exception as exc:  # noqa: BLE001 - isolada por questão
@@ -313,7 +331,8 @@ class GeracaoV22(GeracaoAB):
                                 self._exemplos(item, f"{item}:{foco}:r{rodada}", composta=False),
                                 f"<janela>\n{bloco_txt}\n</janela>"))
             try:
-                d = self.cliente("geracao").json(C.prompt("foco_v22"), user, tag="v22_foco", max_tokens=16000, item=item,
+                d = self.cliente("geracao").json(self.sistema("foco", item), user, tag=f"{self.VERSAO}_foco", max_tokens=16000,
+                                                 item=item,
                                                  validate=lambda d: validar_saida(d, POR_FOCO))
             except Exception as exc:  # noqa: BLE001
                 if not _filtrado(exc):
@@ -322,7 +341,7 @@ class GeracaoV22(GeracaoAB):
                 d = {"questoes": [], "motivo": "bloqueado pelo filtro de conteúdo"}
             atomic_json(arq, {"item": item, "foco": foco, "rodada": rodada, "contexto": {r: b["indice"] for r, b in jan},
                               "motivo": d["motivo"],
-                              "questoes": [{**q, "k": k, "regua": regua(q, textos, TIPOS_FOCO, "F")} if isinstance(q, dict)
+                              "questoes": [{**q, "k": k, "regua": self.regua(q, textos, self.TIPOS_FOCO, "F")} if isinstance(q, dict)
                                            else {"k": k, "regua": ["questão não é um objeto"]}
                                            for k, q in enumerate(d["questoes"], 1)]})
             self._ok(nome)
@@ -350,7 +369,8 @@ class GeracaoV22(GeracaoAB):
             partes += [self._exemplos(item, semente, composta=True), f"<blocos>\n{bloco_txt}\n</blocos>"]
             user = "\n\n".join(partes)
             try:
-                d = self.cliente("geracao").json(C.prompt("composta_v22"), user, tag="v22_composta", max_tokens=12000,
+                d = self.cliente("geracao").json(self.sistema("composta", item), user, tag=f"{self.VERSAO}_composta",
+                                                 max_tokens=12000,
                                                  item=item, validate=lambda d: validar_saida(d, 1))
             except Exception as exc:  # noqa: BLE001
                 if not _filtrado(exc):
@@ -359,7 +379,7 @@ class GeracaoV22(GeracaoAB):
                 d = {"questoes": [], "motivo": "bloqueado pelo filtro de conteúdo"}
             atomic_json(arq, {"item": item, "id": c["id"], "tentativa": tentativa, "blocos": usados, "rotulos": rot,
                               "motivo": d["motivo"],
-                              "questoes": [{**q, "k": k, "regua": regua(q, textos, TIPOS_COMPOSTA)} if isinstance(q, dict)
+                              "questoes": [{**q, "k": k, "regua": self.regua(q, textos, self.TIPOS_COMPOSTA)} if isinstance(q, dict)
                                            else {"k": k, "regua": ["questão não é um objeto"]}
                                            for k, q in enumerate(d["questoes"], 1)]})
             self._ok(nome)

@@ -72,6 +72,41 @@ bash pipeline/qa_research/rodar_experimento_ab.sh v22 B    # cria B_v22, avalia 
 O juiz da avaliação é o mesmo dos braços A a D, para que a comparação meça a geração. A comparação passa a
 mostrar também a acurácia com parcial valendo 0,5.
 
+## Gerador v23 (`v23.py`)
+
+Mesmo fluxo da v22 (régua, auditor por questão, deduplicação, saturação, segunda chance), com o que a revisão manual
+do B_v22 (107 questões), do banco antigo (amostra de 60) e do dataset de múltipla escolha (amostra de 44) mostrou:
+
+| Mudança | Motivo |
+|---|---|
+| Exemplos fixos no prompt de sistema (`exemplos_v23.json`): 10 boas, com a resposta padrão de um generalista e o conhecimento que a exclui, e 9 ruins, cada uma com o defeito; cerca de 64% do prompt | O padrão de qualidade fica explícito; exemplos do mesmo documento são trocados por reservas |
+| No máximo 2 exemplos de datasets externos ao pipeline (os 2 do dataset de múltipla escolha) | Convertidas para QA aberta, a maioria das MCQs tem gabarito em lista ou várias respostas |
+| O gerador declara `resposta_padrao` e `por_que_nao`; a régua recusa padrão igual à resposta | Sem resposta atraente e errada, a questão é fácil |
+| Proibidas eliminação (listar o que não mudou) e interpretação dada no enunciado; o sinal que separa a resposta certa exige conhecimento | 71% das recusas do B_v22 eram atalho, quase sempre por eliminação |
+| Decisão também nas janelas; prioridade a decisão e procedimento; elemento técnico nomeado | São os tipos mais difíceis para os modelos e os mais úteis para quem está embarcado |
+| Auditor v23: alternativa equivalente ou caso particular conta como excluída; eliminação e interpretação são atalho; "sem documento" julga o ofício, não o que o modelo sabe | Cerca de metade das recusas por "várias respostas" eram formulações equivalentes |
+
+## Painel de dificuldade (`painel.py`)
+
+Responde sem contexto, com o mesmo respondente e juiz, por GPT-5 mini e GPT-5.4 (esforço baixo) e junta aos
+vereditos do GPT-4.1 Nano, Mini e 4.1. Estrato empírico por questão: fácil (todos acertam), média (o GPT-5.4 acerta),
+difícil (o GPT-5.4 não acerta) e muito difícil (nenhum acerta). Saída em `avaliacao/<braço>/painel/` e linhas novas na
+comparação (acurácia do painel, % difícil, % de decisão e procedimento).
+
+## Banco antigo filtrado (`antigo.py`)
+
+As 2156 questões da geração final com gabarito totalmente sustentado recebem um gabarito curto (mesmo conteúdo,
+até 15 palavras, explicação à parte) e passam pelo auditor v23 com os blocos de origem. As aprovadas, no formato da
+geração final, são avaliadas pelo benchmark_gap (mesmo protocolo do `benchmark_gap_full_v1`) e pelo painel.
+
+```bash
+bash pipeline/qa_research/rodar_experimento_ab.sh v23 B    # B_v23, avaliação, painel (B, B_v22, B_v23), comparação
+bash pipeline/qa_research/rodar_experimento_ab.sh antigo   # filtro, benchmark_gap e painel do banco antigo
+```
+
+Uma trava fora da pasta do braço (`<experimento>/.travas/`) impede duas execuções no mesmo braço, mesmo que a pasta
+seja apagada no meio de uma execução.
+
 ## Robustez
 
 Toda unidade (bloco, encadeamento, foco, lote de auditoria, questão na deduplicação ou na sustentação, par da

@@ -729,3 +729,185 @@ class V22Tests(unittest.TestCase):
         self.assertIn("gerador v22: B_v22-B", out["efeitos"])
         self.assertIsNotNone(out["bracos"]["B_v22"]["acuracia"]["gpt-4-1"]["closedp"])
         self.assertIn("parcial = 0,5", (self.exp / "COMPARACAO.md").read_text(encoding="utf-8"))
+
+
+class FalsoV23(FalsoV22):
+    """Gerador v23 simulado: as questões da v22 com resposta padrão; a 1ª visita traz também uma de decisão."""
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.sistemas = []
+
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        if tag.startswith("v23_"):
+            self.sistemas.append((tag, system))
+            tag = "v22_" + tag[4:]
+        return super().json(system, user, tag, max_tokens, validate, item)
+
+    def _q(self, tipo, trecho, bloco, extra=""):
+        q = super()._q(tipo, trecho, bloco, extra)
+        return {**q, "resposta_padrao": f"Resposta atraente {self.n}.", "por_que_nao": "O conhecimento X a exclui."}
+
+    def foco(self, user):
+        d = super().foco(user)
+        if len(d["questoes"]) == 3:     # 1ª visita: acrescenta uma de decisão (permitida nas janelas na v23)
+            dec = self._q("decisao", d["questoes"][0]["fundamentos"][0]["trecho"], "F")
+            dec["pergunta"] = f"Na situação {self.n} gama{self.n} delta{self.n}, que ajuste técnico deve ser aplicado ao sistema?"
+            d["questoes"].append(dec)
+        return d
+
+
+class V23Tests(unittest.TestCase):
+    def setUp(self):
+        V22Tests.setUp(self)
+
+    def g(self, f, **kw):
+        from pipeline.qa_research.experimento_ab.v23 import GeracaoV23
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria")}
+        cl["dedup_juiz"] = NuncaRedundante()
+        return GeracaoV23(self.exp / "bracos" / "B_v23", [ITEM], docs=self.exp / "docs" / "refinado", braco="B_v23",
+                          reusar=[self.exp / "bracos" / "B"], calibracao=self.cal, clientes=cl, embedder=Emb(),
+                          workers=4, **{**SILENCIO, **kw})
+
+    def test_exemplos_fixos_trocam_o_mesmo_documento_e_limitam_externos(self):
+        from pipeline.qa_research.experimento_ab.v23 import MAX_EXTERNOS, carregar_exemplos, selecionar_exemplos
+        banco = carregar_exemplos()
+        boas, ruins = selecionar_exemplos(banco, "03_03")
+        ids = [e["id"] for e in boas]
+        self.assertNotIn("03_03", {e["item"] for e in boas + ruins})
+        self.assertEqual(len(boas), len(banco["boas"]))
+        self.assertIn("R1", ids)          # procedimento do 03_03 trocado pela reserva de procedimento
+        self.assertIn("R4", ids)          # diagnóstico do 03_03 trocado pela reserva de diagnóstico
+        for item in ("02_02", "03_03", "07_01", "99_99"):
+            b, _ = selecionar_exemplos(banco, item)
+            self.assertLessEqual(sum(e.get("origem") == "dataset_mcq" for e in b), MAX_EXTERNOS)
+        tipos = [e["tipo"] for e in banco["boas"]]
+        self.assertGreaterEqual(tipos.count("decisao") + tipos.count("procedimento"), len(tipos) / 2)
+
+    def test_regua_v23_exige_resposta_padrao_diferente(self):
+        from pipeline.qa_research.experimento_ab.v23 import regua_v23
+        q = {"tipo": "decisao", "cenario": True, "conhecimento": "c", "pergunta": "Na situação descrita com sinal alfa, que ajuste técnico deve ser feito no sistema?",
+             "resposta": "Reduzir a vazão.", "explicacao": "Porque sim.", "resposta_padrao": "Reduzir a vazão.",
+             "por_que_nao": "x", "fundamentos": [{"bloco": "F", "trecho": "texto do foco"}]}
+        tipos = ("decisao",)
+        self.assertTrue(any("resposta_padrao igual" in m for m in regua_v23(q, {"F": "texto do foco"}, tipos, "F")))
+        q["resposta_padrao"] = "Aumentar a pressão."
+        self.assertEqual(regua_v23(q, {"F": "texto do foco"}, tipos, "F"), [])
+        del q["por_que_nao"]
+        self.assertTrue(regua_v23(q, {"F": "texto do foco"}, tipos, "F")[0].startswith("use exatamente os campos"))
+
+    def test_fluxo_v23_com_exemplos_no_sistema_e_decisao_no_foco(self):
+        f = FalsoV23()
+        self.assertEqual(self.g(f).run(), 0)
+        d = self.exp / "bracos" / "B_v23"
+        foco = [s for t, s in f.sistemas if t == "v23_foco"]
+        self.assertTrue(foco and all("<questoes_boas>" in s and "<questoes_ruins>" in s for s in foco))
+        self.assertTrue(all("Resposta padrão (errada aqui)" in s for s in foco))
+        self.assertTrue(any(t == "v23_composta" and "<questoes_boas>" in s for t, s in f.sistemas))
+        self.assertNotIn("<exemplos>", "".join(f.usuarios_foco))          # exemplos só no sistema
+        aprov = C.linhas(d / "aprovadas.jsonl")
+        self.assertTrue(aprov and all(q["resposta_padrao"] and q["por_que_nao"] for q in aprov))
+        self.assertIn("decisao", {q["tipo"] for q in aprov if q["origem"] == "janela"})
+        cfg = read_json(d / "config.json")
+        self.assertEqual(cfg["schema"], "experimento-ab-geracao-v23")
+        self.assertIn("exemplos_v23_sha256", cfg)
+        antes = f.chamadas
+        self.assertEqual(self.g(f).run(), 0)
+        self.assertEqual(f.chamadas, antes)
+
+    def test_painel_de_dificuldade_e_comparacao(self):
+        from pipeline.qa_research.experimento_ab import avaliacao as AV
+        from pipeline.qa_research.experimento_ab.metricas import comparar
+        from pipeline.qa_research.experimento_ab.painel import estrato, executar as painel
+        from pipeline.qa_research.tests.test_benchmark_gap import Answer, Faith
+        from pipeline.qa_research.tests.test_especialista_finalizacao import Juiz as JuizResp
+        self.assertEqual(self.g(FalsoV23()).run(), 0)
+        for nome in ("B", "B_v23"):
+            st = AV.executar(self.exp / "bracos" / nome, self.exp / "avaliacao" / nome, workers=3, judge_workers=1,
+                             clientes={"resp_gpt-4-1-nano": Answer(), "resp_gpt-4-1-mini": Answer(), "resp_gpt-4-1": Answer(),
+                                       "juiz": JuizResp(), "faithfulness": Faith()}, progress=lambda *x, **k: None)
+            self.assertEqual(st, 0)
+        aval = self.exp / "avaliacao" / "B_v23"
+        st = painel(aval, workers=2, judge_workers=1, clientes={"resp_gpt-5-mini": Answer(), "resp_gpt-5-4": Answer(),
+                                                                "juiz": JuizResp()}, progress=lambda *x, **k: None)
+        self.assertEqual(st, 0)
+        res = read_json(aval / "painel" / "resumo.json")
+        self.assertEqual(res["n"], len(C.linhas(self.exp / "bracos" / "B_v23" / "aprovadas.jsonl")))
+        self.assertEqual(sum(res["estratos"].values()), res["n"])
+        self.assertEqual(estrato({"a": "correta", "gpt-5-4": "parcial"}), "dificil")
+        self.assertEqual(estrato({"a": "incorreta", "gpt-5-4": "parcial"}), "muito_dificil")
+        self.assertEqual(estrato({"a": "correta", "gpt-5-4": "correta"}), "facil")
+        self.assertEqual(estrato({"a": "parcial", "gpt-5-4": "correta"}), "media")
+        out = comparar(self.exp)
+        self.assertIn("gerador v23: B_v23-B", out["efeitos"])
+        self.assertIsNotNone(out["bracos"]["B_v23"]["painel"])
+        md = (self.exp / "COMPARACAO.md").read_text(encoding="utf-8")
+        self.assertIn("Painel sem contexto", md)
+        self.assertIn("Decisão + procedimento", md)
+
+
+class FiltroAntigoTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp)
+
+    def test_encurta_audita_e_retoma(self):
+        from pipeline.qa_research.experimento_ab.antigo import FiltroAntigo
+        gap = self.tmp / "gap"
+        gap.mkdir()
+        qs = [{"uid": f"01_01:j:r1:00{k}:1", "item": "01_01", "tipo": "diagnostico", "origem": "janela", "foco": k,
+               "pergunta": f"Pergunta {k} sobre o sinal {k}?", "resposta": f"Causa {k}, porque o bloco explica longamente."}
+              for k in range(3)]
+        C.gravar_jsonl(self.tmp / "aprovadas.jsonl", qs)
+        C.gravar_jsonl(gap / "faithfulness.jsonl", [{"uid": q["uid"], "status": s} for q, s in
+                                                    zip(qs, ("totalmente_sustentado", "totalmente_sustentado", "suporte_insuficiente"))])
+        C.gravar_jsonl(gap / "contextos.jsonl", [{"uid": q["uid"], "blocos_contexto": [{"id": "B1", "texto": "texto"}]} for q in qs])
+
+        class Encurtar:
+            chamadas = 0
+
+            def json(self, system, user, validate=None, **kw):
+                Encurtar.chamadas += 1
+                d = json.loads(user)
+                out = {"resposta": d["resposta_referencia"].split(",")[0] + ".", "explicacao": "Porque o bloco explica."}
+                validate(out)
+                return out
+
+        class Auditor:
+            chamadas = 0
+
+            def json(self, system, user, validate=None, **kw):
+                Auditor.chamadas += 1
+                d = json.loads(user)
+                ok = "Causa 0" in d["resposta_referencia"]
+                out = {"sem_documento": True, "resposta_alternativa": "outra", "alternativa_excluida": True,
+                       "atalho": not ok, "sustentada": True, "elemento_unico": True, "tipo_sugerido": "diagnostico",
+                       "justificativa": "j"}
+                validate(out)
+                return out
+
+        f = lambda: FiltroAntigo(self.tmp / "saida", fonte=self.tmp / "aprovadas.jsonl", gap=gap,  # noqa: E731
+                                 clientes={"encurtar": Encurtar(), "auditoria": Auditor()}, workers=2, **SILENCIO)
+        self.assertEqual(f().run(), 0)
+        aprov = C.linhas(self.tmp / "saida" / "aprovadas.jsonl")
+        self.assertEqual([q["uid"] for q in aprov], [qs[0]["uid"]])
+        self.assertEqual(aprov[0]["resposta"], "Causa 0.")
+        self.assertIn("porque", aprov[0]["resposta_original"])
+        self.assertEqual(aprov[0]["foco"], 0)                  # vínculo de contexto preservado para o benchmark_gap
+        res = read_json(self.tmp / "saida" / "resultado.json")
+        self.assertEqual((res["sustentadas"], res["auditadas"], res["aprovadas"]), (2, 2, 1))
+        antes = (Encurtar.chamadas, Auditor.chamadas)
+        self.assertEqual(f().run(), 0)
+        self.assertEqual((Encurtar.chamadas, Auditor.chamadas), antes)
+
+
+class TravaTests(unittest.TestCase):
+    def test_segunda_execucao_no_mesmo_braco_e_recusada(self):
+        from pipeline.qa_research.experimento_ab.__main__ import _trava
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        with _trava(tmp, "B_v23"):
+            with self.assertRaises(SystemExit):
+                with _trava(tmp, "B_v23"):
+                    pass
+            with _trava(tmp, "B"):     # outro braço não é bloqueado
+                pass

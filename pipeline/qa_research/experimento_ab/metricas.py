@@ -222,6 +222,20 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
         res["acuracia"] = {m: {k: media([v.get(f"{k}_{m}") for v in por_q.values()]) for k in ("closed", "closedp", "open", "gap")}
                            for m in MODELOS}
 
+    # painel de dificuldade (painel.py): GPT-5 mini e GPT-5.4 sem contexto e estrato empírico de cada questão
+    if (adir / "painel" / "dificuldade.csv").exists():
+        with (adir / "painel" / "dificuldade.csv").open(encoding="utf-8-sig") as f:
+            for r in csv.DictReader(f):
+                if r["uid"] in por_q:
+                    for m in ("gpt-5-mini", "gpt-5-4"):
+                        por_q[r["uid"]][f"closed_{m}"] = float(r.get(f"v_{m}") == "correta")
+                    por_q[r["uid"]]["dificil"] = float(r["estrato"] in ("dificil", "muito_dificil"))
+                    por_q[r["uid"]]["estrato"] = r["estrato"]
+        res["painel"] = read_json(adir / "painel" / "resumo.json")
+    tipos = Counter(v.get("tipo") for v in por_q.values())
+    res["tipos"] = {"contagem": dict(tipos), "decisao_procedimento": (tipos["decisao"] + tipos["procedimento"]) / len(por_q)
+                    if por_q else None}
+
     # lexical (contra o contexto de avaliação: capítulos)
     if (adir / "contextos.jsonl").exists():
         ctx = {q["uid"]: q for q in C.linhas(adir / "contextos.jsonl")}
@@ -276,15 +290,17 @@ def comparar(exp: Path, bracos=None, embedder=None, media_vec=None) -> dict:
     for b in bracos:
         if (exp / "bracos" / b / "aprovadas.jsonl").exists():
             res[b], por_q[b] = metricas_braco(exp, b, embedder, media_vec)
-    variaveis = ["sustentado", "max_rougeL", "novel_2gram", "self_bleu4"] + \
+    variaveis = ["sustentado", "max_rougeL", "novel_2gram", "self_bleu4", "closed_gpt-5-4", "dificil"] + \
                 [f"{k}_{m}" for m in MODELOS for k in ("closed", "open", "gap")]
     efeitos = {}
     pares_efeito = dict(EFEITOS)
     for b in por_q:
         if "_" in b and b.rsplit("_", 1)[0] in por_q:
             origem, suf = b.rsplit("_", 1)
-            nome = {"sust": "sustentação", "sat": "saturação", "v22": "gerador v22"}[suf]
+            nome = {"sust": "sustentação", "sat": "saturação", "v22": "gerador v22", "v23": "gerador v23"}[suf]
             pares_efeito[f"{nome}: {b}-{origem}"] = (b, origem)
+        if b.endswith("_v23") and b[:-4] + "_v22" in por_q:
+            pares_efeito[f"v23 x v22: {b}-{b[:-4]}_v22"] = (b, b[:-4] + "_v22")
     for nome, (x, y) in pares_efeito.items():
         if x in por_q and y in por_q:
             efeitos[nome] = {v: boot_diff([q.get(v) for q in por_q[x]], [q.get(v) for q in por_q[y]],
@@ -327,7 +343,7 @@ def _markdown(exp: Path, out: dict) -> None:
         return f"| {nome} | " + " | ".join(vals) + " |"
 
     l = ["# Experimento A/B: documento refinado x antigo e capítulo x janela", "",
-         "Mesmo gerador v21, mesmos 3 documentos (02_02, 03_03, 07_01), sem herança de rodadas anteriores, "
+         "Braços A a D com o gerador v21 (derivados: _v22, _v23, _sat, _sust), mesmos 3 documentos (02_02, 03_03, 07_01), sem herança de rodadas anteriores, "
          "deduplicação incremental calibrada. Avaliação com o mesmo contexto em todos os braços (capítulos tocados "
          "pelo contexto de geração).", "", "## Por braço", "", cab, sep,
          linha("Aprovadas finais", lambda x: str(x["geracao"]["aprovadas_finais"])),
@@ -350,6 +366,12 @@ def _markdown(exp: Path, out: dict) -> None:
             f"({_f(x['acuracia'][m]['gap'], True)})")))
     l.append(linha("Sem contexto, parcial = 0,5 (Nano / Mini / 4.1)", lambda x: " / ".join(
         _f(x["acuracia"][m]["closedp"], True) for m in MODELOS)))
+    l.append(linha("Painel sem contexto: GPT-5 mini / GPT-5.4", lambda x: " / ".join(
+        f"{x['painel']['acuracia'][m]:.1f}%" for m in ("gpt-5-mini", "gpt-5-4"))))
+    l.append(linha("Difícil para o GPT-5.4 / nenhum modelo acerta", lambda x: (
+        f"{x['painel']['estratos_pct']['dificil'] + x['painel']['estratos_pct']['muito_dificil']:.1f}% / "
+        f"{x['painel']['estratos_pct']['muito_dificil']:.1f}%")))
+    l.append(linha("Decisão + procedimento", lambda x: _f(x["tipos"]["decisao_procedimento"], True)))
     l += [linha("Max ROUGE-L pergunta-frase", lambda x: _f(x["lexical"]["max_rougeL"])),
           linha("Novel bigramas / trigramas", lambda x: f"{_f(x['lexical']['novel_2gram'], casas=1)} / "
                                                       f"{_f(x['lexical']['novel_3gram'], casas=1)}"),
@@ -358,8 +380,8 @@ def _markdown(exp: Path, out: dict) -> None:
           linha("Chamadas / tokens (mil)", lambda x: f"{x['custo']['total']['chamadas']} / "
                                                    f"{(x['custo']['total']['prompt_tokens'] + x['custo']['total']['completion_tokens']) / 1000:.0f}"),
           "", "## Efeitos (diferença e IC 95%)", "",
-          "| Efeito | Sustentados | gap 4.1 Nano | gap 4.1 Mini | gap 4.1 | sem contexto 4.1 | Max ROUGE-L | Self-BLEU-4 |",
-          "|---|---|---|---|---|---|---|---|"]
+          "| Efeito | Sustentados | gap 4.1 Nano | gap 4.1 Mini | gap 4.1 | sem contexto 4.1 | sem contexto 5.4 | difícil (5.4) | Max ROUGE-L | Self-BLEU-4 |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
 
     def ef(d, pct=True):
         if not d:
@@ -370,7 +392,8 @@ def _markdown(exp: Path, out: dict) -> None:
 
     for nome, e in out["efeitos"].items():
         l.append(f"| {nome} | {ef(e['sustentado'])} | {ef(e['gap_gpt-4-1-nano'])} | {ef(e['gap_gpt-4-1-mini'])} | "
-                 f"{ef(e['gap_gpt-4-1'])} | {ef(e['closed_gpt-4-1'])} | {ef(e['max_rougeL'], False)} | "
+                 f"{ef(e['gap_gpt-4-1'])} | {ef(e['closed_gpt-4-1'])} | {ef(e.get('closed_gpt-5-4'))} | "
+                 f"{ef(e.get('dificil'))} | {ef(e['max_rougeL'], False)} | "
                  f"{ef(e['self_bleu4'], False)} |")
     l += ["", "Proporções em pontos percentuais. " + out["observacao"]]
     (exp / "COMPARACAO.md").write_text("\n".join(l) + "\n", encoding="utf-8")

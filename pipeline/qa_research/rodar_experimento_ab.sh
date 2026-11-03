@@ -11,7 +11,13 @@
 #   saturacao <BRAÇO>    rodadas extras por foco até saturar (ex.: D -> D_sat), avaliação e comparação
 #   v22 <BRAÇO>          gerador v22 com os documentos e o inventário do braço (ex.: B -> B_v22), avaliação e
 #                        comparação; opções --max-rodadas (padrão 5), --paciencia (1) e --onda (4)
-#                        opções: --max-rodadas N (padrão 5, inclui a 1ª) e --paciencia N (padrão 1)
+#   v23 <BRAÇO>          gerador v23 (exemplos fixos de boas e ruins, resposta padrão, sem eliminação, mais decisão
+#                        e procedimento, auditor v23) -> <BRAÇO>_v23; avaliação; painel de dificuldade (GPT-5 mini e
+#                        GPT-5.4 sem contexto) em <BRAÇO>, <BRAÇO>_v22 e <BRAÇO>_v23; comparação
+#   painel <BRAÇO>       só o painel de dificuldade de um braço já avaliado, e a comparação
+#   antigo               banco antigo: gabarito curto + auditor v23 nas 2156 sustentadas, benchmark_gap e painel
+# Uma trava impede duas execuções no mesmo braço; antes de repetir após interromper, encerre o processo antigo
+# (pkill -f experimento_ab).
 # Repetir o mesmo comando retoma de onde parou; nada concluído é refeito. Falhas isoladas são tentadas de novo
 # automaticamente (até 3 vezes por etapa).
 set -uo pipefail
@@ -27,7 +33,7 @@ fi
 etapa="tudo"
 if [[ $# -gt 0 && "$1" != --* ]]; then etapa="$1"; shift; fi
 braco_sust=""
-if [[ "$etapa" == "sustentacao" || "$etapa" == "saturacao" || "$etapa" == "v22" ]]; then
+if [[ "$etapa" == "sustentacao" || "$etapa" == "saturacao" || "$etapa" == "v22" || "$etapa" == "v23" || "$etapa" == "painel" ]]; then
     braco_sust="${1:-}"
     if [[ -z "$braco_sust" || "$braco_sust" == --* ]]; then echo "Uso: ... $etapa <braço, ex.: B ou D_sat>"; exit 1; fi
     shift
@@ -84,7 +90,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -113,7 +119,24 @@ if [[ "$etapa" == "v22" ]]; then
     rodar "gerador v22 a partir de $braco_sust" v22 --braco "$braco_sust" || fim_erro v22
     rodar "avaliar ${braco_sust}_v22" avaliar --braco "${braco_sust}_v22" || fim_erro v22
 fi
-if [[ "$etapa" == "tudo" || "$etapa" == "comparacao" || "$etapa" == "sustentacao" || "$etapa" == "saturacao" || "$etapa" == "v22" ]]; then
+if [[ "$etapa" == "v23" ]]; then
+    rodar "gerador v23 a partir de $braco_sust" v23 --braco "$braco_sust" || fim_erro v23
+    rodar "avaliar ${braco_sust}_v23" avaliar --braco "${braco_sust}_v23" || fim_erro v23
+    for b in "$braco_sust" "${braco_sust}_v22" "${braco_sust}_v23"; do
+        if [[ -f "$exp/avaliacao/$b/rodada_concluida.json" ]]; then
+            rodar "painel de dificuldade em $b" painel --braco "$b" || fim_erro v23
+        fi
+    done
+fi
+if [[ "$etapa" == "painel" ]]; then
+    rodar "painel de dificuldade em $braco_sust" painel --braco "$braco_sust" || fim_erro painel
+fi
+if [[ "$etapa" == "antigo" ]]; then
+    rodar "banco antigo: gabarito curto + auditor v23" antigo || fim_erro antigo
+    rodar "banco antigo: benchmark_gap" avaliar-antigo || fim_erro antigo
+    rodar "banco antigo: painel de dificuldade" painel --avaliacao pipeline/qa_research/relatorios/benchmark_gap_antigo_filtrado_v1 || fim_erro antigo
+fi
+if [[ "$etapa" == "tudo" || "$etapa" == "comparacao" || "$etapa" == "sustentacao" || "$etapa" == "saturacao" || "$etapa" == "v22" || "$etapa" == "v23" || "$etapa" == "painel" ]]; then
     rodar "comparação" comparar || fim_erro comparacao
 fi
 
@@ -124,6 +147,11 @@ echo "Resultados:"
 echo "  cat $exp/COMPARACAO.md"
 echo "  cat $exp/calibracao/CALIBRACAO.md"
 echo "Enviar ao GitHub (no servidor):"
-echo "  bash pipeline/qa_research/enviar_resultados.sh $exp \"Resultados: experimento A/B ($etapa)\""
+if [[ "$etapa" == "antigo" ]]; then
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/banco_antigo_filtrado_v1 \"Resultados: banco antigo filtrado\""
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/benchmark_gap_antigo_filtrado_v1 \"Resultados: avaliação do banco antigo filtrado\""
+else
+    echo "  bash pipeline/qa_research/enviar_resultados.sh $exp \"Resultados: experimento A/B ($etapa)\""
+fi
 echo "Na sua máquina:"
 echo "  git pull --ff-only origin codex/qa-evidencias-verificadas"
