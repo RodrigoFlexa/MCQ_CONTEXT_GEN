@@ -43,6 +43,31 @@ contexto (`geracao.TROCAS_CAPITULO`).
    e as visitas de cada foco; a comparação `<X>_sat` x `<X>` mostra o que as rodadas extras acrescentam e a
    sustentação das questões das rodadas extras.
 
+## Gerador v22 (`v22.py`)
+
+Refatoração feita a partir da revisão manual das questões do braço B. O fluxo é gerador → régua → auditor →
+deduplicação, em rodadas por foco até saturar:
+
+| Mudança | Defeito observado no B |
+|---|---|
+| O gerador entrega de 0 a 4 questões por foco, sem cota por tipo; zero é resposta válida | 126 de 126 chamadas devolveram exatamente 4 questões, inclusive quando o bloco não sustentava |
+| O gerador vê os conhecimentos já aceitos no documento (focos em ondas de `--onda` focos distantes entre si) | 33% das aprovadas eram redundantes |
+| Exclusões explícitas: nomes comerciais, nomenclatura de projeto, itens de lista, "por que X não garante Y" | Turbiscan, "dirty inert gas header", princípios tautológicos de gestão |
+| Gabarito curto (até 15 palavras) e `explicacao` separada, fora da avaliação | Gabaritos compostos, "causa mais provável" sem suporte, acerto parcial |
+| Auditor por questão, com o texto-fonte e 5 verificações binárias (sem documento, alternativa excluída, atalho, sustentação, elemento único) | Várias respostas plausíveis, atalhos aprovados, auditor sem acesso à fonte |
+| Sem refinador: recusas voltam ao gerador com o motivo, na rodada seguinte do mesmo foco | O refinador descartava 1,2% e reescrevia o resto; 44% do banco final eram reescritas |
+
+Um foco fecha quando o gerador devolve zero questões, quando a visita não traz conhecimento novo aceito
+(`--paciencia`) ou ao atingir `--max-rodadas` visitas. Uma questão inválida nunca afeta as outras: régua e auditor
+decidem questão por questão, e um foco com falha pendente só volta a abrir depois da retomada.
+
+```bash
+bash pipeline/qa_research/rodar_experimento_ab.sh v22 B    # cria B_v22, avalia e compara com B
+```
+
+O juiz da avaliação é o mesmo dos braços A a D, para que a comparação meça a geração. A comparação passa a
+mostrar também a acurácia com parcial valendo 0,5.
+
 ## Robustez
 
 Toda unidade (bloco, encadeamento, foco, lote de auditoria, questão na deduplicação ou na sustentação, par da

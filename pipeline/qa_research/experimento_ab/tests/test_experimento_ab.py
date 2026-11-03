@@ -546,3 +546,144 @@ class SaturacaoTests(unittest.TestCase):
         res = read_json(exp / "bracos" / "A_sat" / "saturacao.json")
         self.assertEqual(set(res["conhecimentos_novos_por_rodada"]), {"1", "2", "3"})
         self.assertTrue(all(v["visitas"] <= 3 for v in res["focos"].values()))
+
+
+class FalsoV22(Falso):
+    """Gerador v22 simulado. 1ª visita: 3 propostas (uma boa, uma longa demais para a régua, uma que o auditor recusa).
+    2ª visita: focos 'pares' trazem uma questão nova; os demais devolvem zero. 3ª visita: zero."""
+    def __init__(self, falhar_auditoria=None):
+        super().__init__()
+        self.visitas, self.falhar_auditoria = {}, falhar_auditoria
+        self.usuarios_foco = []
+
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        if not tag.startswith("v22_"):
+            return super().json(system, user, tag, max_tokens, validate, item)
+        self.chamadas += 1
+        self.tags.append(tag)
+        d = getattr(self, tag[4:])(user)
+        if validate:
+            validate(d)
+        return d
+
+    def _q(self, tipo, trecho, bloco, extra=""):
+        self.n += 1
+        p, cen = PERGUNTAS[tipo]
+        return {"tipo": tipo, "cenario": cen, "conhecimento": f"conhecimento {self.n}",
+                "pergunta": p.format(k=f"{self.n} alfa{self.n} beta{self.n}{extra}"),
+                "resposta": f"Elemento{self.n} especifico{self.n}.", "explicacao": "Porque o bloco afirma.",
+                "fundamentos": [{"bloco": bloco, "trecho": trecho}]}
+
+    def foco(self, user):
+        self.usuarios_foco.append(user)
+        f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d+\]|\n</janela>)", user, re.S).group(1)
+        trecho = " ".join(f.split()[:8])
+        v = self.visitas[f] = self.visitas.get(f, 0) + 1
+        par = int(hashlib.md5(f.encode()).hexdigest(), 16) % 2 == 0
+        if v == 1:
+            longa = self._q("mecanismo", trecho, "F")
+            longa["resposta"] = " ".join(["palavra"] * 25)
+            return {"motivo": "", "questoes": [self._q("conceito", trecho, "F"), longa,
+                                               self._q("mecanismo", trecho, "F", extra=" ATALHO")]}
+        if v == 2 and par:
+            return {"motivo": "", "questoes": [self._q("procedimento", trecho, "F")]}
+        return {"motivo": "conhecimentos de [F] já cobertos", "questoes": []}
+
+    def composta(self, user):
+        b1 = re.search(r"\[B1\] [^\n]*\n(.+?)(?:\n\n\[B\d+\]|\n</blocos>)", user, re.S).group(1)
+        if "C1" in user.split("<encadeamento>")[1][:400]:
+            return {"motivo": "encadeamento não sustenta questão boa", "questoes": []}
+        q = self._q("diagnostico", " ".join(b1.split()[:8]), "B1")
+        return {"motivo": "", "questoes": [q]}
+
+    def auditoria(self, user):
+        d = json.loads(user)
+        if self.falhar_auditoria and self.falhar_auditoria in d["pergunta"]:
+            raise RuntimeError("falha simulada do auditor")
+        atalho = "ATALHO" in d["pergunta"]
+        return {"sem_documento": True, "resposta_alternativa": "outra", "alternativa_excluida": True, "atalho": atalho,
+                "sustentada": True, "elemento_unico": True, "tipo_sugerido": d["tipo_declarado"],
+                "justificativa": "atalho" if atalho else "ok"}
+
+
+class V22Tests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp)
+        self.exp = self.tmp / "exp"
+        C.preparar_documentos(self.exp, itens=[ITEM])
+        self.cal = calibracao_falsa(self.exp / "calibracao", auto=1.01)
+        f = Falso()
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria", "refinador")}
+        cl["dedup_juiz"] = NuncaRedundante()
+        GA.GeracaoAB(self.exp / "bracos" / "B", [ITEM], docs=self.exp / "docs" / "refinado", unidade="janela", braco="B",
+                     calibracao=self.cal, clientes=cl, embedder=Emb(), workers=4, **SILENCIO).run()
+
+    def g(self, f, **kw):
+        from pipeline.qa_research.experimento_ab.v22 import GeracaoV22
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria")}
+        cl["dedup_juiz"] = NuncaRedundante()
+        return GeracaoV22(self.exp / "bracos" / "B_v22", [ITEM], docs=self.exp / "docs" / "refinado", braco="B_v22",
+                          reusar=[self.exp / "bracos" / "B"], calibracao=self.cal, clientes=cl, embedder=Emb(),
+                          workers=4, **{**SILENCIO, **kw})
+
+    def test_fluxo_regua_auditor_saturacao_e_retomada(self):
+        from pipeline.qa_research.experimento_ab.v22 import regua
+        f = FalsoV22()
+        self.assertEqual(self.g(f).run(), 0)
+        d = self.exp / "bracos" / "B_v22"
+        self.assertNotIn("meta_relacoes", f.tags)                 # inventário reaproveitado de B
+        res = read_json(d / "resultado.json")
+        _, bs = blocos(ITEM, self.exp / "docs" / "refinado")
+        pares = {b["indice"] for b in bs if int(hashlib.md5(b["texto"].encode()).hexdigest(), 16) % 2 == 0}
+        t = res["por_origem"]["janela"]
+        self.assertEqual(t["reprovadas_regua"], len(bs))          # a longa de cada foco, só ela
+        self.assertEqual(t["falhas_auditor"].get("atalho"), len(bs))
+        self.assertEqual(t["finais"], len(bs) + len(pares))       # 1 boa por foco + 1 na 2ª visita dos pares
+        vis = {int(k.split(":")[1]): v["visitas"] for k, v in res["saturacao"]["focos"].items()}
+        self.assertEqual(vis, {i: (3 if i in pares else 2) for i in range(len(bs))})
+        self.assertGreater(res["chamadas"]["vazias"], 0)
+        comp = res["por_origem"]["composta"]
+        self.assertGreater(comp["finais"], 0)
+        # o prompt da 2ª visita traz os conhecimentos cobertos e as recusas do foco, com o motivo
+        segunda = [u for u in f.usuarios_foco if "[recusada" in u][0]
+        self.assertIn("conhecimento 1", segunda.split("<conhecimentos_cobertos>")[1])
+        self.assertIn("recusada pela régua", segunda)
+        self.assertIn("recusada (atalho)", segunda)
+        aprov = C.linhas(d / "aprovadas.jsonl")
+        self.assertTrue(all(len(q["resposta"].split()) <= 20 and q["explicacao"] for q in aprov))
+        self.assertTrue((d / "geracao_concluida.json").exists())
+        antes = f.chamadas
+        self.assertEqual(self.g(f).run(), 0)
+        self.assertEqual(f.chamadas, antes)
+        # régua: questão sem fundamento literal de [F] é recusada sozinha
+        q = {"tipo": "conceito", "cenario": False, "conhecimento": "c", "pergunta": "Qual é a função principal do componente x?",
+             "resposta": "Separar fases.", "explicacao": "", "fundamentos": [{"bloco": "A1", "trecho": "texto do apoio"}]}
+        self.assertTrue(regua(q, {"F": "texto do foco", "A1": "texto do apoio"}, ("conceito",), "F"))
+        self.assertEqual(regua(q, {"F": "texto do foco", "A1": "texto do apoio"}, ("conceito",)), [])
+
+    def test_falha_do_auditor_isolada_por_questao(self):
+        f = FalsoV22(falhar_auditoria="alfa3 ")
+        self.assertGreater(self.g(f).run(), 0)
+        d = self.exp / "bracos" / "B_v22"
+        self.assertFalse((d / "geracao_concluida.json").exists())
+        self.assertGreater(len(list((d / "topicos" / ITEM / "auditoria_v22").glob("*.json"))), 5)
+        f.falhar_auditoria = None
+        self.assertEqual(self.g(f).run(), 0)
+        self.assertTrue((d / "geracao_concluida.json").exists())
+
+    def test_avaliacao_e_comparacao_do_v22(self):
+        from pipeline.qa_research.experimento_ab import avaliacao as AV
+        from pipeline.qa_research.experimento_ab.metricas import comparar
+        from pipeline.qa_research.tests.test_benchmark_gap import Answer, Faith
+        from pipeline.qa_research.tests.test_especialista_finalizacao import Juiz as JuizResp
+        self.assertEqual(self.g(FalsoV22()).run(), 0)
+        for nome in ("B", "B_v22"):
+            st = AV.executar(self.exp / "bracos" / nome, self.exp / "avaliacao" / nome, workers=3, judge_workers=1,
+                             clientes={"resp_gpt-4-1-nano": Answer(), "resp_gpt-4-1-mini": Answer(), "resp_gpt-4-1": Answer(),
+                                       "juiz": JuizResp(), "faithfulness": Faith()}, progress=lambda *x, **k: None)
+            self.assertEqual(st, 0)
+        out = comparar(self.exp)
+        self.assertIn("gerador v22: B_v22-B", out["efeitos"])
+        self.assertIsNotNone(out["bracos"]["B_v22"]["acuracia"]["gpt-4-1"]["closedp"])
+        self.assertIn("parcial = 0,5", (self.exp / "COMPARACAO.md").read_text(encoding="utf-8"))

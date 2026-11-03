@@ -215,10 +215,11 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
             for r in csv.DictReader(f):
                 if r["uid"] in por_q and r["veredito_closed_book"] and r["veredito_open_book"]:
                     por_q[r["uid"]][f"closed_{r['modelo']}"] = float(r["veredito_closed_book"] == "correta")
+                    por_q[r["uid"]][f"closedp_{r['modelo']}"] = {"correta": 1.0, "parcial": .5}.get(r["veredito_closed_book"], 0.0)
                     por_q[r["uid"]][f"open_{r['modelo']}"] = float(r["veredito_open_book"] == "correta")
                     por_q[r["uid"]][f"gap_{r['modelo']}"] = (por_q[r["uid"]][f"open_{r['modelo']}"]
                                                             - por_q[r["uid"]][f"closed_{r['modelo']}"])
-        res["acuracia"] = {m: {k: media([v.get(f"{k}_{m}") for v in por_q.values()]) for k in ("closed", "open", "gap")}
+        res["acuracia"] = {m: {k: media([v.get(f"{k}_{m}") for v in por_q.values()]) for k in ("closed", "closedp", "open", "gap")}
                            for m in MODELOS}
 
     # lexical (contra o contexto de avaliação: capítulos)
@@ -282,7 +283,7 @@ def comparar(exp: Path, bracos=None, embedder=None, media_vec=None) -> dict:
     for b in por_q:
         if "_" in b and b.rsplit("_", 1)[0] in por_q:
             origem, suf = b.rsplit("_", 1)
-            nome = {"sust": "sustentação", "sat": "saturação"}[suf]
+            nome = {"sust": "sustentação", "sat": "saturação", "v22": "gerador v22"}[suf]
             pares_efeito[f"{nome}: {b}-{origem}"] = (b, origem)
     for nome, (x, y) in pares_efeito.items():
         if x in por_q and y in por_q:
@@ -347,6 +348,8 @@ def _markdown(exp: Path, out: dict) -> None:
         l.append(linha(f"{m}: sem / com contexto (gap)", lambda x, m=m: (
             f"{_f(x['acuracia'][m]['closed'], True)} / {_f(x['acuracia'][m]['open'], True)} "
             f"({_f(x['acuracia'][m]['gap'], True)})")))
+    l.append(linha("Sem contexto, parcial = 0,5 (Nano / Mini / 4.1)", lambda x: " / ".join(
+        _f(x["acuracia"][m]["closedp"], True) for m in MODELOS)))
     l += [linha("Max ROUGE-L pergunta-frase", lambda x: _f(x["lexical"]["max_rougeL"])),
           linha("Novel bigramas / trigramas", lambda x: f"{_f(x['lexical']['novel_2gram'], casas=1)} / "
                                                       f"{_f(x['lexical']['novel_3gram'], casas=1)}"),

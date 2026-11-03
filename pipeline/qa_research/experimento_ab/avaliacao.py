@@ -18,7 +18,7 @@ from . import comum as C
 
 def carregar(braco_dir: Path):
     cfg = read_json(Path(braco_dir) / "config.json")
-    if not cfg or cfg.get("schema") != "experimento-ab-geracao-v1":
+    if not cfg or not str(cfg.get("schema", "")).startswith("experimento-ab-geracao-"):
         raise ValueError(f"{braco_dir}: pasta sem geração do experimento")
     if not (Path(braco_dir) / "geracao_concluida.json").exists():
         raise ValueError(f"{braco_dir}: geração ainda não concluída (falhas pendentes); rode a geração de novo")

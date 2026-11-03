@@ -8,6 +8,8 @@
   comparar              tabela 2x2 com efeitos e IC 95% (COMPARACAO.md)
   sustentacao --braco B etapa 4: checagem de sustentação + resposta mínima sobre as questões do braço (B_sust)
   saturar --braco D     rodadas extras por foco até saturar (D_sat), sobre a mesma 1ª rodada do braço
+  v22 --braco B         gerador v22 (0 a 4 questões por foco, auditor por questão com o texto-fonte, sem refinador,
+                        rodadas até saturar) com os documentos e o inventário de B (B_v22)
 
 Braços derivados combinam sufixos: D_sat (saturação), D_sust (sustentação), D_sat_sust (os dois).
 
@@ -28,8 +30,9 @@ from . import comum as C
 def info_braco(nome: str) -> dict:
     partes = nome.split("_")
     base, sufixos = partes[0], partes[1:]
-    if base not in C.BRACOS or any(s not in ("sat", "sust") for s in sufixos) or len(set(sufixos)) != len(sufixos):
-        raise SystemExit(f"Braço inválido: {nome} (use A, B, C, D, <braço>_sat, <braço>_sust ou <braço>_sat_sust)")
+    if base not in C.BRACOS or any(s not in ("sat", "sust", "v22") for s in sufixos) or len(set(sufixos)) != len(sufixos):
+        raise SystemExit(f"Braço inválido: {nome} (use A, B, C, D, <braço>_sat, <braço>_sust, <braço>_sat_sust ou "
+                         "<braço>_v22)")
     sust = nome.endswith("_sust")
     return {**C.BRACOS[base], "base": base, "sustentacao": sust, "saturacao": "sat" in sufixos and not sust,
             "derivado": bool(sufixos)}
@@ -89,7 +92,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m pipeline.qa_research.experimento_ab", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
-                                        "saturar"])
+                                        "saturar", "v22"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -100,6 +103,7 @@ def main(argv=None) -> int:
     ap.add_argument("--mini-deployment", default="gpt-4-1-mini-petrobras")
     ap.add_argument("--max-rodadas", type=int, default=5, help="saturação: visitas máximas por foco (inclui a 1ª)")
     ap.add_argument("--paciencia", type=int, default=1, help="saturação: rodadas seguidas sem conhecimento novo para fechar")
+    ap.add_argument("--onda", type=int, default=4, help="v22: focos gerados ao mesmo tempo em cada documento")
     a = ap.parse_args(argv)
     exp = a.experimento if a.experimento.is_absolute() else C.ROOT / a.experimento
 
@@ -143,6 +147,25 @@ def main(argv=None) -> int:
                   "para tentar só elas.")
             return 2
         print(f"[{a.braco}] geração concluída: {C.relativo(exp / 'bracos' / a.braco / 'RELATORIO.md')}")
+        return 0
+    if a.comando == "v22":
+        from .v22 import GeracaoV22
+        info = info_braco(a.braco)
+        if info["derivado"]:
+            raise SystemExit("Informe o braço de origem (A, B, C ou D); o v22 cria <braço>_v22")
+        if info["unidade"] != "janela":
+            raise SystemExit("O v22 usa a janela de 3 blocos (braços A ou B)")
+        origem, nome = exp / "bracos" / a.braco, a.braco + "_v22"
+        faltam = [i for i in C.ITENS if not (origem / "topicos" / i / "combinacoes.json").exists()]
+        if faltam:
+            raise SystemExit(f"O v22 reaproveita o inventário de {a.braco}, incompleto para {faltam}")
+        g = GeracaoV22(exp / "bracos" / nome, C.ITENS, docs=C.docs_do_braco(exp, a.braco), braco=nome, reusar=[origem],
+                       calibracao=_calibracao(exp), saturacao=sat, onda=a.onda, workers=a.workers)
+        falhas = g.run()
+        if falhas:
+            print(f"[{nome}] {falhas} unidades falharam (isoladas; o resto está salvo). Repita o mesmo comando.")
+            return 2
+        print(f"[{nome}] geração concluída: {C.relativo(exp / 'bracos' / nome / 'RELATORIO.md')}")
         return 0
     if a.comando in ("sustentacao", "saturar"):
         sufixo = "_sust" if a.comando == "sustentacao" else "_sat"

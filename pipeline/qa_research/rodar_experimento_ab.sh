@@ -9,6 +9,8 @@
 #   calibracao | geracao | avaliacao | comparacao   só a etapa indicada
 #   sustentacao <BRAÇO>  etapa 4 no braço vencedor (ex.: B): checagem de sustentação, avaliação e comparação
 #   saturacao <BRAÇO>    rodadas extras por foco até saturar (ex.: D -> D_sat), avaliação e comparação
+#   v22 <BRAÇO>          gerador v22 com os documentos e o inventário do braço (ex.: B -> B_v22), avaliação e
+#                        comparação; opções --max-rodadas (padrão 5), --paciencia (1) e --onda (4)
 #                        opções: --max-rodadas N (padrão 5, inclui a 1ª) e --paciencia N (padrão 1)
 # Repetir o mesmo comando retoma de onde parou; nada concluído é refeito. Falhas isoladas são tentadas de novo
 # automaticamente (até 3 vezes por etapa).
@@ -25,7 +27,7 @@ fi
 etapa="tudo"
 if [[ $# -gt 0 && "$1" != --* ]]; then etapa="$1"; shift; fi
 braco_sust=""
-if [[ "$etapa" == "sustentacao" || "$etapa" == "saturacao" ]]; then
+if [[ "$etapa" == "sustentacao" || "$etapa" == "saturacao" || "$etapa" == "v22" ]]; then
     braco_sust="${1:-}"
     if [[ -z "$braco_sust" || "$braco_sust" == --* ]]; then echo "Uso: ... $etapa <braço, ex.: B ou D_sat>"; exit 1; fi
     shift
@@ -38,6 +40,7 @@ while [[ $# -gt 0 ]]; do
         --workers) comuns+=(--workers "$2"); shift 2 ;;
         --max-rodadas) comuns+=(--max-rodadas "$2"); shift 2 ;;
         --paciencia) comuns+=(--paciencia "$2"); shift 2 ;;
+        --onda) comuns+=(--onda "$2"); shift 2 ;;
         *) echo "Opção desconhecida: $1"; exit 1 ;;
     esac
 done
@@ -81,7 +84,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -106,7 +109,11 @@ if [[ "$etapa" == "saturacao" ]]; then
     rodar "saturação por foco em $braco_sust" saturar --braco "$braco_sust" || fim_erro saturacao
     rodar "avaliar ${braco_sust}_sat" avaliar --braco "${braco_sust}_sat" || fim_erro saturacao
 fi
-if [[ "$etapa" == "tudo" || "$etapa" == "comparacao" || "$etapa" == "sustentacao" || "$etapa" == "saturacao" ]]; then
+if [[ "$etapa" == "v22" ]]; then
+    rodar "gerador v22 a partir de $braco_sust" v22 --braco "$braco_sust" || fim_erro v22
+    rodar "avaliar ${braco_sust}_v22" avaliar --braco "${braco_sust}_v22" || fim_erro v22
+fi
+if [[ "$etapa" == "tudo" || "$etapa" == "comparacao" || "$etapa" == "sustentacao" || "$etapa" == "saturacao" || "$etapa" == "v22" ]]; then
     rodar "comparação" comparar || fim_erro comparacao
 fi
 
