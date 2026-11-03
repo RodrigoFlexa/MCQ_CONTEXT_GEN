@@ -153,7 +153,7 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
     aprov = C.linhas(gdir / "aprovadas.jsonl")
     bs = {i: blocos(i, docs)[1] for i in gcfg["itens"]}
     res = {"braco": braco, "docs": C.BRACOS[braco.split("_")[0]]["docs"], "unidade": unidade,
-           "sustentacao": bool(gcfg.get("sustentacao")), "saturacao": bool(gcfg.get("saturacao"))}
+           "gate_sustentacao": bool(gcfg.get("sustentacao")), "saturacao": bool(gcfg.get("saturacao"))}
 
     # geração
     aud = [q for q in todas if q.get("auditoria")]
@@ -313,7 +313,7 @@ def _markdown(exp: Path, out: dict) -> None:
     r = out["bracos"]
     bs = list(r)
     cab = "| Métrica | " + " | ".join(f"{b} ({r[b]['docs']}, {r[b]['unidade']}{', sat.' if r[b].get('saturacao') else ''}"
-                                     f"{', sust.' if r[b]['sustentacao'] else ''})" for b in bs) + " |"
+                                     f"{', sust.' if r[b].get('gate_sustentacao') else ''})" for b in bs) + " |"
     sep = "|---|" + "---|" * len(bs)
 
     def linha(nome, fn):
