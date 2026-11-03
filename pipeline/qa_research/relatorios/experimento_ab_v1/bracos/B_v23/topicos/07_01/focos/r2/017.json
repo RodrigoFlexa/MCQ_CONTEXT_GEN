@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando controle e supervisão exibem o mesmo desvio não confirmado em campo, o primeiro alvo é a PV comum às duas camadas.",
+      "pergunta": "Em um laço em automático, a PV na HMI se desvia, o controlador altera a saída e a válvula acompanha, mas um indicador local independente mostra o processo estável no mesmo intervalo. Qual elo comum às camadas de controle e supervisão deve ser tratado como suspeito primeiro?",
+      "resposta": "PV compartilhada entre controlador e supervisão.",
+      "explicacao": "Os mesmos dados medidos alimentam o controlador e a supervisão. Se ambos refletem o mesmo desvio, desmentido por indicação independente, o problema está no sinal comum, não no elemento final.",
+      "resposta_padrao": "Posicionador da válvula.",
+      "por_que_nao": "Se a válvula acompanha a saída do controlador, o elemento final está obedecendo; o desvio nasce a montante, na PV comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em dados de historian, plausibilidade operacional não substitui a validação da medição quando há evidência de viés persistente.",
+      "pergunta": "Após intervenção em um instrumento, a variável no historian seguiu dentro da faixa esperada e com tendência suave, mas uma referência independente mostrou desvio persistente. Antes de usar essa série em análise de desempenho, que etapa específica do tratamento de dados deve reprová-la?",
+      "resposta": "Validação das medições.",
+      "explicacao": "Checagem de normalidade só verifica aparência plausível. Com viés persistente frente a referência independente, a etapa que decide se o dado representa o processo é a validação da medição.",
+      "resposta_padrao": "Checagem de normalidade.",
+      "por_que_nao": "Faixa usual e tendência suave não garantem representatividade física; um sinal enviesado pode parecer normal e ainda assim ser inválido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em comissionamento, calibração e indicação local corretas não comprovam integração; é preciso confirmar a comunicação campo-PLC.",
+      "pergunta": "Num comissionamento, o transmissor está energizado, calibrado e com indicação local coerente. Ao forçar a entrada no PLC, o permissivo responde, mas a simulação feita no campo não chega ao controlador. Que verificação específica ainda falta antes de liberar a operação?",
+      "resposta": "Confirmação da comunicação entre o equipamento de campo e o PLC.",
+      "explicacao": "Se a lógica reage quando a entrada é forçada no PLC, o problema restante está no caminho entre campo e controlador. Calibração local não comprova integração funcional.",
+      "resposta_padrao": "Repetir a calibração do transmissor.",
+      "por_que_nao": "Calibração confirma a medição local; aqui a falha está na integração do sinal até o PLC, já isolada pela resposta do permissivo ao forçamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O encadeamento básico começa com a medição das variáveis de processo por sensores e transmissores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

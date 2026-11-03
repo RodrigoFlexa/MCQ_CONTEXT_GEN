@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 33,
+  "rodada": 1,
+  "contexto": {
+    "A1": 32,
+    "F": 33,
+    "A2": 34
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudanças de estado sem ação imediata do operador devem ser configuradas como evento, não como alarme.",
+      "pergunta": "Durante a partida automática, mudanças de estado de permissivos, chaveamentos e confirmações de sequência aparecem com horn e banner no supervisório, embora sirvam apenas para rastreabilidade e diagnóstico posterior. Ao mesmo tempo, um HH de processo realmente acionável perde destaque. Que classificação esses anúncios devem receber?",
+      "resposta": "Eventos sem anunciação de alarme.",
+      "explicacao": "Se não há resposta imediata esperada do operador, o anúncio não deve competir com alarmes acionáveis. Mantê-lo como alarme cria pseudo-alarmes e reduz a capacidade de reconhecer a anormalidade importante.",
+      "resposta_padrao": "Alarmes de baixa prioridade.",
+      "por_que_nao": "Baixar prioridade não elimina a competição por atenção; sem ação esperada, a classe correta é evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Alarme é um aviso que requer ação do operador em tempo restrito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evento é uma mudança de estado registrada para análise, sem demanda de ação imediata"
+        },
+        {
+          "bloco": "F",
+          "trecho": "informações que deveriam apenas ser registradas passam a competir por atenção com alarmes realmente acionáveis"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A verificação decisiva da filosofia de anunciação após mudança de configuração é o teste funcional por cenário, confrontando anúncio e resposta esperada.",
+      "pergunta": "Após alteração na lógica de anunciação do DCS, como deve ser verificado, antes da operação normal, se mudanças de estado úteis apenas para registro não estão soando e aparecendo como alarmes?",
+      "resposta": "Teste funcional por cenário da anunciação, confrontado com a resposta esperada do operador.",
+      "explicacao": "Comissionamento funcional precisa confirmar o comportamento implementado, não só a energização. O teste em cenário mostra se a lógica e a anunciação correspondem à função esperada e à ação do operador.",
+      "resposta_padrao": "Revisão estática da lista de pontos configurados.",
+      "por_que_nao": "Revisão estática não comprova o comportamento da lógica, da comunicação e da anunciação nos cenários reais de operação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Comissionamento funcional verifica se a configuração implementada corresponde à função esperada do sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a verificação da matriz de causa e efeito e dos cenários de atuação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a configuração de alarmes precisa associar cada anúncio a uma ação esperada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Anúncios de mudanças de estado sem ação requerida, tratados como alarmes, caracterizam pseudo-alarmes por configuração inadequada.",
+      "pergunta": "Em um upset, o operador recebe sucessivos banners e horn de mudanças de estado que não pedem intervenção imediata, enquanto um alarme de processo acionável demora a ser reconhecido. Qual problema de configuração explica melhor esse comportamento do sistema?",
+      "resposta": "Eventos configurados como alarmes, gerando pseudo-alarmes.",
+      "explicacao": "Quando evento e alarme são configurados de forma semelhante, registros sem ação útil passam a disputar atenção com alarmes verdadeiramente acionáveis, atrasando o reconhecimento da anormalidade importante.",
+      "resposta_padrao": "Falha de priorização do operador.",
+      "por_que_nao": "O mecanismo dominante é a anunciação indevida de registros sem ação, que sobrecarrega a triagem mesmo com operador experiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando ambos são configurados de forma semelhante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O resultado é a geração de pseudo-alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dificulta reconhecer a anormalidade importante"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

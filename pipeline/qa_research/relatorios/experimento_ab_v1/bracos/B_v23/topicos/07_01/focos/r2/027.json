@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 2,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Forçamento no logic solver não demonstra o canal de entrada real do iniciador na função de segurança.",
+      "pergunta": "Para evitar perturbar o processo, o trip de baixa pressão foi ensaiado forçando a variável diretamente no logic solver; a solenoide comutou, a válvula fechou e o retorno chegou ao ESD. Que trecho ainda deve ser exercitado para demonstrar a função de ponta a ponta?",
+      "resposta": "Canal de entrada do iniciador até o logic solver.",
+      "explicacao": "O ensaio percorreu lógica, saída, solenóide, elemento final e retorno. Ao forçar a variável na lógica, ficaram fora da cobertura a detecção real e o caminho de entrada associado.",
+      "resposta_padrao": "Nenhum; a função já foi integralmente comprovada.",
+      "por_que_nao": "Forçar na lógica contorna sensor, transmissor, I/O de entrada e vínculos associados, deixando falhas ocultas desse caminho sem teste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua evidência vale apenas para os canais, vínculos lógicos, saídas e cenários realmente percorridos no ensaio"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento iniciado por bit forçado no SIS não comprova o repasse automático de trip entre F&G e SIS/ESD.",
+      "pergunta": "Num teste de fogo, o F&G reconheceu o detector e mostrou o evento, mas, para evitar parada global, o bit de trip que fecha a SDV foi inserido diretamente no SIS; a válvula fechou e retornou fechada. Que parte específica da arquitetura ainda precisa ser demonstrada?",
+      "resposta": "Repasse de trip do F&G para o SIS/ESD.",
+      "explicacao": "O fechamento da SDV ficou demonstrado a partir do SIS até o campo. Como o comando não percorreu a interface entre sistemas, o repasse automático do evento permaneceu sem cobertura demonstrada.",
+      "resposta_padrao": "O elemento final de fechamento da SDV.",
+      "por_que_nao": "A válvula, a solenóide e o retorno já atuaram pelo caminho iniciado no SIS; faltou provar a transferência automática do trip entre sistemas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "isso é especialmente importante quando a proteção depende de interface entre SIS, ESD, F&G e lógicas de pacotes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se o teste não percorre a interface, o repasse de estado, o comando de trip, a atuação do solenóide, a movimentação do elemento final ou a confirmação de retorno associada, o resultado não demonstra essas partes da arquitetura"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ensaios separados por subsistema ou em momentos distintos não substituem a demonstração integrada de ponta a ponta da SIF.",
+      "pergunta": "Em uma função instrumentada de segurança, o sensor foi verificado em bancada, o logic solver e o módulo de saída foram testados em outra janela e a válvula fez stroke local em dia diferente, sem um percurso contínuo da causa ao efeito. Que ensaio ainda falta para demonstrar a função conforme planejado?",
+      "resposta": "Proof test integrado de ponta a ponta.",
+      "explicacao": "Verificações por partes mostram apenas os trechos exercitados. Sem percorrer a função completa num encadeamento demonstrado, permanecem sem prova interfaces e falhas perigosas ocultas entre subsistemas.",
+      "resposta_padrao": "Nenhum; a soma dos ensaios parciais já vale como teste completo.",
+      "por_que_nao": "Um ensaio parcial por subsistemas não equivale automaticamente a teste integral da função, porque não demonstra a cadeia integrada nem expõe falhas ocultas nas interfaces.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando o ensaio consegue percorrer a função de ponta a ponta, a demonstração é mais completa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando parte do proof test precisa ser feita por subsistema ou em momentos diferentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um ensaio parcial não equivale automaticamente a um teste integral da função"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

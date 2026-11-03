@@ -1,0 +1,101 @@
+{
+  "item": "02_02",
+  "foco": 55,
+  "rodada": 1,
+  "contexto": {
+    "A1": 54,
+    "F": 55,
+    "A2": 56
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tempo morto entre injeção e medição como limitante da malha automática de dosagem.",
+      "pergunta": "Após aumento do volume de retenção entre o ponto de injeção e o analisador on-line, a malha automática de dosagem passou a oscilar: a bomba corrige, a leitura responde só depois e a correção seguinte vem na direção oposta. Que característica do processo deve ser tratada na lógica antes de retunar o controlador?",
+      "resposta": "Tempo morto entre a injeção e a medição.",
+      "explicacao": "Quando o atraso de transporte e mistura domina a resposta, a leitura chega tarde ao controlador e a malha entra em caça. Retunar sem tratar o tempo morto tende a piorar a oscilação.",
+      "resposta_padrao": "Aumentar o ganho do controlador.",
+      "por_que_nao": "Com tempo morto relevante, ganho maior reage a informação atrasada e amplifica a instabilidade em vez de corrigir a dosagem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "atraso entre injeção e medição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "seleção de indicador e lógica de controle devem considerar tempo de mistura"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interferência elétrica por aterramento deficiente como causa de leitura falsa em sensor usado para dosagem automática.",
+      "pergunta": "Um analisador on-line usado para dosar químico registra picos instantâneos toda vez que entram cargas elétricas grandes, mas as amostras de laboratório e o comportamento do sistema não mudam. Qual causa metrológica explica melhor esse sinal?",
+      "resposta": "Ruído elétrico por aterramento deficiente.",
+      "explicacao": "Picos sincronizados com manobras elétricas, sem confirmação em laboratório nem efeito de processo, caracterizam interferência no sinal do instrumento, não mudança real da química do fluido.",
+      "resposta_padrao": "Transiente real de concentração do químico.",
+      "por_que_nao": "Variação química real não acompanha com precisão a comutação elétrica quando o processo e as amostras independentes permanecem estáveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas de aterramento, ruído elétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta, interferências químicas, falhas de aterramento, ruído elétrico"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sujidade/incrustação do sensor como causa de erro de leitura que não deve ser compensado por aumento de dose.",
+      "pergunta": "Em uma malha automática de dosagem, a leitura on-line deriva lentamente para baixo, a dose sobe por controle fechado, mas análises de laboratório seguem estáveis; na inspeção, a sonda está recoberta por depósito. Qual intervenção específica deve preceder qualquer aumento definitivo de dose?",
+      "resposta": "Limpeza/desincrustação do sensor.",
+      "explicacao": "Depósito sobre a sonda altera a resposta e pode introduzir viés e lentidão sem mudança real na concentração. Antes de consolidar nova dose, é preciso restaurar a condição metrológica do sensor.",
+      "resposta_padrao": "Elevar permanentemente a dosagem do químico.",
+      "por_que_nao": "Quando a leitura baixa vem de sujidade na sonda, aumentar dose corrige um erro de medição e não a condição química real do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incrustação ou sujidade do sensor, tempo de resposta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A automação pode reduzir variabilidade humana, mas não elimina necessidade de validação periódica, manutenção do sensor e reconciliação com análises laboratoriais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização contra falso positivo quando a perda de proteção por subdosagem é a consequência dominante.",
+      "pergunta": "Num circuito em aço carbono onde subdosagem pode levar rapidamente a corrosão localizada, enquanto superdosagem traz sobretudo custo e impacto ambiental, que tipo de erro do sistema de medição e controle deve ser minimizado ao definir a lógica de ajuste?",
+      "resposta": "Falso positivo de concentração/proteção adequada.",
+      "explicacao": "Nesse cenário, o erro mais perigoso é o sistema indicar proteção suficiente quando ela não existe, levando a manter ou reduzir dose enquanto o ativo crítico fica exposto.",
+      "resposta_padrao": "Falso negativo de concentração.",
+      "por_que_nao": "Falso negativo induz sobredosagem e custo; o dano ao ativo crítico vem do falso positivo, que mascara a perda real de proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "criticidade do ativo e consequência de falso positivo ou falso negativo para ajuste de dosagem."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ajustar dosagem olhando apenas um indicador pode deslocar o problema para outra variável."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

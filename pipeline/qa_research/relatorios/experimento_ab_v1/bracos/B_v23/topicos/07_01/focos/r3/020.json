@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 3,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite de observabilidade de dashboards baseados em historian com coleta periódica diante de transitórios rápidos.",
+      "pergunta": "Uma lógica de proteção registra atuações compatíveis com picos rápidos de pressão, mas o dashboard do historian mostra a variável sempre suave e sem desvios marcantes. Qual característica da aquisição explica melhor essa divergência?",
+      "resposta": "Coleta periódica com resolução temporal insuficiente no historian.",
+      "explicacao": "O historian amostra em intervalos; transitórios rápidos podem ocorrer entre coletas e não aparecer no dashboard, mesmo tendo sido capturados pela lógica de proteção.",
+      "resposta_padrao": "Falha do transmissor de pressão.",
+      "por_que_nao": "O transmissor pode ter alimentado a lógica a tempo; quem não observou o pico foi a visualização amostrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Efeito de forcing em entrada de estado sobre supervisão e permissivos, mascarando o estado real do equipamento.",
+      "pergunta": "Após uma intervenção, a válvula aparece continuamente \"aberta\" no DCS e o permissivo associado permanece satisfeito, embora em campo ela esteja fisicamente fechada. Antes de tratar isso como defeito de fim de curso, que condição específica da automação deve ser verificada primeiro?",
+      "resposta": "Forcing ativo na entrada de posição da válvula.",
+      "explicacao": "Forcing pode manter a supervisão e a lógica em um estado artificial, mascarando a posição real e sustentando permissivos indevidamente.",
+      "resposta_padrao": "Desajuste do fim de curso.",
+      "por_que_nao": "Com a entrada forçada, o sistema exibe e usa um estado artificial independentemente do ajuste do sensor.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Correlação manual entre automação e registros de campo quando ativos relevantes não são integrados ao PLC.",
+      "pergunta": "Um desvio recorrente aparece no DCS, mas um alinhamento manual e um indicador local decisivos para esse trecho não são integrados ao PLC. Como deve ser feita a correlação para fechar tecnicamente a causa do evento?",
+      "resposta": "Com registro cruzado entre observações de campo e eventos da automação.",
+      "explicacao": "Sem integração ao PLC, parte do estado real não entra na correlação automática; é preciso confrontar o que foi observado localmente com os registros do sistema.",
+      "resposta_padrao": "Apenas pela análise de tendências e alarmes do DCS.",
+      "por_que_nao": "O DCS não contém o estado dos itens não integrados; sozinho, ele não fecha a relação causa-efeito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

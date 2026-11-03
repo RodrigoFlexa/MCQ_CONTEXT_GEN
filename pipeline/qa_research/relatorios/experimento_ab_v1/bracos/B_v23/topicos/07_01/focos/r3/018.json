@@ -1,0 +1,61 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 3,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Autonomia de atuação de um pacote durante perda de supervisão e comando remoto indica lógica local do equipamento.",
+      "pergunta": "Durante uma perda de comunicação com um skid, o DCS fica sem atualização, estados e comando remoto do pacote, mas em campo válvulas e bombas continuam mudando de estado de forma coordenada conforme as condições do próprio skid. Que elemento técnico específico explica essa continuidade operacional?",
+      "resposta": "Lógica local do equipamento.",
+      "explicacao": "A perda do elo com o DCS remove visibilidade e comando remoto, mas não impede a atuação coordenada já executada pela lógica interna do pacote.",
+      "resposta_padrao": "Falha parcial da rede de supervisão.",
+      "por_que_nao": "Falha de rede explica perda de visibilidade e comando, não a continuidade autônoma das sequências e atuações do pacote.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade no DCS apenas de estados agregados do pacote, sem variáveis internas, caracteriza cobertura parcial da automação.",
+      "pergunta": "Num skid integrado ao DCS, os estados gerais do pacote chegam normalmente, mas as variáveis de processo usadas na sequência interna só ficam visíveis na interface local do próprio skid. Que condição técnica específica da arquitetura explica essa visibilidade incompleta?",
+      "resposta": "Cobertura parcial da automação.",
+      "explicacao": "Há integração suficiente para transmitir estados do pacote, mas não todas as variáveis internas; parte da visibilidade permanece fora da automação central.",
+      "resposta_padrao": "Falha de comunicação com o DCS.",
+      "por_que_nao": "Se os estados gerais chegam normalmente, a comunicação existe; a ausência seletiva das variáveis decorre do escopo de integração adotado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nesses casos, parte da visibilidade do processo depende de observação complementar do operador."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

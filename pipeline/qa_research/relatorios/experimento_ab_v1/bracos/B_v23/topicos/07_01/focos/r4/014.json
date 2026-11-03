@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 4,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Relação entre atuador pneumático de dupla ação e o arranjo usual de solenoide no conjunto final.",
+      "pergunta": "Em uma válvula de shutdown com atuador pneumático de dupla ação, sem mola de retorno, a função exige alternar pressurização e exaustão entre os dois lados do atuador para abrir e fechar. Que arranjo usual de solenoide deve ser aplicado nesse conjunto?",
+      "resposta": "Solenoide de quatro vias.",
+      "explicacao": "Sem mola, o atuador de dupla ação precisa comutar ar entre duas câmaras. Por isso, o arranjo usual é de quatro vias; três vias é típico de retorno por mola.",
+      "resposta_padrao": "Solenoide de três vias.",
+      "por_que_nao": "Três vias atende atuador com retorno por mola; na dupla ação é preciso alternar alimentação e exaustão entre dois lados do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A solenoide integra o caminho do ar até o atuador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos usuais com retorno por mola, são empregadas solenoides de três vias; em arranjos usuais de dupla ação, solenoides de quatro vias."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na prova funcional de válvula pneumática com retorno por mola, a disponibilidade da ação de falha depende da exaustão do ar do atuador.",
+      "pergunta": "Numa válvula pneumática de shutdown com retorno por mola, durante o teste funcional a solenoide perde energização conforme esperado. Que efeito pneumático específico deve ser confirmado no conjunto para provar que a válvula realmente pode migrar para a posição de falha?",
+      "resposta": "Exaustão do ar do atuador.",
+      "explicacao": "Na arquitetura com retorno por mola, a função de falha só se concretiza se a câmara do atuador for descarregada. A simples perda de energização da bobina não comprova isso.",
+      "resposta_padrao": "Desenergização da bobina da solenoide.",
+      "por_que_nao": "Mudança do estado elétrico não prova abertura do caminho de exaustão; a migração para a posição de falha depende da descarga pneumática do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Conforme a arquitetura, ela pode exaurir o ar para levar a válvula ao estado de falha sem ar"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A falha de atuação aparece quando uma dessas etapas deixa de transformar o comando em movimento efetivo do obturador."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir resposta lenta de perda de curso pela preservação do curso final com degradação do tempo de deslocamento.",
+      "pergunta": "Em uma válvula on/off com transmissor de posição, o comando muda e a solenoide comuta normalmente. O curso contínuo sempre chega ao valor final e o fim de curso entra, mas o tempo até a posição final vem aumentando e a velocidade de deslocamento caiu. Que sintoma do conjunto final isso caracteriza?",
+      "resposta": "Resposta lenta.",
+      "explicacao": "O curso máximo continua sendo atingido; o desvio está na dinâmica do deslocamento. Isso afasta perda de curso e caracteriza degradação do tempo de resposta do conjunto final.",
+      "resposta_padrao": "Perda de curso.",
+      "por_que_nao": "Perda de curso ocorre quando a válvula não alcança o deslocamento esperado; aqui o deslocamento final é completo e o problema está no tempo de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O transmissor de posição fornece realimentação independente do curso da válvula e permite comparar comando versus posição efetivamente atingida, apoiando o diagnóstico de perda de curso, resposta lenta ou ausência de movimento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Perda de curso indica que a válvula não atingiu o deslocamento esperado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

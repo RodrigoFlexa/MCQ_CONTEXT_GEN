@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 36,
+  "rodada": 1,
+  "contexto": {
+    "A1": 34,
+    "A2": 35,
+    "F": 36
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Recuperação previsível de automação dependente de software exige confirmar a linha de base compatível, não só a peça física.",
+      "pergunta": "Um controlador crítico falhou. Há sobressalente do mesmo modelo, ele energiza e a rede enxerga o hardware, mas a unidade acumulou alterações de lógica, bibliotecas e parametrização desde o último backup completo. Antes da troca, o que precisa ser confirmado para que a restauração seja previsível?",
+      "resposta": "Linha de base compatível da instalação.",
+      "explicacao": "A restauração depende da combinação correta de hardware, software, firmware e da configuração acumulada; sem confirmar essa linha de base, o reparo pode alongar a recuperação e não reproduzir o comportamento esperado.",
+      "resposta_padrao": "Confirmar que existe um sobressalente fisicamente igual e energizável.",
+      "por_que_nao": "Peça igual não garante compatibilidade de versões, aplicação, interfaces e parâmetros da base instalada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a recuperação após falha, reparo ou substituição não depende apenas da presença física do equipamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende da combinação correta entre hardware, software e firmware"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a versão disponível deixa de ser compatível com a base instalada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em funções certificadas, a validade pode ser vinculada à revisão de firmware; hardware igual não basta.",
+      "pergunta": "Num sistema instrumentado de segurança, o cartão sobressalente é do mesmo modelo do instalado, porém veio com revisão de firmware mais nova. A validação da função e a documentação de conformidade foram emitidas para uma revisão específica. Qual compatibilidade deve ser verificada antes da substituição?",
+      "resposta": "Compatibilidade da certificação com a revisão de firmware.",
+      "explicacao": "Em sistemas cuja certificação ou validação é associada a versões específicas, firmware diferente pode invalidar a condição aprovada mesmo com hardware idêntico e energizado.",
+      "resposta_padrao": "Verificar apenas se o cartão encaixa, comunica e alimenta corretamente.",
+      "por_que_nao": "Compatibilidade elétrica e de rack não confirma que a revisão mantém a certificação ou validação da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a validade da configuração ou da certificação está associada a versões específicas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende da combinação correta entre hardware, software e firmware"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em arquitetura com controle e proteção separados, retirar canal de intertravamento degrada a barreira; retirar canal de controle afeta operabilidade.",
+      "pergunta": "Durante manutenção planejada, a malha de controle de um equipamento fica em subsistema separado do intertravamento de proteção, e a operação consegue manter o processo manualmente. Se um único canal redundante precisar ser retirado, qual retirada caracteriza condição degradada da barreira?",
+      "resposta": "O canal redundante do intertravamento.",
+      "explicacao": "Com controle e intertravamento em subsistemas distintos, retirar um canal de proteção reduz a disponibilidade da barreira até restauração e verificação; retirar controle muda a operabilidade.",
+      "resposta_padrao": "A retirada de um canal redundante do controle.",
+      "por_que_nao": "Com a proteção separada, o controle pode ser contornado operacionalmente; a indisponibilidade que degrada a barreira é a do intertravamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando uma arquitetura depende de canais redundantes e um deles é retirado para intervenção, a condição resultante deixa de ser equivalente à condição normal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "controle e intertravamento estão distribuídos em subsistemas distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a indisponibilidade temporária de um deles não produz o mesmo impacto operacional nem o mesmo impacto sobre a proteção"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Monitoramento on-line em canal remanescente deve orientar a escolha da janela operacional em intervenção sobre redundância.",
+      "pergunta": "Um canal redundante de proteção será retirado para intervenção. O canal remanescente está saudável, mas seu monitoramento on-line mostra degradação lenta e estável, sem perda imediata de função, e há várias janelas possíveis antes da próxima parada programada. Qual critério de programação deve prevalecer?",
+      "resposta": "A janela operacional mais favorável.",
+      "explicacao": "O monitoramento on-line existe para deslocar a intervenção para a janela de menor exposição operacional, reduzindo a probabilidade de nova retirada não planejada enquanto a redundância estiver degradada.",
+      "resposta_padrao": "Manter a data originalmente prevista na preventiva.",
+      "por_que_nao": "Em condição degradada, calendário fixo ignora a informação de desempenho disponível para escolher o momento de menor exposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando houver monitoramento on-line da condição e do desempenho, esse recurso pode apoiar a programação da manutenção para janelas operacionais mais favoráveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduzindo a probabilidade de intervenção não planejada."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

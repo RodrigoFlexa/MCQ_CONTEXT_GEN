@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 22,
+  "rodada": 3,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Proteções dependentes de combustão não são validadas em comissionamento com N2 e exigem prova com chama real.",
+      "pergunta": "Num regenerador com comissionamento integrado feito em circuito fechado com N2, como deve ser verificada, antes da entrada de hidrocarboneto, a função que corta o combustível se a chama se extinguir?",
+      "resposta": "Teste de chama real com extinção controlada da chama.",
+      "explicacao": "O arranjo com N2 não exerce combustão. A proteção de corte por perda de chama só é validada com formação, detecção e extinção reais da chama.",
+      "resposta_padrao": "Simulação dos estados do detector de chama no sistema.",
+      "por_que_nao": "Simulação não exercita a combustão nem o caminho real de detecção que comanda o corte de combustível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não substitui a verificação das respostas dependentes do inventário real, da composição do gás, da combustão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa redução de incerteza vale para os subsistemas e condições realmente exercitados no teste"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Se o estado muda em campo, mas a entrada correspondente não muda na lógica, o desvio está na comunicação do sinal até o PLC.",
+      "pergunta": "No comissionamento integrado com N2, uma chave de campo muda de estado e o indicador local confirma a transição, mas a entrada correspondente no PLC não muda e o permissivo permanece negado. Qual mecanismo técnico explica melhor esse descompasso?",
+      "resposta": "Falha de comunicação do sinal de campo até o PLC.",
+      "explicacao": "O teste integrado mostra que a condição física ocorreu, porém não chegou à camada lógica que libera a sequência automática.",
+      "resposta_padrao": "Falha de lógica do permissivo.",
+      "por_que_nao": "Sem a mudança de entrada chegar ao PLC, a lógica não recebe o estado verdadeiro para liberar o permissivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajuda a identificar falhas de comunicação, sequência ou atuação que poderiam impedir liberações corretas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre sinais de campo, lógica e resposta dos equipamentos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

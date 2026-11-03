@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 3,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em SIF com votação, estado forçado no logic solver não substitui a coincidência formada por canais reais independentes.",
+      "pergunta": "Em uma SIF 2oo3, um transmissor foi estimulado em campo e o trip saiu após a manutenção inserir no logic solver o estado de alarme de um segundo canal para completar a votação, com fechamento normal da válvula final. Que aspecto específico ainda precisa ser exercitado para demonstrar a lógica como projetada?",
+      "resposta": "A votação 2oo3 por dois canais reais independentes.",
+      "explicacao": "O ensaio cobriu um canal real, a lógica e a saída, mas não demonstrou a coincidência baseada em entradas reais. A evidência só vale para os canais e vínculos efetivamente percorridos.",
+      "resposta_padrao": "O terceiro transmissor.",
+      "por_que_nao": "A lacuna técnica não é um instrumento isolado, e sim a formação da votação com entradas reais independentes; um estado inserido no solver não prova essa coincidência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua evidência vale apenas para os canais, vínculos lógicos, saídas e cenários realmente percorridos no ensaio."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a matriz de causa e efeito é testada, o objetivo é confirmar que as condições de entrada exercitadas levam aos efeitos definidos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em intertravamentos com rearme condicionado, comando e movimento do elemento final não demonstram o caminho de retorno usado pela própria função.",
+      "pergunta": "Em um shutdown, o detector gerou o trip, a solenoide comutou e a SDV fechou visualmente, mas o bloqueio de rearme dessa função depende do status fechado retornando ao sistema de segurança. Que sinal específico ainda deve ser percorrido no ensaio para demonstrar a função completa?",
+      "resposta": "Retorno de posição fechada da SDV ao SIS/ESD.",
+      "explicacao": "A atuação automática até o elemento final foi observada, porém a função inclui a confirmação associada para manter ou liberar o rearme. Sem esse feedback, a cobertura permanece parcial.",
+      "resposta_padrao": "O comando de saída para a solenoide.",
+      "por_que_nao": "Esse caminho já foi demonstrado quando a solenoide comutou e a SDV fechou; a parte ainda não provada é a realimentação de retorno à lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se o teste não percorre a interface, o repasse de estado, o comando de trip, a atuação do solenóide, a movimentação do elemento final ou a confirmação de retorno associada, o resultado não demonstra essas partes da arquitetura."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em proof test parcial, a fronteira da cobertura do lado de saída é o último ponto fisicamente atuado e confirmado.",
+      "pergunta": "No proof test de uma SDV, a perda de tensão foi confirmada nos bornes de marshalling da saída, mas a bobina da solenoide ficou isolada para evitar atuação e a válvula permaneceu aberta. Ao concluir o ensaio, qual é o último ponto da função efetivamente demonstrado no lado de saída?",
+      "resposta": "Bornes de marshalling da saída.",
+      "explicacao": "Como a solenoide não chegou a atuar, a cobertura não alcança nem bobina nem elemento final. Em ensaio parcial, o limite é o último ponto onde a saída realmente foi comprovada.",
+      "resposta_padrao": "O módulo de saída do SIS.",
+      "por_que_nao": "A confirmação elétrica foi feita a jusante do módulo, nos bornes de marshalling; a evidência se estende além do cartão, mas não chega à solenoide.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é essencial explicitar o que foi testado no canal de entrada, no logic solver, nos módulos de saída e no elemento final, inclusive até onde as saídas realmente atuaram."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa condição, um ensaio parcial não equivale automaticamente a um teste integral da função."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

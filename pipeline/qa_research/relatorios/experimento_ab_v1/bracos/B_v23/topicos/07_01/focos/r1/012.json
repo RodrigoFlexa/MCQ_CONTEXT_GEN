@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Movimento do atuador sob pressurização direta, com falha em automático e divergência de posição, aponta para o posicionador.",
+      "pergunta": "Em uma válvula modulante, o suprimento pneumático está normal e o atuador percorre o curso quando pressurizado diretamente, mas, sob comando automático, a haste não segue a referência e a indicação local de posição não acompanha o comandado. Que acessório do conjunto deve ser o foco do diagnóstico?",
+      "resposta": "Posicionador.",
+      "explicacao": "Com suprimento normal e atuador movendo sob pressurização direta, a parte motriz está íntegra. A divergência entre referência, indicação de posição e resposta em automático caracteriza falha de posicionamento.",
+      "resposta_padrao": "Atuador.",
+      "por_que_nao": "Movimento sob pressurização direta demonstra capacidade do atuador; o erro está no controle de posição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Entre os acessórios citados estão posicionador, transdutor, regulador de pressão de suprimento, operador manual, snubber e chave fim de curso."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre o modo de atuação pretendido, a capacidade de modulação ou de abre-fecha, a indicação de posição e a resposta observável do atuador em campo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda intermitente de força com rede de ar estável e oscilação local de alimentação aponta para o regulador de suprimento da válvula.",
+      "pergunta": "Numa válvula pneumática, o controlador e o posicionador respondem ao comando, porém a força do atuador cai de forma intermitente porque a pressão de alimentação no próprio conjunto oscila, embora a rede geral de ar esteja estável. Que acessório específico deve ser inspecionado primeiro?",
+      "resposta": "Regulador de pressão de suprimento.",
+      "explicacao": "O bloco separa falhas de suprimento pneumático das de posicionamento. Com rede geral estável e perda de força ligada à pressão local do conjunto, o diagnóstico converge para o regulador de suprimento.",
+      "resposta_padrao": "Posicionador.",
+      "por_que_nao": "Pressão pneumática local instável reduz força antes do posicionamento; isso não nasce no controle de posição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Entre os acessórios citados estão posicionador, transdutor, regulador de pressão de suprimento, operador manual, snubber e chave fim de curso."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Fim de curso mecânico observado sem reconhecimento binário pela lógica indica falha na chave fim de curso.",
+      "pergunta": "Em um teste de intertravamento, a válvula de isolamento chega mecanicamente ao fim de curso observado em campo, mas a lógica não reconhece os estados \"aberta\" e \"fechada\". Qual acessório do conjunto deve ser verificado para essa confirmação discreta?",
+      "resposta": "Chave fim de curso.",
+      "explicacao": "Se o fim de curso mecânico acontece em campo e a lógica não o reconhece, a indisponibilidade está no dispositivo que fornece estado binário de posição.",
+      "resposta_padrao": "Posicionador.",
+      "por_que_nao": "O posicionador controla posição analógica; a informação binária de aberto/fechado para a lógica vem da chave.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Entre os acessórios citados estão posicionador, transdutor, regulador de pressão de suprimento, operador manual, snubber e chave fim de curso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre o modo de atuação pretendido, a capacidade de modulação ou de abre-fecha, a indicação de posição e a resposta observável do atuador em campo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A disponibilidade da ESDV não substitui a da válvula modulante quando a função exigida é controle contínuo.",
+      "pergunta": "Após intervenção numa linha com válvula de controle e ESDV, o teste do SIS confirma a ESDV abrindo e fechando, mas no controle de pressão o elemento em campo só responde nos extremos, sem posições intermediárias estáveis. Qual elemento final do laço continua indisponível?",
+      "resposta": "Válvula de controle modulante.",
+      "explicacao": "A ESDV comprova isolamento abre-fecha, mas o laço de pressão precisa de ação contínua do elemento final. Resposta apenas nos extremos mostra indisponibilidade da válvula modulante.",
+      "resposta_padrao": "ESDV.",
+      "por_que_nao": "A ESDV entrega segurança e isolamento em abre-fecha; não substitui a modulação exigida pelo controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos de produção, válvulas modulantes podem atuar, por exemplo, no controle de nível de separadores, de pressão de gás ou na restrição de golfadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre o modo de atuação pretendido, a capacidade de modulação ou de abre-fecha, a indicação de posição e a resposta observável do atuador em campo."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

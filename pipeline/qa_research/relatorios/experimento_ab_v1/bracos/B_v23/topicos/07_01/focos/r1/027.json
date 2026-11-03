@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 1,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Objetivo distintivo do proof test frente ao teste funcional em função instrumentada de segurança.",
+      "pergunta": "Numa função instrumentada de segurança sem falhas aparentes, a equipe precisa escolher o ensaio que busque expor falhas perigosas ocultas, e não apenas confirmar que um cenário previsto gera o trip esperado. Qual ensaio deve ser aplicado?",
+      "resposta": "Proof test.",
+      "explicacao": "O teste funcional confirma a resposta automática ao cenário exercitado. O proof test tem outro objetivo: revelar falhas perigosas ocultas e demonstrar a capacidade planejada de atuação da proteção.",
+      "resposta_padrao": "Teste funcional.",
+      "por_que_nao": "Teste funcional verifica a resposta do cenário percorrido, mas não tem como objetivo revelar falhas perigosas ocultas da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes funcionais e proof tests não demonstram a mesma coisa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O proof test tem alcance diferente: ele busca revelar falhas perigosas ocultas da função instrumentada de segurança"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Cobertura de ensaio da matriz de causa e efeito depende da entrada e do vínculo lógico efetivamente percorridos.",
+      "pergunta": "Na matriz de causa e efeito de uma bomba, a baixa pressão de óleo lubrificante foi ensaiada e a parada automática ocorreu como previsto. Como a alta vibração leva à mesma parada, que entrada ainda precisa ser exercitada para demonstrar essa segunda causa?",
+      "resposta": "A entrada de alta vibração na matriz.",
+      "explicacao": "Na matriz, a evidência do ensaio vale só para as condições de entrada e vínculos lógicos realmente percorridos. A mesma saída final não comprova outra causa se ela não foi exercitada.",
+      "resposta_padrao": "Nenhuma; a parada automática já foi comprovada.",
+      "por_que_nao": "Em matriz de causa e efeito, a mesma saída não demonstra outra entrada nem seu vínculo lógico quando esse caminho não foi percorrido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a matriz de causa e efeito é testada, o objetivo é confirmar que as condições de entrada exercitadas levam aos efeitos definidos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua evidência vale apenas para os canais, vínculos lógicos, saídas e cenários realmente percorridos no ensaio."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de registro necessário para delimitar a cobertura de um proof test parcial.",
+      "pergunta": "Quando o proof test de uma função de segurança é dividido entre subsistemas e em janelas operacionais diferentes, que delimitação técnica precisa constar do registro para não atribuir cobertura integral ao ensaio?",
+      "resposta": "Até onde as saídas realmente atuaram.",
+      "explicacao": "Em proof test fracionado, é indispensável explicitar a cobertura efetiva do ensaio. O limite real de atuação das saídas define o que foi demonstrado e impede tratar o teste parcial como integral.",
+      "resposta_padrao": "As datas e os responsáveis de cada etapa.",
+      "por_que_nao": "Rastreabilidade administrativa não define a cobertura demonstrada; o ponto decisivo é o alcance real da atuação das saídas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte do proof test precisa ser feita por subsistema ou em momentos diferentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inclusive até onde as saídas realmente atuaram."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um ensaio parcial não equivale automaticamente a um teste integral da função."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação do trecho não demonstrado em ensaio integrado quando a interface é percorrida, mas a saída de campo não atua.",
+      "pergunta": "Num ensaio integrado, o F&G confirmou o evento e o ESD recebeu corretamente esse estado, mas o trip de campo ficou inibido e nenhuma solenóide comutou. Que trecho específico da arquitetura permaneceu sem cobertura demonstrada?",
+      "resposta": "A saída de campo do ESD até a solenóide de trip.",
+      "explicacao": "Como o estado chegou ao ESD, a interface entre sistemas foi percorrida. Sem comando de campo efetivo nem comutação da solenóide, a cadeia de saída até esse atuador não foi demonstrada.",
+      "resposta_padrao": "A interface entre F&G e ESD.",
+      "por_que_nao": "O repasse de estado já ocorreu; a parte não demonstrada começa na saída que deveria acionar a solenóide em campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se o teste não percorre a interface, o repasse de estado, o comando de trip, a atuação do solenóide"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o resultado não demonstra essas partes da arquitetura."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em FPSOs, esse efeito é intensificado pela integração entre utilidades, geração elétrica, automação, combate a incêndio, processamento de óleo e gás"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

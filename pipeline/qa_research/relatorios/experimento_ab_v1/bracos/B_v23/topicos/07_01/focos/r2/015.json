@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falhas de ordem, permissivos e temporizações só são comprovadas por teste integrado da sequência automática.",
+      "pergunta": "Na partida automática de um sistema, cada válvula, bomba e retorno de campo passa no loop check, mas a sequência às vezes libera a bomba principal antes da confirmação de fechamento da recirculação e do tempo de estabilização. Como isso deve ser provado no comissionamento?",
+      "resposta": "Teste funcional integrado da sequência automática com permissivos e temporizações ativos.",
+      "explicacao": "O defeito está na coordenação temporal entre lógica, permissivos, temporizações e retornos. Ensaios estáticos e verificações ponto a ponto não exercitam a ordem real da sequência automática.",
+      "resposta_padrao": "Loop check ponto a ponto dos sinais envolvidos.",
+      "por_que_nao": "Loop check valida caminhos individuais, não a dependência temporal entre permissivos, feedbacks e passos da lógica automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de sequência"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comunicação intermitente entre DCS, PLC e supervisão exige prova ponta a ponta sob carga representativa.",
+      "pergunta": "Em uma interface DCS-PLC, comandos e leituras parecem normais em verificações unitárias, mas durante uso simultâneo de tendências, alarmes e troca de dados com várias remotas surgem congelamentos breves na supervisão sem falha local. Como a comunicação deve ser provada no comissionamento para capturar esse defeito?",
+      "resposta": "Teste integrado ponta a ponta sob carga representativa da rede.",
+      "explicacao": "A intermittência aparece na integração entre camadas e sob tráfego semelhante ao real. Conectividade básica ou leitura pontual não exercitam o caminho completo de atualização e supervisão.",
+      "resposta_padrao": "Teste de conectividade da rede com os equipamentos energizados.",
+      "por_que_nao": "Conectividade estática não reproduz a carga nem o fluxo ponta a ponta onde a comunicação intermitente se manifesta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comunicação intermitente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Instabilidade inicial de controle só aparece em teste dinâmico integrado com a malha fechada.",
+      "pergunta": "Após parametrização aprovada, a válvula segue degraus e a variável mede corretamente em manual, mas ao colocar o controlador de pressão em automático com o processo pressurizado aparecem oscilações sustentadas. Que regime de teste do comissionamento evidencia esse defeito?",
+      "resposta": "Teste dinâmico integrado em malha fechada.",
+      "explicacao": "A instabilidade depende da interação entre controlador, elemento final e processo. Testes estáticos ou em manual não reproduzem a dinâmica da malha controlando de fato.",
+      "resposta_padrao": "Teste de curso da válvula em manual.",
+      "por_que_nao": "O curso em manual verifica o elemento final, não a estabilidade da malha com o controlador fechando o ciclo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "instabilidade inicial de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo. Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

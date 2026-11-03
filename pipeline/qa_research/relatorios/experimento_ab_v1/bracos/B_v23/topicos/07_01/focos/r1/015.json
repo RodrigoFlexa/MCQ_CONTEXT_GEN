@@ -1,0 +1,117 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falha de sequência em comissionamento só é provada por teste funcional integrado com permissivos e temporizações reais.",
+      "pergunta": "Durante o comissionamento de uma partida automática entre PLC e DCS, entradas mudam corretamente nas remotas, saídas atuam por forçamento e telas mostram estados coerentes em repouso; na execução automática, a lógica às vezes salta uma etapa quando permissivos e temporizações entram em jogo. Que verificação deve ser executada para comprovar a origem?",
+      "resposta": "Teste funcional integrado da sequência com permissivos e temporizações ativos.",
+      "explicacao": "O defeito aparece na interação temporal entre lógica, comunicação e estados de processo. Forçamento e checagens estáticas não exercitam a sequência real nem validam as transições entre etapas.",
+      "resposta_padrao": "Loop check ponto a ponto dos sinais envolvidos.",
+      "por_que_nao": "Loop check confirma passagem de sinais, mas não a lógica temporal e a dependência entre passos da sequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura de automação precisa ser verificada como sistema integrado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Testes integrados, sob condições representativas porém controladas, revelam falhas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de sequência"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comunicação intermitente em comissionamento deve ser provada por teste ponta a ponta sob carga representativa da rede.",
+      "pergunta": "Em uma interface DCS-PLC por rede, todos os pontos parecem corretos em leituras instantâneas e os equipamentos permanecem energizados sem alarme local, mas a supervisão apresenta congelamentos breves quando várias remotas e estações trocam dados ao mesmo tempo. Como deve ser provada a comunicação para capturar esse defeito?",
+      "resposta": "Teste integrado ponta a ponta sob carga representativa da rede.",
+      "explicacao": "A intermitência depende do sistema completo e do regime de tráfego aplicado. Leituras instantâneas e autotestes locais podem parecer normais sem reproduzir a condição em que a falha aparece.",
+      "resposta_padrao": "Ping e autotestes de comunicação dos equipamentos.",
+      "por_que_nao": "Autotestes e testes leves não reproduzem o tráfego concorrente em que a intermitência se manifesta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "comunicação intermitente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Testes integrados, sob condições representativas porém controladas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Instabilidade inicial de controle só se evidencia por teste dinâmico integrado com a malha em automático.",
+      "pergunta": "Após energização, parametrização conferida, I/Os verificados e válvula respondendo em manual, uma malha de pressão só começa a oscilar quando o controlador entra em automático com o processo em condição real. Que regime de teste deve ser usado no comissionamento para evidenciar esse problema?",
+      "resposta": "Teste dinâmico integrado em malha fechada.",
+      "explicacao": "A instabilidade surge da interação entre controlador, comunicação, elemento final e dinâmica do processo. Em manual ou em verificação estática, essa interação não é exercitada.",
+      "resposta_padrao": "Checagem estática da sintonia e dos comandos em manual.",
+      "por_que_nao": "A oscilação nasce do comportamento fechado da malha, inexistente em testes estáticos ou com atuação manual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes integrados, sob condições representativas porém controladas, revelam falhas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "instabilidade inicial de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Controladores como PLC e DCS compõem a camada que recebe informações do processo e coordena ações de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Erro de associação de alarme entre entrada e supervisão exige verificação funcional integrada até o anúncio ao operador.",
+      "pergunta": "Durante o comissionamento, um switch de alto nível comuta corretamente no cartão de entrada e o ponto bruto muda no controlador, mas o alarme anunciado na estação do operador aparece associado a outro equipamento. Como esse defeito deve ser verificado?",
+      "resposta": "Teste funcional integrado do alarme até o anúncio na estação.",
+      "explicacao": "Campo e entrada podem estar corretos enquanto a associação do evento ao anúncio na supervisão permanece errada. Só o teste ponta a ponta confirma a cadeia completa do alarme.",
+      "resposta_padrao": "Repetir a calibração e o teste local do switch.",
+      "por_que_nao": "Comutação e aquisição já estão corretas; o defeito está na associação do evento à camada de supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alarmes mal associados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura de automação precisa ser verificada como sistema integrado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

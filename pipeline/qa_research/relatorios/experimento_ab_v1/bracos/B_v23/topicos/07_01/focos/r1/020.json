@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A confiabilidade de uma indicação deve ser julgada pela coerência com variáveis correlatas, não pelo valor isolado.",
+      "pergunta": "Durante uma transferência entre tanques, a vazão descarregada permanece sustentada e a bomba segue carregada, mas o nível do tanque de destino fica praticamente plano na supervisão. Antes de tratar isso como problema hidráulico, que verificação técnica deve ser feita para decidir se essa indicação é confiável?",
+      "resposta": "Coerência entre variáveis relacionadas.",
+      "explicacao": "Para diagnóstico de arquitetura ou medição, o valor isolado não basta. Se nível, vazão e condição da bomba não formam um quadro coerente, a indicação pode não representar o processo.",
+      "resposta_padrao": "Mandar recalibrar o transmissor de nível.",
+      "por_que_nao": "A triagem técnica inicial é pela coerência com variáveis correlatas; recalibração não decide primeiro a confiabilidade da informação exibida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Um valor plausível só pode ser usado operacionalmente quando sua validade no sistema está confirmada.",
+      "pergunta": "Após uma perturbação de comunicação, uma pressão na tela do operador continua numericamente plausível e próxima do histórico; o sistema também disponibiliza a condição de confiança de cada ponto. Que atributo deve ser conferido antes de usar esse valor numa decisão operacional?",
+      "resposta": "Status de validade do dado.",
+      "explicacao": "A visualização só apoia decisão quando os dados são consistentes. Um número plausível pode continuar indisponível ou não confiável, e isso aparece no status de validade.",
+      "resposta_padrao": "Se o valor continua dentro da faixa normal.",
+      "por_que_nao": "Faixa plausível não garante usabilidade; a automação indica explicitamente quando o dado não deve ser tomado como confiável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards, a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sinais plausíveis não excluem indisponibilidade da infraestrutura que transporta ou processa os sinais.",
+      "pergunta": "Vários sinais de um mesmo subsistema continuam plausíveis entre si, mas os comandos associados deixam de atuar e aparecem indicações intermitentes de falha da estação. Qual elemento técnico comum explica melhor esse conjunto de sintomas?",
+      "resposta": "Indisponibilidade do sistema que transporta ou processa os sinais.",
+      "explicacao": "No diagnóstico de arquitetura, valores plausíveis não bastam. Um problema no caminho comum pode preservar alguma visibilidade enquanto compromete comando e tratamento dos sinais.",
+      "resposta_padrao": "Falhas simultâneas nos equipamentos de campo comandados.",
+      "por_que_nao": "Perda de comando combinada com falha de estação aponta para causa comum de infraestrutura, não para várias falhas independentes de campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

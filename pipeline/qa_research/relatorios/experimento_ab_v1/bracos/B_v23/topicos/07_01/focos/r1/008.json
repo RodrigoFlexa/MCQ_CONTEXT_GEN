@@ -1,0 +1,93 @@
+{
+  "item": "07_01",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Stiction pode gerar ciclo limite por stick-slip, distinto de hunting por instabilidade.",
+      "pergunta": "Numa malha de controle, o sinal do controlador varia continuamente, a válvula fica um tempo parada, depois dá um salto de posição e a variável de processo repete esse padrão mesmo sem novo distúrbio externo. Que comportamento dinâmico tende a se estabelecer na malha?",
+      "resposta": "Ciclo limite.",
+      "explicacao": "O stick-slip introduz movimento descontínuo e pode manter ciclos repetitivos mesmo sem novo estímulo. Isso é efeito típico de stiction, diferente do hunting sustentado por instabilidade.",
+      "resposta_padrao": "Hunting da válvula.",
+      "por_que_nao": "Hunting é oscilação sustentada por instabilidade da malha ou do posicionador; aqui o padrão nasce da liberação intermitente após travamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O resultado típico é permanência temporária em uma posição seguida de deslocamento abrupto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse mecanismo degrada o desempenho da malha porque introduz atraso, movimento descontínuo e possibilidade de ciclos limite."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele se distingue do stiction porque, no hunting, a oscilação é sustentada por instabilidade; no stiction, há travamento e liberação intermitente do movimento."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Na presença de stiction, parte do esforço do controlador é gasta para vencer o limiar de atrito estático antes de alterar a variável manipulada.",
+      "pergunta": "Em uma válvula de controle, a saída do controlador se desloca por algum tempo sem alterar a variável manipulada; só depois a haste se move de forma brusca. Qual mecanismo na válvula explica esse esforço sem resposta imediata do processo?",
+      "resposta": "Vencimento do limiar de atrito estático do conjunto móvel.",
+      "explicacao": "Antes do início do movimento, o esforço do controlador é convertido em força para superar o atrito estático interno. A variável manipulada só muda quando esse limiar é ultrapassado.",
+      "resposta_padrao": "Tempo morto do processo.",
+      "por_que_nao": "Tempo morto atrasa a resposta após a ação já efetiva; aqui a ação ainda não chegou à modulação porque está sendo consumida na válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Stiction é o comportamento associado ao atrito estático que mantém a válvula parada até que a força de atuação vença a resistência ao movimento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O controlador continua corrigindo o erro, mas parte desse esforço é consumida para vencer o atrito antes que a variável manipulada realmente mude."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Hunting pode nascer do posicionador; ver a válvula oscilar não localiza a origem no corpo da válvula.",
+      "pergunta": "Uma válvula de controle apresenta oscilação persistente de magnitude apreciável e a pressão de carga do atuador também oscila após cessar o estímulo externo. Além da sintonia da malha, que subsistema do conjunto deve ser apontado como origem direta plausível desse hunting?",
+      "resposta": "Posicionador da válvula.",
+      "explicacao": "O hunting pode ser gerado pela instabilidade do posicionador, e a oscilação da pressão de carga mostra que o fenômeno está no conjunto de atuação, não apenas no processo.",
+      "resposta_padrao": "Corpo da válvula.",
+      "por_que_nao": "Ver a válvula oscilar não basta para atribuir a origem ao corpo; o posicionador pode criar a instabilidade e modular a pressão de carga em oscilação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O efeito observado depende da interação entre atrito mecânico, força disponível no atuador, pressão de suprimento, presença de posicionador e forças de processo atuando sobre o obturador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em aplicações com válvulas de controle, esse fenômeno pode aparecer como oscilação da pressão de carga do atuador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "As causas apontadas incluem instabilidade no sistema de controle ou no posicionador da válvula."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Observar a válvula oscilando não basta para concluir que a origem está apenas no corpo da válvula ou apenas no controlador."
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "não pergunte o que é citado, mencionado ou listado: pergunte pelo conhecimento técnico"
+      ]
+    }
+  ]
+}

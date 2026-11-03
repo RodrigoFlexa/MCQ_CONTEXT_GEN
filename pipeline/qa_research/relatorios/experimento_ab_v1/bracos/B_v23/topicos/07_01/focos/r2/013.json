@@ -1,0 +1,69 @@
+{
+  "item": "07_01",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar incompatibilidade entre a função modulante pretendida e um conjunto final montado/configurado como abre-fecha.",
+      "pergunta": "Numa malha de controle de pressão, a IHM permite comandar 0 a 100%, mas em campo o conjunto tem solenoide e apenas confirmações de aberto/fechado; o atuador sempre vai de um extremo ao outro. Que incompatibilidade específica explica a indisponibilidade da função pretendida?",
+      "resposta": "Conjunto on/off instalado onde a função exige válvula modulante.",
+      "explicacao": "A disponibilidade real depende do equipamento instalado e da coerência com a função. Solenoide e sinais discretos caracterizam arquitetura abre-fecha, incapaz de fornecer posicionamento contínuo para controle.",
+      "resposta_padrao": "Posicionador descalibrado.",
+      "por_que_nao": "Com solenoide e apenas fins de curso, o conjunto é abre-fecha e não oferece posicionamento contínuo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a capacidade real do elemento final depende não apenas do equipamento instalado, mas também da configuração de comando"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre o modo de atuação pretendido, a capacidade de modulação ou de abre-fecha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A chave fim de curso confirma apenas que uma posição ajustada foi alcançada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ele não substitui a medição contínua do curso quando a função exige modulação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de lógica de comando de configuração incorreta da ação de falha do conjunto final sob perda de ar.",
+      "pergunta": "Numa válvula de shutdown, o trip pelo sistema fecha corretamente e a reabertura também funciona, mas no teste de perda de ar de suprimento a válvula vai para a posição oposta à exigida pela função de segurança. Que configuração efetiva do elemento final está inconsistente?",
+      "resposta": "A ação de falha pneumática do conjunto atuador-válvula.",
+      "explicacao": "Há incoerência entre o modo de atuação pretendido e o comportamento real sem ar. A posição assumida na perda de suprimento é definida pela arquitetura pneumática e pelo atuador.",
+      "resposta_padrao": "A lógica de trip do SIS.",
+      "por_que_nao": "Se o trip comandado funciona, a lógica executa; a posição errada na perda de ar vem da ação de falha do conjunto final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre o modo de atuação pretendido"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda de pressão de suprimento também pode provocar falha para cima, falha para baixo ou travamento na última posição"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

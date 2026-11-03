@@ -1,0 +1,61 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 2,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A resolução temporal do historian limita a observabilidade de transientes curtos em dashboards e tendências.",
+      "pergunta": "Um dashboard do historian mostra uma pressão sempre suave, mas a lógica de proteção registrou atuações compatíveis com surtos rápidos nessa linha. Antes de descartar o evento como erro do sistema, que parâmetro da aquisição deve ser conferido para saber se a tendência tinha capacidade de enxergar esse desvio?",
+      "resposta": "Intervalo de coleta do historian.",
+      "explicacao": "Com coleta periódica, a tendência só apoia decisão se os dados forem consistentes; um desvio mais rápido que a amostragem pode não aparecer no dashboard.",
+      "resposta_padrao": "Status de validade do dado.",
+      "por_que_nao": "Validade informa se o valor coletado foi aceito, não se a taxa de coleta foi suficiente para registrar um surto curto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância só sustenta a resiliência operacional quando a perda do caminho redundante é perceptível à operação.",
+      "pergunta": "Em uma arquitetura redundante, um dos canais falha e a função continua pelo caminho remanescente, sem efeito imediato no processo. Ao monitorar a supervisão, que indicação específica deve ser observada para que a equipe perceba essa degradação antes de uma segunda falha?",
+      "resposta": "Perda de redundância alarmada.",
+      "explicacao": "A função pode permanecer ativa após a comutação, mas a arquitetura fica em resiliência reduzida; por isso a perda de redundância precisa ser detectável para tratamento tempestivo.",
+      "resposta_padrao": "A comutação automática para o canal remanescente.",
+      "por_que_nao": "Comutar preserva a função, mas não torna perceptível que o sistema perdeu redundância e ficou vulnerável à segunda falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função e quando a perda dessa condição pode ser percebida."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

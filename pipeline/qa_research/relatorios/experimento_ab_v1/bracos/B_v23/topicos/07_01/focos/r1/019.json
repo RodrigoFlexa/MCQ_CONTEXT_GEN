@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de redundância exige comutação real do canal para comprovar preservação da função.",
+      "pergunta": "Em um par redundante de controladores, os dois canais aparecem saudáveis e sincronizados, mas ainda falta comprovar que a malha continuará atendida se um deles cair. Que verificação deve ser executada para validar a redundância de forma operacional?",
+      "resposta": "Comutação forçada de um canal com confirmação da continuidade da função.",
+      "explicacao": "Saúde e sincronismo não provam benefício operacional. O teste de redundância precisa demonstrar preservação da função após falha ou comutação de um canal.",
+      "resposta_padrao": "Consultar apenas o diagnóstico saudável e o sincronismo dos dois controladores.",
+      "por_que_nao": "Indicadores de saúde não mostram se existe caminho alternativo efetivo nem se a função permanece atendida durante a comutação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falha oculta de um canal redundante sem alarme caracteriza ausência de detectabilidade da perda de redundância.",
+      "pergunta": "Em um sistema com fontes redundantes, uma delas falha sem qualquer indicação e a carga segue operando; dias depois, a falha da segunda derruba o serviço. Que deficiência técnica da arquitetura explica essa exposição?",
+      "resposta": "Ausência de detecção da perda de redundância.",
+      "explicacao": "A primeira falha não eliminou a função, mas deixou o sistema degradado sem percepção. Sem detectabilidade, a operação continua com resiliência reduzida até a segunda falha.",
+      "resposta_padrao": "Capacidade insuficiente da fonte remanescente.",
+      "por_que_nao": "A remanescente sustentou a função após a primeira falha; o problema foi a degradação silenciosa, não limitação imediata de capacidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sintoma restrito a uma estação de operação, com controle preservado, aponta primeiro para a camada de supervisão.",
+      "pergunta": "Uma estação de operação deixa de atualizar tendências, estados e comandos remotos, mas outra estação mostra o processo normalmente e o controlador mantém a malha estável. Em que camada o primeiro diagnóstico deve se concentrar?",
+      "resposta": "Camada de supervisão.",
+      "explicacao": "A função de controle e a visibilidade por outra estação permanecem íntegras. O sintoma está restrito à interface supervisória daquela estação, não ao campo ou à medição.",
+      "resposta_padrao": "Transmissor ou instrumento de campo.",
+      "por_que_nao": "Falha de campo afetaria a medição para todas as estações e para o controle; aqui a perda está localizada à visibilidade e comando de um supervisório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

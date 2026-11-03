@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 2,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em arquitetura com comutação automática, a perda silenciosa de um canal redundante deve ser explicitada por indicação de redundância degradada.",
+      "pergunta": "Em um sistema com comutação automática entre canais redundantes, um canal sai de serviço e a função segue normal pelo caminho remanescente. Para que a operação não permaneça sem saber que perdeu resiliência, que indicação deve existir no sistema?",
+      "resposta": "Alarme de redundância degradada.",
+      "explicacao": "A função foi preservada, mas o sistema deixou de tolerar a próxima falha do mesmo serviço. A operação precisa perceber que o arranjo está degradado.",
+      "resposta_padrao": "Nenhuma, se a função permaneceu normal.",
+      "por_que_nao": "Manter a função não preserva a resiliência; sem indicação da degradação, a segunda falha elimina o serviço sem resposta tempestiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função e quando a perda dessa condição pode ser percebida."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em visualização por historian ou dashboard, a aceitação operacional do valor exige conferir a validade do dado, não só sua plausibilidade instantânea.",
+      "pergunta": "Em um sistema com coleta periódica por historian, uma variável permanece plausível e estável no dashboard enquanto variáveis relacionadas se alteram no processo. Antes de usar esse valor na decisão operacional, que informação do próprio sistema deve ser conferida?",
+      "resposta": "Status de validade do dado.",
+      "explicacao": "Em visualizações agregadas, um valor plausível pode estar antigo, congelado ou indisponível. A validade informa se o dado segue utilizável para decisão.",
+      "resposta_padrao": "O valor instantâneo e a tendência mostrada na tela.",
+      "por_que_nao": "Plausibilidade visual não comprova que o dado esteja válido; o sistema pode exibir informação desatualizada ou congelada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na análise por camadas, atualização normal de PV e estados com falha apenas no acionamento remoto caracteriza perda de comando, não perda de medição nem falha de campo.",
+      "pergunta": "Uma válvula não responde ao comando enviado da estação de operação, mas sua realimentação de posição, os estados do skid e a PV associada continuam atualizando normalmente, e o acionamento local em campo funciona. No primeiro enquadramento do sintoma por camadas, que perda técnica está caracterizada?",
+      "resposta": "Perda de comando remoto.",
+      "explicacao": "Medição e visibilidade seguem presentes, e o conjunto de campo atua localmente. O sintoma fica concentrado no caminho de comando remoto.",
+      "resposta_padrao": "Falha do atuador da válvula.",
+      "por_que_nao": "Com atuação local normal e realimentações atualizando, o elemento final e a medição estão íntegros; a perda está na cadeia de comando remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

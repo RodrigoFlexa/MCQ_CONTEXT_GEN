@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Bypass pode alcançar outras funções quando trip, permissivo e alarme compartilham o mesmo sinal condicionado na lógica.",
+      "pergunta": "Após aplicar bypass temporário para impedir um trip de baixa pressão, o permissivo de partida e o alarme dessa mesma condição também deixam de responder ao campo, embora o pressostato e sua entrada mudem normalmente. Que elemento específico da arquitetura lógica explica melhor esse alcance adicional?",
+      "resposta": "Bit condicionado compartilhado na lógica.",
+      "explicacao": "Se a entrada de campo muda e o efeito atinge trip, permissivo e alarme, o bypass provavelmente atua sobre um sinal comum de condicionamento, cujo alcance depende da arquitetura da função.",
+      "resposta_padrao": "Pressostato com defeito.",
+      "por_que_nao": "A entrada de campo muda normalmente, e o desvio simultâneo em funções diferentes aponta para lógica comum, não para o sensor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dependendo de como são aplicadas, seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "embora o alcance concreto dependa da arquitetura e da função afetada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Forcing de saída mantém o elemento final fixo mesmo quando o iniciador e a lógica do trip estão corretos.",
+      "pergunta": "Num teste de intertravamento, o iniciador muda de estado, o PLC registra o trip, mas a saída digital para a solenóide permanece fixa; ao energizar a solenóide localmente, o atuador responde normalmente. Qual intervenção temporária específica explica melhor esse comportamento?",
+      "resposta": "Forcing na saída digital do PLC.",
+      "explicacao": "Há coerência entre iniciador, lógica de trip e resposta local do elemento final; a discrepância aparece apenas no comando digital, típico de saída mantida artificialmente.",
+      "resposta_padrao": "Solenóide defeituosa.",
+      "por_que_nao": "Com trip reconhecido no PLC e atuação normal por energização local, a cadeia final está apta; o comando digital é que ficou preso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar, no arranjo efetivamente testado, a coerência entre sinais de campo, lógica e resposta dos equipamentos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Forcing do bit de qualidade mascara a supervisão e mantém uma PV aparentemente válida mesmo com o canal aberto.",
+      "pergunta": "Um transmissor foi retirado do cartão para manutenção; os demais canais do mesmo cartão seguem atualizando, mas a tela mantém a PV plausível sem bad quality e sem alarme de falha, enquanto variáveis relacionadas mudam no processo. Que elemento específico da supervisão deve ser investigado primeiro?",
+      "resposta": "Bit de qualidade do ponto forçado.",
+      "explicacao": "Com o canal aberto, a supervisão deveria sinalizar inválido; se outros canais do mesmo cartão seguem normais e a PV permanece válida, o mascaramento tende a estar no status de qualidade do próprio ponto.",
+      "resposta_padrao": "Cartão de entrada analógica defeituoso.",
+      "por_que_nao": "Os demais canais do mesmo cartão seguem atualizando, e a ausência de bad quality com canal aberto indica mascaramento do status do ponto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

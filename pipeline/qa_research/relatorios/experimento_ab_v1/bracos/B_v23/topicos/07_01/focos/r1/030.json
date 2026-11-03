@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 30,
+  "rodada": 1,
+  "contexto": {
+    "A1": 29,
+    "F": 30,
+    "A2": 31
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Divergência entre documentação de engenharia e implementação de válvula em campo se revela por comportamento on/off sem realimentação de posição.",
+      "pergunta": "Uma válvula aparece no sistema como remota, com indicação de posição prevista, mas em operação só vai a totalmente aberta ou totalmente fechada e o retorno de posição continua ausente. Qual divergência de implementação em campo explica melhor esse comportamento?",
+      "resposta": "Implementação abre/fecha em vez de controle modulante remoto.",
+      "explicacao": "Atuação apenas nos extremos, apesar da previsão de controle remoto com posição, caracteriza arranjo on/off instalado em campo, não falha isolada de ajuste.",
+      "resposta_padrao": "Falha no posicionador da válvula.",
+      "por_que_nao": "Sem realimentação de posição e com atuação só nos extremos, o comportamento compatível é de arquitetura on/off não implantada como modulante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "válvula prevista para operação remota e com indicação de controle de posição, mas colocada em serviço apenas como totalmente aberta ou fechada, com pendência de indicador de posição."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reconciliação técnica de mudanças exige verificação física as-built entre campo, lógica e representação operacional.",
+      "pergunta": "Após modificações acumuladas, o P&ID indica um arranjo, a IHM mostra comandos e estados, e a inspeção local encontra outra implementação. Antes de devolver a malha crítica à rotina, que técnica de verificação física deve ser aplicada para reconciliar essas camadas?",
+      "resposta": "Walkdown as-built reconciliando campo, lógica, IHM e P&ID.",
+      "explicacao": "Quando documentação e telas deixam de representar o instalado, a coerência operacional só é restabelecida por conferência física cruzada com lógica e desenhos.",
+      "resposta_padrao": "Revisão documental da lógica e dos desenhos, sem ida ao campo.",
+      "por_que_nao": "Sem conferência física do instalado, não se demonstra que comandos, estados e arranjo correspondem ao sistema real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "além da atualização de P&IDs após modificações."
+        },
+        {
+          "bloco": "F",
+          "trecho": "operação, manutenção e resposta a anormalidades passam a se apoiar em documentos ou telas que podem não representar o comportamento real do campo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "perde-se coerência entre projeto, implementação, operação e manutenção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Trip de proteção modificado só é comprovado por teste funcional partindo do iniciador real, não por forçamento lógico.",
+      "pergunta": "Foi incluído um trip de emergência de bomba; a lógica derruba o equipamento quando a entrada é forçada no sistema, mas o transmissor de pressão associado ainda não teve comissionamento concluído. Que teste específico ainda falta para comprovar a função?",
+      "resposta": "Teste funcional iniciado no transmissor de pressão de disparo.",
+      "explicacao": "Forçar a lógica valida apenas processamento e saída. Sem comprovação do transmissor, a função permanece sem verificação completa do iniciador e do caminho real.",
+      "resposta_padrao": "Forçamento da entrada no controlador.",
+      "por_que_nao": "O forçamento prova só a lógica e o elemento final; não verifica o sensor de campo nem a transmissão real do sinal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "instalação de trip de emergência de bombas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem coexistir comissionamento incompleto de controles e de transmissor de pressão de bomba"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

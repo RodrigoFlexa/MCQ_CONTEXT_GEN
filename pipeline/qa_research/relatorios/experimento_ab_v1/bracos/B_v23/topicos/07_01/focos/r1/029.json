@@ -1,0 +1,117 @@
+{
+  "item": "07_01",
+  "foco": 29,
+  "rodada": 1,
+  "contexto": {
+    "A1": 28,
+    "F": 29,
+    "A2": 30
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Divergência entre saída analógica do controlador e elemento final implementado como on/off explica comportamento binário da malha.",
+      "pergunta": "Após colocar uma malha em automático, o controlador passa a emitir saídas intermediárias estáveis, mas a válvula em campo alterna apenas entre totalmente aberta e totalmente fechada, serrilhando o processo. Que divergência específica de configuração explica esse comportamento?",
+      "resposta": "Válvula implementada como abre/fecha, não como controle contínuo.",
+      "explicacao": "Com a saída do controlador variando em valores intermediários, a alternância só entre extremos indica atuação binária do elemento final, incompatível com a função modulante prevista para a malha.",
+      "resposta_padrao": "Sintonia inadequada do PID.",
+      "por_que_nao": "Sintonia pode piorar a oscilação, mas não transforma um elemento final binário em modulante; saídas intermediárias se perdem na implementação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "F",
+          "trecho": "forma de atuação dos elementos finais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "válvula prevista para operação remota e com indicação de controle de posição, mas colocada em serviço apenas como totalmente aberta ou fechada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O modo local/remoto é configuração crítica que define a autoridade de comando sobre o atuador.",
+      "pergunta": "Após manutenção, a IHM aceita o comando de abertura de uma válvula e não há falha de comunicação, mas o atuador só responde pelos comandos do painel de campo. Qual definição de configuração deve ser verificada primeiro?",
+      "resposta": "Modo local/remoto mantido em local.",
+      "explicacao": "Modo local/remoto integra a configuração crítica. Se o atuador obedece ao painel de campo, a cadeia final está funcional; a ausência de resposta à IHM aponta para bloqueio da autoridade remota.",
+      "resposta_padrao": "Falha da solenoide ou do atuador.",
+      "por_que_nao": "Se o comando local move o atuador, o problema não está no elemento final, e sim na seleção da origem autorizada do comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correções para que comandos da IHM sejam executados pelos atuadores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Permissivo libera a partida; intertravamento atua para retirar ou impedir continuidade em condição insegura.",
+      "pergunta": "Numa sequência automática de partida, a lógica fica parada em \"aguardando pronto\", sem enviar start; quando o equipamento é acionado localmente, ele permanece operando sem desligamento automático. Qual elemento lógico específico deve ser revisto?",
+      "resposta": "Permissivo de partida.",
+      "explicacao": "Permissivos fazem parte da configuração crítica e liberam o comando. Se o equipamento segue operando quando parte por outro caminho, o problema está na autorização de start, não no trip de proteção.",
+      "resposta_padrao": "Intertravamento de parada.",
+      "por_que_nao": "Intertravamento atua para desligar ou bloquear por condição perigosa; aqui a característica dominante é a falta de liberação do start.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em procedimentos de partida, parada e isolamento, esse descompasso também pode impedir confirmar se a sequência executada e a lógica implantada correspondem à configuração válida do sistema."
+        },
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Se o controlador usa a variável e só o supervisório fica parado, a incoerência está na associação/configuração do ponto no supervisório.",
+      "pergunta": "A variável de processo muda no controlador e participa corretamente do controle e do intertravamento, mas o valor exibido na IHM e na tendência desse ponto permanece parado. Que definição específica de configuração deve ser verificada?",
+      "resposta": "Mapeamento do ponto ao supervisório.",
+      "explicacao": "Se o controle e o intertravamento usam a variável ao vivo, o sinal chegou ao sistema de controle. A divergência está na configuração que publica ou associa esse ponto ao supervisório.",
+      "resposta_padrao": "Transmissor com defeito.",
+      "por_que_nao": "Com a variável sendo usada pela lógica de controle, a medição de campo está válida no controlador; a incoerência está na camada supervisória.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correções para que sinais de campo cheguem à Interface Homem-Máquina (IHM)"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças sem fechamento adequado degradam a confiabilidade informacional da planta"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

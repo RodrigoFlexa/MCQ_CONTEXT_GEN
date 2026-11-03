@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 26,
+  "rodada": 1,
+  "contexto": {
+    "A1": 25,
+    "F": 26,
+    "A2": 27
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar proof test quando o objetivo é revelar falhas perigosas ocultas e demonstrar a capacidade de atuação da SIF.",
+      "pergunta": "Após longo período sem demanda de uma função instrumentada de segurança, a equipe quer verificar a capacidade real de proteção e expor falhas perigosas ocultas, não apenas confirmar que um cenário previsto gera o trip esperado. Que ensaio deve ser programado?",
+      "resposta": "Proof test.",
+      "explicacao": "Teste funcional confirma a resposta automática esperada do cenário exercitado. Para revelar falhas perigosas ocultas e demonstrar a atuação planejada da proteção, o ensaio aplicável é o proof test.",
+      "resposta_padrao": "Teste funcional da matriz de causa e efeito.",
+      "por_que_nao": "Esse ensaio verifica a resposta esperada do cenário testado; não busca falhas perigosas ocultas da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O efeito prático é que testes e compensações não devem ser avaliados como eventos isolados: seu significado depende do fluido, das condições de operação, da importância do equipamento para o processo e do impacto potencial em segurança, meio ambiente e continuidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Testes funcionais e proof tests não demonstram a mesma coisa."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O proof test tem alcance diferente: ele busca revelar falhas perigosas ocultas da função instrumentada de segurança e demonstrar a capacidade de atuação da proteção conforme planejado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em proof test dividido por subsistemas ou em momentos diferentes, a evidência deve registrar a cobertura efetiva e o alcance real das saídas.",
+      "pergunta": "Por restrição operacional, o ensaio de uma função instrumentada foi separado: hoje serão verificados iniciador e logic solver; a saída e o elemento final ficarão para outra janela. Como deve ser delimitada a evidência técnica deste ensaio parcial?",
+      "resposta": "Cobertura por subsistema até onde as saídas realmente atuaram.",
+      "explicacao": "Quando o proof test é dividido, o resultado não vale automaticamente como teste integral. É necessário declarar o que foi exercitado em entrada, lógica, saída e elemento final, inclusive o alcance real da atuação.",
+      "resposta_padrao": "Como proof test integral da função.",
+      "por_que_nao": "Ensaio parcial feito por partes ou em momentos diferentes não demonstra a função ponta a ponta sem explicitar a cobertura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O efeito prático é que testes e compensações não devem ser avaliados como eventos isolados: seu significado depende do fluido, das condições de operação, da importância do equipamento para o processo e do impacto potencial em segurança, meio ambiente e continuidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando parte do proof test precisa ser feita por subsistema ou em momentos diferentes, por razões operacionais ou de segurança, é essencial explicitar o que foi testado no canal de entrada, no logic solver, nos módulos de saída e no elemento final, inclusive até onde as saídas realmente atuaram."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Nessa condição, um ensaio parcial não equivale automaticamente a um teste integral da função."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Se o teste não percorre a interface até a atuação da solenóide, a cadeia de saída correspondente permanece fora da cobertura demonstrada.",
+      "pergunta": "Num teste de intertravamento com interface entre SIS e lógica de pacote, a condição é simulada, o trip aparece no sistema de segurança, mas a interface não é percorrida e a solenóide não atua. Que parte específica da função permaneceu sem demonstração?",
+      "resposta": "O repasse do comando de trip pela interface até a solenóide.",
+      "explicacao": "Ver a entrada e a mudança lógica no SIS não comprova a arquitetura que transmite o trip para a lógica externa e comanda a solenóide. Sem percorrê-la, essa cadeia segue sem cobertura demonstrada.",
+      "resposta_padrao": "A função inteira já ficou comprovada.",
+      "por_que_nao": "Sem atravessar interface, saída e solenóide, o ensaio não demonstra essas partes da arquitetura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em FPSOs, esse efeito é intensificado pela integração entre utilidades, geração elétrica, automação, combate a incêndio, processamento de óleo e gás e suporte à habitabilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se o teste não percorre a interface, o repasse de estado, o comando de trip, a atuação do solenóide, a movimentação do elemento final ou a confirmação de retorno associada, o resultado não demonstra essas partes da arquitetura."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em FPSOs, dependências compartilhadas entre sistemas integrados transformam falhas periféricas em degradação simultânea de múltiplas barreiras.",
+      "pergunta": "Durante comissionamento em FPSO, a indisponibilidade de um item de apoio afeta permissivos em utilidades, processo e habitabilidade ao mesmo tempo. Que mecanismo explica essa degradação simultânea de barreiras?",
+      "resposta": "Causa comum por dependência compartilhada entre sistemas integrados.",
+      "explicacao": "Na unidade integrada, um suporte comum pode habilitar várias funções. Assim, um item periférico degrada permissivos e reduz a capacidade de resposta de múltiplas barreiras simultaneamente.",
+      "resposta_padrao": "Falhas independentes coincidentes em cada sistema.",
+      "por_que_nao": "O padrão simultâneo entre domínios integrados aponta dependência comum compartilhada, não coincidência de falhas locais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em FPSOs, esse efeito é intensificado pela integração entre utilidades, geração elétrica, automação, combate a incêndio, processamento de óleo e gás e suporte à habitabilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, uma falha em elemento aparentemente periférico pode degradar permissivos ou reduzir a capacidade de resposta de várias barreiras."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

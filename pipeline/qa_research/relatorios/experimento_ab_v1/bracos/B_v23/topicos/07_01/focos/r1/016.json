@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir a execução do controle no PLC/DCS do caminho de comando do operador pela supervisão/HMI.",
+      "pergunta": "Em uma malha de nível operando estável em automático, a válvula acompanha as correções do controlador e o processo responde, mas alterações de setpoint feitas pelo operador na HMI não se refletem na malha. Qual ponto da arquitetura deve ser verificado primeiro?",
+      "resposta": "Comunicação de escrita entre a HMI e o controlador.",
+      "explicacao": "Se a malha continua controlando e o elemento final responde, o controlador segue executando a lógica. O sintoma fica restrito ao caminho pelo qual a supervisão envia o comando do operador ao controlador.",
+      "resposta_padrao": "O próprio PLC/DCS da malha.",
+      "por_que_nao": "O controlador já demonstra integridade funcional ao manter o controle automático; a falha está no caminho de comando da camada de supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de inferir causa e efeito com dados de historian, é preciso confirmar coerência temporal entre os sinais comparados.",
+      "pergunta": "Ao correlacionar no historian variações de pressão, vazão e posição de válvula em diferentes módulos do FPSO, os valores individuais parecem plausíveis, mas os eventos nunca coincidem com as manobras observadas. Antes de tirar conclusões de causa e efeito, que critério dos dados deve ser confirmado?",
+      "resposta": "Coerência temporal entre os sinais.",
+      "explicacao": "Tendências e comparações só representam o processo se os tags estiverem alinhados no tempo. Valores plausíveis isoladamente não bastam quando a análise depende da sequência e simultaneidade dos eventos.",
+      "resposta_padrao": "Calibração individual de cada instrumento.",
+      "por_que_nao": "Calibração trata magnitude da medição, não sincronismo entre tags; sem alinhamento temporal, a correlação entre variáveis pode ser artificial.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

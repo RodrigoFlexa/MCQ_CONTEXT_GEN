@@ -1,0 +1,61 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falha isolada na camada de histórico pode coexistir com supervisão ao vivo e controle normal, por ser um consumidor separado da mesma base de sinais.",
+      "pergunta": "A variável exibida ao vivo na supervisão acompanha o processo e a malha continua controlando normalmente, mas as tendências históricas e os relatórios deixam de refletir as mudanças reais da planta. Qual sistema da arquitetura está mais provavelmente comprometido?",
+      "resposta": "Historian.",
+      "explicacao": "Controle e supervisão em tempo real seguem usando sinais correntes; a divergência restrita ao histórico indica problema na coleta ou armazenamento histórico.",
+      "resposta_padrao": "O transmissor do processo.",
+      "por_que_nao": "Se o transmissor estivesse comprometido, o valor ao vivo e a ação do controlador também tenderiam a ficar incoerentes, não só o histórico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em arquiteturas com historian (sistema de histórico de dados de processo), coleta periódica de dados, checagem de normalidade e validação das medições, a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Para análise operacional, coerência temporal não basta; a base de sinais também precisa ter confiabilidade suficiente para representar o estado físico.",
+      "pergunta": "As tendências de pressão, nível e posição de válvula chegam sem desalinhamento aparente, mas comparações repetidas com indicações locais mostram números plausíveis que não representam o estado físico. Que atributo dessa base de sinais está faltando para sustentar inferências operacionais?",
+      "resposta": "Confiabilidade suficiente do dado.",
+      "explicacao": "Sinais podem parecer normais e alinhados no tempo, mas ainda assim não representar corretamente o processo; sem confiabilidade, comparação e inferência perdem validade.",
+      "resposta_padrao": "Plausibilidade visual dos valores.",
+      "por_que_nao": "Valor plausível não garante correspondência com o processo; a supervisão pode continuar exibindo números sem representar o estado físico real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Integração funcional ao controle exige confirmar comunicação campo-PLC, além de energização e indicação local.",
+      "pergunta": "No comissionamento de um circuito de regeneração, os instrumentos indicam normalmente em campo, mas o PLC ainda precisa usar esses sinais na lógica de partida automática. Qual verificação técnica específica comprova a integração antes da operação?",
+      "resposta": "Confirmação da comunicação entre os equipamentos de campo e o PLC.",
+      "explicacao": "No comissionamento, verificação e calibração não bastam; é necessária a confirmação da comunicação entre campo e PLC para comprovar integração funcional.",
+      "resposta_padrao": "Apenas a calibração dos instrumentos.",
+      "por_que_nao": "Exatidão e indicação local não demonstram troca de dados com o controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Perda de integração com DCS não impede atuação mantida por lógica local em módulos especializados.",
+      "pergunta": "Em um skid com módulo especializado, o DCS perde atualização, estados e comando remoto do pacote, mas a sequência própria do skid continua atuando válvulas pelos seus permissivos internos. Que elemento técnico específico explica essa continuidade?",
+      "resposta": "Lógica local do equipamento.",
+      "explicacao": "O comportamento de módulos especializados depende também da lógica local; assim, a função pode continuar mesmo com perda de integração ao DCS.",
+      "resposta_padrao": "Rede parcialmente operacional.",
+      "por_que_nao": "A rede pode explicar perda de visibilidade e comando remoto, não a execução autônoma dos permissivos internos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste de redundância deve comprovar detectabilidade da perda de redundância, não apenas o failover.",
+      "pergunta": "Num teste de redundância de supervisão e comunicação, a função permanece disponível após a comutação para o canal reserva, mas a operação não recebe qualquer indicação de que ficou sem redundância. Que verificação técnica específica faltou no teste?",
+      "resposta": "Detecção da perda de redundância.",
+      "explicacao": "A redundância só traz benefício operacional quando sua perda é perceptível; sem isso, o sistema permanece degradado sem resposta tempestiva.",
+      "resposta_padrao": "Tempo de comutação entre os canais.",
+      "por_que_nao": "Comutação bem-sucedida mantém o serviço, mas não evita operação oculta em estado degradado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A comunicação entre equipamentos de campo e controlador é uma condição prática para que a arquitetura funcione como sistema integrado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

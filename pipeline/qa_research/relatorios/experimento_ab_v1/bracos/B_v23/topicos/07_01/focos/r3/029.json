@@ -1,0 +1,105 @@
+{
+  "item": "07_01",
+  "foco": 29,
+  "rodada": 3,
+  "contexto": {
+    "A1": 28,
+    "F": 29,
+    "A2": 30
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interpretação lógica do feedback de posição dentro de um permissivo de sequência automática.",
+      "pergunta": "Numa sequência automática, a etapa seguinte só é liberada com confirmação de válvula aberta. Em campo a válvula abre, e no diagnóstico da entrada o fim de curso muda de estado, mas a sequência permanece em “não confirmada”. Que configuração crítica específica deve ser revista?",
+      "resposta": "Polaridade lógica do permissivo de válvula aberta.",
+      "explicacao": "Como o fim de curso chega ao sistema e muda de estado, o bloqueio está na forma como a lógica usa esse sinal para validar a etapa.",
+      "resposta_padrao": "Fim de curso aberto defeituoso.",
+      "por_que_nao": "Se a entrada muda corretamente no diagnóstico, a falha não está no sensor, mas na interpretação lógica do sinal no permissivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "confirmar se a sequência executada e a lógica implantada correspondem à configuração válida do sistema."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença técnica entre tratamento de um ponto como evento e como alarme na configuração do sistema.",
+      "pergunta": "Uma condição que exige ação do operador muda de estado e fica registrada com carimbo de tempo na lista de eventos, mas não aparece na janela de alarmes, não gera horn e não pede reconhecimento. Que configuração crítica explica esse comportamento?",
+      "resposta": "Classificação do ponto como evento, não como alarme.",
+      "explicacao": "O sistema recebeu a mudança de estado, mas não a anunciou ao operador. Isso caracteriza tratamento configurado como evento, sem função de alarme.",
+      "resposta_padrao": "Falha do anunciador sonoro.",
+      "por_que_nao": "Falha no horn não elimina a presença do ponto na lista ativa de alarmes nem a necessidade de reconhecimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "classificação entre alarme e evento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "operação, manutenção e resposta a anormalidades passam a se apoiar em documentos ou telas que podem não representar o comportamento real do campo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de identidade da configuração ativa com a baseline aprovada após restauração de sistema crítico.",
+      "pergunta": "Depois de restaurar um PLC crítico a partir de backup, a comunicação voltou e alguns comandos foram testados com sucesso. Como deve ser verificada, antes da liberação, a correspondência integral entre a aplicação em execução e a configuração válida aprovada?",
+      "resposta": "Comparação on-line/off-line da aplicação ativa com a versão aprovada.",
+      "explicacao": "Comunicação e testes parciais não provam equivalência total. A confirmação da configuração exige confronto integral da aplicação carregada com a baseline válida.",
+      "resposta_padrao": "Teste funcional por amostragem dos principais comandos.",
+      "por_que_nao": "Amostragem pode deixar passar diferenças ocultas em lógica, parâmetros ou ramificações pouco exercitadas; rastreabilidade pede equivalência integral.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A gestão de mudanças é o mecanismo que mantém coerência entre o que foi projetado, o que foi implementado e o que está em operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o retorno à condição regular exige evidência objetiva de saneamento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da ação direta/reversa do controlador como parâmetro crítico de configuração da malha.",
+      "pergunta": "Após troca de controlador, em manual aumentar a saída abre a válvula no sentido que corrige o processo; em automático, quando a PV sobe acima do setpoint, o controlador reduz a saída e o desvio aumenta. Que configuração crítica específica está incorreta?",
+      "resposta": "Ação direta/reversa do controlador.",
+      "explicacao": "Como a válvula responde corretamente ao aumento manual de saída, o erro está no sentido de decisão do controlador, configurado com polaridade oposta.",
+      "resposta_padrao": "Sintonia do PID.",
+      "por_que_nao": "Sintonia altera rapidez e estabilidade; comandar no sentido que amplia o erro caracteriza ação de controle invertida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}
