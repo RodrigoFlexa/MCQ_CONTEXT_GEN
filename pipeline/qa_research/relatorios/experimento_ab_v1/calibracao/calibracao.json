@@ -1,0 +1,72 @@
+{
+  "embedding": "3-large",
+  "deployment": "embedding-3-large-global",
+  "modelo": "text-embedding-3-large",
+  "dimensoes": 3072,
+  "media": "media_3-large.json",
+  "limiar_auto": 0.7090116719469904,
+  "limiar_juiz": 0.40634913520929045,
+  "juiz": "gpt-5-4-petrobras:high",
+  "juiz_nome": "referencia",
+  "criterio": {
+    "embedding": "maior AUC (cosseno centrado, pergunta + resposta)",
+    "limiar_auto": "topo da amostra com >= 3 redundantes consecutivos (precisão 100%); 2.0 = nunca descarta sem juiz",
+    "limiar_juiz": "recall >= 95% dos redundantes rotulados",
+    "juiz": "mais barato com concordância e recall >= 90%; senão a referência"
+  },
+  "analise": {
+    "fonte_rotulo": "humano onde preenchido; demais: gpt-5-4-petrobras:high",
+    "rotulos_humanos": 0,
+    "pares": 150,
+    "pares_com_rotulo": 150,
+    "redundantes": 50,
+    "modelos": {
+      "3-small": {
+        "auc": 0.6596,
+        "limiar_auto": 0.7422637372731818,
+        "limiar_juiz": 0.3377610408601308,
+        "pares": 150,
+        "redundantes": 50,
+        "redundantes_auto": 5,
+        "recall_juiz": 0.96,
+        "pares_para_juiz": 123,
+        "observacao": "pergunta + resposta"
+      },
+      "3-large": {
+        "auc": 0.7426,
+        "limiar_auto": 0.7090116719469904,
+        "limiar_juiz": 0.40634913520929045,
+        "pares": 150,
+        "redundantes": 50,
+        "redundantes_auto": 9,
+        "recall_juiz": 0.96,
+        "pares_para_juiz": 106,
+        "observacao": "pergunta + resposta"
+      }
+    },
+    "juizes": {
+      "gpt-5-4-nano": {
+        "modelo": "gpt-5-4-nano-petrobras:low",
+        "n": 150,
+        "concordancia": 0.8733333333333333,
+        "recall_redundantes": 0.96,
+        "precisao_redundantes": 0.7384615384615385
+      },
+      "gpt-4-1-mini": {
+        "modelo": "gpt-4-1-mini-petrobras",
+        "n": 150,
+        "concordancia": 0.8533333333333334,
+        "recall_redundantes": 0.9,
+        "precisao_redundantes": 0.7258064516129032
+      },
+      "gpt-5-mini": {
+        "modelo": "gpt-5-mini-petrobras:low",
+        "n": 150,
+        "concordancia": 0.8533333333333334,
+        "recall_redundantes": 0.98,
+        "precisao_redundantes": 0.7
+      }
+    }
+  },
+  "em": "2026-11-02T16:17:14.168285+00:00"
+}

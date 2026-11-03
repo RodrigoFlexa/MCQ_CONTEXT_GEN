@@ -1,0 +1,64 @@
+{
+  "uid": "07_01:j:r1:027:4:ref",
+  "avaliacao": {
+    "cobertura_completa": true,
+    "afirmacoes": [
+      {
+        "afirmacao": "A parte defeituosa é a cadeia de comando remoto entre supervisor/PLC e atuador.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B1",
+            "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador; ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "correção para que sinais de campo chegassem à IHM e para que comandos da IHM fossem executados pelos atuadores"
+          },
+          {
+            "bloco": "B6",
+            "trecho": "Também inclui verificação e calibração de instrumentos e confirmação da comunicação entre equipamentos de campo e o Controlador Lógico Programável (PLC)."
+          }
+        ],
+        "justificativa": "Os blocos distinguem explicitamente o caminho de comando da IHM/supervisor até o atuador do caminho de retorno de informação de campo ao supervisor, e B6 inclui a comunicação com o PLC como parte relevante dessa função. Dado o cenário da pergunta — comando remoto aceito, sem movimento, mas com atuação local normal e posição retornando corretamente — a inferência direta é que a falha está no caminho de comando remoto, não no retorno."
+      },
+      {
+        "afirmacao": "A atuação local preservada mostra que o problema não está na válvula.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B1",
+            "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "comandos da IHM fossem executados pelos atuadores"
+          }
+        ],
+        "justificativa": "B1 mostra que local/remoto são modos distintos da função de comando dos elementos finais. No cenário, a mesma válvula atua normalmente por comando local; portanto, a capacidade do elemento final de se mover está preservada. Assim, a falta de movimento sob comando remoto se liga ao modo/caminho de comando remoto, não à válvula em si."
+      },
+      {
+        "afirmacao": "O retorno de posição preservado mostra que o problema não está na realimentação.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B1",
+            "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "correção para que sinais de campo chegassem à IHM"
+          }
+        ],
+        "justificativa": "Os blocos tratam separadamente a recepção, pelo supervisor/IHM, das informações vindas do campo. Como a pergunta afirma que a indicação de posição retorna corretamente ao sistema supervisor, a inferência direta é que a via de realimentação está funcionando; logo, ela não é a parte defeituosa nesse caso."
+      }
+    ],
+    "observacoes": "Os blocos sustentam a localização funcional da falha na cadeia de comando remoto e a exclusão da realimentação e da capacidade de atuação da válvula. Porém, eles não permitem identificar qual componente específico dessa cadeia remota falhou (por exemplo: supervisor, lógica/configuração, PLC, comunicação ou interface do atuador)."
+  },
+  "status": "totalmente_sustentado",
+  "afirmacoes": 3,
+  "sustentada": 3,
+  "contradita": 0,
+  "insuficiente": 0,
+  "fracao_sustentada": 1.0
+}

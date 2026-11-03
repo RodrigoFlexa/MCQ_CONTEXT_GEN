@@ -1,0 +1,68 @@
+{
+  "uid": "07_01:j:r1:016:4:ref",
+  "avaliacao": {
+    "cobertura_completa": true,
+    "afirmacoes": [
+      {
+        "afirmacao": "No quadro descrito, a categoria de falha localizada primeiro é perda de comando.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B5",
+            "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo. Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+          }
+        ],
+        "justificativa": "Pela premissa da pergunta, o controlador recebeu e registrou a ordem; portanto, o comando existe ao menos até a camada de controle. Como a válvula não muda de posição e a variável de processo não reage, o sintoma é de ausência de efeito da ação de controle. À luz de B5, isso se enquadra na categoria diagnóstica de \"perda de comando\"; e B3 fornece a cadeia causal esperada entre controlador, atuação e mudança de processo."
+      },
+      {
+        "afirmacao": "Essa perda de comando se localiza primeiro no lado de saída para o campo.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B5",
+            "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo."
+          },
+          {
+            "bloco": "B3",
+            "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+          }
+        ],
+        "justificativa": "Como a ordem já chegou ao controlador segundo a premissa, a localização inicial do problema não é no envio do supervisório ao controlador, mas no trecho posterior da arquitetura. B5 explicita a análise por camadas, incluindo \"interfaces de entrada e saída ou campo\"; B3 e B2 mostram que, após o controlador, a ação segue para atuadores em campo que modificam o processo. Sem movimento da válvula e sem reação do processo, o primeiro enquadramento é no lado de saída para o campo."
+      },
+      {
+        "afirmacao": "A localização técnica inicial fica entre o controlador e o elemento final de controle.",
+        "veredito": "sustentada",
+        "evidencias": [
+          {
+            "bloco": "B3",
+            "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+          },
+          {
+            "bloco": "B2",
+            "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo."
+          },
+          {
+            "bloco": "B5",
+            "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+          }
+        ],
+        "justificativa": "B3 define que a ação sai do controlador e é executada por atuadores; B2 identifica a válvula como atuador que age diretamente sobre o processo. Dado que o controlador registrou a ordem, mas o elemento final não mudou de posição nem produziu efeito de processo, a primeira localização técnica do sintoma recai no trecho entre a saída do controlador e o elemento final de controle."
+      }
+    ],
+    "observacoes": "Os blocos sustentam a classificação inicial por camadas do sintoma, mas não permitem fechar a causa específica dentro desse trecho. Permanecem abertas possibilidades como falha de interface de saída, rede, alimentação, lógica local, indisponibilidade de comando remoto ou problema no próprio atuador/campo, conforme B4 e B5."
+  },
+  "status": "totalmente_sustentado",
+  "afirmacoes": 3,
+  "sustentada": 3,
+  "contradita": 0,
+  "insuficiente": 0,
+  "fracao_sustentada": 1.0
+}
