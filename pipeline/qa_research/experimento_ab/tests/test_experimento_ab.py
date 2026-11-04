@@ -827,16 +827,16 @@ class V23Tests(unittest.TestCase):
                                        "juiz": JuizResp(), "faithfulness": Faith()}, progress=lambda *x, **k: None)
             self.assertEqual(st, 0)
         aval = self.exp / "avaliacao" / "B_v23"
-        st = painel(aval, workers=2, judge_workers=1, clientes={"resp_gpt-5-mini": Answer(), "resp_gpt-5-4": Answer(),
+        st = painel(aval, workers=2, judge_workers=1, clientes={"resp_gpt-5-nano": Answer(), "resp_gpt-5-mini": Answer(), "resp_gpt-5": Answer(), "resp_gpt-5-4": Answer(),
                                                                 "juiz": JuizResp()}, progress=lambda *x, **k: None)
         self.assertEqual(st, 0)
         res = read_json(aval / "painel" / "resumo.json")
         self.assertEqual(res["n"], len(C.linhas(self.exp / "bracos" / "B_v23" / "aprovadas.jsonl")))
         self.assertEqual(sum(res["estratos"].values()), res["n"])
-        self.assertEqual(estrato({"a": "correta", "gpt-5-4": "parcial"}), "dificil")
-        self.assertEqual(estrato({"a": "incorreta", "gpt-5-4": "parcial"}), "muito_dificil")
-        self.assertEqual(estrato({"a": "correta", "gpt-5-4": "correta"}), "facil")
-        self.assertEqual(estrato({"a": "parcial", "gpt-5-4": "correta"}), "media")
+        self.assertEqual(estrato({"a": "correta", "gpt-5": "parcial", "gpt-5-4": "correta"}), "dificil")
+        self.assertEqual(estrato({"a": "incorreta", "gpt-5": "parcial", "gpt-5-4": "correta"}), "muito_dificil")
+        self.assertEqual(estrato({"a": "correta", "gpt-5": "correta", "gpt-5-4": "incorreta"}), "facil")
+        self.assertEqual(estrato({"a": "parcial", "gpt-5": "correta"}), "media")
         out = comparar(self.exp)
         self.assertIn("gerador v23: B_v23-B", out["efeitos"])
         self.assertIsNotNone(out["bracos"]["B_v23"]["painel"])
@@ -995,7 +995,7 @@ class DatasetFinalTests(unittest.TestCase):
         cl = {"resp_gpt-4-1-nano": Answer(), "resp_gpt-4-1-mini": Answer(), "resp_gpt-4-1": Answer(),
               "juiz": JuizResp(), "faithfulness": Faith()}
         self.assertEqual(d.avaliar(workers=2, judge_workers=1, clientes=cl), 0)
-        self.assertEqual(d.painel(workers=2, judge_workers=1, clientes={"resp_gpt-5-mini": Answer(), "resp_gpt-5-4": Answer(),
+        self.assertEqual(d.painel(workers=2, judge_workers=1, clientes={"resp_gpt-5-nano": Answer(), "resp_gpt-5-mini": Answer(), "resp_gpt-5": Answer(), "resp_gpt-5-4": Answer(),
                                                                        "juiz": JuizResp()}), 0)
         res = d.relatorio()
         self.assertEqual(res["n"], 3)
@@ -1003,7 +1003,7 @@ class DatasetFinalTests(unittest.TestCase):
         self.assertIn("gpt-4-1", res["acuracia"])
         self.assertEqual(res["painel"]["n"], 3)
         md = (tmp / "final" / "QUALIDADE.md").read_text(encoding="utf-8")
-        self.assertIn("| Dificuldade | GPT-5.4 sem contexto | ↓ |", md)
+        self.assertIn("| Dificuldade | GPT-5 sem contexto (modelo forte independente) | ↓ |", md)
         self.assertEqual(d.montar(), 0)                                # retomada: mesmas decisões, mesmo dataset
         excl.write_text(json.dumps({"exclusoes": {}}), encoding="utf-8")
         d2 = DatasetFinal(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),

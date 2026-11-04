@@ -9,7 +9,8 @@ Etapas (cada uma retomável; repetir o comando continua de onde parou):
      "por que X não basta/garante" e deduplica entre fontes, documento por documento, com a deduplicação calibrada do experimento;
   2. avaliar: mesmo protocolo do benchmark_gap (GPT-4.1 Nano/Mini/4.1, com e sem contexto, juiz GPT-5.4,
      sustentação por afirmação); o contexto de cada questão são os blocos que a geraram, no documento de origem;
-  3. painel: GPT-5 mini e GPT-5.4 sem contexto (dificuldade empírica);
+  3. painel: GPT-5 nano, GPT-5 mini e GPT-5 sem contexto (dificuldade empírica), mais o GPT-5.4 como referência
+     (ele gera, audita e julga as questões, então não é uma comparação justa);
   4. relatorio: QUALIDADE.md, uma tabela com as métricas do dataset e a direção desejada de cada uma.
 """
 from __future__ import annotations
@@ -281,6 +282,11 @@ def _p(v, pct=True, casas=1):
     return "-" if v is None else (f"{100 * v:.{casas}f}%" if pct else f"{v:.{casas}f}")
 
 
+def _painel(p: dict, m: str) -> str:
+    v = (p or {}).get("acuracia", {}).get(m)
+    return "-" if v is None else f"{v:.1f}%"
+
+
 def _markdown(r: dict) -> str:
     a, p, lx = r.get("acuracia", {}), r.get("painel") or {}, r["lexical"]
     acc = lambda m, k: _p(a.get(m, {}).get(k))  # noqa: E731
@@ -292,13 +298,13 @@ def _markdown(r: dict) -> str:
         ("Dificuldade", "GPT-4.1 Mini sem contexto", "↓", "45–70%", acc("gpt-4-1-mini", "closed")),
         ("Dificuldade", "GPT-4.1 sem contexto", "↓", "50–75%", acc("gpt-4-1", "closed")),
         ("Dificuldade", "GPT-4.1 sem contexto, parcial = 0,5", "↓", "60–80%", acc("gpt-4-1", "closedp")),
-        ("Dificuldade", "GPT-5 mini sem contexto", "↓", "< 80%",
-         "-" if not p else f"{p['acuracia'].get('gpt-5-mini', 0):.1f}%"),
-        ("Dificuldade", "GPT-5.4 sem contexto", "↓", "< 85%",
-         "-" if not p else f"{p['acuracia'].get('gpt-5-4', 0):.1f}%"),
-        ("Dificuldade", "Difícil para o GPT-5.4 (inclui muito difícil)", "↑", "> 15%",
+        ("Dificuldade", "GPT-5 nano sem contexto", "↓", "30–60%", _painel(p, "gpt-5-nano")),
+        ("Dificuldade", "GPT-5 mini sem contexto", "↓", "< 80%", _painel(p, "gpt-5-mini")),
+        ("Dificuldade", "GPT-5 sem contexto (modelo forte independente)", "↓", "< 85%", _painel(p, "gpt-5")),
+        ("Dificuldade", "GPT-5.4 sem contexto (gerou as questões; só referência)", "–", "–", _painel(p, "gpt-5-4")),
+        ("Dificuldade", "Difícil para o GPT-5 (inclui muito difícil)", "↑", "> 15%",
          "-" if not est else f"{est['dificil'] + est['muito_dificil']:.1f}%"),
-        ("Dificuldade", "Nenhum modelo acerta", "↑ (com questões boas)", "5–15%",
+        ("Dificuldade", "Nenhum modelo independente acerta", "↑ (com questões boas)", "5–15%",
          "-" if not est else f"{est['muito_dificil']:.1f}%"),
         ("Contexto", "GPT-4.1 com contexto", "↑", "> 90%", acc("gpt-4-1", "open")),
         ("Contexto", "Gap do GPT-4.1 (com − sem contexto)", "↔ moderado", "5–20 pontos",

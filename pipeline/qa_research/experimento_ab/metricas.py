@@ -222,13 +222,14 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
         res["acuracia"] = {m: {k: media([v.get(f"{k}_{m}") for v in por_q.values()]) for k in ("closed", "closedp", "open", "gap")}
                            for m in MODELOS}
 
-    # painel de dificuldade (painel.py): GPT-5 mini e GPT-5.4 sem contexto e estrato empírico de cada questão
+    # painel de dificuldade (painel.py): família GPT-5 sem contexto (GPT-5.4 só como referência) e estrato empírico de cada questão
     if (adir / "painel" / "dificuldade.csv").exists():
         with (adir / "painel" / "dificuldade.csv").open(encoding="utf-8-sig") as f:
             for r in csv.DictReader(f):
                 if r["uid"] in por_q:
-                    for m in ("gpt-5-mini", "gpt-5-4"):
-                        por_q[r["uid"]][f"closed_{m}"] = float(r.get(f"v_{m}") == "correta")
+                    for m in ("gpt-5-nano", "gpt-5-mini", "gpt-5", "gpt-5-4"):
+                        if r.get(f"v_{m}"):
+                            por_q[r["uid"]][f"closed_{m}"] = float(r[f"v_{m}"] == "correta")
                     por_q[r["uid"]]["dificil"] = float(r["estrato"] in ("dificil", "muito_dificil"))
                     por_q[r["uid"]]["estrato"] = r["estrato"]
         res["painel"] = read_json(adir / "painel" / "resumo.json")
@@ -290,7 +291,7 @@ def comparar(exp: Path, bracos=None, embedder=None, media_vec=None) -> dict:
     for b in bracos:
         if (exp / "bracos" / b / "aprovadas.jsonl").exists():
             res[b], por_q[b] = metricas_braco(exp, b, embedder, media_vec)
-    variaveis = ["sustentado", "max_rougeL", "novel_2gram", "self_bleu4", "closed_gpt-5-4", "dificil"] + \
+    variaveis = ["sustentado", "max_rougeL", "novel_2gram", "self_bleu4", "closed_gpt-5", "dificil"] + \
                 [f"{k}_{m}" for m in MODELOS for k in ("closed", "open", "gap")]
     efeitos = {}
     pares_efeito = dict(EFEITOS)
@@ -366,9 +367,10 @@ def _markdown(exp: Path, out: dict) -> None:
             f"({_f(x['acuracia'][m]['gap'], True)})")))
     l.append(linha("Sem contexto, parcial = 0,5 (Nano / Mini / 4.1)", lambda x: " / ".join(
         _f(x["acuracia"][m]["closedp"], True) for m in MODELOS)))
-    l.append(linha("Painel sem contexto: GPT-5 mini / GPT-5.4", lambda x: " / ".join(
-        f"{x['painel']['acuracia'][m]:.1f}%" for m in ("gpt-5-mini", "gpt-5-4"))))
-    l.append(linha("Difícil para o GPT-5.4 / nenhum modelo acerta", lambda x: (
+    l.append(linha("Painel sem contexto: GPT-5 nano / mini / 5 (5.4, gerador: referência)", lambda x: " / ".join(
+        f"{x['painel']['acuracia'][m]:.1f}%" if x['painel']['acuracia'].get(m) is not None else "-"
+        for m in ("gpt-5-nano", "gpt-5-mini", "gpt-5")) + f" ({x['painel']['acuracia'].get('gpt-5-4', 0):.1f}%)"))
+    l.append(linha("Difícil para o GPT-5 / nenhum modelo independente acerta", lambda x: (
         f"{x['painel']['estratos_pct']['dificil'] + x['painel']['estratos_pct']['muito_dificil']:.1f}% / "
         f"{x['painel']['estratos_pct']['muito_dificil']:.1f}%")))
     l.append(linha("Decisão + procedimento", lambda x: _f(x["tipos"]["decisao_procedimento"], True)))
@@ -380,7 +382,7 @@ def _markdown(exp: Path, out: dict) -> None:
           linha("Chamadas / tokens (mil)", lambda x: f"{x['custo']['total']['chamadas']} / "
                                                    f"{(x['custo']['total']['prompt_tokens'] + x['custo']['total']['completion_tokens']) / 1000:.0f}"),
           "", "## Efeitos (diferença e IC 95%)", "",
-          "| Efeito | Sustentados | gap 4.1 Nano | gap 4.1 Mini | gap 4.1 | sem contexto 4.1 | sem contexto 5.4 | difícil (5.4) | Max ROUGE-L | Self-BLEU-4 |",
+          "| Efeito | Sustentados | gap 4.1 Nano | gap 4.1 Mini | gap 4.1 | sem contexto 4.1 | sem contexto GPT-5 | difícil (GPT-5) | Max ROUGE-L | Self-BLEU-4 |",
           "|---|---|---|---|---|---|---|---|---|---|"]
 
     def ef(d, pct=True):
@@ -392,7 +394,7 @@ def _markdown(exp: Path, out: dict) -> None:
 
     for nome, e in out["efeitos"].items():
         l.append(f"| {nome} | {ef(e['sustentado'])} | {ef(e['gap_gpt-4-1-nano'])} | {ef(e['gap_gpt-4-1-mini'])} | "
-                 f"{ef(e['gap_gpt-4-1'])} | {ef(e['closed_gpt-4-1'])} | {ef(e.get('closed_gpt-5-4'))} | "
+                 f"{ef(e['gap_gpt-4-1'])} | {ef(e['closed_gpt-4-1'])} | {ef(e.get('closed_gpt-5'))} | "
                  f"{ef(e.get('dificil'))} | {ef(e['max_rougeL'], False)} | "
                  f"{ef(e['self_bleu4'], False)} |")
     l += ["", "Proporções em pontos percentuais. " + out["observacao"]]

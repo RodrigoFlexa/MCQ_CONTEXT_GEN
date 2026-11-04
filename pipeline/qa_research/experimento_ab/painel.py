@@ -4,8 +4,8 @@ Usa o mesmo motor, respondente (até 100 palavras) e juiz do benchmark_gap, só 
 vereditos do painel aos do GPT-4.1 Nano, Mini e 4.1 já avaliados na pasta de origem e classifica cada questão:
   facil         todos os modelos acertam
   media         o GPT-5.4 acerta, mas algum outro erra
-  dificil       o GPT-5.4 não acerta (parcial ou incorreta)
-  muito_dificil nenhum modelo acerta
+  dificil       o GPT-5 não acerta (parcial ou incorreta)
+  muito_dificil nenhum modelo independente acerta (o GPT-5.4, que gerou as questões, fica fora dos estratos)
 A dificuldade é empírica (acerto de modelos), não um rótulo do gerador. Funciona para qualquer pasta de avaliação
 com questoes.jsonl e pares.csv (braços do experimento A/B ou benchmark_gap do banco antigo).
 """
@@ -21,13 +21,18 @@ from pipeline.qa_research import benchmark_gap as G
 
 from . import comum as C
 
-PAINEL = {"gpt-5-mini": "gpt-5-mini-petrobras:low", "gpt-5-4": "gpt-5-4-petrobras:low"}
+# GPT-5.4 gera, audita e julga as questões: entra no painel só como referência (tende a acertar o que ele mesmo
+# escreveu). Os estratos usam o GPT-5, modelo forte que não participou da construção do dataset.
+PAINEL = {"gpt-5-nano": "gpt-5-nano-petrobras:low", "gpt-5-mini": "gpt-5-mini-petrobras:low",
+          "gpt-5": "gpt-5-petrobras:low", "gpt-5-4": "gpt-5-4-petrobras:low"}
 BASE = ("gpt-4-1-nano", "gpt-4-1-mini", "gpt-4-1")
-FORTE = "gpt-5-4"
+FORTE = "gpt-5"
+NAO_INDEPENDENTES = ("gpt-5-4",)
 ESTRATOS = ("facil", "media", "dificil", "muito_dificil")
 
 
 def estrato(vs: dict) -> str:
+    vs = {m: v for m, v in vs.items() if m not in NAO_INDEPENDENTES}
     if all(v != "correta" for v in vs.values()):
         return "muito_dificil"
     if vs.get(FORTE) != "correta":
@@ -57,6 +62,9 @@ def executar(aval: Path, modelos: dict | None = None, workers: int = 8, judge_wo
            "prompts": {n: C.sha(G.prompt(n)) for n in ("respondente", "juiz")}}
     with output_lock(saida):
         old = read_json(saida / "config.json")
+        if old is not None and {k: v for k, v in old.items() if k != "modelos"} == \
+                {k: v for k, v in cfg.items() if k != "modelos"} and old["modelos"].items() <= cfg["modelos"].items():
+            old = cfg      # painel ampliado com modelos novos: as respostas já salvas são mantidas
         if old is not None and old != cfg:
             raise ValueError("Painel com protocolo ou questões diferentes nesta pasta; apague painel/ ou use outra")
         atomic_json(saida / "config.json", cfg)
