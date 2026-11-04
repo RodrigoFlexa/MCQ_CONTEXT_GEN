@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A confiabilidade do histórico analítico após troca física de equipamento depende do vínculo correto entre tag e ativo.",
+      "pergunta": "Após substituir um conjunto motobomba por um sobressalente e manter a mesma malha de sinais, o analytics passou a indicar degradação abrupta, embora processo e inspeção de campo permaneçam coerentes. Que correção técnica deve ser feita no cadastro antes de aceitar esse diagnóstico?",
+      "resposta": "Corrigir o mapeamento da tag para o equipamento físico.",
+      "explicacao": "Se a série histórica da tag continuar associada ao ativo anterior, o modelo compara equipamentos diferentes e produz degradação espúria.",
+      "resposta_padrao": "Reajustar os limites do analytics.",
+      "por_que_nao": "Limites não corrigem histórico contaminado pela mistura de dados de ativos físicos diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "assegurar que as pessoas entendam o significado operacional dos dados e dos alertas produzidos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dados de fornecedores distintos só podem alimentar comparações e alarmes após normalização da semântica operacional do sinal.",
+      "pergunta": "Num painel unificado, a posição de uma válvula vinda de dois controladores diferentes aparece coerente em porcentagem, mas a aplicação comparativa acusa alinhamento oposto porque um sistema interpreta 100% como aberta e outro como fechada. O que deve ser normalizado antes de usar esse dado em alarmes ou analytics?",
+      "resposta": "Normalizar a convenção aberta/fechada do sinal de posição.",
+      "explicacao": "O valor numérico pode ser válido nos dois lados; o erro vem do significado operacional atribuído ao mesmo percentual.",
+      "resposta_padrao": "Padronizar a escala percentual 0–100 do sinal.",
+      "por_que_nao": "Escala igual não resolve semântica invertida; o mesmo percentual pode representar estados opostos.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "assegurar que as pessoas entendam o significado operacional dos dados e dos alertas produzidos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

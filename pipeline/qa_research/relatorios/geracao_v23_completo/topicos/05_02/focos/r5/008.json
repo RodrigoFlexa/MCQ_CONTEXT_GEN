@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 5,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representação das fontes eletricamente disponíveis para a lógica de partida assistida de grande motor.",
+      "pergunta": "Após ajustes na lógica do PMS, a partida assistida de um grande motor passou a considerar como disponíveis todas as máquinas em operação mecânica. Em um teste, havia um gerador rodando sem alarmes, porém em vazio após manutenção, e o suporte ao barramento ficou aquém do previsto. Que estado deve entrar no permissivo para representar as fontes que realmente podem responder à partida?",
+      "resposta": "Fechamento dos disjuntores dos geradores participantes.",
+      "explicacao": "Só geradores com disjuntor fechado estão acoplados ao barramento e podem sustentar tensão, frequência e rateio durante a partida; a lógica precisa enxergar a topologia elétrica real.",
+      "resposta_padrao": "Disponibilidade mecânica dos geradores.",
+      "por_que_nao": "Máquina rodando fora do barramento não injeta corrente nem reativos e não participa do rateio da partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "usando informações de configuração da rede, estados de bus tie, disjuntores dos geradores, ajustes de droop e parâmetros configuráveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando todos os geradores participantes operam em paralelo sob controle do PMS, a resposta coordenada tende a ser mais previsível"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da variável de pré-ajuste do PMS quando a limitação dominante da partida é a tensão.",
+      "pergunta": "Em partidas anteriores de um grande compressor, houve afundamento acentuado de tensão, quase atuação de bobinas de subtensão e aceleração inicial lenta do motor, enquanto a frequência permaneceu dentro da margem operacional. Numa filosofia em que o PMS pode aplicar um viés antecipado antes do fechamento do disjuntor, qual variável deve receber esse ajuste preventivo?",
+      "resposta": "Elevação prévia da tensão do barramento.",
+      "explicacao": "Os sinais apontam limitação por afundamento de tensão na inserção do motor; elevar a tensão antes do fechamento ajuda a preservar torque e a manter circuitos sensíveis.",
+      "resposta_padrao": "Elevação prévia da frequência.",
+      "por_que_nao": "O viés de frequência atua no déficit transitório de potência ativa; não recupera torque perdido por subtensão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "impõe corrente elevada e consumo significativo de potência reativa, causando afundamento de tensão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o Sistema de Gerenciamento de Potência, ou PMS, pode elevar previamente tensão e ou frequência"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

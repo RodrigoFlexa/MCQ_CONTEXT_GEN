@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Coordenação do elemento de terra do alimentador com a retaguarda de terra do primário do transformador.",
+      "pergunta": "Em um barramento secundário alimentado por transformador com disjuntor primário, o elemento de sobrecorrente de terra de um alimentador foi tornado mais sensível para captar faltas de baixa corrente. Para que uma falta à terra nesse alimentador não passe a desligar indevidamente todo o transformador, que proteção a montante deve ser recoordenada com ele?",
+      "resposta": "O relé de retaguarda de terra do primário do transformador.",
+      "explicacao": "Nessa arquitetura, a seletividade para faltas à terra depende da coordenação entre o elemento de terra do alimentador e a retaguarda de terra a montante, evitando a abertura indevida da fonte primária.",
+      "resposta_padrao": "O relé de retaguarda de fase do primário do transformador.",
+      "por_que_nao": "Falta à terra se coordena pelo elemento de terra; o de fase pode não enxergar esse defeito de forma seletiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Nessa arquitetura, relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário, para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interligação por bus tie cria caminhos adicionais de corrente de falta que podem mudar a etapa de atuação do relé.",
+      "pergunta": "Após fechar o bus tie e operar dois transformadores em paralelo, um alimentador passa a atuar pela etapa instantânea em defeitos próximos ao barramento que antes eram limpos pela etapa temporizada. Que alteração elétrica da topologia explica essa mudança de atuação?",
+      "resposta": "Contribuição adicional de corrente de falta pela outra seção interligada.",
+      "explicacao": "Com o barramento interligado, surgem caminhos adicionais de corrente de falta. O relé passa a ver corrente maior no defeito, o que altera a sensibilidade efetiva e pode levar à atuação instantânea.",
+      "resposta_padrao": "Maior corrente de carga após a transferência de consumidores.",
+      "por_que_nao": "A mudança de etapa de proteção decorre da corrente de curto-circuito disponível, não da carga normal do alimentador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

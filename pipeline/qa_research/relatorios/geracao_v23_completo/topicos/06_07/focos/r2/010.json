@@ -1,0 +1,87 @@
+{
+  "item": "06_07",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicação da verificação sequencial do estado das barreiras quando a configuração do sistema muda ao longo da atividade.",
+      "pergunta": "Numa abertura de linha em que drenagem, despressurização, reinstalação temporária de bypass e retirada de inibição alteram o arranjo do sistema a cada manobra, APR e PT isoladas seguem válidas para cada passo. Que método deve ser usado para decidir a progressão do trabalho sem perder proteção nas transições?",
+      "resposta": "Verificação sequencial do estado das barreiras.",
+      "explicacao": "Quando o sistema muda de configuração ao longo do trabalho, a decisão depende do impacto de cada operação sobre as barreiras e da proteção preservada na passagem entre passos.",
+      "resposta_padrao": "Revalidar APR e PT de cada etapa separadamente.",
+      "por_que_nao": "Autorizações estáticas avaliam etapas em abstrato; não mostram o efeito da transição de uma configuração para a seguinte sobre as barreiras.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada operação da sequência é analisada quanto ao seu impacto sobre o estado dessas barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O ponto central não é apenas saber se a atividade é permitida em abstrato, mas se a passagem de um passo para o seguinte preserva um conjunto de proteção suficiente."
+        },
+        {
+          "bloco": "F",
+          "trecho": "situações em que o sistema muda de configuração ao longo do trabalho"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Retomada de atividade crítica a partir da condição inicial atualizada das barreiras, não da etapa nominal do plano.",
+      "pergunta": "Uma despressurização foi interrompida no fim do turno com drenos, isolamentos temporários e uma inibição mantidos. No turno seguinte, um dreno aparece em posição diferente da deixada. Antes de retomar o passo previsto no plano, que referência técnica deve ser restabelecida para reiniciar a verificação das barreiras?",
+      "resposta": "Condição inicial atualizada das barreiras.",
+      "explicacao": "A análise da sequência precisa recomeçar do estado real encontrado, identificando quais barreiras estão ativas e desativadas naquele momento.",
+      "resposta_padrao": "A última etapa concluída no plano operacional.",
+      "por_que_nao": "Após interrupção e manipulação de campo, o número da etapa não garante a configuração real nem quais barreiras permanecem vigentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A verificação de barreiras pode começar pela definição explícita da condição inicial da atividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa condição inicial, identifica-se quais barreiras estão ativas e quais estão desativadas antes do início do plano operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "alterações temporárias feitas durante o trabalho"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limitação da quantificação binária do estado de barreiras diante de incerteza operacional.",
+      "pergunta": "Na comparação binária entre duas etapas de abertura de linha, ambas aparecem com a barreira de despressurização ativa. Em uma delas, porém, a pressão zero é inferida apenas por transmissor remoto intermitente, sem confirmação independente no ponto morto. Que aspecto do estado de segurança essa pontuação deixa de representar?",
+      "resposta": "Incerteza operacional.",
+      "explicacao": "A barreira foi marcada como ativa, mas a evidência de sua efetividade é incerta; o modelo binário não distingue condição comprovada de condição apenas presumida.",
+      "resposta_padrao": "Desempenho degradado da barreira.",
+      "por_que_nao": "Degradação pressupõe capacidade reduzida conhecida; aqui o problema é a falta de confiança no estado real da barreira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "barreiras ativadas receberam valor um e desativadas valor zero, como simplificação binária para quantificar o estado de segurança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa simplificação ajuda a comparar etapas, mas não representa sozinha degradação parcial, desempenho degradado, dependências ocultas nem incertezas operacionais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Para creditar standby frio ao KPI, é preciso provar a função na demanda real, exercitando partida e transferência.",
+      "pergunta": "Antes de creditar ao KPI a contribuição de uma bomba em reserva fria, como deve ser verificada em campo a disponibilidade da função de processo, considerando que o equipamento pode estar íntegro em espera e ainda assim falhar quando chamado?",
+      "resposta": "Teste de transferência sob carga.",
+      "explicacao": "Em reserva fria, prontidão estática não prova restauração da função; é preciso exercitar a demanda real para cobrir falhas de partida e de comutação.",
+      "resposta_padrao": "Inspeção de prontidão com giro local em vazio.",
+      "por_que_nao": "Isso confirma condição em espera, mas não prova a cadeia de demanda, partida e transferência da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "representar dependências e modos de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "No standby frio, perda que só aparece na demanda com ausência de aceleração é falha de partida, não falha em espera.",
+      "pergunta": "Em um arranjo ativo com reserva fria, o equipamento principal perde a função em operação; a sequência automática chama o reserva, mas o motor não acelera e a função não é restabelecida. Que modo de falha específico do arranjo ocorreu?",
+      "resposta": "Falha de partida da reserva fria.",
+      "explicacao": "A indisponibilidade só se revela no momento da demanda, e o sintoma decisivo é a não aceleração após o comando automático.",
+      "resposta_padrao": "Falha em espera da reserva fria.",
+      "por_que_nao": "Falha em espera é indisponibilidade latente antes da demanda; aqui a perda se manifesta quando o start é solicitado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dados do ativo não devem ser transferidos integralmente ao reserva frio quando o mecanismo de falha depende de operação sob carga.",
+      "pergunta": "No histórico do compressor ativo, selos e mancais concentram falhas após campanhas longas aquecidas e sob carga; o reserva frio entra só em testes curtos. Ao usar a mesma parametrização do ativo para o reserva, que mecanismo específico tende a ficar superestimado?",
+      "resposta": "Desgaste sob carga.",
+      "explicacao": "O reserva frio não opera sob a mesma carga nem pelo mesmo tempo; copiar sem ajuste os dados do ativo infla mecanismos dependentes de operação contínua.",
+      "resposta_padrao": "Falhas em espera do reserva.",
+      "por_que_nao": "Falhas em espera são próprias do standby parado; o viés criado ao copiar o ativo recai sobre mecanismos de desgaste em serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

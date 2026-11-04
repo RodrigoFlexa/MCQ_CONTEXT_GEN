@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de privilégio administrativo em IACS pelas capacidades observadas na sessão, distinguindo-o do privilégio de engenharia.",
+      "pergunta": "Numa sessão remota de suporte, os registros mostram criação de contas locais, desativação de mecanismos de proteção e limpeza de trilhas de auditoria, sem evidência de download de lógica ou firmware. Que tipo de privilégio essa sessão efetivamente possuía no ambiente IACS?",
+      "resposta": "Acesso administrativo.",
+      "explicacao": "Criar contas, desabilitar proteções e apagar rastros são capacidades administrativas; engenharia se distingue por alterar configuração, lógica ou firmware.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Engenharia muda configuração, lógica e firmware; criar contas, desabilitar proteções e apagar rastros caracteriza privilégio administrativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "No menor privilégio em IACS, a duração da habilitação faz parte do controle, além do escopo funcional da permissão.",
+      "pergunta": "Um fornecedor recebe credencial de engenharia para uma atividade única prevista para duas horas. A conta permanece habilitada continuamente até a próxima campanha, embora não haja novas tarefas. Que dimensão do menor privilégio foi violada?",
+      "resposta": "Tempo de vigência do privilégio.",
+      "explicacao": "Em IACS, menor privilégio inclui a janela temporal da permissão; mantê-la ativa sem necessidade prolonga exposição operacional indevida.",
+      "resposta_padrao": "Escopo das permissões concedidas.",
+      "por_que_nao": "Mesmo com escopo correto, manter o acesso privilegiado além da tarefa viola o menor privilégio pela permanência desnecessária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de funções em mudanças de IACS: quem aprova não deve, por padrão, implementar e validar a própria intervenção.",
+      "pergunta": "Numa correção remota de lógica após falha intermitente, o mesmo especialista está disponível para pedir autorização, aplicar a mudança e declarar o retorno à operação. Que separação funcional deve ser mantida para reduzir erro não detectado nessa intervenção?",
+      "resposta": "Segregação entre aprovação, implementação e validação.",
+      "explicacao": "A independência entre aprovar, executar e validar reduz erro não detectado durante manutenção, resposta a falhas e suporte remoto offshore.",
+      "resposta_padrao": "Autenticação multifator para o especialista remoto.",
+      "por_que_nao": "MFA confirma a identidade do mesmo executor; não cria verificação independente entre quem aprova, implementa e valida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais, competência e efetividade das contramedidas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O escopo de controle de acesso em IACS inclui aplicações e serviços, não apenas usuários humanos interativos.",
+      "pergunta": "Após bloquear logins compartilhados e revisar perfis humanos, ainda surgem comandos automáticos do sistema supervisório para o processo durante testes. No menor privilégio, que entidade ainda precisa ter seu escopo de permissão tratado explicitamente?",
+      "resposta": "A aplicação que envia os comandos.",
+      "explicacao": "Em IACS, o controle de acesso também vale para aplicações; comandos automáticos persistem se a própria aplicação mantém permissões acima do necessário.",
+      "resposta_padrao": "Somente a conta do operador logado na IHM.",
+      "por_que_nao": "Se os comandos são automáticos, a ação decorre das permissões da aplicação; revisar só usuários interativos deixa o caminho ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "conceder a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

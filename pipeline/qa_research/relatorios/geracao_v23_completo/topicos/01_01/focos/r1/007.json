@@ -1,0 +1,109 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Seleção, na entrada do RAM, apenas de modos de falha com perda funcional do sistema.",
+      "pergunta": "Ao montar o RAM de um sistema de utilidades, o histórico inclui falhas de instrumentos que geram alarme e manutenção, mas várias não alteram a função entregue ao processo. Quais modos de falha devem ser lançados como falha do sistema no modelo?",
+      "resposta": "Os que geram perda de função do sistema.",
+      "explicacao": "A análise RAM deve partir dos modos de falha que provocam perda ao sistema; incluir ocorrências sem perda funcional distorce taxas e a disponibilidade prevista.",
+      "resposta_padrao": "Todas as falhas registradas dos equipamentos.",
+      "por_que_nao": "Evento de manutenção sem perda de serviço não é falha do sistema para uma análise RAM.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A qualidade da avaliação de disponibilidade e confiabilidade depende da qualidade dos registros de falha e retorno à operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização do RAM com dados da própria unidade quando o contexto operacional difere da referência genérica.",
+      "pergunta": "Após um ano de operação, a previsão RAM de uma unidade offshore ainda usa parâmetros de banco setorial, embora a arquitetura e o acesso para manutenção sejam diferentes da referência. Que base de parâmetros deve prevalecer na atualização do modelo?",
+      "resposta": "Dados característicos da própria unidade.",
+      "explicacao": "Arquitetura, acessibilidade e estratégia de manutenção alteram falhas e reparos; por isso, a atualização do RAM deve usar parâmetros observados na unidade, não apenas banco genérico.",
+      "resposta_padrao": "O banco setorial de referência.",
+      "por_que_nao": "Banco setorial ajuda a comparar, mas não representa automaticamente a arquitetura, o acesso e a manutenção locais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Primazia da aderência entre lógica do modelo e regime operacional sobre sofisticação isolada da modelagem RAM.",
+      "pergunta": "Um modelo RAM ficou mais sofisticado, mas ainda trata o sistema como operação contínua única, apesar de campanhas, by-pass e restrições de utilidades mudarem o efeito das falhas. O que deve ser corrigido primeiro para a análise voltar a apoiar decisão?",
+      "resposta": "A lógica funcional aderente ao regime operacional.",
+      "explicacao": "Mesmo um modelo sofisticado perde valor se não representar dependências e modos reais de operação; a aderência da lógica ao regime operacional sustenta a utilidade da previsão.",
+      "resposta_padrao": "Mais sofisticação matemática e estatística no modelo.",
+      "por_que_nao": "Se a lógica não espelha o regime operacional real, aumentar complexidade só refina uma representação errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização em KPI/RAM pela contribuição à indisponibilidade sistêmica, não pela frequência isolada de falhas.",
+      "pergunta": "Na revisão de KPI de um sistema de exportação, uma válvula falha pouco, mas quando indisponível interrompe o offloading; outra falha mais vezes sem cortar a operação. Qual resultado da análise RAM deve comandar a priorização?",
+      "resposta": "Contribuição para a indisponibilidade do sistema.",
+      "explicacao": "A priorização em RAM/KPI vem do impacto da indisponibilidade no sistema. Um item pouco falho pode dominar perdas se bloquear produção ou exportação.",
+      "resposta_padrao": "A taxa bruta de falhas de cada item.",
+      "por_que_nao": "Sem criticidade funcional e impacto sistêmico, frequência isolada mascara o verdadeiro limitante do desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelos mais completos permitem identificar os maiores contribuintes de falha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "seu significado depende da criticidade funcional do item no sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um elemento com baixa taxa de falha pode ser mais relevante que outro mais problemático se sua indisponibilidade bloquear produção, segurança de processo ou exportação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

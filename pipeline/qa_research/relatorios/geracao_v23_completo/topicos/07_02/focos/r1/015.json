@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização inicial da resposta em incidente de OT pelo impacto nas funções críticas, não pela origem presumida do evento.",
+      "pergunta": "Um evento começa como suspeita digital, mas passa a reduzir a efetividade do controle e do shutdown da planta. Na priorização imediata da resposta, que critério deve prevalecer sobre a investigação da origem?",
+      "resposta": "Indisponibilidade de funções críticas de controle e segurança.",
+      "explicacao": "Em instalação com potencial de acidente maior, a gravidade operacional decorre das funções afetadas. Quando controle e shutdown perdem efetividade, a resposta deve migrar para preservação do estado seguro antes da atribuição causal.",
+      "resposta_padrao": "Confirmar primeiro se a origem é cibernética ou elétrica.",
+      "por_que_nao": "A urgência é definida pela perda de funções de controle e salvaguarda, não pela classificação inicial da causa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interface entre resposta a incidente e emergência operacional exige reconhecer quando o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sequência segura de intervenção em falha com fumaça e arco na UPS antes de inspeção e manutenção da alimentação crítica.",
+      "pergunta": "Com fumaça e arco elétrico na UPS que alimenta equipamentos críticos, qual etapa deve ser executada antes da inspeção do dano e da continuidade da alimentação das cargas?",
+      "resposta": "Isolamento e bloqueio das fontes da UPS com falha.",
+      "explicacao": "Com arco elétrico, a parte defeituosa não pode permanecer energizada. Os blocos ligam a resposta inicial ao isolamento seguro e bloqueio das fontes, para só então manter as cargas críticas por bypass seguro.",
+      "resposta_padrao": "Transferir imediatamente as cargas para bypass e inspecionar depois.",
+      "por_que_nao": "O bypass mantém as cargas, mas não elimina o risco elétrico no trecho falho; a seção com arco precisa ser isolada e bloqueada antes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Alcance do comprometimento de IACS que transforma um incidente digital em ameaça operacional imediata.",
+      "pergunta": "Num incidente em OT, qual alcance do comprometimento do sistema de controle faz o evento ganhar prioridade de emergência operacional imediata?",
+      "resposta": "Funções que atuam sobre válvulas, vazão e pressão.",
+      "explicacao": "O potencial de acidente maior aparece quando o comprometimento alcança funções que manipulam o processo. Isso supera em criticidade perdas apenas supervisórias ou informacionais.",
+      "resposta_padrao": "Perda de telas, alarmes ou histórico no SCADA.",
+      "por_que_nao": "Perda de supervisão reduz visibilidade; a escalada para emergência decorre de atingir elementos finais e variáveis de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em instalações com potencial de acidente maior, o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para rejeitar uma contenção de ciberincidente que aumente o risco operacional na OT.",
+      "pergunta": "Há suspeita de exploração remota em rede OT crítica, e a contenção proposta é cortar enlaces que sustentam salvaguardas da planta. Que critério técnico torna essa contenção inadequada?",
+      "resposta": "Perda de funções essenciais de controle e proteção.",
+      "explicacao": "Em OT, conter não é só reduzir exposição. Se o corte retirar controle ou salvaguardas, a medida introduz risco operacional maior que o evento original e deve ser revista.",
+      "resposta_padrao": "Reduzir conectividade ao máximo, independentemente do impacto operacional.",
+      "por_que_nao": "A contenção em OT só é adequada se preservar controle e proteção essenciais; desconectar salvaguardas pode agravar o risco.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A contenção em OT busca limitar propagação e reduzir exposição sem introduzir risco operacional maior que o evento original."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "preservação imediata das funções críticas e do estado seguro da planta."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

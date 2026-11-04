@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do escopo real de acesso de terceiros por evidência das ações executadas.",
+      "pergunta": "Durante acesso remoto de fornecedor para diagnosticar uma vulnerabilidade em um componente de IACS, a conexão ficou dentro da janela aprovada e o perfil concedido era compatível. Como deve ser comprovado depois que o terceiro atuou apenas no escopo autorizado sobre o ativo?",
+      "resposta": "Registro de sessão.",
+      "explicacao": "Para terceiros, a aderência ao escopo precisa ser confirmada pelas ações executadas; logs de conexão só mostram que houve acesso, não o que foi feito.",
+      "resposta_padrao": "Log de autenticação da VPN.",
+      "por_que_nao": "Ele confirma a conexão na janela, mas não evidencia os comandos ou telas acessados durante a sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registro de sessão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do nível de privilégio do fornecedor conforme a atividade de diagnóstico em IACS.",
+      "pergunta": "Para orientar a mitigação de uma vulnerabilidade, o fornecedor precisa ler eventos, versões e diagnósticos de um ativo de automação nesta janela, sem etapa de atualização prevista. Que perfil de acesso deve ser liberado?",
+      "resposta": "Acesso de observação.",
+      "explicacao": "Leitura de diagnósticos não exige capacidade de alterar configuração, lógica ou firmware; aplicar menor privilégio reduz a superfície de erro e abuso.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Privilégio de engenharia amplia desnecessariamente a capacidade de mudar configuração, lógica e firmware do ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério técnico de seleção de fornecedor para gestão de vulnerabilidades em firmware proprietário.",
+      "pergunta": "Na contratação de suporte para dispositivos embarcados de IACS com firmware proprietário, um fornecedor promete mobilização rápida, mas não consegue informar com precisão quais versões instaladas são afetadas quando surge vulnerabilidade. Que capacidade técnica deve pesar mais na escolha?",
+      "resposta": "Capacidade de notificação dos afetados com remediação aplicável.",
+      "explicacao": "Sem identificação clara das versões ou ativos afetados e do caminho de correção estável, o operador não consegue delimitar exposição nem planejar correção segura.",
+      "resposta_padrao": "Menor SLA de atendimento.",
+      "por_que_nao": "Atendimento rápido sem informar exatamente quem foi afetado e como corrigir não reduz a incerteza técnica da exposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Também importam capacidade de notificação, clareza sobre ativos afetados, orientação de mitigação, qualidade do suporte"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Base técnica da dependência do fornecedor para remediação de firmware proprietário em IACS.",
+      "pergunta": "Um time interno quer alterar por conta própria o firmware de um módulo embarcado vulnerável para reduzir exposição antes do retorno do fornecedor. Qual condição técnica torna essa remediação estruturalmente dependente do fornecedor?",
+      "resposta": "Controle do ciclo de desenvolvimento e certificação do firmware pelo fornecedor.",
+      "explicacao": "Em firmware proprietário, correção fora do fornecedor pode comprometer funcionalidade, suporte e certificação do produto, mesmo que a equipe tenha capacidade técnica interna.",
+      "resposta_padrao": "Indisponibilidade do código-fonte.",
+      "por_que_nao": "A dependência não nasce só do acesso ao código; nasce de quem desenvolve, suporta e certifica o firmware.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o operador normalmente não controla o ciclo de desenvolvimento do software embarcado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

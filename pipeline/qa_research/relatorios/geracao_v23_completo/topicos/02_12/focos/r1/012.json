@@ -1,0 +1,109 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da limitação do elemento final anti-surge pela comparação entre comando e posição real da válvula.",
+      "pergunta": "Após um trip a jusante, o controlador anti-surge comanda grande abertura, mas o compressor ainda entra em instabilidade. Que verificação específica deve ser feita para saber se a limitação está na válvula anti-surge, e não na sintonia da malha?",
+      "resposta": "Comparar o comando com a realimentação de posição da válvula anti-surge.",
+      "explicacao": "A divergência entre comando e posição real revela atraso, histerese ou falha de atuação da válvula, distinguindo problema do elemento final de problema de sintonia em transientes rápidos.",
+      "resposta_padrao": "Rever o ganho do controlador anti-surge.",
+      "por_que_nao": "Se a válvula não acompanha o comando, o algoritmo pode estar correto e a proteção falhar por limitação dinâmica do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "detectar degradação, atraso, histerese ou falha de atuação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Precedência da proteção anti-surge sobre o controle de capacidade diante de restrição súbita a jusante.",
+      "pergunta": "Num compressor centrífugo controlando pressão de descarga, uma válvula a jusante fecha inadvertidamente e a vazão cai rapidamente. Qual ação de controle deve prevalecer imediatamente para manter a máquina fora da instabilidade aerodinâmica?",
+      "resposta": "Abertura rápida da válvula de reciclo anti-surge.",
+      "explicacao": "Com a vazão caindo por restrição a jusante, atender a pressão de descarga perde prioridade; o reciclo restabelece vazão mínima estável e protege o compressor do surge.",
+      "resposta_padrao": "Aumentar a rotação para recuperar a pressão de descarga.",
+      "por_que_nao": "Com a descarga restringida, mais rotação não recompõe a vazão mínima estável e pode reduzir ainda mais a margem ao surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo, enquanto a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fechamento inadvertido de válvulas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de load-sharing em trens paralelos para transferências seguras de carga.",
+      "pergunta": "Em dois trens centrífugos paralelos no mesmo coletor, um trem será colocado em carga para assumir parte da vazão do outro sem sobrecarga localizada nem perda de estabilidade. Que função de controle deve coordenar essa transferência?",
+      "resposta": "Malha de repartição de carga entre os trens paralelos.",
+      "explicacao": "Na transferência, controlar só pressão não garante divisão equilibrada; a repartição de carga evita que uma máquina assuma vazão ou potência excessiva durante a manobra.",
+      "resposta_padrao": "Usar apenas o controle independente de pressão em cada trem.",
+      "por_que_nao": "Malhas independentes podem disputar o mesmo coletor e concentrar carga em uma máquina, sem garantir partilha segura na transferência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema de controle precisa repartir carga, evitar sobrecarga localizada e manter partidas, paradas e transferências de trem com segurança e confiabilidade"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Teste automático aplicável à válvula anti-surge crítica para detectar degradação de atuação sem curso total.",
+      "pergunta": "Para uma válvula anti-surge crítica, que teste automático, quando disponível, ajuda a detectar degradação do atuador sem exigir curso completo em operação?",
+      "resposta": "Teste automático de curso parcial.",
+      "explicacao": "Para válvulas críticas de anti-surge, o curso parcial automático é recomendado quando disponível porque expõe degradação de atuação sem exigir abertura total em serviço.",
+      "resposta_padrao": "Fazer apenas a calibração periódica do posicionador.",
+      "por_que_nao": "Calibração não comprova o movimento mecânico do conjunto nem evidencia agarramento, atraso ou histerese sob atuação real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para válvulas críticas de anti-surge, são recomendadas características dinâmicas adequadas, realimentação de posição ao sistema de controle e, quando disponível, teste automático de curso parcial"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "01_01",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "MTTR deve considerar apenas o tempo efetivo de reparo, separado de esperas e demais tempos de indisponibilidade.",
+      "pergunta": "Um compressor crítico parou às 08h. Por restrição meteoceanográfica, a equipe só conseguiu acessar o skid às 20h; o reparo terminou às 23h e o equipamento voltou a operar às 23h30. Para apurar o MTTR do item, que intervalo deve entrar no indicador?",
+      "resposta": "Apenas o tempo de reparo, 20h às 23h.",
+      "explicacao": "MTTR contabiliza as atividades de reparo. Espera para acesso e tempo até o retorno operacional compõem a indisponibilidade observada, não o tempo médio de reparo.",
+      "resposta_padrao": "Das 08h às 23h30.",
+      "por_que_nao": "Esse intervalo mistura espera logística e retorno ao serviço com o esforço efetivo de reparo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para priorizar ações corretivas em KPI, o registro precisa distinguir o mecanismo de falha, não só a ocorrência por equipamento.",
+      "pergunta": "O KPI mensal mostra várias paradas de válvulas críticas agrupadas apenas como “falha de válvula”, e as ações corretivas seguem genéricas. Ao redesenhar a coleta para tornar as causas comparáveis e priorizáveis, que informação técnica deve ser explicitamente separada no registro?",
+      "resposta": "Mecanismo de falha.",
+      "explicacao": "Distinguir o mecanismo torna as causas úteis à priorização e à correção específica; somar ocorrências por equipamento não separa padrões físicos distintos.",
+      "resposta_padrao": "Número de ocorrências por equipamento.",
+      "por_que_nao": "Frequência sem o mecanismo não diferencia padrões de degradação nem aponta a ação corretiva adequada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dados de falhas, mecanismos de falha e manutenção precisam circular entre áreas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis e úteis à priorização de ações corretivas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A priorização de indicadores individuais deve seguir a criticidade funcional do item no sistema, não a taxa de falha isolada.",
+      "pergunta": "No painel de desempenho, um transmissor redundante acumula muitas falhas sem impacto operacional, enquanto uma única indisponibilidade da válvula motorizada de exportação interrompeu o offloading. Ao priorizar o indicador individual para atacar a perda real da unidade, que critério técnico deve prevalecer?",
+      "resposta": "Criticidade funcional do item no sistema.",
+      "explicacao": "O significado do indicador depende da função bloqueada. Em FPSO, baixa frequência pode ser mais relevante se a indisponibilidade interromper produção, segurança de processo ou exportação.",
+      "resposta_padrao": "Maior taxa de falha do equipamento.",
+      "por_que_nao": "Contagem de falhas ignora consequência sistêmica; um item redundante pode falhar muito sem limitar o desempenho global.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seu significado depende da criticidade funcional do item no sistema."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um elemento com baixa taxa de falha pode ser mais relevante que outro mais problemático se sua indisponibilidade bloquear produção, segurança de processo ou exportação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Anos de histórico só aumentam a confiança analítica quando os registros permanecem padronizados ao longo do tempo.",
+      "pergunta": "Um histórico de falhas de oito anos foi consolidado, mas o mesmo evento aparece como “trip”, “shutdown” e “parada automática” conforme a equipe do turno, reduzindo a confiança das tendências. Que condição do registro está faltando para que esse acúmulo de anos realmente aumente a confiança analítica?",
+      "resposta": "Padronização dos registros.",
+      "explicacao": "Mais anos só fortalecem a análise se os eventos forem comparáveis ao longo do tempo; taxonomias variáveis distorcem frequências e tendências.",
+      "resposta_padrao": "Mais anos de histórico.",
+      "por_que_nao": "Volume sem consistência de classificação não melhora comparabilidade nem confiabilidade estatística das tendências.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Registros acumulados por anos tendem a aumentar a confiança analítica, desde que permaneçam padronizados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_03",
+  "foco": 1,
+  "rodada": 4,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A arquitetura funcional de votação altera a criticidade efetiva do mesmo instrumento e pode exigir estratégia de manutenção diferente.",
+      "pergunta": "Um transmissor com falha latente deixa uma função de shutdown indisponível até o próximo teste periódico; em outro serviço, a mesma falha individual ainda preserva a função porque a lógica continua votando com canais independentes remanescentes. Ao decidir se ambos podem seguir a mesma política de manutenção, que característica técnica do serviço deve prevalecer?",
+      "resposta": "Arquitetura funcional de votação do sistema.",
+      "explicacao": "Uma mesma falha individual pode retirar totalmente a proteção ou apenas degradar a redundância. Isso muda a consequência funcional e, portanto, a estratégia adequada para o transmissor.",
+      "resposta_padrao": "O histórico individual de falhas do transmissor.",
+      "por_que_nao": "O mesmo componente pode ter risco de serviço distinto quando uma falha única derruba a função em um caso e só reduz a redundância no outro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "combina a importância funcional do item com as consequências de sua falha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a arquitetura funcional do sistema"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A manutenção baseada em condição só é tecnicamente preferível quando a janela operacional da unidade permite agir dentro da antecedência útil do sinal.",
+      "pergunta": "Num item crítico, a variável de condição começa a degradar com antecedência, mas a intervenção exige uma janela de parada que costuma ocorrer depois do intervalo entre o início dessa degradação e a perda funcional. Ao escolher a estratégia principal do plano, que ponto técnico precisa pesar mais?",
+      "resposta": "Janela operacional disponível para intervenção.",
+      "explicacao": "A preditiva só é preferível se a unidade conseguir intervir dentro da antecedência útil dada pelo sinal. Quando a parada viável vem depois, a restrição operacional passa a dominar a escolha.",
+      "resposta_padrao": "A detectabilidade do sinal de degradação.",
+      "por_que_nao": "Sinal detectável sem possibilidade prática de intervenção dentro da janela útil não evita a perda funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sinais detectáveis de degradação antes da perda funcional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permitindo intervir no momento em que o risco aumenta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "as restrições operacionais da unidade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A disponibilidade de histórico de referência é condição para que um sinal monitorável sustente manutenção baseada em condição em item crítico.",
+      "pergunta": "Em um equipamento crítico recém-implantado, o modo de falha altera uma variável monitorável, mas a equipe ainda não tem tendência consolidada do comportamento normal nem referência do desvio típico em serviço. Para sustentar a adoção de manutenção baseada em condição como estratégia principal, que base técnica ainda falta?",
+      "resposta": "Histórico de referência da condição do ativo.",
+      "explicacao": "A decisão varia com a disponibilidade de dados históricos. Sem referência de comportamento normal, o sinal existe, mas não sustenta identificar aumento real de risco nem posicionar a intervenção.",
+      "resposta_padrao": "A calibração do instrumento de monitoramento.",
+      "por_que_nao": "Medir corretamente não basta sem baseline para separar variabilidade normal de degradação útil à decisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sinais detectáveis de degradação antes da perda funcional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permitindo intervir no momento em que o risco aumenta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a disponibilidade de dados históricos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

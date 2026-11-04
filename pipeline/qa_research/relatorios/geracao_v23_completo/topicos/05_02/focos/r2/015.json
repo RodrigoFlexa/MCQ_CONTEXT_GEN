@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção de cargas de load shedding deve considerar dependências de processo, não só o montante de MW aliviado.",
+      "pergunta": "Após a perda de um gerador, o load shedding rejeita a potência prevista e a frequência se recupera, mas um trem ainda necessário para manter a produção segura para logo depois porque um auxiliar comum dele estava entre as cargas cortadas. Que critério técnico da seleção de cargas foi negligenciado?",
+      "resposta": "Impacto do desligamento no processo.",
+      "explicacao": "Mesmo com alívio de potência suficiente, cortar um auxiliar comum pode derrubar um trem necessário. A seleção das cargas deve considerar as dependências do processo.",
+      "resposta_padrao": "A potência total rejeitada foi insuficiente.",
+      "por_que_nao": "A frequência já se recuperou com o montante rejeitado; a perda veio da dependência do trem em relação ao auxiliar cortado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores que permaneceram conectados e aumenta a chance de preservar alimentação para funções essenciais."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A eficácia do load shedding depende da coordenação com permissivos, intertravamentos e proteções, para não provocar desligamentos indiretos fora da lista.",
+      "pergunta": "Num teste de perda de geração, os alimentadores previstos pelo load shedding abrem e a frequência estabiliza, mas um motor essencial desarma segundos depois por perda de permissivo associada a uma das cargas rejeitadas. Que aspecto técnico do esquema deve ser revisto?",
+      "resposta": "Coordenação com proteções e automação.",
+      "explicacao": "O alívio de demanda funcionou; o desligamento adicional veio da interação entre as cargas rejeitadas e a lógica/permissivos do sistema, que precisa ser coordenada.",
+      "resposta_padrao": "Rejeitar mais carga na primeira etapa.",
+      "por_que_nao": "A estabilidade de frequência já foi recuperada; o problema é a interação com lógica e proteção, não a falta de MW cortado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se o esquema atuar tarde, com prioridades inadequadas ou baseado em análise de carga desatualizada, sua eficácia diminui."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o limitante do load shedding é a rapidez de alívio e as cargas descartáveis estão agrupadas, a implementação por seccionamento de barramento é a mais adequada.",
+      "pergunta": "Em ensaio de perda súbita de geração, a soma das cargas programadas para corte é suficiente, mas a frequência atinge o nadir antes que a sequência de abertura de vários alimentadores termine. Os consumidores descartáveis estão numa seção própria, sem funções essenciais. Que forma de implementação do load shedding deve ser usada?",
+      "resposta": "Separação apropriada de barramentos.",
+      "explicacao": "Se o problema é tempo de resposta, um único seccionamento remove um bloco de carga mais rápido do que várias aberturas seriais de alimentadores.",
+      "resposta_padrao": "Desligamento individual dos alimentadores programados.",
+      "por_que_nao": "A sequência serial não entrega alívio a tempo no transitório; o seccionamento do barramento reduz a demanda mais rapidamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Load shedding é a rejeição seletiva de cargas para reduzir rapidamente a demanda elétrica quando isso for requerido para evitar blackout."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

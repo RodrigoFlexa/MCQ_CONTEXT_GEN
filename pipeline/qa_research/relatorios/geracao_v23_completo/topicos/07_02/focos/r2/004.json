@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 2,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda simultânea de alarmes e visibilidade, com controle preservado, aponta para o escopo de acesso da camada supervisória.",
+      "pergunta": "Após suporte remoto, as malhas seguem estáveis nos controladores, mas toda a sala de controle perde reconhecimento de alarmes, tendências e visibilidade ao mesmo tempo. Em qual ativo do ambiente IACS o escopo de acesso deve ser revisado primeiro?",
+      "resposta": "Servidor de supervisão/alarmes do SCADA.",
+      "explicacao": "Em IACS, o controle de acesso também cobre servidores e sistemas de supervisão. Perda simultânea de visibilidade e alarmes, com controle preservado, é efeito típico dessa camada.",
+      "resposta_padrao": "Controlador de processo.",
+      "por_que_nao": "Os controladores podem manter as malhas enquanto a camada supervisória perde telas, tendências e alarmes; o ponto crítico de acesso está no SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "perda de visibilidade, desabilitação de alarmes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Menor privilégio em IACS: atuar no processo sem mudar configuração exige acesso de operação, não de engenharia.",
+      "pergunta": "Para reproduzir uma falha intermitente, o fornecedor remoto precisa apenas colocar uma malha em manual e variar setpoints sob autorização, sem alterar configuração, lógica ou firmware. Que tipo de privilégio basta para essa intervenção?",
+      "resposta": "Acesso de operação.",
+      "explicacao": "Acesso de operação permite atuar no processo. Acesso de engenharia só se justifica quando é necessário alterar configuração, lógica ou firmware.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Mover a malha para manual e variar setpoint não exige capacidade de alterar configuração, lógica ou firmware, que ampliaria desnecessariamente o risco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em IACS, incidentes com setpoint, alarmes e parada indevida devem ser priorizados pela disponibilidade e pelo comportamento do processo.",
+      "pergunta": "Uma conta legítima, mas superprivilegiada, mudou setpoints, suprimiu alarmes e provocou parada indevida, sem evidência de exfiltração. Na resposta inicial do incidente em IACS, que dimensão do impacto deve orientar a prioridade?",
+      "resposta": "Disponibilidade operacional do processo.",
+      "explicacao": "No IACS, mudança de setpoint, supressão de alarmes e parada indevida são impactos operacionais imediatos; a prioridade é restaurar a disponibilidade e o comportamento seguro do processo.",
+      "resposta_padrao": "Confidencialidade dos dados.",
+      "por_que_nao": "Em ICS, o dano dominante é interromper ou desviar o comportamento do processo; exposição de informação não é o efeito operacional principal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "item": "02_08",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Inventários hidraulicamente acoplados devem ser modelados como volumes comunicantes na simulação dinâmica de alívio.",
+      "pergunta": "Durante o trip de dois vasos que descarregam para o mesmo flare, as pressões dos dois se equalizam rapidamente e a massa total liberada não corresponde à soma de inventários tratados isoladamente. Na simulação que vai definir a carga de alívio, que característica hidráulica do sistema deve ser preservada?",
+      "resposta": "Volumes comunicantes.",
+      "explicacao": "Equalização rápida de pressão e descarga total não aditiva indicam inventário acoplado; o modelo precisa manter a comunicação hidráulica para representar corretamente a partilha transiente de massa e pressão.",
+      "resposta_padrao": "Tratar cada vaso como fonte independente.",
+      "por_que_nao": "Fontes independentes ignoram a troca de massa e a equalização de pressão entre volumes acoplados, distorcendo o pico descarregado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Cargas dinâmicas de alívio variam com o estado inicial do processo, mesmo com o mesmo fluido e a mesma lógica de proteção.",
+      "pergunta": "O mesmo trem, com o mesmo gás e a mesma lógica de ESD, mostra picos de vazão e temperatura de alívio bem diferentes quando a parada começa em plena carga quente ou em reciclo frio. Na simulação usada para definir as cargas, que dado do processo precisa ser específico de cada cenário?",
+      "resposta": "Condições iniciais do processo.",
+      "explicacao": "Com o mesmo fluido, a diferença entre os cenários vem do estado de partida: pressão, temperatura e inventário iniciais. É isso que muda a evolução da vazão e da temperatura de alívio.",
+      "resposta_padrao": "O PVT do fluido.",
+      "por_que_nao": "Com o mesmo gás, o pacote termodinâmico não distingue os cenários; quem altera o transiente são as pressões, temperaturas e inventários de partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses resultados permanecem dependentes das hipóteses adotadas para simultaneidade e dinâmica do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "depende da qualidade das hipóteses do modelo, das condições iniciais"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ação das malhas de controle pode amortecer e defasar a descarga ao flare; o modelo dinâmico precisa representá-la.",
+      "pergunta": "Na parada de um sistema de compressão ligado ao flare, o modelo prevê pico imediato de descarga, mas em campo o pico vem amortecido e atrasado após a abertura automática do reciclo e a correção de pressão pelo controle. Que elemento da representação dinâmica deve ser incluído para reproduzir esse comportamento?",
+      "resposta": "Malhas de controle e sua atuação transiente.",
+      "explicacao": "O amortecimento e o atraso observados antes do pico são produzidos pela resposta automática dos controladores; sem essas malhas, o modelo tende a descarregar cedo e acima do real.",
+      "resposta_padrao": "A contrapressão do flare header.",
+      "por_que_nao": "A contrapressão afeta a capacidade após o escoamento se estabelecer; o atraso e o amortecimento observados nascem da ação dos controladores antes do pico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Paradas de sistemas de compressão exigem verificar surge por simulação dinâmica além das cargas ao flare.",
+      "pergunta": "Durante parada programada ou de emergência de um sistema de compressão ligado ao flare, a abertura do reciclo e a queda das pressões deslocam rapidamente o ponto operacional do compressor. Além da carga ao flare, que fenômeno transitório precisa ser avaliado por simulação dinâmica?",
+      "resposta": "Surge do compressor.",
+      "explicacao": "Em shutdown de compressores, a trajetória transitória de pressão e vazão pode levar o ponto de operação à instabilidade característica de surge, exigindo avaliação dinâmica além do flare.",
+      "resposta_padrao": "Cavitação do compressor.",
+      "por_que_nao": "Cavitação é instabilidade de líquidos; em compressores, o risco transitório de shutdown é surge por queda de vazão frente à razão de compressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

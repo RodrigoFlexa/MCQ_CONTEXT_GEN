@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em UPS CA on-line, queda das cargas apenas durante interrupções curtas da entrada aponta degradação do subsistema de armazenamento de energia.",
+      "pergunta": "Uma UPS CA on-line mantém servidores e controladores estáveis com a alimentação de entrada presente, mas qualquer interrupção curta da fonte faz as cargas reinicializarem imediatamente. Qual subsistema da UPS deve ser apontado primeiro como degradado?",
+      "resposta": "Banco de baterias.",
+      "explicacao": "Na dupla conversão, a carga segue alimentada pelo caminho interno; quando a entrada some por instantes, a sustentação depende das baterias. Queda restrita a essas perturbações aponta degradação desse banco.",
+      "resposta_padrao": "Seção inversora.",
+      "por_que_nao": "Falha do inversor tende a comprometer a saída mesmo com a entrada normal; o sintoma restrito à perda breve da fonte aponta o caminho de armazenamento de energia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa etapa carrega o banco de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "continuidade frente a afundamentos, interrupções curtas e variações da fonte"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A continuidade real fornecida pela UPS contra afundamentos e microinterrupções deve ser comprovada por ensaio funcional sob carga com perda controlada da entrada.",
+      "pergunta": "Após manutenção na UPS que alimenta controladores e servidores críticos, como deve ser comprovado que a proteção contra microinterrupções e afundamentos continua realmente disponível?",
+      "resposta": "Teste funcional sob carga com simulação controlada de perda da entrada.",
+      "explicacao": "Medições com a rede normal ou autotestes não provam a sustentação da carga quando a fonte varia ou interrompe. O ensaio precisa exercitar o mecanismo de continuidade da própria UPS.",
+      "resposta_padrao": "Autoteste interno da UPS sem mexer na alimentação.",
+      "por_que_nao": "Autoteste ou leitura em regime normal não demonstram que a carga continuará energizada quando a entrada sofrer afundamento ou interrupção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desde que potência, componentes e manutenção estejam adequados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O benefício não elimina vulnerabilidades do próprio sistema"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em UPS mantida em flutuação, disponibilidade real do backup depende do estado de saúde das baterias, não apenas de estarem carregadas.",
+      "pergunta": "Em uma UPS que permanece em flutuação e sem alarmes de carregamento, a equipe quer saber se o backup para sistemas digitais críticos ainda está efetivamente disponível. Qual condição deve ser acompanhada?",
+      "resposta": "Estado de saúde do banco de baterias.",
+      "explicacao": "Banco em flutuação pode estar carregado e ainda assim degradado por envelhecimento. A disponibilidade do backup depende da capacidade real das baterias de sustentar a carga quando a entrada falhar.",
+      "resposta_padrao": "Estado de carga das baterias.",
+      "por_que_nao": "Bateria carregada não garante autonomia útil; envelhecimento e perda de capacidade só aparecem na condição de saúde do banco.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a gestão do estado de saúde de bancos de baterias foi associada à disponibilidade do backup de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "09_01",
+  "foco": 8,
+  "rodada": 3,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Hipótese de atendimento exclusivo por uma única embarcação pode tornar artificialmente inviável a entrega urgente fracionada ao FPSO.",
+      "pergunta": "Um sobressalente crítico de pequeno porte fica disponível em terra depois do fechamento da carga de rotina já alocada a um PSV com destino ao FPSO. Outro PSV, leve e liberado, passará pelo campo antes do dia seguinte, mas o roteirizador ainda posterga a entrega urgente. Que hipótese de modelagem explica essa postergação artificial?",
+      "resposta": "Atendimento exclusivo do FPSO por uma única embarcação.",
+      "explicacao": "A postergação não decorre da falta de meio naval: um segundo PSV poderia levar o item crítico. O bloqueio vem da hipótese do modelo que não permite dividir o atendimento da mesma unidade entre embarcações.",
+      "resposta_padrao": "Capacidade insuficiente do PSV já programado.",
+      "por_que_nao": "O item cabe em outro PSV disponível; o impeditivo é a restrição de exclusividade de atendimento da unidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada plataforma ser atendida por uma única embarcação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não devem ser universalizadas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A hipótese de inexistência de restrições horárias no modelo precisa ser substituída por janela real de atendimento da unidade.",
+      "pergunta": "A programação ótima marca a chegada do PSV ao FPSO de madrugada, em horário sem equipe mobilizada para recebimento e sem operação de carga no convés, mas mantém baixo custo e sem atrasos no modelo. Que restrição de modelagem faltou para tornar essa escala executável?",
+      "resposta": "Janela de atendimento da unidade.",
+      "explicacao": "O resultado é inviável porque a unidade não recebe carga naquele horário. A hipótese de inexistência de restrições de horário vale só para o sistema modelado, não para qualquer FPSO.",
+      "resposta_padrao": "Tempo extra de espera do PSV.",
+      "por_que_nao": "Espera não substitui a necessidade de um intervalo admissível de atendimento; a escala só é válida se respeitar a janela operacional da unidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inexistência de restrições de horário de atendimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma rota eficiente em custo não é, por si só, prova de executabilidade operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Fragmentar entregas em mais visitas de PSVs aumenta a exposição ao risco de colisão pelo crescimento das interações próximas no campo.",
+      "pergunta": "Para reduzir custo fixo, uma proposta troca uma viagem única por várias escalas menores de PSVs ao mesmo FPSO, mantendo a mesma tonelagem total entregue. Na interface marítima do campo, que variável de exposição ao risco tende a aumentar e precisa entrar na avaliação operacional?",
+      "resposta": "Número potencial de interações próximas no campo.",
+      "explicacao": "Mais circulação de embarcações de apoio amplia a preocupação com colisão porque cresce o número de aproximações e permanências próximas à unidade, mesmo que a tonelagem total transportada não mude.",
+      "resposta_padrao": "Tempo total de navegação em mar aberto.",
+      "por_que_nao": "O agravamento vem das aproximações adicionais ao FPSO; trânsito afastado em mar aberto não é o fator decisivo nessa interface.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a solução precisa ser compatível com restrições físicas e operacionais da interface marítima"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cresce o número potencial de interações próximas no campo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de propulsão e predomínio da ação ambiental caracterizam colisão de deriva na aproximação ao FPSO.",
+      "pergunta": "Durante a aproximação para suprimento, o PSV perde propulsão e, sem manter posição, passa a ser levado por vento e ondas em direção ao FPSO. Qual mecanismo de colisão fica caracterizado nessa condição?",
+      "resposta": "Colisão de deriva.",
+      "explicacao": "Sem controle efetivo de posição, a embarcação passa a sofrer predominantemente a ação ambiental; isso define colisão de deriva, não colisão motora por erro de navegação ou manobra.",
+      "resposta_padrao": "Colisão motora.",
+      "por_que_nao": "Na motora, o deslocamento resulta de navegação ou manobra; aqui a perda de propulsão deixa a deriva dominar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "necessidade de posicionamento seguro"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Nas colisões de deriva, a embarcação perde controle efetivo de posição e passa a sofrer predominantemente a ação ambiental"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

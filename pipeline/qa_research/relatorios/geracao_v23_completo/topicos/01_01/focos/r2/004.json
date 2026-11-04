@@ -1,0 +1,65 @@
+{
+  "item": "01_01",
+  "foco": 4,
+  "rodada": 2,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Estimativa de disponibilidade de sistema reparável a partir de MTBF e MTTR quando uptime e downtime observados não estão disponíveis.",
+      "pergunta": "Em um sistema reparável com comportamento já estabilizado, o consolidado do período não traz uptime e downtime por evento, apenas MTBF e MTTR confiáveis. Para aproximar a disponibilidade desse sistema, que relação deve ser usada?",
+      "resposta": "MTBF / (MTBF + MTTR).",
+      "explicacao": "Sem uptime e downtime observados, os blocos admitem usar tempos médios de falha e reparo como aproximação. A disponibilidade é a fração do ciclo total em operação, não uma razão simples entre as duas médias.",
+      "resposta_padrao": "MTBF dividido pelo MTTR.",
+      "por_que_nao": "Essa razão compara durações, mas não calcula a fração do ciclo falha-reparo em que o sistema permanece disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade expressa a probabilidade de o sistema estar operacional em um dado instante"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma forma de referência relaciona disponibilidade a MTBF (Mean Time Between Failures, tempo médio entre falhas) e MTTR (Mean Time To Repair, tempo médio para reparo)"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Condição de validade para usar a razão uptime/tempo total como representação da disponibilidade observada de um sistema reparável.",
+      "pergunta": "Na consolidação de KPI de um sistema reparável, a equipe quer usar a razão uptime/tempo total de uma janela histórica como representativa do comportamento típico do ativo. Que condição do regime de falhas e reparos essa janela precisa atender?",
+      "resposta": "Estado estacionário.",
+      "explicacao": "A representação por uptime sobre tempo total é dada para sistemas reparáveis em estado estacionário. Fora desse regime, a janela pode refletir transitórios de partida, recuperação ou mudança de política, e não o comportamento típico.",
+      "resposta_padrao": "Operação em carga nominal constante.",
+      "por_que_nao": "Carga estável não garante que o processo de falhas e reparos já tenha atingido o regime estatístico regular.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas reparáveis, ela resulta da alternância entre períodos operacionais e períodos indisponíveis por falha ou reparo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em estado estacionário, pode ser representada pela razão entre uptime e tempo total observado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

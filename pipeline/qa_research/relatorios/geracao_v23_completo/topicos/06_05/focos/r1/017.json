@@ -1,0 +1,89 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Incoerência entre campo/controlador e supervisório com hardware íntegro aponta erro de mapeamento de sinais, não falha do detector.",
+      "pergunta": "Após uma alteração de configuração, um detector entra em alarme local e o controlador registra a entrada correta, mas o supervisório apresenta o alarme em outro ponto sem indicar perda de comunicação. Qual falha técnica específica explica melhor essa incoerência?",
+      "resposta": "Mapeamento incorreto de sinais entre controlador e supervisório.",
+      "explicacao": "Se campo e controlador concordam e o supervisório associa o evento a outro ponto, a falha está na associação de tags, telas ou banco de dados, não na detecção em campo.",
+      "resposta_padrao": "Perda de comunicação do detector.",
+      "por_que_nao": "Perda de comunicação tende a gerar ausência, falha ou congelamento do sinal, não um alarme válido apresentado no ponto errado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório, e a rastreabilidade temporal dos eventos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "perda de comunicação, mapeamento incorreto de sinais, falhas de configuração ou inconsistências entre telas e lógica podem preservar hardware em campo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ausência de registros intermediários previstos após mudança de lógica indica falha de implementação da sequência configurada.",
+      "pergunta": "Em uma atuação de CO2, a lógica modificada previa confirmação local seguida de confirmação posterior no supervisório. No evento, aparecem o disparo local e a indicação final, mas não os registros intermediários esperados. Que falha técnica específica isso sugere?",
+      "resposta": "Falha de implementação da dupla confirmação na lógica.",
+      "explicacao": "Quando a sequência configurada não deixa os registros intermediários obrigatórios, a execução real da lógica diverge do que foi previsto na mudança.",
+      "resposta_padrao": "Latência de comunicação do supervisório.",
+      "por_que_nao": "Latência altera a marcação temporal ou atrasa a indicação, mas não elimina uma etapa lógica obrigatória e seu respectivo registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a gestão de mudança previa dupla verificação, envolvendo confirmação local e confirmação posterior no supervisório."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a ausência de registros esperados no evento investigado indicou indício de falha de implementação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O intervalo registrado entre disparo local e indicação de CO2 disparado também mostra que a sequência temporal é relevante para verificar se a lógica configurada foi realmente executada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Indicação local sem registro no controlador localiza a degradação no caminho do sinal até a lógica, não na capacidade de detecção em campo.",
+      "pergunta": "Em um teste, o detector aciona a indicação local em campo, porém o controlador não registra a entrada e nenhuma ação automática associada inicia. Qual trecho da cadeia funcional deve ser apontado como degradado?",
+      "resposta": "Transmissão do sinal do campo para o controlador.",
+      "explicacao": "A atuação local mostra que o detector percebeu o evento; sem registro na lógica nem resposta automática, a falha está no caminho do sinal até o controlador.",
+      "resposta_padrao": "O detector está indisponível ou descalibrado.",
+      "por_que_nao": "Um detector indisponível ou fora de atuação não produziria a indicação local que comprova percepção do fenômeno e funcionamento do hardware de campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade de um detector não produz proteção completa se a comunicação com a lógica e com a interface do operador estiver degradada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em F&G, perda de comunicação, mapeamento incorreto de sinais, falhas de configuração ou inconsistências entre telas e lógica podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "não pergunte o que é citado, mencionado ou listado: pergunte pelo conhecimento técnico"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "item": "06_05",
+  "foco": 9,
+  "rodada": 1,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança aprovada em lógica de descarga por CO2 só existe de fato se o permissivo de confirmação do operador estiver implementado.",
+      "pergunta": "Uma alteração aprovada passou a exigir confirmação do operador no supervisório antes da descarga de CO2. Em teste, a confirmação local já inicia a contagem e a liberação do agente sem qualquer ação do operador. Qual falha técnica explica melhor esse comportamento?",
+      "resposta": "Permissivo de confirmação do operador não implementado na lógica de descarga.",
+      "explicacao": "O arranjo previsto exige dupla verificação antes da descarga. Se a sequência avança sem a etapa do operador, a mudança aprovada não se materializou na implementação.",
+      "resposta_padrao": "Erro operacional do operador no supervisório.",
+      "por_que_nao": "Se a sequência prossegue sem intervenção humana, o defeito está no encadeamento lógico da descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "foi adotada dupla verificação com confirmação local e posterior confirmação do operador em supervisório antes da descarga, seguida de temporização."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Também mostra que uma mudança formalmente aprovada pode não se materializar em campo se a implementação falhar."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em sistemas fixos por CO2 com dupla verificação, a descarga deve ser precedida por temporização de pré-descarga.",
+      "pergunta": "Em um sistema fixo por CO2 configurado com confirmação local do evento e posterior confirmação do operador no supervisório, qual etapa específica da sequência ainda deve ocorrer antes da descarga do agente?",
+      "resposta": "Temporização de pré-descarga.",
+      "explicacao": "No arranjo descrito, a liberação do CO2 não é imediata após as confirmações; a sequência inclui uma temporização antes da descarga.",
+      "resposta_padrao": "Descarga imediata do CO2.",
+      "por_que_nao": "Nesse arranjo, a autorização de descarga passa por um atraso deliberado entre a confirmação e a liberação do agente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "foi adotada dupla verificação com confirmação local e posterior confirmação do operador em supervisório antes da descarga, seguida de temporização."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

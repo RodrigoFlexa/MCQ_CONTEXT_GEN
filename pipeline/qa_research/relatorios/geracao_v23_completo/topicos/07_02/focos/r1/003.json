@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 1,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento da segmentação por confronto entre tráfego real e matriz autorizada de fluxos interdomínios.",
+      "pergunta": "Após várias mudanças pequenas e liberações temporárias, a operação segue normal, mas a equipe quer verificar se a segmentação entre domínios ainda corresponde ao uso real da rede. Como essa verificação deve ser feita para confirmar que os fluxos interdomínios continuam necessários?",
+      "resposta": "Confrontando o tráfego observado com a matriz de fluxos autorizados entre domínios.",
+      "explicacao": "A aderência da segmentação só se comprova comparando comunicações reais com os fluxos aprovados; isso revela deriva operacional e exposições mantidas sem necessidade atual.",
+      "resposta_padrao": "Revisando apenas as regras configuradas nos firewalls.",
+      "por_que_nao": "Regra configurada mostra intenção de bloqueio ou liberação, mas não prova quais comunicações realmente cruzam os domínios nem se ainda são necessárias.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "verificar se a separação planejada continua compatível com a operação real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Coerência do escopo arquitetural depende de inventário atualizado dos ativos efetivamente conectados ao IACS.",
+      "pergunta": "Em janelas de manutenção, o switch de uma VLAN operacional passa a aprender endereços de um notebook não previsto, sem alteração perceptível no processo. Para saber se a arquitetura segmentada ainda corresponde ao escopo planejado, qual referência técnica deve ser reconciliada primeiro?",
+      "resposta": "Inventário dos ativos conectados ao IACS.",
+      "explicacao": "A arquitetura monitorada precisa confirmar se o conjunto de sistemas conectados ainda é o planejado; dispositivo não inventariado altera o escopo mesmo sem perturbar o processo.",
+      "resposta_padrao": "Conferindo a lista de usuários autorizados para acesso remoto.",
+      "por_que_nao": "A coerência do escopo arquitetural depende dos equipamentos efetivamente conectados; permissões de usuário não revelam hardware novo ou temporário no IACS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação deve verificar gestão de ativos, competências, configuração e eficácia dos controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Adequação de barreiras interdomínios deve ser reavaliada pela criticidade das funções alcançadas, não por desempenho de rede.",
+      "pergunta": "Um enlace já existente entre domínios passa a transportar também comunicações para um sistema elétrico de controle, além dos dados supervisórios usuais. Latência, perda e carga do firewall seguem normais. Na revisão da arquitetura, que critério técnico decide se a barreira existente continua adequada?",
+      "resposta": "Criticidade das funções envolvidas no enlace.",
+      "explicacao": "Barreiras são definidas pela consequência do que atravessam; tráfego estável e firewall folgado não demonstram compatibilidade com funções mais críticas agora expostas pelo mesmo enlace.",
+      "resposta_padrao": "Verificando banda, latência e carga do firewall.",
+      "por_que_nao": "Desempenho só mostra operabilidade do enlace; a suficiência da barreira depende da criticidade e das consequências das funções alcançadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

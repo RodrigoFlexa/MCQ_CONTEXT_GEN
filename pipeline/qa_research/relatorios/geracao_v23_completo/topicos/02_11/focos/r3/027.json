@@ -1,0 +1,79 @@
+{
+  "item": "02_11",
+  "foco": 27,
+  "rodada": 3,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Propagação de falhas em módulo de gás integrado restringe múltiplos destinos a partir de uma única indisponibilidade.",
+      "pergunta": "Uma única falha no módulo de gás passa a limitar simultaneamente exportação e gas lift, embora os compressores finais desses destinos continuem mecanicamente aptos. Que mecanismo da arquitetura do sistema explica esse alcance da falha?",
+      "resposta": "Propagação de falhas em sistema de gás integrado.",
+      "explicacao": "No sistema de gás integrado, uma falha única em serviço compartilhado pode restringir mais de um destino mesmo com compressores finais íntegros; o elo explicativo é a propagação de falhas.",
+      "resposta_padrao": "Falha simultânea independente dos dois compressores finais.",
+      "por_que_nao": "Destinos diferentes podem ser bloqueados por uma dependência comum a montante; não é necessário que as máquinas finais falhem juntas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como o sistema de gás é altamente integrado, indisponibilidades em compressão, regeneração de utilidades associadas, recuperação de vapor ou tratamento podem restringir mais de um destino ao mesmo tempo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para manutenção e operação, são especialmente relevantes a propagação de falhas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na disponibilidade offshore, logística de sobressalentes pode dominar o tempo de retorno ao serviço.",
+      "pergunta": "Quando a peça correta está disponível, um compressor crítico do tratamento volta ao serviço em poucas horas; no FPSO, a mesma falha mantém o trem parado por dias sem aumento relevante da complexidade do reparo. Qual fator offshore domina a indisponibilidade?",
+      "resposta": "Logística de sobressalentes.",
+      "explicacao": "Se a intervenção é curta quando a peça existe, o atraso adicional offshore vem do suprimento e embarque do item; o limitante não é a reparabilidade intrínseca.",
+      "resposta_padrao": "Baixa restaurabilidade do compressor.",
+      "por_que_nao": "Restaurabilidade trata do esforço e tempo de reparo; aqui o atraso dominante vem de obter e embarcar o sobressalente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "restrições de espaço, pessoal, materiais a bordo e logística de sobressalentes dificultam manutenção e recuperação rápida após falhas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a restaurabilidade dos compressores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para serviço de compressão com uma única máquina em carga, cobertura imediata de falha exige compressor em espera.",
+      "pergunta": "Em uma função de compressão de gás que normalmente opera com uma única máquina em carga, a perda inesperada da unidade em operação não pode interromper o destino atendido nem aguardar reparo offshore. Que arranjo de disponibilidade deve estar pronto para assumir 100% da carga?",
+      "resposta": "Compressor em espera.",
+      "explicacao": "Quando uma só máquina atende o duty e a interrupção não é aceitável, a reserva pronta para assumir toda a carga é o arranjo relevante; divisão permanente de carga não garante essa substituição imediata.",
+      "resposta_padrao": "Dois compressores dividindo a carga em paralelo.",
+      "por_que_nao": "Compartilhar carga eleva capacidade online, mas não mantém uma máquina íntegra e ociosa pronta para assumir 100% instantaneamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para manutenção e operação, são especialmente relevantes a propagação de falhas, a disponibilidade de trens paralelos ou em espera, a restaurabilidade dos compressores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "logística de sobressalentes dificultam manutenção e recuperação rápida após falhas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

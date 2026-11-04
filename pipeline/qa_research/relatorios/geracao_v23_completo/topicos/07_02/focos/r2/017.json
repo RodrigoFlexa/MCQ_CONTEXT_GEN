@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparação com baseline histórico do mesmo modo operacional para separar transientes normais de indícios cibernéticos.",
+      "pergunta": "Durante a partida de um compressor, o backbone OT sofre burst de tráfego, atrasos de telas e alarmes de comunicação; minutos depois tudo estabiliza, e padrões parecidos já ocorreram sem incidente. Que base técnica deve sustentar a decisão de escalar ou não o caso como comprometimento digital?",
+      "resposta": "Baseline histórico da mesma condição operacional.",
+      "explicacao": "O bloco F liga a qualidade da resposta à comparação do comportamento atual com referência histórica. Em partidas, picos de tráfego e atrasos podem ser normais; o baseline equivalente separa transiente esperado de desvio anômalo.",
+      "resposta_padrao": "O pico instantâneo de utilização da rede.",
+      "por_que_nao": "Carga alta num instante pode ser normal na partida; sem referência equivalente, valor absoluto não distingue transiente esperado de anomalia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capacidade de comparar comportamento atual com referência histórica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem esse preparo, a organização pode confundir consequência com causa e agravar o evento por ações mal coordenadas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de verificações em OT pela menor efetividade das contramedidas e menor observabilidade do ativo exposto.",
+      "pergunta": "Após conexão remota suspeita por um mesmo caminho de acesso, dois ativos OT pedem checagem: um historiador com EDR e logs íntegros; um servidor legado do mesmo domínio sem telemetria equivalente. A equipe só consegue validar um ativo antes da próxima janela operacional. Qual deve ser priorizado?",
+      "resposta": "O servidor legado sem telemetria equivalente.",
+      "explicacao": "F determina verificações proporcionais e priorizadas conforme a efetividade das contramedidas. Com exposição pelo mesmo caminho, o ativo com menor observabilidade e defesa traz maior incerteza técnica e deve ser verificado primeiro.",
+      "resposta_padrao": "O historiador, por ter mais eventos disponíveis.",
+      "por_que_nao": "Volume de log não define prioridade; em OT, menor cobertura de contramedidas e menor visibilidade aumentam a urgência da verificação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "gestão de competências e efetividade das contramedidas, com direcionamento proporcional e priorizado das verificações."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "avaliar a exposição potencial dos dispositivos afetados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso das dependências entre controle, proteção e energia para investigar sintomas simultâneos e evitar isolar o segmento errado.",
+      "pergunta": "Após congelamento do SCADA, perda da visão do sistema de gerenciamento de energia e diagnósticos intermitentes do SIS quase ao mesmo tempo, a equipe discute três falhas distintas. Antes de isolar qualquer rede, que entendimento técnico deve orientar a análise para verificar uma causa compartilhada?",
+      "resposta": "Dependências entre controle, proteção e energia.",
+      "explicacao": "F aponta esse entendimento prévio como necessário para responder melhor e não confundir consequência com causa. A2 reforça que indisponibilidade e perda de alimentação podem degradar supervisão e proteção simultaneamente.",
+      "resposta_padrao": "A aplicação que alarmou primeiro.",
+      "por_que_nao": "O primeiro sintoma visível pode ser apenas efeito propagado; sem conhecer dependências, a equipe pode conter o ponto errado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem esse preparo, a organização pode confundir consequência com causa e agravar o evento por ações mal coordenadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

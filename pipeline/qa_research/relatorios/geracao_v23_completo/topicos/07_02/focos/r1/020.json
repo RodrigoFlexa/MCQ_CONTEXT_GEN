@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelagem unificada offline reduz divergências entre disciplinas ao alinhar propriedades, termodinâmica e métodos de solução.",
+      "pergunta": "Reservatório, poços e facilidades são estudados em simuladores separados e, para o mesmo fluido e cenário, os balanços e flashes divergem entre disciplinas apesar da troca regular de arquivos. Que arranjo de modelagem deve ser adotado para reduzir essa divergência na origem?",
+      "resposta": "Plataforma unificada de simulação offline.",
+      "explicacao": "Num único ambiente, propriedades físicas, termodinâmica e métodos de solução permanecem alinhados, reduzindo divergências que persistem quando cada disciplina mantém modelo paralelo.",
+      "resposta_padrao": "Rotina de reconciliação entre modelos separados.",
+      "por_que_nao": "Reconcilia resultados depois; não elimina divergências geradas por pacotes de propriedades e solucionadores diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo offline, uma plataforma unificada de simulação pode reunir reservatório, poços, escoamento, facilidades de produção e cenários de segurança em um mesmo ambiente de modelagem."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa abordagem, o ganho principal é a consistência: propriedades físicas, termodinâmica e métodos de solução permanecem alinhados entre disciplinas, reduzindo divergências entre modelos paralelos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicações que influenciam ajustes operacionais frequentes devem executar próximas ao controle quando há latência variável e perda de conectividade.",
+      "pergunta": "Uma aplicação de otimização passou a influenciar ajustes operacionais frequentes. O enlace para a nuvem tem latência variável e quedas curtas, enquanto o controle básico local permanece estável. Onde essa aplicação deve executar para evitar comportamento temporal inadequado?",
+      "resposta": "Na borda, próxima ao sistema de controle local.",
+      "explicacao": "Funções mais acopladas ao processo toleram menos atraso e indisponibilidade; executá-las localmente reduz dependência do enlace e do comportamento na perda de conectividade.",
+      "resposta_padrao": "Na nuvem, com buffering e reconexão automática.",
+      "por_que_nao": "Buffering preserva dados, mas não remove latência nem garante resposta previsível para aplicações que interferem em ajustes frequentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também aparecem arquiteturas híbridas, nas quais controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sem contexto de modo operacional, comparações e analytics com dados correntes produzem alarmes espúrios e diagnósticos frágeis.",
+      "pergunta": "Um analytics compara equipamentos equivalentes entre ativos e gera alarmes apenas quando um está em partida, reciclo ou teste, embora timestamps, unidades e identificação dos equipamentos estejam corretos. Que informação de dados está faltando para tornar essa comparação válida?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Mesmo com tempo, unidade e identificação corretos, sinais de estados operacionais diferentes não são comparáveis; o modo operacional é o dado que separa condição normal de falso desvio.",
+      "resposta_padrao": "Maior frequência de amostragem.",
+      "por_que_nao": "Mais resolução temporal não distingue partida, reciclo, teste ou carga plena; o erro vem da mistura de estados operacionais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando isso funciona bem, o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

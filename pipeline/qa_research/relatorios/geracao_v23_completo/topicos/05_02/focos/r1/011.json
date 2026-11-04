@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Identificação do ponto de atuação do CLP que deve permanecer energizado para que comandos cheguem às válvulas após falha de UPS.",
+      "pergunta": "Após a falha da UPS que alimenta o controle, a estação de supervisão volta a comunicar com o CLP, mas nenhuma válvula comandada por ele responde em campo. Que ponto do CLP deve ter sua alimentação conferida primeiro para confirmar que o comando ainda consegue sair aos atuadores?",
+      "resposta": "O cartão-relé de saída do CLP.",
+      "explicacao": "A supervisão e a lógica podem continuar acessíveis, mas sem o estágio físico de saída energizado o comando não chega às válvulas. O bloco cita a desenergização do cartão-relé como causa direta da perda de comando.",
+      "resposta_padrao": "A CPU do CLP.",
+      "por_que_nao": "A CPU pode processar lógica e manter comunicação; sem o módulo de saídas energizado, não há atuação no campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Condição de teste necessária para revelar bloqueios de recomposição que ficam ocultos no reboot usual assistido por bateria.",
+      "pergunta": "Uma sequência de recomposição fecha normalmente após reinícios rotineiros, mas fracassa apenas depois de blackout total, durante o reboot do controle. Que condição de alimentação deve ser reproduzida no teste para expor bloqueios lógicos que o reinício usual mascara?",
+      "resposta": "Reboot sem alimentação de bateria.",
+      "explicacao": "O reboot usual apoiado por bateria pode esconder trips e bloqueios que só aparecem no estado degradado. Para provar a recomposição real, o teste deve repetir a condição anormal sem esse suporte.",
+      "resposta_padrao": "Reboot com a bateria disponível, como no reinício usual.",
+      "por_que_nao": "O suporte de bateria altera o estado de controle e pode ocultar o bloqueio; a falha só se revela no modo degradado sem essa alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

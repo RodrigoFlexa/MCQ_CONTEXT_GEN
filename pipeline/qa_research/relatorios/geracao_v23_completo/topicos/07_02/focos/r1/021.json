@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diagnóstico analítico confiável exige contexto de modo operacional para distinguir regime válido de falha.",
+      "pergunta": "Um modelo analítico passa a sinalizar baixa eficiência de uma bomba de água de injeção justamente nas partidas e nas fases com recirculação mínima, enquanto pressões, vibração e desempenho mecânico seguem coerentes em campo. Que informação contextual deve entrar no conjunto de dados para evitar que regimes válidos sejam classificados como falha?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Sem contexto de modo operacional, sinais normais de partida ou recirculação parecem desvio. O foco vincula a robustez de analytics à coerência operacional dos dados, não apenas à existência de medições.",
+      "resposta_padrao": "Mais sensores de condição na bomba.",
+      "por_que_nao": "Sensores adicionais não distinguem um estado operacional legítimo de uma falha; essa separação vem do contexto de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicações analíticas em OT devem respeitar a qualidade/validade do dado, não apenas o valor numérico recebido.",
+      "pergunta": "Durante perdas curtas de comunicação, a tela e o detector de anomalias continuam usando o último valor de pressão como se estivesse atual, e os alarmes falsos aparecem na retomada do enlace. Que atributo do sinal a aplicação consumidora precisa tratar para não considerar dado estagnado como válido?",
+      "resposta": "Indicador de qualidade ou validade do sinal.",
+      "explicacao": "O foco afirma que sinais sem tratamento de qualidade geram diagnósticos frágeis e alarmes espúrios. Valor congelado sem indicação de validade parece real e contamina a análise.",
+      "resposta_padrao": "Filtro de suavização do sinal.",
+      "por_que_nao": "Suavização atenua ruído, mas não informa se o dado está inválido, congelado ou indisponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicações com influência frequente no processo exigem definição explícita do comportamento sob perda de conectividade.",
+      "pergunta": "Uma aplicação externa passa a influenciar ajustes frequentes de um controle de processo; com o enlace disponível, a resposta é rápida, mas a conectividade cai por segundos em alguns períodos do dia. Antes de liberar essa influência operacional, que aspecto da integração deve ser definido e testado de forma explícita?",
+      "resposta": "Comportamento em perda de conectividade.",
+      "explicacao": "O foco distingue apoio à decisão de funções próximas do controle. Quando há influência frequente no processo, torna-se decisivo definir a reação da aplicação à queda do enlace.",
+      "resposta_padrao": "Latência média da rede.",
+      "por_que_nao": "Boa latência com o link disponível não define o que a função fará quando a comunicação cair; perto do controle, isso é tecnicamente mais crítico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Benchmark entre ativos multi-fornecedor depende de identificação consistente do equipamento, além de nomes de tags ou unidades.",
+      "pergunta": "Na comparação de desempenho entre equipamentos equivalentes de duas unidades, tags com nomes parecidos chegam de controladores de fornecedores diferentes, e a equipe de operação contesta se elas representam o mesmo item físico em cada ativo. Que atributo de dados deve ser normalizado primeiro para que o benchmark seja tecnicamente válido?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "O foco aponta que comparações entre ativos falham sem identificação consistente do equipamento. Tags semelhantes de fornecedores distintos podem referir itens ou funções diferentes.",
+      "resposta_padrao": "Conversão de todas as variáveis para a mesma unidade.",
+      "por_que_nao": "Unidade comum não corrige mapeamento errado entre sinais de equipamentos diferentes; a equivalência física e funcional precisa vir antes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso dificulta convenções de nomenclatura, padronização de interfaces humano-máquina (HMI) e comparação entre ativos sem retrabalho."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

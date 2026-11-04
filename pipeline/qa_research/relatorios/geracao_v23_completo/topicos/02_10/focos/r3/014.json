@@ -1,0 +1,57 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelo dinâmico de separador-hidrociclone precisa incluir perda de líquido pela rota de gás quando ela governa os transientes.",
+      "pergunta": "Um estudo dinâmico do sistema separador-hidrociclone fecha o balanço líquido apenas por underflow e overflow. Em operação com golfadas, o scrubber de gás recebe líquido e a interface real diverge da simulação, embora as duas válvulas respondam corretamente. Que caminho adicional de saída deve entrar no balanço do modelo antes de usar esse estudo para definir a filosofia de controle?",
+      "resposta": "Arraste de líquido na saída de gás.",
+      "explicacao": "Se parte do líquido sai pela rota de gás durante golfadas, o inventário não fecha só com underflow e overflow, e a dinâmica da interface fica mal representada.",
+      "resposta_padrao": "Ressintonia das malhas de interface e de DPR.",
+      "por_que_nao": "Sintonia não acrescenta ao modelo a rota adicional de retirada de líquido que altera o balanço de massa nos transientes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Por isso, a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Conclusões de controle perdem validade se o modelo não representar o efeito da química na estabilidade da emulsão.",
+      "pergunta": "A filosofia de controle escolhida por um estudo dinâmico mantinha descarga estável aos hidrociclones. Depois de uma mudança de química, a vazão continua regular e o DPR permanece controlado, mas o óleo na água piora de modo persistente. Que dependência fenomenológica precisa ser acrescentada ao modelo antes de reaproveitar essa conclusão?",
+      "resposta": "Influência dos agentes emulsificantes na estabilidade da emulsão.",
+      "explicacao": "Com vazão e DPR estáveis, a piora persistente aponta para mudança de gota e emulsão por química; sem esse vínculo, a conclusão do estudo não se transfere para a planta.",
+      "resposta_padrao": "Reduzir a oscilação permitida da interface.",
+      "por_que_nao": "Se a descarga segue estável, estreitar a banda não introduz no modelo o efeito químico que passou a governar a separação líquido-líquido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essas conclusões são condicionadas aos arranjos e parâmetros estudados; não definem superioridade universal para toda geometria, fluido ou filosofia de operação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

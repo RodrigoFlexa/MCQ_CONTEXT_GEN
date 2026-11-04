@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Pré-elevação preventiva dos setpoints do barramento pelo PMS na partida direta de grande motor.",
+      "pergunta": "Antes de fechar o disjuntor de um grande motor em partida direta assistida por PMS, qual estratégia de controle do barramento pode ser aplicada preventivamente para amortecer o afundamento inicial e melhorar a aceleração?",
+      "resposta": "Pré-elevação dos setpoints de tensão e/ou frequência",
+      "explicacao": "Na partida direta há forte corrente e queda transitória de tensão; a filosofia descrita permite ao PMS elevar previamente tensão e/ou frequência para atravessar melhor o fechamento e a aceleração.",
+      "resposta_padrao": "Aumentar a reserva girante dos geradores.",
+      "por_que_nao": "Folga de potência ajuda, mas não cria o viés preventivo das referências elétricas exatamente no instante do fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Partidas diretas de grandes motores elevam fortemente a corrente, provocam queda transitória de tensão e exigem potência reativa elevada durante a aceleração."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o Sistema de Gerenciamento de Potência, PMS, pode elevar previamente tensão e/ou frequência"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso da posição real dos disjuntores para alimentar a lógica de correção rápida do PMS na partida de motor.",
+      "pergunta": "Numa partida assistida por PMS, as correções rápidas dependem da topologia real logo após o fechamento do motor. Que informação deve entrar na lógica para representar essa topologia, e não apenas a manobra pretendida?",
+      "resposta": "Estados dos disjuntores",
+      "explicacao": "As correções rápidas são baseadas na configuração real da rede; só a posição efetiva dos disjuntores revela a conectividade vigente para tensão, rigidez do barramento e fluxo de reativos.",
+      "resposta_padrao": "Os comandos emitidos aos disjuntores.",
+      "por_que_nao": "Comando não garante a topologia real; a correção depende da conectividade efetivamente estabelecida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Importância do perfil de carga na escolha da tensão de operação de step-out HVAC longo.",
+      "pergunta": "Num step-out HVAC longo que opera muitas horas em carga leve, a equipe quer fixar uma tensão mais alta para reduzir corrente nos picos. Além das perdas por corrente, que critério operacional precisa pesar nessa escolha para não agravar sobretensão ao longo do tempo?",
+      "resposta": "Perfil de carga do sistema",
+      "explicacao": "Em cabos CA longos, os reativos crescem com V² e podem dominar em carga leve; por isso, a tensão de operação deve ser escolhida considerando o perfil de carga, não só o pico.",
+      "resposta_padrao": "A demanda de pico do sistema.",
+      "por_que_nao": "O pior desvio de tensão pode aparecer em carga leve, quando o efeito reativo do cabo permanece alto em relação à demanda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a potência reativa associada ao cabo cresce com o comprimento e com o quadrado da tensão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em HVAC offshore, a tensão de operação deve ser escolhida em balanço com perdas, reativos do cabo e perfil de carga."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

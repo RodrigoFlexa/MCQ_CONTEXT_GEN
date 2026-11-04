@@ -1,0 +1,95 @@
+{
+  "item": "02_01",
+  "foco": 23,
+  "rodada": 1,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Balanço de transferência deve integrar apenas o fluxo líquido que cruza a fronteira do armazenamento, excluindo recirculações internas.",
+      "pergunta": "Durante um alívio, a bomba de carga mantém recirculação entre tanques para condicionamento de linha ao mesmo tempo em que há transferência ao navio. No balanço da transferência, qual termo de vazão deve ser integrado para não criar desvio artificial por movimentação interna?",
+      "resposta": "Fluxo líquido que cruza a fronteira do sistema de armazenamento.",
+      "explicacao": "Recirculações internas só redistribuem volume dentro da fronteira. O balanço usa inventário inicial e final e apenas entradas e saídas externas ao armazenamento.",
+      "resposta_padrao": "Toda a vazão movimentada pelas bombas no período.",
+      "por_que_nao": "Vazão recirculada dentro da mesma fronteira não altera o inventário total e, se somada, duplica volume sem transferência de custódia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possíveis correntes internas de recirculação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua confiabilidade depende da qualidade das medições e da correta definição de fronteiras."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a definição da custódia exige delimitar exatamente quais correntes alimentam o estoque transferível"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A variação da interface óleo-água deve ser determinada para que a mudança de inventário represente o óleo transferido.",
+      "pergunta": "Durante o offloading, o nível total do tanque cai de forma regular, mas o volume drenado do fundo e a fração de água retirada mudam sensivelmente entre o início e o fim da janela. Para que a variação de inventário represente o óleo efetivamente entregue, qual variável de inventário deve ser determinada nesses dois instantes?",
+      "resposta": "Posição da interface óleo-água.",
+      "explicacao": "A interface altera o volume de óleo no tanque sem relação direta com o nível total. O balanço precisa separar inventário de óleo da água livre.",
+      "resposta_padrao": "Nível total do tanque.",
+      "por_que_nao": "O nível total não distingue redução de óleo de redistribuição de água; interface móvel muda o inventário líquido de óleo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "variação de interface óleo-água"
+        },
+        {
+          "bloco": "F",
+          "trecho": "estado inicial e final do inventário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Correntes adicionais que alimentam os tanques durante o alívio, como condensado, devem entrar como entradas do balanço da transferência.",
+      "pergunta": "No meio da janela de alívio, parte do condensado do processamento de gás passa a ser encaminhada aos tanques de óleo, enquanto a medição fiscal de óleo permanece a montante da estocagem. Que parcela adicional deve entrar no balanço para reconciliar a transferência?",
+      "resposta": "Entrada integrada de condensado aos tanques durante o alívio.",
+      "explicacao": "Correntes adicionais ao armazenamento alteram o inventário e a composição do estoque transferível. A produção fiscalizada a montante não fecha sozinha a transferência entregue.",
+      "resposta_padrao": "A produção fiscal de óleo do período já basta.",
+      "por_que_nao": "A estocagem desacopla produção e entrega, e o condensado altera as entradas do sistema cujo inventário será transferido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mudanças operacionais que alteram a composição do fluido entregue."
+        },
+        {
+          "bloco": "F",
+          "trecho": "às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O encaminhamento de condensado do processamento de gás aos tanques de óleo ou a outra rota modifica as entradas do balanço"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

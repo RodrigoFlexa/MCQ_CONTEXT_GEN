@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério técnico para liberar ou adiar acesso remoto quando a alimentação ininterrupta dos sistemas digitais críticos está degradada.",
+      "pergunta": "Durante instabilidade na alimentação ininterrupta que atende controle, shutdown de emergência e mitigação, um fornecedor solicita acesso remoto para manutenção em ativo digital. Qual decisão técnica específica deve prevalecer antes de liberar a sessão?",
+      "resposta": "Adiar a intervenção até normalizar a alimentação ininterrupta dos sistemas críticos.",
+      "explicacao": "Com a UPS degradada, reinicialização ou indisponibilidade durante a atividade pode coincidir com redução simultânea de barreiras operacionais; a liberação depende do restabelecimento da condição elétrica crítica.",
+      "resposta_padrao": "Liberar a sessão se VPN e autenticação estiverem conformes.",
+      "por_que_nao": "Canal e credenciais válidos não compensam a maior sensibilidade operacional criada pela possível perda simultânea de controle, shutdown e mitigação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas em sistemas de alimentação ininterrupta podem afetar simultaneamente sistemas de controle, shutdown de emergência e mitigação de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "qualquer atividade remota ou de manutenção sobre ativos digitais torna-se mais sensível"
+        },
+        {
+          "bloco": "F",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação, mas também condição do equipamento utilizado, momento operacional da intervenção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em acesso remoto a OT, a integridade do dispositivo de origem continua decisiva mesmo quando o canal é seguro.",
+      "pergunta": "Um terceiro acessa um ativo OT por VPN aprovada, com identidade individual e janela autorizada, mas o notebook foi reutilizado em outras instalações sem checagem recente. Qual condição técnica mantém essa sessão de alto risco?",
+      "resposta": "Integridade não verificada do notebook de origem.",
+      "explicacao": "A VPN protege o tráfego, mas não corrige comprometimento, desatualização ou má configuração do equipamento que inicia a sessão; o risco permanece no endpoint.",
+      "resposta_padrao": "Nenhuma; com VPN aprovada a sessão já está segura.",
+      "por_que_nao": "A proteção do canal não neutraliza um dispositivo reutilizado e sem verificação de integridade antes do uso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O risco é maior quando o dispositivo é reutilizado entre múltiplos contratos ou instalações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando sua atualização e integridade não são verificadas antes do uso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sinal operacional que identifica incompatibilidade de versão em ferramenta temporária de engenharia.",
+      "pergunta": "Após conectar o notebook de manutenção de um terceiro à estação de engenharia, a ferramenta pede conversão do projeto antes de entrar online; o ativo operava normalmente até então. Qual condição técnica do dispositivo explica melhor esse risco?",
+      "resposta": "Versão incompatível da ferramenta de engenharia.",
+      "explicacao": "Solicitação de conversão do projeto ao conectar a ferramenta é sinal típico de incompatibilidade de revisão, capaz de introduzir alteração indevida ou indisponibilidade no ativo.",
+      "resposta_padrao": "Oscilação de comunicação na rede industrial.",
+      "por_que_nao": "Problema de rede afeta conectividade; pedido de conversão do projeto aponta para incompatibilidade de versão no ambiente de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Salvaguarda técnica necessária para retorno seguro ao estado operacional após intervenção de terceiros.",
+      "pergunta": "Um terceiro fará ajuste com ferramenta temporária em um ativo digital crítico, com possibilidade de reinicialização ou alteração de configuração. Além de autenticação e aprovação da atividade, que recurso técnico deve existir antes de iniciar para assegurar retorno operacional se algo não voltar ao normal?",
+      "resposta": "Rollback para a configuração ou versão estável anterior.",
+      "explicacao": "Como a intervenção pode deixar o ativo indisponível ou alterado, a continuidade depende de um meio técnico de restaurar rapidamente o estado operacional conhecido e seguro.",
+      "resposta_padrao": "Registro completo da sessão do fornecedor.",
+      "por_que_nao": "O registro ajuda na rastreabilidade, mas não devolve o ativo ao estado operacional normal após uma intervenção malsucedida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação, mas também condição do equipamento utilizado, momento operacional da intervenção e possibilidade de retorno seguro ao estado normal após a atividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

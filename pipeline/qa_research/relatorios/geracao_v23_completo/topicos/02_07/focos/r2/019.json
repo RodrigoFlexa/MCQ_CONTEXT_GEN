@@ -1,0 +1,83 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 2,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção técnica entre controle por bandas e controle de inventário/averaging em separadores.",
+      "pergunta": "Em um separador com alimentação oscilatória, deseja-se manter a vazão de saída próxima da média estimada da entrada enquanto o nível permanecer numa faixa admissível e, só quando sair dela, aplicar correção rápida para recuperar o inventário. Que estratégia de controle deve ser usada?",
+      "resposta": "Controle por Bandas.",
+      "explicacao": "Essa lógica usa o volume de retenção para amortecer oscilações: dentro da faixa, evita movimentação desnecessária da válvula; fora dela, acelera a correção do inventário.",
+      "resposta_padrao": "Controle por inventário/averaging.",
+      "por_que_nao": "O averaging deixa a malha lenta continuamente; não usa limites com comutação explícita para ação rápida quando o nível sai da faixa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação da hipótese de válvula rápida antes de aplicar sintonia baseada em modelo simplificado de nível.",
+      "pergunta": "Uma sintonia de nível foi obtida com modelo que tratava a abertura da válvula como praticamente instantânea frente à dinâmica do inventário. Antes de aplicar essa sintonia em campo, que característica do elemento final deve ser verificada para não superestimar a rapidez da malha?",
+      "resposta": "Tempo de resposta da válvula de saída.",
+      "explicacao": "A sintonia supõe que a abertura acompanhe quase imediatamente a ação de controle. Se a válvula for lenta, surge dinâmica extra e a resposta do nível fica mais lenta que a prevista.",
+      "resposta_padrao": "Relação altura-volume do vaso.",
+      "por_que_nao": "A relação altura-volume valida o ganho de armazenamento do vaso, não a hipótese de que a vazão manipulada siga o comando sem dinâmica relevante do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode-se assumir relação linear entre altura e volume e dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de PI para malha contínua de nível com comportamento integrador e sem necessidade útil de derivativo.",
+      "pergunta": "Em uma malha contínua de nível de separador, a dinâmica dominante é o acúmulo de inventário líquido e o transmissor tem ruído normal de campo. Sem necessidade de ação derivativa para antecipação, que estrutura de controlador tende a ser suficiente quando bem ajustada?",
+      "resposta": "PI.",
+      "explicacao": "O nível resulta do balanço de massa e tem comportamento integrador. Nesse contexto, o PI foi considerado eficiente; o derivativo costuma acrescentar pouco e aumentar sensibilidade a ruído.",
+      "resposta_padrao": "PID.",
+      "por_que_nao": "Em nível de separador, o comportamento integrador já é atendido por ação proporcional-integral; o derivativo tende a amplificar ruído sem ganho operacional proporcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma forma de representar o controle de nível é partir do balanço de massa da fase líquida: a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

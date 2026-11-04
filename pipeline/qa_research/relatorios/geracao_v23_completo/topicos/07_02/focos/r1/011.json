@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em hardening de IACS, VPN não substitui a eliminação da exposição direta de ativos OT à internet.",
+      "pergunta": "Um controlador de pacote acessado por enlace de rádio para suporte remoto ficou com endereço publicamente roteável e começou a aparecer em varreduras externas; a equipe sustenta que a VPN atualizada já basta. Que condição de exposição deve ser eliminada nesse arranjo?",
+      "resposta": "Acessibilidade direta pela internet do controlador.",
+      "explicacao": "A VPN reduz exposição durante a sessão autorizada, mas não elimina a superfície criada por um ativo publicamente alcançável; retirar essa publicação corta descoberta e ataque direto.",
+      "resposta_padrao": "Manter apenas a VPN atualizada para o suporte remoto.",
+      "por_que_nao": "A VPN protege a sessão autorizada, mas não remove a superfície de ataque de um ativo com alcance direto pela internet.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "F",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A liberação de acesso remoto em OT exige verificar o estado de segurança do dispositivo cliente, não só do túnel VPN.",
+      "pergunta": "Antes de liberar uma sessão de fornecedor por VPN para uma estação de engenharia com alcance a controladores, que condição técnica do equipamento usado na conexão precisa ser confirmada para que a VPN não seja tratada como proteção suficiente?",
+      "resposta": "Estado de segurança e configuração do dispositivo cliente.",
+      "explicacao": "Em IACS, um cliente comprometido ou mal configurado atravessa o túnel autorizado; por isso, a segurança da sessão depende também do estado do equipamento que se conecta.",
+      "resposta_padrao": "Validar só a VPN e as credenciais do usuário.",
+      "por_que_nao": "Autenticação e túnel não impedem que um dispositivo cliente inseguro introduza comprometimento na sessão autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "verificar a condição do dispositivo usado na conexão"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a atualização é adiada em ativo OT legado, a redução imediata da superfície de ataque vem da remoção de serviços expostos sem função operacional.",
+      "pergunta": "Numa estação OT legada conectada à rede de controle, a correção de software foi adiada e a varredura mostra serviços escutando que não pertencem à aplicação. Qual medida de hardening reduz primeiro a superfície de ataque sem depender da atualização?",
+      "resposta": "Desabilitar os serviços desnecessários.",
+      "explicacao": "Serviços não usados mantêm portas e funções expostas sem benefício operacional. Desativá-los reduz caminhos de exploração com menor impacto que tentar atualização fora da janela.",
+      "resposta_padrao": "Aplicar todas as atualizações disponíveis do sistema.",
+      "por_que_nao": "Com a correção adiada, a redução imediata da superfície vem de eliminar serviços expostos, não de esperar a atualização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coexistência com equipamentos embarcados sem suporte pleno a atualizações frequentes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em FPSO, exceções de hardening em OT devem ser decididas pelo papel operacional do ativo, não por padronização uniforme.",
+      "pergunta": "Após aplicar o mesmo baseline de hardening a todos os nós OT, um gateway de skid crítico perde uma função diagnóstica necessária ao suporte do fornecedor. Antes de reabrir serviços por padrão, que critério técnico deve definir a exceção nesse ativo?",
+      "resposta": "Papel operacional do ativo digital.",
+      "explicacao": "No FPSO, disponibilidade e dependências variam entre ativos OT. A exceção de hardening deve preservar apenas o que é necessário ao papel operacional daquele gateway.",
+      "resposta_padrao": "Usar exatamente o mesmo baseline de hardening em todos os nós OT.",
+      "por_que_nao": "Baselines uniformes podem retirar funções necessárias em ativos com papéis distintos, contrariando o hardening seletivo exigido em OT embarcado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital"
+        },
+        {
+          "bloco": "F",
+          "trecho": "restrições de disponibilidade, janelas curtas de manutenção"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

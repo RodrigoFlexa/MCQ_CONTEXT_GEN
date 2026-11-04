@@ -1,0 +1,109 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a regularidade da alimentação aos hidrociclones é mais crítica que manter a interface fixa, a filosofia adequada é controle por bandas.",
+      "pergunta": "Num separador trifásico cuja água segue para hidrociclones, a qualidade da água tratada piora principalmente quando a descarga para o pacote oscila; a interface permanece longe dos limites geométricos e a camada de emulsão é administrável. Que filosofia de controle da interface deve ser adotada para priorizar a regularidade da alimentação a jusante?",
+      "resposta": "Controle por bandas da interface água-óleo.",
+      "explicacao": "Nos blocos, a prioridade pode mudar de manter a interface em valor único para limitar sua excursão, reduzindo a oscilação de vazão e de split que chega aos hidrociclones.",
+      "resposta_padrao": "Controle contínuo da interface em setpoint fixo pelo underflow.",
+      "por_que_nao": "Manter a interface rigidamente fixa faz a malha atuar continuamente no hidrociclone, aumentando a variabilidade da descarga que mais afeta o desempenho a jusante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica é coerente com o controle por bandas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A interação entre as malhas de interface e de DPR decorre do balanço de massa comum do hidrociclone entre underflow e overflow.",
+      "pergunta": "Em um sistema em que a interface do separador é controlada pelo underflow do hidrociclone e o DPR é mantido pelo overflow, que vínculo físico faz um ajuste de uma dessas malhas alterar imediatamente a condição enfrentada pela outra?",
+      "resposta": "Balanço de massa compartilhado entre underflow e overflow do hidrociclone.",
+      "explicacao": "Os blocos afirmam que underflow e overflow pertencem ao mesmo equipamento e dividem a mesma alimentação; por isso, uma mudança em uma corrente modifica a condição da outra malha.",
+      "resposta_padrao": "A mesma sintonia dos controladores.",
+      "por_que_nao": "Mesmo com sintonias independentes, as correntes saem do mesmo hidrociclone e repartem a mesma alimentação, o que acopla fisicamente as malhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A espessura excessiva da camada de emulsão pode invalidar a faixa admissível da interface e exigir revisão da variável manipulada.",
+      "pergunta": "Em um separador cuja interface vinha sendo controlada por bandas para suavizar a alimentação dos hidrociclones, a mesma estratégia passa a perder adequação à medida que a faixa operacional útil da interface encolhe. Que condição interna do vaso deve ser reconhecida como o limitante decisivo dessa estratégia?",
+      "resposta": "Espessura excessiva da camada de emulsão.",
+      "explicacao": "A faixa admissível da interface precisa ser compatível com a espessura da emulsão; quando essa camada cresce demais, a filosofia por bandas pode deixar de ser adequada e a variável manipulada pode precisar mudar.",
+      "resposta_padrao": "Sintonia agressiva do controlador da interface.",
+      "por_que_nao": "Aqui o limitante não é apenas ajuste de ganho; a própria faixa utilizável da interface passa a ser restringida pela camada emulsificada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa filosofia depende de a faixa admissível ser compatível com a geometria do separador, com a espessura da camada de emulsão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de emulsão se torna muito espessa"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A tolerância a oscilações da interface deve ser validada por comparação entre a velocidade das variações de óleo na água e a constante de tempo do hidrociclone.",
+      "pergunta": "Antes de aceitar uma filosofia que permita pequena oscilação da interface sem esperar perda relevante no tratamento por hidrociclones, qual comparação dinâmica específica deve ser confirmada?",
+      "resposta": "Variação de óleo na água mais lenta que a constante de tempo do hidrociclone.",
+      "explicacao": "Os blocos condicionam a tolerância à interface oscilando ao fato de a concentração de óleo na água variar lentamente frente à dinâmica do hidrociclone.",
+      "resposta_padrao": "Tempo de residência alto no separador.",
+      "por_que_nao": "A aceitação da oscilação depende da escala temporal relativa entre a mudança de qualidade e a resposta do hidrociclone, não de um valor isolado de residência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

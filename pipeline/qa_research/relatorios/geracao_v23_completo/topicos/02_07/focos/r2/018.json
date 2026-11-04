@@ -1,0 +1,79 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falha da hipótese de válvula rápida na aplicação de modelo simplificado de controle de nível.",
+      "pergunta": "Um ajuste de nível baseado em modelo simplificado funcionou em simulação, mas no separador real a resposta ficou mais atrasada e oscilatória, embora a relação altura-volume já tenha sido validada. Qual hipótese simplificadora é a mais provável de ter falhado?",
+      "resposta": "Válvula suficientemente rápida frente à dinâmica do processo.",
+      "explicacao": "A2 usa a hipótese de válvula rápida para simplificar a malha; com altura-volume validada e atraso adicional no real, a dinâmica do atuador é o elemento ausente que explica a oscilação.",
+      "resposta_padrao": "A relação linear altura-volume do vaso.",
+      "por_que_nao": "Mesmo com a geometria correta, atraso de atuador introduz dinâmica e fase não representadas no modelo simplificado.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Referência da vazão de saída dentro da banda para usar o volume de retenção como amortecedor.",
+      "pergunta": "Em um separador com alimentação variando rapidamente, quer-se usar o volume de retenção para amortecer a vazão enviada a jusante sem ficar caçando a válvula. Enquanto o nível permanece dentro da faixa admitida, de que referência a vazão de saída deve ficar próxima?",
+      "resposta": "Valor médio estimado da vazão de entrada.",
+      "explicacao": "A2 mantém a saída próxima da média estimada de entrada enquanto o nível fica na banda; em F, isso usa o volume de retenção para desacoplar a variabilidade a montante.",
+      "resposta_padrao": "Valor instantâneo da vazão de entrada.",
+      "por_que_nao": "Seguir a entrada instantânea repassa a oscilação para jusante e anula o amortecimento pelo inventário do vaso.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a alimentação varia com frequência, o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Seleção da perturbação de robustez para qualificar a malha de nível sob regime de golfadas.",
+      "pergunta": "A unidade vai receber escoamento de riser com períodos alternados de baixa vazão e chegada súbita de grandes pacotes líquidos. Para qualificar a malha de nível do separador para esse regime antes da partida, que perturbação deve entrar no teste de robustez?",
+      "resposta": "Golfadas a montante.",
+      "explicacao": "A2 inclui golfadas a montante na robustez; em F, o separador deve amortecer oscilações vindas dos poços usando volume de retenção, exatamente o desafio imposto por esse regime.",
+      "resposta_padrao": "Degraus de vazão.",
+      "por_que_nao": "Degraus não reproduzem a chegada intermitente de pacotes líquidos e vazios típica de golfadas.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "também amortecem flutuações de vazão e atenuam oscilações vindas dos poços, reduzindo o surge de pressão a jusante."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

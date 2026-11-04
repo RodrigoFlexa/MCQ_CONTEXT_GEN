@@ -1,0 +1,101 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle por bandas usa o inventário do separador para amortecer oscilações de entrada, evitando caça de válvula e repasse de transientes.",
+      "pergunta": "Em um separador que recebe oscilações frequentes dos poços, a válvula de saída líquida passa a caçar e a repassar perturbações às etapas a jusante, embora o vaso ainda tenha folga de inventário. Que estratégia de controle de nível deve ser adotada?",
+      "resposta": "Controle por bandas.",
+      "explicacao": "Dentro da banda, a saída fica próxima da vazão média estimada de entrada; fora dela, entra ação rápida. Assim, o separador usa seu volume de retenção para amortecer variações sem movimentação desnecessária da válvula.",
+      "resposta_padrao": "Um PI contínuo mais agressivo no setpoint.",
+      "por_que_nao": "Correção contínua agressiva faz a vazão de saída perseguir as oscilações de entrada; o controle por bandas preserva o volume de retenção como amortecedor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Robustez da malha de nível deve ser qualificada contra aumento de atraso quando há introdução de tempo morto relevante.",
+      "pergunta": "Após incluir um elemento que acrescenta tempo morto perceptível entre medição, comando e efeito no nível de um separador, como a malha deve ser desafiada na qualificação para verificar robustez contra essa vulnerabilidade?",
+      "resposta": "Aumento deliberado do atraso da malha.",
+      "explicacao": "Se a vulnerabilidade nova é tempo morto adicional, a qualificação precisa tensionar exatamente essa sensibilidade. Ensaios de carga não substituem a verificação da estabilidade e da resposta com atraso maior na própria malha.",
+      "resposta_padrao": "Com degraus de vazão na alimentação.",
+      "por_que_nao": "Degraus testam rejeição de carga, mas não a perda de margem causada por tempo morto adicional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validade da relação altura-volume é decisiva para usar modelo linear simplificado no controle de nível.",
+      "pergunta": "Ao aplicar em campo uma sintonia derivada de modelo simplificado de nível para um separador que opera em ampla faixa de inventário, que relação do equipamento precisa ser validada antes de assumir ganho aproximadamente constante?",
+      "resposta": "Relação altura-volume do vaso.",
+      "explicacao": "Na simplificação de nível, o ganho entre inventário e altura depende de assumir relação aproximadamente linear entre volume armazenado e nível. Em vaso real e faixa ampla, essa geometria precisa ser confirmada.",
+      "resposta_padrao": "A densidade média da fase líquida.",
+      "por_que_nao": "O ganho nível-inventário é definido pela geometria volume-altura do vaso; densidade não substitui essa verificação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode-se assumir relação linear entre altura e volume"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Resposta mais lenta que a prevista, com atraso entre comando e posição real, indica falha da hipótese de válvula rápida no modelo.",
+      "pergunta": "Uma sintonia de nível baseada em modelo simplificado parece correta, mas no campo a posição efetiva da válvula de saída demora a acompanhar o sinal de controle e a resposta do nível fica mais lenta que a prevista. Qual hipótese do modelo foi violada?",
+      "resposta": "Dinâmica de válvula rápida, com abertura seguindo a ação de controle.",
+      "explicacao": "O modelo só iguala sinal de controle e abertura quando a válvula é rápida. Se a posição efetiva atrasa, a discrepância vem da dinâmica do elemento final, não da geometria do vaso.",
+      "resposta_padrao": "A relação altura-volume linear do separador.",
+      "por_que_nao": "A defasagem entre comando e posição real revela limitação dinâmica do elemento final, não da geometria do inventário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

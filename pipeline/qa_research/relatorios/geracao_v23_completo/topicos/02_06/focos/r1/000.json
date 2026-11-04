@@ -1,0 +1,117 @@
+{
+  "item": "02_06",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Estabilização operacional exige perda da dependência forte do histórico da manobra, não apenas variáveis na faixa.",
+      "pergunta": "Após a partida de um compressor, pressão, temperatura e vazão já entraram na faixa esperada, mas a resposta do sistema ainda muda conforme a sequência e o ritmo dos últimos ajustes. Que critério técnico ainda falta confirmar antes de declarar a operação estabilizada?",
+      "resposta": "Independência prática do histórico da manobra.",
+      "explicacao": "Estabilização não é só entrar na faixa; é quando o sistema deixa de responder fortemente ao histórico da manobra e permanece coerente com arranjo, fluido e carga.",
+      "resposta_padrao": "Atingimento dos valores nominais de processo.",
+      "por_que_nao": "Valores nominais podem ser atingidos ainda sob memória da manobra; a estabilização só existe quando essa dependência decai.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o comportamento intermediário até que as variáveis atinjam condição estável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "estabilização é a etapa em que o sistema deixa de responder fortemente ao histórico da manobra"
+        },
+        {
+          "bloco": "F",
+          "trecho": "passa a operar dentro da faixa esperada para aquele arranjo, fluido e carga"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Partidas e repartidas de poços de gás com risco de instabilidade devem ser avaliadas com simulação transiente.",
+      "pergunta": "Antes de repartir um poço de gás cuja abertura pode gerar oscilações de pressão e vazão, que ferramenta deve ser usada para antecipar o comportamento e o risco de instabilidade da manobra?",
+      "resposta": "Simulação transiente do poço/sistema.",
+      "explicacao": "Para abertura de poços de gás, a simulação transiente antecipa pressão, vazão e risco de instabilidade; análise estacionária tende a ser insuficiente em manobras.",
+      "resposta_padrao": "Simulação em regime permanente.",
+      "por_que_nao": "Regime permanente não representa a propagação temporal das perturbações nem prevê instabilidades da abertura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Partida e parada são transições entre estados operacionais"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em poços de gás, simulações transientes podem antecipar comportamento de pressão, vazão e risco de instabilidades antes da abertura."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "análises puramente estacionárias tendem a ser insuficientes para manobras"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Gás livre em sistemas de bombeio aumenta a compressibilidade efetiva e torna a partida mais dependente do tempo.",
+      "pergunta": "Em uma linha de bombeio que deveria operar cheia de líquido, a partida passa a mostrar compressão e descompressão perceptíveis na resposta de pressão, com demora para firmar a vazão, sem evidência de degradação mecânica da bomba. Que condição do sistema melhor explica o transiente?",
+      "resposta": "Gás livre na linha.",
+      "explicacao": "Em bombeio, a presença de gás livre aumenta a compressibilidade efetiva e torna a partida mais dependente do tempo, com resposta de pressão elástica e demora para firmar vazão.",
+      "resposta_padrao": "Desgaste hidráulico da bomba.",
+      "por_que_nao": "Desgaste reduz desempenho contínuo; o comportamento compressível e temporal da partida aponta para gás livre no sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Partida e parada são transições entre estados operacionais de um sistema, equipamento, poço ou trecho de processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em sistemas multifásicos e de bombeio, a resposta também depende de inércia do fluido, compressibilidade, inventário nas linhas, presença de gás livre, coluna hidrostática e curva do equipamento."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o ganho de pressão na bomba pode alterar rapidamente as condições do sistema e tornar a resposta fortemente dependente do tempo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Na detecção de gás, manter fonte de hidrocarboneto energizada preserva o alerta, mas deixa incompleta a mitigação automática.",
+      "pergunta": "Em uma área com detecção de gás, o alarme atua e pessoas são alertadas, mas uma bomba capaz de manter movimentação de hidrocarboneto continua energizada. Que função técnica da barreira automática permanece não cumprida?",
+      "resposta": "Remoção ou isolamento automático da fonte de gás e energia.",
+      "explicacao": "Detecção de gás deve alertar pessoas e acionar remoção ou isolamento automático de fontes. Se a bomba continua energizada, essa função mitigadora fica incompleta.",
+      "resposta_padrao": "Função de alerta às pessoas.",
+      "por_que_nao": "O alerta pode funcionar enquanto a mitigação falha; fonte energizada ainda sustenta o vazamento ou sua movimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing, leitura de equipamentos fora do Controlador Lógico Programável (CLP), interface com detecção de vazamentos e resposta a emergências."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

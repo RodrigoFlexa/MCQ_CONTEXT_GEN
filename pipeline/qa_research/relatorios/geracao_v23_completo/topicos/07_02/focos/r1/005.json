@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sinais operacionais que distinguem privilégio administrativo de privilégio de engenharia em IACS.",
+      "pergunta": "Após uma sessão remota de suporte em um sistema de automação, apareceram contas locais novas, uma proteção do host foi desabilitada e parte dos registros de auditoria deixou de existir. Que tipo de privilégio esteve disponível nessa sessão?",
+      "resposta": "Acesso administrativo.",
+      "explicacao": "Criar contas, desabilitar proteções e apagar rastros são capacidades típicas de privilégio administrativo. Não são o sinal técnico característico de acesso de engenharia.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Engenharia altera configuração, lógica e firmware; criar contas, desabilitar proteções e apagar rastros caracteriza privilégio administrativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na prática, o comportamento do risco muda conforme o tipo de privilégio."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mapeamento da atuação direta no processo ao privilégio mínimo de operação, sem escalar para engenharia.",
+      "pergunta": "Durante suporte remoto aprovado, o fornecedor deve apenas comandar partida/parada de uma bomba e ajustar temporariamente seu setpoint pelo supervisório para um teste de resposta do processo. Qual privilégio mínimo deve ser concedido?",
+      "resposta": "Acesso de operação.",
+      "explicacao": "A atividade exige atuar no processo. Como não envolve alterar configuração, lógica ou firmware, o menor privilégio adequado é o operacional.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Partida, parada e ajuste de setpoint são atuação no processo; privilégio de engenharia é para configuração, lógica e firmware.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio na dimensão temporal do acesso remoto de fornecedor em IACS.",
+      "pergunta": "Um fornecedor receberá acesso remoto a uma estação de engenharia somente para uma atualização já autorizada numa janela noturna específica. Além de limitar os ativos alcançados, que controle deve ser aplicado ao credenciamento para cumprir o menor privilégio no tempo?",
+      "resposta": "Expiração automática do acesso ao fim da janela.",
+      "explicacao": "O menor privilégio limita não só o escopo do acesso, mas também sua duração ao menor tempo compatível com a atividade autorizada.",
+      "resposta_padrao": "Autenticação multifator obrigatória.",
+      "por_que_nao": "MFA fortalece a autenticação, mas não restringe a permissão ao menor tempo compatível com a atividade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pelo menor tempo compatível com a atividade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Segregação entre implementação e validação de mudanças em IACS para reduzir erros não detectados.",
+      "pergunta": "Numa correção emergencial de lógica em controlador, o mesmo especialista preparou o pacote, executou o download e acompanhou a retomada da planta. Antes de encerrar a intervenção, que etapa deve ficar com outra pessoa para preservar a segregação de funções?",
+      "resposta": "Validação independente da mudança.",
+      "explicacao": "A segregação de funções exige separar implementação e validação, reduzindo a chance de erro não detectado após a alteração em ambiente operacional.",
+      "resposta_padrao": "Aprovação retroativa do gestor.",
+      "por_que_nao": "Aprovação sem verificação independente não separa implementação de validação nem detecta erro introduzido na execução.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

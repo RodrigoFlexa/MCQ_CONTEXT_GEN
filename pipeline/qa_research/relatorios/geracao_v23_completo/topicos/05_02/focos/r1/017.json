@@ -1,0 +1,105 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Classificação de carga essencial pela consequência da perda de energia, não pela potência consumida.",
+      "pergunta": "Na revisão de cargas após restrição de capacidade, uma estação de supervisão de baixa potência disputa permanência em alimentação de maior continuidade com um consumidor utilitário bem mais potente. Qual critério técnico deve decidir essa classificação?",
+      "resposta": "Consequência da perda de energia.",
+      "explicacao": "A essencialidade da carga decorre do efeito operacional e de segurança da sua perda; cargas de baixo consumo ligadas a supervisão ou shutdown podem exigir maior continuidade que utilidades maiores.",
+      "resposta_padrao": "A potência consumida da carga.",
+      "por_que_nao": "A criticidade elétrica é definida pelo impacto da perda no comando, na segurança e na mitigação, não pelo kW da carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação da independência funcional por segregação real das cargas entre ramos redundantes.",
+      "pergunta": "Após anos de modificações, dois trens redundantes de controle seguem energizados sem alarmes nos UPS A e B. Além de confirmar presença de tensão, que verificação específica deve ser feita para provar que a redundância funcional ainda existe?",
+      "resposta": "Distribuição correta entre ramos redundantes.",
+      "explicacao": "Redundância aparente não basta: mudanças podem concentrar ambos os trens no mesmo UPS ou barramento. A prova da independência está na distribuição correta das cargas entre os ramos.",
+      "resposta_padrao": "Medir tensão e autonomia em cada UPS.",
+      "por_que_nao": "Fontes saudáveis não garantem independência se os dois trens acabaram alimentados pelo mesmo ramo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de monitorar a autonomia real das baterias, não só a tensão do quadro com retificador em serviço.",
+      "pergunta": "Em operação normal, o quadro 24 Vcc fica estável e o retificador sem alarmes, mas no simulado de blackout a alimentação de comando se perde antes da recomposição. Que condição específica deve ser monitorada para expor essa vulnerabilidade?",
+      "resposta": "Autonomia real do banco de baterias.",
+      "explicacao": "Com o retificador alimentado, a tensão do quadro pode permanecer normal mesmo com bateria degradada. O que revela a vulnerabilidade é a autonomia efetiva da bateria sustentando a carga sem CA.",
+      "resposta_padrao": "A tensão de saída do retificador.",
+      "por_que_nao": "Com CA disponível, o retificador mascara a perda de capacidade da bateria; no blackout, quem sustenta a carga é a bateria.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Circuitos de comando de geradores precisam de alimentação independente da própria recomposição em blackout.",
+      "pergunta": "Num blackout total, o gerador de emergência está apto mecanicamente, mas seu circuito de comando perde energia junto com a rede principal. Que arranjo de alimentação deve ser adotado para esse comando?",
+      "resposta": "Alimentação por bateria independente.",
+      "explicacao": "O comando do gerador precisa existir antes de o barramento de emergência ser estabelecido. Se depender da própria recomposição, a partida e o fechamento podem ficar impossibilitados.",
+      "resposta_padrao": "Alimentação pelo barramento de emergência em CA.",
+      "por_que_nao": "O barramento de emergência só fica disponível depois da partida e do fechamento do gerador; o comando precisa sobreviver antes disso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

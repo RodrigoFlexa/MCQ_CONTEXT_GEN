@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando existe correção suportada para vulnerabilidade embarcada em OT, a remediação principal passa a ser a atualização para versão estável corrigida.",
+      "pergunta": "Um controlador embarcado exposto a uma vulnerabilidade em pilha TCP/IP já tem correção liberada pelo fornecedor para o firmware instalado, e a janela de manutenção permite intervenção sem perder salvaguardas. Qual medida técnica deve deixar de ser apenas planejada e passar a ser executada como remediação principal?",
+      "resposta": "Atualização para a versão estável mais recente com a correção.",
+      "explicacao": "Com correção disponível e compatível, a resposta sai da contenção compensatória e passa para a remediação efetiva pela versão estável corrigida, desde que a intervenção preserve as salvaguardas.",
+      "resposta_padrao": "Isolamento adicional do ativo com conectividade rigidamente restringida.",
+      "por_que_nao": "Controle compensatório reduz a superfície de ataque, mas não remove a pilha vulnerável quando já existe correção estável e suportada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter patches e estratégias de remediação com fornecedores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "atualizar para versão estável mais recente quando houver correção disponível"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na priorização da contenção de vulnerabilidades OT, a ordem deve seguir a exposição potencial de rede dos ativos afetados.",
+      "pergunta": "Um mesmo alerta de vulnerabilidade em pilha TCP/IP afeta vários ativos OT a bordo, todos sem sintomas operacionais e com severidade publicada semelhante. Para ordenar a contenção inicial, qual critério técnico deve prevalecer?",
+      "resposta": "Exposição potencial de rede dos dispositivos afetados.",
+      "explicacao": "A prioridade prática sobe onde existe maior alcançabilidade pela rede e, portanto, maior probabilidade de exploração remota, não apenas onde o boletim indica maior severidade abstrata.",
+      "resposta_padrao": "A maior pontuação de severidade do alerta.",
+      "por_que_nao": "Em OT, a urgência real depende da possibilidade de alcançar o ativo pelos caminhos de rede disponíveis, não só da nota publicada do CVE.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar a exposição potencial dos dispositivos afetados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "direcionamento proporcional e priorizado das verificações"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de isolar enlaces em OT, é necessário conferir dependências funcionais entre controle, proteção e energia para evitar perda de funções críticas.",
+      "pergunta": "Há suspeita de atividade maliciosa em um segmento OT, e a contenção proposta é fechar um enlace que interliga sistemas. Antes dessa manobra, que mapeamento técnico precisa ser conferido para não retirar funções críticas da planta?",
+      "resposta": "Dependências entre sistemas de controle, proteção e energia.",
+      "explicacao": "A resposta melhora quando essas dependências já são conhecidas; sem isso, um bloqueio de rede pode derrubar funções essenciais de controle ou proteção.",
+      "resposta_padrao": "Apenas os endereços IP e portas que cruzam o enlace.",
+      "por_que_nao": "Fluxos de rede, sozinhos, não mostram se o enlace sustenta funções de controle, shutdown, mitigação ou supervisão energética essenciais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A aceitabilidade de uma contenção em OT é limitada pela preservação das funções essenciais de controle e proteção.",
+      "pergunta": "Durante a contenção de um incidente em OT, a equipe de segurança propõe bloquear um segmento inteiro para cortar propagação. Qual critério técnico deve vetar essa medida, mesmo que ela reduza a superfície de ataque?",
+      "resposta": "Indisponibilidade de funções essenciais de controle e proteção.",
+      "explicacao": "Em OT, contenção só é aceitável se mantiver o controle do processo e as salvaguardas disponíveis; se a medida derruba essas funções, ela se torna inadequada.",
+      "resposta_padrao": "Perda da visibilidade supervisória e de históricos.",
+      "por_que_nao": "O limite técnico da contenção em OT é não comprometer comando e salvaguardas; perda de observabilidade, isoladamente, não define esse veto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode ser inadequada se provocar perda de controle do processo ou indisponibilidade de salvaguardas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

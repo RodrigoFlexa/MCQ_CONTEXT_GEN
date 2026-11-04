@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Disponibilidade real do backup de supervisão depende do estado de saúde do banco de baterias, não apenas do status da UPS.",
+      "pergunta": "Em um SCADA crítico alimentado por UPS CA on-line, a fonte principal segue estável e a UPS permanece sem alarme, mas a equipe quer confirmar se a supervisão continuará disponível numa perda súbita da entrada. Que variável técnica deve ser verificada para julgar a capacidade real do backup?",
+      "resposta": "Estado de saúde do banco de baterias.",
+      "explicacao": "Os blocos associam a disponibilidade do backup ao estado de saúde das baterias; entrada presente e UPS em operação normal não comprovam autonomia quando a fonte principal cair.",
+      "resposta_padrao": "Status on-line da UPS.",
+      "por_que_nao": "Operação on-line não demonstra autonomia; a continuidade na perda da fonte depende da condição real do armazenamento de energia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a gestão do estado de saúde de bancos de baterias foi associada à disponibilidade do backup de energia."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em suspeita de alteração indevida, a disponibilidade real da proteção depende do estado de overrides e inhibits das funções instrumentadas.",
+      "pergunta": "Durante condição anormal, houve acesso de engenharia recente e o processo parece estável nos analytics e no modelo digital. Antes de assumir que a proteção automática continua disponível, que estado técnico deve ser conferido diretamente?",
+      "resposta": "Estado de overrides e inhibits das funções instrumentadas de proteção.",
+      "explicacao": "O bloco foco liga segurança funcional à gestão de overrides e inhibits; um bypass ativo ou indevido pode degradar a proteção mesmo com comportamento aparentemente normal do processo.",
+      "resposta_padrao": "Tendência dos analytics preditivos.",
+      "por_que_nao": "Analytics observam comportamento, mas não revelam um bypass que suprime a atuação da função de proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela se relaciona com temas como gestão de alarmes, overrides, inhibits e avaliação de risco operacional em condições anormais,"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Na UPS CA on-line de dupla conversão, o desacoplamento frente a afundamentos vem do barramento CC interno e da etapa inversora.",
+      "pergunta": "Em uma rede com afundamentos instantâneos frequentes, os sistemas digitais críticos seguem alimentados por UPS CA on-line de dupla conversão. Qual elemento da topologia reduz o acoplamento direto dessas perturbações da entrada à carga?",
+      "resposta": "Barramento CC interno e inversor de saída.",
+      "explicacao": "Na dupla conversão, a carga não depende diretamente da entrada; ela é suprida por um barramento interno condicionado e pelo inversor, melhorando continuidade e qualidade de energia.",
+      "resposta_padrao": "Filtro passivo na entrada da UPS.",
+      "por_que_nao": "O desacoplamento característico da dupla conversão vem do caminho retificador-barramento CC-inversor, não de simples filtragem na entrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "isso tende a reduzir o acoplamento direto entre perturbações instantâneas da entrada e a alimentação entregue ao consumidor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a carga passa a depender de um barramento interno condicionado e da etapa eletrônica de saída."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

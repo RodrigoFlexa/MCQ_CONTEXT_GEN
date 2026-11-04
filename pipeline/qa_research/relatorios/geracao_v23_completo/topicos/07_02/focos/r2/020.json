@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 2,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso de qualidade do dado para excluir amostras inválidas em analytics alimentados por SCADA e controle.",
+      "pergunta": "Um modelo preditivo usa histórico de variáveis vindas de SCADA e controle. Timestamps, unidades e identificação dos equipamentos estão corretos, mas, nas quedas curtas de comunicação, alguns pontos ficam congelados e depois retornam sem refletir o processo real. Antes de usar esse histórico no treino ou na inferência, que tratamento específico deve ser aplicado aos dados?",
+      "resposta": "Filtragem pelos indicadores de qualidade do dado.",
+      "explicacao": "Sem tratar a qualidade, valores congelados entram como medições válidas e tornam predições e diagnósticos frágeis.",
+      "resposta_padrao": "Filtragem de ruído ou suavização da série temporal.",
+      "por_que_nao": "O problema é validade do dado durante a falha de comunicação, não ruído analógico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparações analíticas entre ativos exigem rotular o modo operacional do equipamento.",
+      "pergunta": "Um analytics compara o desempenho de dois compressores equivalentes em ativos diferentes. Pressões, vazões, unidades, timestamps e identificação estão coerentes, mas os desvios aparecem apenas quando um deles opera com a válvula antisurge aberta. Que informação deve entrar no conjunto de dados para que a comparação seja tecnicamente válida?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Antisurge aberto caracteriza regime operacional diferente; sem esse contexto, o algoritmo compara estados não equivalentes como se fossem iguais.",
+      "resposta_padrao": "Mais precisão no transmissor de vazão.",
+      "por_que_nao": "O desvio decorre do regime de operação representado pelo dado, não da exatidão do sensor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando isso funciona bem, o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em funções digitais mais acopladas ao processo, é decisivo validar a resposta à perda de conectividade.",
+      "pergunta": "Uma aplicação digital deixará de apenas recomendar ações e passará a influenciar ajustes frequentes no processo. O enlace entre camadas sofre quedas curtas, embora o controle básico local permaneça estável. Antes de integrar essa função à camada crítica, que condição técnica deve ser validada?",
+      "resposta": "Comportamento em perda de conectividade.",
+      "explicacao": "Quanto maior o acoplamento ao controle, mais importa como a aplicação reage ao perder o enlace, para evitar atuações indevidas ou retomadas instáveis.",
+      "resposta_padrao": "Capacidade de processamento do servidor da aplicação.",
+      "por_que_nao": "Processamento suficiente não define o que a função fará sem visão atual do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

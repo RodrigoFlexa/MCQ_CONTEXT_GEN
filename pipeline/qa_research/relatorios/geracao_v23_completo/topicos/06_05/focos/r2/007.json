@@ -1,0 +1,69 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escalonamento lógico de respostas: aviso precoce ao pessoal separado da confirmação robusta da atuação automática.",
+      "pergunta": "Em um módulo de processo, a primeira detecção de gás costuma anteceder em poucos segundos a coincidência entre sensores da zona. O shutdown automático associado é de alto impacto e precisa de confirmação robusta. Sem esperar essa coincidência, que resposta deve sair já no primeiro sinal?",
+      "resposta": "Alarme ao pessoal em 1ooN.",
+      "explicacao": "Os blocos admitem respostas escalonadas. Menor confirmação acelera o aviso; maior coincidência dá robustez à ação automática de alto impacto. Separar o alarme da atuação confirmada preserva tempo de resposta ao pessoal.",
+      "resposta_padrao": "Aguardar a confirmação 2ooN antes de alarmar.",
+      "por_que_nao": "O requisito de tempo do aviso ao pessoal é diferente do shutdown; usar a mesma coincidência para ambos desperdiça a janela em que só existe a primeira detecção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Exigir menos confirmação tende a acelerar a resposta, porém pode elevar a suscetibilidade a disparos indesejados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Exigir coincidência de mais sinais tende a aumentar a robustez contra atuações indevidas, mas pode reduzir a sensibilidade prática"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a detecção de gás pode iniciar uma sequência escalonada de respostas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da resposta automática pela barreira requerida: eliminar fontes de ignição, e não apenas reduzir inventário liberado.",
+      "pergunta": "Em uma área onde a nuvem de gás pode alcançar rapidamente motores e painéis não adequados à área classificada antes de qualquer intervenção manual, qual ação automática específica a detecção confirmada deve comandar além do alarme?",
+      "resposta": "Desenergização desses equipamentos.",
+      "explicacao": "Nesse cenário, a barreira necessária é remover fontes de ignição com rapidez. A2 cita a desconexão de energia desses equipamentos como resposta automática; só alarmar ou fechar SDVs não elimina a ignição já disponível.",
+      "resposta_padrao": "Fechamento automático das válvulas de shutdown.",
+      "por_que_nao": "Fechar SDVs reduz inventário, mas não remove a fonte de ignição que o cenário torna crítica; aqui a resposta decisiva é a desenergização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "desconexão de fontes de energia de equipamentos inadequados à área classificada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o cenário exige redução rápida da massa liberada, da energia disponível ou das fontes de ignição, limitar a resposta ao alarme pode ser insuficiente."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

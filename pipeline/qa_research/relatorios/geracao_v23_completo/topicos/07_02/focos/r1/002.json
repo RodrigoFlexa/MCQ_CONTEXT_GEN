@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da segmentação por confronto entre tráfego real interdomínio e necessidade operacional vigente.",
+      "pergunta": "Após integrar historiador, analytics e telecom à rede OT, tudo segue operando normalmente. Como verificar se a segmentação planejada ainda corresponde à operação real entre os domínios?",
+      "resposta": "Confrontando os fluxos interdomínio observados com os ainda necessários.",
+      "explicacao": "A monitoração da arquitetura segmentada deve confirmar se a separação planejada continua aderente à operação real e se os fluxos entre domínios permanecem necessários.",
+      "resposta_padrao": "Atualizando apenas o inventário de ativos conectados.",
+      "por_que_nao": "Inventário mostra quem está conectado, mas não revela se o tráfego que cruza fronteiras continua justificado.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Monitorar a arquitetura segmentada significa verificar se a separação planejada continua compatível com a operação real."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Estimativa de alcance funcional de um comprometimento por mapeamento das interdependências entre domínios.",
+      "pergunta": "Após descobrir um caminho de acesso indevido saindo da supervisão, que mapeamento técnico mostra se o comprometimento pode se propagar funcionalmente até proteção, segurança e sistema elétrico?",
+      "resposta": "Interdependências entre funções e domínios conectados.",
+      "explicacao": "O alcance real do incidente depende de como as funções se relacionam na arquitetura; o mapeamento dessas dependências mostra a propagação funcional possível.",
+      "resposta_padrao": "A criticidade isolada do servidor de supervisão.",
+      "por_que_nao": "O alcance do impacto é definido pelas dependências e salvaguardas ao redor do ativo, não só pela sua importância isolada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a gravidade real, porém, depende da arquitetura implantada, das interdependências entre funções e das salvaguardas existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reavaliação de barreiras entre domínios com base na criticidade das funções ligadas pelo enlace.",
+      "pergunta": "Um enlace antes só de leitura entre supervisão e sistema elétrico passou a ser bidirecional para analytics, sem alterar desempenho ou alarmes. Ao reavaliar as barreiras desse enlace, que atributo técnico das funções de cada lado deve orientar a decisão?",
+      "resposta": "Criticidade das funções envolvidas no enlace.",
+      "explicacao": "A adequação das barreiras não é provada pelo funcionamento normal do link; ela deve ser compatível com a criticidade das funções conectadas.",
+      "resposta_padrao": "A taxa média de utilização do link.",
+      "por_que_nao": "Carga de tráfego influencia capacidade, mas não o potencial de propagação entre funções com consequências distintas.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Propagação interdomínios causada por conectividade compartilhada além do necessário em arquitetura OT.",
+      "pergunta": "Em uma rede OT quase plana, uma alteração de configuração na supervisão é seguida por perda de estabilidade também em proteção e no sistema elétrico, sem falhas locais nesses conjuntos. Que condição arquitetural explica melhor essa propagação?",
+      "resposta": "Conectividade compartilhada além do necessário entre domínios.",
+      "explicacao": "Quando domínios de funções distintas compartilham conectividade em excesso, um erro de configuração em um deles pode ampliar consequências para os demais.",
+      "resposta_padrao": "Falhas independentes e simultâneas em cada sistema.",
+      "por_que_nao": "O efeito cruzado após uma única mudança indica um caminho comum de propagação, não falhas locais sem relação entre si.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

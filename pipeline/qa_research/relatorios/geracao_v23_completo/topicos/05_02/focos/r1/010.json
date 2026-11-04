@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação em campo do as-built para confirmar segregação real das alimentações de controle após modificações.",
+      "pergunta": "Depois de várias modificações, o unifilar ainda mostra UPS e quadros CC segregados, mas há suspeita de que cargas vitais de trens distintos tenham sido remanejadas para o mesmo ponto. Como essa condição deve ser verificada no arranjo implantado?",
+      "resposta": "Rastreamento físico em campo das rotas de alimentação até a origem.",
+      "explicacao": "A redundância só é efetiva se o as-built confirmar segregação real e coerência entre projeto e implantação. Modificações acumuladas podem concentrar cargas antes independentes no mesmo ponto de alimentação.",
+      "resposta_padrao": "Revisando apenas o diagrama unifilar e a filosofia de operação.",
+      "por_que_nao": "Documentação não prova o arranjo implantado nem revela remanejamentos e dependências comuns criadas ao longo da vida da unidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "efeito das modificações acumuladas ao longo da vida da unidade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "depende de inspeção, teste, manutenção e controle de mudanças"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de independência entre dois sistemas 24 Vcc redundantes por interligação TIE mantida fechada.",
+      "pergunta": "Dois sistemas de 24 Vcc, cada um com retificador e bateria capazes de suprir sozinho a carga, passam a perder simultaneamente funções de controle; nas ocorrências, os dois bancos aparecem equalizados e um defeito em um lado repercute imediatamente no outro. Que detalhe de configuração explica melhor essa perda da independência esperada?",
+      "resposta": "TIE fechado entre os dois sistemas de 24 Vcc.",
+      "explicacao": "Se cada lado suporta toda a demanda, a propagação imediata de um defeito de um trem ao outro indica caminho comum. O TIE fechado transforma redundância nominal em alimentação compartilhada.",
+      "resposta_padrao": "Autonomia insuficiente das baterias.",
+      "por_que_nao": "Autonomia limita o tempo de sustentação após perda da fonte, mas não cria a repercussão imediata de uma falha de um lado no outro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência do comando remoto de válvulas da alimentação do cartão-relé de saída do CLP via UPS.",
+      "pergunta": "Após falha de uma UPS seguida de perda da energia principal, as válvulas de tanques deixam de responder ao comando remoto, embora os atuadores e o suprimento pneumático permaneçam disponíveis. Qual elemento desenergizado no circuito de controle explica melhor essa perda de comando?",
+      "resposta": "Cartão-relé do CLP.",
+      "explicacao": "Sem alimentação do cartão-relé de saída, o comando remoto não chega às válvulas, mesmo com hardware de campo e utilidades ainda disponíveis para atuar.",
+      "resposta_padrao": "A própria válvula ou sua solenóide.",
+      "por_que_nao": "Uma falha de campo afetaria a válvula localmente; a perda simultânea do comando remoto decorre do ponto comum de atuação no CLP.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "desenergizou parte do controle associado às válvulas de tanques"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

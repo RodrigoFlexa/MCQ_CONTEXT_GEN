@@ -1,0 +1,79 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Padronização funcional de eventos para comparar MTBF entre fabricantes com lógicas de mensagens diferentes.",
+      "pergunta": "Ao comparar o MTBF de transmissores de dois fabricantes, um deles gera muitas mensagens diagnósticas e trocas de estado para uma mesma ocorrência, enquanto o outro registra quase só falha e restabelecimento. Que regra deve ser aplicada à extração dos eventos antes da contagem das falhas?",
+      "resposta": "Classificação funcional por perda e recuperação da função.",
+      "explicacao": "A contagem deve refletir falha funcional e retorno, não a densidade de mensagens de cada fabricante. Só essa padronização torna o indicador comparável entre fabricantes, equipamentos e períodos.",
+      "resposta_padrao": "Contar todas as mensagens de falha e reset emitidas pelo sistema.",
+      "por_que_nao": "Granularidade de mensagens varia com a lógica do fabricante; confiabilidade deve contar perda funcional, não volume de eventos de automação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Disponibilidade observada de item em standby depende de aptidão para a função requerida, não de teste local isolado.",
+      "pergunta": "Um gerador de emergência passou em partidas locais semanais, mas permaneceu com o auto-start inibido após manutenção no painel e, por isso, não assumiria carga automaticamente numa perda da rede. Na apuração da disponibilidade observada do período, que condição técnica decide se esse tempo conta como disponível?",
+      "resposta": "Aptidão para assumir a carga na demanda automática.",
+      "explicacao": "Disponibilidade observada considera tempo apto à operação. Partir localmente não basta se a função requerida do gerador inclui entrar automaticamente e assumir carga quando demandado.",
+      "resposta_padrao": "Ter partido normalmente nos testes locais programados.",
+      "por_que_nao": "Teste local comprova acionamento parcial; com auto-start inibido, o equipamento não está apto à função exigida na demanda real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O encerramento técnico da indisponibilidade ocorre no retorno à função, não no fechamento administrativo da ordem.",
+      "pergunta": "Na consolidação da indisponibilidade de um compressor, a notificação registra o início da falha e o CMMS registra o fechamento da ordem, mas o teste funcional e a liberação para operação ficam em sistema separado. Para não superestimar a indisponibilidade observada, que marco precisa ser incorporado à base do indicador?",
+      "resposta": "Horário de retorno à função.",
+      "explicacao": "A indisponibilidade termina quando o item volta a estar apto à função. Fechamento administrativo pode ocorrer depois e inflar o tempo indisponível observado.",
+      "resposta_padrao": "Data e hora de fechamento da ordem no CMMS.",
+      "por_que_nao": "Encerramento administrativo não coincide necessariamente com a restauração funcional; a disponibilidade deve parar no retorno efetivo da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

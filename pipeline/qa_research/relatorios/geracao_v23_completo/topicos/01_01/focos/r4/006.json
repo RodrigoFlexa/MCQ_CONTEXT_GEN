@@ -1,0 +1,79 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 4,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falhas sob demanda de falhas em espera em reserva fria para medir corretamente a redundância.",
+      "pergunta": "Uma bomba em reserva fria fica meses parada, passa em checagens estáticas de prontidão, mas as perdas de produção surgem justamente quando o ativo falha e a troca automática é solicitada. No KPI do arranjo, que classe de falha da reserva deve ser acompanhada separadamente das falhas em espera?",
+      "resposta": "Falhas sob demanda da reserva fria.",
+      "explicacao": "Em reserva fria, poucas horas não eliminam perdas no acionamento; o evento crítico aparece na partida ou na transferência, não como defeito latente em espera.",
+      "resposta_padrao": "Falha em espera da reserva fria.",
+      "por_que_nao": "Falha em espera é indisponibilidade latente antes da demanda; aqui a perda só se manifesta quando a reserva é chamada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em reserva fria, mecanismos ligados à operação contínua do ativo não devem ser transferidos linearmente para o reserva.",
+      "pergunta": "Num par ativo-reserva fria de compressores, o ativo concentra falhas de selo e mancal após campanhas longas aquecidas; o reserva passa meses parado e as perdas aparecem quando ele é chamado para assumir. Ao parametrizar o KPI do arranjo, que mecanismo do ativo não deve ser copiado diretamente para o reserva?",
+      "resposta": "Desgaste sob carga contínua.",
+      "explicacao": "A reserva fria não acumula a mesma solicitação térmica e mecânica do ativo; copiar desgaste de operação contínua superestima esse mecanismo e mascara riscos típicos de espera e acionamento.",
+      "resposta_padrao": "A mesma taxa global de falhas do compressor ativo.",
+      "por_que_nao": "Ela mistura mecanismos de operação contínua com riscos característicos de espera e de acionamento, que têm exposição diferente no reserva frio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Redundância de equipamentos não cobre indisponibilidade de manutenção quando a intervenção exige isolamento comum do processo.",
+      "pergunta": "Duas bombas 100% duty/standby aparecem como redundância plena no KPI. Na prática, toda preventiva em qualquer uma exige bloquear e despressurizar o coletor comum, interrompendo a função mesmo com a outra saudável. Que causa específica de indisponibilidade continua existindo apesar da duplicação das bombas?",
+      "resposta": "Isolamento comum para manutenção.",
+      "explicacao": "Mesmo com duas bombas, a função cai quando a intervenção exige retirar de serviço o coletor compartilhado; a indisponibilidade vem do isolamento comum necessário à manutenção.",
+      "resposta_padrao": "Falta de capacidade da bomba remanescente.",
+      "por_que_nao": "A bomba remanescente está apta; a perda ocorre porque o caminho funcional comum precisa ser isolado para a intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Além disso, redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

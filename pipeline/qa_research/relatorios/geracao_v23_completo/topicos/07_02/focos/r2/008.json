@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 8,
+  "rodada": 2,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aderência ao escopo de acesso de terceiro é verificada por registro de sessão, não por log de conexão.",
+      "pergunta": "Após uma sessão remota de terceiro em estação de engenharia, com identidade individual, aprovação e janela válidas, a operação voltou ao normal. Para verificar que a atuação ficou dentro do escopo autorizado, qual registro técnico deve ser revisado?",
+      "resposta": "Registro de sessão.",
+      "explicacao": "Para terceiros, a verificação deve confirmar não só a janela autorizada, mas também a aderência ao escopo executado; isso exige registro da sessão, não apenas do acesso.",
+      "resposta_padrao": "Logs de autenticação ou da VPN.",
+      "por_que_nao": "Esses logs mostram quem conectou e quando, mas não as ações executadas dentro da sessão.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Divergências amplas em comparação online, com processo estável após uso de notebook temporário, apontam para incompatibilidade da ferramenta de engenharia.",
+      "pergunta": "Após conectar um notebook temporário de terceiro apenas para diagnóstico online, o processo segue estável, mas a comparação online passa a indicar muitas diferenças de parâmetros e blocos inexistentes antes de qualquer escrita. Que condição do dispositivo deve ser suspeitada primeiro?",
+      "resposta": "Versão incompatível da ferramenta de engenharia.",
+      "explicacao": "O bloco destaca o risco de versões incompatíveis em dispositivos temporários; discrepâncias amplas sem efeito de processo, antes de escrever, indicam incompatibilidade da representação de engenharia.",
+      "resposta_padrao": "Configuração corrompida no controlador.",
+      "por_que_nao": "Corrupção real no controlador tende a produzir falhas operacionais ou alarmes; divergência maciça só na comparação online é típica de incompatibilidade da ferramenta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua atualização e integridade não são verificadas antes do uso."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "VPN protege o tráfego, mas execução inesperada após conexão remota aponta para comprometimento do notebook de origem.",
+      "pergunta": "Um terceiro acessa um ativo OT por VPN aprovada e MFA a partir de notebook temporário de manutenção. O túnel permanece estável, mas, logo após a conexão, surgem no destino tentativas de executar utilitários fora do escopo autorizado. Que elemento técnico do arranjo explica o risco apesar do canal seguro?",
+      "resposta": "Comprometimento pré-existente do notebook de origem.",
+      "explicacao": "A proteção da VPN vale para o tráfego em trânsito; se o equipamento de origem estiver comprometido, a sessão pode ser válida e ainda introduzir software ou ações indevidas.",
+      "resposta_padrao": "Falha na criptografia da VPN.",
+      "por_que_nao": "O canal seguro não corrige comprometimento do endpoint; utilitários inesperados após conexão válida apontam para o dispositivo de origem.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

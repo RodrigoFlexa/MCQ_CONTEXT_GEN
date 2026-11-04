@@ -1,0 +1,87 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "rodada": 2,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação no modelo das esperas causadas por SIMOPS e indisponibilidades operacionais.",
+      "pergunta": "Em um estudo de programação para um FPSO, a solução só fecha com tempos fixos, mas na prática o PSV frequentemente aguarda offloading, pousos e manutenção concorrente antes de transferir carga. Antes de confiar no resultado, que componente operacional precisa estar explicitamente representado no modelo?",
+      "resposta": "Tempos de espera por SIMOPS e fatores exógenos.",
+      "explicacao": "O modelo precisa captar as indisponibilidades operacionais que atrasam o atendimento antes da transferência. Ignorá-las torna a programação artificialmente otimista e pode subdimensionar a frota.",
+      "resposta_padrao": "Tempo de transferência de carga.",
+      "por_que_nao": "Aqui o atraso dominante nasce da indisponibilidade para operar; a transferência só começa depois da liberação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "espera por fatores exógenos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Operações Simultâneas (SIMOPS)"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "aumentam as esperas, as reprogramações e a variabilidade do tempo de atendimento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso de stockout de insumos críticos para detectar falha logística que não aparece em métricas agregadas de prazo.",
+      "pergunta": "Uma nova política reduziu consumo da frota e manteve o atendimento médio no prazo, mas uma corretiva crítica perdeu a janela porque o sobressalente não estava disponível a bordo quando necessário. No monitoramento da política, qual indicador mostra diretamente essa inadequação?",
+      "resposta": "Stockout de insumos críticos.",
+      "explicacao": "A falha foi a ruptura de disponibilidade do item crítico na unidade. Consumo e pontualidade média podem permanecer bons enquanto ainda ocorre falta de suprimento decisivo.",
+      "resposta_padrao": "Atrasos.",
+      "por_que_nao": "Perder a janela aqui decorre da indisponibilidade do item crítico; atraso não distingue falta a bordo de simples postergação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma política pode reduzir consumo ou frota contratada e ainda assim ser inadequada se aumentar ruptura de suprimento ou atrasos críticos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Utilização da frota como indicador de saturação operacional e perda de folga para absorver perturbações.",
+      "pergunta": "Uma programação com cargas múltiplas reduziu custo, e os atendimentos correntes seguem no prazo, mas os PSVs passaram a operar quase sem ociosidade, perdendo folga para absorver reprogramações e demandas emergenciais. No monitoramento da política, qual indicador evidencia essa saturação operacional?",
+      "resposta": "Utilização da frota.",
+      "explicacao": "Uso quase contínuo da frota revela perda de folga operacional. Custo e prazo corrente podem parecer bons enquanto a política já ficou menos robusta às perturbações.",
+      "resposta_padrao": "Atendimento no prazo.",
+      "por_que_nao": "Pontualidade ex post pode continuar aceitável mesmo com a frota saturada e sem margem para absorver desvios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos, utilização da frota"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses indicadores precisam ser lidos em conjunto"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa variabilidade reduz a previsibilidade do serviço e pode elevar a capacidade necessária para manter o mesmo nível de atendimento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

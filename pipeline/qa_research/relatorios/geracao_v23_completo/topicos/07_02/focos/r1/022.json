@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Distinção operacional entre saída analítica consultiva e atuação de controle pela autoridade de escrita.",
+      "pergunta": "Numa tela integrada ao DCS, uma aplicação analítica exibe um setpoint recomendado para uma malha que o operador também ajusta pela HMI. Antes de qualquer ajuste, que característica técnica da aplicação precisa ser confirmada para não tratar a recomendação como um comando efetivo do processo?",
+      "resposta": "Autoridade de escrita da aplicação no sistema de controle.",
+      "explicacao": "O ponto decisivo é saber se a aplicação apenas orienta ou se tem caminho de atuação sobre a malha. O treinamento deve separar recomendação analítica de comando real de controle.",
+      "resposta_padrao": "Conferir se o valor sugerido parece coerente com a tendência do processo.",
+      "por_que_nao": "Coerência aparente não define se a saída é apenas consultiva ou se realmente pode escrever no controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diferenciar recomendação analítica de comando de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de contexto de modo operacional para interpretar alertas analíticos sem gerar falsos positivos em transientes.",
+      "pergunta": "Após implantar analytics de falha em bombas, os alertas surgem principalmente nas partidas, paradas e entradas de recirculação automática, enquanto as variáveis estabilizadas permanecem dentro do comportamento esperado. Que elemento de dados precisa compor a interpretação para que esses alertas sejam tecnicamente confiáveis?",
+      "resposta": "Contexto de modo operacional do equipamento.",
+      "explicacao": "Sem distinguir estados como partida, parada e recirculação, o sistema tende a ler transientes normais como anomalia e produzir alarmes espúrios.",
+      "resposta_padrao": "Maior frequência de amostragem dos sinais.",
+      "por_que_nao": "Amostragem mais rápida não informa ao analytics que o equipamento está numa transição operacional esperada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o significado operacional dos dados e dos alertas produzidos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso do status de qualidade do sinal para validar dados consumidos por analytics após manutenção ou substituição temporária.",
+      "pergunta": "Um analytics de desempenho aponta degradação logo após manutenção, mas um transmissor usado no cálculo permaneceu com o último valor válido retido pelo sistema durante parte da retomada, e a tendência parecia plausível. Que informação técnica do dado deve ser verificada antes de considerar o alerta válido?",
+      "resposta": "Flag de qualidade do sinal.",
+      "explicacao": "Valor plausível não garante validade. Dado retido, substituído ou inválido precisa ser identificado pelo status de qualidade para não contaminar o diagnóstico.",
+      "resposta_padrao": "Se a tendência exibida parece coerente com o restante do processo.",
+      "por_que_nao": "Um valor retido pode permanecer numericamente plausível; só a qualidade do sinal distingue dado válido de dado substituído ou inválido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interpretar qualidade de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem tratamento de qualidade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

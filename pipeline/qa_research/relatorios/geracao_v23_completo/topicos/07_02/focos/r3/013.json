@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 3,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Liberação de patch em controlador exige validação funcional das sequências, permissivos e intertravamentos de processo, além da estabilidade de CPU e comunicação.",
+      "pergunta": "Após atualizar em bancada um controlador legado, CPU, memória e comunicação com remotas permanecem estáveis. Antes da janela em produção, como deve ser comprovado que o patch não introduziu comportamento não previsto nas partidas e paradas automáticas do processo?",
+      "resposta": "Teste funcional de sequências, permissivos e intertravamentos de processo.",
+      "explicacao": "Em legados, o patch pode afetar funções de processo mesmo com CPU e comunicação normais. A liberação precisa provar o comportamento do controle em operação automática.",
+      "resposta_padrao": "Teste de comunicação com as remotas.",
+      "por_que_nao": "Comunicação íntegra não prova que permissivos, intertravamentos e sequências mantenham o comportamento validado após a troca de firmware.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode introduzir indisponibilidade ou comportamento não previsto no controle"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Patch homologado em um produto OT não pode ser generalizado a outro sem qualificação específica da versão aplicável ao ativo-alvo.",
+      "pergunta": "Um patch de segurança homologado para a IHM foi aplicado por analogia em um gateway do mesmo fornecedor. Depois da mudança, os equipamentos nas duas redes seguem comunicando normalmente entre si, mas surgem falhas intermitentes apenas na tradução de protocolo feita pelo gateway, sem alarmes de CPU. Que causa técnica explica melhor esse comportamento?",
+      "resposta": "Versão aplicável não qualificada para o gateway.",
+      "explicacao": "O problema aparece na função específica do gateway após uso de pacote homologado para outro produto. Compartilhar fornecedor ou plataforma não substitui qualificação do alvo.",
+      "resposta_padrao": "Instabilidade da rede industrial.",
+      "por_que_nao": "Se a rede fosse a causa, a degradação apareceria também nas trocas nativas dos mesmos enlaces; falhar só na tradução após o patch aponta para pacote fora da qualificação do gateway.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa ação não deve ser generalizada para outros produtos fora desse contexto."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Viabilidade de rollback em mudança OT só fica comprovada com ensaio de restauração da imagem e da versão anterior.",
+      "pergunta": "Em um servidor OT redundante, o patch de segurança foi qualificado e passou nos testes básicos. Antes da janela em produção, como deve ser comprovada a viabilidade do retorno caso a atualização introduza indisponibilidade?",
+      "resposta": "Ensaio de restauração da imagem e da versão anteriores.",
+      "explicacao": "Plano de retorno só é tecnicamente confiável quando a reversão foi exercitada. Backup de dados isolado não demonstra retorno operacional do sistema anterior.",
+      "resposta_padrao": "Backup dos dados de processo e logs.",
+      "por_que_nao": "Preservar dados não prova que sistema operacional, serviços OT e integrações voltem a operar na versão anterior dentro do retorno planejado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode introduzir indisponibilidade ou comportamento não previsto no controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

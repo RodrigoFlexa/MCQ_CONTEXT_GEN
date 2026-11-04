@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 2,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A lógica automática de partida depende da confirmação da topologia real da rede pelo estado do bus tie.",
+      "pergunta": "Após intervenção na distribuição, a lógica automática de partida de um grande motor voltou a usar correções previstas para barramentos em paralelo. Antes de liberar a manobra, que estado elétrico o PMS deve confirmar para não selecionar o perfil errado?",
+      "resposta": "Estado real do bus tie.",
+      "explicacao": "Na filosofia descrita, o PMS ajusta a partida conforme a configuração da rede. O estado do bus tie define se os barramentos estão acoplados ou seccionados e altera rigidez e fontes participantes.",
+      "resposta_padrao": "A reserva de MW online.",
+      "por_que_nao": "O perfil de correção depende da topologia elétrica efetiva, não apenas da potência disponível em regime.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "usando informações de configuração da rede, estados de bus tie, disjuntores dos geradores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a partida de grande consumidor precisa considerar a rigidez do barramento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em geração em droop, o aumento transitório de carga ativa na partida aparece como desvio temporário de frequência.",
+      "pergunta": "Durante a partida de um grande motor, a tensão foi sustentada pelas correções reativas do PMS, mas a frequência ainda caiu até os governadores reagirem. Que característica da geração transforma esse degrau transitório de carga em desvio de frequência?",
+      "resposta": "Droop dos governadores.",
+      "explicacao": "Com governadores em droop, o aumento transitório de potência ativa aparece como desvio temporário de frequência até o novo compartilhamento se estabelecer.",
+      "resposta_padrao": "Compensação reativa insuficiente.",
+      "por_que_nao": "Reativos afetam principalmente a tensão; a relação entre carga ativa transitória e frequência vem do droop.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possível desvio de frequência quando a geração opera em droop"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o compartilhamento de carga"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Afundamento de tensão com pouca variação de frequência, na partida de motor grande, indica predominância da demanda reativa.",
+      "pergunta": "Na partida de um motor de grande porte, havia folga de MW online e a frequência quase não variou, mas ocorreu afundamento pronunciado de tensão no barramento. Que parcela da demanda do motor explica melhor esse comportamento?",
+      "resposta": "Potência reativa de partida.",
+      "explicacao": "A partida impõe corrente elevada e forte consumo de reativos. Pela impedância da rede, isso provoca afundamento de tensão mesmo sem grande desvio de frequência.",
+      "resposta_padrao": "Falta de potência ativa disponível.",
+      "por_que_nao": "Se a frequência ficou quase estável, o sinal dominante não é déficit de kW, e sim demanda reativa elevada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "impõe corrente elevada e consumo significativo de potência reativa, causando afundamento de tensão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "possível desvio de frequência quando a geração opera em droop"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

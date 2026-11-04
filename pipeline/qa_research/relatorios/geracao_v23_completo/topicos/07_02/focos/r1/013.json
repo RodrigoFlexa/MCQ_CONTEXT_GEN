@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A relevância prática de uma vulnerabilidade em OT depende primeiro da presença do componente vulnerável no ativo.",
+      "pergunta": "Foi emitido alerta para vulnerabilidade em uma pilha de comunicação usada em alguns equipamentos de um mesmo fornecedor presentes a bordo. Antes de abrir janela de patch para controladores, IHMs e gateways dessa família, que verificação técnica do ativo deve ser feita primeiro?",
+      "resposta": "Confirmar se o ativo usa o componente afetado.",
+      "explicacao": "O tratamento em OT começa verificando se a vulnerabilidade realmente se aplica ao ativo. Compartilhar fabricante ou família não prova presença da pilha vulnerável.",
+      "resposta_padrao": "Aplicar o patch em todos os equipamentos do mesmo fabricante.",
+      "por_que_nao": "A vulnerabilidade só é aplicável se o ativo realmente incorporar a pilha ou componente vulnerável; fabricante comum não basta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de aplicar patch em sistema legado, falhas de troca com remotas e gateways exigem validar a interoperabilidade de comunicação com o firmware.",
+      "pergunta": "Em um sistema legado, o patch recomendado sobe sem alarmes de CPU, mas nos testes aparecem timeouts intermitentes entre controlador, remotas e gateway de protocolo. Antes de liberar a atualização para produção, que compatibilidade específica precisa ser validada?",
+      "resposta": "Compatibilidade de comunicação entre firmware e remotas.",
+      "explicacao": "Os sinais apontam para interoperabilidade de comunicação, não para lógica básica. Em OT, atualização pode exigir validar compatibilidade entre firmware e comunicação antes da liberação.",
+      "resposta_padrao": "Compatibilidade apenas da aplicação de controle.",
+      "por_que_nao": "Com CPU estável e falha na troca com remotas e gateway, o ponto crítico é a interoperabilidade da comunicação industrial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em mudanças de segurança em OT, a capacidade comprovada de reverter ao estado conhecido é pré-requisito técnico independente da qualificação do fornecedor.",
+      "pergunta": "Uma atualização de segurança para um servidor OT redundante foi qualificada pelo fornecedor e passou nos testes básicos, mas a restauração da imagem e da versão anteriores ainda não foi ensaiada. Antes de executar a mudança em produção, que condição técnica precisa estar assegurada?",
+      "resposta": "Plano de retorno validado.",
+      "explicacao": "Qualificação e testes não substituem a capacidade de restaurar rapidamente o estado anterior se a atualização introduzir indisponibilidade ou comportamento não previsto.",
+      "resposta_padrao": "Basta a qualificação do fornecedor.",
+      "por_que_nao": "A aprovação do fornecedor não garante recuperabilidade rápida se a atualização degradar disponibilidade ou comportamento do controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A decisão de patch em OT legado deve pesar explicitamente o risco operacional criado pela própria mudança, não só a severidade da vulnerabilidade.",
+      "pergunta": "Um controlador legado com vulnerabilidade confirmada está atrás de conduíte restrito, e a correção disponível exige reboot e nova validação funcional do processo. Na escolha entre patch imediato e medida compensatória temporária, que risco técnico precisa ser ponderado explicitamente além do risco de exploração?",
+      "resposta": "Risco operacional da própria mudança.",
+      "explicacao": "Em sistemas legados, a decisão não é só atualizar ou não. Deve-se pesar o risco da exploração contra a indisponibilidade ou comportamento inesperado que a mudança pode causar.",
+      "resposta_padrao": "A gravidade publicada da CVE.",
+      "por_que_nao": "Em OT, severidade isolada não decide quando a alteração pode retirar serviço ou alterar o comportamento do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

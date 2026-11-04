@@ -1,0 +1,83 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de comutação de falha de partida em arranjo com reserva fria.",
+      "pergunta": "Em um arranjo com reserva fria, o ativo perde a função, a sequência automática chama o reserva, o motor acelera e estabiliza, mas a vazão só retorna depois que a equipe realinha manualmente a linha para o reserva. Que evento específico deve ser lançado no modelo de disponibilidade dessa perda?",
+      "resposta": "Falha de comutação da reserva fria.",
+      "explicacao": "O reserva partiu; a perda ocorreu na transferência da função para ele. Em reserva fria, indisponibilidade por comutação deve ser separada da indisponibilidade por não partida.",
+      "resposta_padrao": "Falha de partida da reserva.",
+      "por_que_nao": "Com partida bem-sucedida, a perda não está no acionamento do equipamento, mas na assunção da função de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer indisponibilidade latente de reserva fria como falha em espera.",
+      "pergunta": "Numa prova de prontidão sem transferência de carga, a equipe encontra a bomba em reserva fria indisponível por defeito latente, antes de qualquer necessidade real de acionamento. Que modo de falha específico deve entrar no indicador de disponibilidade?",
+      "resposta": "Falha em espera da reserva fria.",
+      "explicacao": "A indisponibilidade existia enquanto o equipamento aguardava demanda. Em reserva fria, defeitos latentes descobertos antes do comando real são falhas em espera, não falhas de partida.",
+      "resposta_padrao": "Nenhuma falha, porque a bomba estava parada.",
+      "por_que_nao": "Reserva fria pode perder prontidão enquanto aguarda demanda; a indisponibilidade latente existe mesmo sem operação sob carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "é necessário levantar modos de falha que geram perda ao sistema"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Não transferir diretamente para a reserva fria a contribuição de falhas ligada ao desgaste sob carga do equipamento ativo.",
+      "pergunta": "Em uma campanha, o compressor A opera continuamente e o B fica em reserva fria, entrando só em testes curtos. Ao usar dados de A para parametrizar B, qual parâmetro de falha ligado às horas sob carga não deve ser copiado diretamente?",
+      "resposta": "Taxa de falhas por desgaste sob carga.",
+      "explicacao": "O reserva frio não acumula a mesma exposição à carga do ativo. Falhas associadas a desgaste operacional não podem ser transpostas diretamente do equipamento em serviço contínuo.",
+      "resposta_padrao": "A taxa total de falhas de A pode ser aplicada integralmente a B.",
+      "por_que_nao": "Equipamentos idênticos em regimes diferentes não compartilham a mesma contribuição de desgaste; a reserva fria tem menor exposição sob carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

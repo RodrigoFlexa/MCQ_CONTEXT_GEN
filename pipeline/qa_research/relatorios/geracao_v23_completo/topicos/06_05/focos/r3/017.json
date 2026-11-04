@@ -1,0 +1,65 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 3,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de perda de comunicação entre detector e controlador quando o campo responde, mas a lógica não recebe a condição.",
+      "pergunta": "Durante um teste com gás, o detector entra em alarme local e o sinal de saída do instrumento muda, mas o ponto correspondente no controlador permanece estável, a votação não se forma e nenhuma ação automática inicia. Qual falha técnica específica explica melhor esse comportamento?",
+      "resposta": "Perda de comunicação do detector com o controlador.",
+      "explicacao": "Se o detector alarmou localmente e seu sinal mudou, mas o controlador não viu alteração, a condição não chegou à lógica; a falha está no caminho de comunicação campo-controlador.",
+      "resposta_padrao": "Falha do detector.",
+      "por_que_nao": "O detector percebeu o evento e alterou seu sinal; sem essa condição chegar ao controlador, a lógica nem entra em votação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a comunicação com a lógica e com a interface do operador estiver degradada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional inclui o caminho do sinal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de perda de comunicação entre controlador e supervisório quando a lógica atua e o problema fica só na interface do operador.",
+      "pergunta": "Em uma atuação real, o controlador registra a entrada de F&G, executa a lógica e comanda o elemento final no tempo esperado, mas a IHM não mostra o alarme nem a cronologia do evento até o enlace retornar. Qual falha técnica específica explica melhor esse descompasso?",
+      "resposta": "Perda de comunicação entre controlador e supervisório.",
+      "explicacao": "Com entrada registrada, lógica executada e elemento final comandado, a função atuou; a ausência de alarme e histórico na IHM até o retorno do enlace aponta para perda do enlace com o supervisório.",
+      "resposta_padrao": "Falha de configuração da lógica F&G.",
+      "por_que_nao": "A lógica foi executada e o elemento final recebeu comando; o problema ficou restrito à apresentação e ao registro no supervisório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a comunicação com a lógica e com a interface do operador estiver degradada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "perda de comunicação, mapeamento incorreto de sinais, falhas de configuração ou inconsistências entre telas e lógica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

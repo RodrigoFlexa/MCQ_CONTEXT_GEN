@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Avaliação de risco de surge em shutdown de compressão requer simulação dinâmica do transiente.",
+      "pergunta": "Durante a parada de emergência de um sistema de compressão com reciclo, volumes acoplados e sequências automáticas que mudam pressão e vazão em segundos, que abordagem deve ser usada para avaliar se o compressor cruza a região de surge?",
+      "resposta": "Simulação dinâmica do sistema de compressão.",
+      "explicacao": "O risco de surge no shutdown depende da trajetória transitória de pressão e vazão, da atuação dos controles e do acoplamento entre equipamentos; análise estática não reproduz essa evolução temporal.",
+      "resposta_padrao": "Análise estática das cargas de alívio.",
+      "por_que_nao": "Carga estática não mostra a trajetória operacional do compressor nem o efeito temporal do reciclo e dos controles.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Malhas de controle devem ser representadas quando alteram amortecimento, defasagem e carga transitória ao flare.",
+      "pergunta": "Em um estudo de flare, o pico calculado muda bastante quando certos controladores seguram a pressão por alguns segundos antes da abertura plena das descargas. Para reproduzir corretamente esse amortecimento e a defasagem entre fontes, o que precisa estar explicitamente representado no modelo?",
+      "resposta": "Malhas de controle atuantes.",
+      "explicacao": "Quando os controles alteram a evolução temporal do evento, eles governam amortecimento, sequência e simultaneidade das descargas; omiti-los distorce a carga transitória ao sistema receptor.",
+      "resposta_padrao": "Só os dispositivos de alívio e os volumes dos vasos.",
+      "por_que_nao": "Sem os controles, o modelo perde o mecanismo que modifica o perfil temporal e a interação entre fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Condições iniciais governam o cenário dinâmico de máxima temperatura e vazão de alívio.",
+      "pergunta": "Dois cenários usam a mesma lógica de blowdown, mas um parte de inventário quente e pressurizado e o outro de condição mais fria, com menor holdup. Antes de comparar qual governa temperatura e vazão de alívio, que aspecto do modelo deve refletir fielmente cada caso?",
+      "resposta": "Estado inicial termohidráulico do sistema.",
+      "explicacao": "Em simulação dinâmica, pressão, temperatura e inventário no instante inicial condicionam a evolução do transiente e podem mudar o cenário governante para vazão ou temperatura de alívio.",
+      "resposta_padrao": "Os coeficientes nominais dos dispositivos de alívio.",
+      "por_que_nao": "Coeficientes fixos não substituem pressão, temperatura e inventário iniciais, que governam a evolução do transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende da qualidade das hipóteses do modelo, das condições iniciais"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

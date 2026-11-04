@@ -1,0 +1,91 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de despacho offshore quando o custo do atraso difere entre demandas.",
+      "pergunta": "Com apenas uma janela de embarque antes de piora de mar, há duas cargas prontas: uma repõe item rotineiro; a outra chegou depois, mas sem ela uma função essencial permanece indisponível e o atraso já gera custo alto. Que critério deve comandar a ordem de atendimento?",
+      "resposta": "Criticidade operacional ponderada pela penalidade de atraso.",
+      "explicacao": "Sob restrição de janela e capacidade, a disciplina de atendimento muda o resultado. Quando o custo da espera não é uniforme, a ordem deve seguir a consequência operacional da demanda, e não a chegada.",
+      "resposta_padrao": "Atender por ordem de chegada, em FIFO.",
+      "por_que_nao": "FIFO só serve quando a espera tem custo semelhante entre demandas; com consequências muito diferentes, ele consome a janela escassa no pedido menos impactante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a política de prioridade altera o resultado porque muda quais demandas serão atendidas primeiro quando há restrição de embarcações, janelas operacionais ou capacidade logística."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização e estoque de item de baixo consumo quando a ruptura impede restaurar função.",
+      "pergunta": "Um sobressalente tem consumo raro, mas sem ele um equipamento essencial não retorna ao serviço, e o reabastecimento depende de longa distância e poucas janelas logísticas. Na definição do estoque local e da prioridade de atendimento, qual variável deve prevalecer sobre a frequência de consumo?",
+      "resposta": "Impacto da ruptura sobre segurança ou produção.",
+      "explicacao": "Em offshore, itens de baixa demanda ainda exigem prioridade ou estoque local quando sua falta compromete restauração de função ou continuidade operacional, sobretudo com reposição difícil.",
+      "resposta_padrao": "A frequência histórica de consumo do item.",
+      "por_que_nao": "Baixo consumo não reduz a criticidade quando a falta impede recuperar função e a reposição é lenta ou incerta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "frequência de consumo, impacto da falta, prazo de reposição e possibilidade de consolidação da demanda."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "itens de baixa demanda podem continuar exigindo estoque local se a ruptura tiver consequência alta para segurança ou produção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Efeito de penalidades de atraso na vantagem econômica da priorização frente ao FIFO.",
+      "pergunta": "Num estudo com mesma demanda, capacidades e janelas operacionais, a equipe eleva a penalidade de atraso das cargas que sustentam segurança e produção. Na comparação entre atendimento priorizado e FIFO, que efeito tende a ficar mais forte?",
+      "resposta": "Maior vantagem de custo da priorização.",
+      "explicacao": "Com atraso mais caro nas demandas relevantes, cresce o benefício econômico de servi-las antes. Isso reforça o valor do critério de prioridade, sem implicar automaticamente mais ou menos frota.",
+      "resposta_padrao": "Necessidade automática de aumentar a frota.",
+      "por_que_nao": "Penalidade maior altera a atratividade econômica da regra de atendimento; o efeito sobre tamanho de frota depende do cenário completo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No mesmo contexto modelado, a priorização de tarefas foi associada a redução de custo frente ao FIFO"
+        },
+        {
+          "bloco": "F",
+          "trecho": "penalidades elevadas por atraso reforçaram o valor de critérios de prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não implica menor frota em todo cenário."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

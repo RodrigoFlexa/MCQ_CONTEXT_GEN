@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 1,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em IACS, quando suporte remoto é necessário, a forma de reduzir exposição é substituir acessibilidade direta pela VPN.",
+      "pergunta": "Um servidor de engenharia em rede OT precisa de suporte remoto esporádico. A proposta é publicar o serviço diretamente na internet, restrito por whitelist de IP e MFA. Que método de acesso deve ser adotado para reduzir a exposição do IACS à exploração remota?",
+      "resposta": "Acesso remoto via VPN.",
+      "explicacao": "Evitar acessibilidade direta reduz a alcançabilidade por agentes externos; quando o acesso remoto é necessário, o método seguro indicado é VPN.",
+      "resposta_padrao": "Publicação direta do serviço com whitelist de IP e MFA.",
+      "por_que_nao": "Whitelist e MFA restringem tentativas, mas o serviço continua diretamente alcançável a partir da internet.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reduzir a exposição de rede diminui a chance de alcançabilidade por agentes externos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "recomenda-se evitar acessibilidade direta a partir da internet. Quando o acesso remoto for necessário, recomenda-se usar método seguro, como Rede Privada Virtual (VPN)."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A VPN protege o canal, mas não neutraliza comprometimento prévio do dispositivo conectado; o endpoint continua sendo vetor decisivo de risco.",
+      "pergunta": "Um fornecedor acessa uma estação de engenharia por VPN. O túnel permaneceu estável e autenticado, mas depois se verifica que o notebook usado na conexão estava desatualizado e com malware adquirido em outra instalação. Qual componente do arranjo de acesso era o vetor decisivo de risco nessa sessão?",
+      "resposta": "O endpoint de origem conectado à VPN.",
+      "explicacao": "A proteção do canal não corrige comprometimento do dispositivo. Um host infectado ou mal configurado pode abrir sessão válida e ainda assim introduzir risco ao ambiente operacional.",
+      "resposta_padrao": "O túnel VPN.",
+      "por_que_nao": "A VPN protege o tráfego em trânsito, não elimina infecção, desatualização ou controle indevido no equipamento conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de intervenção remota em IACS depende de trilha de auditoria da sessão, não apenas de eventos do processo.",
+      "pergunta": "Após uma intervenção remota de fornecedor em um ativo OT, surge comportamento inesperado e é preciso reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação. Que registro técnico deve estar disponível?",
+      "resposta": "Trilha de auditoria da sessão remota.",
+      "explicacao": "Esse registro permite correlacionar autor, horário e alvo da intervenção, sustentando investigação, responsabilização e contenção após desvio ou alteração indevida.",
+      "resposta_padrao": "Histórico de alarmes e eventos do processo.",
+      "por_que_nao": "Eventos de processo mostram efeitos operacionais, não necessariamente autoria, janela da sessão e ativo acessado na intervenção remota.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cria um ponto de entrada mais controlado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

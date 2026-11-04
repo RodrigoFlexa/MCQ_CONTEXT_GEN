@@ -1,0 +1,83 @@
+{
+  "item": "05_01",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para aceitar nova carga térmica em utilidade: usar a capacidade real disponível, não a potência nominal instalada.",
+      "pergunta": "Em um circuito fechado de resfriamento com retorno já alto e pouca folga térmica, será conectado um novo consumidor. Qual critério técnico deve decidir se a utilidade suporta essa adição sem degradar os demais usuários?",
+      "resposta": "Balanço térmico-hidráulico da capacidade real disponível.",
+      "explicacao": "A decisão depende da capacidade efetiva nas condições atuais de carga, vazão, temperaturas, perdas de carga e limpeza, e não do nomeplate isolado de bombas e trocadores.",
+      "resposta_padrao": "A potência nominal instalada de bombas e trocadores.",
+      "por_que_nao": "Nomeplate não incorpora temperatura de suprimento e de rejeito, vazão efetiva, perdas de carga nem fouling, que é o que define a capacidade disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A capacidade de um sistema de resfriamento ou aquecimento não depende apenas da potência nominal de bombas e trocadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ela resulta da combinação entre carga térmica dos consumidores, vazão disponível, temperatura de suprimento, temperatura do fluido de rejeito ou da fonte quente, perda de carga do circuito e estado de limpeza das superfícies de troca."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Correlação de picos térmicos curtos com a carga do consumidor antes de concluir por degradação da utilidade.",
+      "pergunta": "Em uma malha de resfriamento, a temperatura de um consumidor crítico sobe em picos curtos logo após rampas rápidas de produção. Que variável deve ser correlacionada primeiro com esses picos antes de diagnosticar degradação da utilidade?",
+      "resposta": "Carga térmica instantânea do consumidor crítico.",
+      "explicacao": "Em resfriamento, variações rápidas de carga deslocam a planta antes de a medição refletir totalmente o efeito; sem correlacionar a demanda térmica, o transitório pode parecer perda de capacidade.",
+      "resposta_padrao": "Aproximação térmica do trocador.",
+      "por_que_nao": "Picos curtos podem ser resposta normal a degraus de carga antes do circuito atingir novo equilíbrio; a aproximação mostra o trocador, não a demanda instantânea.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela resulta da combinação entre carga térmica dos consumidores, vazão disponível, temperatura de suprimento, temperatura do fluido de rejeito ou da fonte quente, perda de carga do circuito e estado de limpeza das superfícies de troca."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em malhas de resfriamento, variações rápidas de carga ou de temperatura do meio refrigerante podem deslocar a planta para nova condição antes de a medição refletir completamente o efeito."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança do ponto operacional ao longo da campanha exige nova sintonia da malha de aquecimento.",
+      "pergunta": "Uma malha de aquecimento de óleo antes estável passa a oscilar após aumento sustentado de produção; válvula e sensor respondem normalmente, mas a resposta térmica já não lembra a da campanha anterior. Qual ação técnica específica na malha deve ser priorizada?",
+      "resposta": "Nova sintonia do controlador de temperatura.",
+      "explicacao": "Mudanças de vazão, pressão e composição alteram a dinâmica do processo; com tempo morto, inércia e não linearidade do trocador, a sintonia antiga pode deixar de servir.",
+      "resposta_padrao": "Recalibrar o sensor de temperatura.",
+      "por_que_nao": "Calibração corrige erro estático; oscilações surgidas com mudança de ponto operacional vêm do desacerto entre a sintonia e a dinâmica atual do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No aquecimento de óleo, a resposta dinâmica pode ser dificultada por tempo morto associado à medição de temperatura na saída do trocador, elevada inércia térmica e comportamento não linear do permutador em vazões elevadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em plantas offshore, variações de vazão, pressão e composição dos fluidos produzidos propagam distúrbios para separação, aquecimento e resfriamento; por isso, a mesma malha pode se comportar de forma diferente ao longo da campanha operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em malhas de aquecimento, a presença de tempo morto e inércia térmica torna comum a resposta lenta e a propensão a sobre-elevação ou oscilações se o controle for agressivo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

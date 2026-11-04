@@ -1,0 +1,73 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A redundância de supervisão/comando só é válida na recomposição se os canais forem alimentados por UPS segregadas.",
+      "pergunta": "Na revisão da recomposição pós-blackout, descobre-se que as duas estações master do sistema de controle, tratadas como redundantes, são alimentadas pelo mesmo conjunto UPS. Que arranjo de alimentação deve ser adotado para que a perda de uma UPS não elimine os dois canais?",
+      "resposta": "Uma UPS independente para cada estação master.",
+      "explicacao": "Se ambos os canais dependem da mesma UPS, existe falha de causa comum. A redundância só permanece no estado degradado quando a alimentação dos canais é eletricamente segregada.",
+      "resposta_padrao": "Aumentar a autonomia do banco de baterias da UPS compartilhada.",
+      "por_que_nao": "Mais autonomia não remove a causa comum; a falha de uma única UPS continua derrubando ambos os canais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso reduziu a independência entre canais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Intertravamentos e scripts de reinicialização devem ser verificados em reboot a frio, sem suporte de bateria, para revelar trips ocultos que bloqueiam a recomposição.",
+      "pergunta": "Após blackout total, o gerador de emergência parte e estabelece tensão, mas o disjuntor não se mantém fechado quando o sistema de controle reinicia, condição que não aparece no reinício habitual. Que verificação funcional deve ser incluída para expor esse bloqueio antes da operação?",
+      "resposta": "Reboot a frio do sistema de controle sem bateria, observando o trip do disjuntor.",
+      "explicacao": "O bloqueio oculto apareceu quando o controle reiniciou sem alimentação de bateria e continuou enviando trip ao disjuntor. O teste precisa reproduzir exatamente esse modo anormal.",
+      "resposta_padrao": "Teste de partida isolada do gerador de emergência.",
+      "por_que_nao": "A partida isolada prova a máquina, mas não exercita o caminho lógico externo que pode manter o trip durante o reboot.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ela depende de permissivos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

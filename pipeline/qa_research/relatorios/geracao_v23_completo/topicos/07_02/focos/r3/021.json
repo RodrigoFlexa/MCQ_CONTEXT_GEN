@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em integração multivendor, comparação entre ativos exige harmonizar o significado semântico da variável, não apenas unidade e identificação.",
+      "pergunta": "Em um dashboard comum, a tendência de “velocidade do compressor” de uma unidade sobe alguns segundos antes da partida mecânica, enquanto na unidade irmã a curva só aparece após aceleração real; ambas vêm de controladores de fornecedores diferentes e são mostradas em rpm. Que atributo do dado deve ser harmonizado antes de comparar desempenho entre as máquinas?",
+      "resposta": "Semântica da variável: referência versus velocidade medida.",
+      "explicacao": "Mesma unidade não garante mesma grandeza. Em ambiente multivendor, rótulos parecidos podem representar comando, referência ou medição real; sem coerência semântica, a comparação fica enganosa.",
+      "resposta_padrao": "Unidade de engenharia da variável.",
+      "por_que_nao": "As duas séries já estão em rpm; o erro nasce de comparar grandezas de significado diferente sob o mesmo rótulo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um desafio recorrente no nível de controle é a diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A criticidade arquitetural de uma integração digital cresce quando a aplicação se acopla ao controle por ajustes frequentes, mesmo com pouco tráfego e boa latência média.",
+      "pergunta": "Um analítico em terra envia, a cada 20 s, viés de setpoint para estabilizar exportação. Nos testes, a latência média foi baixa, mas ocorreram rajadas de atraso e duas perdas curtas do enlace; o tráfego total é pequeno. Que característica da aplicação torna esse arranjo muito mais crítico do que um painel de KPIs no mesmo enlace?",
+      "resposta": "Acoplamento ao controle por ajustes frequentes de setpoint.",
+      "explicacao": "O fator decisivo não é o volume de dados nem a latência média, e sim a função atuar sobre ajustes frequentes do processo. Isso reduz a tolerância a atraso e indisponibilidade.",
+      "resposta_padrao": "A latência média do enlace.",
+      "por_que_nao": "Média baixa não elimina rajadas nem perdas curtas; quando a aplicação interfere no ajuste do processo, o critério decisivo passa a ser o acoplamento ao controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

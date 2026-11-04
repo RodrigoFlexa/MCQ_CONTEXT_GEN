@@ -1,0 +1,91 @@
+{
+  "item": "09_01",
+  "foco": 8,
+  "rodada": 2,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Janelas de atendimento são restrição de modelo indispensável quando o FPSO não recebe suprimentos em qualquer horário.",
+      "pergunta": "Um roteirizador vindo de outro sistema gera chegadas de PSV ao longo de 24 horas, mas o FPSO só realiza recebimento em períodos operacionais definidos. Que restrição deve ser incorporada ao modelo antes de validar a sequência?",
+      "resposta": "Restrição de janela de atendimento.",
+      "explicacao": "No sistema importado, podia não haver restrição de horário; para FPSO, os períodos admissíveis de atendimento precisam entrar no modelo, senão a sequência ótima pode marcar escalas fora da operação viável.",
+      "resposta_padrao": "Aumentar a penalização por atraso.",
+      "por_que_nao": "Penalidade altera o custo relativo das opções, mas não impede o modelo de programar atendimentos fora da janela operacional permitida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inexistência de restrições de horário de atendimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas condições pertencem ao sistema descrito e não devem ser universalizadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a solução precisa ser compatível com restrições físicas e operacionais da interface marítima"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A exclusividade de atendimento por uma única embarcação é hipótese de modelo e não regra universal da operação offshore.",
+      "pergunta": "Durante o ciclo logístico, o FPSO poderia receber carga de rotina em um PSV e um item urgente em outro, mas o roteirizador importado rejeita qualquer solução com dois PSVs para a mesma unidade. Que restrição do modelo está causando essa inviabilidade artificial?",
+      "resposta": "Restrição de atendimento exclusivo por uma única embarcação.",
+      "explicacao": "A hipótese de atendimento exclusivo pertence ao sistema de origem do modelo. Se a operação admite entregas fracionadas em embarcações diferentes, essa restrição elimina soluções fisicamente possíveis.",
+      "resposta_padrao": "Falta capacidade de carga e é preciso um PSV maior.",
+      "por_que_nao": "O bloqueio é lógico: o modelo proíbe dividir o atendimento entre embarcações, e aumentar porte não remove essa proibição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada plataforma ser atendida por uma única embarcação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas condições pertencem ao sistema descrito e não devem ser universalizadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O valor técnico desse tipo de modelagem está em organizar decisões de frota e atendimento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sequências longas sem retorno ao porto dependem de suporte offshore de reabastecimento previsto explicitamente na programação.",
+      "pergunta": "Uma malha otimizada só fecha financeiramente porque elimina retornos ao porto e mantém o PSV em vários trechos consecutivos no mar; a autonomia própria da embarcação não cobre todo o ciclo. Que recurso logístico específico precisa constar da solução?",
+      "resposta": "Navio-tanque de reabastecimento posicionado.",
+      "explicacao": "Quando a programação pressupõe permanência prolongada sem retorno, a viabilidade depende de suporte offshore de reabastecimento, não apenas da autonomia inicial do PSV.",
+      "resposta_padrao": "Basta sair com mais combustível no próprio PSV.",
+      "por_que_nao": "A sequência planejada requer um ponto externo de suprimento ao longo da rota; ampliar a reserva inicial não substitui esse recurso de apoio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permanência do PSV em viagem por até três dias sem retorno ao porto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "definição de rotas, partidas diárias, alocação de pedidos, sequência de atendimento e posicionamento de navios-tanque de reabastecimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas condições pertencem ao sistema descrito e não devem ser universalizadas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

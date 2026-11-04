@@ -1,0 +1,101 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Transferência de estimador de mar por movimentos entre unidades exige compatibilidade da resposta hidrodinâmica, não apenas semelhança geométrica.",
+      "pergunta": "Na falta de histórico local, planeja-se aplicar em um FPSO o estimador de direção de mar por movimentos, calibrado em outra unidade de porte semelhante. Qual elemento técnico deve ser confirmado como compatível antes de aceitar essa transferência?",
+      "resposta": "A resposta hidrodinâmica da própria unidade, expressa nos RAOs.",
+      "explicacao": "A inferência depende dos RAOs representados no modelo. Sem compatibilidade da resposta hidrodinâmica, semelhança de porte não garante a mesma recuperação direcional.",
+      "resposta_padrao": "Casco de porte parecido e deslocamento próximo.",
+      "por_que_nao": "Dimensões semelhantes não asseguram RAOs equivalentes, e é a resposta dinâmica que sustenta a inferência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Estimativas de condições de mar a partir dos movimentos do FPSO dependem da resposta hidrodinâmica representada nos modelos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Após mudança de aproamento, a inferência direcional por movimentos pode falhar por baixa sensibilidade direcional dos RAOs no novo heading.",
+      "pergunta": "Em um FPSO turretado, a direção de onda inferida pelos movimentos passa a oscilar fortemente logo após grande mudança de aproamento, embora os sensores estejam íntegros e o mar não tenha mudado bruscamente. Que limitação do método explica melhor esse comportamento?",
+      "resposta": "Baixa sensibilidade direcional dos RAOs no novo aproamento.",
+      "explicacao": "Com mudança de heading, a observabilidade direcional muda. Em regiões de baixa sensibilidade dos RAOs, pequenas perturbações geram grande incerteza na direção inferida.",
+      "resposta_padrao": "Mudança real e rápida da direção do mar.",
+      "por_que_nao": "A perda de observabilidade pode nascer do novo heading, mesmo sem rotação relevante do ambiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o comportamento passa a ser sensível à direcionalidade relativa entre vento, onda e correnteza."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de estimativa de mar por movimentos deve cobrir a própria unidade e o envelope ambiental onde o resultado será usado.",
+      "pergunta": "Um estimador de direção de mar por movimentos mostrou boa concordância com referência externa em mar ameno e agora será usado para alarmes de station keeping durante ressaca severa. Que evidência técnica ainda precisa existir para sustentar esse uso?",
+      "resposta": "Validação da própria unidade no envelope ambiental severo.",
+      "explicacao": "Boa precisão em mar ameno não se transfere automaticamente para extremos; a validação deve cobrir a unidade e as condições onde o resultado será aplicado.",
+      "resposta_padrao": "A mesma boa concordância já demonstrada em mar ameno.",
+      "por_que_nao": "Acurácia do modelo e limites de sensores mudam com o envelope ambiental; extrapolar do ameno para o severo é tecnicamente inválido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desempenho em mar ameno não demonstra a mesma precisão em condições extremas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Picos truncados nos sinais de movimento indicam saturação de sensor, comprometendo a recuperação direcional por movimentos.",
+      "pergunta": "Durante temporal, o estimador de direção de mar por movimentos passa a retornar valores erráticos; nos registros de roll e pitch, os picos repetem o mesmo valor máximo apesar de a resposta visual do casco parecer mais intensa. Que limitação técnica explica melhor a perda de confiabilidade?",
+      "resposta": "Saturação da faixa dinâmica dos sensores de movimento.",
+      "explicacao": "Picos truncados no mesmo valor indicam clipping do sensor. Com entrada saturada, o modelo perde informação essencial para recuperar a direção do mar.",
+      "resposta_padrao": "Ruído numérico do algoritmo de estimação.",
+      "por_que_nao": "Ruído não produz patamares repetidos no valor máximo; esse padrão é típico de limitação física do sensor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Resultados do modelo devem ser interpretados com essas limitações"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "03_01",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do modo de DP nas proximidades do FPSO quando faltam referências relativas locais.",
+      "pergunta": "Durante a permanência próxima ao FPSO, os sistemas locais de referência relativa ficaram indisponíveis, mas o aliviador ainda precisa manter a posição e o rumo definidos pelo operador. Que modo de DP deve ser usado nessa condição?",
+      "resposta": "Modo absoluto com aproamento fixo.",
+      "explicacao": "Esse modo mantém posição e rumo comandados nas proximidades do FPSO e é o indicado quando faltam referências relativas locais, como ARTEMIS ou FANBEAM.",
+      "resposta_padrao": "Modo por referências relativas com alinhamento ambiental.",
+      "por_que_nao": "Sem referências relativas locais disponíveis, o controle baseado nelas perde a medição principal para operar perto do FPSO.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já no modo absoluto com aproamento fixo, o sistema mantém posição e rumo definidos pelo operador mesmo nas proximidades do FPSO"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sendo útil quando não há referências relativas locais ou quando sistemas como ARTEMIS ou FANBEAM estão indisponíveis."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Referência relativa usada para corrigir o controle principal absoluto no modo Tandem com hawser.",
+      "pergunta": "Com hawser conectado, o DP principal mantém o aliviador por sistema absoluto e só aplica correções quando a posição relativa sai de uma área permitida em torno do alvo. Que referência relativa define essa área?",
+      "resposta": "Retângulo de tolerância.",
+      "explicacao": "No modo Tandem com hawser, a lógica pode usar controle absoluto corrigido por uma área relativa de referência; esse envelope é o retângulo de tolerância.",
+      "resposta_padrao": "Distância fixa instantânea ao FPSO.",
+      "por_que_nao": "A correção não é baseada em um único range; ela usa uma área relativa para suavizar o controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo Tandem descrito para operações com hawser"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle principal pode usar o sistema absoluto com correção por uma área relativa de referência, o retângulo de tolerância."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição do alvo de controle no modo de alinhamento ambiental com referências exclusivamente relativas antes da conexão do hawser.",
+      "pergunta": "Antes da conexão do hawser, em uma faixa normal de afastamento, o aliviador opera num modo que busca alinhamento com a resultante ambiental usando apenas referências relativas. Qual alvo de controle deve ser adotado nesse modo?",
+      "resposta": "Ponto central de rotação geoposicionado.",
+      "explicacao": "Nesse modo, o navio referencia seu controle a um pivô virtual geoposicionado, não a um ponto físico do FPSO, para compor o alinhamento ambiental.",
+      "resposta_padrao": "A popa do FPSO.",
+      "por_que_nao": "O modo trabalha sobre um alvo virtual de rotação; um ponto estrutural do FPSO não representa a geometria de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há modo em que a embarcação busca alinhamento com a resultante das forças ambientais usando exclusivamente referências relativas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "nesse estágio, o hawser ainda pode estar desconectado e existe um ponto central de rotação geoposicionado como alvo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

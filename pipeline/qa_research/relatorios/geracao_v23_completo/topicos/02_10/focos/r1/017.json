@@ -1,0 +1,105 @@
+{
+  "item": "02_10",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em separação submarina, a interface óleo-água pode ser controlada pela taxa de retirada líquida via velocidade da bomba, sem válvula modulante.",
+      "pergunta": "Em um separador submarino água-óleo, a interface precisa ser estabilizada, mas não há válvula submarina modulante dedicada à descarga líquida e a linha de reinjeção dispõe de bomba com velocidade ajustável. Qual atuador deve ser usado como variável manipulada da malha de interface?",
+      "resposta": "Rotação da bomba injetora via VSD.",
+      "explicacao": "No arranjo descrito, a variável que altera diretamente a retirada líquida e o inventário do vaso é a velocidade da bomba. O bloco deixa explícito que a malha de interface não precisa manipular uma válvula.",
+      "resposta_padrao": "Válvula de controle na saída de água.",
+      "por_que_nao": "Quando a atuação disponível e efetiva sobre a vazão de retirada é a bomba com velocidade variável, é ela que fecha a malha de inventário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A variável manipulada da malha de interface não precisa ser, necessariamente, uma válvula de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o nível de interface óleo-água no vaso é controlado pela rotação da bomba injetora por meio de Variable Speed Drive (VSD)"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "No arranjo subsea, a qualidade da água separada deve ser acompanhada por medição de TOG, distinta da variável manipulada da interface.",
+      "pergunta": "Num arranjo submarino em que a interface óleo-água é controlada pela rotação da bomba, como deve ser acompanhado em operação se essa estratégia está preservando a qualidade da água separada enviada a descarte ou reinjeção?",
+      "resposta": "Analisador de TOG na água separada.",
+      "explicacao": "A arquitetura separa funções: a bomba via VSD manipula o inventário do vaso, enquanto a qualidade da água é acompanhada por analisador de teor de óleo e graxa.",
+      "resposta_padrao": "Pelo transmissor de interface do vaso.",
+      "por_que_nao": "O transmissor de interface indica inventário e estabilidade do separador, não o teor de óleo remanescente na água tratada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "enquanto a qualidade da água separada é acompanhada por analisador de teor de óleo e graxa (TOG)."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a qualidade da água tratada depende fortemente da regularidade da alimentação aos hidrociclones"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A substituição de válvulas modulantes subsea por chokes descontínuos e ejetores reduz a continuidade e a resolução da modulação, elevando a incerteza operacional.",
+      "pergunta": "Em um sistema subsea com hidrociclones, válvulas modulantes indisponíveis foram substituídas por chokes descontínuos e ejetores. Depois da mudança, a retirada líquida passa a ocorrer em degraus e a resposta do processo fica menos previsível. Que característica da atuação é a fonte técnica imediata dessa maior incerteza operacional?",
+      "resposta": "Modulação descontínua e de baixa resolução.",
+      "explicacao": "O bloco associa chokes descontínuos e ejetores à perda de continuidade e resolução da ação de controle. Essa granularidade piora a finura do ajuste e aumenta a incerteza operacional.",
+      "resposta_padrao": "Menor capacidade hidráulica do sistema.",
+      "por_que_nao": "A maior incerteza decorre da atuação em passos, que degrada a modulação fina, não de uma limitação necessária de capacidade máxima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a indisponibilidade de válvulas submarinas modulantes levou ao uso de chokes descontínuos e ejetores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa substituição tende a reduzir a continuidade e a resolução da ação de controle, o que pode aumentar a incerteza operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redução de instrumentação em arranjos ciclônicos só é admissível se a controlabilidade do arranjo real for comprovada.",
+      "pergunta": "Ao substituir parte de um vaso separador por uma configuração ciclônica, surge proposta de retirar instrumentos antes usados no controle de nível. Que verificação técnica específica deve ser feita para saber se a arquitetura simplificada ainda consegue governar o inventário do processo?",
+      "resposta": "Controlabilidade do arranjo real.",
+      "explicacao": "O bloco admite redução de instrumentos em algumas configurações ciclônicas, mas condiciona isso à comprovação de que o arranjo permanece controlável na prática.",
+      "resposta_padrao": "Calibração dos instrumentos remanescentes.",
+      "por_que_nao": "Instrumentos calibrados não demonstram, por si, que a dinâmica e os acoplamentos do arranjo ainda permitem controle estável do inventário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode haver redução de instrumentos associados ao controle de nível"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não elimina a necessidade de verificar controlabilidade, proteção de processo e interação entre malhas no arranjo real."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

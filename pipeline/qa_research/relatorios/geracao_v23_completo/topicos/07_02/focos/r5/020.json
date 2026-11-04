@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 5,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção técnica entre execução online e reprocessamento em lote por exportação manual.",
+      "pergunta": "Um modelo de balanço roda automaticamente a cada hora, mas só reflete a planta depois que o turno exporta planilhas do sistema supervisório. Que alimentação de dados deve ser implementada para caracterizá-lo como integração online?",
+      "resposta": "Alimentação automática por dados correntes do ativo.",
+      "explicacao": "No modo online, a execução programada precisa receber dados atuais diretamente da operação; exportação manual por turno mantém a lógica offline em lote.",
+      "resposta_padrao": "Aumentar a frequência das exportações manuais.",
+      "por_que_nao": "Mais lotes não substituem o recebimento direto e programado de dados correntes do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de coerência semântica quando códigos iguais representam estados operacionais diferentes entre controladores.",
+      "pergunta": "Em dois controladores de fornecedores diferentes, o mesmo estado de válvula chega ao analytics como valor \"1\" em ambos os ativos; em um isso significa aberta e no outro, fechada. Que atributo dos dados está faltando?",
+      "resposta": "Coerência semântica.",
+      "explicacao": "O mesmo código numérico carrega significados operacionais distintos entre fontes; sem semântica alinhada, analytics e HMI interpretam o estado de forma incompatível.",
+      "resposta_padrao": "Padronização de nomenclatura.",
+      "por_que_nao": "Nomes iguais não resolvem códigos cujo valor continua representando estados opostos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações analíticas e modelos os transformam em informação operacional útil."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso de contexto de modo operacional para comparar desempenho sem misturar regimes não equivalentes.",
+      "pergunta": "Um analytics compara consumo específico de dois compressores equivalentes e acusa desvio apenas em trechos com recirculação de proteção, aceleração em rampa ou permissivos de teste em um dos trens. Que informação deve etiquetar esses trechos antes da comparação?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Esses regimes alteram a relação esperada entre vazão, potência e pressão; sem rotular o modo, o algoritmo mistura estados não equivalentes e gera falso desvio.",
+      "resposta_padrao": "Curva de desempenho atualizada do compressor.",
+      "por_que_nao": "Mesmo com curva correta, regimes de proteção, partida e teste seguem relações diferentes da operação comparável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

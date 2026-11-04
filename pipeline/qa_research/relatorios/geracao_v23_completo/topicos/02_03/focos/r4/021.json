@@ -1,0 +1,57 @@
+{
+  "item": "02_03",
+  "foco": 21,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de alarme de tendência no monitor on-line para detectar perda gradual de desempenho sem depender de limite absoluto fixo.",
+      "pergunta": "Em uma unidade que alterna campanhas com patamares normais diferentes de TOG, o monitor on-line mostra aumento contínuo por vários tempos de residência após piora do tratamento, mas ainda abaixo de qualquer valor fixo que sirva para todas as campanhas. Que recurso específico da filosofia de controle deve abrir a investigação cedo nessa situação?",
+      "resposta": "Alarme de tendência.",
+      "explicacao": "Com patamares normais variáveis, limite absoluto perde sensibilidade operacional. O bloco atribui ao monitor função de sustentar alarmes de tendência e investigação de perda de desempenho, não só leitura instantânea.",
+      "resposta_padrao": "Pré-alarme fixo em valor absoluto de TOG.",
+      "por_que_nao": "Com baseline variável entre campanhas, um valor fixo alarma cedo demais ou tarde demais; a tendência captura a deterioração progressiva abaixo do limite.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o valor operacional do monitor não se limita à leitura instantânea: ele pode sustentar alarmes de tendência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "investigação de perda de desempenho"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de confirmação de excursões para bloquear desvio automático por picos espúrios incompatíveis com a dinâmica do tratamento.",
+      "pergunta": "Após partidas de bombas, o monitor on-line de TOG gera picos de um único ciclo, mais rápidos que a dinâmica do tratamento, mas a unidade quer manter o desvio automático para elevações reais e sustentadas. Que lógica específica deve ser aplicada entre a leitura alta e o comando de desvio?",
+      "resposta": "Confirmação de excursões.",
+      "explicacao": "Picos mais rápidos que a resposta do tratamento precisam ser validados antes de atuar. O bloco associa o valor operacional do monitor à confirmação de excursões dentro da filosofia de controle.",
+      "resposta_padrao": "Média móvel do sinal do monitor.",
+      "por_que_nao": "Filtragem suaviza ruído, mas não confirma persistência compatível com a dinâmica do processo e pode mascarar uma excursão real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o valor operacional do monitor não se limita à leitura instantânea"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ele pode sustentar alarmes de tendência, confirmação de excursões e investigação de perda de desempenho"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

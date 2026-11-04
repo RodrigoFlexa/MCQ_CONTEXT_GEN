@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em atualização de sistema legado, timeouts de I/O após o patch exigem validar a compatibilidade de comunicação do firmware com as remotas.",
+      "pergunta": "Em um controlador legado com remotas diretamente conectadas, o patch recomendado instala sem alarmes de CPU, mas nos testes surgem timeouts intermitentes e perda de atualização de I/O entre a CPU e as remotas. Antes de liberar a atualização para produção, que compatibilidade específica deve ser validada?",
+      "resposta": "Compatibilidade de comunicação do firmware com as remotas.",
+      "explicacao": "Os sintomas estão no enlace de I/O após a mudança de firmware. Em legados, a atualização pode exigir validação prévia da compatibilidade de comunicação, mesmo sem falha aparente de CPU.",
+      "resposta_padrao": "Compatibilidade funcional com as sequências do processo.",
+      "por_que_nao": "Timeout e perda de atualização de I/O apontam para interação do firmware com a comunicação das remotas, não para lógica de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Após patch com comunicação preservada, alteração em permissivos e sequências exige validar compatibilidade funcional com as funções de processo.",
+      "pergunta": "Após aplicar um patch em um controlador, a CPU permanece estável e as remotas comunicam normalmente, mas no teste funcional uma sequência automática passa a liberar uma bomba antes do permissivo de alinhamento, sem perda de comunicação. Que compatibilidade específica deve ser confirmada antes da liberação?",
+      "resposta": "Compatibilidade funcional do firmware com as funções de processo.",
+      "explicacao": "Como a comunicação permanece íntegra e o desvio aparece na sequência automática, o ponto crítico é a compatibilidade da atualização com permissivos, intertravamentos e lógica funcional do processo.",
+      "resposta_padrao": "Compatibilidade de comunicação entre a CPU e as remotas.",
+      "por_que_nao": "Comunicação saudável não prova equivalência de permissivos, sequências e intertravamentos após a atualização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Homologação de patch em OT é específica por produto e versão aplicável; não deve ser extrapolada para outro equipamento semelhante.",
+      "pergunta": "O fornecedor homologou um patch para a IHM de um sistema OT. A bordo, um gateway do mesmo fabricante usa o mesmo componente vulnerável e sistema operacional embarcado semelhante. Antes de aplicar o mesmo pacote no gateway, que condição técnica específica precisa estar atendida?",
+      "resposta": "Versão aplicável qualificada para o gateway.",
+      "explicacao": "Em OT, a remediação precisa ser avaliada para o produto-alvo. Compartilhar fabricante, sistema operacional ou componente vulnerável não autoriza generalizar o mesmo patch para outro equipamento.",
+      "resposta_padrao": "Ser do mesmo fabricante e usar o mesmo sistema operacional embarcado.",
+      "por_que_nao": "A compatibilidade e a homologação são específicas por produto e versão; sem qualificação do gateway, o pacote pode introduzir indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa ação não deve ser generalizada para outros produtos fora desse contexto."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

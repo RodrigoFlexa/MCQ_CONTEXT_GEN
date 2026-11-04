@@ -1,0 +1,101 @@
+{
+  "item": "02_08",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo com PSVs escalonadas para conciliar caso governante e evento de baixa carga dinamicamente inadequado.",
+      "pergunta": "Um vaso tem um cenário de sobrepressão com grande vazão e outro com vazão bem menor. A PSV única dimensionada pelo caso governante limita a pressão, mas no evento de menor carga não se comporta de forma estável. Que arranjo de proteção deve ser adotado para que só o primeiro dispositivo atue na menor vazão, sem perder cobertura do caso maior?",
+      "resposta": "Duas PSVs com pressões de ajuste diferentes.",
+      "explicacao": "Quando a inadequação aparece no cenário de menor carga, uma solução contextual é escalonar os setpoints para que só a primeira válvula abra nesse evento, mantendo a proteção do caso governante.",
+      "resposta_padrao": "Uma única PSV maior para cobrir os dois cenários.",
+      "por_que_nao": "Maior capacidade pode continuar dinamicamente inadequada na menor vazão; setpoints escalonados separam as atuações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da repartição de vazão em arranjo com PSVs em paralelo e setpoints diferentes.",
+      "pergunta": "Depois de adotar duas PSVs com pressões de ajuste diferentes para um mesmo vaso, a filosofia pretende que só a de menor ajuste atue no evento de menor vazão. Que aspecto hidráulico do arranjo deve ser verificado para confirmar esse comportamento?",
+      "resposta": "Repartição de vazão entre as PSVs.",
+      "explicacao": "Em arranjos com mais de um dispositivo, a divisão real do escoamento entre os ramos influencia qual válvula participa do evento, além dos próprios setpoints.",
+      "resposta_padrao": "Somatório da capacidade nominal das duas válvulas.",
+      "por_que_nao": "Capacidade total suficiente não garante que a válvula de maior ajuste fique fora do evento; a hidráulica pode repartir vazão e recrutá-la.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses resultados permanecem dependentes das hipóteses adotadas para simultaneidade e dinâmica do processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "passam a ser relevantes a repartição de vazão, a estabilidade de abertura, a contrapressão do sistema receptor e a manutenção da cobertura do caso governante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação da pressão de reassentamento em simulação dinâmica de PSV.",
+      "pergunta": "Numa simulação dinâmica com duas PSVs em paralelo e pressões de ajuste diferentes, o modelo fecha a válvula assim que a pressão volta ao ponto de abertura. Que pressão real da válvula precisa ser representada para não tomar essa simplificação como comportamento instalado?",
+      "resposta": "Pressão de reassentamento da PSV.",
+      "explicacao": "O fechamento real depende da pressão de reassentamento e da diferença para a abertura; simplificações do modelo não definem o comportamento da válvula instalada.",
+      "resposta_padrao": "Coeficiente de descarga da PSV.",
+      "por_que_nao": "O coeficiente afeta a capacidade, mas quem define quando a válvula volta a fechar é o reassentamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de volumes comunicantes em modelo dinâmico de alívio.",
+      "pergunta": "Em um estudo dinâmico de alívio, vasos e linhas permanecem abertos entre si durante o transiente, e a carga calculada muda muito conforme a forma de conectá-los no modelo. Que elemento do processo precisa estar corretamente representado para o resultado ser confiável?",
+      "resposta": "Volumes comunicantes.",
+      "explicacao": "Quando inventários interligados equalizam pressão durante o evento, a massa disponível e a evolução temporal dependem da comunicação entre volumes.",
+      "resposta_padrao": "Capacidade nominal da PSV.",
+      "por_que_nao": "A vazão possível também depende do inventário efetivamente conectado e da equalização de pressão, não só da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "02_08",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação e monitoramento de header/KOD exigem comparar a simulação com janelas operacionais estáveis do regime analisado.",
+      "pergunta": "Ao calibrar um modelo de um header comum com knock-out drum usando dados de operação que incluem partidas, oscilações e alívios, que recorte dos dados deve ser feito antes de comparar pressões e temperaturas com a simulação?",
+      "resposta": "Períodos estáveis do regime de interesse.",
+      "explicacao": "A comparação útil com o modelo requer janelas em estado permanente do regime avaliado; misturar transientes de natureza diferente distorce a resposta hidráulica observada.",
+      "resposta_padrao": "Usar a média de toda a série histórica disponível.",
+      "por_que_nao": "Médias que misturam partidas, oscilações e alívios apagam a assinatura do regime hidráulico que o modelo precisa reproduzir.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento útil combina pressões, temperaturas e identificação de períodos estáveis com simulação adequada ao regime de interesse."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Resultado de caso modelado só pode sustentar decisão em outro FPSO quando há comparabilidade dinâmica entre sistema e cenários.",
+      "pergunta": "Um estudo dinâmico de outro header com knock-out drum indicou desempenho aceitável em transiente multifásico. Antes de usar esse resultado para justificar a capacidade de um FPSO diferente, que critério técnico específico deve ser atendido?",
+      "resposta": "Comparabilidade dinâmica entre os sistemas.",
+      "explicacao": "A transferência do resultado depende de similaridade relevante de fluidos, geometria, controle e cenários operacionais; sem isso, o comportamento transitório pode mudar.",
+      "resposta_padrao": "Ter a mesma vazão máxima nominal de alívio.",
+      "por_que_nao": "Pico nominal igual não garante a mesma resposta temporal de pressão, retenção líquida e interação com a malha de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ainda assim, resultados de um caso modelado não devem ser universalizados;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a transferência para FPSO depende de fluidos, geometria, malha de controle e cenários de operação comparáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Avaliação de capacidade de header/KOD em transiente deve incluir o inventário líquido pré-existente, não só as vazões do evento.",
+      "pergunta": "Após longo período em baixa vazão de gás com possibilidade de condensação, será reavaliada a capacidade de um header com knock-out drum para um transiente de alívio. Além das vazões do cenário, que condição do sistema deve entrar explicitamente no cálculo?",
+      "resposta": "Inventário líquido inicial no header e no KOD.",
+      "explicacao": "Líquido previamente acumulado ocupa volume útil e participa da carga transitória, alterando a quantidade efetivamente retida e o risco de carryover.",
+      "resposta_padrao": "Considerar só as vazões aliviadas no evento.",
+      "por_que_nao": "A capacidade instantânea do vaso depende também do líquido já presente, que muda a hidráulica e reduz a folga de separação disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inventário líquido, simultaneidade de fontes, variação temporal das vazões e compressibilidade do gás podem alterar pico de carga, contrapressão e quantidade de líquido efetivamente coletada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a vazão de gás for baixa, o arraste diminui e o inventário líquido cresce"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o líquido acumulado altera a hidráulica, aumenta carga intermitente sobre equipamentos e pode degradar a estabilidade do escoamento."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A compressibilidade do gás no header altera a resposta transitória de pressão e a coleta líquida no KOD.",
+      "pergunta": "Dois cenários de alívio em um header comum têm massa total descarregada semelhante e picos nominais parecidos nas fontes, mas produzem picos de contrapressão e coleta de líquido diferentes no knock-out drum. Que característica física do gás explica essa diferença?",
+      "resposta": "Compressibilidade do gás no header.",
+      "explicacao": "O gás compressível armazena e libera massa no sistema, deslocando o perfil temporal de pressão e influenciando pico de carga, contrapressão e retenção líquida.",
+      "resposta_padrao": "Apenas a perda de carga por atrito na tubulação.",
+      "por_que_nao": "Atrito define parte da queda de pressão instantânea, mas não reproduz o line-pack e a defasagem temporal causados pela compressibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inventário líquido, simultaneidade de fontes, variação temporal das vazões e compressibilidade do gás podem alterar pico de carga, contrapressão e quantidade de líquido efetivamente coletada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar desempenho apenas por uma visão estática pode ser insuficiente quando o fenômeno dominante é transitório ou multifásico."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

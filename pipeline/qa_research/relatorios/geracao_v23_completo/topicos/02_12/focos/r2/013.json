@@ -1,0 +1,91 @@
+{
+  "item": "02_12",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Assinatura de histerese do elemento final pela comparação entre comando e realimentação de posição.",
+      "pergunta": "Em uma válvula de recirculação usada no controle de capacidade, a variável controlada passa a caçar mesmo com perturbações pequenas. Ao comparar a saída do controlador com a realimentação de posição, a trajetória posição-versus-comando é diferente na abertura e no fechamento, com movimento em saltos após acumular erro. Que característica do elemento final explica melhor esse comportamento?",
+      "resposta": "Histerese da válvula ou do posicionador.",
+      "explicacao": "A diferença entre as curvas de abertura e fechamento para os mesmos comandos, com movimento em saltos, é assinatura de histerese no elemento final; o bloco F cita a realimentação de posição justamente para detectar esse problema.",
+      "resposta_padrao": "Controlador mal sintonizado.",
+      "por_que_nao": "Sintonia inadequada altera a resposta da malha, mas não cria uma relação comando-posição dependente do sentido com saltos de movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula, o que ajuda a detectar degradação, atraso, histerese ou falha de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o desempenho da malha depende do elemento final e não apenas do algoritmo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em compressores paralelos, a referência de controle para repartição de carga deve representar o estado comum do processo, não o de cada ramal.",
+      "pergunta": "Dois compressores em paralelo descarregam para o mesmo cabeçalho. Após degraus de demanda, um trem assume carga demais e o outro alivia, embora ambos respondam aos comandos. As malhas de capacidade usam pressão medida em cada ramal individual, antes das válvulas de retenção de descarga. Que ponto de medição deve servir de referência comum para melhorar a distribuição de carga?",
+      "resposta": "Pressão no cabeçalho comum de descarga, a jusante das retenções.",
+      "explicacao": "Em trens paralelos, a carga deve ser repartida pela variável comum do sistema. Medir antes das retenções faz cada trem “enxergar” um estado diferente, enviesando a distribuição de carga.",
+      "resposta_padrao": "Pressão de descarga individual de cada trem.",
+      "por_que_nao": "Essa medição incorpora perdas e efeitos locais de cada ramal e não representa a condição compartilhada que governa a repartição de carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em compressores em paralelo e em sistemas com múltiplos estágios, a seleção e a localização da instrumentação também afetam a qualidade do controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "distribuir carga de forma inadequada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em trens paralelos, essa necessidade se amplia: o sistema de controle precisa repartir carga"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para suspeita de limitação associada ao empuxo axial, a variável de monitoração decisiva é o deslocamento axial do rotor.",
+      "pergunta": "Em uma máquina crítica, durante transientes de carga, cresce a atuação do sistema de proteção associado ao mancal de escora, embora as malhas de processo sigam coerentes. Para verificar se a limitação está ligada ao comportamento mecânico do rotor e não ao controle, qual variável de monitoração operacional do conjunto deve ser acompanhada?",
+      "resposta": "Deslocamento axial.",
+      "explicacao": "O bloco F coloca o deslocamento axial como parte do monitoramento que complementa o controle em máquinas críticas. Quando a preocupação é o mancal de escora, essa variável mostra diretamente a resposta axial do rotor.",
+      "resposta_padrao": "Vibração radial.",
+      "por_que_nao": "Problemas ligados ao empuxo e ao mancal de escora se manifestam diretamente na posição axial do rotor; vibração radial pode não ser o indicador principal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em máquinas críticas, o monitoramento operacional do conjunto, incluindo vibração, deslocamento axial e temperaturas de mancais, complementa a visão do controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "revela degradações que podem comprometer resposta, estabilidade ou disponibilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o de monitoração acompanha variáveis mecânicas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

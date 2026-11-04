@@ -1,0 +1,97 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicabilidade de alerta de vulnerabilidade depende da presença do componente embarcado afetado.",
+      "pergunta": "Chega um alerta sobre vulnerabilidades na pilha Treck TCP/IP para equipamentos do setor de energia. Um ativo OT embarcado usa firmware proprietário, não está exposto diretamente à internet e o fornecedor ainda não confirmou a matriz de impacto. Antes de tratar patch ou segmentação adicional, que verificação técnica deve ser feita para definir se o alerta realmente se aplica a esse ativo?",
+      "resposta": "Presença da pilha Treck TCP/IP afetada no ativo.",
+      "explicacao": "O alerta é relevante quando a pilha vulnerável está presente. Em OT, o primeiro passo é confirmar uso do componente afetado e só então avaliar exposição e remediação.",
+      "resposta_padrao": "Se o ativo tem acesso direto à internet.",
+      "por_que_nao": "Exposição externa altera alcançabilidade e risco, mas a aplicabilidade do alerta depende de o ativo usar a pilha TCP/IP vulnerável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar se o ativo usa o componente afetado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de vulnerabilidades em IACS deve considerar a capacidade do ativo de interferir no processo.",
+      "pergunta": "Dois ativos OT têm a mesma vulnerabilidade confirmada e exposição semelhante. Um apenas registra dados; o outro comanda válvulas e malhas de pressão. Ao priorizar o tratamento, qual critério técnico específico deve prevalecer?",
+      "resposta": "Capacidade de alterar o comportamento do processo.",
+      "explicacao": "No IACS, o efeito relevante da vulnerabilidade depende da função do sistema atingido. Ativos que atuam sobre válvulas, vazão ou pressão podem impactar diretamente o processo.",
+      "resposta_padrao": "A maior pontuação CVSS da vulnerabilidade.",
+      "por_que_nao": "Em automação industrial, a consequência operacional depende do que o ativo consegue fazer no processo, não só da severidade genérica da CVE.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode alterar o comportamento do processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Exploração bem-sucedida em IACS pode se manifestar como indisponibilidade da função de serviço do ativo.",
+      "pergunta": "Um nó de controle comprometido não mostra comandos indevidos visíveis, mas a função que mantinha o processo operando deixa de estar disponível após a exploração. Qual efeito técnico específico deve entrar na análise de impacto?",
+      "resposta": "Retirada de funções de serviço.",
+      "explicacao": "Nem todo impacto de exploração aparece como comando anômalo. Em IACS, a vulnerabilidade explorada também pode tornar indisponível a função que o ativo presta ao processo.",
+      "resposta_padrao": "Perda de visibilidade da supervisão.",
+      "por_que_nao": "O impacto relevante aqui é a indisponibilidade da função operacional do ativo; perda de tela ou histórico não descreve a falha de serviço ao processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O escopo de avaliação de IACS offshore inclui sistemas de informação e negócios conectados pela sua infraestrutura de rede.",
+      "pergunta": "Na avaliação de exposição de uma rede offshore, um servidor de informações de produção trafega pela mesma infraestrutura usada pelos sistemas de controle. Em qual perímetro técnico ele deve ser incluído na análise?",
+      "resposta": "No escopo do IACS.",
+      "explicacao": "No contexto offshore, o perímetro do IACS não se limita a controladores e SIS. Sistemas de informação e negócios entram no escopo quando conectados pela infraestrutura de rede do IACS.",
+      "resposta_padrao": "Somente no escopo de TI corporativa.",
+      "por_que_nao": "Compartilhar a infraestrutura de rede do IACS coloca o servidor no mesmo perímetro técnico de exposição relevante para a análise industrial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e negócios conectados pela infraestrutura de rede do IACS"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

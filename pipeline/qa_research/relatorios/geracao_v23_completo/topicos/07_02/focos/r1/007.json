@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de ações em IACS depende de identidade individual verificável, não de conta compartilhada gravada.",
+      "pergunta": "Uma manutenção remota em estação de engenharia é feita com conta genérica compartilhada entre técnicos do fornecedor, enquanto a sessão é gravada e a atividade foi aprovada. Qual controle deve ser exigido para atribuir cada ação a uma pessoa específica?",
+      "resposta": "Credencial nominal com identidade individual verificável.",
+      "explicacao": "Em IACS, a seleção do controle deve distinguir identidade individual verificável. Conta compartilhada impede atribuição pessoal das ações, mesmo com aprovação e gravação da sessão.",
+      "resposta_padrao": "Gravação completa da sessão.",
+      "por_que_nao": "Sessão gravada em conta compartilhada não comprova qual indivíduo executou cada comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "identidade individual verificável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Validade temporal do acesso reduz exposição de credenciais entre janelas de intervenção.",
+      "pergunta": "Após cada campanha, a conta remota do integrador permanece habilitada por conveniência e só depende de o técnico conhecer a senha para voltar a entrar semanas depois. Qual controle técnico deve limitar esse acesso ao período efetivamente aprovado?",
+      "resposta": "Expiração temporal vinculada à janela autorizada.",
+      "explicacao": "Validade temporal faz parte da seleção do acesso. Sem expiração, a credencial continua utilizável fora da intervenção aprovada, mantendo exposição desnecessária.",
+      "resposta_padrao": "Troca periódica de senha da conta.",
+      "por_que_nao": "Senha renovada não encerra o privilégio fora da janela autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dentro da janela autorizada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento de terceiros exige confronto do registro de sessão com janela e escopo autorizados.",
+      "pergunta": "Depois de uma intervenção remota de terceiro em um ativo OT crítico, o log mostra autenticação bem-sucedida e início no horário previsto. Como deve ser verificada a conformidade do que foi feito durante a sessão?",
+      "resposta": "Confronto do registro de sessão com janela e escopo autorizados.",
+      "explicacao": "Para terceiros, não basta saber que entrou. O monitoramento precisa confirmar permanência na janela aprovada e aderência ao escopo previsto.",
+      "resposta_padrao": "Confirmar apenas o login bem-sucedido com MFA.",
+      "por_que_nao": "Autenticação prova entrada, não prova permanência dentro do tempo e das ações autorizadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Autorização de acesso de terceiros deve incluir verificação da integridade do dispositivo temporário usado na OT.",
+      "pergunta": "Uma equipe terceirizada chega para diagnóstico em ativo de automação com notebook reutilizado em outras instalações. O acesso do técnico já foi aprovado. Antes de conectar o equipamento à rede OT, qual verificação específica do recurso usado deve ser feita?",
+      "resposta": "Verificação prévia da integridade do dispositivo temporário.",
+      "explicacao": "Em offshore, a decisão sobre acesso também depende da condição do equipamento utilizado. Notebook temporário pode introduzir malware, versões incompatíveis ou alterações não rastreadas.",
+      "resposta_padrao": "Checar apenas a autenticação e o perfil do técnico.",
+      "por_que_nao": "Usuário autorizado com notebook comprometido ainda pode introduzir software indevido ou incompatibilidades na OT.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sua atualização e integridade não são verificadas antes do uso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "devem considerar não só autenticação, mas também condição do equipamento utilizado"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

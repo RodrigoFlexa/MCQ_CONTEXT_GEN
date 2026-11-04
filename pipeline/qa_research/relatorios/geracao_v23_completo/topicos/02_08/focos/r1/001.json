@@ -1,0 +1,97 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A previsão de cycling de PSV em transiente de bloqueio depende da representação da pressão de reassentamento.",
+      "pergunta": "Em uma simulação transitória de sobrepressão por bloqueio de válvula, a PSV limita a pressão, mas o estudo também precisa dizer se ela tende a abrir e fechar repetidamente em baixa carga. Que característica da válvula deve ser representada corretamente no modelo?",
+      "resposta": "Pressão de reassentamento da PSV.",
+      "explicacao": "No bloqueio transitório, limitar a sobrepressão não basta; a tendência de abrir e fechar repetidamente depende da diferença entre a pressão de abertura e a de reassentamento adotada no modelo.",
+      "resposta_padrao": "A capacidade nominal de alívio da PSV.",
+      "por_que_nao": "Capacidade define o escoamento quando a válvula está aberta; o cycling é governado pela histerese entre abertura e fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em dinâmica de alívio com equipamentos interligados, o inventário deve ser modelado como volumes comunicantes, não como volume lumped único.",
+      "pergunta": "Ao modelar dinamicamente o blowdown de vasos interligados por caminhos abertos e restritivos para o mesmo flare, como o inventário deve ser representado para preservar a equalização real de pressão entre eles?",
+      "resposta": "Como volumes comunicantes.",
+      "explicacao": "Mesmo com o mesmo inventário total, a comunicação hidráulica entre volumes altera a equalização de pressão e o perfil temporal da descarga, influenciando o pico de alívio.",
+      "resposta_padrao": "Como um único volume total equivalente.",
+      "por_que_nao": "O mesmo inventário total pode gerar transientes diferentes quando a comunicação entre volumes impõe atrasos e equalização próprios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar dispositivos, volumes comunicantes e controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A avaliação de surge em shutdown de compressão depende da representação explícita da malha anti-surge.",
+      "pergunta": "Durante a parada de emergência de um trem de compressão com reciclo para sucção e blowdown para flare, qual malha de controle precisa estar no modelo para avaliar corretamente o risco de surge?",
+      "resposta": "Malha anti-surge do compressor.",
+      "explicacao": "Na travessia do transiente de shutdown, a proximidade da linha de surge depende da rapidez e da lógica de abertura do reciclo comandado pela proteção anti-surge.",
+      "resposta_padrao": "Controle de pressão do vaso de sucção.",
+      "por_que_nao": "Esse controle não decide a abertura rápida do reciclo que mantém o compressor afastado da linha de surge durante a parada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Cenários operacionais distintos podem governar separadamente o pico de vazão e o pico de temperatura de alívio.",
+      "pergunta": "Numa revisão de cargas de alívio, o cenário de maior vazão não coincide com o de maior severidade térmica. Que variável deve ser obtida separadamente para não perder o caso governante?",
+      "resposta": "Temperatura máxima de alívio.",
+      "explicacao": "Em transientes distintos, o caso que maximiza a vazão pode não ser o que impõe a temperatura extrema, e ambos podem governar verificações diferentes.",
+      "resposta_padrao": "Somente a vazão máxima de alívio.",
+      "por_que_nao": "Verificações térmicas e de materiais podem ser governadas por um pico de temperatura em outro cenário, não pelo maior fluxo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

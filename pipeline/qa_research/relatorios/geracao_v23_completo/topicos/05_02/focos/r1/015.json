@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto da temporização do load shedding na recuperação da frequência após perda de geração.",
+      "pergunta": "Após a perda de um gerador, o esquema rejeita aproximadamente a potência prevista, mas a frequência atinge o patamar de atuação das proteções antes de se recuperar. Que deficiência do esquema explica melhor a perda de estabilidade?",
+      "resposta": "Atuação tardia do load shedding.",
+      "explicacao": "Mesmo com alívio de carga compatível em MW, se a rejeição vier tarde demais a frequência cruza o nadir crítico antes da recuperação, e o esquema deixa de estabilizar o sistema a tempo.",
+      "resposta_padrao": "Potência rejeitada insuficiente.",
+      "por_que_nao": "A quantidade pode ser suficiente em regime; aqui o decisivo é o atraso do alívio diante da queda transitória de frequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se a demanda excede a potência ativa que a geração remanescente consegue sustentar no transitório, a frequência tende a cair;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se o esquema atuar tarde, com prioridades inadequadas ou baseado em análise de carga desatualizada, sua eficácia diminui."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso da corrente de retomada no religamento para ordenar a recomposição após atuação do load shedding.",
+      "pergunta": "Depois de uma atuação de load shedding por perda de geração, a rede estabiliza. Na recomposição, a energização de um único consumidor não prioritário volta a derrubar tensão e frequência, embora a margem em regime seja suficiente. Qual característica desse consumidor deve tirá-lo das primeiras etapas de religamento?",
+      "resposta": "Corrente de retomada no religamento.",
+      "explicacao": "A seleção e o retorno das cargas devem considerar a solicitação transitória da reenergização; uma retomada elevada pode repetir a instabilidade mesmo quando a potência em regime cabe na geração disponível.",
+      "resposta_padrao": "Potência nominal em regime.",
+      "por_que_nao": "O distúrbio nasce no transitório de religamento; a potência em regime não representa o pico de corrente que afunda tensão e frequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o suporte de tensão também fica insuficiente, a estabilidade elétrica se deteriora ainda mais."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação da separação de barramentos como forma de load shedding quando cargas menos prioritárias já estão segregadas.",
+      "pergunta": "As cargas menos prioritárias já estão concentradas em uma seção própria, separada das funções essenciais. Numa perda súbita de geração, qual forma de load shedding deve ser usada para aliviar demanda rapidamente com o menor número de comandos?",
+      "resposta": "Separação apropriada de barramentos.",
+      "explicacao": "Quando os consumidores menos prioritários já estão reunidos em uma seção própria, o descarte por separação de barramentos reduz a demanda de imediato e preserva o ramo essencial.",
+      "resposta_padrao": "Descarte individual dos maiores consumidores.",
+      "por_que_nao": "Com as cargas já segregadas, abrir a seção rejeita o bloco inteiro de forma mais rápida e robusta do que depender de múltiplos desligamentos individuais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de coordenar load shedding com proteções e automação para evitar desligamentos não pretendidos.",
+      "pergunta": "Quando o load shedding atua, os alimentadores previstos abrem, mas um trem essencial também desliga por intertravamentos automáticos e atuações subsequentes de proteção, apesar de não estar na lista de rejeição. Que aspecto do esquema deve ser revisto para manter a seletividade funcional?",
+      "resposta": "Coordenação com proteções e automação.",
+      "explicacao": "A perda adicional não decorre necessariamente de falta de geração, mas da interação entre a rejeição comandada, lógicas automáticas e proteções que propagam desligamentos para cargas que deveriam permanecer.",
+      "resposta_padrao": "Aumentar o montante de carga rejeitada.",
+      "por_que_nao": "Mais descarte não elimina a cadeia de trips cruzados; o problema é a interação entre lógicas e proteções durante a atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores que permaneceram conectados e aumenta a chance de preservar alimentação para funções essenciais."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

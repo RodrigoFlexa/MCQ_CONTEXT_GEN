@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "No controle por bandas, a saída da faixa admissível aciona sintonia mais rápida para retornar a interface aos limites.",
+      "pergunta": "Num separador alimentando hidrociclone, a filosofia escolhida é controle por bandas para manter a descarga estável. Se a interface óleo-água sai da faixa permitida durante um transiente, que mudança específica de atuação a malha deve aplicar nesse momento?",
+      "resposta": "Comutação para parâmetros de controle mais rápidos.",
+      "explicacao": "No controle por bandas, a interface pode oscilar dentro da faixa. Ao ultrapassá-la, a lógica troca para um conjunto de parâmetros mais rápido para devolver a interface aos limites sem recentrá-la rigidamente.",
+      "resposta_padrao": "Mover o setpoint imediatamente para o centro da faixa.",
+      "por_que_nao": "Controle por bandas não busca recentrar continuamente a interface; fora da banda, ele acelera a resposta para retornar aos limites mantendo a descarga mais estável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "no controle por bandas, no qual a interface pode variar dentro de uma faixa permitida; se sair dessa faixa, um conjunto de parâmetros mais rápido atua"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa abordagem desloca o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "No Dead Band Assimétrico aplicado para proteger a água de injeção, a correção deve ser mais rápida para desvios de baixa da interface.",
+      "pergunta": "Em um separador que envia água para injeção, operando com Dead Band Assimétrico, a prioridade operacional é preservar a qualidade da água, não manter a interface rigidamente centrada. Em qual sentido do desvio da interface a reação deve ser mais rápida?",
+      "resposta": "Desvio de baixa da interface.",
+      "explicacao": "A assimetria foi proposta para reagir mais rápido à diminuição da interface, priorizando a proteção da qualidade da água de injeção quando esse lado do desvio ameaça mais a corrente aquosa.",
+      "resposta_padrao": "Desvio de alta da interface.",
+      "por_que_nao": "Para proteger a água de injeção, a lógica assimétrica prioriza a queda da interface, que aproxima óleo da retirada de água e piora essa corrente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com a finalidade de preservar mais eficientemente a qualidade da água de injeção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em separadores tubulares de pequeno diâmetro, os limites do controle por bandas devem ser definidos pela janela geométrica que preserva escoamento e separação.",
+      "pergunta": "Em um separador tubular de pequeno diâmetro num FPSO sujeito a movimento, a equipe vai definir os limites de um controle por bandas da interface óleo-água. Que critério técnico deve determinar essa banda?",
+      "resposta": "Faixa geométrica admissível da interface.",
+      "explicacao": "Em vasos tubulares e sob movimento, a banda não deve ser definida pelo conforto da medição; ela precisa caber na janela geométrica que preserva as seções de escoamento e a separação óleo-água.",
+      "resposta_padrao": "A faixa que evita falsos alarmes do transmissor.",
+      "por_que_nao": "Em pequeno diâmetro, o limitante é a janela hidráulica disponível para manter seções de escoamento e separação, não a conveniência do instrumento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controle por bandas, no qual a interface pode variar dentro de uma faixa permitida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em separadores tubulares de pequeno diâmetro, a sensibilidade é ainda maior, porque a faixa geométrica disponível para a interface é estreita"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a interface precisa permanecer dentro da faixa prevista para preservar as seções de escoamento e a separação óleo-água"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

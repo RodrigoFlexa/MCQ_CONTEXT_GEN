@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comprovação funcional da independência real entre rotas redundantes de alimentação após modificações acumuladas.",
+      "pergunta": "Depois de anos de remanejamentos, os diagramas ainda mostram UPS e quadros CC redundantes, mas há suspeita de um ponto comum oculto entre duas funções vitais. Como demonstrar, na condição real de operação, que a perda de uma única alimentação não derruba ambas?",
+      "resposta": "Teste funcional sob carga com perda isolada de cada alimentação.",
+      "explicacao": "Os blocos dizem que redundância nominal não basta e que parte das falhas só aparece com esforço elétrico real. A prova da independência exige simular a perda de cada fonte, uma por vez, observando a sobrevivência da outra rota.",
+      "resposta_padrao": "Revisando unifilar, lista de cargas e capacidade nominal das fontes.",
+      "por_que_nao": "Documentação e capacidade instalada não revelam interligações ocultas ou remanejamentos acumulados; só a perda seletiva da fonte prova independência funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ensaios operacionais sob carga aplicável são relevantes porque parte das falhas só se manifesta com esforço elétrico real"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência do comando remoto de válvulas em relação à alimentação AC vital mantida por UPS.",
+      "pergunta": "Após perda da energia principal, os atuadores e o ar de instrumentos permanecem disponíveis, mas o comando remoto de válvulas de tanques desaparece junto com a falha da UPS. Que alimentação da cadeia de comando foi a decisiva nessa perda?",
+      "resposta": "A alimentação AC vital mantida pela UPS.",
+      "explicacao": "Os blocos ligam a falha da UPS, combinada com a perda da energia principal, à desenergização da cadeia de controle das válvulas. A utilidade mecânica pode existir sem que o comando sobreviva.",
+      "resposta_padrao": "A alimentação 24 Vcc dos solenóides das válvulas.",
+      "por_que_nao": "Aqui o elo perdido está na cadeia de comando alimentada como carga vital em AC; o elemento final pode continuar íntegro sem existir comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a UPS tinha a função de manter alimentação ininterrupta a cargas vitais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de independência por convergência das rotas em ponto comum de distribuição a jusante das fontes redundantes.",
+      "pergunta": "Dois sistemas de controle nominalmente independentes, cada um com retificador e bateria próprios, caem juntos quando um único trecho de distribuição é isolado para manutenção, sem anomalia nas fontes. Que falha de arquitetura explica melhor essa perda acoplada?",
+      "resposta": "Ponto comum de distribuição a jusante das fontes.",
+      "explicacao": "Os blocos destacam que funções independentes podem ser derrubadas por uma única falha quando convergem para o mesmo ponto de distribuição. Com as fontes normais, o modo comum está depois delas.",
+      "resposta_padrao": "TIE fechado entre os dois sistemas de 24 Vcc.",
+      "por_que_nao": "O TIE acopla as fontes; aqui o gatilho é o isolamento de um trecho específico da distribuição, indicando convergência das rotas depois das fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma única falha pode derrubar funções que deveriam sobreviver ao evento inicial."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

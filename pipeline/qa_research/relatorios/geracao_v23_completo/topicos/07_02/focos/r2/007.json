@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Diferença entre log de autenticação e registro de sessão para rastrear ações em acesso remoto a ativo OT crítico.",
+      "pergunta": "Após suporte remoto aprovado em uma estação de engenharia, um setpoint crítico apareceu alterado e depois foi restabelecido. Os registros disponíveis mostram apenas quem entrou e o horário da conexão. Que controle deve existir para reconstruir os comandos executados nessa intervenção?",
+      "resposta": "Registro de sessão.",
+      "explicacao": "Autenticação e horário só provam acesso. Para saber o que foi feito em ativo capaz de alterar parâmetros críticos, é necessário capturar a atividade da sessão.",
+      "resposta_padrao": "Log de autenticação.",
+      "por_que_nao": "Ele registra identidade e tempo de conexão, não as ações executadas dentro da sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle que elimina acessos residuais de terceiros ou integradores que permaneceram habilitados após o fim da necessidade operacional.",
+      "pergunta": "Meses após o comissionamento, contas nominais de integradores continuam habilitadas em servidores OT críticos, embora não exista atividade prevista para elas. Que controle deve identificar e retirar esse acesso residual antes que ele se torne exposição latente?",
+      "resposta": "Revisão periódica dos acessos ativos.",
+      "explicacao": "A necessidade de acesso muda com o tempo. Em ativos críticos, contas sem uso ou sem justificativa devem ser detectadas por revisão regular das permissões ainda habilitadas.",
+      "resposta_padrao": "Troca periódica de senha.",
+      "por_que_nao": "Trocar senha mantém a conta desnecessária existente; não verifica se o acesso ainda precisa continuar ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "revisão periódica dos acessos ativos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Momento operacional da intervenção de terceiros deve considerar a condição da alimentação ininterrupta comum aos sistemas digitais críticos.",
+      "pergunta": "Uma intervenção remota já aprovada vai atuar em ativo OT que interfere em permissivos do processo, mas a UPS que sustenta controle e shutdown está em condição degradada após falhas recentes. Que condição técnica deve ser restabelecida antes de liberar essa atividade?",
+      "resposta": "Alimentação ininterrupta estável dos sistemas digitais críticos.",
+      "explicacao": "Com UPS degradada, a intervenção pode coincidir com reinicialização ou indisponibilidade simultânea de controle, shutdown e mitigação. O momento operacional da atividade precisa preservar essas barreiras.",
+      "resposta_padrao": "Apenas manter a sessão gravada e dentro da janela aprovada.",
+      "por_que_nao": "Governança de acesso não compensa a redução simultânea das barreiras operacionais causada por suporte elétrico instável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo e ao efeito potencial da ação permitida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas em sistemas de alimentação ininterrupta podem afetar simultaneamente sistemas de controle, shutdown de emergência e mitigação de emergência"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação, mas também condição do equipamento utilizado, momento operacional da intervenção"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

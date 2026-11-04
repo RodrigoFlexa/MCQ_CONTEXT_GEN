@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reconstrução causal de incidente OT ambíguo por cronologia confiável de estados.",
+      "pergunta": "Após perda quase simultânea de telas do SCADA, alarme de alimentação de suporte e atuação de intertravamento, a equipe precisa decidir se a perda de supervisão foi causa ou consequência antes de isolar algo. Que registro técnico deve ser preservado e consultado para reconstruir a ordem real dos eventos?",
+      "resposta": "Registro de sequência de eventos sincronizado.",
+      "explicacao": "A cronologia confiável dos estados dos sistemas é o que permite separar evento iniciador de efeito secundário e evitar contenção baseada em causa errada.",
+      "resposta_padrao": "Lista de alarmes da IHM.",
+      "por_que_nao": "Lista de alarmes sofre polling, supressão e reordenação; não prova a sequência causal entre domínios distintos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registros confiáveis dos estados do sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem esse preparo, a organização pode confundir consequência com causa"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Escalonamento de anomalias OT por comparação com baseline histórico do mesmo modo operacional.",
+      "pergunta": "Durante a partida de uma máquina crítica, o tráfego da rede industrial aumenta e algumas malhas oscilam; sintomas parecidos também aparecem em partidas normais. Para decidir se o caso deve escalar como incidente cibernético, com que referência técnica o comportamento atual deve ser comparado?",
+      "resposta": "Baseline histórico do mesmo modo de operação.",
+      "explicacao": "A comparação com referência histórica equivalente separa transitório esperado de comportamento anômalo que justifica escalonamento de incidente.",
+      "resposta_padrao": "Com os limites de alarme e as tendências atuais do processo.",
+      "por_que_nao": "Limites e tendências instantâneas mostram magnitude, não se o padrão observado é normal para aquela fase operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "critérios claros para escalonamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "capacidade de comparar comportamento atual com referência histórica"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Segurança da contenção OT depende do mapeamento funcional entre controle, proteção e energia.",
+      "pergunta": "Uma estação de engenharia com atividade suspeita compartilha serviços com DCS, SIS e gerenciamento de energia. Antes de isolar um switch para contenção, que mapeamento técnico específico deve ser verificado para não derrubar salvaguardas ou perder supervisão crítica?",
+      "resposta": "Mapa de dependências entre controle, proteção e energia.",
+      "explicacao": "Isolar um nó sem conhecer dependências funcionais pode retirar serviços compartilhados essenciais e agravar o evento durante a contenção.",
+      "resposta_padrao": "Diagrama físico da rede.",
+      "por_que_nao": "Topologia física mostra enlaces, mas não revela quais funções de proteção e energia dependem do mesmo serviço ou ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

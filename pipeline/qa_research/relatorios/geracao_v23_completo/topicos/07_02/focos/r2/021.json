@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Unidade de engenharia confiável como pré-condição para comparar variáveis entre ativos e plataformas digitais.",
+      "pergunta": "Após integrar uma nova unidade com controlador de outro fornecedor, o dashboard corporativo passa a mostrar a pressão de descarga de um compressor cerca de 14,5 vezes acima da unidade irmã em todos os pontos de operação, embora a HMI local e o manômetro de campo indiquem comportamento equivalente. Que atributo do dado deve ser harmonizado primeiro para que a comparação seja válida?",
+      "resposta": "Unidade de engenharia da variável.",
+      "explicacao": "Divergência por fator constante, com concordância entre HMI local e campo, caracteriza incompatibilidade de unidade ou escala na integração, não diferença real de processo.",
+      "resposta_padrao": "Recalibração dos transmissores de pressão.",
+      "por_que_nao": "Deriva de calibração não mantém fator exato de conversão entre sistemas enquanto indicação local e campo permanecem coerentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O acoplamento entre função e infraestrutura define quando uma aplicação externa deve permanecer apenas consultiva.",
+      "pergunta": "Um otimizador hospedado fora da rede de controle calcula, a cada minuto, correções de setpoint para reduzir consumo específico. O enlace tem latência variável e quedas curtas diárias, mas o cálculo continua útil como orientação. Que forma de integração com o processo deve ser adotada?",
+      "resposta": "Modo consultivo, sem escrita automática no controle.",
+      "explicacao": "Com latência variável e indisponibilidade curta, a função ainda pode apoiar decisão, mas não deve fechar o loop sobre ajustes frequentes do processo.",
+      "resposta_padrao": "Escrita automática dos setpoints pelo otimizador.",
+      "por_que_nao": "Ajuste frequente automático exige acoplamento temporal mais rígido ao controle e resposta definida em perda de conectividade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A continuidade analítica no tempo depende de identificar o equipamento físico, não apenas o ponto lógico ou a tag.",
+      "pergunta": "Depois de um turnaround, duas bombas redundantes tiveram cabos e endereços de I/O remanejados entre controladores, sem troca dos equipamentos físicos. O analytics histórico passa a indicar salto abrupto de eficiência em uma \"bomba\" e piora equivalente na outra, sem evidência mecânica. Que atributo de dados deve permanecer estável entre sistemas para que as séries continuem representando o mesmo ativo ao longo do tempo?",
+      "resposta": "Identificador único do equipamento físico.",
+      "explicacao": "Se a identidade seguir a tag ou o endereço de I/O, o histórico muda de máquina após remanejamentos e a comparação temporal fica enganosa.",
+      "resposta_padrao": "Nome da tag do ponto no SCADA.",
+      "por_que_nao": "Tag pode permanecer vinculada ao ponto lógico após remapeamento e deixar de representar o mesmo equipamento físico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 2,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redução efetiva da exposição externa em IACS exige eliminar a alcançabilidade direta do serviço OT pela internet.",
+      "pergunta": "Uma estação de engenharia de IACS precisa de suporte remoto eventual. O serviço foi publicado diretamente na internet, com whitelist de IP e MFA. Qual condição de rede deve ser eliminada para reduzir a exposição externa desse ativo?",
+      "resposta": "A acessibilidade direta do serviço OT a partir da internet.",
+      "explicacao": "Em IACS, reduzir exposição significa reduzir alcançabilidade externa. Whitelist e MFA controlam o uso, mas não removem a superfície de ataque criada pela publicação direta na internet.",
+      "resposta_padrao": "Basta manter a publicação direta se houver whitelist de IP e MFA.",
+      "por_que_nao": "Esses controles não retiram o ativo da alcançabilidade externa; a oportunidade de exploração remota permanece.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reduzir a exposição de rede diminui a chance de alcançabilidade por agentes externos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "recomenda-se evitar acessibilidade direta a partir da internet."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em acesso remoto a IACS, o perfil de permissão deve ser limitado ao escopo técnico da tarefa executada.",
+      "pergunta": "Um fornecedor foi autorizado a acessar remotamente um ativo OT apenas para coletar diagnósticos e verificar estados, sem alterar lógica, parâmetros ou configuração. Qual perfil técnico de acesso deve ser liberado nessa sessão?",
+      "resposta": "Acesso somente leitura, restrito a diagnóstico.",
+      "explicacao": "O risco do acesso remoto depende também das permissões. Se a tarefa é só consulta, liberar engenharia amplia desnecessariamente o alcance da sessão para funções de configuração ou impacto operacional.",
+      "resposta_padrao": "Privilégio de engenharia temporário para agilizar o atendimento.",
+      "por_que_nao": "Permissões excedentes permitem atuar além do escopo da tarefa e alcançar funções com efeito operacional ou de configuração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação. Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A permanência do acesso remoto após a tarefa concluída mantém exposição desnecessária e deve ser eliminada.",
+      "pergunta": "O fornecedor concluiu a intervenção remota, o ativo voltou ao estado normal e a equipe cogita manter o acesso habilitado até o fim do turno para eventual retorno rápido. Que ação técnica deve ser adotada nesse momento?",
+      "resposta": "Desabilitar o acesso remoto temporário.",
+      "explicacao": "O acesso remoto deve existir apenas enquanto houver necessidade operacional. Mantê-lo habilitado após a atividade preserva um caminho válido e permissões disponíveis sem finalidade imediata.",
+      "resposta_padrao": "Manter o acesso habilitado até o fim do turno, por conveniência.",
+      "por_que_nao": "O acesso deve ser delimitado pela necessidade operacional; prolongá-lo aumenta a exposição e a possibilidade de uso indevido.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Também é tecnicamente importante verificar a condição do dispositivo usado na conexão, encerrar o acesso ao fim da atividade e manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação. Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

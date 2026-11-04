@@ -1,0 +1,105 @@
+{
+  "item": "07_03",
+  "foco": 24,
+  "rodada": 1,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparação de MTTR só é válida com a mesma base temporal e as mesmas atividades incluídas no reparo.",
+      "pergunta": "Na revisão de desempenho de um mesmo conjunto, uma área calcula MTTR desde a abertura da OS até o retorno ao serviço, e outra considera só a intervenção e o teste final. Antes de comparar os valores, o que precisa ser padronizado?",
+      "resposta": "A base do MTTR, com as mesmas atividades incluídas.",
+      "explicacao": "Sem a mesma definição temporal, o MTTR mistura reparo ativo com esperas, logística ou mobilização e deixa de ser comparável para avaliar mantenabilidade.",
+      "resposta_padrao": "O mesmo período histórico do relatório.",
+      "por_que_nao": "Mesmo período não corrige MTTRs que contam parcelas temporais diferentes do ciclo de recuperação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A base do MTTR deve explicitar quais atividades de reparo inclui."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O intervalo completo entre falha e retorno também pode incluir esperas que precisam ser discriminadas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Aumento de horas perdidas com tempo de reparo ativo estável e apoio mais distante aponta para logística e mobilização, não para piora do reparo.",
+      "pergunta": "Um analisador exige reparo em terra. O tempo de bancada do fornecedor permaneceu estável, mas as horas perdidas por falha aumentaram após a troca para um porto de apoio mais distante. Na análise do evento, que parcela do ciclo falha-retorno explica esse aumento?",
+      "resposta": "Logística e mobilização até a unidade.",
+      "explicacao": "Se o tempo de bancada ficou igual e o apoio saiu mais longe, o aumento das horas perdidas vem da espera de transporte e mobilização até a unidade.",
+      "resposta_padrao": "O reparo ativo do fornecedor.",
+      "por_que_nao": "Com o tempo de bancada estável, a piora da indisponibilidade não vem da execução técnica do reparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A distância da costa e a dependência de apoio em terra podem prolongar o tempo total indisponível por logística e mobilização"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mesmo sem alterar o tempo de reparo ativo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Queda de MTBF não justifica sozinha encurtar periodicidade; é preciso confirmar a eficácia real da tarefa no modo de falha.",
+      "pergunta": "O MTBF de um atuador crítico caiu, e foi proposta uma inspeção mais frequente. Antes de encurtar a periodicidade, qual critério técnico da própria tarefa precisa ser comprovado?",
+      "resposta": "A eficácia real da intervenção proposta.",
+      "explicacao": "Indicador isolado não justifica encurtar preventiva; a tarefa precisa demonstrar que detecta ou evita o modo de falha que está reduzindo o MTBF.",
+      "resposta_padrao": "Que a nova frequência seja menor que o MTBF observado.",
+      "por_que_nao": "Frequência menor que o MTBF não prova que a tarefa previne nem detecta o modo de falha relevante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O MTBF muda quando mudam os mecanismos que levam o item a falhar"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "MTBF, MTTR e disponibilidade, isoladamente, não bastam para definir a melhor tarefa de manutenção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "à eficácia real da intervenção proposta."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Indicadores agregados iguais não definem a mesma estratégia quando as consequências da perda de função são diferentes.",
+      "pergunta": "Dois equipamentos têm MTBF e MTTR parecidos, mas a falha de um aciona shutdown e a do outro apenas exige intervenção local sem impacto relevante. Ao revisar o plano, qual critério deve pesar mais que a coincidência dos indicadores?",
+      "resposta": "A consequência da perda de função.",
+      "explicacao": "Indicadores agregados semelhantes não capturam severidade; a estratégia muda quando a perda de função traz consequências muito diferentes para segurança, ambiente ou produção.",
+      "resposta_padrao": "Os mesmos valores de MTBF e MTTR.",
+      "por_que_nao": "MTBF e MTTR semelhantes não representam a severidade operacional nem de segurança da falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O MTBF muda quando mudam os mecanismos que levam o item a falhar"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A decisão depende de relacionar o indicador ao modo de falha, à consequência da perda de função e à eficácia real da intervenção proposta."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

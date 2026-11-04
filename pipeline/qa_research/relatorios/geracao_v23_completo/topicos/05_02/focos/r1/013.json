@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A inclusão de trechos no back feeding é limitada pela compatibilidade entre a carga do segmento energizado e a capacidade da geração de emergência.",
+      "pergunta": "Com os geradores principais já isolados e o caminho de realimentação liberado, pretende-se incluir mais um ramal do painel principal no back feeding por geração de emergência para adiantar a recuperação. Qual critério técnico decide se esse trecho pode ser energizado sem descaracterizar a fonte emergencial?",
+      "resposta": "Compatibilidade da carga do trecho com a capacidade da geração de emergência.",
+      "explicacao": "Mesmo com isolamento correto, só cabe energizar o trecho cuja carga esteja dentro da capacidade da geração de emergência; do contrário, o back feeding passa a alimentar cargas além da finalidade da fonte.",
+      "resposta_padrao": "Ser um ramal classificado como essencial.",
+      "por_que_nao": "Classificação essencial não garante que a soma das cargas do trecho caiba na fonte emergencial nem que permaneça dentro da finalidade desse arranjo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compatibilidade entre o segmento da rede a ser energizado e a capacidade disponível da geração de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização de cargas que excedam a finalidade da fonte emergencial"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A utilidade do back feeding para recuperar a geração principal depende de o painel energizado alimentar os auxiliares necessários à partida e sustentação desses geradores.",
+      "pergunta": "Após um blackout, o back feeding restabelece instrumentação e parte dos controles no painel alcançado pela geração de emergência. Antes de creditar essa recomposição parcial para recolocar a geração principal, o que deve ser confirmado nesse painel?",
+      "resposta": "Os auxiliares de partida e sustentação dos geradores principais.",
+      "explicacao": "Restaurar indicação e comando não basta. O back feeding só ajuda a recompor a geração principal se o painel energizado também alimentar os sistemas auxiliares necessários à partida e à sustentação desses geradores.",
+      "resposta_padrao": "Os instrumentos e controles essenciais do processo.",
+      "por_que_nao": "Eles melhoram a supervisão, mas a recuperação da geração principal depende dos auxiliares que permitem sua partida e sustentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode restaurar instrumentos, controles ou serviços necessários à recuperação da planta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "da condição dos sistemas auxiliares que permitem partir ou sustentar os geradores principais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em recomposição parcial, falhas que surgem apenas após blackout com reboot indicam verificar permissivos e intertravamentos de fechamento no modo anormal de controle.",
+      "pergunta": "Em teste de recomposição parcial, a geração de emergência está disponível e as fontes principais permanecem isoladas, mas o fechamento para back feeding só falha quando houve blackout total seguido de reboot do controle. Que ponto técnico deve ser verificado primeiro nesse modo anormal?",
+      "resposta": "Permissivos e intertravamentos de fechamento no reboot do controle.",
+      "explicacao": "Nesse cenário, a indisponibilidade aparece só no estado anormal de reboot. Isso aponta para permissivos, intertravamentos ou trip mantido pela lógica, capazes de bloquear o fechamento mesmo com fonte e equipamento disponíveis.",
+      "resposta_padrao": "A integridade mecânica do disjuntor de back feeding.",
+      "por_que_nao": "Se a falha só aparece após blackout com reboot, o bloqueio tende a vir de trip latente ou permissivo negado na lógica, não do mecanismo de fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ela depende de permissivos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a lógica de controle não bloquear a própria retomada de energia"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

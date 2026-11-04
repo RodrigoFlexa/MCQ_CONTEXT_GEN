@@ -1,0 +1,57 @@
+{
+  "item": "01_01",
+  "foco": 8,
+  "rodada": 3,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudanças de arquitetura, acessibilidade e estratégia de manutenção exigem segmentar a série histórica local antes de recalibrar KPI de disponibilidade.",
+      "pergunta": "Após modularização de um skid crítico, abertura de acessos permanentes e mudança da estratégia de manutenção, os reparos recentes ficaram sistematicamente mais curtos que nos anos anteriores. Para recalibrar a disponibilidade esperada da unidade sem misturar desempenhos de contextos distintos, que recorte técnico deve ser aplicado à série histórica?",
+      "resposta": "Série histórica local pós-modificação.",
+      "explicacao": "Tempos de reparo e frequências de falha variam com arquitetura, acessibilidade e estratégia de manutenção. Misturar períodos pré e pós-modificação distorce a representação das condições locais atuais.",
+      "resposta_padrao": "Usar toda a série histórica da unidade para ganhar robustez estatística.",
+      "por_que_nao": "Mais massa de dados não corrige a mudança de regime; parâmetros de falha e reparo mudam com a configuração física e operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Registros acumulados por anos tendem a aumentar a confiança analítica"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na disponibilidade observada, a indisponibilidade começa na perda da função requerida, não na abertura administrativa da intervenção.",
+      "pergunta": "Um compressor crítico entrou em reciclo total às 03h por atuação automática e deixou de entregar vazão ao processo, embora a ordem de serviço só tenha sido aberta às 06h. Para apurar a disponibilidade observada da função de compressão, de que marco deve partir a indisponibilidade?",
+      "resposta": "Início da perda de função.",
+      "explicacao": "Disponibilidade observada deve usar o instante em que a função requerida ficou indisponível. Marco administrativo posterior não representa o começo real da perda operacional.",
+      "resposta_padrao": "A abertura da ordem de serviço.",
+      "por_que_nao": "A disponibilidade observada mede perda e recuperação da função; registros administrativos podem começar horas depois do evento real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permite calcular MTTR e disponibilidade observada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 2,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em integrações supervisão/analytics, a contenção até o processo depende de impedir caminho de escrita aos controladores.",
+      "pergunta": "Uma aplicação analítica externa passou a receber dados do SCADA por uma nova interface, e a exigência é que um eventual comprometimento dessa aplicação não consiga interferir em válvulas nem em malhas de vazão e pressão. Na fronteira entre a camada supervisória e a de controle, que tráfego específico deve ser bloqueado?",
+      "resposta": "Comandos de escrita da supervisão para os controladores.",
+      "explicacao": "O risco operacional surge quando a exposição alcança funções que atuam no processo. Leituras para consumo externo não criam esse alcance; escrita em controladores cria.",
+      "resposta_padrao": "Leitura de dados de processo pelo analytics.",
+      "por_que_nao": "Leitura só extrai informação; sem caminho de escrita até os controladores, não há interferência direta no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na gravidade operacional de um incidente digital, o acoplamento funcional com proteção e sistema elétrico pesa mais que a quantidade de ativos atingidos.",
+      "pergunta": "Uma invasão alcançou 12 HMIs e um historiador em uma unidade, mas foi tratada como menos grave do que outra que atingiu apenas duas máquinas, sendo uma delas conectada a permissivos de parada e ao sistema elétrico. Que característica técnica explica melhor essa diferença de gravidade?",
+      "resposta": "Interdependências funcionais com permissivos de parada e sistema elétrico.",
+      "explicacao": "A gravidade operacional depende do acoplamento capaz de levar o incidente a proteção, segurança ou elétrico. Muitos ativos apenas consumidores de dados podem ter menor consequência.",
+      "resposta_padrao": "Maior número de máquinas comprometidas.",
+      "por_que_nao": "Contagem de hosts não define ameaça operacional; o decisivo é o caminho funcional para funções de proteção e elétricas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a gravidade real, porém, depende da arquitetura implantada, das interdependências entre funções e das salvaguardas existentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em falha de um ramo 24 Vcc redundante, a continuidade do quadro vem da alimentação cruzada via TIE quando o ramo remanescente é full-capacity.",
+      "pergunta": "Um dos conjuntos independentes de retificador/carregador e banco de baterias de 24 Vcc falhou, mas o outro permanece saudável e é capaz de suprir integralmente a demanda do quadro. Qual arranjo deve ser usado para manter a alimentação do quadro nessa contingência?",
+      "resposta": "Alimentação cruzada pelo disjuntor TIE do quadro 24 Vcc.",
+      "explicacao": "A arquitetura prevê dois conjuntos independentes, cada um com capacidade total do quadro, e a contingência é atendida pela interligação por TIE quando um conjunto falha.",
+      "resposta_padrao": "Acionar o gerador de emergência.",
+      "por_que_nao": "A continuidade imediata já é coberta pelo ramo CC remanescente com capacidade integral; a função decisiva é a interligação redundante do próprio sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir integralmente a demanda do quadro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com possibilidade de alimentação cruzada por disjuntor TIE em caso de falha de um conjunto"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A redundância funcional se perde quando estações redundantes ficam concentradas no mesmo ramo elétrico, mesmo havendo capacidade nominal no outro.",
+      "pergunta": "Em teste de contingência, a perda de um único UPS desenergiza simultaneamente a estação principal e a redundante de um mesmo sistema, embora o outro UPS permaneça saudável e com capacidade de sobra. Qual falha de arquitetura explica melhor esse resultado?",
+      "resposta": "Concentração das estações redundantes no mesmo ramo elétrico.",
+      "explicacao": "Dois caminhos só são realmente redundantes se as cargas forem segregadas entre ramos independentes. Se ambas as estações estão no mesmo lado, uma falha simples derruba as duas.",
+      "resposta_padrao": "Subdimensionamento do UPS remanescente.",
+      "por_que_nao": "Se o outro UPS tem capacidade integral e continua disponível, a perda simultânea indica falta de independência funcional, não insuficiência de potência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A seleção de cargas para UPS e 24 Vcc deve ser definida pela consequência da perda de energia, não pela potência da carga.",
+      "pergunta": "Na revisão das cargas de um sistema essencial, a equipe quer manter no UPS apenas os consumidores de menor potência para ganhar folga. Qual critério técnico deve prevalecer para decidir o que permanece em 24 Vcc e UPS?",
+      "resposta": "Consequência da perda de energia.",
+      "explicacao": "Em sistemas essenciais, a prioridade decorre do efeito da perda de suprimento sobre controle, segurança, mitigação e recomposição, não do valor de potência consumida pela carga.",
+      "resposta_padrao": "Potência consumida da carga.",
+      "por_que_nao": "Potência orienta dimensionamento, mas a essencialidade elétrica é definida pelo impacto operacional e de segurança da perda de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na falha do inversor com alimentação a montante disponível, a continuidade imediata das cargas AC depende da disponibilidade do bypass do UPS.",
+      "pergunta": "Um UPS de 120 Vca que alimenta cargas essenciais sofre falha do inversor, mas a alimentação a montante e o retificador permanecem disponíveis. Que caminho do próprio UPS deve estar disponível para manter a continuidade imediata das cargas?",
+      "resposta": "Bypass do UPS.",
+      "explicacao": "Com o inversor indisponível, a continuidade em CA não vem da bateria sozinha; ela depende da transferência para o bypass, cuja disponibilidade deve ser monitorada.",
+      "resposta_padrao": "Banco de baterias do UPS.",
+      "por_que_nao": "A bateria sustenta o elo CC e a autonomia, mas não substitui o caminho CA necessário quando o inversor falha.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

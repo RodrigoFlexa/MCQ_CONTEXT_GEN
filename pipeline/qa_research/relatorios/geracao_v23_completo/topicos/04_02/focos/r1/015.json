@@ -1,0 +1,101 @@
+{
+  "item": "04_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localização da etapa eletro-hidráulica que converte o comando elétrico em pressurização do atuador.",
+      "pergunta": "Em uma válvula subsea com comando eletro-hidráulico, o comando chega ao módulo submarino e a solenóide da função comuta, mas a pressão no cilindro do atuador não sobe e a válvula não se move. Que equipamento da cadeia de acionamento é o ponto mais provável de falha?",
+      "resposta": "Unidade hidráulica associada ao atuador.",
+      "explicacao": "Se o comando foi processado e a comutação elétrica ocorreu, a ausência de pressurização no cilindro aponta para a etapa que transforma o sinal elétrico em ação hidráulica.",
+      "resposta_padrao": "Atuador ou cilindro hidráulico da válvula.",
+      "por_que_nao": "O cilindro só se move depois de receber pressão; a conversão do comando elétrico em pressão ocorre antes, na unidade hidráulica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse módulo processa a informação recebida e a converte em sinais elétricos que acionam a unidade hidráulica associada ao atuador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A unidade hidráulica pressuriza o cilindro"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Elemento físico que realiza o fechamento em válvula subsea com filosofia fail safe close após perda de pressão.",
+      "pergunta": "Em uma válvula subsea configurada como fail safe close, ocorre perda da pressão de controle e a válvula vai ao fechado sem novo comando de abertura ou fechamento. Qual elemento mecânico efetivamente produz esse movimento até o estado seguro?",
+      "resposta": "Mola de retorno do atuador.",
+      "explicacao": "Nessa filosofia, a perda de pressão libera a atuação da mola, que leva a válvula ao fechado sem depender de novo acionamento hidráulico.",
+      "resposta_padrao": "Unidade hidráulica do controle.",
+      "por_que_nao": "Quando a pressão de controle se perde, a hidráulica deixa de fornecer força de acionamento; o fechamento vem da energia mecânica armazenada na mola.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola"
+        },
+        {
+          "bloco": "F",
+          "trecho": "e leva a válvula ao estado seguro fechado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ação hidráulica necessária para fechamento fail-safe rápido em arquiteturas subsea com retorno por mola.",
+      "pergunta": "Em uma arquitetura subsea com válvula fail safe close e requisito de fechamento rápido após perda de comando, que ação hidráulica específica deve ocorrer no atuador para permitir a atuação imediata do retorno mecânico?",
+      "resposta": "Despressurização rápida do atuador por descarte do fluido hidráulico.",
+      "explicacao": "O fechamento rápido depende de aliviar sem demora a pressão no atuador; em algumas arquiteturas isso é obtido descartando pequeno volume de fluido hidráulico à base de água.",
+      "resposta_padrao": "Pressurização do lado de fechamento do atuador.",
+      "por_que_nao": "Nesta filosofia, o retorno mecânico só atua depois do alívio de pressão; pressurizar o atuador não caracteriza o fechamento fail-safe descrito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em algumas arquiteturas, esse fechamento envolve descarte de pequeno volume de fluido hidráulico à base de água"
+        },
+        {
+          "bloco": "F",
+          "trecho": "para despressurização rápida do atuador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Separação entre seleção elétrica da função e fornecimento hidráulico da força em controle multiplexado subsea.",
+      "pergunta": "Em um sistema multiplexado, a eletrônica submarina endereça corretamente a função e comuta a solenóide local, mas ainda falta o recurso que realmente gera esforço para mover a válvula. Que recurso é esse?",
+      "resposta": "Suprimento hidráulico do atuador.",
+      "explicacao": "No multiplexado, a eletrônica decide qual função executar, mas o deslocamento só acontece quando a hidráulica fornece a força necessária ao atuador.",
+      "resposta_padrao": "Potência elétrica do módulo submarino.",
+      "por_que_nao": "A eletrônica seleciona e comuta a função, porém o esforço de abertura ou fechamento continua sendo hidráulico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção da função ocorre localmente no módulo submarino por meio da eletrônica submarina e de válvulas solenóides"
+        },
+        {
+          "bloco": "F",
+          "trecho": "enquanto a hidráulica fornece a força necessária ao movimento do atuador."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

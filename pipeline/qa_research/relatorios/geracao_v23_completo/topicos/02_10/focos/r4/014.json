@@ -1,0 +1,61 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 4,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validação de Dead Band Assimétrico deve incluir transiente que leve o elemento final ao limite para revelar falhas de implementação e recuperação.",
+      "pergunta": "Na validação de uma nova lógica de Dead Band Assimétrico para a interface óleo-água, a malha responde bem a pequenos degraus em regime, mas há suspeita sobre a recuperação após distúrbios fortes. Que condição de teste deve ser provocada para comprovar a implementação?",
+      "resposta": "Transiente que leve o atuador à saturação.",
+      "explicacao": "Sem forçar o limite de capacidade, o teste não exercita a recuperação após saturação nem expõe ausência de anti-windup ou falhas lógicas relevantes em transientes.",
+      "resposta_padrao": "Pequenos degraus de setpoint em torno do ponto normal.",
+      "por_que_nao": "Sem levar o elemento final ao limite, o teste não percorre a condição em que a integral e a lógica de recuperação costumam falhar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O desempenho da malha pode ser limitado por saturação ou proximidade do limite dos atuadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem distorcer a resposta integral, retardar recuperação e mascarar riscos em transientes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Com sensores e atuadores íntegros, comutação automática incoerente ao cruzar bandas indica erro na lógica de transição, não problema de sintonia.",
+      "pergunta": "Em uma malha de interface por bandas, o sensor confirma corretamente o cruzamento dos limites e a válvula responde em manual, mas no automático a sequência de estados comuta fora da ordem e aplica a ação errada ao atravessar a banda. Que falha específica explica melhor esse comportamento?",
+      "resposta": "Erro na lógica de transição entre bandas.",
+      "explicacao": "Como medição e elemento final respondem, o defeito está nas regras de mudança de estado da estratégia automática, não na dinâmica contínua da malha.",
+      "resposta_padrao": "Sintonia inadequada do controlador de interface.",
+      "por_que_nao": "Sintonia altera a agressividade de uma lei correta; ação incompatível com a banda ativa indica erro na lógica de comutação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também ocorreram falhas de implementação, como associação incorreta de trip por nível baixo, ausência inicial de anti-windup no Dead Band Assimétrico e bugs de lógica."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Outra filosofia é o controle por bandas, no qual a interface pode variar dentro de uma faixa permitida; se sair dessa faixa, um conjunto de parâmetros mais rápido atua para trazê-la de volta aos limites."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

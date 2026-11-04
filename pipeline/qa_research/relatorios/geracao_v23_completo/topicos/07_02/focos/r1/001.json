@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em ambiente OT com controladores de fornecedores distintos, a integração de dados tende a ser concentrada na camada supervisória, não na fonte.",
+      "pergunta": "Num FPSO com controladores de fornecedores diferentes, cada um expondo tags e estruturas próprias, a equipe precisa consolidar alarmes, histórico e dados para aplicações externas sem refatorar a lógica de controle. Em que camada essa integração deve ser concentrada?",
+      "resposta": "Na camada supervisória, via SCADA.",
+      "explicacao": "Com modelos de dados distintos, a padronização próxima à fonte fica limitada; por isso a integração tende a migrar para a supervisão, onde o SCADA já agrega alarmes, histórico e interface operacional.",
+      "resposta_padrao": "Nos próprios controladores de campo.",
+      "por_que_nao": "A heterogeneidade dos modelos de dados limita a padronização na fonte; integrar nos controladores aumenta acoplamento e não aproveita a camada agregadora da operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ao criar nova interface IT/OT, o critério técnico básico é explicitar quais fluxos podem cruzar a fronteira e a finalidade operacional de cada um.",
+      "pergunta": "Um controlador de borda passou a publicar dados para um broker MQTT em nuvem e, ao mesmo tempo, alimentar o SCADA local em tempo real. Antes de liberar essa interconexão, como deve ser delimitado o tráfego que cruza a fronteira?",
+      "resposta": "Por matriz de tráfego autorizado por finalidade operacional.",
+      "explicacao": "A nova interface amplia a fronteira IT/OT. O ponto decisivo não é só haver conectividade, mas definir exatamente quais fluxos podem cruzá-la e para que uso operacional.",
+      "resposta_padrao": "Por lista de IPs, portas e banda do enlace.",
+      "por_que_nao": "Endereçamento e capacidade descrevem o caminho, mas não delimitam quais dados ou comandos podem atravessar a fronteira nem a finalidade de cada fluxo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em cenários com múltiplos controladores, o SCADA é a camada agregadora para operação, alarmes e histórico.",
+      "pergunta": "Em uma instalação com vários controladores de campo, os operadores precisam uma visão única para alarmes, histórico e interface de operação, enquanto outros consumidores lerão dados consolidados. Qual sistema deve assumir essa função agregadora?",
+      "resposta": "SCADA.",
+      "explicacao": "Quando há múltiplos controladores, o SCADA tende a concentrar alarmes, armazenamento histórico e interface operacional, servindo de ponto agregador antes do consumo por outros sistemas.",
+      "resposta_padrao": "Historiador de dados.",
+      "por_que_nao": "O historiador registra séries temporais, mas não substitui a agregação de alarmes nem a interface homem-máquina central da operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

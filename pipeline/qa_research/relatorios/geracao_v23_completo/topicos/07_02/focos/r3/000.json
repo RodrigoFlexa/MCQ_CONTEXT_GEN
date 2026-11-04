@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Local de concentração da normalização de dados quando múltiplos controladores heterogêneos não permitem padronização na origem.",
+      "pergunta": "Um novo consumo externo exige variáveis operacionais padronizadas de controladores de fornecedores distintos, mas alterar os controladores foi vetado e os modelos de dados divergem. Em que camada a normalização deve ser concentrada antes da exposição externa?",
+      "resposta": "Camada supervisória (SCADA).",
+      "explicacao": "Com modelos de dados distintos e limitação para padronizar na origem, a integração migra para a camada supervisória, que já agrega contexto operacional e histórico antes de atender consumidores externos.",
+      "resposta_padrao": "No middleware corporativo ou no data lake.",
+      "por_que_nao": "Sem convergência dos modelos na origem, empurrar a normalização para a camada corporativa afasta a integração do contexto operacional que o SCADA já consolida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Defesa em profundidade como encadeamento de barreiras para conter propagação entre domínios IT/OT.",
+      "pergunta": "Uma nova interligação entre supervisão, analytics e sistemas corporativos não elimina a vulnerabilidade de um ativo exposto, mas precisa impedir que um problema numa interface alcance o restante da rede industrial. Que princípio arquitetural descreve esse arranjo?",
+      "resposta": "Defesa em profundidade.",
+      "explicacao": "A segmentação isolada não corrige a vulnerabilidade; o que reduz o alcance lateral é o encadeamento de barreiras sucessivas entre interfaces e domínios.",
+      "resposta_padrao": "Segmentação de rede.",
+      "por_que_nao": "Segmentação é uma barreira específica; o uso deliberado de várias barreiras sucessivas é que caracteriza defesa em profundidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Arquitetura IT/OT é a organização dos sistemas, redes e interfaces que conectam tecnologia da informação (IT) e tecnologia operacional (OT) em uma instalação industrial."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Separar domínios não remove a vulnerabilidade de origem, mas dificulta que um problema em uma interface alcance todos os ativos conectados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Interdependências entre funções como fator que amplia a gravidade operacional de um comprometimento digital.",
+      "pergunta": "Em um FPSO, a mesma infraestrutura digital atende controle de processo, proteção independente, SIS e controle elétrico. Se surgir erro de configuração ou ação maliciosa em um domínio, que relação técnica passa a governar a gravidade real das consequências?",
+      "resposta": "Interdependências entre funções.",
+      "explicacao": "Quando funções diferentes compartilham a infraestrutura, uma falha ou ação maliciosa pode atravessar domínios; a gravidade depende de como essas funções estão acopladas na arquitetura.",
+      "resposta_padrao": "Número total de ativos conectados.",
+      "por_que_nao": "A consequência cresce pelo acoplamento funcional entre domínios; muitos ativos sem dependência cruzada não ampliam o efeito da mesma forma.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo pode incluir o sistema básico de controle de processo, funções de camada independente de proteção, sistemas instrumentados de segurança, sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a gravidade real, porém, depende da arquitetura implantada, das interdependências entre funções e das salvaguardas existentes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

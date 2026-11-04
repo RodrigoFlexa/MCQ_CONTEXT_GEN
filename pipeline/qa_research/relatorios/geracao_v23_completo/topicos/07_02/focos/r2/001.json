@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Pontos entre controle e supervisão exigem tratamento arquitetural específico quando concentram fluxos entre domínios funcionais distintos.",
+      "pergunta": "Em uma rede industrial onde vários controladores alimentam um SCADA que também repassa dados a historiador e aplicações externas, qual característica técnica do ponto entre controle e supervisão explica a necessidade de tratamento arquitetural específico?",
+      "resposta": "Convergência de fluxos interdomínios.",
+      "explicacao": "Esse ponto concentra a troca de dados entre controladores, supervisão e consumidores externos, aumentando o potencial de propagação entre domínios com funções e consequências diferentes.",
+      "resposta_padrao": "Maior largura de banda necessária.",
+      "por_que_nao": "O fator crítico é a convergência de fluxos entre domínios distintos; banda afeta dimensionamento, não a razão principal do tratamento arquitetural.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Adicionar interfaces de consumo de dados fora do controle amplia os pontos de fronteira IT/OT que precisam ser segmentados.",
+      "pergunta": "Um sistema que antes só alimentava o SCADA local passou a publicar dados para um broker em nuvem e para um software analítico externo, sem mudar a lógica de controle. Qual efeito arquitetural direto essa expansão traz para a segmentação do ambiente?",
+      "resposta": "Multiplicação das fronteiras IT/OT.",
+      "explicacao": "Cada novo consumidor fora da camada de controle cria uma nova interface de travessia entre domínios, ampliando os pontos que exigem definição e contenção de tráfego.",
+      "resposta_padrao": "Apenas aumento de banda e latência.",
+      "por_que_nao": "O impacto principal é criar novas interconexões entre domínios de funções distintas; banda e latência são efeitos de comunicação, não a consequência arquitetural decisiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes: OT prioriza controle determinístico, segurança operacional e disponibilidade do processo; IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

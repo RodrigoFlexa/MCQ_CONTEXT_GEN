@@ -1,0 +1,75 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Disponibilidade observada usa prontidão funcional, não ausência de demanda, para contar tempo disponível.",
+      "pergunta": "Um gerador de reserva permaneceu semanas sem ser demandado, mas com bloqueio no circuito de excitação que impedia sua entrada imediata em serviço. Na apuração da disponibilidade observada desse gerador, qual critério decide se esse tempo entra como disponível?",
+      "resposta": "Aptidão à operação",
+      "explicacao": "Na disponibilidade observada, conta como disponível o tempo em que o item estava apto a operar. Ficar sem demanda não compensa uma incapacidade real de entrar em serviço.",
+      "resposta_padrao": "Como ficou em standby e sem demanda, conta como disponível.",
+      "por_que_nao": "Disponibilidade observada mede prontidão do item; standby sem capacidade de entrar em operação não soma tempo disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falha contável em indicadores exige perda e recuperação da função, não simples transições de estado.",
+      "pergunta": "Depois de uma atualização de lógica, um conjunto de válvulas passou a registrar dezenas de transições de status por dia, mas as demandas de processo continuaram atendidas e não houve reparos correspondentes. Antes de comparar o MTBF com o período anterior, que critério deve definir quais registros viram falha contável?",
+      "resposta": "Perda e recuperação da função",
+      "explicacao": "O indicador só deve contar eventos que representem perda funcional e posterior retorno. Mudanças irrelevantes de estado aumentam a contagem sem representar falha de confiabilidade.",
+      "resposta_padrao": "Toda mudança de status registrada no sistema deve contar como falha.",
+      "por_que_nao": "Evento de confiabilidade é funcional; transições sem perda e retorno da função distorcem o MTBF.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Separar MTTR de reparo da indisponibilidade total requer cronologia funcional consistente do evento.",
+      "pergunta": "Em um compressor crítico, houve diagnóstico inicial, espera de material, reparo em campo e teste funcional liberando o equipamento horas antes do fechamento administrativo da ordem. Para separar MTTR de reparo de indisponibilidade total, que registro deve existir?",
+      "resposta": "Cronologia funcional falha–reparo–retorno",
+      "explicacao": "Os indicadores dependem dos marcos de início da falha, intervalo de reparo e retorno à função. Sem essa cronologia, tempos administrativos e esperas se misturam ao reparo.",
+      "resposta_padrao": "Basta usar a abertura e o fechamento da ordem de serviço.",
+      "por_que_nao": "Timestamps administrativos não separam início da falha, reparo efetivo e recuperação funcional, indispensáveis para distinguir MTTR e indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador, enquanto o tempo total indisponível pode incluir esperas logísticas e administrativas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

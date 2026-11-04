@@ -1,0 +1,105 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para selecionar 2ooN quando a ação automática tem alto custo de atuação indevida e a cobertura real sustenta coincidência.",
+      "pergunta": "Numa área com liberações de gás que, quando reais, tendem a envolver mais de um detector da mesma zona antes do tempo limite de resposta, mas com histórico de disparos espúrios e uma ação automática de alto impacto operacional, qual lógica de votação deve liberar essa ação?",
+      "resposta": "Votação 2ooN entre detectores da mesma zona.",
+      "explicacao": "Se o evento real materializa coincidência dentro do tempo disponível, exigir dois sinais aumenta a robustez contra disparos indevidos sem perda relevante de sensibilidade prática.",
+      "resposta_padrao": "Votação 1ooN para agir o mais cedo possível.",
+      "por_que_nao": "Quando a cobertura real sustenta a coincidência, 1ooN sacrifica robustez sem ganho técnico necessário de sensibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Exigir coincidência de mais sinais tende a aumentar a robustez contra atuações indevidas, mas pode reduzir a sensibilidade prática"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para selecionar 1ooN em incêndio rápido e localizado quando a coincidência entre detectores pode não se materializar a tempo.",
+      "pergunta": "Em um módulo onde o foco de incêndio pode ficar visível para apenas um detector de chama por geometria e obstáculos, e a ação associada precisa sair antes que a propagação permita segunda confirmação, que lógica deve liberar o dilúvio automático?",
+      "resposta": "Votação 1ooN do detector de chama.",
+      "explicacao": "Com tempo curto e campo de visão sem sobreposição útil, esperar coincidência reduz a sensibilidade prática e pode impedir a atuação no incêndio real.",
+      "resposta_padrao": "Votação 2ooN para evitar disparo indevido do dilúvio.",
+      "por_que_nao": "Se a geometria não permite materializar dois sinais no tempo útil, 2ooN falha pelo mecanismo de cobertura, não por falta de calibração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Exigir menos confirmação tende a acelerar a resposta, porém pode elevar a suscetibilidade a disparos indesejados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "ausência de detecção de chama, baixa confiabilidade do sistema de combate e ausência de dilúvio em módulos específicos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de condicionar os detectores participantes da votação ao modo de ventilação que altera as combinações válidas.",
+      "pergunta": "Num módulo que opera com ventilação mecânica normal e também com modo degradado sem exaustão, os estudos mostram que a nuvem passa por conjuntos diferentes de detectores em cada estado. Para que uma votação 2ooN continue representando o cenário real, o que a lógica deve condicionar?",
+      "resposta": "A participação dos detectores ao estado da ventilação.",
+      "explicacao": "A votação não é só contagem; ela define quais detectores participam sob certas condições. Mudando o escoamento de ar, mudam as combinações que conseguem confirmar a nuvem.",
+      "resposta_padrao": "Somente o nível de alarme dos mesmos detectores em qualquer modo.",
+      "por_que_nao": "O ponto decisivo é a validade dos pares votantes em cada regime de ventilação; limiar não corrige combinação lógica irrepresentativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restrição da votação aos detectores da mesma zona para evitar confirmação lógica com sinais de áreas diferentes.",
+      "pergunta": "Dois módulos adjacentes compartilham um pipe rack, mas uma liberação em qualquer um deve acionar isolamento e respostas diferentes. Se detectores das duas áreas puderem ver uma pluma periférica, qual critério lógico deve confirmar o evento que libera a ação automática?",
+      "resposta": "Coincidência entre detectores da própria zona afetada.",
+      "explicacao": "A lógica de votação define quais detectores e em que zona participam. Misturar sinais de zonas diferentes pode confirmar o evento errado e disparar a resposta errada.",
+      "resposta_padrao": "Quaisquer dois detectores próximos, mesmo de zonas diferentes.",
+      "por_que_nao": "Proximidade física não substitui pertencimento lógico à zona cuja causa e efeito corresponde à ação automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

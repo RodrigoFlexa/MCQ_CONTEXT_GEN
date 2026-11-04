@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 2,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Segregação de funções em mudança de lógica exige separar implementação e validação quando a aprovação já é independente.",
+      "pergunta": "Uma mudança emergencial de lógica em controlador já foi aprovada por profissional distinto, e o download foi executado pelo especialista de automação embarcado. Antes de liberar a retomada da planta, que etapa deve ser feita por outra pessoa para manter a segregação de funções?",
+      "resposta": "Validação independente da mudança.",
+      "explicacao": "Com a aprovação já separada da execução, a etapa que ainda precisa ficar com outro profissional é a validação, para reduzir erro não detectado após o download.",
+      "resposta_padrao": "Aceite operacional da retomada.",
+      "por_que_nao": "Aceite operacional libera a volta do processo, mas não comprova de forma independente que a lógica implementada corresponde ao que foi aprovado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Menor privilégio em IACS inclui limitar o privilégio ao tempo estritamente necessário para a tarefa.",
+      "pergunta": "Uma credencial de engenharia criada para suporte remoto emergencial permaneceu válida após o término da intervenção e foi reutilizada dias depois sem nova autorização. Sem depender de revogação manual posterior, que controle de credenciamento deveria ter sido aplicado já na liberação?",
+      "resposta": "Expiração automática da credencial ao fim da janela.",
+      "explicacao": "O menor privilégio em IACS não limita só o que pode ser feito, mas também por quanto tempo. Credencial temporária evita permanência indevida do privilégio elevado.",
+      "resposta_padrao": "Revisão periódica de acessos.",
+      "por_que_nao": "Revisão periódica só detecta a exposição depois; a limitação temporal remove o privilégio quando a tarefa termina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de acessos de engenharia depende de credenciais individuais, não de conta compartilhada.",
+      "pergunta": "Dois especialistas do fornecedor precisam atuar na mesma estação de engenharia durante uma atualização autorizada que envolve mudança de lógica. Para sustentar a rastreabilidade exigida por esse nível de privilégio, como o credenciamento deve ser feito?",
+      "resposta": "Credenciais nominais individuais.",
+      "explicacao": "Mudanças de engenharia exigem rastreabilidade de quem executou cada ação. Credencial compartilhada impede atribuição inequívoca das alterações a uma pessoa específica.",
+      "resposta_padrao": "Uma conta compartilhada com gravação de sessão.",
+      "por_que_nao": "Gravação não substitui a identificação individual do responsável por cada comando ou alteração feita com privilégio elevado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

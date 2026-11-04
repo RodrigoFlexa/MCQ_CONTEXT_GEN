@@ -1,0 +1,79 @@
+{
+  "item": "02_11",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do pacote termodinâmico pela faixa validada de pressão, antes de ajustar eficiência da torre.",
+      "pergunta": "Em uma simulação de desidratação por TEG para gás de alta pressão, o caso só converge com o Glycol Package em condição acima da faixa de pressão validada para ele. Para estimar o ponto de orvalho com credibilidade, qual decisão de modelagem deve ser tomada?",
+      "resposta": "Selecionar e validar outro pacote para equilíbrio água-TEG nessa faixa.",
+      "explicacao": "Fora da faixa validada pela pressão, o próprio modelo de propriedades pode perder aplicabilidade. Nessa situação, o correto é trocar para um pacote adequado ao equilíbrio água-glicol nas condições reais.",
+      "resposta_padrao": "Manter o Glycol Package e ajustar a eficiência da torre.",
+      "por_que_nao": "Ajuste de eficiência não corrige equilíbrio de fases calculado fora da aplicabilidade do pacote termodinâmico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O Glycol Package do HYSYS é descrito como dedicado à desidratação com glicóis, mas com faixa de aplicabilidade limitada pela pressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Fora da faixa validada de um pacote de propriedades, deve-se selecionar e validar outro modelo adequado ao equilíbrio água-glicol e às condições de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação adequada do desempenho de recheio estruturado na validação de modelos de torres de TEG offshore.",
+      "pergunta": "Ao validar em campo o modelo de uma torre de TEG offshore com recheio estruturado, montado a partir de correlações e experiência predominantemente com colunas de pratos, qual parâmetro do interno deve ser calibrado para representar a coluna real?",
+      "resposta": "HETP do recheio estruturado.",
+      "explicacao": "Em colunas com recheio estruturado, a representação do contato não deve ser transportada diretamente como eficiência de prato. A validação precisa ajustar o desempenho equivalente do recheio real.",
+      "resposta_padrao": "Eficiência de prato.",
+      "por_que_nao": "Eficiência de prato descreve contato em estágios discretos e não representa diretamente o desempenho do recheio estruturado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em ambiente offshore, a predominância de colunas com recheio estruturado adiciona um desafio quando a literatura disponível ou a experiência de simulação foi construída majoritariamente com pratos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "discrepâncias entre modelo e operação real nem sempre significam erro exclusivo do simulador; podem refletir incerteza na eficiência da torre, nos internos ou nos instrumentos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validação do modelo de desidratação depende da confiabilidade metrológica da medição de umidade do gás.",
+      "pergunta": "A simulação prevê gás mais seco do que a operação, mas o analisador de umidade na saída oscila sem correlação com carga, circulação de TEG ou temperaturas, e repetições de amostra não se confirmam. Antes de recalibrar a torre no simulador, o que deve ser estabelecido?",
+      "resposta": "Confiabilidade metrológica da medição de umidade do gás.",
+      "explicacao": "A validação do modelo depende de dados de campo de umidade. Se essa medição é pouco confiável, o desvio aparente pode ser instrumental, não necessariamente erro do simulador ou da torre.",
+      "resposta_padrao": "Reduzir a eficiência assumida da torre.",
+      "por_que_nao": "Sem dado de umidade confiável, não existe base técnica para atribuir o desvio à transferência de massa da torre.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A simulação de torres de desidratação com TEG envolve incertezas práticas, porque a validação depende de dados de campo e de medições de umidade cuja confiabilidade pode ser limitada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "discrepâncias entre modelo e operação real nem sempre significam erro exclusivo do simulador; podem refletir incerteza na eficiência da torre, nos internos ou nos instrumentos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

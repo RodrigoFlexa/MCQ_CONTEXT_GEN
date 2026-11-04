@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 3,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de volumes comunicantes é necessária quando vasos interligados se influenciam durante o blowdown.",
+      "pergunta": "Em um teste de blowdown de dois vasos ligados por uma restrição e descarregando para o mesmo flare, a queda de pressão de um muda claramente quando o outro abre, mas o modelo prevê despressurizações quase independentes e pico excessivo no header. Que representação do inventário deve ser adotada para reproduzir esse acoplamento?",
+      "resposta": "Volumes comunicantes.",
+      "explicacao": "O comportamento cruzado entre os vasos revela equalização durante o evento; sem volumes comunicantes, o modelo trata as descargas como independentes e distorce o perfil de alívio.",
+      "resposta_padrao": "Recalibrar apenas o coeficiente de descarga das BDVs.",
+      "por_que_nao": "A divergência nasce da comunicação hidráulica entre os volumes; mexer só na capacidade das válvulas não cria essa equalização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forma de representar dispositivos, volumes comunicantes e controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Máxima temperatura de alívio pode ser governada por cenário diferente do de máxima vazão.",
+      "pergunta": "Na revisão de um sistema de alívio, o caso de maior vazão já foi definido para a capacidade do header, mas esse mesmo caso não necessariamente governa a revisão de materiais e do flare tip. Que variável de carga deve ser determinada separadamente?",
+      "resposta": "Temperatura máxima de alívio.",
+      "explicacao": "O bloco indica que máxima temperatura e máxima vazão podem vir de cenários operacionais distintos; usar só o caso hidráulico pode perder o governante térmico.",
+      "resposta_padrao": "Usar a temperatura do cenário de maior vazão.",
+      "por_que_nao": "Máxima vazão e máxima temperatura podem ocorrer em cenários diferentes; um único caso pode não cobrir a severidade térmica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A abordagem estática e a abordagem dinâmica podem levar a conclusões diferentes sobre a carga de alívio e sobre o sistema receptor."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Malhas de controle atuantes precisam ser modeladas para reproduzir defasagem e amortecimento das descargas.",
+      "pergunta": "Em um ESD, o campo mostra que algumas fontes seguram a pressão por alguns segundos antes de descarregar, espalhando no tempo o pico no flare; no modelo, tudo descarrega cedo demais. Para reproduzir esse amortecimento e a defasagem entre fontes, o que precisa estar explicitamente representado na simulação?",
+      "resposta": "Malhas de controle atuantes.",
+      "explicacao": "A retenção temporária de pressão e o espalhamento do pico são efeitos de ação de controle e sequenciamento; sem essas malhas, o modelo descarrega cedo e mais simultaneamente.",
+      "resposta_padrao": "Apenas aumentar o volume modelado do header de flare.",
+      "por_que_nao": "Volume sozinho não cria espera, amortecimento nem sequência de descarga; esses efeitos vêm da atuação das malhas.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

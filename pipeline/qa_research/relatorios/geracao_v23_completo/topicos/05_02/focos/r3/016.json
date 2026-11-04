@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Alocação de estações redundantes em barramentos opostos para preservar independência funcional.",
+      "pergunta": "Será instalada uma nova estação redundante de supervisão de uma função crítica. Os dois UPS de 120 Vca estão saudáveis, cada um tem folga de capacidade, e a estação já existente dessa função é alimentada pelo barramento A. Para preservar a tolerância a falha simples, em qual barramento a nova estação deve ser ligada?",
+      "resposta": "No barramento B, oposto ao da estação existente.",
+      "explicacao": "A redundância só se materializa com segregação real entre ramos. Para uma função redundante, as estações precisam ficar em barramentos independentes; folga de capacidade não substitui essa independência.",
+      "resposta_padrao": "No barramento com maior folga de carga.",
+      "por_que_nao": "A escolha por kVA disponível pode concentrar o par redundante no mesmo ramo; a falha simples então remove as duas estações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações, distribuídos em barramentos “A” e “B”, também com interligação por disjuntor em contingência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência a montante comum como ponto único de falha em arquitetura aparentemente redundante.",
+      "pergunta": "Dois UPS de 120 Vca atendem barramentos A e B, e as cargas redundantes estão corretamente separadas. Mesmo assim, ao isolar um único painel AC comum a montante, os dois UPS passam simultaneamente a depender de bateria. Que vulnerabilidade arquitetural esse comportamento revela?",
+      "resposta": "Ponto único de falha no suprimento AC comum a montante.",
+      "explicacao": "Mesmo com dois UPS e cargas segregadas, uma alimentação comum a montante remove a independência entre os caminhos. A falha de um único elemento passa a afetar simultaneamente ambos os ramos.",
+      "resposta_padrao": "Autonomia insuficiente das baterias.",
+      "por_que_nao": "A autonomia só determina por quanto tempo o sistema resiste; a vulnerabilidade revelada é a dependência comum que aciona ambos os UPS ao mesmo tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A confiabilidade dos sistemas essenciais aumenta quando a arquitetura evita ponto único de falha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O princípio por trás disso é a redundância funcional: dois caminhos capazes de assumir a carga reduzem a probabilidade de perda total por falha simples."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de capacidade individual de cada UPS para redundância funcional com falha simples.",
+      "pergunta": "Uma modificação acrescentará novas cargas essenciais, e a equipe propõe manter dois UPS em paralelo porque, em operação normal, a soma das capacidades continua acima da demanda total. Para preservar a filosofia redundante desse serviço na perda de um UPS, que critério de capacidade individual deve continuar valendo?",
+      "resposta": "Cada UPS deve suprir integralmente a carga essencial da função.",
+      "explicacao": "Na redundância funcional, um caminho deve assumir sozinho a carga quando o outro falha. Capacidade total somada em regime normal não garante continuidade sob falha simples.",
+      "resposta_padrao": "Que a soma das capacidades dos dois UPS cubra a demanda.",
+      "por_que_nao": "Cobertura apenas combinada atende ao regime normal, mas não sustenta a carga essencial quando um único UPS sai de serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na unidade descrita, os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias, cada um capaz de suprir integralmente a demanda do quadro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O princípio por trás disso é a redundância funcional: dois caminhos capazes de assumir a carga reduzem a probabilidade de perda total por falha simples."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

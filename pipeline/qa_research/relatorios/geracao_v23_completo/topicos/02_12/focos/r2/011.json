@@ -1,0 +1,65 @@
+{
+  "item": "02_12",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O mesmo trem pode exigir seleção diferente do ponto de pressão controlado conforme o destino do gás e o modo operacional.",
+      "pergunta": "Após a remoção de CO2, um mesmo trem alterna entre exportação e reinjeção. Reaplicar só um novo setpoint na mesma malha de pressão deixa um dos modos instável, embora a máquina esteja íntegra. Que elemento do controle de capacidade precisa ser comutável entre esses modos?",
+      "resposta": "A seleção do ponto de pressão controlado.",
+      "explicacao": "A pressão é só a proxy da necessidade do processo. Como destino, arranjo e modo mudam, pode ser necessário trocar a referência mestra entre descarga, sucção ou outro header-chave.",
+      "resposta_padrao": "Apenas o ganho do PID da mesma malha.",
+      "por_que_nao": "Retuning não corrige uma variável controlada inadequada; cada modo pode exigir outro ponto de pressão para representar a demanda real do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a pressão passa a ser a variável proxy da necessidade do processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a unidade precisa sustentar exportação, por exemplo, o compressor tende a responder à condição exigida na descarga; se precisa estabilizar a coleta de gás de separadores ou proteger a etapa a montante, a pressão de sucção pode ganhar prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa relação não é universal e depende do arranjo, da malha selecionada e do modo operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança de encaminhamento do gás entre destinos altera a curva do sistema a jusante, exigindo reavaliação da filosofia de controle aplicável.",
+      "pergunta": "Em um trem que muda de exportação para reinjeção após tratamento, a pressão final exigida continua parecida, mas a rota do gás a jusante muda. Antes de manter a mesma filosofia de controle de capacidade, que elemento do sistema deve ser reavaliado?",
+      "resposta": "Curva do sistema a jusante.",
+      "explicacao": "Mesmo com pressão terminal semelhante, a nova rota impõe outras restrições ao escoamento. Isso altera a relação vazão-pressão vista pelo compressor e pela malha de capacidade.",
+      "resposta_padrao": "Somente a pressão final requerida.",
+      "por_que_nao": "Mesma pressão terminal não garante o mesmo comportamento do sistema; a rota nova muda as restrições a jusante que definem a resposta do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa relação não é universal e depende do arranjo, da malha selecionada e do modo operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudam a composição do gás, o encaminhamento das correntes e as restrições do sistema a jusante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema, alterando pressões e vazões em cascata"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

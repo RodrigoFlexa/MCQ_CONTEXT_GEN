@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Hardening em OT legado: desativar serviços desnecessários no próprio ativo reduz a superfície explorável sem afetar a função requerida.",
+      "pergunta": "Um controlador legado precisa permanecer em operação sem patch imediato. Ele só usa um protocolo industrial com dois pares fixos, mas a varredura autorizada mostra outros serviços de rede escutando no equipamento. Que ação de hardening no próprio ativo reduz diretamente os caminhos exploráveis sem afetar essa comunicação necessária?",
+      "resposta": "Desativação dos serviços de rede desnecessários.",
+      "explicacao": "Nos blocos, hardening reduz caminhos de exploração removendo serviços desnecessários. Como a comunicação necessária já é conhecida e limitada, a ação decisiva é eliminar os serviços que não suportam a função operacional.",
+      "resposta_padrao": "Restringir o acesso remoto por VPN.",
+      "por_que_nao": "A VPN protege o caminho remoto, mas não remove a superfície exposta pelos serviços já ativos aos pares alcançáveis na rede OT.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "remove serviços desnecessários, restringe rotas de acesso, reduz a chance de varredura externa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em atualização de nó de controle crítico, a recuperação rápida após incompatibilidade em campo depende de plano de retorno à versão estável.",
+      "pergunta": "O fornecedor liberou correção para um nó de controle legado crítico. A versão foi validada em bancada, mas há histórico de comportamento não previsto só após entrada em serviço e a janela offshore é curta. No plano de mudança, que item técnico deve estar definido para recuperar rapidamente a função se a atualização falhar em campo?",
+      "resposta": "Plano de retorno à versão estável anterior.",
+      "explicacao": "Os blocos exigem avaliar a correção com plano de retorno. Em nó crítico, a validação em bancada não elimina comportamento inesperado em serviço; recuperar a função depende de rollback previamente definido.",
+      "resposta_padrao": "Backup completo do nó antes da intervenção.",
+      "por_que_nao": "Backup por si só não define o caminho testado para restaurar rapidamente a versão operacional conhecida dentro da janela restrita.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na remediação de vulnerabilidade em OT legado, deve-se identificar a versão corretiva aplicável e qualificada para o ativo, não simplesmente a mais recente.",
+      "pergunta": "Um boletim do fornecedor corrige a mesma vulnerabilidade para várias revisões de um sistema de controle embarcado, mas a unidade opera hardware antigo e firmware fora da linha principal. Antes de programar a intervenção, que versão corretiva precisa ser determinada para esse ativo?",
+      "resposta": "Versão corretiva aplicável e qualificada para o ativo.",
+      "explicacao": "Nos blocos, a correção deve ser avaliada pela versão aplicável e qualificação. Em hardware e firmware legados, a versão mais recente pode não servir ao ativo nem ser segura para a função.",
+      "resposta_padrao": "A versão mais recente disponível do fornecedor.",
+      "por_que_nao": "Em OT legado, a correção precisa ser aplicável e qualificada para o hardware e firmware em uso; a mais recente pode introduzir indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

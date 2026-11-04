@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 19,
+  "rodada": 4,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de UPS-CC para cargas nativas em corrente contínua quando se quer remover a vulnerabilidade da etapa inversora.",
+      "pergunta": "Um conjunto de remotas e módulos eletrônicos de 24 Vcc é hoje mantido por uma UPS CA, e falhas da seção inversora já derrubaram essas cargas. Se a meta é manter o respaldo energético retirando da cadeia justamente o estágio que vem falhando, que arranjo de UPS deve ser adotado?",
+      "resposta": "UPS-CC.",
+      "explicacao": "Para cargas nativas em corrente contínua, a UPS-CC atende diretamente a carga e elimina a dependência da etapa inversora da UPS-CA.",
+      "resposta_padrao": "Outra UPS-CA redundante.",
+      "por_que_nao": "Redundar UPS-CA mantém a mesma dependência da conversão para CA; para carga nativa CC, o arranjo direto é UPS-CC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "UPS-CC são sistemas simples para cargas em corrente contínua."
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Degradação dos capacitores do barramento CC como causa de perda de condicionamento e pior resposta a transientes em UPS de dupla conversão.",
+      "pergunta": "Em uma UPS CA on-line, a entrada está estável; ainda assim, cargas digitais sensíveis reinicializam em degraus rápidos de carga e observa-se aumento de ondulação no barramento interno. Qual componente degradado explica melhor a perda de condicionamento?",
+      "resposta": "Capacitores do barramento CC.",
+      "explicacao": "Os capacitores sustentam o barramento condicionado e amortecem variações rápidas; quando degradados, aumentam a ondulação e pioram a resposta a transientes que afetam cargas sensíveis.",
+      "resposta_padrao": "Banco de baterias.",
+      "por_que_nao": "Bateria degradada afeta autonomia e sustentação sem rede; ondulação do barramento e resposta a transientes rápidos com entrada presente apontam aos capacitores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a carga passa a depender de um barramento interno condicionado e da etapa eletrônica de saída."
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas digitais críticos, degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de rever o dimensionamento de potência da UPS quando o crescimento de carga elimina o benefício esperado da dupla conversão.",
+      "pergunta": "Após a inclusão de novos servidores e switches, a UPS de dupla conversão passou a provocar reinicializações somente em partidas simultâneas de cargas do próprio barramento, sem coincidência com perturbações da rede externa. Que condição técnica da UPS deve ser corrigida para recuperar o benefício esperado da topologia?",
+      "resposta": "Dimensionamento de potência da UPS.",
+      "explicacao": "A melhoria da dupla conversão depende de potência adequada; com crescimento da carga, degraus internos podem exceder a capacidade de entrega mesmo sem problema na fonte externa.",
+      "resposta_padrao": "Qualidade da energia de entrada.",
+      "por_que_nao": "Se os eventos acompanham degraus de carga internos, o limitante é a capacidade da UPS, não o suprimento de entrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "desde que potência, componentes e manutenção estejam adequados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas digitais críticos, degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

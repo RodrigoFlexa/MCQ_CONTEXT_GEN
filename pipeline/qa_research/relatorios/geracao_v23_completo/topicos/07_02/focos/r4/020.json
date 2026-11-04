@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 4,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Divergências entre simuladores paralelos decorrem de base termodinâmica e de propriedades não alinhada.",
+      "pergunta": "Em estudos integrados feitos em simuladores separados, o mesmo fluido produz flashes e balanços diferentes entre reservatório e facilidades, embora as correntes de interface sejam trocadas regularmente. Qual causa técnica melhor explica a divergência na origem?",
+      "resposta": "Base termodinâmica e de propriedades físicas inconsistente.",
+      "explicacao": "Quando cada disciplina calcula equilíbrio de fases e propriedades com bases diferentes, os resultados divergem mesmo com troca regular de dados. A integração unificada reduz isso por manter esses elementos alinhados.",
+      "resposta_padrao": "Troca de arquivos de interface insuficiente.",
+      "por_que_nao": "Aumentar ou regularizar a troca de interfaces não corrige diferenças de equilíbrio de fases e propriedades calculadas por bases termodinâmicas distintas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o ganho principal é a consistência: propriedades físicas, termodinâmica e métodos de solução permanecem alinhados entre disciplinas, reduzindo divergências entre modelos paralelos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distribuição desacoplada de dados para múltiplos consumidores em integração híbrida usa publish/subscribe com broker MQTT.",
+      "pergunta": "A mesma variável de processo precisa alimentar em tempo real um SCADA local e várias aplicações analíticas, e novos consumidores deverão ser adicionados sem refazer integrações no controlador de origem. Que técnica de integração deve intermediar essa distribuição?",
+      "resposta": "Publish/subscribe via broker MQTT.",
+      "explicacao": "No arranjo híbrido, controladores de borda enviam dados por MQTT e brokers fazem a distribuição. Isso desacopla a origem dos vários consumidores e evita multiplicar ligações ponto a ponto.",
+      "resposta_padrao": "Polling ponto a ponto a partir do SCADA.",
+      "por_que_nao": "Polling ponto a ponto acopla origem e destinos e exige refazer integrações a cada novo consumidor; o broker distribui o mesmo fluxo desacoplado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "protocolos e brokers distribuem esses dados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Semântica consistente é pré-condição para HMI e analytics interpretarem corretamente dados multivendor.",
+      "pergunta": "Variáveis equivalentes de controladores distintos chegam à HMI e aos analytics com estruturas e codificações diferentes, e um mesmo estado de processo passa a ser interpretado com significados operacionais incompatíveis entre ativos. Que atributo dos dados está faltando?",
+      "resposta": "Coerência semântica.",
+      "explicacao": "Modelos de dados multivendor podem representar o mesmo estado com significados diferentes. Sem coerência semântica, HMI e analytics comparam sinais parecidos na forma, mas não equivalentes no significado operacional.",
+      "resposta_padrao": "Sincronismo temporal.",
+      "por_que_nao": "Timestamps alinhados preservam ordem e correlação no tempo, mas não unificam o significado operacional de estruturas e codificações diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações analíticas e modelos os transformam em informação operacional útil."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Um desafio recorrente no nível de controle é a diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

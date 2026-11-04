@@ -1,0 +1,83 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de controle por bandas para aproveitar o volume de retenção do separador sob flutuações rápidas de alimentação.",
+      "pergunta": "Em um separador trifásico sujeito a oscilações rápidas de alimentação, a válvula de saída de líquido fica caçando e repassa a variabilidade para jusante, embora o nível permaneça dentro da faixa operacional na maior parte do tempo. Qual estratégia de malha deve ser adotada para explorar o volume de retenção do vaso e reduzir a movimentação da válvula?",
+      "resposta": "Controle por Bandas no nível.",
+      "explicacao": "Como o vaso deve desacoplar parte da variabilidade, o controle por bandas evita que a válvula siga cada flutuação rápida enquanto o nível está aceitável e só acelera a correção perto dos limites.",
+      "resposta_padrao": "Um PI mais agressivo na malha de nível.",
+      "por_que_nao": "Perseguir continuamente o erro instantâneo faz a saída copiar as oscilações de entrada; o controle por bandas usa o inventário do vaso para amortecê-las.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também amortecem flutuações de vazão e atenuam oscilações vindas dos poços"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A separação óleo/água em separador trifásico exige controle direto da interface, não apenas do nível total.",
+      "pergunta": "Num separador trifásico, a pressão e o nível total estão estáveis, mas o óleo de saída passa a carregar mais água quando a alimentação varia. Qual variável controlada do próprio vaso deve ser priorizada para manter a partição correta entre as fases líquidas?",
+      "resposta": "Interface óleo-água.",
+      "explicacao": "O inventário total pode permanecer aceitável enquanto a fronteira entre as fases líquidas se desloca; manter a interface na posição adequada é o que preserva a separação óleo/água.",
+      "resposta_padrao": "Nível total do líquido.",
+      "por_que_nao": "O nível total controla apenas o volume combinado; ele não fixa onde está a fronteira entre óleo e água dentro da zona de separação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de nível, pressão e interface é central para a estabilidade da planta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A robustez da malha deve ser testada contra atraso adicional quando a vulnerabilidade observada é lentidão de medição/atuação.",
+      "pergunta": "Na qualificação de uma malha de nível de separador, degraus e oscilações de vazão foram bem absorvidos, mas em operação real o loop fica oscilatório quando sensores e atuadores respondem mais lentamente. Que perturbação específica deve entrar no teste de robustez para reproduzir essa vulnerabilidade?",
+      "resposta": "Aumento de atraso da malha.",
+      "explicacao": "A fragilidade descrita é perda de margem dinâmica por lentidão adicional do loop; por isso o teste de robustez deve introduzir atraso extra, não apenas variar a carga.",
+      "resposta_padrao": "Degraus maiores na vazão de entrada.",
+      "por_que_nao": "Amplitude de perturbação não revela a degradação de fase e tempo que aparece quando a malha fica mais lenta do que a dinâmica do vaso.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

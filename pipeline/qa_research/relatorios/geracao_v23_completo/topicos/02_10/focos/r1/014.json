@@ -1,0 +1,109 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Instabilidade da interface pode ser causada por perda de margem do elemento final de controle, e não pela sintonia.",
+      "pergunta": "Na malha de interface óleo-água, surtos de alimentação fazem o controlador levar repetidamente a válvula de saída de água para quase 100%; ainda assim o nível continua subindo e novas retunagens pouco alteram a resposta. Qual causa técnica explica melhor essa instabilidade?",
+      "resposta": "Saturação da válvula de controle da saída de água.",
+      "explicacao": "Com a válvula perto do limite, a malha perde margem de correção; a instabilidade passa a vir da falta de autoridade do elemento final, não principalmente da sintonia.",
+      "resposta_padrao": "Sintonia inadequada do controlador PID.",
+      "por_que_nao": "Com a válvula no limite, a malha perdeu autoridade hidráulica; mudar ganhos não cria capacidade adicional de descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações, podendo não conseguir estabilizar o nível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "instabilidade nem sempre decorre apenas da lógica de controle; pode surgir porque o elemento final de controle perdeu margem operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em Dead Band Assimétrico, a saturação do atuador exige anti-windup para evitar atraso de recuperação por acúmulo integral.",
+      "pergunta": "Numa malha de interface com Dead Band Assimétrico, uma perturbação longa mantém a saída saturada; quando a alimentação normaliza, o nível demora a voltar à banda e cruza o limite oposto antes de estabilizar. Que recurso de implementação deve ser incluído para evitar esse atraso de recuperação?",
+      "resposta": "Anti-windup da ação integral.",
+      "explicacao": "Sem anti-windup, o integral continua acumulando enquanto a saída está saturada, o que distorce a resposta integral e retarda a recuperação após a perturbação.",
+      "resposta_padrao": "Aumentar a ação derivativa do controlador.",
+      "por_que_nao": "A demora após desaturar vem do integral acumulado no limite, algo que derivativo não elimina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tais falhas são tecnicamente relevantes porque podem distorcer a resposta integral, retardar recuperação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A avaliação prévia de mudanças na filosofia de controle em sistema separador-hidrociclone exige modelo dinâmico fenomenológico para captar acoplamento e transientes.",
+      "pergunta": "Antes de mudar a filosofia de controle da interface de um separador que envia água a hidrociclones e recebe golfadas, como o efeito combinado na interface e na estabilidade da descarga deve ser estudado sem testar direto na planta?",
+      "resposta": "Modelo dinâmico fenomenológico do sistema separador-hidrociclone.",
+      "explicacao": "Esse modelo permite representar o acoplamento separador-hidrociclone e testar oscilações de carga e golfadas antes da aplicação, algo que análise estacionária não captura.",
+      "resposta_padrao": "Balanço de massa estacionário do separador.",
+      "por_que_nao": "Oscilações, golfadas e interação entre as malhas só aparecem em modelo dinâmico acoplado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "No controle acoplado separador-hidrociclone, a malha do overflow deve manter o DPR para preservar o split enquanto a interface é ajustada via underflow.",
+      "pergunta": "Em um arranjo em que a interface água-óleo do separador é controlada pela vazão de underflow do hidrociclone, cada correção da interface muda a condição enfrentada pelo próprio ciclone. Para manter o split aproximadamente constante enquanto essa malha atua, que variável a malha do overflow deve controlar?",
+      "resposta": "Differential Pressure Ratio (DPR).",
+      "explicacao": "Nessa arquitetura, o overflow controla o DPR para manter o split quase constante, apesar das correções na vazão de underflow usadas para segurar a interface.",
+      "resposta_padrao": "Pressão de alimentação do hidrociclone.",
+      "por_que_nao": "O split do hidrociclone é mantido pelo DPR; pressão absoluta de entrada, sozinha, não garante essa divisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

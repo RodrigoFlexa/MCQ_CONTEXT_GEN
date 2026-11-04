@@ -1,0 +1,65 @@
+{
+  "item": "06_02",
+  "foco": 3,
+  "rodada": 5,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Retentividade do intertravamento como requisito funcional da barreira em variáveis oscilatórias.",
+      "pergunta": "Após migração de lógica, um shutdown de alto-alto continua disparando no setpoint correto. Em transientes oscilatórios, porém, a alimentação volta sozinha assim que a variável cruza brevemente abaixo do ajuste, e a condição perigosa reaparece antes de intervenção. Que característica da lógica deve ser exigida para que essa barreira cumpra a função do cenário?",
+      "resposta": "Retentividade do shutdown até reset manual seguro.",
+      "explicacao": "Se a variável recua momentaneamente, a barreira só mantém o estado seguro se o intertravamento ficar travado após uma demanda válida; sem isso, a função não atua do modo e no tempo previstos.",
+      "resposta_padrao": "Aumentar a histerese do transmissor.",
+      "por_que_nao": "Histerese só reduz recrossings do sinal; impedir reabertura automática após uma demanda válida exige travamento lógico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ela precisa atuar do modo, no tempo e na condição previstos no cenário analisado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "lógica de intertravamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "regime transiente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Coordenação temporal das saídas do intertravamento para evitar perda de função em transientes.",
+      "pergunta": "Após revisão de causa e efeito, um vaso protegido por shutdown passou a apresentar pico breve de pressão justamente na demanda do trip, antes de iniciar a despressurização. Sensor, lógica e válvulas passaram nos testes individuais. Que aspecto específico da lógica deve ser conferido para que a barreira cumpra a função no transiente?",
+      "resposta": "Sequenciamento temporal entre isolamento da alimentação e abertura do blowdown.",
+      "explicacao": "Se os elementos atuam isoladamente, mas a pressão ainda sobe na demanda, o ponto decisivo é a coordenação entre saídas. A função precisa atuar na ordem e no tempo coerentes com o transiente analisado.",
+      "resposta_padrao": "Reduzir o setpoint do trip de alta pressão.",
+      "por_que_nao": "Quando o trip já dispara, o pico transitório durante a atuação aponta para ordem e temporização das saídas, não para limiar de disparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ela precisa atuar do modo, no tempo e na condição previstos no cenário analisado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "lógica de intertravamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "as interdependências entre sistemas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A condição de baterias em sistemas essenciais deve ser comprovada por ensaio de descarga, não pela tensão com retificador em flutuação.",
+      "pergunta": "Durante o ensaio de blackout, o quadro 24 Vcc perde comandos antes da recomposição, embora em serviço normal a tensão fique estável com o retificador em flutuação. Que ensaio deve ser usado periodicamente para comprovar a retaguarda real do banco?",
+      "resposta": "Teste de autonomia por descarga controlada do banco de baterias.",
+      "explicacao": "Com o retificador em flutuação, o quadro pode parecer saudável mesmo com capacidade degradada. A retaguarda efetiva só é demonstrada verificando se o banco sustenta a carga pelo tempo requerido.",
+      "resposta_padrao": "Acompanhar a tensão do quadro e o carregamento em flutuação.",
+      "por_que_nao": "O retificador pode manter a tensão normal mesmo com baterias degradadas; só a descarga evidencia a capacidade útil.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Cargas AC críticas que não podem reiniciar durante a transferência para a emergência devem ser alimentadas por UPS, não apenas por geração de emergência.",
+      "pergunta": "Um CLP de parada e a rede crítica de comunicação reiniciam na transferência para a geração de emergência, perdendo estado, embora a fonte assuma depois. Para eliminar esse reboot na perda total da rede, que sistema de alimentação deve suprir essas cargas AC?",
+      "resposta": "UPS 120 Vca.",
+      "explicacao": "CLP e comunicação crítica exigem continuidade sem interrupção. A geração de emergência recompõe após partida e transferência; o UPS mantém a alimentação no intervalo e evita reboot.",
+      "resposta_padrao": "Geração de emergência.",
+      "por_que_nao": "Ela não é no-break; há lacuna de partida e transferência, suficiente para reinicializar CLPs e comunicações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A perda simultânea de funções redundantes após falha de um único UPS revela ausência de segregação funcional entre ramos.",
+      "pergunta": "No teste de contingência, a perda do UPS A derruba simultaneamente duas estações redundantes, enquanto o UPS B permanece energizado e sem alarmes. Que falha de arquitetura isso revela?",
+      "resposta": "Perda de segregação funcional entre os ramos redundantes.",
+      "explicacao": "Se os trens estivessem segregados, a perda de um UPS não derrubaria ambos. O resultado do teste aponta dependência comum de alimentação entre cargas que deveriam ser independentes.",
+      "resposta_padrao": "Falha simultânea das duas estações.",
+      "por_que_nao": "A correlação direta com a perda de um único UPS aponta causa comum de alimentação, não defeito independente dos dois equipamentos.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

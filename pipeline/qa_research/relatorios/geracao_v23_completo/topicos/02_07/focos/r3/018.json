@@ -1,0 +1,79 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 3,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Oscilações transmitidas ao sistema de gás a jusante do separador são tratadas prioritariamente pela malha de pressão do vaso.",
+      "pergunta": "Em um separador trifásico recebendo oscilações dos poços, a vazão líquida enviada às etapas seguintes permanece relativamente suave, mas o header de gás sofre picos sempre que a alimentação varia. Sem alterar os controles das saídas líquidas, qual variável controlada do próprio vaso deve ser priorizada para recuperar o amortecimento desses surtos?",
+      "resposta": "Pressão do separador.",
+      "explicacao": "O separador também amortece oscilações e reduz surge de pressão a jusante; quando o efeito indesejado aparece no lado gasoso, a malha decisiva é a de pressão, não a de inventário líquido.",
+      "resposta_padrao": "Nível do líquido do separador.",
+      "por_que_nao": "O nível suaviza a vazão líquida por holdup; picos no header de gás dependem da gestão da contrapressão no espaço gasoso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também amortecem flutuações de vazão e atenuam oscilações vindas dos poços, reduzindo o surge de pressão a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa função amortecedora explica por que o controle de nível, pressão e interface é central para a estabilidade da planta."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A partição correta entre as duas fases líquidas no separador depende do posicionamento da interface óleo-água, não apenas do nível total.",
+      "pergunta": "Durante variações de alimentação, o óleo de saída passa a vir mais úmido e a água produzida mais oleosa, enquanto a pressão e o nível total do separador permanecem estáveis. Que variável interna do vaso deve ser reconduzida ao ponto correto para restaurar a partição entre as fases líquidas?",
+      "resposta": "Interface óleo-água.",
+      "explicacao": "Com pressão e inventário total estáveis, a piora simultânea das duas correntes líquidas indica deslocamento da fronteira entre óleo e água; é essa variável que preserva a partição correta.",
+      "resposta_padrao": "Nível total de líquido.",
+      "por_que_nao": "O nível total pode permanecer correto enquanto a fronteira entre as fases se desloca e contamina ambas as saídas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa função amortecedora explica por que o controle de nível, pressão e interface é central para a estabilidade da planta."
+        },
+        {
+          "bloco": "F",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Oscilação de malha por correção tardia, sem mudança relevante no ganho estático, deve ser reproduzida em qualificação por aumento de atraso do loop.",
+      "pergunta": "Uma malha de nível ajustada em bancada absorveu degraus e oscilações de vazão, mas no campo a correção passa a chegar tarde e o nível entra em oscilação sustentada após pequenas perturbações, sem mudança relevante no ganho estático do processo. Que perturbação deve ser acrescentada ao ensaio de robustez para reproduzir esse comportamento?",
+      "resposta": "Aumento de atraso da malha.",
+      "explicacao": "Correção tardia com ganho estático semelhante aponta para perda de margem por tempo morto adicional no loop; esse tipo de perturbação é citado na qualificação de robustez.",
+      "resposta_padrao": "Golfadas a montante.",
+      "por_que_nao": "Golfadas testam surtos assimétricos de entrada; aqui o sinal decisivo é a defasagem excessiva entre erro e ação de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

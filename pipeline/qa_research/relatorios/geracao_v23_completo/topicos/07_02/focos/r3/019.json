@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 19,
+  "rodada": 3,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em UPS CA on-line, descarga do banco com entrada presente aponta para falha do estágio de retificação/carregamento.",
+      "pergunta": "Em uma UPS CA on-line de dupla conversão, a alimentação de entrada permanece presente e a carga crítica continua energizada, mas o banco de baterias passa a fornecer corrente de descarga durante a operação normal. Qual seção da UPS deve ter a intervenção priorizada?",
+      "resposta": "Retificador/carregador.",
+      "explicacao": "Com entrada disponível, a dupla conversão deve retificar a fonte, alimentar o barramento interno e carregar o banco. Se o banco sustenta a carga em regime normal, o estágio de retificação/carregamento não está cumprindo sua função.",
+      "resposta_padrao": "Banco de baterias degradado.",
+      "por_que_nao": "Bateria degradada reduz autonomia; descarga contínua com entrada presente indica falha do estágio que deveria manter o barramento e recarregar o banco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a energia disponível é retificada para corrente contínua, essa etapa carrega o banco de baterias e alimenta internamente o caminho de conversão que supre a carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Oscilação de frequência e forma de onda na saída de UPS on-line, com entrada estável, aponta primeiro para a seção inversora.",
+      "pergunta": "Em uma UPS CA on-line, a rede de entrada está estável e o banco permanece em flutuação, porém a frequência e a forma de onda na saída da UPS passam a oscilar, causando reinicializações em servidores e controladores. Qual elemento interno deve ter a intervenção priorizada?",
+      "resposta": "Seção inversora de saída.",
+      "explicacao": "Na dupla conversão, a saída entregue à carga é sintetizada pela etapa eletrônica de saída a partir do barramento interno condicionado. Oscilação própria de frequência e forma de onda aponta primeiro para o inversor.",
+      "resposta_padrao": "Banco de baterias descarregado.",
+      "por_que_nao": "O banco fornece reserva energética; a geração da frequência e da forma de onda de saída é função do inversor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a carga passa a depender de um barramento interno condicionado e da etapa eletrônica de saída"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega"
+        },
+        {
+          "bloco": "F",
+          "trecho": "degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para confirmar se a reserva da UPS está sustentando o barramento com entrada presente, a verificação decisiva é o sentido da corrente do banco.",
+      "pergunta": "Com a entrada CA presente e a tensão de saída da UPS aparentemente normal, há suspeita de que a reserva esteja sendo consumida sem percepção da operação. Que verificação específica deve ser feita para confirmar se o banco está sustentando o barramento interno em vez de estar sendo recarregado?",
+      "resposta": "Sentido da corrente do banco de baterias.",
+      "explicacao": "Em regime normal, o retificador deve carregar o banco e alimentar o caminho interno. Corrente saindo do banco com entrada presente mostra que a reserva está sustentando o barramento.",
+      "resposta_padrao": "Conferir apenas o estado de carga do banco.",
+      "por_que_nao": "O banco pode ainda aparecer carregado e, mesmo assim, estar descarregando; o sentido da corrente mostra se ele está sendo recarregado ou sustentando o barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa etapa carrega o banco de baterias e alimenta internamente o caminho de conversão que supre a carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a carga passa a depender de um barramento interno condicionado e da etapa eletrônica de saída"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}
