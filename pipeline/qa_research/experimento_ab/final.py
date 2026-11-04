@@ -77,6 +77,8 @@ def carregar(fonte: dict) -> list[dict]:
 
 
 class DatasetFinal:
+    ARQ = "dataset.jsonl"      # saída da montagem (o dataset v2 grava candidatos e filtra pela sustentação depois)
+
     def __init__(self, saida: Path = SAIDA, exp: Path = C.EXPERIMENTO, fontes_: list | None = None,
                  calibracao: Path | None = None, exclusoes: Path = EXCLUSOES, embedder=None, juiz=None,
                  progress=print):
@@ -136,7 +138,7 @@ class DatasetFinal:
             raise ValueError("O dataset mudou desde a última avaliação (nova fonte, exclusão ou decisão). Apague "
                              f"{C.relativo(self.saida / 'avaliacao')} e {C.relativo(self.saida / 'painel')} para "
                              "reavaliar (as respostas já pagas continuam no cache copiado das fontes)")
-        C.gravar_jsonl(self.saida / "dataset.jsonl", final)
+        C.gravar_jsonl(self.saida / self.ARQ, final)
         res = {"dataset": cfg_dataset,
                "por_fonte": {f["nome"]: {"reunidas": f["questoes"],
                                          "excluidas": sum(u.startswith(f["nome"] + ":") for u in excl),
@@ -218,6 +220,43 @@ class DatasetFinal:
                         progress=self.progress)
 
     # ---------------------------------------------------------------- 4. relatório
+    def diversidade(self, lst: list) -> dict:
+        """Não trivialidade (sobreposição com o contexto) e diversidade (repetição dentro do tópico)."""
+        media = lambda xs: float(np.mean([x for x in xs if x is not None])) if any(x is not None for x in xs) else None  # noqa: E731
+        mr, n2, n3 = [], [], []
+        for q in lst:
+            frases = [s for b in q["blocos_contexto"] for s in re.split(r"(?<=[.!?;])\s+|\n+", b["texto"]) if s.strip()]
+            qt = content(q["pergunta"])
+            mr.append(max((rouge(qt, content(s)) for s in frases), default=0.0))
+            at, cts = tokens(q["resposta"]), [tokens(b["texto"]) for b in q["blocos_contexto"]]
+            for k, dest in ((2, n2), (3, n3)):
+                ag, cg = grams(at, k), set().union(*(grams(t, k) for t in cts))
+                if ag:
+                    dest.append(100 * len(ag - cg) / len(ag))
+        sb = []
+        for item in {q["item"] for q in lst}:   # repetição dentro do mesmo tópico (independe do tamanho do dataset)
+            grupo = [q["pergunta"] for q in lst if q["item"] == item]
+            if len(grupo) > 1:
+                sb += list(self_bleu4(grupo))
+        res = {}
+        res["lexical"] = {"max_rougeL": media(mr), "novel_2gram": media(n2), "novel_3gram": media(n3),
+                          "self_bleu4_por_topico": media(sb),
+                          "palavras_resposta": media([len(q["resposta"].split()) for q in lst])}
+        try:
+            cal = carregar_calibracao(self.cal_arq)
+            emb = self._embedder or C.embedder(cal["embedding"], self.saida)
+            V = centrar(emb.encode([C.texto_questao(q) for q in lst]), np.asarray(ler(self.cal_arq.parent / cal["media"])))
+            viz = []
+            for k, q in enumerate(lst):
+                mesmos = [j for j, w in enumerate(lst) if w["item"] == q["item"] and j != k]
+                if mesmos:
+                    viz.append(float(max(V[mesmos] @ V[k])))
+            res["vizinho_cosseno_centrado"] = media(viz)
+        except Exception as exc:  # noqa: BLE001 - sem API: a métrica fica ausente
+            res["vizinho_cosseno_centrado"] = None
+            res["erro_embeddings"] = f"{type(exc).__name__}: {exc}"[:200]
+        return res
+
     def relatorio(self) -> dict:
         import csv
         qs = {q["uid"]: q for q in C.linhas(self.saida / "dataset.jsonl")}
@@ -240,39 +279,7 @@ class DatasetFinal:
                     a["open"].append(float(r["veredito_open_book"] == "correta"))
         res["acuracia"] = {m: {k: media(v) for k, v in a.items()} for m, a in acc.items()}
         res["painel"] = ler(self.saida / "painel" / "resumo.json")
-        # não trivialidade e diversidade
-        mr, n2, n3 = [], [], []
-        for q in qs.values():
-            frases = [s for b in q["blocos_contexto"] for s in re.split(r"(?<=[.!?;])\s+|\n+", b["texto"]) if s.strip()]
-            qt = content(q["pergunta"])
-            mr.append(max((rouge(qt, content(s)) for s in frases), default=0.0))
-            at, cts = tokens(q["resposta"]), [tokens(b["texto"]) for b in q["blocos_contexto"]]
-            for k, lst in ((2, n2), (3, n3)):
-                ag, cg = grams(at, k), set().union(*(grams(t, k) for t in cts))
-                if ag:
-                    lst.append(100 * len(ag - cg) / len(ag))
-        lst = list(qs.values())
-        sb = []
-        for item in {q["item"] for q in lst}:   # repetição dentro do mesmo tópico (independe do tamanho do dataset)
-            grupo = [q["pergunta"] for q in lst if q["item"] == item]
-            if len(grupo) > 1:
-                sb += list(self_bleu4(grupo))
-        res["lexical"] = {"max_rougeL": media(mr), "novel_2gram": media(n2), "novel_3gram": media(n3),
-                          "self_bleu4_por_topico": media(sb),
-                          "palavras_resposta": media([len(q["resposta"].split()) for q in lst])}
-        try:
-            cal = carregar_calibracao(self.cal_arq)
-            emb = self._embedder or C.embedder(cal["embedding"], self.saida)
-            V = centrar(emb.encode([C.texto_questao(q) for q in lst]), np.asarray(ler(self.cal_arq.parent / cal["media"])))
-            viz = []
-            for k, q in enumerate(lst):
-                mesmos = [j for j, w in enumerate(lst) if w["item"] == q["item"] and j != k]
-                if mesmos:
-                    viz.append(float(max(V[mesmos] @ V[k])))
-            res["vizinho_cosseno_centrado"] = media(viz)
-        except Exception as exc:  # noqa: BLE001 - sem API: a métrica fica ausente
-            res["vizinho_cosseno_centrado"] = None
-            res["erro_embeddings"] = f"{type(exc).__name__}: {exc}"[:200]
+        res.update(self.diversidade(list(qs.values())))
         atomic_json(self.saida / "qualidade.json", res)
         (self.saida / "QUALIDADE.md").write_text(_markdown(res), encoding="utf-8")
         return res

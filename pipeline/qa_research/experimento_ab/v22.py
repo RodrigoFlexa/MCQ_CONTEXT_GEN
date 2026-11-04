@@ -134,7 +134,7 @@ class GeracaoV22(GeracaoAB):
 
     def __init__(self, saida: Path, itens, *, docs: Path, braco: str = "?", reusar=(), calibracao: Path,
                  saturacao: dict | None = None, onda: int = 4, modelos: dict | None = None, clientes: dict | None = None,
-                 embedder=None, workers: int = 8, progress=print):
+                 embedder=None, workers: int = 8, docs_simultaneos: int | None = None, progress=print):
         super().__init__(saida, itens, docs=docs, unidade="janela", braco=braco, reusar=reusar, calibracao=calibracao,
                          dedup="incremental", modelos=modelos, clientes=clientes, embedder=embedder, workers=workers,
                          progress=progress)
@@ -143,6 +143,9 @@ class GeracaoV22(GeracaoAB):
         if self.sat["max_rodadas"] < 1 or self.sat["paciencia"] < 1:
             raise ValueError("max_rodadas e paciencia devem ser >= 1")
         self.onda_foco = max(1, int(onda))
+        # documentos gerados ao mesmo tempo (cada um com ondas de onda_foco focos): com 40 documentos, todos juntos
+        # seriam 160 chamadas simultâneas ao gerador; não entra no config porque não muda o resultado
+        self.docs_simultaneos = max(1, int(docs_simultaneos or len(self.itens)))
         # auditorias de uma unidade rodam em paralelo; o semáforo limita as chamadas simultâneas do auditor no total
         # (2 x workers: com 3 documentos e ondas de 4 focos, a v22 sequencial já fazia até 12 auditorias de uma vez)
         self._vagas_auditor = threading.BoundedSemaphore(2 * max(1, int(workers)))
@@ -509,7 +512,7 @@ class GeracaoV22(GeracaoAB):
     def run(self) -> int:
         self.config()
         falhas = self.inventario()
-        with ThreadPoolExecutor(max_workers=max(1, len(self.itens))) as pool:
+        with ThreadPoolExecutor(max_workers=min(max(1, len(self.itens)), self.docs_simultaneos)) as pool:
             falhas += sum(pool.map(self._documento, self.itens))
         self.finalizar(self.itens)
         self.relatorio()
@@ -557,7 +560,7 @@ class GeracaoV22(GeracaoAB):
                         revisitas["visitas"] += 1
                         revisitas["conhecimentos_novos"] += g[f][r]
         segunda = [q for q in todas if q.get("tentativa") == 2]
-        res = {"braco": self.braco, "gerador": "v22", "unidade": "janela", "docs": C.relativo(self.docs_dir),
+        res = {"braco": self.braco, "gerador": self.VERSAO, "unidade": "janela", "docs": C.relativo(self.docs_dir),
                "total": funil(todas), "por_origem": {o: funil([q for q in todas if q["origem"] == o])
                                                        for o in ("janela", "composta")},
                "por_item": {i: funil([q for q in todas if q["item"] == i]) for i in self.itens},

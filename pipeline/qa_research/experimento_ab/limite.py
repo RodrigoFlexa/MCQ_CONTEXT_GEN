@@ -123,13 +123,15 @@ def amostrar(final: Path, n: int, semente: int = 20261103) -> list[dict]:
 
 # ------------------------------------------------------------------ avaliação com resposta curta
 class AvaliacaoCurta(G.AvaliacaoGap):
+    """Mesmo motor do benchmark_gap com resposta de até `limite` palavras, com ou sem contexto."""
     limite = 20
 
     def responder_um(self, m, q):
         nome = "resposta_" + m + "_" + _nome_arq(q["uid"])
         try:
             d = self.cliente("resp_" + m, self.respondentes[m]).json(
-                prompt_curta(self.limite), json.dumps({"pergunta": q["pergunta"], "contexto": None}, ensure_ascii=False),
+                prompt_curta(self.limite), json.dumps({"pergunta": q["pergunta"], "contexto": q.get("contexto_tecnico")},
+                                                 ensure_ascii=False),
                 tag="resposta_curta_" + m, max_tokens=8000, item=q["item"], validate=G.Q.base.validar_resposta)
             pal = len(d["resposta"].split())
             rec = {"uid": q["uid"], "modelo": m, "resposta": d["resposta"], "status_avaliacao": "respondida",

@@ -1044,3 +1044,91 @@ class DedupBloqueioTests(unittest.TestCase):
         self.assertEqual(dd.processar("01_01", qs), 0)
         self.assertEqual(read_json(tmp / "01_01" / "x_1.json")["via"], "bloqueio_juiz")
         self.assertEqual(dd.redundantes("01_01"), {})
+
+
+class CompletoTests(unittest.TestCase):
+    def test_gerador_completo_usa_inventario_de_outubro_e_fontes_na_ordem(self):
+        from pipeline.qa_research.experimento_ab import completo as CO
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        exp = tmp / "exp"
+        C.preparar_documentos(exp, itens=[ITEM])
+        calibracao_falsa(exp / "calibracao", auto=0.97)
+        origem = tmp / "outubro"
+        (origem / "topicos" / ITEM).mkdir(parents=True)
+        (origem / "config.json").write_text(json.dumps({"itens": ["01_01", ITEM, "02_02"]}), encoding="utf-8")
+        self.assertEqual(CO.itens_completos(origem), ["01_01"])          # os 3 do experimento ficam com o B_v23
+        with self.assertRaises(ValueError):
+            CO.gerador(exp, itens=[ITEM], origem=origem, saida=tmp / "g", docs=exp / "docs" / "antigo", **SILENCIO)
+        (origem / "topicos" / ITEM / "combinacoes.json").write_text("{}", encoding="utf-8")
+        g = CO.gerador(exp, itens=[ITEM], origem=origem, saida=tmp / "g", docs=exp / "docs" / "antigo",
+                       docs_simultaneos=2, embedder=Emb(), **SILENCIO)
+        self.assertEqual((g.VERSAO, g.reusar, g.docs_simultaneos), ("v23", [origem], 2))
+        self.assertEqual([f["nome"] for f in CO.fontes_v2(exp, tmp / "g")], ["v23", "v23c", "v22", "antigo"])
+        self.assertTrue(all(f["obrigatoria"] for f in CO.fontes_v2(exp, tmp / "g")))
+
+    def test_dataset_v2_filtra_sustentacao_avalia_com_contexto_e_relata(self):
+        from pipeline.qa_research.experimento_ab import completo as CO
+        from pipeline.qa_research.tests.test_benchmark_gap import Answer, Faith
+        from pipeline.qa_research.tests.test_especialista_finalizacao import Juiz as JuizResp
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        exp = tmp / "exp"
+        C.preparar_documentos(exp, itens=[ITEM])
+        cal = calibracao_falsa(exp / "calibracao", auto=0.97)
+        docs = exp / "docs" / "refinado"
+
+        def q(k, pergunta, resposta, tipo="diagnostico"):
+            return {"uid": f"{ITEM}:j:r1:{k:03d}:1", "item": ITEM, "tipo": tipo, "cenario": True, "composicao": "simples",
+                    "origem": "janela", "foco": k, "pergunta": pergunta, "resposta": resposta}
+
+        fontes_ = []
+        for nome, qs in (("v23", [q(0, "Após trocar o filtro, a pressão cai e a vazão some. Qual a causa?", "Entupimento do elemento.")]),
+                         ("v23c", [q(1, "Qual ajuste estabiliza a interface do separador em mar severo?", "Ganho menor no controle de nível.", "decisao"),
+                                   q(2, "Qual técnica acompanha a perda metálica com leitura contínua?", "SEM SUPORTE", "procedimento")])):
+            pasta = tmp / nome
+            C.gravar_jsonl(pasta / "aprovadas.jsonl", qs)
+            (pasta / "geracao_concluida.json").write_text("{}", encoding="utf-8")
+            fontes_.append({"nome": nome, "pasta": pasta, "marcador": "geracao_concluida.json", "docs": docs,
+                            "obrigatoria": True})
+        v1 = tmp / "v1"                                # auditoria do v1 reaproveitada para a mesma questão
+        uid0 = f"v23:{ITEM}:j:r1:000:1"
+        (v1 / "faithfulness").mkdir(parents=True)
+        (v1 / "faithfulness" / (CO._nome_arq(uid0) + ".json")).write_text(json.dumps(
+            {"uid": uid0, "avaliacao": {}, "status": "totalmente_sustentado", "afirmacoes": 1, "sustentada": 1,
+             "contradita": 0, "insuficiente": 0, "fracao_sustentada": 1.0}), encoding="utf-8")
+
+        class FaithParcial(Faith):
+            def json(self, system, user, validate=None, **kw):
+                d = super().json(system, user, validate=validate, **kw)
+                if "SEM SUPORTE" in json.loads(user)["gabarito"]:
+                    d["afirmacoes"][0]["veredito"] = "insuficiente"
+                    d["afirmacoes"][0]["evidencias"] = []
+                return d
+
+        excl = tmp / "exclusoes.json"
+        excl.write_text(json.dumps({"exclusoes": {}}), encoding="utf-8")
+        modelos = {"gpt-4-1": "gpt-4-1-petrobras", "gpt-5": "gpt-5-petrobras:low", "gpt-5-4": "gpt-5-4-petrobras:low"}
+        d = CO.DatasetCompleto(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),
+                               juiz=NuncaRedundante(), modelos=modelos, v1=v1, **SILENCIO)
+        self.assertEqual(d.montar(), 0)
+        self.assertEqual(len(C.linhas(tmp / "final" / "candidatos.jsonl")), 3)
+        faith = FaithParcial()
+        self.assertEqual(d.sustentar(workers=2, clientes={"faithfulness": faith}), 0)
+        self.assertEqual(faith.calls, 2)                                   # a do v1 não é paga de novo
+        ds = C.linhas(tmp / "final" / "dataset.jsonl")
+        self.assertEqual({x["uid"] for x in ds}, {uid0, f"v23c:{ITEM}:j:r1:001:1"})
+        resp = {f"resp_{m}": Answer() for m in modelos}
+        self.assertEqual(d.avaliar(workers=2, judge_workers=1, clientes=resp | {"juiz": JuizResp()}), 0)
+        contextos = [p["contexto"] for p in resp["resp_gpt-5"].payloads]
+        self.assertEqual(sum(c is None for c in contextos), 3)             # sondagem + 2 sem contexto
+        self.assertEqual(sum(bool(c) for c in contextos), 2)
+        self.assertEqual(read_json(tmp / "final" / "config.json")["limite_palavras"], 20)
+        res = d.relatorio()
+        self.assertEqual(res["n"], 2)
+        self.assertEqual(set(res["modelos"]), set(modelos))
+        self.assertIn("f1", res["modelos"]["gpt-5"]["sem"])
+        self.assertIsNotNone(res["estratos_pct"])
+        md = (tmp / "final" / "QUALIDADE.md").read_text(encoding="utf-8")
+        self.assertIn("| GPT-5.4 (referência) |", md)
+        self.assertIn("2 de 3 candidatas", md)
