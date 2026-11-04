@@ -1064,7 +1064,7 @@ class CompletoTests(unittest.TestCase):
         g = CO.gerador(exp, itens=[ITEM], origem=origem, saida=tmp / "g", docs=exp / "docs" / "antigo",
                        docs_simultaneos=2, embedder=Emb(), **SILENCIO)
         self.assertEqual((g.VERSAO, g.reusar, g.docs_simultaneos), ("v23", [origem], 2))
-        self.assertEqual([f["nome"] for f in CO.fontes_v2(exp, tmp / "g")], ["v23", "v23c", "v22", "antigo", "conceitos"])
+        self.assertEqual([f["nome"] for f in CO.fontes_v2(exp, tmp / "g")], ["v23", "v23c", "v22", "antigo", "conceitos", "variada"])
         self.assertTrue(all(f["obrigatoria"] for f in CO.fontes_v2(exp, tmp / "g")))
 
     def test_dataset_v2_filtra_sustentacao_avalia_com_contexto_e_relata(self):
@@ -1206,3 +1206,80 @@ class ConceitoTests(unittest.TestCase):
             boas, ruins = selecionar_exemplos(banco, item)
             self.assertNotIn(item, {e["item"] for e in boas + ruins})
             self.assertEqual(len(boas), len(banco["boas"]))
+
+
+class FalsoVariada(FalsoConceito):
+    """Gerador variado simulado: uma questão de conceito nova por visita, até a 4ª."""
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        if tag.startswith("v23var_"):
+            self.sistemas.append((tag, system))
+            tag = "v22_" + tag[len("v23var_"):]
+        return super().json(system, user, tag, max_tokens, validate, item)
+
+    def foco(self, user):
+        self.usuarios_foco.append(user)
+        f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d+\]|\n</janela>)", user, re.S).group(1)
+        return {"motivo": "", "questoes": [self._q("conceito", " ".join(f.split()[:8]), "F")]}
+
+
+class VariadaTests(unittest.TestCase):
+    def setUp(self):
+        V22Tests.setUp(self)
+        self.ext = self.exp / "externos.jsonl"
+        C.gravar_jsonl(self.ext, [{"id": f"{src}:{k}", "source": src, "question": f"Pergunta externa {src} {k}?",
+                                   "answer": f"Resposta {k}."} for src in ("pira_ptbr", "mmmlu_ptbr", "arc_challenge", "qasc")
+                                  for k in range(5)])
+        self.conv = self.exp / "convertidas.jsonl"
+        C.gravar_jsonl(self.conv, [{"uid": f"especialista_revisada:{k:04d}", "item": "05_02" if k % 3 else ITEM,
+                                    "tipo": ("mecanismo", "decisao")[k % 2], "pergunta": f"Pergunta convertida {k}?",
+                                    "resposta": "Curta." if k < 20 else " ".join(["longa"] * 20), "aprovada": True}
+                                   for k in range(24)])
+
+    def g(self, f, **kw):
+        from pipeline.qa_research.experimento_ab.variada import GeracaoVariada
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria")}
+        cl["dedup_juiz"] = NuncaRedundante()
+        return GeracaoVariada(self.exp / "variada", [ITEM], docs=self.exp / "docs" / "antigo", braco="variada",
+                              calibracao=self.cal, clientes=cl, embedder=Emb(), workers=4,
+                              **{**SILENCIO, "externos": self.ext, "convertidas": self.conv, **kw})
+
+    def test_externos_nas_tres_primeiras_visitas_e_convertidas_na_quarta(self):
+        f = FalsoVariada()
+        self.assertEqual(self.g(f).run(), 0)
+        d = self.exp / "variada"
+        _, bs = blocos(ITEM, self.exp / "docs" / "antigo")
+        vis = {int(k.split(":")[1]): v["visitas"] for k, v in read_json(d / "resultado.json")["saturacao"]["focos"].items()}
+        self.assertEqual(set(vis.values()), {4})                   # 4 visitas mesmo sem saturar; nunca uma 5ª
+        por_visita = {}
+        for u in f.usuarios_foco:
+            ex = u.split("<exemplos_de_forma>")[1].split("</exemplos_de_forma>")[0]
+            n = len([x for x in f.usuarios_foco if x.split("<janela>")[1] == u.split("<janela>")[1] and
+                     f.usuarios_foco.index(x) <= f.usuarios_foco.index(u)])
+            por_visita.setdefault(n, []).append(ex)
+        for n in (1, 2, 3):
+            self.assertTrue(all("Pergunta externa" in ex and ex.count("Pergunta:") == 8 for ex in por_visita[n]))
+        self.assertTrue(all("Pergunta convertida" in ex and "Pergunta externa" not in ex and "longa" not in ex
+                            and ex.count("Pergunta:") == 6 for ex in por_visita[4]))
+        self.assertNotEqual(por_visita[1][0], por_visita[2][0])      # exemplos mudam a cada visita
+        foco = [s for t, s in f.sistemas if t == "v23var_foco"]
+        self.assertTrue(foco and all("<questoes_ruins>" in s and "<questoes_boas>" not in s for s in foco))
+        self.assertTrue(any(t == "v23var_auditoria" for t, _ in f.sistemas))
+        aprov = C.linhas(d / "aprovadas.jsonl")
+        self.assertTrue(aprov and {q["origem"] for q in aprov} == {"janela"})
+        cfg = read_json(d / "config.json")
+        self.assertEqual((cfg["schema"], cfg["saturacao"]["max_rodadas"]), ("experimento-ab-geracao-v23var", 4))
+        antes = f.chamadas
+        self.assertEqual(self.g(f).run(), 0)
+        self.assertEqual(f.chamadas, antes)
+
+    def test_convertidas_de_outros_documentos_e_tipos_da_geracao(self):
+        from pipeline.qa_research.experimento_ab.variada import carregar_convertidas, sortear_convertidas
+        banco = carregar_convertidas(self.conv)
+        self.assertEqual(len(banco), 20)                              # gabarito longo fica fora
+        esc = sortear_convertidas(banco, ITEM, 3, ("conceito", "mecanismo", "consequencia"))
+        self.assertTrue(all(q["item"] != ITEM for q in esc))
+
+    def test_sem_externos_falha_com_instrucao(self):
+        with self.assertRaises(ValueError) as cm:
+            self.g(FalsoVariada(), externos=self.exp / "nao_existe.jsonl")
+        self.assertIn("preparar_exemplos", str(cm.exception))

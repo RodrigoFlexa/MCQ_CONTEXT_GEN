@@ -16,10 +16,11 @@
 #                        GPT-5.4 sem contexto) em <BRAÇO>, <BRAÇO>_v22 e <BRAÇO>_v23; comparação
 #   painel <BRAÇO>       só o painel de dificuldade de um braço já avaliado, e a comparação
 #   completo             gerador v23 nos 37 documentos restantes (inventário de outubro), geração de conceitos
-#                        (nomeação de termo técnico) nos 40 documentos e, em seguida, o dataset
+#                        (nomeação de termo técnico) e geração variada (conceito, mecanismo e consequência com
+#                        exemplos externos) nos 40 documentos e, em seguida, o dataset
 #                        final v2 (só gabaritos totalmente sustentados) avaliado com resposta de até 20 palavras por
 #                        GPT-4.1 Nano/Mini/4.1, GPT-5 nano/mini/5 e GPT-5.4 (referência); opção --docs-simultaneos (6)
-#   v23c | conceitos | final2   só uma das partes do completo
+#   v23c | conceitos | variada | final2   só uma das partes do completo
 #   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
 #   limite [N]           experimento do limite de palavras na resposta (padrão 20), amostra de 300 questões
 #   antigo               banco antigo: gabarito curto + auditor v23 nas 2156 sustentadas, benchmark_gap e painel
@@ -99,7 +100,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|final2) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -152,6 +153,9 @@ fi
 if [[ "$etapa" == "completo" || "$etapa" == "conceitos" ]]; then
     rodar "geração de conceitos nos 40 documentos" conceitos || fim_erro conceitos
 fi
+if [[ "$etapa" == "completo" || "$etapa" == "variada" ]]; then
+    rodar "geração variada (conceito, mecanismo, consequência) nos 40 documentos" variada || fim_erro variada
+fi
 if [[ "$etapa" == "completo" || "$etapa" == "final2" ]]; then
     rodar "dataset final v2: montagem, sustentação, avaliação (20 palavras) e relatório" final-v2 || fim_erro final2
 fi
@@ -175,10 +179,11 @@ echo "Enviar ao GitHub (no servidor):"
 if [[ "$etapa" == "limite" ]]; then
     echo "  cat pipeline/qa_research/relatorios/petroquest_final_v1/limite_${braco_sust:-20}/LIMITE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v1 \"Resultados: limite de palavras\""
-elif [[ "$etapa" == "completo" || "$etapa" == "v23c" || "$etapa" == "conceitos" || "$etapa" == "final2" ]]; then
+elif [[ "$etapa" == "completo" || "$etapa" == "v23c" || "$etapa" == "conceitos" || "$etapa" == "variada" || "$etapa" == "final2" ]]; then
     echo "  cat pipeline/qa_research/relatorios/geracao_v23_completo/RELATORIO.md"
     echo "  cat pipeline/qa_research/relatorios/geracao_conceitos/RELATORIO.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_conceitos \"Resultados: conceitos\""
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_variada \"Resultados: geração variada\""
     echo "  cat pipeline/qa_research/relatorios/petroquest_final_v2/QUALIDADE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_v23_completo \"Resultados: v23 completo\""
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v2 \"Resultados: dataset final v2\""

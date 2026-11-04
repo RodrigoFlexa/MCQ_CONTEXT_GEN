@@ -5,7 +5,8 @@
    do experimento já têm o B_v23, gerado sobre a versão refinada deles. Saída: relatorios/geracao_v23_completo.
 2. final-v2 (relatorios/petroquest_final_v2):
    a. montar: v23 (B_v23) > v23c (v23 completo) > v22 (B_v22) > antigo filtrado > conceitos (geração de nomeação
-      de termo técnico nos 40 documentos, relatorios/geracao_conceitos), exclusões da revisão manual e
+      de termo técnico nos 40 documentos, relatorios/geracao_conceitos) > variada (conceito, mecanismo e consequência
+      com exemplos de forma que mudam a cada visita, relatorios/geracao_variada), exclusões da revisão manual e
       deduplicação entre fontes (a mesma do dataset final v1) -> candidatos.jsonl;
    b. sustentar: auditoria de sustentação por afirmação de cada candidato (reaproveita a do v1 quando a questão é a
       mesma); só as totalmente sustentadas entram em dataset.jsonl;
@@ -38,6 +39,7 @@ from .painel import ESTRATOS, NAO_INDEPENDENTES, estrato
 
 SAIDA_GERACAO = C.QA / "relatorios" / "geracao_v23_completo"
 SAIDA_CONCEITOS = C.QA / "relatorios" / "geracao_conceitos"
+SAIDA_VARIADA = C.QA / "relatorios" / "geracao_variada"
 SAIDA = C.QA / "relatorios" / "petroquest_final_v2"
 LIMITE = 20
 DOCS_SIMULTANEOS = 6
@@ -78,14 +80,31 @@ def gerador_conceitos(exp: Path, *, workers: int = 8, onda: int = 4, saturacao: 
                            saturacao=saturacao, onda=onda, workers=workers, docs_simultaneos=docs_simultaneos, **kw)
 
 
-def fontes_v2(exp: Path = C.EXPERIMENTO, geracao: Path = SAIDA_GERACAO, conceitos: Path = SAIDA_CONCEITOS) -> list[dict]:
-    """Prioridade na deduplicação: v23 > v23 completo > v22 > antigo > conceitos (fonte nova, entra no que falta)."""
+def gerador_variada(exp: Path, *, workers: int = 8, onda: int = 4, docs_simultaneos: int = DOCS_SIMULTANEOS,
+                    itens=None, saida: Path = SAIDA_VARIADA, origem: Path = C.GERACAO_FINAL, docs: Path = DOCS, **kw):
+    """Conceito, mecanismo e consequência nos 40 documentos, com exemplos de forma externos (visitas 1 a 3) e do
+    dataset de múltipla escolha convertido (visita 4)."""
+    from .variada import GeracaoVariada
+    cal = Path(exp) / "calibracao" / "calibracao.json"
+    if not cal.exists():
+        raise ValueError(f"Falta a calibração da deduplicação ({C.relativo(cal)})")
+    itens = list(itens or ler(Path(origem) / "config.json")["itens"])
+    return GeracaoVariada(Path(saida), itens, docs=Path(docs), braco="variada", calibracao=cal, onda=onda,
+                          workers=workers, docs_simultaneos=docs_simultaneos, **kw)
+
+
+def fontes_v2(exp: Path = C.EXPERIMENTO, geracao: Path = SAIDA_GERACAO, conceitos: Path = SAIDA_CONCEITOS,
+              variada: Path = SAIDA_VARIADA) -> list[dict]:
+    """Prioridade na deduplicação: v23 > v23 completo > v22 > antigo > conceitos > variada (as fontes novas entram
+    no que falta)."""
     v23, v22, antigo = ({**f, "obrigatoria": True} for f in F.fontes(exp))
     v23c = {"nome": "v23c", "pasta": Path(geracao), "marcador": "geracao_concluida.json", "docs": DOCS,
             "obrigatoria": True}
     conc = {"nome": "conceitos", "pasta": Path(conceitos), "marcador": "geracao_concluida.json", "docs": DOCS,
             "obrigatoria": True}
-    return [v23, v23c, v22, antigo, conc]
+    var = {"nome": "variada", "pasta": Path(variada), "marcador": "geracao_concluida.json", "docs": DOCS,
+           "obrigatoria": True}
+    return [v23, v23c, v22, antigo, conc, var]
 
 
 def metricas_modelo(pares: list[dict]) -> dict:
