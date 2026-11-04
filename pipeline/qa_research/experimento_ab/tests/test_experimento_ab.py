@@ -1064,7 +1064,7 @@ class CompletoTests(unittest.TestCase):
         g = CO.gerador(exp, itens=[ITEM], origem=origem, saida=tmp / "g", docs=exp / "docs" / "antigo",
                        docs_simultaneos=2, embedder=Emb(), **SILENCIO)
         self.assertEqual((g.VERSAO, g.reusar, g.docs_simultaneos), ("v23", [origem], 2))
-        self.assertEqual([f["nome"] for f in CO.fontes_v2(exp, tmp / "g")], ["v23", "v23c", "v22", "antigo"])
+        self.assertEqual([f["nome"] for f in CO.fontes_v2(exp, tmp / "g")], ["v23", "v23c", "v22", "antigo", "conceitos"])
         self.assertTrue(all(f["obrigatoria"] for f in CO.fontes_v2(exp, tmp / "g")))
 
     def test_dataset_v2_filtra_sustentacao_avalia_com_contexto_e_relata(self):
@@ -1132,3 +1132,77 @@ class CompletoTests(unittest.TestCase):
         md = (tmp / "final" / "QUALIDADE.md").read_text(encoding="utf-8")
         self.assertIn("| GPT-5.4 (referência) |", md)
         self.assertIn("2 de 3 candidatas", md)
+
+
+class FalsoConceito(FalsoV22):
+    """Gerador de conceitos simulado: reaproveita as respostas da v22 e registra os prompts de sistema."""
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.sistemas = []
+
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        if tag.startswith("v23conceito_"):
+            self.sistemas.append((tag, system))
+            tag = "v22_" + tag[len("v23conceito_"):]
+        return super().json(system, user, tag, max_tokens, validate, item)
+
+    def _q(self, tipo, trecho, bloco, extra=""):
+        q = super()._q(tipo, trecho, bloco, extra)
+        return {**q, "resposta_padrao": f"Termo vizinho {self.n}.", "por_que_nao": "O traço X o exclui."}
+
+
+class ConceitoTests(unittest.TestCase):
+    def setUp(self):
+        V22Tests.setUp(self)
+
+    def g(self, f, **kw):
+        from pipeline.qa_research.experimento_ab.conceito import GeracaoConceito
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria")}
+        cl["dedup_juiz"] = NuncaRedundante()
+        return GeracaoConceito(self.exp / "conceitos", [ITEM], docs=self.exp / "docs" / "antigo", braco="conceitos",
+                               calibracao=self.cal, clientes=cl, embedder=Emb(), workers=4, **{**SILENCIO, **kw})
+
+    def test_gera_so_conceitos_sem_compostas_nem_inventario(self):
+        f = FalsoConceito()
+        self.assertEqual(self.g(f).run(), 0)
+        d = self.exp / "conceitos"
+        self.assertFalse({"meta_relacoes", "meta_combinacoes"} & set(f.tags))
+        self.assertFalse(any("composta" in t for t in f.tags))
+        aprov = C.linhas(d / "aprovadas.jsonl")
+        self.assertTrue(aprov and {q["tipo"] for q in aprov} == {"conceito"} and {q["origem"] for q in aprov} == {"janela"})
+        foco = [s for t, s in f.sistemas if t == "v23conceito_foco"]
+        self.assertTrue(foco and all("nomeação" in s and "Stress-joint" in s and "<questoes_ruins>" in s for s in foco))
+        aud = [s for t, s in f.sistemas if t == "v23conceito_auditoria"]
+        self.assertTrue(aud and "vocabulário técnico" in aud[0])
+        self.assertEqual(read_json(d / "config.json")["schema"], "experimento-ab-geracao-v23conceito")
+        self.assertTrue((d / "geracao_concluida.json").exists())
+        antes = f.chamadas
+        self.assertEqual(self.g(f).run(), 0)
+        self.assertEqual(f.chamadas, antes)
+
+    def test_regua_aceita_so_termo_curto_de_conceito(self):
+        g = self.g(FalsoConceito())
+        q = {"tipo": "conceito", "cenario": False, "conhecimento": "nome de x",
+             "pergunta": "Qual peça reduz a descontinuidade de rigidez no topo de um riser rígido?",
+             "resposta": "Stress-joint.", "explicacao": "O bloco afirma.", "resposta_padrao": "Bend stiffener.",
+             "por_que_nao": "É de riser flexível.", "fundamentos": [{"bloco": "F", "trecho": "texto do foco"}]}
+        textos = {"F": "texto do foco"}
+        self.assertEqual(g.regua(q, textos, g.TIPOS_FOCO, "F"), [])
+        self.assertTrue(any("6 palavras" in m for m in g.regua({**q, "resposta": "uma duas tres quatro cinco seis sete"},
+                                                              textos, g.TIPOS_FOCO, "F")))
+        self.assertTrue(any("tipo deve ser" in m for m in g.regua({**q, "tipo": "mecanismo"}, textos, g.TIPOS_FOCO, "F")))
+        cen = {**q, "cenario": True, "pergunta": "Num certificado com k informado, a equipe propõe somar o valor de ±U à "
+                                               "indicação para compensar um desvio persistente observado em campo. Que "
+                                               "grandeza do certificado está sendo usada indevidamente nessa proposta?"}
+        self.assertEqual(g.regua(cen, textos, g.TIPOS_FOCO, "F"), [])      # cenário curto é permitido
+        self.assertTrue(g.regua({**cen, "pergunta": cen["pergunta"] + " palavra" * 20}, textos, g.TIPOS_FOCO, "F"))
+
+    def test_exemplos_de_conceito_validos_e_sem_o_mesmo_documento(self):
+        from pipeline.qa_research.experimento_ab.conceito import EXEMPLOS_CONCEITO
+        from pipeline.qa_research.experimento_ab.v23 import carregar_exemplos, selecionar_exemplos
+        banco = carregar_exemplos(EXEMPLOS_CONCEITO)
+        self.assertTrue(all(len(e["resposta"].split()) <= 6 for e in banco["boas"] + banco["reservas"]))
+        for item in ("04_01", "07_01", "02_10"):
+            boas, ruins = selecionar_exemplos(banco, item)
+            self.assertNotIn(item, {e["item"] for e in boas + ruins})
+            self.assertEqual(len(boas), len(banco["boas"]))

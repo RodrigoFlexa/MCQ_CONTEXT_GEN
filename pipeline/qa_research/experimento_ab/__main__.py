@@ -21,7 +21,8 @@
                         e escreve petroquest_final_v1/QUALIDADE.md
   v23-completo          gerador v23 nos 37 documentos fora do experimento (inventário da geração de outubro);
                         --docs-simultaneos limita os documentos gerados ao mesmo tempo (padrão 6)
-  final-v2              dataset final v2: v23 + v23 completo + v22 + antigo, deduplicado, só gabaritos totalmente
+  conceitos             geração de nomeação de termo técnico (a pergunta descreve, a resposta é o nome) nos 40 documentos
+  final-v2              dataset final v2: v23 + v23 completo + v22 + antigo + conceitos, deduplicado, só gabaritos totalmente
                         sustentados, avaliado com resposta de até --palavras (20) por GPT-4.1 Nano/Mini/4.1,
                         GPT-5 nano/mini/5 e GPT-5.4 (referência), com e sem contexto -> petroquest_final_v2/QUALIDADE.md
   limite --palavras 20  experimento: as mesmas questões (amostra estratificada, --amostra 300) com resposta de até N
@@ -129,7 +130,7 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
-                                        "v23-completo", "final-v2"])
+                                        "v23-completo", "conceitos", "final-v2"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -202,6 +203,20 @@ def main(argv=None) -> int:
             print(f"[v23-completo] {falhas} unidades falharam (isoladas; o resto está salvo). Repita o mesmo comando.")
             return 2
         print(f"[v23-completo] geração concluída: {C.relativo(SAIDA_GERACAO / 'RELATORIO.md')}")
+        return 0
+    if a.comando == "conceitos":
+        from .completo import SAIDA_CONCEITOS, gerador_conceitos
+        with _trava(exp, "conceitos"):
+            try:
+                g = gerador_conceitos(exp, workers=a.workers, onda=a.onda, docs_simultaneos=a.docs_simultaneos,
+                                      saturacao={"max_rodadas": a.max_rodadas, "paciencia": a.paciencia})
+            except ValueError as exc:
+                raise SystemExit(f"[conceitos] {exc}") from exc
+            falhas = g.run()
+        if falhas:
+            print(f"[conceitos] {falhas} unidades falharam (isoladas; o resto está salvo). Repita o mesmo comando.")
+            return 2
+        print(f"[conceitos] geração concluída: {C.relativo(SAIDA_CONCEITOS / 'RELATORIO.md')}")
         return 0
     if a.comando == "final-v2":
         from .completo import SAIDA as SAIDA2, executar as final2

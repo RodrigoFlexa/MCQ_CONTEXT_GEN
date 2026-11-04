@@ -118,6 +118,7 @@ def veredito(d: dict, tipo_declarado: str) -> dict:
 class GeracaoV22(GeracaoAB):
     VERSAO = "v22"
     CHAVES, TIPOS_FOCO, TIPOS_COMPOSTA = CHAVES, TIPOS_FOCO, TIPOS_COMPOSTA
+    COMPOSTAS = True      # gera também as questões compostas (encadeamentos do inventário) antes das janelas
 
     def prompt_nome(self, papel: str) -> str:
         return f"{papel}_{self.VERSAO}"
@@ -483,11 +484,8 @@ class GeracaoV22(GeracaoAB):
                 out.append(f)   # segunda chance: visita sem ganho, mas com recusas corrigíveis (uma vez por foco)
         return out
 
-    def _documento(self, item: str) -> int:
+    def _compostas(self, item: str) -> int:
         arq = self._dir(item) / "combinacoes.json"
-        if not arq.exists():
-            self.progress(f"[{item}] sem inventário de encadeamentos; repita para tentar de novo", flush=True)
-            return 1
         rels = {r["id"]: r for p in sorted((self._dir(item) / "relacoes").glob("*.json")) for r in read_json(p)["relacoes"]}
         cadeias = [(c, [rels[i] for i in c["relacoes"] if i in rels]) for c in read_json(arq)["combinacoes"]]
         # Falhas ficam isoladas: uma composta ou um foco com falha não impede os demais; o foco com falha só volta
@@ -497,6 +495,13 @@ class GeracaoV22(GeracaoAB):
         falhas += self._rodar_ondas(item, segundas, lambda t: self._composta(item, *t, tentativa=2))
         self.progress(f"[{item}] compostas: {len(cadeias)} encadeamentos, {len(segundas)} segundas tentativas | "
                       f"aceitas {len(self._aceitas(item))}", flush=True)
+        return falhas
+
+    def _documento(self, item: str) -> int:
+        if self.COMPOSTAS and not (self._dir(item) / "combinacoes.json").exists():
+            self.progress(f"[{item}] sem inventário de encadeamentos; repita para tentar de novo", flush=True)
+            return 1
+        falhas = self._compostas(item) if self.COMPOSTAS else 0
         for rodada in range(1, self.sat["max_rodadas"] + 1):
             abertos = self.focos_abertos(item, rodada)
             if not abertos:
