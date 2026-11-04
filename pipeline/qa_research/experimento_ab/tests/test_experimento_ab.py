@@ -1004,6 +1004,20 @@ class DatasetFinalTests(unittest.TestCase):
         self.assertEqual(res["painel"]["n"], 3)
         md = (tmp / "final" / "QUALIDADE.md").read_text(encoding="utf-8")
         self.assertIn("| Dificuldade | GPT-5 sem contexto (modelo forte independente) | ↓ |", md)
+        # experimento do limite de palavras sobre o dataset final avaliado
+        from pipeline.qa_research.experimento_ab import limite as LI
+        cl_lim = {f"resp_{m}": Answer() for m in LI.MODELOS} | {"juiz": JuizResp()}
+        self.assertEqual(LI.executar(tmp / "final", limite=20, n=3, workers=2, judge_workers=1, clientes=cl_lim,
+                                     **SILENCIO), 0)
+        comp = read_json(tmp / "final" / "limite_20" / "comparacao.json")
+        self.assertEqual(comp["n_amostra"], 3)
+        self.assertIn("20", comp["modelos"]["gpt-4-1"])
+        self.assertIn("100", comp["modelos"]["gpt-4-1"])
+        self.assertIn("diferenca_acuracia", comp["modelos"]["gpt-5"])
+        self.assertIn("AUC F1 x juiz", (tmp / "final" / "limite_20" / "LIMITE.md").read_text(encoding="utf-8"))
+        self.assertAlmostEqual(LI.f1("redução da repulsão elétrica", "redução da repulsão elétrica entre as gotas")[0], 0.75)
+        self.assertAlmostEqual(LI.rouge_l("a válvula abriu tarde por atraso no alívio",
+                                          "a válvula de alívio abriu com atraso"), 2 * (3 / 5) * (3 / 4) / (3 / 5 + 3 / 4))   # sem stopwords
         self.assertEqual(d.montar(), 0)                                # retomada: mesmas decisões, mesmo dataset
         excl.write_text(json.dumps({"exclusoes": {}}), encoding="utf-8")
         d2 = DatasetFinal(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),

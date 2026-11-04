@@ -19,6 +19,8 @@
   final                 dataset final único: reúne v23 (se pronto), v22 e antigo filtrado, exclui os defeitos da
                         revisão manual, deduplica entre fontes, avalia (com/sem contexto, sustentação, painel)
                         e escreve petroquest_final_v1/QUALIDADE.md
+  limite --palavras 20  experimento: as mesmas questões (amostra estratificada, --amostra 300) com resposta de até N
+                        palavras, comparada às respostas de até 100 palavras (acurácia, F1, BLEU, ROUGE-L)
 
 Braços derivados combinam sufixos: D_sat (saturação), D_sust (sustentação), D_sat_sust (os dois).
 
@@ -121,7 +123,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m pipeline.qa_research.experimento_ab", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
-                                        "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final"])
+                                        "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -133,6 +135,8 @@ def main(argv=None) -> int:
     ap.add_argument("--max-rodadas", type=int, default=5, help="saturação: visitas máximas por foco (inclui a 1ª)")
     ap.add_argument("--paciencia", type=int, default=1, help="saturação: rodadas seguidas sem conhecimento novo para fechar")
     ap.add_argument("--onda", type=int, default=4, help="v22/v23: focos gerados ao mesmo tempo em cada documento")
+    ap.add_argument("--palavras", type=int, default=20, help="limite: palavras máximas na resposta dos modelos")
+    ap.add_argument("--amostra", type=int, default=300, help="limite: questões na amostra estratificada")
     ap.add_argument("--avaliacao", type=Path, help="painel: pasta de avaliação (padrão: avaliacao/<braço>)")
     a = ap.parse_args(argv)
     exp = a.experimento if a.experimento.is_absolute() else C.ROOT / a.experimento
@@ -177,6 +181,15 @@ def main(argv=None) -> int:
             st = avaliar(workers=a.workers, judge_workers=a.judge_workers, mini=a.mini_deployment)
         print(f"[antigo] avaliação {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
               f"{C.relativo(AVALIACAO)}")
+        return st
+    if a.comando == "limite":
+        from .limite import executar as limite
+        with _trava(exp, f"limite_{a.palavras}"):
+            try:
+                st = limite(limite=a.palavras, n=a.amostra, workers=a.workers, judge_workers=a.judge_workers)
+            except ValueError as exc:
+                raise SystemExit(f"[limite] {exc}") from exc
+        print(f"[limite] {'concluído' if st == 0 else 'incompleto; repita o mesmo comando'}")
         return st
     if a.comando == "final":
         from .final import SAIDA, executar as final

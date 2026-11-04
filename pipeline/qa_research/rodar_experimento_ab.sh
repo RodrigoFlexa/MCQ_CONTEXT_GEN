@@ -16,6 +16,7 @@
 #                        GPT-5.4 sem contexto) em <BRAÇO>, <BRAÇO>_v22 e <BRAÇO>_v23; comparação
 #   painel <BRAÇO>       só o painel de dificuldade de um braço já avaliado, e a comparação
 #   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
+#   limite [N]           experimento do limite de palavras na resposta (padrão 20), amostra de 300 questões
 #   antigo               banco antigo: gabarito curto + auditor v23 nas 2156 sustentadas, benchmark_gap e painel
 # Uma trava impede duas execuções no mesmo braço; antes de repetir após interromper, encerre o processo antigo
 # (pkill -f experimento_ab).
@@ -34,6 +35,7 @@ fi
 etapa="tudo"
 if [[ $# -gt 0 && "$1" != --* ]]; then etapa="$1"; shift; fi
 braco_sust=""
+if [[ "$etapa" == "limite" && $# -gt 0 && "$1" != --* ]]; then braco_sust="$1"; shift; fi
 if [[ "$etapa" == "sustentacao" || "$etapa" == "saturacao" || "$etapa" == "v22" || "$etapa" == "v23" || "$etapa" == "painel" ]]; then
     braco_sust="${1:-}"
     if [[ -z "$braco_sust" || "$braco_sust" == --* ]]; then echo "Uso: ... $etapa <braço, ex.: B ou D_sat>"; exit 1; fi
@@ -91,7 +93,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -132,6 +134,9 @@ fi
 if [[ "$etapa" == "painel" ]]; then
     rodar "painel de dificuldade em $braco_sust" painel --braco "$braco_sust" || fim_erro painel
 fi
+if [[ "$etapa" == "limite" ]]; then
+    rodar "limite de ${braco_sust:-20} palavras" limite --palavras "${braco_sust:-20}" || fim_erro limite
+fi
 if [[ "$etapa" == "final" ]]; then
     rodar "dataset final: montagem, avaliação, painel e relatório" final || fim_erro final
 fi
@@ -152,7 +157,10 @@ echo "Resultados:"
 echo "  cat $exp/COMPARACAO.md"
 echo "  cat $exp/calibracao/CALIBRACAO.md"
 echo "Enviar ao GitHub (no servidor):"
-if [[ "$etapa" == "final" ]]; then
+if [[ "$etapa" == "limite" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/petroquest_final_v1/limite_${braco_sust:-20}/LIMITE.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v1 \"Resultados: limite de palavras\""
+elif [[ "$etapa" == "final" ]]; then
     echo "  cat pipeline/qa_research/relatorios/petroquest_final_v1/QUALIDADE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v1 \"Resultados: dataset final\""
 elif [[ "$etapa" == "antigo" ]]; then
