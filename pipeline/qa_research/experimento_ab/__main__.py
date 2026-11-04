@@ -144,6 +144,8 @@ def main(argv=None) -> int:
     ap.add_argument("--max-rodadas", type=int, default=5, help="saturação: visitas máximas por foco (inclui a 1ª)")
     ap.add_argument("--paciencia", type=int, default=1, help="saturação: rodadas seguidas sem conhecimento novo para fechar")
     ap.add_argument("--onda", type=int, default=4, help="v22/v23: focos gerados ao mesmo tempo em cada documento")
+    ap.add_argument("--so-relatorio", action="store_true",
+                    help="final-v2: só refaz o QUALIDADE.md com o que já foi avaliado, sem montar nem avaliar")
     ap.add_argument("--docs-simultaneos", type=int, default=6, help="v23-completo: documentos gerados ao mesmo tempo")
     ap.add_argument("--palavras", type=int, default=20, help="limite: palavras máximas na resposta dos modelos")
     ap.add_argument("--amostra", type=int, default=300, help="limite: questões na amostra estratificada")
@@ -234,7 +236,11 @@ def main(argv=None) -> int:
         print(f"[variada] geração concluída: {C.relativo(SAIDA_VARIADA / 'RELATORIO.md')}")
         return 0
     if a.comando == "final-v2":
-        from .completo import SAIDA as SAIDA2, executar as final2
+        from .completo import SAIDA as SAIDA2, DatasetCompleto, executar as final2
+        if a.so_relatorio:
+            r = DatasetCompleto(exp=exp, limite=a.palavras).relatorio()
+            print(f"[final-v2] relatório de {r['n']} questões: {C.relativo(SAIDA2 / 'QUALIDADE.md')}")
+            return 0
         with _trava(exp, "final_v2"):
             try:
                 st = final2(exp, workers=a.workers, judge_workers=a.judge_workers, limite=a.palavras)

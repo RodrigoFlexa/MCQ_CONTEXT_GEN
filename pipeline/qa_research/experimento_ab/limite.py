@@ -105,7 +105,7 @@ def amostrar(final: Path, n: int, semente: int = 20261103) -> list[dict]:
     ds = {q["uid"]: q for q in C.linhas(final / "dataset.jsonl")}
     est = {}
     with (final / "painel" / "dificuldade.csv").open(encoding="utf-8-sig") as f:
-        for r in csv.DictReader(f):
+        for r in csv.DictReader(C.sem_nul(f)):
             est[r["uid"]] = "dificil" if r["estrato"] in ("dificil", "muito_dificil") else r["estrato"]
     grupos = defaultdict(list)
     for u in sorted(ds):
@@ -161,10 +161,10 @@ def controle(final: Path) -> dict:
     """(modelo, uid) -> (resposta, veredito) com até 100 palavras, já avaliadas no dataset final."""
     out = {}
     with (final / "pares.csv").open(encoding="utf-8-sig") as f:
-        for r in csv.DictReader(f):
+        for r in csv.DictReader(C.sem_nul(f)):
             out[(r["modelo"], r["uid"])] = (r["resposta_closed_book"], r["veredito_closed_book"])
     with (final / "painel" / "dificuldade.csv").open(encoding="utf-8-sig") as f:
-        for r in csv.DictReader(f):
+        for r in csv.DictReader(C.sem_nul(f)):
             for m in PAINEL:
                 arq = final / "painel" / "avaliacao" / "respostas" / m / f"{_nome_arq('closed_book:' + r['uid'])}.json"
                 if r.get(f"v_{m}") and arq.exists():

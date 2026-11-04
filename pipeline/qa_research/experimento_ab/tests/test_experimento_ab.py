@@ -1132,6 +1132,26 @@ class CompletoTests(unittest.TestCase):
         md = (tmp / "final" / "QUALIDADE.md").read_text(encoding="utf-8")
         self.assertIn("| GPT-5.4 (referência) |", md)
         self.assertIn("2 de 3 candidatas", md)
+        pares = tmp / "final" / "pares.csv"                 # resposta de modelo com NUL não derruba o relatório
+        pares.write_text(pares.read_text(encoding="utf-8-sig").replace("gpt-5-4,", "gpt-5-4,\0", 1), encoding="utf-8-sig")
+        self.assertEqual(d.relatorio()["n"], 2)
+        # fonte nova depois da avaliação: as questões antigas continuam avaliadas e só a nova é paga
+        nova = tmp / "nova"
+        C.gravar_jsonl(nova / "aprovadas.jsonl", [q(5, "Que propriedade do MEG reduz sua perda para a corrente gasosa?",
+                                                    "Baixa volatilidade.", "conceito")])
+        (nova / "geracao_concluida.json").write_text("{}", encoding="utf-8")
+        fontes_.append({"nome": "nova", "pasta": nova, "marcador": "geracao_concluida.json", "docs": docs,
+                        "obrigatoria": True})
+        d2 = CO.DatasetCompleto(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),
+                                juiz=NuncaRedundante(), modelos=modelos, v1=v1, **SILENCIO)
+        self.assertEqual(d2.montar(), 0)
+        self.assertEqual(d2.sustentar(workers=2, clientes={"faithfulness": faith}), 0)
+        self.assertEqual(faith.calls, 3)
+        antes = len(resp["resp_gpt-5"].payloads)
+        self.assertEqual(d2.avaliar(workers=2, judge_workers=1, clientes=resp | {"juiz": JuizResp()}), 0)
+        self.assertEqual(len([p for p in resp["resp_gpt-5"].payloads[antes:] if "MEG" in p["pergunta"]]), 2)
+        self.assertFalse([p for p in resp["resp_gpt-5"].payloads[antes:] if "filtro" in p["pergunta"]])
+        self.assertEqual(d2.relatorio()["n"], 3)
 
 
 class FalsoConceito(FalsoV22):

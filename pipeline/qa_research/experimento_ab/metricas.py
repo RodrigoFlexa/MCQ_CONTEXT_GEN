@@ -212,7 +212,7 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
                               "rodadas_extras": media([v.get("sustentado") for v in por_q.values() if (v["rodada"] or 0) > 1])}
     if (adir / "pares.csv").exists():
         with (adir / "pares.csv").open(encoding="utf-8-sig") as f:
-            for r in csv.DictReader(f):
+            for r in csv.DictReader(C.sem_nul(f)):
                 if r["uid"] in por_q and r["veredito_closed_book"] and r["veredito_open_book"]:
                     por_q[r["uid"]][f"closed_{r['modelo']}"] = float(r["veredito_closed_book"] == "correta")
                     por_q[r["uid"]][f"closedp_{r['modelo']}"] = {"correta": 1.0, "parcial": .5}.get(r["veredito_closed_book"], 0.0)
@@ -225,7 +225,7 @@ def metricas_braco(exp: Path, braco: str, embedder=None, media_vec=None) -> tupl
     # painel de dificuldade (painel.py): família GPT-5 sem contexto (GPT-5.4 só como referência) e estrato empírico de cada questão
     if (adir / "painel" / "dificuldade.csv").exists():
         with (adir / "painel" / "dificuldade.csv").open(encoding="utf-8-sig") as f:
-            for r in csv.DictReader(f):
+            for r in csv.DictReader(C.sem_nul(f)):
                 if r["uid"] in por_q:
                     for m in ("gpt-5-nano", "gpt-5-mini", "gpt-5", "gpt-5-4"):
                         if r.get(f"v_{m}"):

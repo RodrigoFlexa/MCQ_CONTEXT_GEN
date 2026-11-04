@@ -284,3 +284,9 @@ class EmbedderDireto:
 
 def embedder(nome: str, pasta: Path, max_chamadas: int = 20000, client=None):
     return EmbedderDireto(nome, pasta, max_chamadas=max_chamadas, client=client)
+
+
+def sem_nul(f):
+    """Linhas de um CSV sem o caractere NUL: um modelo pode devolvê-lo dentro da resposta, e o módulo csv recusa a
+    linha inteira ("line contains NUL")."""
+    return (linha.replace("\0", "") for linha in f)

@@ -149,6 +149,19 @@ class DatasetCompleto(F.DatasetFinal):
                 shutil.copy2(arq, alvo)
         return super().montar()
 
+    def _aceita_mudanca(self, final: list) -> bool:
+        """A avaliação é guardada por questão (uid): com uma fonte nova, as questões que já existiam continuam
+        avaliadas e só as novas são pagas. Exige que nenhuma questão antiga tenha mudado de conteúdo."""
+        antigo = self.saida / self.ARQ
+        if not antigo.exists():
+            return False
+        novo = {q["uid"]: q for q in final}
+        mudaram = [q["uid"] for q in C.linhas(antigo) if q["uid"] in novo and novo[q["uid"]] != q]
+        if mudaram:
+            raise ValueError(f"{len(mudaram)} questões mudaram de conteúdo com o mesmo uid (ex.: {mudaram[0]}); apague "
+                             f"{C.relativo(self.saida)} para reavaliar do zero")
+        return True
+
     # ---------------------------------------------------------------- 2b. sustentação
     def sustentar(self, workers: int = 8, clientes=None) -> int:
         cands = C.linhas(self.saida / self.ARQ)
@@ -199,9 +212,14 @@ class DatasetCompleto(F.DatasetFinal):
                    prompts={"respondente": C.sha(LI.prompt_curta(self.limite)), "juiz": C.sha(G.prompt("juiz"))})
         with output_lock(self.saida / "avaliacao"):
             old = ler(self.saida / "config.json")
-            if old is not None and old != cfg:
-                raise ValueError("Protocolo ou dataset mudou em relação à avaliação existente; apague "
-                                 f"{C.relativo(self.saida / 'avaliacao')} e config.json para reavaliar")
+            dados = ("n", "dados_sha256", "questoes_sha256")
+            if old is not None and {k: v for k, v in old.items() if k not in dados} != \
+                    {k: v for k, v in cfg.items() if k not in dados}:
+                raise ValueError("O protocolo (modelos, limite, prompts ou juiz) mudou em relação à avaliação "
+                                 f"existente; apague {C.relativo(self.saida / 'avaliacao')} e config.json para reavaliar")
+            if old is not None and old != cfg:     # dataset ampliado: as respostas e vereditos por questão continuam
+                self.progress(f"[final-v2] dataset mudou ({old['n']} -> {cfg['n']} questões): só as novas serão "
+                              "respondidas e julgadas", flush=True)
             local = self.saida / "avaliacao" / ".local"
             lim = self.v1 / f"limite_{self.limite}" / "avaliacao" / ".local"
             if not local.exists() and clientes is None and lim.exists():
@@ -223,7 +241,7 @@ class DatasetCompleto(F.DatasetFinal):
             try:
                 e.run()
                 G.exportar_gap(self.saida, self.modelos)
-                ok = all(len(e.vereditos[m]) == len(rows) for m in self.modelos)
+                ok = all(r["uid"] in e.vereditos[m] for m in self.modelos for r in rows)
             finally:
                 for c in e.clientes.values():
                     if hasattr(c, "close"):
@@ -246,7 +264,7 @@ class DatasetCompleto(F.DatasetFinal):
         pares: dict = {}
         if (self.saida / "pares.csv").exists():
             with (self.saida / "pares.csv").open(encoding="utf-8-sig") as f:
-                for r in csv.DictReader(f):
+                for r in csv.DictReader(C.sem_nul(f)):
                     if r["uid"] in qs:
                         pares.setdefault(r["modelo"], []).append({**r, "gabarito": qs[r["uid"]]["resposta"]})
         res["modelos"] = {m: metricas_modelo(pares[m]) for m in self.modelos if m in pares}

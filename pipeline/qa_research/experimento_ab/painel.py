@@ -44,7 +44,7 @@ def _base(aval: Path) -> dict:
     """uid original -> {modelo: veredito sem contexto} da avaliação de origem."""
     out: dict = {}
     with (aval / "pares.csv").open(encoding="utf-8-sig") as f:
-        for r in csv.DictReader(f):
+        for r in csv.DictReader(C.sem_nul(f)):
             out.setdefault(r["uid"], {})[r["modelo"]] = r["veredito_closed_book"]
     return out
 

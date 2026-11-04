@@ -134,7 +134,8 @@ class DatasetFinal:
         final = [q for q in cands if q["uid"] not in removidas]
         cfg_dataset = {"fontes": usadas, "n": len(final), "sha256": C.sha(final)}
         atual = ler(self.saida / "montagem.json")
-        if atual and atual["dataset"]["sha256"] != cfg_dataset["sha256"] and (self.saida / "avaliacao").exists():
+        if atual and atual["dataset"]["sha256"] != cfg_dataset["sha256"] and (self.saida / "avaliacao").exists() \
+                and not self._aceita_mudanca(final):
             raise ValueError("O dataset mudou desde a última avaliação (nova fonte, exclusão ou decisão). Apague "
                              f"{C.relativo(self.saida / 'avaliacao')} e {C.relativo(self.saida / 'painel')} para "
                              "reavaliar (as respostas já pagas continuam no cache copiado das fontes)")
@@ -219,6 +220,10 @@ class DatasetFinal:
         return executar(self.saida, workers=workers, judge_workers=judge_workers, clientes=clientes,
                         progress=self.progress)
 
+    def _aceita_mudanca(self, final: list) -> bool:
+        """Se o dataset pode mudar mantendo a avaliação existente (o v1 não aceita: reavaliar do zero)."""
+        return False
+
     # ---------------------------------------------------------------- 4. relatório
     def diversidade(self, lst: list) -> dict:
         """Não trivialidade (sobreposição com o contexto) e diversidade (repetição dentro do tópico)."""
@@ -272,7 +277,7 @@ class DatasetFinal:
         acc: dict = {}
         if (self.saida / "pares.csv").exists():
             with (self.saida / "pares.csv").open(encoding="utf-8-sig") as f:
-                for r in csv.DictReader(f):
+                for r in csv.DictReader(C.sem_nul(f)):
                     a = acc.setdefault(r["modelo"], {"closed": [], "closedp": [], "open": []})
                     a["closed"].append(float(r["veredito_closed_book"] == "correta"))
                     a["closedp"].append({"correta": 1.0, "parcial": .5}.get(r["veredito_closed_book"], 0.0))
