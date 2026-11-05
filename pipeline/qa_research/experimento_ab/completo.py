@@ -40,6 +40,7 @@ from .painel import ESTRATOS, NAO_INDEPENDENTES, estrato
 SAIDA_GERACAO = C.QA / "relatorios" / "geracao_v23_completo"
 SAIDA_CONCEITOS = C.QA / "relatorios" / "geracao_conceitos"
 SAIDA_VARIADA = C.QA / "relatorios" / "geracao_variada"
+SAIDA_TIPO = C.QA / "relatorios" / "geracao_tipo_{}"
 SAIDA = C.QA / "relatorios" / "petroquest_final_v2"
 LIMITE = 20
 DOCS_SIMULTANEOS = 6
@@ -93,6 +94,20 @@ def gerador_variada(exp: Path, *, workers: int = 8, onda: int = 4, docs_simultan
                           workers=workers, docs_simultaneos=docs_simultaneos, **kw)
 
 
+def gerador_tipo(exp: Path, tipo: str, *, workers: int = 8, onda: int = 4, docs_simultaneos: int = DOCS_SIMULTANEOS,
+                 itens=None, origem: Path = C.GERACAO_FINAL, docs: Path = DOCS, saida: Path | None = None, **kw):
+    """Um único tipo (decisão, diagnóstico ou procedimento) nos 40 documentos, com o esquema de exemplos da
+    geração variada."""
+    from .tipo_unico import GeracaoTipo
+    cal = Path(exp) / "calibracao" / "calibracao.json"
+    if not cal.exists():
+        raise ValueError(f"Falta a calibração da deduplicação ({C.relativo(cal)})")
+    itens = list(itens or ler(Path(origem) / "config.json")["itens"])
+    return GeracaoTipo(Path(saida or str(SAIDA_TIPO).format(tipo)), itens, tipo=tipo, docs=Path(docs),
+                       braco=f"tipo_{tipo}", calibracao=cal, onda=onda, workers=workers,
+                       docs_simultaneos=docs_simultaneos, **kw)
+
+
 def fontes_v2(exp: Path = C.EXPERIMENTO, geracao: Path = SAIDA_GERACAO, conceitos: Path = SAIDA_CONCEITOS,
               variada: Path = SAIDA_VARIADA) -> list[dict]:
     """Prioridade na deduplicação: v23 > v23 completo > v22 > antigo > conceitos > variada (as fontes novas entram
@@ -104,7 +119,10 @@ def fontes_v2(exp: Path = C.EXPERIMENTO, geracao: Path = SAIDA_GERACAO, conceito
             "obrigatoria": True}
     var = {"nome": "variada", "pasta": Path(variada), "marcador": "geracao_concluida.json", "docs": DOCS,
            "obrigatoria": True}
-    return [v23, v23c, v22, antigo, conc, var]
+    # gerações por tipo: entram quando concluídas (opcionais, para não travar a montagem enquanto rodam)
+    tipos = [{"nome": f"tipo_{t}", "pasta": Path(str(SAIDA_TIPO).format(t)), "marcador": "geracao_concluida.json",
+              "docs": DOCS, "obrigatoria": False} for t in ("decisao", "diagnostico", "procedimento")]
+    return [v23, v23c, v22, antigo, conc, var, *tipos]
 
 
 def metricas_modelo(pares: list[dict]) -> dict:

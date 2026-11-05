@@ -1064,8 +1064,9 @@ class CompletoTests(unittest.TestCase):
         g = CO.gerador(exp, itens=[ITEM], origem=origem, saida=tmp / "g", docs=exp / "docs" / "antigo",
                        docs_simultaneos=2, embedder=Emb(), **SILENCIO)
         self.assertEqual((g.VERSAO, g.reusar, g.docs_simultaneos), ("v23", [origem], 2))
-        self.assertEqual([f["nome"] for f in CO.fontes_v2(exp, tmp / "g")], ["v23", "v23c", "v22", "antigo", "conceitos", "variada"])
-        self.assertTrue(all(f["obrigatoria"] for f in CO.fontes_v2(exp, tmp / "g")))
+        self.assertEqual([f["nome"] for f in CO.fontes_v2(exp, tmp / "g")], ["v23", "v23c", "v22", "antigo", "conceitos", "variada", "tipo_decisao", "tipo_diagnostico",
+                          "tipo_procedimento"])
+        self.assertEqual([f["obrigatoria"] for f in CO.fontes_v2(exp, tmp / "g")], [True] * 6 + [False] * 3)
 
     def test_dataset_v2_filtra_sustentacao_avalia_com_contexto_e_relata(self):
         from pipeline.qa_research.experimento_ab import completo as CO
@@ -1303,3 +1304,96 @@ class VariadaTests(unittest.TestCase):
         with self.assertRaises(ValueError) as cm:
             self.g(FalsoVariada(), externos=self.exp / "nao_existe.jsonl")
         self.assertIn("preparar_exemplos", str(cm.exception))
+
+
+class FalsoTipo(FalsoVariada):
+    tipo = "diagnostico"
+
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        if tag.startswith("v23tipo_"):
+            self.sistemas.append((tag, system))
+            tag = "v22_" + tag[len("v23tipo_"):]
+        return super().json(system, user, tag, max_tokens, validate, item)
+
+    def foco(self, user):
+        d = super().foco(user)
+        for q in d["questoes"]:
+            q.update(tipo=self.tipo, cenario=True,
+                     pergunta="A vazão caiu e a pressão a montante subiu sem mudança de abertura. Qual a causa provável?")
+        return d
+
+
+class TipoUnicoTests(VariadaTests):
+    def gt(self, f, tipo="diagnostico", **kw):
+        from pipeline.qa_research.experimento_ab.tipo_unico import GeracaoTipo
+        cl = {p: f for p in ("relacoes", "combinacoes", "geracao", "auditoria")}
+        cl["dedup_juiz"] = NuncaRedundante()
+        return GeracaoTipo(self.exp / f"tipo_{tipo}", [ITEM], tipo=tipo, docs=self.exp / "docs" / "antigo",
+                           braco=f"tipo_{tipo}", calibracao=self.cal, clientes=cl, embedder=Emb(), workers=4,
+                           **{**SILENCIO, "externos": self.ext, "convertidas": self.conv, **kw})
+
+    def test_gera_so_o_tipo_pedido_com_definicao_no_prompt(self):
+        f = FalsoTipo()
+        self.assertEqual(self.gt(f).run(), 0)
+        d = self.exp / "tipo_diagnostico"
+        foco = [s for t, s in f.sistemas if t == "v23tipo_foco"]
+        self.assertTrue(foco and all("<<" not in s and "`diagnostico`" in s and "causa primária" in s for s in foco))
+        aprov = C.linhas(d / "aprovadas.jsonl")
+        self.assertTrue(aprov and {q["tipo"] for q in aprov} == {"diagnostico"})
+        self.assertEqual(read_json(d / "config.json")["tipo"], "diagnostico")
+        with self.assertRaises(ValueError):
+            self.gt(FalsoTipo(), tipo="conceito")
+
+    def test_outro_tipo_e_recusado_pela_regua(self):
+        f = FalsoTipo()
+        f.tipo = "mecanismo"
+        self.assertEqual(self.gt(f, tipo="procedimento").run(), 0)
+        self.assertFalse(C.linhas(self.exp / "tipo_procedimento" / "aprovadas.jsonl"))
+
+
+class RubricaTests(unittest.TestCase):
+    def test_classifica_retoma_e_compara_com_o_painel(self):
+        from pipeline.qa_research.experimento_ab import rubrica as RU
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        qs = [{"uid": f"v23c:{ITEM}:j:r1:{k:03d}:1", "item": ITEM, "fonte": "v23c", "tipo": t, "pergunta": f"P{k}?",
+               "resposta": "R.", "resposta_padrao": "X."} for k, t in enumerate(["conceito", "diagnostico", "decisao"])]
+        C.gravar_jsonl(tmp / "dataset.jsonl", qs)
+        modelos = ("gpt-4-1", "gpt-5", "gpt-5-4")
+        acerto = {0: ("correta",) * 3, 1: ("incorreta", "correta", "correta"), 2: ("incorreta",) * 3}
+        with (tmp / "pares.csv").open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["uid", "modelo", "veredito_closed_book"])
+            for k, q in enumerate(qs):
+                for m, v in zip(modelos, acerto[k]):
+                    w.writerow([q["uid"], m, v + ("\0" if k == 1 and m == "gpt-5" else "")])
+
+        class Cli:
+            def __init__(self):
+                self.n = 0
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                self.n += 1
+                assert "D12" in system and "rubrica" in system.lower()
+                p = json.loads(user)["pergunta"]
+                d = {"P0?": {"criterios": ["F1", "F5"], "nivel": "facil", "justificativa": "lembrar"},
+                     "P1?": {"criterios": ["M6"], "nivel": "media", "justificativa": "aplicar"},
+                     "P2?": {"criterios": ["D2", "D5", "D12"], "nivel": "dificil", "justificativa": "integrar"}}[p]
+                validate(d)
+                return d
+
+        cli = Cli()
+        r = RU.Rubrica(tmp, cliente=cli, workers=2, **SILENCIO)
+        self.assertEqual(r.classificar(), 0)
+        res = r.relatorio()
+        self.assertEqual((res["n"], res["concorda_regra"]), (3, 100.0))
+        self.assertEqual(res["acuracia_por_nivel"]["gpt-4-1"], {"facil": 100.0, "media": 0.0, "dificil": 0.0})
+        self.assertLess(res["spearman_nivel_x_acerto"], -0.9)
+        self.assertEqual(res["cruzamento_estratos"]["dificil"]["muito_dificil"], 1)
+        md = (tmp / "rubrica" / "RUBRICA.md").read_text(encoding="utf-8")
+        self.assertIn("| GPT-5 |", md)
+        self.assertIn("D12 resposta verdadeira em outra condição", md)
+        self.assertEqual(RU.Rubrica(tmp, cliente=cli, **SILENCIO).classificar(), 0)
+        self.assertEqual(cli.n, 3)                                          # retomada sem novas chamadas
+        with self.assertRaises(ValueError):
+            RU.validar({"criterios": ["Z9"], "nivel": "facil", "justificativa": "x"})

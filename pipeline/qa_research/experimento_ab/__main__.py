@@ -24,6 +24,10 @@
   conceitos             geração de nomeação de termo técnico (a pergunta descreve, a resposta é o nome) nos 40 documentos
   variada               conceito, mecanismo e consequência nos 40 documentos, com exemplos de forma externos (visitas
                         1 a 3) e do dataset de múltipla escolha convertido (visita 4)
+  tipos                 decisão, diagnóstico e procedimento, cada um numa geração separada nos 40 documentos, com
+                        o esquema de exemplos da variada (--tipos escolhe quais; padrão os três, em sequência)
+  rubrica               classifica o dataset final v2 em fácil/média/difícil pela rubrica do especialista e compara
+                        com a dificuldade empírica -> petroquest_final_v2/rubrica/RUBRICA.md
   final-v2              dataset final v2: v23 + v23 completo + v22 + antigo + conceitos + variada, deduplicado, só gabaritos totalmente
                         sustentados, avaliado com resposta de até --palavras (20) por GPT-4.1 Nano/Mini/4.1,
                         GPT-5 nano/mini/5 e GPT-5.4 (referência), com e sem contexto -> petroquest_final_v2/QUALIDADE.md
@@ -132,7 +136,8 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
-                                        "v23-completo", "conceitos", "variada", "final-v2"])
+                                        "v23-completo", "conceitos", "variada", "tipos", "rubrica",
+                                        "final-v2"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -144,6 +149,8 @@ def main(argv=None) -> int:
     ap.add_argument("--max-rodadas", type=int, default=5, help="saturação: visitas máximas por foco (inclui a 1ª)")
     ap.add_argument("--paciencia", type=int, default=1, help="saturação: rodadas seguidas sem conhecimento novo para fechar")
     ap.add_argument("--onda", type=int, default=4, help="v22/v23: focos gerados ao mesmo tempo em cada documento")
+    ap.add_argument("--tipos", default="decisao,diagnostico,procedimento",
+                    help="tipos: quais gerações por tipo rodar, separados por vírgula")
     ap.add_argument("--so-relatorio", action="store_true",
                     help="final-v2: só refaz o QUALIDADE.md com o que já foi avaliado, sem montar nem avaliar")
     ap.add_argument("--docs-simultaneos", type=int, default=6, help="v23-completo: documentos gerados ao mesmo tempo")
@@ -235,6 +242,31 @@ def main(argv=None) -> int:
             return 2
         print(f"[variada] geração concluída: {C.relativo(SAIDA_VARIADA / 'RELATORIO.md')}")
         return 0
+    if a.comando == "tipos":
+        from .completo import SAIDA_TIPO, gerador_tipo
+        tipos = [t.strip() for t in a.tipos.split(",") if t.strip()]
+        for t in tipos:
+            with _trava(exp, f"tipo_{t}"):
+                try:
+                    g = gerador_tipo(exp, t, workers=a.workers, onda=a.onda, docs_simultaneos=a.docs_simultaneos)
+                except ValueError as exc:
+                    raise SystemExit(f"[tipos] {exc}") from exc
+                falhas = g.run()
+            if falhas:
+                print(f"[tipos] {t}: {falhas} unidades falharam (isoladas; o resto está salvo). Repita o mesmo comando.")
+                return 2
+            print(f"[tipos] {t} concluído: {C.relativo(Path(str(SAIDA_TIPO).format(t)) / 'RELATORIO.md')}")
+        return 0
+    if a.comando == "rubrica":
+        from .rubrica import executar as rubrica
+        with _trava(exp, "rubrica"):
+            try:
+                st = rubrica(workers=a.workers)
+            except ValueError as exc:
+                raise SystemExit(f"[rubrica] {exc}") from exc
+        print("[rubrica] " + ("concluída" if st == 0 else "incompleta; repita o mesmo comando") +
+              ": pipeline/qa_research/relatorios/petroquest_final_v2/rubrica/RUBRICA.md")
+        return st
     if a.comando == "final-v2":
         from .completo import SAIDA as SAIDA2, DatasetCompleto, executar as final2
         if a.so_relatorio:

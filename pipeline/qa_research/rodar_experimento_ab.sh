@@ -21,6 +21,10 @@
 #                        final v2 (só gabaritos totalmente sustentados) avaliado com resposta de até 20 palavras por
 #                        GPT-4.1 Nano/Mini/4.1, GPT-5 nano/mini/5 e GPT-5.4 (referência); opção --docs-simultaneos (6)
 #   v23c | conceitos | variada | final2   só uma das partes do completo
+#   tipos                decisão, diagnóstico e procedimento, cada um numa geração separada nos 40 documentos
+#                        (exemplos de forma externos), depois o dataset final v2 (só as novas são avaliadas) e a
+#                        rubrica de dificuldade do especialista
+#   rubrica              só a classificação pela rubrica do especialista (petroquest_final_v2/rubrica/RUBRICA.md)
 #   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
 #   limite [N]           experimento do limite de palavras na resposta (padrão 20), amostra de 300 questões
 #   antigo               banco antigo: gabarito curto + auditor v23 nas 2156 sustentadas, benchmark_gap e painel
@@ -100,7 +104,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -156,8 +160,14 @@ fi
 if [[ "$etapa" == "completo" || "$etapa" == "variada" ]]; then
     rodar "geração variada (conceito, mecanismo, consequência) nos 40 documentos" variada || fim_erro variada
 fi
-if [[ "$etapa" == "completo" || "$etapa" == "final2" ]]; then
+if [[ "$etapa" == "tipos" ]]; then
+    rodar "gerações por tipo (decisão, diagnóstico, procedimento) nos 40 documentos" tipos || fim_erro tipos
+fi
+if [[ "$etapa" == "completo" || "$etapa" == "final2" || "$etapa" == "tipos" ]]; then
     rodar "dataset final v2: montagem, sustentação, avaliação (20 palavras) e relatório" final-v2 || fim_erro final2
+fi
+if [[ "$etapa" == "tipos" || "$etapa" == "rubrica" ]]; then
+    rodar "dificuldade pela rubrica do especialista" rubrica || fim_erro rubrica
 fi
 if [[ "$etapa" == "antigo" ]]; then
     # 2 chamadas por questão (2156 questões): 16 em paralelo por padrão; um --workers explícito prevalece
@@ -179,6 +189,13 @@ echo "Enviar ao GitHub (no servidor):"
 if [[ "$etapa" == "limite" ]]; then
     echo "  cat pipeline/qa_research/relatorios/petroquest_final_v1/limite_${braco_sust:-20}/LIMITE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v1 \"Resultados: limite de palavras\""
+elif [[ "$etapa" == "tipos" || "$etapa" == "rubrica" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/petroquest_final_v2/QUALIDADE.md"
+    echo "  cat pipeline/qa_research/relatorios/petroquest_final_v2/rubrica/RUBRICA.md"
+    for t in decisao diagnostico procedimento; do
+        echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_tipo_$t \"Resultados: geração $t\""
+    done
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v2 \"Resultados: dataset final v2 com tipos e rubrica\""
 elif [[ "$etapa" == "completo" || "$etapa" == "v23c" || "$etapa" == "conceitos" || "$etapa" == "variada" || "$etapa" == "final2" ]]; then
     echo "  cat pipeline/qa_research/relatorios/geracao_v23_completo/RELATORIO.md"
     echo "  cat pipeline/qa_research/relatorios/geracao_conceitos/RELATORIO.md"
