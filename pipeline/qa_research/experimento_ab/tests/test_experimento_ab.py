@@ -1153,6 +1153,19 @@ class CompletoTests(unittest.TestCase):
         self.assertEqual(len([p for p in resp["resp_gpt-5"].payloads[antes:] if "MEG" in p["pergunta"]]), 2)
         self.assertFalse([p for p in resp["resp_gpt-5"].payloads[antes:] if "filtro" in p["pergunta"]])
         self.assertEqual(d2.relatorio()["n"], 3)
+        # um modelo sai da avaliação: não responde mais, e os demais não são repetidos
+        menos = {k: v for k, v in modelos.items() if k != "gpt-4-1"}
+        d3 = CO.DatasetCompleto(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),
+                                juiz=NuncaRedundante(), modelos=menos, v1=v1, **SILENCIO)
+        n41, n5 = len(resp["resp_gpt-4-1"].payloads), len(resp["resp_gpt-5"].payloads)
+        self.assertEqual(d3.avaliar(workers=2, judge_workers=1, clientes=resp | {"juiz": JuizResp()}), 0)
+        self.assertEqual(len(resp["resp_gpt-4-1"].payloads), n41)
+        self.assertLessEqual(len(resp["resp_gpt-5"].payloads) - n5, 1)       # no máximo a sondagem
+        self.assertEqual(set(d3.relatorio()["modelos"]), set(menos))
+        with self.assertRaises(ValueError):                                 # versão diferente de um modelo comum
+            CO.DatasetCompleto(tmp / "final", exp=exp, fontes_=fontes_, calibracao=cal, exclusoes=excl, embedder=Emb(),
+                               juiz=NuncaRedundante(), modelos={**menos, "gpt-5": "gpt-5-petrobras:high"}, v1=v1,
+                               **SILENCIO).avaliar(workers=2, judge_workers=1, clientes=resp | {"juiz": JuizResp()})
 
 
 class FalsoConceito(FalsoV22):

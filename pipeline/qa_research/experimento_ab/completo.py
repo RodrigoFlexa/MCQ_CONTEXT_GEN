@@ -45,7 +45,8 @@ SAIDA = C.QA / "relatorios" / "petroquest_final_v2"
 LIMITE = 20
 DOCS_SIMULTANEOS = 6
 # Os modelos avaliados, todos com effort low quando o modelo aceita (o GPT-4.1 não tem effort).
-MODELOS = dict(LI.MODELOS)
+# Os nano (GPT-4.1 Nano e GPT-5 nano) saíram da avaliação: só os modelos abaixo respondem às questões.
+MODELOS = {m: v for m, v in LI.MODELOS.items() if m not in ("gpt-4-1-nano", "gpt-5-nano")}
 
 
 def itens_completos(origem: Path = C.GERACAO_FINAL) -> list[str]:
@@ -230,11 +231,18 @@ class DatasetCompleto(F.DatasetFinal):
                    prompts={"respondente": C.sha(LI.prompt_curta(self.limite)), "juiz": C.sha(G.prompt("juiz"))})
         with output_lock(self.saida / "avaliacao"):
             old = ler(self.saida / "config.json")
-            dados = ("n", "dados_sha256", "questoes_sha256")
-            if old is not None and {k: v for k, v in old.items() if k not in dados} != \
-                    {k: v for k, v in cfg.items() if k not in dados}:
-                raise ValueError("O protocolo (modelos, limite, prompts ou juiz) mudou em relação à avaliação "
-                                 f"existente; apague {C.relativo(self.saida / 'avaliacao')} e config.json para reavaliar")
+            dados = ("n", "dados_sha256", "questoes_sha256", "modelos")
+            comuns = set(old["modelos"]) & set(cfg["modelos"]) if old is not None else set()
+            if old is not None and ({k: v for k, v in old.items() if k not in dados} !=
+                                    {k: v for k, v in cfg.items() if k not in dados}
+                                    or any(old["modelos"][m] != cfg["modelos"][m] for m in comuns)):
+                raise ValueError("O protocolo (limite, prompts, juiz ou a versão de um modelo) mudou em relação à "
+                                 f"avaliação existente; apague {C.relativo(self.saida / 'avaliacao')} e config.json "
+                                 "para reavaliar")
+            if old is not None and set(old["modelos"]) != set(cfg["modelos"]):
+                # modelo removido deixa de responder (as respostas antigas ficam guardadas); modelo novo responde a tudo
+                self.progress(f"[final-v2] modelos: saem {sorted(set(old['modelos']) - set(cfg['modelos']))}, "
+                              f"entram {sorted(set(cfg['modelos']) - set(old['modelos']))}", flush=True)
             if old is not None and old != cfg:     # dataset ampliado: as respostas e vereditos por questão continuam
                 self.progress(f"[final-v2] dataset mudou ({old['n']} -> {cfg['n']} questões): só as novas serão "
                               "respondidas e julgadas", flush=True)
