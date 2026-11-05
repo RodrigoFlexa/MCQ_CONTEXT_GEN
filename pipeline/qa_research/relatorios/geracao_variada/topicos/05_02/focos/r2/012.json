@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Dependência de um mesmo UPS elimina a função de reserva entre estações master redundantes durante a recomposição.",
+      "pergunta": "Quando duas estações master redundantes passam a depender do mesmo UPS e esse conjunto falha, o que acontece com a supervisão master na recomposição?",
+      "resposta": "Perda simultânea dos dois canais master.",
+      "explicacao": "Sem segregação elétrica entre as estações, uma falha única no UPS derruba ambos os masters e remove a supervisão redundante no estado degradado.",
+      "resposta_padrao": "Um master cai e o outro assume automaticamente.",
+      "por_que_nao": "Com alimentação comum, a falha do UPS atinge os dois canais ao mesmo tempo e elimina o failover.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Um comando de trip mantido pela lógica durante o reboot pode bloquear o fechamento do disjuntor do gerador de emergência.",
+      "pergunta": "No blackout total, com barramento morto e permissivos de fechamento válidos, que elemento lógico ainda pode impedir a entrada do gerador de emergência durante o reboot do controle?",
+      "resposta": "Sinal de trip persistente ao disjuntor.",
+      "explicacao": "O caso descrito mostra que a lógica de controle pode continuar enviando trip ao disjuntor durante a reinicialização, bloqueando o fechamento mesmo na recomposição.",
+      "resposta_padrao": "Falta de sincronismo com o barramento.",
+      "por_que_nao": "Com barramento morto, sincronismo não é o limitante; o bloqueio vem do trip mantido pela lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Back feeding só viabiliza a retomada da geração principal se também restabelecer os auxiliares de partida e sustentação dos geradores.",
+      "pergunta": "Se o back feeding restaura instrumentos e controles, mas os auxiliares necessários para partir ou sustentar os geradores principais continuam indisponíveis, o que acontece com a retomada da geração principal?",
+      "resposta": "A retomada da geração principal permanece inviável.",
+      "explicacao": "A realimentação parcial ajuda na recuperação, mas não substitui os auxiliares que permitem partir ou manter os geradores principais em operação.",
+      "resposta_padrao": "O back feeding já substitui a geração principal.",
+      "por_que_nao": "Ele recompõe só parte da rede; sem auxiliares de partida e sustentação, os geradores principais não retornam.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "o back feeding pode restaurar instrumentos, controles ou serviços necessários à recuperação da planta, mas sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado, da lógica de intertravamento e da condição dos sistemas auxiliares que permitem partir ou sustentar os geradores principais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

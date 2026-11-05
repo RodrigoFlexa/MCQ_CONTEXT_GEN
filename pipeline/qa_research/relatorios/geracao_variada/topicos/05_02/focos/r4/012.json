@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 4,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Perda simultânea de canais redundantes por dependência elétrica comum em um único UPS.",
+      "pergunta": "Um distúrbio de alimentação auxiliar derruba, ao mesmo tempo, duas estações master tidas como redundantes. Que desvio de arquitetura explica essa perda simultânea?",
+      "resposta": "Alimentação comum pelo mesmo UPS.",
+      "explicacao": "No bloco F, as duas estações master estavam no mesmo UPS, o que reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou.",
+      "resposta_padrao": "Falha simultânea de software nas duas estações.",
+      "por_que_nao": "O gatilho foi um distúrbio de alimentação; isso aponta dependência elétrica comum, não uma falha lógica independente do suprimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A interligação por TIE no 24 Vcc elimina a segregação entre fontes redundantes de controle.",
+      "pergunta": "Que manobra no 24 Vcc pode desfazer a segregação entre dois conjuntos retificador/bateria redundantes durante a recomposição?",
+      "resposta": "Fechamento do disjuntor TIE.",
+      "explicacao": "No A1, os dois conjuntos 24 Vcc podiam ser interligados por TIE; no F, a resiliência depende da segregação entre fontes e caminhos de comando.",
+      "resposta_padrao": "Comutação do UPS para bypass.",
+      "por_que_nao": "O bypass altera a alimentação CA do UPS; quem interliga diretamente os dois ramos 24 Vcc é o TIE.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "com possibilidade de interligação por disjuntor TIE"
+        },
+        {
+          "bloco": "F",
+          "trecho": "segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

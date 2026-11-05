@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 3,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Em arquitetura híbrida, o consumo em tempo real permanece local para reduzir dependência de latência e perda de conectividade externa.",
+      "pergunta": "Por que, numa arquitetura híbrida com envio de dados à nuvem, o consumo em tempo real continua no SCADA local?",
+      "resposta": "Menor dependência de latência e perda de conectividade externa.",
+      "explicacao": "O SCADA fica mais próximo das funções operacionais. Para consumo em tempo real, atraso e desconexão externos degradam mais a função do que em usos analíticos na nuvem.",
+      "resposta_padrao": "Para aproveitar mais armazenamento e processamento na nuvem.",
+      "por_que_nao": "Capacidade computacional não atende o requisito decisivo perto do controle: atraso previsível e continuidade de comunicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Sem contexto de modo operacional, o mesmo valor medido muda de significado e fragiliza diagnósticos.",
+      "pergunta": "Por que um mesmo valor medido pode levar a diagnóstico errado quando o dado não traz o modo operacional?",
+      "resposta": "O significado do sinal muda entre modos operacionais.",
+      "explicacao": "Partida, regime e parada impõem referências diferentes para a mesma medição. Sem esse contexto, a analítica interpreta como anomalia ou normalidade o que pertence a outro modo.",
+      "resposta_padrao": "Falha de calibração do sensor.",
+      "por_que_nao": "Mesmo com calibração correta, o valor fica semanticamente ambíguo sem o contexto operacional que define sua referência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações analíticas e modelos os transformam em informação operacional útil"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Em aplicações próximas do controle, falta de sincronismo entre fontes torna o estado inferido temporalmente inconsistente.",
+      "pergunta": "Quando uma aplicação combina medições de fontes distintas para influenciar ajustes frequentes, o que a falta de sincronismo faz com o estado inferido do processo?",
+      "resposta": "Torna o estado inferido temporalmente inconsistente.",
+      "explicacao": "Variáveis de instantes diferentes passam a compor um único cálculo. Perto do controle, essa fotografia falsa do processo distorce estimativas e ajustes.",
+      "resposta_padrao": "Só atrasa a atualização exibida na tela.",
+      "por_que_nao": "O problema principal não é visualização tardia, mas mistura temporal de entradas usadas para inferir e atuar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "item": "07_02",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A remediação de vulnerabilidades em software embarcado proprietário depende estruturalmente do fornecedor.",
+      "pergunta": "Por que o operador não corrige sozinho vulnerabilidades em software embarcado proprietário?",
+      "resposta": "Dependência do fornecedor para correção suportada.",
+      "explicacao": "O operador não controla o desenvolvimento do software embarcado e alterar firmware proprietário por conta própria pode comprometer suporte, funcionalidade ou certificação; por isso a correção viável depende do fornecedor.",
+      "resposta_padrao": "A necessidade principal é só esperar uma janela de manutenção.",
+      "por_que_nao": "Janela operacional não resolve a falta de patch suportado nem o controle externo do ciclo de desenvolvimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o operador normalmente não controla o ciclo de desenvolvimento do software embarcado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "A falta de patch e versão estável do fornecedor prolonga a janela de exposição do ativo vulnerável.",
+      "pergunta": "Divulgada uma vulnerabilidade em componente embarcado, mas ainda sem patch e versão estável do fabricante, o que acontece com a janela de exposição do ativo?",
+      "resposta": "Ela se prolonga sob dependência do fornecedor.",
+      "explicacao": "Sem correção e base estável informadas pelo fabricante, o operador não controla o tempo até a remediação compatível; a exposição permanece aberta por mais tempo.",
+      "resposta_padrao": "Ela diminui, porque a falha já foi identificada.",
+      "por_que_nao": "Conhecer a falha não a remove; a janela só fecha com mitigação ou correção aplicável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o fornecedor passa a influenciar o tempo de exposição do ativo vulnerável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Diagnóstico por terceiro sem mudança requer privilégio de observação, não de engenharia.",
+      "pergunta": "Qual privilégio é adequado para um terceiro só diagnosticar, sem alterar lógica, parâmetros ou firmware?",
+      "resposta": "Acesso de observação.",
+      "explicacao": "Para diagnóstico sem intervenção, o menor privilégio basta. Engenharia e administração excedem a necessidade e ampliam a possibilidade de alteração indevida.",
+      "resposta_padrao": "Acesso de engenharia temporário.",
+      "por_que_nao": "Privilégio de engenharia pode modificar configuração, lógica e firmware; para só observar, isso é excesso técnico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "A conexão temporária de notebook de manutenção de terceiro amplia a superfície de exposição do sistema.",
+      "pergunta": "Quando a mitigação de uma vulnerabilidade exige notebook de manutenção de terceiro conectado temporariamente, que efeito isso traz para a superfície de ataque?",
+      "resposta": "Ela aumenta com um vetor temporário externo.",
+      "explicacao": "A conexão introduz um novo caminho de acesso durante a intervenção. Mesmo temporário, ele amplia a exposição e exige controle mais rigoroso do terceiro.",
+      "resposta_padrao": "Ela não muda, pois a conexão é só temporária.",
+      "por_que_nao": "Temporalidade não elimina o caminho adicional de entrada; o vetor externo existe enquanto conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "conexão temporária de notebooks de manutenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "isso reduz a superfície de erro e de abuso porque limita quais ativos podem ser vistos, configurados ou modificados."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

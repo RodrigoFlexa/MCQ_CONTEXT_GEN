@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Com stiction, parte da ação do controlador é consumida para superar o atrito estático antes de alterar a variável manipulada.",
+      "pergunta": "Por que, com stiction, a variável manipulada pode demorar a responder mesmo enquanto a saída do controlador continua mudando?",
+      "resposta": "Esforço do controlador consumido até vencer o atrito estático.",
+      "explicacao": "Com stiction, a válvula permanece parada até a força superar um limiar de atrito estático. Nesse intervalo, o controlador segue corrigindo, mas a variável manipulada ainda não se altera.",
+      "resposta_padrao": "Atraso do transmissor.",
+      "por_que_nao": "O transmissor não bloqueia o início do movimento da válvula; o atraso citado decorre do atrito estático no elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador, folgas mecânicas, atrito, limitação de ar ou problemas no próprio atuador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O controlador continua corrigindo o erro, mas parte desse esforço é consumida para vencer o atrito antes que a variável manipulada realmente mude."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Sem posicionador, aumento da força de processo oposta ao movimento reduz a abertura atingida para o mesmo sinal do controlador.",
+      "pergunta": "Se a força de processo contrária à abertura aumenta em uma válvula pneumática sem posicionador, o que acontece com a abertura obtida para o mesmo sinal do controlador?",
+      "resposta": "Redução da abertura alcançada.",
+      "explicacao": "Sem posicionador, a pressão aplicada ao atuador pode coincidir com a de instrumento, sem correção local adicional. Com maior força de processo o mesmo sinal pode resultar em menor abertura efetiva.",
+      "resposta_padrao": "A abertura permanece igual, porque o sinal é o mesmo.",
+      "por_que_nao": "O bloco indica que a mesma variação do sinal pode gerar respostas diferentes e que o posicionador melhora a capacidade de vencer forças de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando não há posicionador, essa pressão pode coincidir com a pressão de instrumento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na prática, o posicionador pode melhorar a capacidade de vencer forças de processo e não linearidades"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Folga mecânica provoca backlash na reversão do comando, absorvendo parte do movimento antes do reengate da transmissão.",
+      "pergunta": "Por que a reversão do comando pode não mover a válvula de imediato quando há folga mecânica na transmissão?",
+      "resposta": "Backlash mecânico.",
+      "explicacao": "Na reversão, parte do deslocamento primeiro recompõe o jogo entre os componentes mecânicos. Só depois desse reengate o comando volta a produzir movimento efetivo da haste ou do obturador.",
+      "resposta_padrao": "Stiction.",
+      "por_que_nao": "No stiction a resistência é por atrito estático; com folga, o atraso vem da tomada do jogo mecânico na mudança de sentido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador, folgas mecânicas, atrito, limitação de ar ou problemas no próprio atuador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

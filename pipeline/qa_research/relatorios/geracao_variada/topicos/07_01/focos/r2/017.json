@@ -1,0 +1,81 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Redundância só evita degradação oculta quando a perda da condição redundante é detectável.",
+      "pergunta": "Que característica da redundância evita operação prolongada em modo degradado sem resposta?",
+      "resposta": "Detectabilidade da perda de redundância",
+      "explicacao": "A redundância só traz benefício operacional se sua degradação puder ser percebida; sem isso, o sistema continua operando com resiliência reduzida e sem reação tempestiva.",
+      "resposta_padrao": "Comutação automática entre canais.",
+      "por_que_nao": "Comutar não basta se a perda da redundância não for percebida e tratada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Congelamento restrito a uma única remota aponta primeiro para falha localizada na camada de I/O da própria remota, não para rede geral.",
+      "pergunta": "Por que o congelamento simultâneo dos sinais de uma única remota, com o restante atualizando, aponta antes para a remota que para a rede geral?",
+      "resposta": "Falha localizada na interface remota de I/O",
+      "explicacao": "Na análise por camadas, um sintoma concentrado numa só remota indica problema local nessa interface; uma falha de rede geral tenderia a afetar um conjunto mais amplo de sinais.",
+      "resposta_padrao": "Instabilidade geral da rede.",
+      "por_que_nao": "Se a rede geral fosse a causa principal, o efeito tenderia a aparecer além de uma única remota.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Na análise de arquitetura, a confiabilidade diagnóstica da indicação depende também da validade do dado, não só do valor exibido.",
+      "pergunta": "Que atributo de qualidade do dado, além do valor exibido, precisa ser verificado no diagnóstico?",
+      "resposta": "Validade do dado",
+      "explicacao": "Um valor pode parecer plausível e ainda assim estar inválido ou indisponível para a arquitetura; por isso o diagnóstico não deve se apoiar apenas no número mostrado.",
+      "resposta_padrao": "Precisão do instrumento.",
+      "por_que_nao": "A precisão metrológica não informa se o dado chegou válido ou indisponível ao sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "conceito não pode pedir 'que aspectos/quais fatores' nem 'além de X': admite várias respostas; pergunte por um termo, função, componente, parâmetro ou local único"
+      ]
+    }
+  ]
+}

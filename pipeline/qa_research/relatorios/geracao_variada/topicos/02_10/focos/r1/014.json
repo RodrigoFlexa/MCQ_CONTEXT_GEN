@@ -1,0 +1,99 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Instabilidade da malha de interface pode resultar de perda de autoridade do atuador, não apenas da lógica de controle.",
+      "pergunta": "Por que a malha de interface pode perder estabilidade quando a válvula de descarga satura?",
+      "resposta": "Perda de autoridade do elemento final de controle.",
+      "explicacao": "Ao saturar, a válvula fica sem margem para aumentar ou reduzir a ação manipulada, prejudicando a rejeição de perturbações e a estabilização da interface.",
+      "resposta_padrao": "Sintonia inadequada do PID.",
+      "por_que_nao": "Mesmo com sintonia adequada, a malha não corrige perturbações se o atuador já atingiu seu limite.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O desempenho da malha pode ser limitado por saturação ou proximidade do limite dos atuadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações, podendo não conseguir estabilizar o nível."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Sem anti-windup, a saturação do atuador provoca windup integral e aumenta o tempo de recuperação da malha.",
+      "pergunta": "Quando o atuador satura num Dead Band Assimétrico sem anti-windup, o que tende a acontecer com o tempo de recuperação da malha?",
+      "resposta": "Aumenta por windup integral.",
+      "explicacao": "Sem anti-windup, o integrador continua acumulando erro durante a saturação, distorce a resposta e prolonga a volta ao regime controlado.",
+      "resposta_padrao": "Diminui pela reação mais rápida da banda assimétrica.",
+      "por_que_nao": "A assimetria não evita o acúmulo da integral; sem anti-windup, a saída demora a sair do limite.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tais falhas são tecnicamente relevantes porque podem distorcer a resposta integral, retardar recuperação e mascarar riscos em transientes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "O controle da interface via underflow interage com o overflow do hidrociclone pelo balanço de massa compartilhado.",
+      "pergunta": "Que vínculo físico faz o ajuste do underflow para controlar a interface alterar também a condição do overflow do hidrociclone?",
+      "resposta": "Balanço de massa comum entre underflow e overflow.",
+      "explicacao": "As duas correntes saem do mesmo equipamento e compartilham a mesma alimentação; mudar uma altera a outra e acopla as malhas.",
+      "resposta_padrao": "Interferência entre sinais dos controladores.",
+      "por_que_nao": "A interação relevante é hidráulica e material, não um simples cruzamento de sinais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Avaliação prévia de golfadas e oscilações de carga em sistema separador-hidrociclone requer modelo dinâmico fenomenológico.",
+      "pergunta": "Que tipo de modelo permite comparar filosofias de controle e antecipar efeitos de golfadas no conjunto separador-hidrociclone?",
+      "resposta": "Modelo dinâmico fenomenológico.",
+      "explicacao": "Esse modelo representa a dinâmica e o acoplamento do sistema, permitindo estudar transientes e comparar estratégias antes da aplicação.",
+      "resposta_padrao": "Balanço estacionário.",
+      "por_que_nao": "Golfadas e oscilações dependem da evolução temporal do processo, ausente em regime permanente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        }
+      ],
+      "k": 4,
+      "regua": [
+        "conceito não pode pedir 'que tipo de': costuma ser um item de uma lista com outros igualmente corretos; inclua o qualificador que torna a resposta única ou escolha outro conhecimento"
+      ]
+    }
+  ]
+}

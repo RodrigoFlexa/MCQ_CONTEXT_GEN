@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 2,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Fluxo interdomínios sem necessidade operacional mantém caminho de propagação que contraria a finalidade técnica da segmentação.",
+      "pergunta": "Por que um fluxo entre domínios que já não é necessário para a operação continua sendo criticamente relevante na arquitetura?",
+      "resposta": "Mantém um caminho de propagação entre domínios.",
+      "explicacao": "Os blocos ligam o monitoramento à confirmação de que os fluxos continuam necessários. Se não são mais necessários, seguem abrindo caminhos de propagação que a segmentação existe justamente para reduzir.",
+      "resposta_padrao": "Porque pode degradar o desempenho da rede.",
+      "por_que_nao": "O ponto decisivo não é desempenho, e sim a permanência de um caminho de propagação entre domínios de criticidade distinta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "reduzir caminhos de propagação entre domínios"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Perda do backup elétrico do SCADA afeta a disponibilidade da supervisão e comunicação, não a contenção lógica entre domínios.",
+      "pergunta": "Se a segmentação lógica permanece íntegra, mas o SCADA perde energia ininterrupta, o que cai do ponto de vista funcional?",
+      "resposta": "Continuidade de supervisão e comunicação do SCADA.",
+      "explicacao": "O bloco foco afirma que SCADA depende de energia confiável e ininterrupta. O backup elétrico preserva a continuidade da supervisão e da comunicação; sua perda não altera, por si, a segmentação lógica.",
+      "resposta_padrao": "A segmentação entre domínios deixa de existir.",
+      "por_que_nao": "A contenção lógica não é substituída nem removida pelo backup de energia; o efeito citado é sobre disponibilidade funcional do SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas SCADA dependem de energia confiável e ininterrupta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

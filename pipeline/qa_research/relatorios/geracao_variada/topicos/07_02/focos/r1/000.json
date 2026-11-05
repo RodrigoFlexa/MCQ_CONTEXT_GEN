@@ -1,0 +1,93 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Critério técnico de inclusão de sistemas de informação e de negócio no escopo do IACS.",
+      "pergunta": "Que condição faz um sistema de informação ou de negócio entrar no escopo do IACS?",
+      "resposta": "Conexão à infraestrutura de rede do IACS.",
+      "explicacao": "No escopo do IACS, sistemas de informação e de negócio passam a ser considerados quando estão conectados pela infraestrutura de rede do próprio IACS.",
+      "resposta_padrao": "Basta ser um sistema corporativo usado pela operação.",
+      "por_que_nao": "Uso operacional não basta; o critério citado é a conexão pela infraestrutura de rede do IACS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e de negócio conectados pela infraestrutura de rede do IACS"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Identificação da camada funcional que agrupa SCADA, historiadores, gestão de alarmes e HMI.",
+      "pergunta": "Como se chama a camada que costuma reunir SCADA, historiadores, gestão de alarmes e interfaces homem-máquina?",
+      "resposta": "Camada supervisória.",
+      "explicacao": "O bloco foco associa explicitamente essas aplicações à camada supervisória, distinta da camada de controle determinístico do processo.",
+      "resposta_padrao": "Camada de controle.",
+      "por_que_nao": "Controle direto do processo fica abaixo; SCADA, historiadores, alarmes e HMI pertencem à supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Relação entre heterogeneidade de modelos de dados e migração da integração para a camada supervisória.",
+      "pergunta": "Quando fornecedores diferentes usam modelos de dados distintos, por que a integração costuma migrar para a camada supervisória?",
+      "resposta": "Padronização limitada próxima à fonte.",
+      "explicacao": "Modelos de dados distintos dificultam normalizar a troca no nível mais próximo dos controladores; por isso a integração tende a se concentrar na supervisão.",
+      "resposta_padrao": "Maior poder de processamento do SCADA.",
+      "por_que_nao": "A migração é atribuída à limitação de padronização junto à fonte, não à capacidade computacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Efeito de conectividade excessiva entre domínios de criticidade distinta sobre o alcance das falhas.",
+      "pergunta": "Se controle de processo, proteção, segurança e sistemas elétricos compartilham conectividade além do necessário, o que acontece com o alcance de um erro de configuração?",
+      "resposta": "Amplia-se para outros domínios.",
+      "explicacao": "Conectividade excessiva cria caminhos de propagação entre conjuntos com funções diferentes, permitindo que um erro deixe de ficar contido no domínio de origem.",
+      "resposta_padrao": "Fica restrito ao domínio onde surgiu.",
+      "por_que_nao": "A segmentação existe para conter propagação; conectividade além do necessário aumenta o espalhamento das consequências.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo pode incluir o sistema básico de controle de processo, funções de camada independente de proteção, sistemas instrumentados de segurança, sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Disponibilidade em estado estacionário é representada pela razão entre tempo operacional e tempo total observado.",
+      "pergunta": "Qual razão representa a disponibilidade em estado estacionário com tempos medidos diretamente?",
+      "resposta": "Uptime dividido pelo tempo total observado.",
+      "explicacao": "No bloco F, a forma direta de representar a disponibilidade em estado estacionário é a razão entre o tempo em operação e o tempo total observado.",
+      "resposta_padrao": "MTBF dividido por MTTR.",
+      "por_que_nao": "MTBF e MTTR são usados como aproximação quando uptime e downtime não estão diretamente disponíveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em estado estacionário, pode ser representada pela razão entre uptime e tempo total observado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "O valor do KPI de disponibilidade depende de quais indisponibilidades entram no indicador.",
+      "pergunta": "Que definição do KPI de disponibilidade pode alterar o resultado sem mudar o comportamento físico do sistema?",
+      "resposta": "As indisponibilidades incluídas no indicador.",
+      "explicacao": "O bloco F afirma que a fração de tempo disponível varia conforme o escopo de indisponibilidades contabilizado, mesmo sem mudança nas falhas ou nos reparos.",
+      "resposta_padrao": "Apenas o período de observação.",
+      "por_que_nao": "Mesmo no mesmo período, incluir ou excluir certas indisponibilidades altera a fração de tempo disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A fração de tempo disponível depende de quais indisponibilidades são incluídas no indicador."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "MTTR reduz disponibilidade por aumentar a duração da indisponibilidade em cada falha, sem mudar sua frequência.",
+      "pergunta": "Por que elevar o MTTR reduz a disponibilidade se o MTBF permanece constante?",
+      "resposta": "Maior duração da indisponibilidade por falha.",
+      "explicacao": "Com MTBF constante, a frequência de interrupções não muda. A disponibilidade cai porque cada evento mantém o sistema fora de serviço por mais tempo até a recuperação.",
+      "resposta_padrao": "A chance de falhar aumenta.",
+      "por_que_nao": "MTTR afeta a duração da recuperação, não a frequência de falhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumentar o MTTR tende a reduzi-la."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso ocorre porque a disponibilidade combina frequência de interrupções e duração de recuperação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Tempos logísticos e administrativos maiores reduzem a disponibilidade operacional mesmo com mesma frequência de falha e mesmo reparo ativo.",
+      "pergunta": "Dois equipamentos têm mesma frequência de falha e mesmo reparo ativo; um espera mais por acesso e sobressalente. O que acontece com sua disponibilidade operacional?",
+      "resposta": "Sua disponibilidade operacional fica menor.",
+      "explicacao": "Na disponibilidade operacional, o downtime inclui tempos logísticos e administrativos além da intervenção. Se esses tempos aumentam, a fração de tempo disponível diminui.",
+      "resposta_padrao": "Fica igual, porque falham igual e o reparo ativo é o mesmo.",
+      "por_que_nao": "A disponibilidade operacional considera todo o downtime, não apenas o reparo ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo, isto é, a intervenção propriamente dita, a tempos logísticos e administrativos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dois equipamentos com a mesma frequência de falha e o mesmo tempo de reparo ativo podem apresentar disponibilidades operacionais muito diferentes se seus tempos logísticos e administrativos forem distintos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

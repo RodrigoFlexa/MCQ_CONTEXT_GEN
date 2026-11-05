@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Integração funcional depende de troca válida de dados entre campo e controlador, não só de energização.",
+      "pergunta": "Por que a energização de um instrumento não comprova, sozinha, que ele já está integrado ao controlador?",
+      "resposta": "ausência de troca válida de dados com o PLC",
+      "explicacao": "O bloco foco trata a comunicação como condição prática para a arquitetura funcionar integrada e afirma que energização ou presença física não bastam para comprovar essa integração.",
+      "resposta_padrao": "A energização do instrumento já comprova a integração.",
+      "por_que_nao": "O bloco foco afirma que energização ou presença física não bastam sem comunicação confirmada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A comunicação entre equipamentos de campo e controlador é uma condição prática para que a arquitetura funcione como sistema integrado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Perda de comunicação pode se manifestar como valor exibido que não acompanha mais o processo.",
+      "pergunta": "Quando a perda de comunicação não remove o ponto da tela, mas ele deixa de acompanhar o processo, que sintoma aparece?",
+      "resposta": "valor congelado",
+      "explicacao": "O bloco foco lista valor congelado como manifestação possível da perda de comunicação. O apoio acrescenta que a supervisão pode continuar exibindo valores sem representar corretamente o estado físico.",
+      "resposta_padrao": "A leitura vai para zero.",
+      "por_que_nao": "Dependendo da arquitetura, a perda de comunicação pode manter o último valor exibido sem atualização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": false,
+      "conhecimento": "Cobertura parcial da automação reduz a visibilidade integrada e exige observação complementar do operador.",
+      "pergunta": "Que efeito a leitura complementar de equipamentos fora do PLC tem sobre a visibilidade do processo?",
+      "resposta": "visibilidade parcial dependente de observação complementar do operador",
+      "explicacao": "Se alguns equipamentos são lidos fora do PLC, a automação não cobre toda a visão do processo; o próprio bloco associa isso à necessidade de observação complementar do operador.",
+      "resposta_padrao": "A visibilidade continua totalmente centralizada no supervisório.",
+      "por_que_nao": "Se há leitura fora do PLC, a automação tem cobertura parcial e parte da visibilidade depende do operador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "parte da visibilidade do processo depende de observação complementar do operador"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Diagnóstico por camadas distingue perda de comando remoto de perda de medição ou visibilidade.",
+      "pergunta": "A variável continua atualizando na supervisão, mas o elemento final não responde a comandos da sala. Que perda funcional isso indica?",
+      "resposta": "perda de comando remoto",
+      "explicacao": "Com a variável ainda atualizando, a perda não está na medição ou na visibilidade. Pelos blocos, esse sintoma corresponde à perda de comando remoto.",
+      "resposta_padrao": "Perda de medição.",
+      "por_que_nao": "A medição segue visível e atualizada; o sintoma está no caminho de atuação/comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

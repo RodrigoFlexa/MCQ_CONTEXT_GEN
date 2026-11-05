@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Parte dos instrumentos acompanhada fora do PLC caracteriza cobertura parcial da automação.",
+      "pergunta": "Como se chama a arquitetura em que parte dos instrumentos é acompanhada fora do PLC?",
+      "resposta": "Cobertura parcial da automação.",
+      "explicacao": "Acompanhar instrumentos fora do PLC é apresentado como indício de cobertura parcial da automação; por isso a visibilidade automática do processo fica incompleta.",
+      "resposta_padrao": "Falha de comunicação com o PLC.",
+      "por_que_nao": "A medição pode existir e ser acompanhada fora do PLC por desenho da arquitetura, não por perda de enlace.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Nesses casos, parte da visibilidade do processo depende de observação complementar do operador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Visualização e análise podem concordar entre si e ainda assim errar o processo real quando compartilham a mesma base degradada de sinais.",
+      "pergunta": "Por que tendência na tela e análise de desempenho podem concordar entre si e ainda assim não refletir o processo real?",
+      "resposta": "Base comum de sinais degradada.",
+      "explicacao": "Como visualização e análise usam a mesma base de sinais, a degradação dessa base preserva a concordância entre aplicações, mas não a correspondência com o estado físico.",
+      "resposta_padrao": "O processo entrou em regime permanente.",
+      "por_que_nao": "Concordância entre aplicações não valida o campo quando ambas consomem o mesmo dado deteriorado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Desalinhamento temporal entre sinais históricos distorce a ordem causal inferida dos eventos.",
+      "pergunta": "Quando variáveis de uma mesma ocorrência entram na base histórica com carimbos de tempo desalinhados, que distorção aparece na análise de causa e efeito?",
+      "resposta": "Inversão aparente de causa e efeito.",
+      "explicacao": "Sem coerência temporal, a ordem mostrada entre sinais relacionados na base histórica pode divergir da ordem física real, comprometendo a inferência de causa e efeito.",
+      "resposta_padrao": "Atraso de comunicação.",
+      "por_que_nao": "O atraso é a condição de origem; a consequência analisada é a ordem causal aparente ficar errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "A independência funcional da redundância em UPS e 24 Vcc depende da distribuição real das cargas entre ramos distintos.",
+      "pergunta": "Que verificação confirma que os ramos redundantes realmente são independentes, além da simples presença de tensão?",
+      "resposta": "Distribuição correta das cargas entre os ramos redundantes.",
+      "explicacao": "F exige verificar a distribuição entre ramos; A1 diz que a redundância só existe com segregação real das cargas, não apenas com alimentação disponível nos dois lados.",
+      "resposta_padrao": "Capacidade nominal idêntica nos dois ramos.",
+      "por_que_nao": "Capacidade igual não evita ponto único de falha se as cargas redundantes estiverem concentradas no mesmo ramo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "conceito não pode pedir 'que aspectos/quais fatores' nem 'além de X': admite várias respostas; pergunte por um termo, função, componente, parâmetro ou local único"
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A disponibilidade do bypass do UPS preserva um caminho alternativo de alimentação CA quando o inversor não sustenta a carga.",
+      "pergunta": "Por que a indisponibilidade do bypass do UPS é crítica mesmo com baterias e retificador saudáveis?",
+      "resposta": "Elimina a alimentação alternativa de CA se o inversor falhar.",
+      "explicacao": "F inclui o bypass entre os itens críticos de monitoramento; pela lógica de redundância funcional de A1, ele é o caminho alternativo da saída CA quando o inversor fica indisponível.",
+      "resposta_padrao": "Porque reduz a autonomia do banco de baterias.",
+      "por_que_nao": "Autonomia depende do banco e da carga; o bypass serve para manter a saída CA sem o inversor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "dois caminhos capazes de assumir a carga reduzem a probabilidade de perda total por falha simples."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Incoerência entre as lógicas de reboot e de trip pode bloquear a recomposição mesmo quando já existe fonte disponível.",
+      "pergunta": "Quando existe fonte após blackout, mas a recomposição automática não avança e a alimentação CC está presente, que elo técnico deve ser suspeitado?",
+      "resposta": "Intertravamentos incoerentes entre reboot e trip.",
+      "explicacao": "F destaca a coerência entre reboot e trip e afirma que falhas de lógica podem impedir a recomposição mesmo com fonte potencialmente disponível.",
+      "resposta_padrao": "Insuficiência de potência da fonte disponível.",
+      "por_que_nao": "O bloco F explicita que, mesmo com fonte potencialmente disponível, falhas de lógica ainda podem travar a recomposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "A perda da alimentação por bateria em black start remove os circuitos de comando e permissivos necessários para iniciar a recomposição.",
+      "pergunta": "Na sequência de black start, que efeito imediato a indisponibilidade da alimentação por bateria produz sobre a recomposição?",
+      "resposta": "Perda dos comandos e permissivos de partida.",
+      "explicacao": "F afirma que a perda da alimentação por bateria pode impedir a recomposição. Como essas fontes sustentam comando, CLP, supervisão e atuação, a sequência perde comandos e permissivos essenciais.",
+      "resposta_padrao": "Só há redução da autonomia de retaguarda.",
+      "por_que_nao": "Sem alimentação por bateria, perdem-se imediatamente comando e lógica, antes de a autonomia ser o limitante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

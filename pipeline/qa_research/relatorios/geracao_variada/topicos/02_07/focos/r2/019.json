@@ -1,0 +1,101 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 2,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "O nível de um vaso se comporta como processo integrador, pois acumula o desbalanço entre vazões de entrada e saída.",
+      "pergunta": "Do ponto de vista dinâmico, como se classifica o nível de um separador frente ao desbalanço entre vazão de entrada e saída?",
+      "resposta": "Processo integrador.",
+      "explicacao": "Pelo balanço de massa, a diferença entre entrada e saída se acumula como volume armazenado; assim, o nível integra esse desbalanço ao longo do tempo.",
+      "resposta_padrao": "Processo autoregulado de primeira ordem.",
+      "por_que_nao": "Sem correção, o nível não retorna sozinho ao valor anterior; ele continua acumulando o desbalanço de vazões.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "A ação integral é a responsável por eliminar erro estacionário em malhas de nível.",
+      "pergunta": "Que ação do controlador remove o erro estacionário de nível em presença de carga constante?",
+      "resposta": "Ação integral.",
+      "explicacao": "Ela acumula o desvio até impor a correção necessária na saída líquida para equilibrar permanentemente a entrada.",
+      "resposta_padrao": "Ação proporcional.",
+      "por_que_nao": "Proporcional sozinho precisa manter erro residual para sustentar a correção, portanto não zera o offset.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Bloqueio de saída com PI ativo favorece windup do integrador, por perda de autoridade do atuador enquanto a integral continua acumulando erro.",
+      "pergunta": "Com a saída líquida bloqueada e o PI ainda integrando erro de nível, que mecanismo tende a dificultar a retomada sem sobre-elevação?",
+      "resposta": "Windup do integrador.",
+      "explicacao": "Sem conseguir alterar a vazão de saída, a integral continua acumulando correção; quando a autoridade retorna, a ação fica excessiva.",
+      "resposta_padrao": "Histerese da válvula.",
+      "por_que_nao": "Histerese é não linearidade do atuador; aqui a causa decisiva é a integral acumulada sem efeito na vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Aumento do atraso da malha reduz a margem de fase, degradando a robustez do controle de nível.",
+      "pergunta": "Quando o atraso total da malha de nível aumenta sem novo ajuste, o que acontece com a margem de fase?",
+      "resposta": "A margem de fase cai.",
+      "explicacao": "O atraso adiciona defasagem entre desvio de nível e correção na saída, reduzindo a robustez e aproximando a malha da oscilação.",
+      "resposta_padrao": "A margem de fase aumenta.",
+      "por_que_nao": "Mais atraso não amortece a malha; ele acrescenta fase negativa e erode a reserva de estabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumento de atraso da malha"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o controle de nível, pressão e interface é central para a estabilidade da planta"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

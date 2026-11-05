@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Critério de inclusão de sistemas de informação e negócios no escopo de IACS offshore.",
+      "pergunta": "Quando sistemas de informação e negócios passam a integrar o escopo de IACS offshore?",
+      "resposta": "Quando se conectam pela infraestrutura de rede do IACS.",
+      "explicacao": "No escopo offshore de IACS, a conexão pela infraestrutura de rede industrial basta para incluir sistemas de informação e negócios, mesmo sem atuação direta no processo.",
+      "resposta_padrao": "Somente quando executam controle direto do processo.",
+      "por_que_nao": "O critério citado é a conexão pela infraestrutura de rede do IACS, não o exercício de controle direto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "O impacto operacional de uma vulnerabilidade em IACS depende da função de processo do ativo atingido.",
+      "pergunta": "Por que a mesma vulnerabilidade pode ter impacto operacional muito diferente entre dois ativos de IACS?",
+      "resposta": "Pela função operacional do sistema atingido.",
+      "explicacao": "Os blocos ligam o efeito relevante ao papel do ativo; se ele atua em válvulas, vazão ou pressão, a exploração alcança o próprio processo ou tira funções de serviço.",
+      "resposta_padrao": "Pela pontuação CVSS ou pela severidade do boletim.",
+      "por_que_nao": "Nos blocos, o decisivo é a função do sistema atingido e sua capacidade de atuar no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Aplicação de patch sem validação de compatibilidade em controle pode reduzir a disponibilidade por introduzir indisponibilidade.",
+      "pergunta": "Quando um patch é aplicado sem validar compatibilidade entre firmware, comunicação e função de processo, o que acontece com a disponibilidade do controle?",
+      "resposta": "Cai por indisponibilidade introduzida pela mudança.",
+      "explicacao": "A2 afirma que atualizar sem validar compatibilidade pode introduzir indisponibilidade no controle; para esse tipo de ativo, a consequência relevante é perda de disponibilidade operacional.",
+      "resposta_padrao": "A disponibilidade melhora imediatamente, porque o risco foi corrigido.",
+      "por_que_nao": "Em OT, a própria mudança pode criar indisponibilidade se a compatibilidade não for validada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo;"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Um alerta amplo de vulnerabilidade só se traduz em risco concreto após confirmar presença do componente afetado e exposição real do ativo.",
+      "pergunta": "Por que um alerta amplo de vulnerabilidade não autoriza presumir comprometimento de todos os ativos conectados?",
+      "resposta": "Presença do componente afetado e exposição real do ativo.",
+      "explicacao": "F e A2 condicionam a análise à presença do componente vulnerável no ativo e à sua exposição real; um alerta amplo, sozinho, não demonstra comprometimento generalizado.",
+      "resposta_padrao": "Porque só haveria risco se o ativo estivesse diretamente exposto à internet.",
+      "por_que_nao": "Os blocos exigem verificar, para cada ativo, se o componente vulnerável está presente e qual é sua exposição, não apenas internet direta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Usar apenas regime permanente impede avaliar o acoplamento dinâmico entre separador e hidrociclone sob perturbações.",
+      "pergunta": "Se a análise de uma nova filosofia for feita apenas em regime permanente, que aspecto decisivo do conjunto separador-hidrociclone fica fora da avaliação?",
+      "resposta": "Acoplamento dinâmico em transientes e golfadas.",
+      "explicacao": "Sem dinâmica, a análise não captura a interação temporal entre o controle da interface, o hidrociclone e as perturbações de carga; por isso perde justamente os efeitos de golfadas e o acoplamento entre malhas.",
+      "resposta_padrao": "Só a escolha fina do setpoint.",
+      "por_que_nao": "O ponto decisivo ausente é a interação temporal entre separador e hidrociclone sob perturbações, que regime permanente não representa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a malha da interface água-óleo não deve ser analisada isoladamente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Omitir arraste pelo gás em um modelo leva a previsões otimistas demais da secura do gás quando esse mecanismo domina.",
+      "pergunta": "Quando um modelo ignora arraste pelo gás justamente num regime dominado por esse fenômeno, que erro tende a aparecer na previsão da saída gasosa?",
+      "resposta": "Subestimação do carryover de líquido.",
+      "explicacao": "Ao retirar do modelo o mecanismo que carrega líquido pela fase gasosa, a simulação passa a prever gás mais seco do que o real quando esse fenômeno governa a separação.",
+      "resposta_padrao": "Erro principalmente na posição da interface.",
+      "por_que_nao": "A simplificação omitida atua na fase gasosa; por isso o viés dominante é prever pouco líquido no gás.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sua utilidade, porém, depende das hipóteses adotadas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "No controle por bandas, a atuação mais agressiva é acionada pela saída da interface dos limites da banda, não por qualquer erro em relação ao centro.",
+      "pergunta": "No controle por bandas da interface, o que dispara a troca para a atuação mais rápida?",
+      "resposta": "Saída da interface da faixa permitida.",
+      "explicacao": "Nessa filosofia, a interface pode oscilar dentro de uma banda. O conjunto mais rápido só entra quando o nível ultrapassa os limites aceitos, não por qualquer erro em relação ao centro da banda.",
+      "resposta_padrao": "Qualquer desvio do setpoint.",
+      "por_que_nao": "No controle por bandas, desvios internos à faixa são tolerados; a atuação mais rápida só é acionada fora dos limites.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a interface pode variar dentro de uma faixa permitida; se sair dessa faixa, um conjunto de parâmetros mais rápido atua"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comparar filosofias de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

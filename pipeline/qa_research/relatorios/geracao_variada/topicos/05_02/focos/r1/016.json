@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Capacidade total por ramo é requisito para que a alimentação cruzada por TIE preserve a continuidade após falha simples.",
+      "pergunta": "Que capacidade cada ramo de 24 Vcc ou UPS deve ter para que a alimentação cruzada por TIE preserve a continuidade em contingência?",
+      "resposta": "Suprir integralmente a demanda do quadro.",
+      "explicacao": "Com o TIE em contingência, o ramo remanescente precisa assumir sozinho toda a carga; sem isso, a continuidade não é plenamente preservada.",
+      "resposta_padrao": "Capacidade para manter só as cargas prioritárias.",
+      "por_que_nao": "Na arquitetura descrita, cada conjunto é dimensionado para assumir toda a demanda do quadro, não apenas parte dela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir integralmente a demanda do quadro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com possibilidade de alimentação cruzada por disjuntor TIE em caso de falha de um conjunto"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Concentrar estações redundantes no mesmo UPS ou barramento cria ponto único de falha e elimina independência funcional.",
+      "pergunta": "Quando estações redundantes ficam no mesmo UPS ou no mesmo barramento, que mecanismo faz a arquitetura perder independência funcional?",
+      "resposta": "Ponto único de falha comum.",
+      "explicacao": "Sem segregação real, os dois trens dependem do mesmo caminho elétrico; uma falha simples nesse ramo derruba ambos simultaneamente.",
+      "resposta_padrao": "Sobrecarga do UPS.",
+      "por_que_nao": "Mesmo sem sobrecarga, a falha do ramo comum elimina os dois caminhos redundantes ao mesmo tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "perde independência funcional"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Indisponibilidade da alimentação por bateria pode impedir a recomposição no blackout ou black start mesmo havendo fonte potencialmente disponível.",
+      "pergunta": "Durante o black start, há fonte potencialmente disponível, mas a alimentação por bateria dos sistemas essenciais falha. O que acontece com a recomposição?",
+      "resposta": "Fica impedida.",
+      "explicacao": "Sem a bateria, comandos e lógicas essenciais podem não permanecer operantes para executar a recomposição do sistema.",
+      "resposta_padrao": "A recomposição apenas demora mais.",
+      "por_que_nao": "O bloqueio pode ser total, porque a indisponibilidade da bateria impede funções necessárias ao retorno da alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A confiabilidade dos sistemas essenciais aumenta quando a arquitetura evita ponto único de falha."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve ser feita pela consequência da perda de energia, não pela potência.",
+      "pergunta": "Qual critério técnico governa a escolha de cargas para 24 Vcc, UPS e geração de emergência?",
+      "resposta": "Consequência da perda de energia.",
+      "explicacao": "A essencialidade vem do efeito funcional da perda de alimentação sobre controle, shutdown, mitigação e continuidade, e não do valor de potência.",
+      "resposta_padrao": "Potência consumida da carga.",
+      "por_que_nao": "Uma carga pequena pode ser mais crítica que outra maior se sua perda comprometer controle ou segurança.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

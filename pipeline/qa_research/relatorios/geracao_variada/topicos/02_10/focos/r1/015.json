@@ -1,0 +1,93 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Função operacional do controle de DPR no hidrociclone.",
+      "pergunta": "No controle de hidrociclones, manter o DPR aproximadamente constante busca manter constante qual parâmetro operacional?",
+      "resposta": "O split do hidrociclone.",
+      "explicacao": "No arranjo descrito, a malha no overflow usa o DPR para preservar a divisão de vazão entre overflow e underflow, isto é, o split.",
+      "resposta_padrao": "A eficiência de separação do hidrociclone.",
+      "por_que_nao": "O bloco liga o DPR diretamente ao split; a eficiência depende de outras condições além dessa razão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "O acoplamento entre a malha de interface e a malha de DPR decorre do balanço de massa comum entre underflow e overflow.",
+      "pergunta": "Por que a malha da interface água-óleo e a malha de DPR do hidrociclone tendem a interagir?",
+      "resposta": "Underflow e overflow compartilham o mesmo balanço de massa.",
+      "explicacao": "As duas saídas pertencem ao mesmo equipamento; alterar uma delas muda a condição da outra, acoplando o controle da interface ao controle de DPR.",
+      "resposta_padrao": "Porque usam instrumentos instalados no mesmo skid.",
+      "por_que_nao": "A interação decisiva não é a proximidade física, mas o balanço de massa compartilhado da alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A tolerância a oscilações da interface depende da separação de escalas temporais entre a concentração de óleo na água e a resposta do hidrociclone.",
+      "pergunta": "Que condição dinâmica permite tolerar alguma oscilação da interface sem perda relevante no desempenho a jusante?",
+      "resposta": "Variações de óleo na água mais lentas que a constante de tempo do hidrociclone.",
+      "explicacao": "Se a concentração de óleo muda lentamente frente à resposta do hidrociclone, pequenas oscilações da interface podem não degradar de forma relevante o tratamento a jusante.",
+      "resposta_padrao": "Maior volume de água no separador.",
+      "por_que_nao": "Inventário por si só não explica a tolerância; o bloco a vincula à relação entre as escalas de tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Limitar a excursão da interface, em vez de fixá-la rigidamente, reduz a variabilidade do descarte de água ao estabilizar vazão e split no hidrociclone.",
+      "pergunta": "Quando a malha de interface passa a limitar excursão em vez de fixar rigidamente um ponto, o que tende a acontecer com a variabilidade da concentração de óleo na água descartada?",
+      "resposta": "Cai a variabilidade da concentração de óleo na água descartada.",
+      "explicacao": "Essa filosofia busca descarga mais estável; menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade do teor de óleo no descarte.",
+      "resposta_padrao": "Aumenta o teor médio de óleo na água descartada.",
+      "por_que_nao": "Os blocos tratam de redução de variabilidade por maior regularidade da alimentação, não de aumento inevitável do valor médio.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "A supressão temporária de uma única entrada de disparo reduz a cobertura da função de proteção apenas no cenário associado a esse caminho.",
+      "pergunta": "Quando um override suprime só uma entrada de disparo, o que acontece com a cobertura da função de proteção para o cenário associado a essa entrada?",
+      "resposta": "A cobertura daquele cenário diminui.",
+      "explicacao": "Ao suprimir uma entrada, a função deixa de reconhecer esse caminho de demanda. Outros disparos podem permanecer ativos, caracterizando perda parcial de cobertura, não indisponibilidade total obrigatória.",
+      "resposta_padrao": "A função inteira fica indisponível.",
+      "por_que_nao": "A supressão é localizada na entrada; o texto admite função parcialmente atuante, com outros caminhos ainda válidos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "bypass ou override é a supressão temporária de uma entrada, condição ou resposta automática"
+        },
+        {
+          "bloco": "F",
+          "trecho": "esses estados alteram a função de barreiras"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a função ainda atua integralmente, atua parcialmente ou está indisponível"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A integração de dados apoia a decisão sobre indisponibilidades ao tornar visível a propagação causal entre falha inicial e consequência final.",
+      "pergunta": "Por que integrar dados de operação, manutenção, inspeção e segurança pode mudar a avaliação de uma indisponibilidade aparentemente pequena?",
+      "resposta": "Expõe a cadeia causa-consequência do cenário.",
+      "explicacao": "A decisão técnica depende de enxergar como a falha inicial evolui até a consequência final. Dados isolados não mostram esse encadeamento com clareza suficiente.",
+      "resposta_padrao": "Porque reúne mais registros no mesmo sistema.",
+      "por_que_nao": "Mais dados, por si só, não mudam a avaliação; o ganho técnico é revelar a propagação causal relevante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ferramentas que integrem dados de operação, manutenção, inspeção e segurança ajudam a representar a cadeia entre causa inicial e consequência final"
+        },
+        {
+          "bloco": "F",
+          "trecho": "apoiando decisões sobre contingenciamentos e monitoramento de sua validade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "avaliar a consequência prática da perda de desempenho"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "A degradação de outro elemento de proteção reduz o tempo tecnicamente aceitável de permanência de uma função crítica em condição degradada.",
+      "pergunta": "Com outro elemento de proteção já degradado, o que acontece com o tempo tecnicamente aceitável de permanência de uma função crítica em contingenciamento?",
+      "resposta": "O tempo aceitável de exposição diminui.",
+      "explicacao": "A aceitabilidade depende do tempo de exposição e do impacto combinado com outras indisponibilidades. Menos proteção remanescente torna a condição degradada menos tolerável por mais tempo.",
+      "resposta_padrao": "Permanece o mesmo, porque a falha principal não mudou.",
+      "por_que_nao": "O texto vincula a aceitabilidade ao estado de outros elementos de proteção e ao impacto combinado, não só à falha isolada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a relevância de uma indisponibilidade depende do cenário de risco, da simultaneidade de serviços, do estado de outros elementos de proteção e do tempo em que a condição degradada persiste"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o tempo de exposição é aceitável para o cenário; e há impacto combinado com outras indisponibilidades"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

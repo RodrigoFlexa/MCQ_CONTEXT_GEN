@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 26,
+  "rodada": 4,
+  "contexto": {
+    "A1": 25,
+    "F": 26,
+    "A2": 27
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Bypass no instrumento desabilita a detecção automática na cadeia de proteção por pressão.",
+      "pergunta": "Quando um bypass retira de serviço o transmissor que inicia o trip de alta pressão, que capacidade automática da proteção fica indisponível?",
+      "resposta": "A detecção do desvio de pressão.",
+      "explicacao": "Sem o sinal real do transmissor, a lógica não recebe a condição de processo que iniciaria o trip; a ruptura ocorre na etapa de detecção.",
+      "resposta_padrao": "A atuação do elemento final de shutdown.",
+      "por_que_nao": "Sem detecção válida, o comando pode nem ser gerado; o elo perdido é o de detecção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "bypass, override e forcing são estados sensíveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A operação rotineira pode envolver essas desativações temporárias, inclusive em instrumentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "override sem controle adequado pode enfraquecer o encadeamento entre detecção, decisão lógica e ação final"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um item pode parecer fisicamente íntegro e ainda assim não atender à função requerida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Forcing na saída do CLP neutraliza a ação final automática mesmo com detecção e lógica operantes.",
+      "pergunta": "Com forcing mantido na saída de trip do CLP, que capacidade automática fica neutralizada diante de um desvio real?",
+      "resposta": "A atuação automática do elemento final.",
+      "explicacao": "A saída fixa impede que o comando calculado pela lógica chegue ao elemento que executa a ação final.",
+      "resposta_padrao": "A decisão lógica de trip.",
+      "por_que_nao": "A lógica pode decidir corretamente; o bloqueio está na execução do comando pela saída forçada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A operação rotineira pode envolver essas desativações temporárias, inclusive em instrumentos ou em Controlador Lógico Programável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação altera a resposta real das barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "override sem controle adequado pode enfraquecer o encadeamento entre detecção, decisão lógica e ação final"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Continuidade da recuperação de vapores sob queda de pressão desloca a demanda para a proteção de vácuo do tanque, não para o flare.",
+      "pergunta": "Se a recuperação de vapores continua retirando gás enquanto a pressão do espaço de vapor cai, qual camada do tanque passa a ser mais solicitada?",
+      "resposta": "A proteção de vácuo do tanque.",
+      "explicacao": "A extração contínua aprofunda a subpressão no espaço de vapor; quem responde a esse desvio é o arranjo P/V no lado de vácuo.",
+      "resposta_padrao": "O flare.",
+      "por_que_nao": "Flare descarta hidrocarbonetos liberados; baixa pressão no tanque é tratada pelo arranjo de vácuo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "arranjos de pressão e vácuo em tanques"
+        },
+        {
+          "bloco": "F",
+          "trecho": "parada de bombas e de recuperação de vapores, conforme o ponto onde alta ou baixa pressão é detectada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os hidrocarbonetos precisam ser conduzidos com segurança para descarte adequado, por vent atmosférico ou flare"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

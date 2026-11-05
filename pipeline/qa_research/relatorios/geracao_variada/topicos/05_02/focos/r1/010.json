@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Perda de 24 Vcc de controle pode derrubar geração pela indisponibilidade dos circuitos de comando e atuação do gerador.",
+      "pergunta": "Por que a perda do 24 Vcc dos painéis de controle pode derrubar geradores ainda mecanicamente disponíveis?",
+      "resposta": "Perda da alimentação de comando e atuação.",
+      "explicacao": "Sem energia nesses circuitos, o gerador deixa de permanecer conectado ou controlável, mesmo que a máquina motriz continue mecanicamente disponível.",
+      "resposta_padrao": "Falta de potência mecânica no eixo.",
+      "por_que_nao": "O mecanismo destacado é a perda da energia de controle; a indisponibilidade mecânica não é necessária para a queda da geração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle de geradores em operação levou à perda da geração principal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Dependência comum de um mesmo quadro CC transforma uma falha simples em perda simultânea de trens redundantes.",
+      "pergunta": "Quando dois trens de controle redundantes passam a depender do mesmo quadro 24 Vcc, qual efeito uma única falha nesse quadro passa a ter?",
+      "resposta": "Perda simultânea por causa comum.",
+      "explicacao": "O ponto compartilhado elimina a independência real entre os trens; assim, uma única falha alcança ambos ao mesmo tempo.",
+      "resposta_padrao": "A falha permanece restrita a um único trem.",
+      "por_que_nao": "Com dependência do mesmo quadro CC, a arquitetura deixa de ser segregada e a falha deixa de ficar confinada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções que deveriam sobreviver ao evento inicial."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Falha simultânea de UPS e energia principal em saídas de CLP elimina o comando das válvulas, sem definir por si só a posição final.",
+      "pergunta": "Se a UPS que alimenta o cartão-relé de saída de um CLP falha junto com a energia principal, o que acontece com o comando das válvulas ligadas a esse CLP?",
+      "resposta": "Inviabiliza o comando das válvulas.",
+      "explicacao": "Sem alimentação no cartão-relé de saída, o caminho de atuação do CLP desaparece; a posição final depende da filosofia dos atuadores.",
+      "resposta_padrao": "As válvulas fecham automaticamente.",
+      "por_que_nao": "O efeito diretamente sustentado é a perda do comando; fechamento automático depende do projeto de falha segura da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "junto com falha de UPS, desenergizou parte do controle associado às válvulas de tanques"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

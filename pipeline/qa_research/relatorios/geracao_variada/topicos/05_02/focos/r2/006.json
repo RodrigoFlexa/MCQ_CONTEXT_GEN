@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Fechar o bus tie entre seções alimentadas acopla fontes e eleva o nível de curto-circuito no barramento.",
+      "pergunta": "Quando o bus tie interliga duas seções antes isoladas e ambas têm alimentação disponível, o que acontece com o nível de curto-circuito no barramento?",
+      "resposta": "Aumenta.",
+      "explicacao": "A interligação cria caminhos adicionais de corrente de falta e acopla as fontes, elevando a corrente de curto-circuito disponível e mudando a coordenação das proteções.",
+      "resposta_padrao": "Não muda; o bus tie só redistribui carga.",
+      "por_que_nao": "Interligar as seções soma contribuições de fontes e altera a corrente de falta vista no barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "podem ser operados seccionados ou interligados por bus tie"
+        },
+        {
+          "bloco": "F",
+          "trecho": "introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Sem coordenação entre retaguarda do transformador e proteção de alimentadores, a proteção a montante pode atuar antes da jusante e desligar o barramento.",
+      "pergunta": "Por que uma falta em alimentador pode derrubar todo o barramento secundário quando a retaguarda do transformador não está coordenada com os relés jusante?",
+      "resposta": "Atuação antecipada da retaguarda a montante.",
+      "explicacao": "A seletividade exige que a proteção do alimentador elimine a falta antes da retaguarda do transformador; sem coordenação, a proteção a montante pode abrir o barramento inteiro.",
+      "resposta_padrao": "A proteção a montante sempre deve abrir primeiro.",
+      "por_que_nao": "Em seletividade, a falta de alimentador deve ser removida pela proteção jusante; a montante é retaguarda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a seletividade coordena a atuação entre dispositivos a montante e a jusante, enquanto a retaguarda atua quando a proteção principal falha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário, para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Na proteção de barramento baseada em TCs nas buchas primárias do transformador, a eliminação da falta exige abertura da fonte primária.",
+      "pergunta": "Se a proteção de barramento usa TCs nas buchas primárias do transformador e detecta uma falta interna, que lado deve abrir?",
+      "resposta": "A fonte primária.",
+      "explicacao": "Nessa arquitetura, a zona protegida permanece energizada pelo lado primário; abrir apenas saídas secundárias não remove a alimentação da falta.",
+      "resposta_padrao": "Os alimentadores secundários.",
+      "por_que_nao": "Abrir só os alimentadores não desenergiza a falta interna mantida pelo transformador a montante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "barramentos que concentram fontes e cargas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a proteção de barramento pode usar transformadores de corrente nas buchas primárias ou proteção diferencial de terra, exigindo abertura da fonte primária"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

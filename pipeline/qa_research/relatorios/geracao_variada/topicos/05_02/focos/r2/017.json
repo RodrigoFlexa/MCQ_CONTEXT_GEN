@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A redundância de UPS só se materializa quando as cargas redundantes permanecem segregadas em ramos independentes.",
+      "pergunta": "Por que dois UPS capazes de suprir integralmente as cargas ainda podem não entregar redundância real?",
+      "resposta": "Concentração de cargas redundantes no mesmo UPS ou barramento.",
+      "explicacao": "Capacidade nominal duplicada não basta. Se cargas principais ou estações redundantes ficam no mesmo ramo, surge ponto único de falha e perde-se a independência funcional.",
+      "resposta_padrao": "Porque a potência instalada pode ser insuficiente na contingência.",
+      "por_que_nao": "O bloco já considera cada fonte capaz de suprir integralmente a demanda; o problema decisivo é a perda de segregação das cargas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Incoerência entre as lógicas de reboot e de trip pode impedir a recomposição durante blackout ou black start.",
+      "pergunta": "Quando a lógica de reboot conflita com a de trip durante black start, o que acontece com a recomposição automática?",
+      "resposta": "Fica bloqueada.",
+      "explicacao": "A incoerência lógica mantém ou reaplica bloqueios na sequência, impedindo o avanço da recomposição mesmo com fonte potencialmente disponível.",
+      "resposta_padrao": "Apenas atrasa a sequência de partida.",
+      "por_que_nao": "O bloco afirma que falhas de lógica podem impedir a recomposição, não apenas torná-la mais lenta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

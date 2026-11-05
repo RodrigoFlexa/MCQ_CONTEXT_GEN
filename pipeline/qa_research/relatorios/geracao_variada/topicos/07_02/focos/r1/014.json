@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Falha de uma UPS compartilhada por barreiras distintas caracteriza modo de falha comum.",
+      "pergunta": "Como se chama a falha em que uma única UPS indisponibiliza simultaneamente controle, shutdown de emergência e mitigação?",
+      "resposta": "Modo de falha comum.",
+      "explicacao": "Quando barreiras diferentes dependem da mesma alimentação ininterrupta, a falha da UPS derruba todas ao mesmo tempo por uma causa única.",
+      "resposta_padrao": "Falha em cascata.",
+      "por_que_nao": "Não há propagação sequencial entre funções; há perda simultânea por dependência comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esses sistemas podem depender da mesma alimentação ininterrupta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Sinais elétricos locais na UPS com perda simultânea de sistemas indicam falha da infraestrutura de energia, não comprometimento do controle.",
+      "pergunta": "Por que fumaça e arco na UPS, junto com perda simultânea de vários sistemas, indicam falha de infraestrutura e não comprometimento do controle?",
+      "resposta": "Interrupção da alimentação comum por defeito elétrico na UPS.",
+      "explicacao": "Os sinais físicos locais e a perda simultânea de funções com alimentação compartilhada apontam para falha elétrica; comprometimento do controle exigiria alterações não autorizadas de lógica, setpoints ou comandos.",
+      "resposta_padrao": "Ataque à rede industrial.",
+      "por_que_nao": "Comprometimento do controle se caracteriza por alterações não autorizadas, não por sintomas elétricos locais com perda por alimentação comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Na perda da geração principal com falha de partida do gerador de emergência, a continuidade das funções críticas fica limitada à autonomia da UPS.",
+      "pergunta": "Quando se perde a geração principal e o gerador de emergência não parte, o que acontece com a disponibilidade temporal das funções críticas?",
+      "resposta": "Fica limitada à autonomia da UPS.",
+      "explicacao": "Nessa combinação de falhas, a UPS é o último meio de manter energizadas as funções críticas; a continuidade dura apenas o tempo de sua autonomia.",
+      "resposta_padrao": "Permanece normal pelo bypass.",
+      "por_que_nao": "Bypass não cria fonte de energia; sem geração disponível, a sustentação temporal depende da UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se a geração principal for perdida e o gerador de emergência não partir, ela é o meio que resta para manter alimentadas as funções críticas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda da geração principal, somada à falha de partida do gerador de emergência e à indisponibilidade da UPS, pode deixar sem energia as funções de segurança"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Patch sem validação pode introduzir indisponibilidade por incompatibilidade entre firmware, comunicação e funções de processo.",
+      "pergunta": "O patch mais recente pode piorar a disponibilidade por qual elo técnico?",
+      "resposta": "Rompimento de compatibilidade entre firmware, comunicação e funções de processo.",
+      "explicacao": "Em controle industrial, a versão nova pode não estar qualificada para o conjunto instalado; a indisponibilidade surge da incompatibilidade funcional introduzida pela mudança.",
+      "resposta_padrao": "Reinício inevitável do sistema.",
+      "por_que_nao": "O risco decisivo não é o reinício em si, mas comportamento não previsto por incompatibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade efetiva de um IACS não depende apenas do software de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

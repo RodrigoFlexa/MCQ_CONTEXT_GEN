@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Redundância só aumenta a resiliência da recomposição quando há segregação elétrica e lógica entre canais, fontes e comandos.",
+      "pergunta": "Que propriedade deve existir entre canais, fontes e caminhos de comando para que a redundância sustente a recomposição após blackout?",
+      "resposta": "Segregação elétrica e lógica suficiente.",
+      "explicacao": "O foco não é a mera duplicação de equipamentos, mas a independência real entre canais e comandos para que o estado degradado não derrube a redundância inteira.",
+      "resposta_padrao": "Equipamentos duplicados.",
+      "por_que_nao": "Duplicação sem segregação de fontes e comandos mantém vulnerabilidade a falhas simultâneas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Compartilhar a mesma UPS entre estações de supervisão redundantes introduz falha de causa comum e elimina a independência funcional.",
+      "pergunta": "Por que alimentar duas estações de supervisão redundantes pelo mesmo UPS enfraquece a recomposição?",
+      "resposta": "Falha de causa comum na alimentação dos dois canais.",
+      "explicacao": "Se ambos os canais dependem do mesmo UPS, a falha desse conjunto derruba simultaneamente as duas estações e reduz a supervisão disponível na retomada.",
+      "resposta_padrao": "Só aumenta a carga sobre o UPS.",
+      "por_que_nao": "O efeito crítico citado é a perda simultânea dos dois canais por uma única falha de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Um sinal de trip mantido pelo controle durante o reboot pode bloquear o fechamento do disjuntor do gerador de emergência e impedir a energização.",
+      "pergunta": "Quando o sistema de controle mantém sinal de trip durante o reboot, o que impede a entrada do gerador de emergência?",
+      "resposta": "Trip persistente bloqueando o fechamento do disjuntor do gerador de emergência.",
+      "explicacao": "A limitação não é mecânica do gerador; o impedimento está no comando que mantém o disjuntor aberto durante a tentativa de recomposição.",
+      "resposta_padrao": "Baixa potência disponível do gerador de emergência.",
+      "por_que_nao": "O bloqueio descrito é lógico no disjuntor, não falta de capacidade do gerador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A disponibilidade da bateria pode mascarar uma lógica bloqueante, que só se revela no modo anormal sem essa alimentação.",
+      "pergunta": "Por que uma lógica de trip pode ficar invisível nas partidas usuais e aparecer no blackout total?",
+      "resposta": "Reinício normal alimentado por bateria mascara a lógica bloqueante.",
+      "explicacao": "Na condição usual, a bateria sustenta um caminho de reinício que oculta o bloqueio. Sem essa alimentação no estado anormal, a lógica passa a impedir a recomposição.",
+      "resposta_padrao": "Mais alarmes e intertravamentos surgem na emergência.",
+      "por_que_nao": "A ocultação depende do caminho de reboot sustentado por bateria, não da quantidade de alarmes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 3,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "A heterogeneidade de modelos de dados desloca a integração para a supervisão, que passa a concentrar interconexões sensíveis para a segmentação.",
+      "pergunta": "Que característica da camada supervisória justifica tratamento arquitetural específico quando integra controladores de fornecedores com modelos de dados distintos?",
+      "resposta": "Concentração de pontos de interconexão entre controle, supervisão e consumidores externos.",
+      "explicacao": "Modelos distintos limitam a padronização próxima à fonte, deslocam a integração para a supervisão e concentram ali a troca entre domínios, exigindo tratamento arquitetural para conter propagação.",
+      "resposta_padrao": "Maior volume de dados trafegando na supervisão.",
+      "por_que_nao": "O ponto decisivo não é capacidade ou taxa, e sim a concentração de interconexões entre domínios.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a integração frequentemente migra para a camada supervisória"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "concentram troca de dados entre controladores, supervisão e consumidores externos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em arquitetura híbrida, um mesmo controlador falando com nuvem e SCADA local cria novas interfaces interdomínios, aumentando a criticidade da definição do tráfego permitido.",
+      "pergunta": "Quando um controlador de borda alimenta simultaneamente broker MQTT em nuvem e SCADA local, por que a definição do tráfego entre domínios se torna crítica?",
+      "resposta": "Criação de interfaces simultâneas através das fronteiras IT/OT.",
+      "explicacao": "Na arquitetura híbrida, o mesmo controlador passa a cruzar fronteiras com destinos diferentes. Cada nova interface amplia a necessidade de definir exatamente que tráfego pode atravessá-las.",
+      "resposta_padrao": "Maior carga de processamento no controlador de borda.",
+      "por_que_nao": "O risco destacado é de interconexão e propagação entre domínios, não de CPU do equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Se a criticidade funcional de um domínio aumenta sem ajuste das barreiras, a arquitetura deixa de manter barreiras proporcionais à criticidade.",
+      "pergunta": "Se uma função mais crítica passa a depender de um domínio existente sem reforço das barreiras, o que se degrada na segmentação?",
+      "resposta": "Compatibilidade das barreiras com a criticidade funcional.",
+      "explicacao": "O monitoramento da arquitetura segmentada deve confirmar compatibilidade entre barreiras e criticidade das funções. Se a criticidade cresce e as barreiras não mudam, essa adequação se perde.",
+      "resposta_padrao": "Só a capacidade de processamento do domínio.",
+      "por_que_nao": "A adequação da segmentação é julgada pela criticidade das funções envolvidas, não pelo desempenho computacional.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "domínios com funções e consequências diferentes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

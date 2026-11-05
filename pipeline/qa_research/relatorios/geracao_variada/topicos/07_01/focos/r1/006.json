@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Relação entre pressão de carga e pressão de instrumento na ausência de posicionador.",
+      "pergunta": "Sem posicionador, com qual pressão a de carga pode coincidir?",
+      "resposta": "Pressão de instrumento.",
+      "explicacao": "O bloco foco afirma que, sem posicionador, a pressão de carga pode coincidir com a pressão de instrumento; isso a distingue da pressão de suprimento, definida separadamente.",
+      "resposta_padrao": "Pressão de suprimento.",
+      "por_que_nao": "Suprimento é a pressão disponível na alimentação; a que pode coincidir com a de carga, sem posicionador, é a pressão de instrumento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando não há posicionador, essa pressão pode coincidir com a pressão de instrumento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "O posicionador altera a resposta da válvula ao modular a pressão entregue ao atuador.",
+      "pergunta": "Que elo físico faz o mesmo sinal do controlador produzir resposta diferente quando a válvula tem posicionador?",
+      "resposta": "Ajuste da pressão entregue ao atuador.",
+      "explicacao": "O posicionador muda a pressão aplicada ao atuador para atingir a posição pedida; por isso, o mesmo sinal pode gerar resposta diferente ao interagir com atrito, folgas e forças de processo.",
+      "resposta_padrao": "Amplificação do sinal do controlador.",
+      "por_que_nao": "O bloco atribui a diferença ao ajuste da pressão entregue ao atuador, não a uma simples amplificação abstrata do sinal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador, folgas mecânicas, atrito, limitação de ar ou problemas no próprio atuador."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Baixa pressão de suprimento reduz a força disponível para vencer stiction no início do movimento.",
+      "pergunta": "Com pressão de suprimento limitada numa válvula com stiction, o que acontece com a capacidade de iniciar o movimento?",
+      "resposta": "Cai a capacidade de vencer o atrito estático.",
+      "explicacao": "A2 relaciona o efeito do stiction à força disponível no atuador e à pressão de suprimento; com suprimento limitado, diminui a pressão de carga possível e fica mais difícil superar o limiar de atrito.",
+      "resposta_padrao": "A válvula só fica mais lenta.",
+      "por_que_nao": "Com stiction, o ponto decisivo é a força disponível para superar o atrito estático; suprimento baixo pode impedir o início do deslocamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Stiction é o comportamento associado ao atrito estático que mantém a válvula parada até que a força de atuação vença a resistência ao movimento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O efeito observado depende da interação entre atrito mecânico, força disponível no atuador, pressão de suprimento, presença de posicionador e forças de processo atuando sobre o obturador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "A interação entre correções do posicionador, stiction e não linearidades pode gerar ciclos limite na malha.",
+      "pergunta": "Que fenômeno oscilatório pode surgir na malha quando correções do posicionador interagem com stiction e não linearidades da válvula?",
+      "resposta": "Ciclos limite.",
+      "explicacao": "O bloco foco admite instabilidade com posicionador, e A2 detalha que o atrito estático gera atraso e movimento descontínuo, com possibilidade de ciclos limite na malha.",
+      "resposta_padrao": "Overshoot.",
+      "por_que_nao": "A2 descreve atraso, movimento descontínuo e possibilidade de ciclos limite; overshoot é excesso transitório, não a oscilação autossustentada resultante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mas também pode introduzir erro de posicionamento ou participar de fenômenos de instabilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse mecanismo degrada o desempenho da malha porque introduz atraso, movimento descontínuo e possibilidade de ciclos limite."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O efeito observado depende da interação entre atrito mecânico, força disponível no atuador, pressão de suprimento, presença de posicionador e forças de processo atuando sobre o obturador."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

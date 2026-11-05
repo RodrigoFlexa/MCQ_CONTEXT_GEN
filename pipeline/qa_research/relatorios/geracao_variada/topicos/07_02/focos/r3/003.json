@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 3,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A interação entre disponibilidade elétrica e arquitetura segmentada decorre da dependência do SCADA de energia confiável e ininterrupta.",
+      "pergunta": "Por que a disponibilidade elétrica entra na avaliação da arquitetura segmentada?",
+      "resposta": "Dependência do SCADA de energia confiável e ininterrupta.",
+      "explicacao": "O bloco foco relaciona energia e arquitetura pela continuidade do SCADA: sem alimentação confiável e ininterrupta, perdem-se supervisão e comunicação; isso não equivale a falha da segmentação lógica.",
+      "resposta_padrao": "Porque firewalls e switches também precisam de alimentação.",
+      "por_que_nao": "A interação destacada não é a energização genérica da rede, mas a continuidade de supervisão e comunicação do SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade elétrica interage com essa arquitetura porque sistemas SCADA dependem de energia confiável e ininterrupta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Quando um fluxo muda para função mais crítica, a arquitetura deve reavaliar se as barreiras ainda são compatíveis com a criticidade das funções envolvidas.",
+      "pergunta": "Um fluxo antes só de histórico passa a influenciar permissivos de partida, sem mudar o caminho de rede. O que a monitoração da arquitetura precisa reavaliar?",
+      "resposta": "Compatibilidade das barreiras com a criticidade das funções.",
+      "explicacao": "Ao mudar de histórico para permissivo de partida, o fluxo passa a envolver função mais crítica. A arquitetura precisa confirmar se a barreira do mesmo caminho ainda é compatível com essa criticidade.",
+      "resposta_padrao": "Desempenho e latência do enlace.",
+      "por_que_nao": "O ponto decisivo é a adequação das barreiras à nova criticidade funcional, não o throughput do caminho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A entrada de novos sistemas em um domínio, mesmo sem mudar fluxos ou barreiras, exige verificar a coerência do escopo dos sistemas conectados.",
+      "pergunta": "Os fluxos autorizados continuam necessários e as barreiras não mudaram, mas novos servidores entram no domínio operacional. Que verificação identifica essa deriva arquitetural?",
+      "resposta": "Coerência do escopo dos sistemas conectados.",
+      "explicacao": "Mesmo sem mudar fluxos nem barreiras, a entrada de novos servidores pode alterar o perímetro funcional previsto. A monitoração deve confirmar se o conjunto conectado continua coerente com a arquitetura planejada.",
+      "resposta_padrao": "Atualização do inventário de ativos.",
+      "por_que_nao": "Inventário registra presença; o ponto técnico é se o conjunto conectado permanece coerente com o perímetro arquitetural previsto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar se a separação planejada continua compatível com a operação real."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Estado global reconstruído por automação e observações complementares reduz a observabilidade da planta.",
+      "pergunta": "Que propriedade da arquitetura de monitoramento se reduz quando o estado global precisa ser recomposto por PLC e observações complementares?",
+      "resposta": "Observabilidade global da planta.",
+      "explicacao": "Sem integrar todos os ativos e medições, a percepção do estado global fica distribuída, reduzindo a capacidade de a automação representar sozinha a condição real do processo.",
+      "resposta_padrao": "Integração dos sistemas.",
+      "por_que_nao": "Integração é a condição estrutural; o atributo técnico afetado por sua falta é a observabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Medições não integradas ao PLC atrasam desvios por perda de correlação automática entre causa e efeito.",
+      "pergunta": "Por que medições não integradas ao PLC tendem a retardar a identificação de desvios?",
+      "resposta": "Perda de correlação automática entre causa e efeito.",
+      "explicacao": "Quando parte da percepção fica fora da automação, o encadeamento entre evento causal e resposta do processo deixa de ser montado automaticamente pelo sistema.",
+      "resposta_padrao": "Menor frequência de coleta.",
+      "por_que_nao": "O atraso pode ocorrer mesmo com coleta frequente; o fator decisivo é a correlação causal distribuída fora da automação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito e pode retardar a identificação de desvios"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Olhar só o valor instantâneo aumenta a chance de aceitar dado congelado como real.",
+      "pergunta": "Quando se observa só o valor instantâneo e se ignora a atualização do sinal, que erro de diagnóstico fica mais provável?",
+      "resposta": "Aceitar dado congelado como condição real do processo.",
+      "explicacao": "Valor instantâneo, sozinho, não distingue processo estável de informação parada; sem verificar atualização, um dado estagnado pode parecer uma medição válida.",
+      "resposta_padrao": "Confundir ruído com tendência.",
+      "por_que_nao": "Mesmo sem ruído, um sinal sem atualização pode parecer normal; o erro decisivo é tomar dado estagnado como real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "validade do dado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Checagem cruzada entre sinais acoplados pelo processo ajuda a separar perda de visibilidade de alteração real.",
+      "pergunta": "Que checagem cruzada entre sinais acoplados pela física do processo ajuda a separar perda de visibilidade de alteração real?",
+      "resposta": "Coerência entre variáveis relacionadas.",
+      "explicacao": "Comparar sinais fisicamente ligados ajuda a localizar a camada provável da falha e evita atribuir de imediato o sintoma ao campo.",
+      "resposta_padrao": "Valor dentro da faixa normal.",
+      "por_que_nao": "Um valor isolado pode estar em faixa e ainda ser incoerente com outras variáveis, mascarando falha de supervisão ou comunicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência entre variáveis relacionadas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

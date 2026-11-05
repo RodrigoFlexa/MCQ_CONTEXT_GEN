@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Bypass pode suprimir a supervisão lógica de um intertravamento e dissociar a condição real de campo da resposta da automação.",
+      "pergunta": "Se a condição de campo que deveria disparar um intertravamento está presente, mas nada atua durante um bypass, qual mecanismo explica a divergência entre campo e automação?",
+      "resposta": "remoção temporária da supervisão lógica do intertravamento",
+      "explicacao": "Ao contornar a função, o bypass retira a lógica que converteria a condição de campo em atuação ou indicação; assim, a automação pode deixar de refletir o estado real.",
+      "resposta_padrao": "Falha do transmissor que mede a condição de disparo.",
+      "por_que_nao": "Mesmo com a condição corretamente existente, a atuação pode não ocorrer se a lógica do intertravamento estiver contornada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "retiram temporariamente parte da lógica normal de atuação ou de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Forcing em um ponto tende a aparecer no diagnóstico como quebra de coerência com variáveis de processo correlacionadas.",
+      "pergunta": "Se um ponto permanece em forcing enquanto o processo correlato continua mudando, que evidência diagnóstica tende a aparecer entre as medições?",
+      "resposta": "incoerência entre variáveis relacionadas",
+      "explicacao": "Com o ponto forçado, a medição deixa de acompanhar o campo; no diagnóstico, isso aparece como quebra de coerência com outras variáveis que deveriam variar de forma compatível.",
+      "resposta_padrao": "Falha de comunicação da rede.",
+      "por_que_nao": "Falha de comunicação afeta atualização ou validade; o traço distintivo aqui é a perda de coerência causal entre sinais correlacionados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem alterar o comportamento esperado da automação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A propagação dos efeitos de um bypass depende do encadeamento lógico da função na arquitetura de automação.",
+      "pergunta": "Que aspecto técnico define se o efeito de um bypass ficará local ou alcançará outras funções de automação?",
+      "resposta": "o encadeamento lógico da função na arquitetura",
+      "explicacao": "A extensão do efeito é estrutural: depende de como a função está implementada e conectada a permissivos, alarmes e intertravamentos na arquitetura.",
+      "resposta_padrao": "O tempo que o bypass permanece ativo.",
+      "por_que_nao": "A duração altera a exposição ao risco, mas não determina quais funções estão logicamente conectadas ao ponto contornado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o alcance concreto depende da arquitetura e da função afetada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

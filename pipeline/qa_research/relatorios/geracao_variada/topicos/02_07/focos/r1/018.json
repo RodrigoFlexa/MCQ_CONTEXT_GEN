@@ -1,0 +1,79 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "A malha de nível regula o inventário líquido do separador; o nível é a variável medida que o representa.",
+      "pergunta": "Na malha de nível de um separador, que grandeza de processo o controlador procura estabilizar?",
+      "resposta": "Inventário líquido do vaso.",
+      "explicacao": "No separador, o nível representa o volume acumulado. O objetivo da malha é manter esse inventário dentro da faixa útil, ajustando a saída sem perder separação.",
+      "resposta_padrao": "O próprio nível medido.",
+      "por_que_nao": "Nível é a variável observada; o estado físico regulado é o volume armazenado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A dinâmica do nível decorre do balanço de massa: o inventário cresce quando a vazão de entrada excede a de saída.",
+      "pergunta": "Que termo do balanço de massa faz o nível subir quando a alimentação líquida supera a descarga?",
+      "resposta": "Saldo positivo entre vazão de entrada e vazão de saída.",
+      "explicacao": "Com entrada maior que saída, o volume armazenado aumenta; como o nível representa esse inventário, ele sobe até que a malha reequilibre as vazões.",
+      "resposta_padrao": "A pressão de entrada mais alta.",
+      "por_que_nao": "A elevação do nível decorre da acumulação de massa; pressão não substitui o desbalanço de vazões no balanço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sem controle adequado, o desequilíbrio entre entradas e saídas pode levar o nível aos limites do vaso;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "No controle por bandas, enquanto o nível fica na faixa permitida, a saída permanece próxima ao valor médio da entrada estimada.",
+      "pergunta": "Quando o nível permanece dentro da banda de controle, como fica a vazão de saída comandada?",
+      "resposta": "Próxima da vazão média de entrada estimada.",
+      "explicacao": "Dentro da banda, a estratégia evita perseguir cada oscilação da alimentação. Assim, a saída permanece perto do valor médio e o vaso usa seu inventário para amortecer variações.",
+      "resposta_padrao": "Passa a seguir instantaneamente cada oscilação da alimentação.",
+      "por_que_nao": "No controle por bandas, esse rastreamento é evitado justamente para preservar desacoplamento e estabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a alimentação varia com frequência, o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada;"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

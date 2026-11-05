@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Critério técnico de teste de redundância: manter a função após falha ou comutação de um canal.",
+      "pergunta": "Qual é o critério técnico central que um teste de redundância deve comprovar?",
+      "resposta": "Manutenção da função na falha ou comutação de um canal.",
+      "explicacao": "O teste precisa mostrar que supervisão, controle, rede ou alimentação preservam a função quando um canal falha ou comuta; alternar canais sem manter a função não comprova redundância útil.",
+      "resposta_padrao": "Comutação automática entre canais.",
+      "por_que_nao": "Trocar de canal não basta se a função não for preservada durante a falha ou a comutação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Diagnóstico por camadas reduz erro inicial ao separar perda de visibilidade, de medição e de comando.",
+      "pergunta": "Por que o diagnóstico por camadas reduz a chance de culpar a camada errada logo no início?",
+      "resposta": "Separação entre perda de visibilidade, de medição e de comando.",
+      "explicacao": "Ao organizar o sintoma pela camada provável, a análise distingue se o problema é de visualização, medição ou atuação e evita atribuir cedo demais a causa à rede, ao controlador ou ao campo.",
+      "resposta_padrao": "Localização mais rápida da causa raiz.",
+      "por_que_nao": "Rapidez é efeito secundário; o ganho técnico é distinguir o tipo de perda e a camada provável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Perda não detectada de redundância remove a tolerância à segunda falha e pode eliminar o serviço.",
+      "pergunta": "Se um canal redundante falha e essa degradação não é percebida, o que acontece quando ocorre uma segunda falha?",
+      "resposta": "O serviço é eliminado.",
+      "explicacao": "Sem detecção da perda de redundância, o sistema segue em estado reduzido de resiliência; a próxima falha retira a única via funcional restante.",
+      "resposta_padrao": "O outro canal assume e tudo segue normal.",
+      "por_que_nao": "Depois da primeira perda, já não existe redundância disponível para absorver a segunda falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Valor plausível no supervisório pode estar congelado; ausência de atualização indica perda de visibilidade.",
+      "pergunta": "Quando a leitura permanece plausível na tela, que indício técnico aponta valor congelado em vez de variável realmente estável?",
+      "resposta": "Ausência de atualização do sinal.",
+      "explicacao": "No diagnóstico de arquitetura, um valor plausível pode estar apenas congelado. Observar a atualização do sinal ajuda a distinguir indisponibilidade de transporte/processamento de uma variável realmente estável em campo.",
+      "resposta_padrao": "Proximidade do valor com o setpoint.",
+      "por_que_nao": "Um valor pode permanecer perto do setpoint mesmo sem atualização; isso não confirma medição válida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

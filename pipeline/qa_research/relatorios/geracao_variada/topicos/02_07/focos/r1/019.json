@@ -1,0 +1,105 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Descrição operacional que caracteriza o Controle por Bandas na malha de nível.",
+      "pergunta": "Como se chama a estratégia de nível que mantém a saída próxima da entrada média estimada e só comuta para ação rápida quando o nível sai da faixa?",
+      "resposta": "Controle por Bandas.",
+      "explicacao": "No foco, dentro de limites predefinidos a saída fica próxima da vazão média estimada de entrada; fora da banda, a lógica comuta para ação rápida para devolver o inventário à faixa.",
+      "resposta_padrao": "Controle PI contínuo.",
+      "por_que_nao": "No PI a atuação é contínua; no Controle por Bandas há faixa normal com pouca movimentação e comutação fora dela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Hipótese de modelagem que permite aproximar a abertura da válvula pela própria ação de controle.",
+      "pergunta": "Que hipótese da modelagem simplificada permite tomar a abertura da válvula como aproximadamente igual à ação de controle?",
+      "resposta": "Dinâmica de válvula suficientemente rápida.",
+      "explicacao": "O foco afirma que essa aproximação só é usada quando a dinâmica da válvula é rápida o bastante frente à dinâmica do nível no vaso.",
+      "resposta_padrao": "Relação linear entre altura e volume.",
+      "por_que_nao": "Essa hipótese trata da geometria do vaso; a equivalência entre abertura e ação depende da rapidez da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode-se assumir relação linear entre altura e volume"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "No Controle por Bandas, superestimar a vazão média de entrada faz o nível cair enquanto a saída segue a média estimada.",
+      "pergunta": "Se a vazão média de entrada estimada no Controle por Bandas ficar acima da real, para que lado o nível tende a se deslocar enquanto ainda está na faixa?",
+      "resposta": "O nível cai.",
+      "explicacao": "Dentro da banda, a saída fica próxima da média estimada de entrada. Se essa estimativa excede a entrada real, a saída supera a entrada e o inventário diminui.",
+      "resposta_padrao": "Permanece estável.",
+      "por_que_nao": "Com saída ajustada acima da entrada real, o balanço líquido é negativo e o nível desce.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Banda mais estreita sob a mesma oscilação de alimentação aumenta cruzamentos de limite e, portanto, a comutação da estratégia.",
+      "pergunta": "Por que uma banda de nível estreita demais, sob a mesma oscilação de alimentação, aumenta a movimentação da válvula?",
+      "resposta": "Mais cruzamentos dos limites predefinidos da banda.",
+      "explicacao": "Com a mesma variabilidade de nível, uma faixa menor é ultrapassada mais vezes; como a lógica comuta para ação rápida ao sair da banda, a válvula se movimenta com maior frequência.",
+      "resposta_padrao": "Correções menores em cada atuação.",
+      "por_que_nao": "O aumento de movimento decorre de comutações mais frequentes ao cruzar os limites, não do tamanho de cada correção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "enquanto o nível permanece entre limites predefinidos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

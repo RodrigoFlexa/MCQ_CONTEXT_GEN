@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Heterogeneidade na camada de controle desloca a normalização de dados para o SCADA como camada mais próxima da fonte onde ela é viável.",
+      "pergunta": "Controladores de borda enviam dados à nuvem por MQTT, mas os controladores de campo seguem modelos heterogêneos. Mais perto da fonte, em que camada a normalização tende a ser viável?",
+      "resposta": "SCADA local",
+      "explicacao": "Com modelos de dados heterogêneos, a padronização não fecha na camada de controle. Como o SCADA já consome os dados em tempo real, ele se torna a camada mais próxima viável para normalizar.",
+      "resposta_padrao": "O broker MQTT.",
+      "por_que_nao": "O broker distribui mensagens, mas não resolve a normalização semântica e operacional que a supervisão consegue consolidar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Aplicações analíticas precisam do status de qualidade do sinal para distinguir valor numericamente plausível de dado inválido ou congelado.",
+      "pergunta": "Que informação associada ao sinal permite à aplicação rejeitar um valor congelado ou inválido sem confiar só no número medido?",
+      "resposta": "Status de qualidade do sinal",
+      "explicacao": "O bloco foco liga diagnósticos frágeis à ausência de tratamento de qualidade. Esse status informa se o valor está válido, degradado, congelado ou indisponível.",
+      "resposta_padrao": "Filtragem do ruído.",
+      "por_que_nao": "Filtragem suaviza o valor, mas não informa se o dado está congelado, inválido ou perdido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "É capacitar a interpretar qualidade de dados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em aplicações próximas ao controle que combinam múltiplas fontes, a qualidade de sincronismo é crítica mesmo com baixa latência média.",
+      "pergunta": "Uma aplicação combina sinais de controladores diferentes para sugerir correções quase em tempo real. A latência média é baixa, mas as decisões saem fora de fase. Que propriedade da comunicação explica isso?",
+      "resposta": "Qualidade de sincronismo entre fontes",
+      "explicacao": "Perto do controle, não basta atraso médio baixo. Se as fontes não ficam temporalmente alinhadas, a aplicação correlaciona estados de instantes diferentes e decide fora de fase.",
+      "resposta_padrao": "Largura de banda da rede.",
+      "por_que_nao": "Mais banda não corrige desalinhamento temporal entre fontes; o problema é sincronismo, não volume de tráfego.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

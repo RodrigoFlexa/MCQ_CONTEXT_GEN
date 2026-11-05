@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 3,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Distinção técnica entre alteração de configuração e alteração de lógica em IACS.",
+      "pergunta": "Como se chama a mudança de endereçamento, parâmetros de comunicação ou mapeamento de E/S sem reescrever as regras automáticas do controlador?",
+      "resposta": "Alteração de configuração",
+      "explicacao": "No bloco foco, configuração é distinta de lógica e firmware. Mudanças de endereçamento, comunicação e mapeamento ajustam a parametrização do sistema, não as regras de atuação.",
+      "resposta_padrao": "Alteração de lógica.",
+      "por_que_nao": "Lógica muda as regras de decisão e atuação; parametrização de comunicação e E/S é configuração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Capacidade administrativa que permite persistir um caminho de acesso futuro além da sessão concedida.",
+      "pergunta": "Se um fornecedor recebe privilégio acima do necessário e consegue deixar um usuário privilegiado para retorno futuro sem nova liberação, que capacidade técnica foi concedida?",
+      "resposta": "Criação de contas",
+      "explicacao": "O bloco foco atribui ao acesso administrativo a capacidade de criar contas. Isso permite persistir um novo caminho de acesso além da sessão originalmente autorizada.",
+      "resposta_padrao": "Apagamento de rastros.",
+      "por_que_nao": "Apagar rastros dificulta auditoria depois do acesso; não cria uma identidade privilegiada para uso futuro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo pelo qual o menor privilégio reduz risco ao restringir o conjunto de ativos alcançáveis.",
+      "pergunta": "Por que restringir o fornecedor ao controlador afetado, em vez de toda a rede de automação, reduz o risco da intervenção remota?",
+      "resposta": "Restrição do escopo de ativos alcançáveis",
+      "explicacao": "Segundo o bloco foco, o menor privilégio reduz erro e abuso ao limitar quais ativos podem ser vistos, configurados ou modificados. Menos ativos alcançáveis significam menor superfície operacional da intervenção.",
+      "resposta_padrao": "Segmentação de rede.",
+      "por_que_nao": "Segmentação é o meio arquitetural; o risco cai porque menos ativos permanecem alcançáveis para ver, configurar ou modificar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "isso reduz a superfície de erro e de abuso porque limita quais ativos podem ser vistos, configurados ou modificados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Efeito adicional do privilégio administrativo sobre barreiras de proteção, além do alcance de engenharia.",
+      "pergunta": "Quando um terceiro recebe privilégio administrativo apenas para atualizar firmware, que efeito adicional passa a ser possível diretamente sobre as barreiras do sistema?",
+      "resposta": "Desabilitação de proteções",
+      "explicacao": "No bloco foco, alterar firmware já é compatível com acesso de engenharia. O adicional do administrativo é poder atuar sobre as próprias proteções do sistema, enfraquecendo barreiras preventivas.",
+      "resposta_padrao": "Alteração de firmware.",
+      "por_que_nao": "Alterar firmware não distingue o administrativo aqui; essa capacidade já existe no acesso de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

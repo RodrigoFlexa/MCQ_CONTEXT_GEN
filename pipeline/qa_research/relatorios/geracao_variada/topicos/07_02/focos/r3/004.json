@@ -1,0 +1,89 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 3,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Diferença entre privilégio de engenharia e administrativo na capacidade de alterar firmware.",
+      "pergunta": "Que perfil de acesso em IACS pode alterar firmware de controladores?",
+      "resposta": "Acesso de engenharia.",
+      "explicacao": "Nos privilégios de IACS, engenharia abrange configuração, lógica e firmware; o administrativo se concentra em contas, proteções e rastros.",
+      "resposta_padrao": "Acesso administrativo.",
+      "por_que_nao": "Em IACS, administrativo gere contas e proteções; alterar firmware é capacidade típica de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Comprometimento da supervisão afeta a observabilidade do processo mesmo sem alterar lógica ou setpoints.",
+      "pergunta": "Quando um acesso excessivo compromete apenas a camada de supervisão, sem alterar lógica nem setpoints, qual efeito operacional específico tende a aparecer?",
+      "resposta": "Perda de visibilidade.",
+      "explicacao": "O bloco foco inclui sistemas de supervisão no escopo do acesso e destaca perda de visibilidade como efeito operacional distinto de mudar lógica ou setpoint.",
+      "resposta_padrao": "Perda de confidencialidade.",
+      "por_que_nao": "Na supervisão industrial, o efeito dominante é perder a observabilidade do processo, não apenas expor informações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Backup elétrico preserva disponibilidade da supervisão, mas não cria isolamento entre domínios de rede.",
+      "pergunta": "Por que o backup de energia do SCADA não substitui a segmentação lógica entre domínios?",
+      "resposta": "Não cria barreiras lógicas de rede.",
+      "explicacao": "O backup mantém supervisão e comunicação disponíveis, mas a contenção de propagação depende de segmentação e controle dos caminhos de comunicação entre domínios.",
+      "resposta_padrao": "Porque a autonomia do backup pode ser insuficiente.",
+      "por_que_nao": "Mesmo com autonomia suficiente, sem segmentação continuam existindo caminhos de propagação entre domínios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica"
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "a resposta começa por sim, não ou um juízo de adequação; comece pelo elemento decisivo"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "A fronteira IT/OT é marcada funcionalmente quando os dados saem da camada de controle para camadas consumidoras.",
+      "pergunta": "Que transição funcional costuma marcar a fronteira IT/OT na prática?",
+      "resposta": "Saída da camada de controle para supervisão e consumidores externos.",
+      "explicacao": "A fronteira prática não é definida apenas por um equipamento de rede, mas pelo ponto em que dados do controle passam a alimentar supervisão, histórico, analítica, telecomunicações ou sistemas corporativos.",
+      "resposta_padrao": "A passagem pela DMZ.",
+      "por_que_nao": "DMZ é uma barreira arquitetural possível; a fronteira funcional surge quando o dado deixa a camada de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Com múltiplos controladores de campo, o SCADA tende a exercer papel agregador na arquitetura.",
+      "pergunta": "Com múltiplos controladores de campo, que papel o SCADA tende a assumir na arquitetura?",
+      "resposta": "Camada agregadora supervisória.",
+      "explicacao": "Nesse arranjo, o SCADA consolida alarmes, histórico e interface operacional de vários controladores, sem substituir o controle básico executado no campo.",
+      "resposta_padrao": "Controlador principal do processo.",
+      "por_que_nao": "O controle do processo permanece nos controladores de campo; o SCADA agrega supervisão e dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Modelos de dados distintos entre fornecedores deslocam a integração para a camada supervisória.",
+      "pergunta": "Quando fornecedores diferentes usam modelos de dados distintos e a padronização junto à fonte fica limitada, para onde a integração costuma migrar?",
+      "resposta": "Para a camada supervisória.",
+      "explicacao": "A heterogeneidade perto da origem dificulta padronizar a integração nos próprios controladores; por isso, a convergência costuma ocorrer acima deles, na supervisão.",
+      "resposta_padrao": "Para a camada de controle.",
+      "por_que_nao": "Modelos distintos limitam justamente a padronização na fonte; a integração sobe para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Arquiteturas híbridas aumentam a necessidade de explicitar o tráfego de fronteira por criarem interfaces simultâneas com destinos e finalidades diferentes.",
+      "pergunta": "Por que arquiteturas híbridas com controlador de borda, nuvem e SCADA local exigem definição explícita do tráfego que cruza a fronteira?",
+      "resposta": "Múltiplas interfaces com finalidades operacionais distintas.",
+      "explicacao": "O mesmo controlador pode alimentar nuvem e supervisão local ao mesmo tempo; cada interface adicional amplia a fronteira e torna necessário explicitar quais fluxos são permitidos e para quê.",
+      "resposta_padrao": "Maior volume de dados.",
+      "por_que_nao": "A exigência cresce pela multiplicação de interfaces e propósitos dos fluxos, não apenas pela quantidade trafegada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

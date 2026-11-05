@@ -1,0 +1,109 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Painéis de controle de geradores são alimentados por 24 Vcc, enquanto UPS atende cargas vitais em corrente alternada.",
+      "pergunta": "Que sistema, distinto da UPS em corrente alternada, alimenta tipicamente os painéis de controle dos geradores principais?",
+      "resposta": "24 Vcc de serviços gerais.",
+      "explicacao": "No arranjo descrito, os painéis de geradores estavam no 24 Vcc; a UPS servia às cargas vitais em corrente alternada.",
+      "resposta_padrao": "UPS em corrente alternada.",
+      "por_que_nao": "A UPS atende cargas vitais em CA; os painéis de controle dos geradores usam alimentação CC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Havia também UPS (Uninterruptible Power Supply) para cargas vitais em corrente alternada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "Perda de 24 Vcc de controle pode derrubar a geração ao tornar o gerador incapaz de permanecer conectado ao barramento.",
+      "pergunta": "Que elo transforma a perda de 24 Vcc de controle em perda de geração, mesmo sem falha no barramento principal?",
+      "resposta": "Incapacidade de permanecer conectado ao barramento.",
+      "explicacao": "Sem alimentação de comando, supervisão ou atuação, o gerador pode seguir mecanicamente disponível, mas não consegue manter-se no barramento.",
+      "resposta_padrao": "Sobrecorrente imediata no barramento principal.",
+      "por_que_nao": "O disparo pode vir da energia de controle, antes de qualquer falta no barramento de potência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Redundância nominal de fontes CC falha sem segregação real e independência das rotas de alimentação.",
+      "pergunta": "Mesmo com dois retificadores/carregadores e dois bancos de baterias, cada um capaz da carga total, a perda de controle ainda pode ocorrer. Que deficiência técnica explica isso?",
+      "resposta": "Dependência comum das rotas por falta de segregação.",
+      "explicacao": "A duplicação de fonte não protege contra falha comum se cargas e canais convergem para a mesma UPS, quadro CC ou rota.",
+      "resposta_padrao": "Autonomia insuficiente das baterias.",
+      "por_que_nao": "Mesmo com conjuntos capazes da carga total, um ponto comum de alimentação pode derrubar todas as funções.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Sinal persistente de trip no disjuntor do gerador de emergência impede o fechamento e bloqueia a recomposição.",
+      "pergunta": "Quando a lógica mantém sinal de trip ao disjuntor do gerador de emergência durante o reboot do controle, o que acontece com a recomposição?",
+      "resposta": "O fechamento do disjuntor fica bloqueado.",
+      "explicacao": "Trip mantido durante o reboot impede o fechamento do disjuntor do gerador de emergência, frustrando a energização na recomposição.",
+      "resposta_padrao": "A recomposição apenas demora mais.",
+      "por_que_nao": "Com trip persistente, o gerador de emergência não consegue energizar o barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

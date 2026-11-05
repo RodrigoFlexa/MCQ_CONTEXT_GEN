@@ -1,0 +1,79 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 4,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Avaliar apenas a saúde do detector em campo superestima a disponibilidade funcional ao ignorar a cadeia de comunicação, processamento e registro.",
+      "pergunta": "Se a disponibilidade do F&G for inferida apenas do estado saudável do detector em campo, sem avaliar processamento e registros, o que acontece com a estimativa da barreira?",
+      "resposta": "Superestima-se a disponibilidade funcional da barreira.",
+      "explicacao": "O bloco foco afirma que detector disponível não produz proteção completa se a comunicação com lógica e interface estiver degradada; por isso, olhar só o sensor infla a estimativa real de proteção.",
+      "resposta_padrao": "A estimativa continua válida se o detector estiver saudável.",
+      "por_que_nao": "Saúde do detector não assegura comunicação, lógica, interface e registro; a resposta de segurança pode estar comprometida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade de um detector não produz proteção completa se a comunicação com a lógica e com a interface do operador estiver degradada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "A ordem temporal dos registros entre confirmação local e supervisório permite verificar se a sequência lógica configurada foi realmente executada.",
+      "pergunta": "Com relógios sincronizados, o supervisório registra o disparo antes da confirmação local exigida como etapa anterior. O que essa ordem evidencia?",
+      "resposta": "Sequência lógica executada diferente da configurada.",
+      "explicacao": "O bloco foco liga a sequência temporal dos registros à verificação da lógica executada. Se a ordem prevista se inverte com marcas de tempo confiáveis, a sequência configurada não foi a realizada.",
+      "resposta_padrao": "Apenas latência de comunicação entre campo e supervisório.",
+      "por_que_nao": "Latência altera o atraso, mas não inverte a precedência entre etapas quando os relógios estão sincronizados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "envolvendo confirmação local e confirmação posterior no supervisório."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a sequência temporal é relevante para verificar se a lógica configurada foi realmente executada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Inconsistência entre supervisório e lógica compromete a resposta porque desloca a ação do operador para um estado falso do sistema.",
+      "pergunta": "Detector e lógica atuam corretamente, mas o supervisório exibe estado incompatível. Por que a proteção ainda fica comprometida?",
+      "resposta": "O operador reage a um estado de sistema inexistente.",
+      "explicacao": "O bloco foco afirma que a interface do operador integra a proteção completa e que inconsistências entre telas e lógica podem comprometer a resposta, mesmo com hardware de campo preservado.",
+      "resposta_padrao": "Não compromete, porque a atuação automática já ocorreu.",
+      "por_que_nao": "A proteção completa depende também de indicação coerente ao operador; estado exibido incorreto distorce a resposta ao evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade de um detector não produz proteção completa se a comunicação com a lógica e com a interface do operador estiver degradada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "inconsistências entre telas e lógica podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

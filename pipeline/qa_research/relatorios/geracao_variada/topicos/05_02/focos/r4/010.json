@@ -1,0 +1,61 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 4,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Método de verificação que expõe falhas de segregação e controle apenas observáveis sob carga real.",
+      "pergunta": "Como se chama a verificação que exercita a arquitetura de alimentação com carga real para revelar falhas ocultas de segregação e controle?",
+      "resposta": "Ensaio operacional sob carga aplicável.",
+      "explicacao": "Os blocos ligam a verificação da segregação real à configuração implantada, e A1 afirma que parte das falhas só aparece com esforço elétrico real, interação entre controles ou aquecimento.",
+      "resposta_padrao": "Revisão documental do unifilar.",
+      "por_que_nao": "O unifilar ajuda a rastrear rotas, mas não reproduz esforço elétrico real, aquecimento nem interação entre controles.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ensaios operacionais sob carga aplicável são relevantes porque parte das falhas só se manifesta com esforço elétrico real, interação entre controles ou aquecimento."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A redundância de fontes 24 Vcc não elimina a vulnerabilidade quando existe um ponto comum de alimentação a jusante.",
+      "pergunta": "Dois sistemas 24 Vcc, cada um capaz de suprir 100% da demanda, ainda assim não evitam a perda simultânea de funções críticas. Que dependência estrutural a jusante explica isso?",
+      "resposta": "Ponto comum de alimentação a jusante.",
+      "explicacao": "Mesmo com fontes redundantes e capacidade integral, a independência desaparece se funções convergirem para a mesma UPS, quadro CC ou ponto de distribuição; a falha nesse trecho derruba ambas.",
+      "resposta_padrao": "Falta de capacidade das fontes em contingência.",
+      "por_que_nao": "Os blocos dizem que cada sistema podia suprir toda a demanda; o problema decisivo é a dependência compartilhada no trecho comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

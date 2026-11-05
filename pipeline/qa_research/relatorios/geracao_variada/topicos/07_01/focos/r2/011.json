@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": false,
+      "conhecimento": "A compensação de atrito por pulsos aumenta o desgaste ao impor movimentação adicional ao elemento final.",
+      "pergunta": "Por que a compensação de atrito por pulsos tende a acelerar a degradação da válvula?",
+      "resposta": "Movimentação deliberadamente adicional da válvula.",
+      "explicacao": "Os pulsos acrescentam energia para vencer o atrito, gerando deslocamentos extras. Isso pode recuperar desempenho da malha, mas eleva a degradação do elemento final.",
+      "resposta_padrao": "Maior pressão de suprimento no atuador.",
+      "por_que_nao": "O bloco relaciona o desgaste ao aumento da movimentação, não a um simples aumento da pressão de suprimento.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o elemento final executa fisicamente a ação escolhida pelo controlador"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Se o posicionador entrega pressão e o ar de instrumento está normal, ausência de movimento indica falha na conversão de pressão em deslocamento no atuador.",
+      "pergunta": "Quando a pressão de saída do posicionador varia com o comando e o suprimento pneumático está normal, mas a haste não se move, que elo do conjunto falhou?",
+      "resposta": "Conversão de pressão em deslocamento no atuador.",
+      "explicacao": "Com sinal de posicionamento e ar disponíveis, a falha está depois dessas etapas. O elo restante é o atuador, que deveria transformar pressão em movimento mecânico.",
+      "resposta_padrao": "Posicionador defeituoso.",
+      "por_que_nao": "Se a pressão de saída do posicionador varia corretamente, a etapa de posicionamento respondeu; falta o movimento do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O conjunto de válvula de controle normalmente reúne corpo, internos, atuador e acessórios."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "resposta observável do atuador em campo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Se há movimento coerente da válvula sem efeito no processo, a perda está na capacidade dos internos de estrangular a vazão.",
+      "pergunta": "Se o curso acompanha o comando e o atuador responde, mas a variável controlada quase não muda, que mecanismo do conjunto perdeu efetividade?",
+      "resposta": "Estrangulamento de vazão pelos internos.",
+      "explicacao": "A válvula influencia pressão, nível e vazão ao restringir o escoamento. Se o movimento existe sem efeito de processo, a perda está na capacidade dos internos de modular a vazão.",
+      "resposta_padrao": "Controlador mal sintonizado.",
+      "por_que_nao": "Com comando e deslocamento coerentes, o problema não é gerar a ação, mas transformar movimento em restrição hidráulica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manipula a vazão de fluidos e, assim, influencia variáveis como pressão, nível e vazão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": false,
+      "conhecimento": "Inferir disponibilidade apenas por sinais na IHM tende a superestimar a função de controle, que depende da resposta física em campo.",
+      "pergunta": "Quando a disponibilidade é inferida apenas por sinais na IHM, que erro de avaliação tende a ocorrer?",
+      "resposta": "Superestimação da disponibilidade real da função de controle.",
+      "explicacao": "Sinais na IHM, sozinhos, não demonstram a função integralmente disponível. A avaliação precisa confirmar modo de atuação, posição e resposta física do atuador em campo.",
+      "resposta_padrao": "Erro apenas na indicação de posição.",
+      "por_que_nao": "O problema não se limita à indicação; pode haver ausência da própria modulação efetiva em campo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "capacidade de modulação ou de abre-fecha, indicação de posição e resposta observável do atuador em campo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na malha de controle, o elemento final executa fisicamente a ação escolhida pelo controlador"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

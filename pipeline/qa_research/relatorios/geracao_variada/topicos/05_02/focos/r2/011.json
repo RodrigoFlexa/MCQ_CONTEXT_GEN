@@ -1,0 +1,61 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Dependência compartilhada de UPS ou quadro CC entre canais redundantes caracteriza falha de causa comum.",
+      "pergunta": "Como se chama a vulnerabilidade criada quando canais redundantes de controle passam a depender da mesma UPS ou do mesmo quadro CC?",
+      "resposta": "Falha de causa comum.",
+      "explicacao": "Se canais tidos como redundantes compartilham a mesma alimentação, uma única falha elimina ambos. Os blocos ligam explicitamente a falta de segregação à redução da independência entre canais.",
+      "resposta_padrao": "Perda de redundância.",
+      "por_que_nao": "Isso descreve o efeito de forma genérica; o elemento técnico decisivo é a introdução de uma falha de causa comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Perda simultânea da alimentação principal e da UPS de uma placa de saídas a relé do CLP elimina a capacidade de comando remoto das válvulas.",
+      "pergunta": "Se falham a alimentação principal e a UPS que sustenta o cartão-relé do CLP, o que acontece com o comando remoto das válvulas por esse CLP?",
+      "resposta": "Fica indisponível.",
+      "explicacao": "Sem energia no cartão-relé, a via de atuação do CLP deixa de comandar as válvulas. O bloco foco afirma essa sequência funcional ao descrever a perda da UPS junto com a energia principal.",
+      "resposta_padrao": "Perde-se só a supervisão das válvulas.",
+      "por_que_nao": "Cartão-relé é caminho de saída e atuação; sem sua alimentação, a perda decisiva é de comando, não apenas de monitoramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}
