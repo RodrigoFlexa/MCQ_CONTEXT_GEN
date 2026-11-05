@@ -1,0 +1,79 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de defeito do reserva demandado que não entra em serviço",
+      "pergunta": "Num arranjo duty/standby, a transferência para o caminho alternativo ocorre, o reserva recebe comando, mas o próprio conjunto não ganha rotação nem assume carga. Como se chama esse defeito?",
+      "resposta": "Falha de partida",
+      "explicacao": "No cenário, a perda da função não vem da mudança de caminho, mas do fato de o reserva, já demandado, não entrar em operação; em RAM isso caracteriza falha de partida.",
+      "resposta_padrao": "Falha de comutação.",
+      "por_que_nao": "Na falha de comutação, o reserva está apto, mas a transferência entre caminhos é que não acontece; aqui essa etapa ocorreu e o problema está no próprio equipamento reserva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de defeito em que a transferência para o reserva não ocorre",
+      "pergunta": "Num sistema duplicado com troca automática, o reserva está apto e o ativo falha, mas a função se perde porque o serviço não migra para o outro caminho. Como se chama esse defeito?",
+      "resposta": "Falha de comutação",
+      "explicacao": "O reserva existe e está disponível; o que falha é o mecanismo que deveria transferir a função para o caminho alternativo após a perda do ativo.",
+      "resposta_padrao": "Falha de partida.",
+      "por_que_nao": "Na falha de partida, a transferência não é o problema; o defeito está em o reserva não entrar em operação mesmo depois de demandado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome de simplificação de modelagem RAM que ignora dependências compartilhadas",
+      "pergunta": "Que simplificação topológica costuma superestimar o ganho da duplicação quando se ignoram utilidades, controle, descarga ou acesso de reparo compartilhados?",
+      "resposta": "Lógica simplificada série-paralelo",
+      "explicacao": "O termo nomeia a modelagem que trata os caminhos como independentes em série e paralelo; por isso tende a superestimar o ganho quando há dependências compartilhadas.",
+      "resposta_padrao": "Diagrama de blocos de confiabilidade.",
+      "por_que_nao": "O diagrama é a ferramenta ampla; o erro citado é usar sua forma mais simplificada, sem representar dependências e recursos compartilhados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

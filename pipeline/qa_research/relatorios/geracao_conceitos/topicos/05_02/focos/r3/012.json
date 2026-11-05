@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome de lógica que bloqueia manobras inseguras na recomposição",
+      "pergunta": "Como se chama a lógica que, diante de combinações proibidas de estados e fontes, inibe o fechamento ou mantém a abertura do disjuntor para evitar energização indevida na recomposição?",
+      "resposta": "Intertravamento (interlock)",
+      "explicacao": "Nos blocos, a retomada falhou porque a lógica mantinha sinal de trip e dependia de permissivos e intertravamentos; isso caracteriza a função que bloqueia a manobra em condições inseguras.",
+      "resposta_padrao": "Permissivo de fechamento.",
+      "por_que_nao": "O permissivo apenas autoriza o comando quando pré-condições estão satisfeitas; o intertravamento bloqueia a manobra ou mantém a abertura diante de estados proibidos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica de controle não bloquear a própria retomada de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado, da lógica de intertravamento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de tipo de defeito que permanece mascarado até uma condição específica",
+      "pergunta": "Uma lógica defeituosa só apareceu quando o reboot ocorreu sem alimentação de bateria; nas retomadas usuais, passava despercebida. Como se chama esse tipo de defeito?",
+      "resposta": "Falha latente",
+      "explicacao": "O defeito já existia, mas ficava mascarado no caminho normal de reinício e só emergiu no estado anormal sem bateria, exatamente o comportamento de uma falha latente.",
+      "resposta_padrao": "Falha intermitente.",
+      "por_que_nao": "Na intermitente o problema aparece e desaparece de forma recorrente; aqui ele permanecia presente, porém só foi revelado por uma condição específica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indisponível naquele estado anormal"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome de condição operacional a evitar quando duas fontes podem alimentar o mesmo trecho",
+      "pergunta": "Na realimentação por fonte de emergência, que condição deve ser evitada isolando a geração principal para que duas fontes não alimentem simultaneamente o mesmo trecho?",
+      "resposta": "Paralelismo indevido",
+      "explicacao": "A recomposição parcial exige isolamento das fontes justamente para impedir conexão simultânea não planejada entre emergência e principal no mesmo segmento.",
+      "resposta_padrao": "Retroalimentação.",
+      "por_que_nao": "Retroalimentação é energizar um trecho por caminho reverso; aqui o risco específico é a conexão simultânea de duas fontes no mesmo barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ela depende de permissivos, isolamento adequado das fontes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "evitar paralelismo indevido, retroalimentação de partes não previstas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

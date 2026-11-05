@@ -1,0 +1,75 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de filosofia de controle de nível",
+      "pergunta": "Num separador, a descarga líquida fica próxima da vazão média de entrada enquanto o nível segue entre dois limites; só ao sair dessa faixa entra ação rápida para recolocar o vaso na região permitida. Como se chama essa filosofia?",
+      "resposta": "Controle por bandas (nível amortecido)",
+      "explicacao": "No bloco foco, dentro de limites predefinidos a saída fica próxima da vazão média estimada; ao ultrapassá-los, a lógica comuta para ação rápida de retorno do nível, caracterizando essa filosofia.",
+      "resposta_padrao": "Controle PI de nível com setpoint fixo.",
+      "por_que_nao": "No PI com setpoint fixo a válvula corrige continuamente qualquer desvio; aqui a saída fica quase constante dentro de limites e só há ação rápida fora deles.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida, que pode ser implementada por PID, para retornar o inventário à faixa permitida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de atributo de desempenho do controlador",
+      "pergunta": "Na qualificação de uma malha de nível, testam-se parada de alimentação, bloqueio de saídas, oscilações, atraso maior e golfadas a montante para verificar qual atributo do controlador?",
+      "resposta": "Robustez",
+      "explicacao": "O bloco foco diz que esse atributo foi avaliado impondo parada de alimentação, bloqueio, oscilações, atraso adicional e golfadas, verificando se a malha mantém desempenho aceitável.",
+      "resposta_padrao": "Estabilidade.",
+      "por_que_nao": "Estabilidade é não perder o equilíbrio dinâmico; robustez é suportar perturbações, incertezas e atraso adicional mantendo comportamento aceitável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome de característica de armazenamento dinâmico do separador",
+      "pergunta": "Que característica do separador oferece armazenamento temporário para desacoplar parcialmente a variabilidade da alimentação das etapas seguintes durante transientes?",
+      "resposta": "Volume de retenção",
+      "explicacao": "O apoio afirma que o vaso fornece esse volume para desacoplar parcialmente a variabilidade a montante; o bloco foco liga a dinâmica ao volume armazenado no vaso.",
+      "resposta_padrao": "Tempo de residência.",
+      "por_que_nao": "Tempo de residência é uma relação entre volume e vazão média; o que amortece transientes é o volume disponível para acumular líquido temporariamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

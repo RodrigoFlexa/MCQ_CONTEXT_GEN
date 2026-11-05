@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de requisito de arquitetura para independência entre canais redundantes",
+      "pergunta": "Dois canais ditos redundantes perderam supervisão juntos por dependerem do mesmo UPS e do mesmo caminho de comando. Que requisito de arquitetura faltou para preservar a independência entre eles?",
+      "resposta": "Segregação elétrica e lógica",
+      "explicacao": "No bloco foco, a perda conjunta ocorreu porque canais redundantes compartilharam a mesma UPS. O princípio destacado é que só há resiliência quando canais, fontes e comandos permanecem separados elétrica e logicamente.",
+      "resposta_padrao": "Redundância N+1.",
+      "por_que_nao": "N+1 acrescenta capacidade ou unidade reserva, mas não evita falha comum se canais redundantes compartilham a mesma fonte ou lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso reduziu a independência entre canais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de condição lógica que autoriza conexão do gerador ao barramento",
+      "pergunta": "Após o reboot, o disjuntor do gerador não conecta ao barramento porque ainda falta a combinação correta de estados e ausências de bloqueio. Como se chama essa autorização lógica prévia?",
+      "resposta": "Permissivo de fechamento",
+      "explicacao": "O foco cita que permissivos de fechamento precisam ser verificados em modos anormais. É a condição lógica que autoriza o comando de conexão do disjuntor quando os pré-requisitos estão atendidos.",
+      "resposta_padrao": "Intertravamento.",
+      "por_que_nao": "Intertravamento bloqueia manobras inseguras; o termo pedido é a liberação positiva que só existe quando todas as condições necessárias foram satisfeitas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos de fechamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de operação de recomposição parcial com fonte emergencial",
+      "pergunta": "Com os geradores principais indisponíveis e isolados, que operação usa a fonte emergencial para energizar um trecho do quadro principal durante a recuperação da planta?",
+      "resposta": "Back feeding",
+      "explicacao": "A2 nomeia essa operação e limita seu uso à indisponibilidade e isolamento dos geradores principais, com seletora adequada e sem paralelismo indevido. É uma ferramenta de recomposição parcial, não substitui a geração principal.",
+      "resposta_padrao": "Transferência automática de fonte.",
+      "por_que_nao": "Na transferência automática, cargas previstas mudam entre duas fontes designadas; aqui a fonte emergencial passa a energizar parte do quadro principal sob permissivos específicos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a geração de emergência pode ser usada para realimentar parte dos sistemas ligados ao painel principal de distribuição, operação denominada back feeding"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa realimentação só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de parâmetro de duração do suprimento por UPS/baterias",
+      "pergunta": "Após blackout, a equipe discute se as baterias sustentam CLP, ESD e telecom crítica até a recomposição. Que parâmetro de projeto está sendo verificado para esse suprimento temporário?",
+      "resposta": "Tempo de retaguarda (autonomia)",
+      "explicacao": "O bloco focal trata esse parâmetro como variável de minutos a horas, conforme a essencialidade, para manter cargas críticas alimentadas até a recomposição ou parada segura.",
+      "resposta_padrao": "Tempo de transferência entre fontes.",
+      "por_que_nao": "Tempo de transferência mede a interrupção na comutação; aqui se discute por quanto tempo a carga continua alimentada após perder a fonte normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O tempo de retaguarda pode variar de minutos a algumas horas conforme porte e essencialidade da aplicação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de vulnerabilidade causada pela concentração de ramos redundantes",
+      "pergunta": "Após modificações, duas estações redundantes passam a depender do mesmo UPS; se esse único ramo falha, a função inteira se perde apesar da duplicidade no diagrama. Como se chama essa vulnerabilidade?",
+      "resposta": "Ponto único de falha",
+      "explicacao": "A1 diz que a arquitetura deve evitar essa condição; concentrar cargas redundantes no mesmo ramo elimina a independência funcional cuja verificação F exige no monitoramento.",
+      "resposta_padrao": "Falta de redundância.",
+      "por_que_nao": "Pode existir duplicação aparente no diagrama; o problema específico é haver um único ramo ou elemento cuja perda derruba toda a função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "efeitos de modificações acumuladas ao longo da vida operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A confiabilidade dos sistemas essenciais aumenta quando a arquitetura evita ponto único de falha."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de procedimento de recomposição após perda total de energia",
+      "pergunta": "Após perda total de energia, existe uma máquina capaz de entrar sem barramento vivo, mas a recomposição falha porque a lógica alimentada por bateria não sobe. Que procedimento operacional ficou inviabilizado?",
+      "resposta": "Black start",
+      "explicacao": "O bloco focal liga a recomposição pós-blackout à disponibilidade da alimentação por bateria e cita esse procedimento quando há fonte potencialmente disponível, mas a lógica impede a recuperação.",
+      "resposta_padrao": "Partida de emergência.",
+      "por_que_nao": "Partida de emergência põe um equipamento em serviço; aqui se trata de recompor a unidade a partir de condição totalmente desenergizada com fonte autônoma.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

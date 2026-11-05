@@ -1,0 +1,89 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome da infraestrutura digital que reúne processo, proteção, segurança e elétrica",
+      "pergunta": "Como se chama a infraestrutura digital que pode reunir processo, proteção independente, segurança e elétrica, de modo que conectividade além do necessário amplie o alcance de falhas ou ações maliciosas?",
+      "resposta": "IACS",
+      "explicacao": "No bloco F, IACS é a infraestrutura que pode reunir processo, proteção, segurança e elétrica; por isso, interconexões excessivas entre seus domínios ampliam a propagação de falhas, erros de configuração ou ações maliciosas.",
+      "resposta_padrao": "OT.",
+      "por_que_nao": "OT é o domínio amplo da tecnologia operacional; IACS é a infraestrutura específica citada no bloco como reunindo processo, proteção, segurança e elétrica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "conceito não pode pedir 'que aspectos/quais fatores' nem 'além de X': admite várias respostas; pergunte por um termo, função, componente, parâmetro ou local único"
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome da camada que agrega alarmes, histórico e interface do operador sobre múltiplos equipamentos de campo",
+      "pergunta": "Em uma instalação com vários PLCs e RTUs de campo, que camada costuma concentrar alarmes, histórico e interface do operador, agregando as informações para outros consumidores?",
+      "resposta": "SCADA (sistema supervisório)",
+      "explicacao": "A1 descreve o SCADA como camada agregadora para alarmes, histórico e interface operacional. Por concentrar interconexões entre campo e outros consumidores, ele é relevante para a segmentação tratada em F.",
+      "resposta_padrao": "DCS.",
+      "por_que_nao": "DCS executa a estratégia de controle distribuído do processo; SCADA agrega informações de múltiplos PLCs/RTUs e as apresenta ao operador e a outros consumidores.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome do elemento em nuvem que redistribui mensagens de controladores de borda em arquitetura IIoT",
+      "pergunta": "Em arquitetura híbrida de IIoT, que elemento em nuvem, do modelo publicação/assinatura, recebe mensagens dos controladores de borda e as distribui aos consumidores autorizados?",
+      "resposta": "broker MQTT",
+      "explicacao": "A1 cita explicitamente controladores de borda enviando dados para broker MQTT em nuvem. Como essa interface cruza domínios, F reforça que sua segmentação deve limitar a propagação de problemas.",
+      "resposta_padrao": "Gateway IIoT.",
+      "por_que_nao": "O gateway faz coleta e tradução na borda; quem recebe as publicações e as redistribui aos assinantes, no cenário citado, é o broker MQTT.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Separar domínios não remove a vulnerabilidade de origem, mas dificulta que um problema em uma interface alcance todos os ativos conectados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

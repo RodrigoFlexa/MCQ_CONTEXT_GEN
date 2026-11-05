@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome de componente do sistema 24 Vcc de comando",
+      "pergunta": "No sistema de 24 Vcc de comando, como se chama o equipamento que recebe energia em CA, sustenta o barramento em CC e mantém o banco de baterias apto a assumir a alimentação?",
+      "resposta": "Retificador/carregador",
+      "explicacao": "Nos blocos, o 24 Vcc de controle tinha \"dois conjuntos retificador/carregador e banco de baterias\"; esse equipamento converte CA para CC, alimenta a malha e mantém as baterias prontas para sustentar o sistema.",
+      "resposta_padrao": "UPS.",
+      "por_que_nao": "A UPS entrega CA ininterrupta por meio de retificação, baterias e inversão; o equipamento do barramento 24 Vcc é o retificador/carregador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "com dois conjuntos retificador/carregador e banco de baterias, cada um capaz de suprir toda a demanda"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de condição lógica para conectar gerador na recomposição",
+      "pergunta": "Na recomposição após blackout, como se chama o conjunto de condições lógicas que deve estar satisfeito para que o disjuntor do gerador de emergência possa acoplar o quadro?",
+      "resposta": "Permissivo de fechamento",
+      "explicacao": "A2 destaca que \"permissivos de fechamento\" precisam ser verificados em modos anormais; são as condições lógicas positivas que autorizam conectar o gerador de emergência na recomposição após blackout.",
+      "resposta_padrao": "Intertravamento.",
+      "por_que_nao": "Intertravamento é a lógica que bloqueia manobras inseguras em geral; o conjunto de condições positivas para autorizar a conexão é o permissivo de fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome de condição de arquitetura com duplicidade apenas aparente",
+      "pergunta": "Como se chama a duplicidade aparente em que dois conjuntos parecem cobrir integralmente a demanda, mas uma dependência comum ainda permite que uma única falha derrube ambos?",
+      "resposta": "Redundância nominal",
+      "explicacao": "F fala em \"redundância nominal\" e A1 explica que ela não basta quando falta segregação real; há duplicidade aparente, mas uma dependência comum permite perda simultânea dos dois canais.",
+      "resposta_padrao": "Critério N+1.",
+      "por_que_nao": "N+1 trata de capacidade instalada com a perda de um elemento; quando falta independência entre fontes e caminhos, a duplicidade continua apenas nominal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

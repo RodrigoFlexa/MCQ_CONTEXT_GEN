@@ -1,0 +1,79 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de corrente do hidrociclone usada para controlar a interface",
+      "pergunta": "Em um arranjo em que outra malha mantém o DPR pela corrente oposta, qual corrente do hidrociclone costuma receber a atuação usada para controlar a interface água-óleo no separador?",
+      "resposta": "Underflow",
+      "explicacao": "No arranjo descrito, a interface é controlada manipulando essa corrente, enquanto a corrente oposta recebe a atuação destinada a manter o DPR e o split aproximadamente constantes.",
+      "resposta_padrao": "Overflow.",
+      "por_que_nao": "Nessa arquitetura, o overflow é a corrente usada pela outra malha para manter o DPR e, indiretamente, o split aproximadamente constante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manipula a vazão de underflow do hidrociclone para controlar a interface no separador,"
+        },
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR)"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": true,
+      "conhecimento": "nome de parâmetro dinâmico do hidrociclone usado como referência para tolerar oscilação da interface",
+      "pergunta": "Se a concentração de óleo na água varia devagar e a equipe tolera algum vaivém da interface, qual parâmetro de primeira ordem do hidrociclone está servindo de referência para essa decisão?",
+      "resposta": "Constante de tempo do hidrociclone",
+      "explicacao": "F relaciona a tolerância a oscilações da interface ao fato de as variações de óleo na água serem lentas quando comparadas com esse parâmetro dinâmico do hidrociclone.",
+      "resposta_padrao": "Tempo morto.",
+      "por_que_nao": "Tempo morto é atraso puro antes da resposta; a referência citada para tolerar a oscilação é a rapidez de acomodação após o início da resposta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone,"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "nome de parâmetro do hidrociclone indiretamente estabilizado pelo controle de DPR",
+      "pergunta": "No hidrociclone, qual parâmetro do próprio equipamento, não de pressão, é indiretamente estabilizado quando outra malha mantém o DPR, ajudando a reduzir a variabilidade do teor de óleo na água?",
+      "resposta": "Split",
+      "explicacao": "F liga o controle do DPR à manutenção aproximada desse parâmetro, e A2 associa menor oscilação dele à menor variabilidade do desempenho a jusante.",
+      "resposta_padrao": "Differential Pressure Ratio (DPR).",
+      "por_que_nao": "DPR é a razão de pressões usada como variável de controle; o termo pedido é o efeito obtido nela, ligado à partilha da alimentação entre as duas saídas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}
