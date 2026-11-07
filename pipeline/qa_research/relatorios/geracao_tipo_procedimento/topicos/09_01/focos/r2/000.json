@@ -1,0 +1,71 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 2,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de verificação para manter FIFO ou adotar prioridade quando há disputa por atendimento.",
+      "pergunta": "Antes de manter a fila por ordem de chegada, qual verificação decide se esse critério é tecnicamente coerente?",
+      "resposta": "Uniformidade do custo de espera entre demandas.",
+      "explicacao": "O foco afirma que a ordem de chegada só é tecnicamente coerente quando a espera tem custo equivalente; se a consequência da espera varia, a fila deve refletir essa diferença.",
+      "resposta_padrao": "Tempo já decorrido na fila.",
+      "por_que_nao": "Isso apenas reforça o FIFO; não verifica se demandas diferentes têm consequências de espera distintas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Condição de validade de um teste entre FIFO e prioridade: presença de restrição logística que force escolha entre demandas.",
+      "pergunta": "Prioridade e FIFO produziram o mesmo plano no teste. Que condição precisa ser conferida para saber se a comparação foi realmente discriminante?",
+      "resposta": "Existência de restrição logística efetiva.",
+      "explicacao": "A política só altera o resultado quando há disputa real por embarcações, janelas ou capacidade. Sem gargalo, as duas regras podem gerar o mesmo atendimento.",
+      "resposta_padrao": "Valor da penalidade por atraso.",
+      "por_que_nao": "Penalidade alta só influencia a fila se existir escassez operacional que obrigue escolher o que atender primeiro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a política de prioridade altera o resultado porque muda quais demandas serão atendidas primeiro quando há restrição de embarcações, janelas operacionais ou capacidade logística."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação que justifica priorizar item de baixo consumo quando sua falta afeta restauração de função ou continuidade operacional.",
+      "pergunta": "Chegou por último um item de baixo consumo necessário para restaurar uma função indisponível. Qual verificação justifica reordenar o embarque?",
+      "resposta": "Comprometimento da restauração de função ou da continuidade operacional.",
+      "explicacao": "Os blocos ligam a priorização à consequência operacional da falta. Mesmo com baixo consumo, o item sobe na fila se sua ausência impedir restaurar função ou manter a operação.",
+      "resposta_padrao": "Baixa frequência de consumo do item.",
+      "por_que_nao": "Frequência de consumo não define a ordem quando a ruptura afeta restauração de função ou continuidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

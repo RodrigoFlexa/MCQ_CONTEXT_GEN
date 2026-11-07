@@ -1,0 +1,75 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Perda de estabilidade perto do limite exige verificar a folga do elemento final de controle.",
+      "pergunta": "Com a interface instável após aumento de carga, a válvula de saída ou a bomba opera repetidamente perto do máximo, sem mudança de sintonia. O que deve ser verificado antes de atribuir a falha à lógica de controle?",
+      "resposta": "Margem operacional remanescente da válvula ou bomba.",
+      "explicacao": "Perto do limite de capacidade, o elemento final perde autoridade para corrigir perturbações; a instabilidade pode vir da falta de folga operacional, não da lógica.",
+      "resposta_padrao": "Os ganhos do controlador.",
+      "por_que_nao": "Sintonia não devolve autoridade quando o elemento final já está sem folga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O desempenho da malha pode ser limitado por saturação ou proximidade do limite dos atuadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações, podendo não conseguir estabilizar o nível."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Teste de shutdown por interface baixa deve confirmar o mapeamento lógico do iniciador ao trip.",
+      "pergunta": "Na prova funcional de um desligamento por interface baixa, qual verificação distingue ajuste correto de implementação correta?",
+      "resposta": "Mapeamento do iniciador de interface baixa ao trip correto.",
+      "explicacao": "O ajuste pode estar certo e ainda assim a proteção atuar de forma errada se houver associação incorreta entre o iniciador e a ação de trip.",
+      "resposta_padrao": "Somente o valor de ajuste do nível baixo.",
+      "por_que_nao": "Setpoint correto não evita atuação indevida se a lógica estiver associada ao iniciador errado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também ocorreram falhas de implementação, como associação incorreta de trip por nível baixo, ausência inicial de anti-windup no Dead Band Assimétrico e bugs de lógica."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudança química que altera emulsão exige verificar se o modelo representa agentes emulsificantes.",
+      "pergunta": "Depois de alterar a dosagem química, a planta passa a reter emulsão e a resposta da interface fica mais lenta, embora a simulação continue prevendo o comportamento anterior. O que deve ser verificado no modelo antes de escolher outra filosofia de controle?",
+      "resposta": "Influência dos agentes emulsificantes nas hipóteses do modelo.",
+      "explicacao": "Se a química passou a dominar a estabilidade da emulsão, um modelo que ignore esse efeito perde validade para prever a dinâmica e comparar controles.",
+      "resposta_padrao": "O tempo de residência do separador.",
+      "por_que_nao": "Residência inalterada não corrige a ausência do efeito químico dominante nas hipóteses do modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sua utilidade, porém, depende das hipóteses adotadas; por exemplo, simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

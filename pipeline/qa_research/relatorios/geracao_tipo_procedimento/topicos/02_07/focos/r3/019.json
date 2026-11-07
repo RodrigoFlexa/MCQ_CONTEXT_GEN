@@ -1,0 +1,79 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 3,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Seleção do ensaio de bloqueio de saídas para qualificar a malha de nível sob perda do caminho de descarga.",
+      "pergunta": "Com a entrada líquida estável, o nível sobe rápido e a vazão de saída cai a zero embora o comando mande abrir totalmente a válvula. Na qualificação da malha, qual perturbação deve reproduzir essa condição?",
+      "resposta": "Bloqueio de saídas.",
+      "explicacao": "A condição decisiva é a indisponibilidade da retirada, com alimentação ainda presente; o ensaio correto precisa reproduzir essa perda de escoamento a jusante.",
+      "resposta_padrao": "Degrau positivo na carga de entrada.",
+      "por_que_nao": "Aumento de carga ainda preserva caminho de saída; aqui a descarga some mesmo com abertura máxima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o desequilíbrio entre entradas e saídas pode levar o nível aos limites do vaso"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Escolha de golfadas a montante como perturbação representativa de alimentação intermitente em pacotes.",
+      "pergunta": "Picos curtos de líquido chegam separados por intervalos de baixa vazão, sem periodicidade regular e com média horária parecida. Para testar a malha nesse regime, que perturbação representa melhor a alimentação?",
+      "resposta": "Golfadas a montante.",
+      "explicacao": "Pacotes intermitentes de alta carga com intervalos de baixa alimentação caracterizam slugging, não oscilação contínua nem degrau sustentado.",
+      "resposta_padrao": "Oscilações na vazão de entrada.",
+      "por_que_nao": "Oscilação é variação contínua e mais regular; o caso descreve pacotes intermitentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando a alimentação varia com frequência, o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Escolha da estrutura PI para a ação rápida quando se quer remover desvio persistente sem usar derivativa.",
+      "pergunta": "Fora da banda de nível, a correção precisa remover erro persistente do inventário sem usar ação derivativa. Que estrutura de controlador deve ser ajustada para essa etapa rápida?",
+      "resposta": "PI.",
+      "explicacao": "Sem derivativa, a ação integral é a que elimina desvio sustentado; no separador citado, PI foi considerado eficiente quando bem ajustado.",
+      "resposta_padrao": "PID.",
+      "por_que_nao": "A derivativa foi excluída da condição; para remover erro persistente, proporcional-integral atende ao requisito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em simulação específica de separador trifásico, um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida, que pode ser implementada por PID, para retornar o inventário à faixa permitida."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

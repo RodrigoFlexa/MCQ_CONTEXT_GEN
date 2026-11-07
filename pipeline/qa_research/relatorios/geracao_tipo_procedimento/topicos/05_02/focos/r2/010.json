@@ -1,0 +1,65 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação da continuidade funcional do comando de válvulas por UPS deve ser feita no elemento final da cadeia de controle.",
+      "pergunta": "Válvulas críticas são comandadas por CLP/ECOS e declaradas mantidas por UPS. Numa simulação de perda da alimentação principal, em que ponto a presença de energia deve ser confirmada para o teste valer?",
+      "resposta": "No cartão-relé do CLP.",
+      "explicacao": "A falha relevante ocorreu no cartão-relé do CLP, que perdeu alimentação e inviabilizou o comando das válvulas. Confirmar só a UPS não prova continuidade até o ponto que sustenta a função.",
+      "resposta_padrao": "Na saída do quadro da UPS.",
+      "por_que_nao": "Tensão na saída da UPS não garante alimentação contínua no cartão-relé nem nas interligações a jusante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a UPS tinha a função de manter alimentação ininterrupta a cargas vitais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "junto com falha de UPS, desenergizou parte do controle associado às válvulas de tanques"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A capacidade individual de sistemas redundantes de 24 Vcc com interligação só se comprova com o TIE aberto.",
+      "pergunta": "Dois sistemas de 24 Vcc, cada um dimensionado para atender toda a demanda, podem ser interligados por TIE. Ao provar a capacidade individual de cada lado, em que posição o TIE deve permanecer?",
+      "resposta": "Aberto.",
+      "explicacao": "Com o TIE fechado, um lado pode sustentar o outro e mascarar perda de autonomia. O ensaio deixa de provar segregação real e capacidade individual.",
+      "resposta_padrao": "Fechado, para reforçar a redundância durante o teste.",
+      "por_que_nao": "A interligação elimina a prova de independência e pode esconder dependência cruzada entre os dois lados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

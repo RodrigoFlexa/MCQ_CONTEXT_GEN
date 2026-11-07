@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de liberar operação automática, integração funcional exige confirmar comunicação campo-PLC; energização e indicação local não bastam.",
+      "pergunta": "Instrumentos calibrados e energizados, com indicação local normal, ainda não permitem liberar a operação automática de um circuito novo. Qual verificação fecha a integração funcional com o controlador?",
+      "resposta": "Confirmação da comunicação entre equipamentos de campo e PLC.",
+      "explicacao": "O bloco foco distingue equipamento apenas energizado de equipamento integrado. Antes da operação prevista, é necessário confirmar que o sinal e a interface com o PLC estão efetivamente comunicando.",
+      "resposta_padrao": "Verificar somente alimentação, energização e indicação local.",
+      "por_que_nao": "O próprio bloco afirma que energização ou presença física não bastam para comprovar integração funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Quando a automação tem cobertura parcial, a condição não integrada ao PLC deve ser verificada por leitura local complementar.",
+      "pergunta": "Parte dos dados de um pacote não chega ao PLC por projeto. Para verificar a condição que não aparece na automação, onde deve ser feita a leitura de rotina?",
+      "resposta": "No indicador local do equipamento fora do PLC.",
+      "explicacao": "Na cobertura parcial da automação, nem toda a visibilidade do processo está no sistema de controle. A confirmação da condição ausente depende da observação local complementar do operador.",
+      "resposta_padrao": "Pelo supervisório, usando os sinais disponíveis.",
+      "por_que_nao": "Quando a cobertura é parcial, a tela não representa todo o estado físico do equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "equipamentos precisam ser lidos e acompanhados fora do PLC"
+        },
+        {
+          "bloco": "F",
+          "trecho": "parte da visibilidade do processo depende de observação complementar do operador"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Valor congelado com controle ainda atuando indica iniciar a verificação no caminho controlador-supervisório, não no campo.",
+      "pergunta": "A tendência no supervisório ficou congelada, mas a malha continua controlando e o processo responde. Qual caminho deve ser verificado primeiro?",
+      "resposta": "Comunicação entre controlador e supervisório.",
+      "explicacao": "Se o controle segue atuando, a medição e o controlador continuam cumprindo a função. O sintoma aponta primeiro para perda de atualização na camada de supervisão/comunicação, não para falha do sensor.",
+      "resposta_padrao": "No transmissor de campo.",
+      "por_que_nao": "Com a malha ainda respondendo, o sintoma é de perda de visibilidade, não de perda de medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização da variável com perda de comando remoto exige testar o caminho de saída/comando até o elemento final.",
+      "pergunta": "O valor de processo continua atualizando, mas o operador perdeu o comando remoto do mesmo equipamento. Qual trecho da arquitetura deve ser testado antes de suspeitar do sensor?",
+      "resposta": "Saída de comando do controlador até o elemento final.",
+      "explicacao": "O sintoma combina medição disponível com perda de atuação remota. Pela separação diagnóstica por camadas, a primeira verificação deve recair sobre a cadeia de comando, não sobre a entrada de medição.",
+      "resposta_padrao": "A entrada analógica da medição.",
+      "por_que_nao": "Se a variável continua atualizando, a medição está presente; a falha está no caminho de comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

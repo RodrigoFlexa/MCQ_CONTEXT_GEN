@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 25,
+  "rodada": 1,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validade de resultado de teste funcional depende do cenário exercitado e do arranjo disponível.",
+      "pergunta": "Uma causa da matriz foi testada e aprovada ontem. Hoje, um ramo que estava inibido voltou ao serviço. Qual critério técnico define se aquele resultado ainda sustenta a liberação da função?",
+      "resposta": "Coincidência com o arranjo disponível e o cenário exercitado no teste.",
+      "explicacao": "O comportamento observado num teste funcional só vale para os cenários exercitados e para o arranjo disponível naquele momento; ao mudar um ramo lógico, a evidência anterior pode deixar de representar a função atual.",
+      "resposta_padrao": "A aprovação anterior continua válida se a mesma causa principal foi simulada.",
+      "por_que_nao": "A mudança no arranjo lógico rompe a condição em que o resultado anterior era representativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vale para os cenários exercitados e para o arranjo disponível naquele momento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a execução pode deixar de refletir a configuração real do sistema"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Aplicabilidade de teste funcional a lógica de pacote depende da existência de função automática.",
+      "pergunta": "Para uma lógica de shutdown de pacote com controlador próprio, qual verificação decide se ela deve entrar em teste funcional de causa e efeito?",
+      "resposta": "Existência de função automática de proteção a validar.",
+      "explicacao": "O critério de aplicabilidade não é o rótulo do sistema. Lógicas de pacote também entram em teste funcional quando possuem funções automáticas de proteção que precisam ser validadas.",
+      "resposta_padrao": "Só entra em teste funcional se estiver integrada formalmente ao SIS principal.",
+      "por_que_nao": "A validação funcional também se aplica a paradas de emergência e lógicas de pacotes com função automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esse tipo de teste pode ser aplicado a sistemas instrumentados de segurança, paradas de emergência e lógicas de pacotes, desde que existam funções automáticas a validar"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Caracterização de teste funcional exige evidência do processamento lógico que gerou o comando de saída.",
+      "pergunta": "No relatório de um intertravamento aparecem somente “entrada atuou” e “elemento final mudou de estado”. Que evidência específica faltou verificar para caracterizar teste funcional?",
+      "resposta": "O processamento lógico gerando o comando automático de saída.",
+      "explicacao": "Teste funcional não aceita apenas estados isolados de entrada e saída; ele precisa mostrar o encadeamento entre condição detectada, decisão automática e comando de saída para a ação protetiva.",
+      "resposta_padrao": "Basta comprovar que a entrada comutou e o elemento final respondeu.",
+      "por_que_nao": "Isso não demonstra que a lógica produziu automaticamente o comando protetivo observado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a proteção depende da coerência entre causa, decisão automática e efeito final, e não apenas do estado isolado de um instrumento ou equipamento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

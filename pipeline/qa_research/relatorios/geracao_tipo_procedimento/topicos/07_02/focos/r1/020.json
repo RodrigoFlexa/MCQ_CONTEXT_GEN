@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Quando a padronização não é viável na camada de controle, a normalização de dados deve ser executada no SCADA.",
+      "pergunta": "Quando controladores heterogêneos impedem padronização suficiente no controle, em que camada deve ser feita a normalização antes de expor dados a HMI comum e analytics?",
+      "resposta": "Na camada SCADA.",
+      "explicacao": "Se a camada de controle não padroniza suficientemente os dados entre fornecedores, o SCADA é a camada mais próxima da fonte onde a normalização se torna viável.",
+      "resposta_padrao": "Nos próprios controladores.",
+      "por_que_nao": "Neste cenário, a heterogeneidade entre fornecedores impede padronização suficiente no nível de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também aparecem arquiteturas híbridas, nas quais controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para aplicações online próximas ao controle e usadas em ajustes frequentes, a liberação exige testar o comportamento na perda de conectividade.",
+      "pergunta": "A latência medida está aceitável e o sincronismo entre fontes foi ajustado, mas a aplicação passará a influenciar ajustes operacionais frequentes. Que condição ainda precisa ser testada para a liberação?",
+      "resposta": "Comportamento da aplicação na perda de conectividade.",
+      "explicacao": "Para aplicações próximas ao controle, a validade do teste depende de comprovar a reação correta quando a comunicação cai, além de latência e sincronismo.",
+      "resposta_padrao": "Acurácia do modelo em operação normal.",
+      "por_que_nao": "O risco descrito está na resposta da função à falha de comunicação, não só no desempenho com link disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de comparar desempenho entre ativos ou sistemas de origem distinta, deve-se verificar a identificação consistente do equipamento.",
+      "pergunta": "Relatórios comparam equipamentos equivalentes no mesmo modo operacional; timestamps estão sincronizados e unidades corretas, mas os históricos vieram de sistemas diferentes. Que verificação do dado vem antes de aceitar a comparação?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "Comparações entre ativos ficam enganosas quando o dado não mantém associação inequívoca com o equipamento correto, mesmo com unidade e tempo consistentes.",
+      "resposta_padrao": "Maior frequência de amostragem.",
+      "por_que_nao": "O sintoma compromete a associação semântica do histórico ao ativo, não a resolução temporal do sinal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando isso funciona bem, o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na validação de sinais para analytics, deve-se incluir o contexto de modo operacional para evitar alarmes espúrios.",
+      "pergunta": "Alarmes espúrios aparecem no analytics sempre que o processo alterna partida, regime e parada; unidades e identificação dos equipamentos estão corretas. Que informação deve acompanhar o sinal na validação?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Sem o modo operacional, o mesmo valor pode gerar diagnóstico frágil ou alarme espúrio entre partida, regime e parada, embora tags e unidades estejam corretas.",
+      "resposta_padrao": "Faixa nominal do instrumento.",
+      "por_que_nao": "Um valor só é interpretável corretamente quando ligado ao estado operacional em que foi medido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O mecanismo físico é simples: sensores e controladores convertem estados do processo em dados; protocolos e brokers distribuem esses dados; aplicações analíticas e modelos os transformam em informação operacional útil."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

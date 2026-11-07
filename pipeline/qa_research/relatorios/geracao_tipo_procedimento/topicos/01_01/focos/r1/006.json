@@ -1,0 +1,105 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de reserva fria exige testar partida sob demanda e comutação da função, não apenas disponibilidade declarada.",
+      "pergunta": "Reserva fria indicada como disponível há meses. Para comprovar que ela sustentará o serviço na falha do ativo, qual teste específico deve ser feito?",
+      "resposta": "Partida sob demanda com comutação real da função de processo.",
+      "explicacao": "Na reserva fria, o item não opera sob a mesma carga; é preciso revelar falhas em espera, de partida e de comutação, não só confirmar status disponível.",
+      "resposta_padrao": "Rodagem periódica em vazio do equipamento reserva.",
+      "por_que_nao": "Isso pode servir para preservação, mas não comprova atendimento da função na demanda nem a comutação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na verificação de ganho por redundância, gargalos compartilhados devem ser modelados como dependência comum, não como paralelismo independente.",
+      "pergunta": "Dois trens 100% aparecem duplicados, mas dependem da mesma utilidade crítica para descarga. Na verificação do ganho de disponibilidade, como esse ponto deve entrar no modelo?",
+      "resposta": "Como dependência comum do gargalo compartilhado.",
+      "explicacao": "Quando há utilidade ou descarga comum, o paralelismo aparente não representa independência real; o ganho pode ser menor que o previsto por lógica série-paralelo simplificada.",
+      "resposta_padrao": "Como dois blocos paralelos independentes.",
+      "por_que_nao": "Isso só vale sem gargalo compartilhado; aqui a perda dessa dependência afeta os dois trens.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância útil deve ser verificada pela preservação da função de processo sob falha de um ramo, não pela simples duplicação física.",
+      "pergunta": "Arranjo duplicado de compressão parece redundante no fluxograma. Antes de creditar esse ganho, que condição funcional deve ser demonstrada?",
+      "resposta": "Preservação da função de processo relevante com a falha de um ramo.",
+      "explicacao": "O critério não é haver equipamento em dobro, e sim manter o serviço requerido quando parte do arranjo falha.",
+      "resposta_padrao": "Presença de equipamento duplicado em paralelo.",
+      "por_que_nao": "Duplicação física sem manutenção da função não garante o desempenho esperado do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Redundância é o uso de caminhos, equipamentos ou funções adicionais para manter o serviço quando ocorre falha em parte do arranjo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Na modelagem de reserva fria, falha em espera do standby deve ser incluída para não superestimar confiabilidade.",
+      "pergunta": "Na modelagem de um arranjo com reserva fria, qual modo de falha do equipamento parado precisa ser incluído para não superestimar a confiabilidade?",
+      "resposta": "Falha em espera.",
+      "explicacao": "A reserva fria sofre menos desgaste sob carga, mas ainda pode falhar enquanto aguarda acionamento; omitir isso infla o benefício da redundância.",
+      "resposta_padrao": "Nenhum, porque o reserva não está operando.",
+      "por_que_nao": "Reserva fria não elimina falhas em espera; considerar taxa nula para o standby distorce o resultado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para executar uma análise, é necessário levantar modos de falha que geram perda ao sistema"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

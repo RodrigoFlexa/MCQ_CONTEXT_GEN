@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação de manobra remota exige feedback físico do elemento final, não eco do comando na supervisão.",
+      "pergunta": "O botão da válvula motorizada muda para “aberta” logo após o comando na HMI. Para confirmar a manobra como estado físico, que sinal deve ser verificado?",
+      "resposta": "Feedback de posição/estado do elemento final.",
+      "explicacao": "A supervisão pode apenas refletir o comando. O estado físico se confirma pelo retorno de posição/estado vindo do campo.",
+      "resposta_padrao": "A própria indicação de “aberta” na HMI.",
+      "por_que_nao": "A interface pode exibir o comando emitido sem comprovar que o elemento final atingiu a posição real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sensores e transmissores fornecem variáveis medidas, como pressão, nível, temperatura, vazão, posição e velocidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparação entre supervisão e análise só é válida se ambas usam a mesma origem de sinal.",
+      "pergunta": "HMI e ferramenta de análise exibem vazões diferentes para o mesmo instante; os carimbos de tempo são coerentes e ambos atualizam. Antes de tratar como descalibração, que verificação de arquitetura deve ser feita?",
+      "resposta": "Mesma origem do sinal nas duas camadas.",
+      "explicacao": "A comparação só vale se visualização e análise consumirem a mesma base de sinais; camadas diferentes podem ler sinais distintos ou derivados.",
+      "resposta_padrao": "Calibração do transmissor.",
+      "por_que_nao": "Diferença entre camadas pode surgir de fontes de dado diferentes, mesmo com medição correta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Transferência de condução pela HMI só se confirma no modo efetivo da malha no controlador.",
+      "pergunta": "A malha foi colocada em manual pela HMI e a saída ficou editável na tela, mas a variável controlada continua sendo corrigida. Que ponto confirma a transferência correta de modo?",
+      "resposta": "Modo efetivo da malha no controlador.",
+      "explicacao": "A HMI é interface; a autoridade de controle está no PLC/DCS. Tela editável não prova que o controlador saiu do automático.",
+      "resposta_padrao": "O campo de saída editável na HMI.",
+      "por_que_nao": "A interface pode aceitar edição sem que o modo do controlador tenha mudado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a automação executa a lógica configurada e o operador acompanha condições, desempenho e desvios visíveis na supervisão."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

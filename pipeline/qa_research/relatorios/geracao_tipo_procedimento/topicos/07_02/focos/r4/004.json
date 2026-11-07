@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 4,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste que distingue privilégio de operação de privilégio de engenharia em acesso remoto ao controle.",
+      "pergunta": "Na homologação de um perfil remoto para partida assistida, ele deve permitir comandos pela supervisão, mas a intervenção não inclui qualquer mudança no programa do controlador. Que tentativa precisa falhar para comprovar que o acesso ficou restrito à operação?",
+      "resposta": "Alteração de lógica do controlador.",
+      "explicacao": "Em IACS, operação permite atuar no processo; engenharia permite alterar configuração, lógica e firmware. Bloquear a alteração de lógica comprova que o perfil não avançou para privilégio de engenharia.",
+      "resposta_padrao": "Comando do processo pela supervisão.",
+      "por_que_nao": "Comandar o processo é próprio do acesso de operação; o limite técnico aqui é não poder alterar a lógica.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Segregação mínima de funções a conferir no fechamento de uma mudança aplicada por acesso de engenharia remoto.",
+      "pergunta": "Uma alteração já foi aprovada e carregada por acesso de engenharia remoto. Antes do encerramento, que independência de papéis deve ser conferida para que a própria execução não conte como validação?",
+      "resposta": "Validador diferente do implementador.",
+      "explicacao": "A segregação de funções em IACS exige que quem implementa não seja, por padrão, quem valida. Isso reduz erros não detectados durante manutenção e suporte remoto.",
+      "resposta_padrao": "Aprovador diferente do implementador.",
+      "por_que_nao": "A aprovação ocorreu antes da carga; no fechamento, o controle decisivo é a validação independente da execução.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais, competência e efetividade das contramedidas, e não apenas como um conjunto de controles técnicos isolados."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

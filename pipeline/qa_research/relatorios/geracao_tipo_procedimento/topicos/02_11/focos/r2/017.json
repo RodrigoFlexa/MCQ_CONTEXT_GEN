@@ -1,0 +1,79 @@
+{
+  "item": "02_11",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de ajustar parâmetros da coluna, conferir se a pressão de operação permanece na faixa validada do pacote termodinâmico.",
+      "pergunta": "A revisão elevou a pressão de operação da desidratação, e a previsão de umidade se desviou sem mudança de recheio nem de regeneração. Qual conferência deve vir antes de retunar a eficiência da torre?",
+      "resposta": "Faixa de pressão validada do pacote termodinâmico.",
+      "explicacao": "Se a nova pressão estiver fora da faixa validada, o desvio pode vir do pacote de propriedades; ajustar a eficiência antes disso mascara a limitação do modelo.",
+      "resposta_padrao": "A eficiência da torre.",
+      "por_que_nao": "Se o pacote estiver fora da faixa de pressão validada, acertar a eficiência não valida a previsão de umidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O Glycol Package do HYSYS é descrito como dedicado à desidratação com glicóis, mas com faixa de aplicabilidade limitada pela pressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Fora da faixa validada de um pacote de propriedades, deve-se selecionar e validar outro modelo adequado ao equilíbrio água-glicol e às condições de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na comparação entre modelos para prever umidade do gás desidratado, a aderência na fase vapor é o ponto decisivo.",
+      "pergunta": "Dois pacotes reproduzem de modo parecido o circuito líquido, mas divergem na umidade do gás seco. Na verificação de aderência para esse serviço, qual fase deve pesar mais?",
+      "resposta": "A fase vapor.",
+      "explicacao": "A variável de interesse é a água remanescente no gás tratado, e o bloco registra melhor precisão do pacote dedicado especialmente na fase vapor.",
+      "resposta_padrao": "A fase líquida.",
+      "por_que_nao": "Acertar só o circuito líquido não garante prever a umidade do gás desidratado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o Glycol Package também aparece com melhor precisão para misturas água-glicol do que Peng-Robinson, especialmente na fase vapor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A simulação de torres de desidratação com TEG envolve incertezas práticas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com pacote e medição já conferidos, mudança de ΔP na absorvedora direciona a verificação para os internos da coluna.",
+      "pergunta": "A absorvedora voltou da parada com ΔP diferente, pressão dentro da faixa validada do pacote e analisador de umidade conferido. Antes de mexer no simulador, o que verificar na coluna?",
+      "resposta": "Condição dos internos da absorvedora.",
+      "explicacao": "Com instrumento e pacote já checados, a discrepância entre modelo e operação passa a apontar para incerteza física da coluna, especialmente nos internos.",
+      "resposta_padrao": "Ajustar a eficiência da torre no modelo.",
+      "por_que_nao": "ΔP alterado após a parada aponta primeiro para condição física dos internos, e não para um simples refino de parâmetro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "discrepâncias entre modelo e operação real nem sempre significam erro exclusivo do simulador; podem refletir incerteza na eficiência da torre, nos internos ou nos instrumentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A simulação de torres de desidratação com TEG envolve incertezas práticas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

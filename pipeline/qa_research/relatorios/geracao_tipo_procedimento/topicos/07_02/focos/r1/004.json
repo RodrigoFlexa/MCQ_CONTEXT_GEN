@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Ponto principal de verificação do escopo de acesso quando o risco relevante é alteração de configuração, lógica e firmware.",
+      "pergunta": "Na revisão de acessos com foco em mudanças de configuração, lógica e firmware, qual ativo é o ponto principal de verificação?",
+      "resposta": "Estações de engenharia.",
+      "explicacao": "A revisão não pode ficar só nas contas de usuário; a capacidade de alterar configuração, lógica e firmware está associada ao acesso de engenharia.",
+      "resposta_padrao": "Estações de operação.",
+      "por_que_nao": "Acesso de operação atua no processo, mas não é o ponto típico para alterar lógica e firmware.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio para atividade de coleta diagnóstica sem atuação no processo.",
+      "pergunta": "Um fornecedor vai apenas coletar tendências e histórico de alarmes para diagnóstico, sem comandar equipamentos nem alterar configuração. Que perfil de acesso deve ser liberado?",
+      "resposta": "Acesso de observação.",
+      "explicacao": "A tarefa descrita é só leitura diagnóstica; pelo menor privilégio, o perfil correto é o de observação, não o de operação nem o de engenharia.",
+      "resposta_padrao": "Acesso de operação.",
+      "por_que_nao": "Esse privilégio permite atuar no processo, além do necessário para coletar dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Restrição temporal obrigatória na concessão de privilégio temporário em IACS.",
+      "pergunta": "Para um acesso de engenharia liberado só para uma intervenção definida, que condição do perfil precisa ser configurada antes da ativação?",
+      "resposta": "Expiração pelo menor tempo compatível com a atividade.",
+      "explicacao": "Em IACS, menor privilégio não limita só o escopo da permissão; limita também sua duração à janela estritamente necessária para a tarefa.",
+      "resposta_padrao": "Validade permanente com troca periódica de senha.",
+      "por_que_nao": "Senha forte não substitui a restrição temporal exigida pelo menor privilégio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mapeamento do privilégio necessário quando a tarefa envolve criação de contas no ambiente de controle.",
+      "pergunta": "Durante um suporte controlado, será preciso criar uma conta temporária para outra equipe. Que tipo de privilégio deve ser concedido a quem fará esse cadastro?",
+      "resposta": "Acesso administrativo.",
+      "explicacao": "Criar contas é atribuição de privilégio administrativo, que por isso demanda controle mais rigoroso que perfis de observação, operação ou engenharia.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Engenharia altera configuração, lógica e firmware, mas criar contas é ação de administração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

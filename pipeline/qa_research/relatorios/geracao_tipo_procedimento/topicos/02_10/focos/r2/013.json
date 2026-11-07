@@ -1,0 +1,113 @@
+{
+  "item": "02_10",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em controle por bandas, a verificação funcional correta é aceitar a interface dentro da faixa sem recentragem contínua ao setpoint.",
+      "pergunta": "Numa SAT de controle por bandas, a interface oscila dentro dos limites definidos e a vazão para jusante permanece estável. Que comportamento da malha confirma a execução correta e a distingue de um PID centrado em setpoint?",
+      "resposta": "Ausência de recentragem contínua da interface ao setpoint.",
+      "explicacao": "No controle por bandas, a interface pode variar dentro da faixa permitida. O objetivo deixa de ser fixar o nível e passa a estabilizar a descarga para a corrente a jusante.",
+      "resposta_padrao": "Pequenas correções contínuas para manter a interface no centro da banda.",
+      "por_que_nao": "Isso reproduz a lógica de PID em setpoint e tende a perturbar a descarga que a estratégia busca estabilizar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Outra filosofia é o controle por bandas, no qual a interface pode variar dentro de uma faixa permitida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa abordagem desloca o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A prova funcional de um Dead Band Assimétrico deve demonstrar resposta diferente conforme o sentido do desvio da interface.",
+      "pergunta": "Excursões equivalentes da interface para cima e para baixo produzem a mesma velocidade de correção na prova funcional. Qual ponto da lógica deve ser verificado para confirmar que o Dead Band Assimétrico está realmente ativo?",
+      "resposta": "Assimetria dos parâmetros de resposta por sentido.",
+      "explicacao": "A estratégia é assimétrica justamente por reagir mais rápido em um dos sentidos. Respostas iguais indicam que a diferenciação direcional não está implementada ou não entrou em ação.",
+      "resposta_padrao": "O valor do setpoint da interface.",
+      "por_que_nao": "Setpoint não cria diferença entre subida e descida; a assimetria depende de parâmetros ou lógica distintos por direção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também foi testado um Dead Band Assimétrico, em que a reação era mais rápida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Também ocorreram falhas de implementação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "bugs de lógica"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de retunar a malha de interface, deve-se verificar saturação do elemento final quando a correção não recupera o desvio.",
+      "pergunta": "Durante uma perturbação, a interface continua se afastando, o termo integral cresce e a variável manipulada permanece no extremo. Antes de alterar ganhos, o que deve ser verificado no elemento final?",
+      "resposta": "Saturação do atuador final de controle.",
+      "explicacao": "Se bomba ou válvula estiverem no limite de capacidade, a malha perde capacidade de correção. Nessa condição, a instabilidade pode vir do atuador, não da sintonia.",
+      "resposta_padrao": "Aumentar a ação integral do controlador.",
+      "por_que_nao": "Mais integral não restitui capacidade física ao elemento final e pode piorar a recuperação após saturação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma filosofia clássica é o controlador PID"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "instabilidade nem sempre decorre apenas da lógica de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Resultados de modelo dinâmico só podem ser aplicados quando fenômenos ignorados, como espuma, não dominam a dinâmica real.",
+      "pergunta": "Se a filosofia de controle foi escolhida em um modelo dinâmico que não representa espuma, qual condição deve ser confirmada antes de levar essa sintonia para operação?",
+      "resposta": "Que a espuma não domine a dinâmica do vaso.",
+      "explicacao": "A utilidade do modelo depende das hipóteses adotadas. Se ele desconsidera espuma e esse fenômeno domina em campo, a comparação entre filosofias perde validade.",
+      "resposta_padrao": "Basta reproduzir a mesma vazão média do estudo.",
+      "por_que_nao": "Coincidência de médias não corrige a ausência de um fenômeno dominante na hidrodinâmica e no controle reais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões são condicionadas aos arranjos e parâmetros estudados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "simplificações que desconsideram espuma"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "limitam a validade quando esses fenômenos dominam"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

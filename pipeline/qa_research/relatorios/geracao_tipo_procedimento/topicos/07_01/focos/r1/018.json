@@ -1,0 +1,93 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da atualização do sinal antes de aceitar um valor estável como condição real de processo.",
+      "pergunta": "Um nível indicado permanece idêntico por vários minutos, mas as vazões associadas mudam. Na checagem do supervisório, o que deve ser verificado antes de assumir processo estável?",
+      "resposta": "Atualização do sinal.",
+      "explicacao": "Leitura plausível pode estar congelada. Para diagnóstico de arquitetura, além do valor instantâneo, deve-se confirmar que o sinal continua sendo atualizado.",
+      "resposta_padrao": "A faixa normal de operação do valor mostrado.",
+      "por_que_nao": "Dado congelado pode continuar plausível; faixa normal não comprova que a medição está atualizando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Checagem da validade do dado em dashboards alimentados por historian antes de apoiar decisão operacional.",
+      "pergunta": "No dashboard alimentado por historian, a tendência parece normal, mas a coleta é periódica. Qual sinalizador deve ser conferido antes de usar esse ponto na decisão operacional?",
+      "resposta": "Flag de validade do dado.",
+      "explicacao": "Dashboards com coleta periódica só apoiam decisão quando as medições são consistentes; por isso, a validade do dado precisa ser confirmada.",
+      "resposta_padrao": "A continuidade visual da tendência.",
+      "por_que_nao": "Traçado contínuo não prova consistência; sem validade confirmada, a visualização pode induzir decisão errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de coerência entre variáveis relacionadas para validar a credibilidade de uma medição.",
+      "pergunta": "Pressão, corrente e posição de válvula mudam, enquanto a vazão indicada fica fixa sem alarme. Qual verificação confirma se essa leitura ainda é confiável?",
+      "resposta": "Coerência entre variáveis relacionadas.",
+      "explicacao": "A credibilidade da leitura depende da comparação com variáveis do mesmo processo; divergência entre elas indica problema de observabilidade ou medição.",
+      "resposta_padrao": "Ausência de alarme de falha do instrumento.",
+      "por_que_nao": "Sem comparar variáveis correlatas, uma leitura incoerente pode permanecer sem alarme.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência entre variáveis relacionadas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação de indisponibilidade no transporte ou processamento do dado antes de assumir falhas simultâneas de campo.",
+      "pergunta": "Várias tags da mesma área ficam indisponíveis ao mesmo tempo. Antes de tratar como falhas independentes de campo, qual condição do caminho do dado deve ser verificada?",
+      "resposta": "Indisponibilidade do sistema que transporta ou processa o dado.",
+      "explicacao": "Indisponibilidade simultânea pode vir da rede, do controlador ou de I/O. Confirmar o caminho do dado evita atribuir de início múltiplas falhas ao campo.",
+      "resposta_padrao": "Falha simultânea dos instrumentos de campo.",
+      "por_que_nao": "Perda comum de rede, controlador ou I/O pode derrubar várias tags de uma vez.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "eventuais sinais de indisponibilidade do sistema que o transporta ou processa"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Identificação do ponto arquitetural onde a fronteira IT/OT deve ser mapeada.",
+      "pergunta": "Ao mapear a fronteira IT/OT, qual ponto da arquitetura deve ser verificado primeiro?",
+      "resposta": "A interface onde os dados deixam a camada de controle.",
+      "explicacao": "Na prática, a fronteira aparece quando dados saem do controle para supervisão, historiadores, analítica, telecom ou sistemas corporativos; não apenas no perímetro corporativo.",
+      "resposta_padrao": "O firewall perimetral da rede corporativa.",
+      "por_que_nao": "Esse perímetro pode estar depois da fronteira real, que nasce na saída da camada de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Arquitetura IT/OT é a organização dos sistemas, redes e interfaces que conectam tecnologia da informação (IT) e tecnologia operacional (OT) em uma instalação industrial."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Camada correta para concentrar integração quando controladores usam modelos de dados distintos.",
+      "pergunta": "Controladores de fornecedores diferentes precisam entregar dados para supervisão e analítica. Em que camada a integração deve ser concentrada?",
+      "resposta": "Na camada supervisória.",
+      "explicacao": "Com modelos de dados distintos, a padronização próxima à fonte fica limitada; por isso a integração frequentemente migra para a camada supervisória.",
+      "resposta_padrao": "Nos próprios controladores, junto à fonte.",
+      "por_que_nao": "Nesse caso, a heterogeneidade de modelos limita a padronização na origem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de verificação para autorizar uma nova interface em arquitetura híbrida IT/OT.",
+      "pergunta": "Controlador de borda envia dados para broker MQTT em nuvem e também alimenta SCADA local. Na verificação da interface, o que precisa ficar explicitamente definido?",
+      "resposta": "O tráfego permitido e sua finalidade operacional.",
+      "explicacao": "Cada nova interface amplia a fronteira; a verificação correta exige definir exatamente que tráfego pode cruzá-la e com qual finalidade operacional.",
+      "resposta_padrao": "A largura de banda necessária para a telemetria.",
+      "por_que_nao": "Desempenho não substitui a definição arquitetural do tráfego autorizado e do propósito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "OT prioriza controle determinístico, segurança operacional e disponibilidade do processo; IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de reprovação de segmentação entre domínios de criticidade distinta.",
+      "pergunta": "Na revisão da segmentação entre controle de processo, proteção independente e sistema de segurança, qual achado reprova a proposta mesmo sem incidente observado?",
+      "resposta": "Conectividade compartilhada além do necessário.",
+      "explicacao": "A segmentação serve para conter propagação; se domínios críticos compartilham conectividade além do necessário, falha, erro de configuração ou ação maliciosa podem ampliar consequências.",
+      "resposta_padrao": "A existência de uma vulnerabilidade explorável em um dos ativos.",
+      "por_que_nao": "A segmentação não elimina a vulnerabilidade de origem; o achado decisivo é o caminho de propagação desnecessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo pode incluir o sistema básico de controle de processo, funções de camada independente de proteção, sistemas instrumentados de segurança, sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

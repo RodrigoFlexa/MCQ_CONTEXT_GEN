@@ -1,0 +1,79 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Condição válida para julgar o anti-windup do Dead Band Assimétrico.",
+      "pergunta": "Quando a saída do controlador satura durante uma golfada, em que trecho da resposta o teste do anti-windup do Dead Band Assimétrico deve ser julgado?",
+      "resposta": "Na recuperação após o atuador deixar a saturação.",
+      "explicacao": "A ausência de anti-windup se evidencia quando há saturação; o efeito decisivo é a recuperação lenta ou distorcida depois que a saída volta a ter margem.",
+      "resposta_padrao": "Enquanto a interface permanece dentro da banda em regime.",
+      "por_que_nao": "Sem saturação, o integrador não é desafiado e o defeito pode ficar oculto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem distorcer a resposta integral, retardar recuperação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Método de teste para confirmar associação correta de trip por nível baixo.",
+      "pergunta": "Ao comissionar um trip por nível baixo da interface, qual passo do teste funcional confirma que a lógica está associada ao iniciador correto?",
+      "resposta": "Forçamento do sinal de nível baixo no canal de entrada correto.",
+      "explicacao": "Falha de associação é erro de implementação; forçar o sinal iniciador verifica o vínculo entre entrada e lógica, não apenas a atuação final do shutdown.",
+      "resposta_padrao": "Acionamento manual do shutdown pela HMI.",
+      "por_que_nao": "Isso prova a saída final, mas não a associação do trip ao sinal certo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "associação incorreta de trip por nível baixo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "bugs de lógica"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de validade do modelo quando espuma domina a dinâmica do separador.",
+      "pergunta": "Com espuma persistente dominando o comportamento do vaso, qual hipótese do modelo dinâmico deve ser conferida antes de usar a simulação para escolher a filosofia de controle?",
+      "resposta": "Representação explícita da espuma no modelo.",
+      "explicacao": "Se a simplificação desconsidera espuma justamente quando ela domina, a comparação entre estratégias perde validade mesmo que o restante do modelo esteja coerente.",
+      "resposta_padrao": "Reprodução fiel da sintonia dos controladores.",
+      "por_que_nao": "Sintonia correta não compensa a ausência do fenômeno dominante na modelagem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "simplificações que desconsideram espuma"
+        },
+        {
+          "bloco": "F",
+          "trecho": "limitam a validade quando esses fenômenos dominam"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

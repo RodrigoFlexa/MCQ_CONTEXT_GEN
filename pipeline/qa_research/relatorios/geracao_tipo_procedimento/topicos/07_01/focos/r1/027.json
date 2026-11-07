@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 1,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste que distingue válvula modulante corretamente implementada de válvula comissionada como abre/fecha.",
+      "pergunta": "Uma válvula prevista para controle de posição respondeu apenas em 0% e 100% no teste funcional. Que passo confirma se ela foi implementada como abre/fecha?",
+      "resposta": "Aplicar comando intermediário e verificar posição proporcional no campo.",
+      "explicacao": "O foco aponta que uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha. O teste decisivo é exigir resposta proporcional fora dos extremos.",
+      "resposta_padrao": "Basta confirmar a abertura e o fechamento totais.",
+      "por_que_nao": "Isso também aprova uma válvula on-off e não distingue ausência de modulação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Validação fim a fim do comando remoto da IHM até o elemento final.",
+      "pergunta": "Ao testar um comando remoto pela IHM, qual verificação torna o teste válido para a cadeia de comando?",
+      "resposta": "Atuação do elemento final em campo.",
+      "explicacao": "Ver apenas a tela não basta. O foco registra que um comando mostrado na IHM pode não chegar ao atuador; o teste correto precisa comprovar atuação no campo.",
+      "resposta_padrao": "Basta ver a mudança de estado na IHM.",
+      "por_que_nao": "A interface pode indicar o comando sem que o elemento final atue.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que comandos da IHM fossem executados pelos atuadores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação fim a fim do caminho de medição do campo até o sistema supervisor.",
+      "pergunta": "Uma malha voltou de alteração e a indicação local está coerente. Que teste comprova que a informação de campo é recebida pelo supervisor?",
+      "resposta": "Estimular o instrumento e confirmar a atualização na IHM.",
+      "explicacao": "Coerência local não garante aquisição pelo sistema. O foco menciona falha em que a informação de campo não era recebida pelo supervisor; a validação deve ir do campo à IHM.",
+      "resposta_padrao": "Basta comparar com a indicação local do transmissor.",
+      "por_que_nao": "Leitura local correta não comprova recepção pelo sistema supervisor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correção para que sinais de campo chegassem à IHM"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Conferência do modo local/remoto como condição de aceitação de comando remoto no elemento final.",
+      "pergunta": "Com a saída do sistema comutando e sem bloqueio lógico ativo, a válvula não aceita comando remoto. Que configuração do elemento final deve ser conferida primeiro?",
+      "resposta": "Modo remoto habilitado.",
+      "explicacao": "O modo local/remoto integra as configurações críticas. Se o elemento final permanecer em local, a cadeia de comando pode estar íntegra e, ainda assim, o comando remoto não ser aceito.",
+      "resposta_padrao": "Primeiro deve ser recalibrado o posicionador.",
+      "por_que_nao": "Sem remoto habilitado, o comando é ignorado mesmo com hardware ajustado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

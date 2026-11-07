@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Encerramento correto de acesso temporário de fornecedor exige verificar a expiração da validade temporal, não só o fim da sessão.",
+      "pergunta": "Concluída a mitigação remota de uma vulnerabilidade por fornecedor, a sessão foi encerrada e os logs salvos. Qual verificação ainda distingue o encerramento correto do acesso temporário?",
+      "resposta": "Expiração da validade temporal do acesso",
+      "explicacao": "Sessão encerrada e registro salvo não garantem que a permissão temporária deixou de existir. Para terceiros, o controle eficaz inclui validade temporal do acesso aberto para a remediação.",
+      "resposta_padrao": "Verificar o registro de sessão.",
+      "por_que_nao": "O registro mostra o que ocorreu, mas não comprova que a credencial temporária deixou de poder ser usada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Definição do escopo técnico de remediação por fornecedor deve confrontar revisões instaladas com as revisões afetadas no alerta.",
+      "pergunta": "Há dispositivos da mesma família com revisões diferentes instalados, e o alerta do fornecedor cita só parte dessas revisões. Antes de abrir acesso para remediação, qual confronto técnico deve ser feito?",
+      "resposta": "Revisão instalada versus revisões afetadas no alerta",
+      "explicacao": "Em famílias com múltiplas revisões, o nome do equipamento não basta. O escopo correto da remediação depende de casar a revisão ou versão instalada com as explicitamente afetadas pelo fornecedor.",
+      "resposta_padrao": "Conferir apenas o modelo do equipamento.",
+      "por_que_nao": "Equipamentos do mesmo modelo ou família podem ter revisões com exposição diferente à vulnerabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "clareza sobre ativos afetados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Agendamento de correção em componente que sustenta função crítica exige validar que a execução não criará indisponibilidade indevida.",
+      "pergunta": "Boletim do fornecedor identifica o ativo afetado e a versão corrigida, mas a aplicação exige reinicializar um componente que suporta função crítica contínua. Qual critério da execução deve ser validado antes do agendamento?",
+      "resposta": "Ausência de indisponibilidade indevida da função crítica",
+      "explicacao": "Para sistemas críticos, não basta haver ativo identificado e correção disponível. A execução só é aceitável quando a estratégia de remediação não cria indisponibilidade indevida na função sustentada pelo componente.",
+      "resposta_padrao": "Confirmar apenas a existência da versão corrigida.",
+      "por_que_nao": "Uma versão corrigida pode existir e ainda assim sua aplicação indisponibilizar indevidamente uma função crítica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sem patch disponível para componente embarcado, a medida compensatória inicial deve ser guiada pela orientação de mitigação do fornecedor.",
+      "pergunta": "Sem versão corrigida disponível para um componente embarcado exposto, e sem liberdade para alterar o firmware por conta própria, qual referência deve orientar a medida compensatória inicial?",
+      "resposta": "Orientação de mitigação do fornecedor",
+      "explicacao": "Em componente embarcado, a remediação depende estruturalmente do fornecedor. Como o operador não pode alterar livremente firmware proprietário, a contenção inicial deve seguir a orientação de mitigação informada por ele.",
+      "resposta_padrao": "Aplicar hardening genérico do sistema.",
+      "por_que_nao": "Medidas genéricas podem ser incompatíveis com o componente embarcado e comprometer funcionalidade, suporte ou certificação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "02_06",
+  "foco": 1,
+  "rodada": 3,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de verificação da estabilização antes de usar referência estacionária após uma manobra.",
+      "pergunta": "Antes de tratar uma manobra como caso estacionário para comparar pressão e vazão, qual verificação da resposta precisa ser feita?",
+      "resposta": "Perda da forte dependência do histórico da manobra.",
+      "explicacao": "A comparação com caso estacionário só passa a valer quando o sistema está estabilizado, isto é, quando a resposta deixa de depender fortemente da sequência da manobra.",
+      "resposta_padrao": "Pressão e vazão já estarem na faixa normal.",
+      "por_que_nao": "As variáveis podem estar na faixa esperada e ainda permanecer em regime transiente.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "estabilização é a etapa em que o sistema deixa de responder fortemente ao histórico da manobra"
+        },
+        {
+          "bloco": "F",
+          "trecho": "análises puramente estacionárias tendem a ser insuficientes para manobras"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Condição inicial a ajustar na simulação quando o alinhamento altera o volume contido e muda a resposta transiente do bombeio.",
+      "pergunta": "Com o mesmo módulo de bombeio, a mesma rotação e sucção líquida, a repartida ficou mais lenta depois que um trecho adicional permaneceu alinhado e cheio entre paradas. Na preparação da simulação, que condição inicial deve ser ajustada para reproduzir essa diferença?",
+      "resposta": "Inventário nas linhas.",
+      "explicacao": "Em sistemas multifásicos e de bombeio, a resposta transiente depende do inventário contido nas linhas; um trecho adicional cheio altera o volume mobilizado na manobra.",
+      "resposta_padrao": "Curva característica da bomba.",
+      "por_que_nao": "A curva do equipamento não muda com o trecho adicional cheio; o volume contido no sistema muda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas multifásicos e de bombeio, a resposta também depende de inércia do fluido, compressibilidade, inventário nas linhas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta fortemente dependente do tempo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de validação de simulação transiente de linha de gás além dos valores estabilizados.",
+      "pergunta": "Na validação de uma simulação de abertura de linha de gás, o que deve ser confrontado com o campo além das pressões estabilizadas?",
+      "resposta": "A propagação temporal das perturbações ao longo da linha.",
+      "explicacao": "No escoamento compressível de gás, massa e quantidade de movimento não se redistribuem instantaneamente; por isso, a aderência do modelo exige comparar a evolução temporal da perturbação.",
+      "resposta_padrao": "As pressões finais nas extremidades.",
+      "por_que_nao": "Valores finais iguais não demonstram a evolução temporal nem o avanço da perturbação no sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "variam com o tempo e com a propagação de perturbações ao longo do sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "massa e quantidade de movimento não se redistribuem instantaneamente"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

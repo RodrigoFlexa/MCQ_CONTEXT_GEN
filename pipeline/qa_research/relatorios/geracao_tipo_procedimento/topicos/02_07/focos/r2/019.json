@@ -1,0 +1,87 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 2,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A modelagem simplificada da malha de nível deve começar pelo balanço de massa da fase líquida.",
+      "pergunta": "Ao montar um modelo simplificado para controle de nível de separador, qual balanço deve ser escrito primeiro?",
+      "resposta": "Balanço de massa da fase líquida.",
+      "explicacao": "O nível representa inventário líquido. No modelo, a variação do volume armazenado decorre da diferença entre vazões de entrada e saída dessa fase.",
+      "resposta_padrao": "Balanço global de massa do separador.",
+      "por_que_nao": "O nível não acompanha a massa total com gás; acompanha o inventário da fase líquida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma forma de representar o controle de nível é partir do balanço de massa da fase líquida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sem controle adequado, o desequilíbrio entre entradas e saídas pode levar o nível aos limites do vaso;"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A qualificação de robustez frente a tempo morto adicional deve introduzir aumento do atraso da malha.",
+      "pergunta": "A malha mantém o nível sob degraus de carga, mas houve inclusão de filtragem e comunicação mais lenta. Na qualificação, que perturbação deve ser introduzida para testar robustez a esse efeito?",
+      "resposta": "Aumento do atraso da malha.",
+      "explicacao": "Se a preocupação é perda de desempenho por tempo morto adicional de medição ou atuação, o ensaio pertinente é elevar deliberadamente o atraso da malha.",
+      "resposta_padrao": "Aplicar degraus na vazão de entrada.",
+      "por_que_nao": "Degraus avaliam rejeição de carga, não a sensibilidade do controlador ao tempo morto acrescido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudança abrupta e sustentada de carga por reprocessamento deve ser reproduzida por degrau na qualificação da malha.",
+      "pergunta": "Uma recirculação de corrente off-spec entrou de uma vez e permaneceu ativa, deslocando o ponto de operação. Para reproduzir esse efeito na qualificação da malha de nível, que forma de perturbação deve ser aplicada?",
+      "resposta": "Degrau na carga de entrada.",
+      "explicacao": "A recirculação introduz mudança sustentada no ponto de operação do separador; no ensaio de robustez, esse comportamento é representado por um degrau.",
+      "resposta_padrao": "Oscilação periódica na vazão.",
+      "por_que_nao": "Oscilações testam resposta cíclica, não uma alteração abrupta que se mantém no novo patamar.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a água fora de especificação pode ser segregada em tanque off-spec para posterior reprocessamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse tipo de desvio evita contaminar o destino final com corrente fora de qualidade, mas aumenta a carga de reprocessamento e pode deslocar o ponto de operação do separador principal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 4,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Identificação do ponto prático onde a fronteira IT/OT passa a exigir tratamento de segmentação.",
+      "pergunta": "Um controlador de borda passou a enviar dados para broker MQTT em nuvem e também para o SCADA local. Ao revisar a segmentação, em que ponto técnico a fronteira IT/OT deve ser marcada?",
+      "resposta": "Onde os dados deixam a camada de controle.",
+      "explicacao": "A fronteira prática surge na saída da camada de controle para consumo por supervisão ou sistemas externos; é esse ponto que precisa de tratamento para conter propagação entre domínios.",
+      "resposta_padrao": "Na conexão do broker com a nuvem.",
+      "por_que_nao": "A fronteira já aparece antes, quando o dado sai do controle para ser consumido por SCADA, historiador, analytics ou telecom.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação que confirma se a arquitetura segmentada ainda reflete o escopo previsto após conexões remanescentes.",
+      "pergunta": "Após uma parada, permaneceram conectados à rede operacional um notebook de fornecedor e um gateway analítico provisório. Na monitoração da arquitetura segmentada, qual verificação determina se a separação planejada ainda condiz com a operação real?",
+      "resposta": "Coerência do escopo dos sistemas conectados.",
+      "explicacao": "A monitoração da arquitetura precisa confirmar que apenas os sistemas previstos permanecem conectados; conexões remanescentes alteram o escopo real e podem ampliar consequências entre domínios.",
+      "resposta_padrao": "Se os fluxos atuais entre domínios ainda são necessários.",
+      "por_que_nao": "Os fluxos podem continuar legítimos e, mesmo assim, a arquitetura já estar fora do planejado por manter sistemas conectados fora do escopo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a monitoração da arquitetura deve confirmar se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

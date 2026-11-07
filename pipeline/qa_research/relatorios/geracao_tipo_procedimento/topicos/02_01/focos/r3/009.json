@@ -1,0 +1,79 @@
+{
+  "item": "02_01",
+  "foco": 9,
+  "rodada": 3,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na conversão automática de volume de gás, o coeficiente de compressibilidade deve ser recalculado com pressão e temperatura.",
+      "pergunta": "O conversor de gás atualiza pressão estática e temperatura, mas mantém o mesmo Z durante toda a operação. Que parâmetro do cálculo deve ser recalculado com essas variáveis?",
+      "resposta": "Coeficiente de compressibilidade do gás.",
+      "explicacao": "Na medição de gás com compensação automática, a correção por pressão e temperatura só é válida se o coeficiente de compressibilidade variar conforme essas grandezas.",
+      "resposta_padrao": "Um Z fixo do último ajuste.",
+      "por_que_nao": "A compensação automática deve incluir as variações de compressibilidade decorrentes de pressão e temperatura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os algoritmos de compensação consideram dilatação térmica, pressão, compressibilidade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a compensação automática das variações de pressão estática e temperatura deve incluir também as variações do coeficiente de compressibilidade decorrentes dessas variáveis."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Nova composição de gás obtida por análise periódica passa a valer apenas nas medições subsequentes à análise.",
+      "pergunta": "Com análises periódicas de composição previstas para gás, quando a nova composição passa a valer na conversão do volume corrigido?",
+      "resposta": "Nas medições subsequentes à nova análise.",
+      "explicacao": "O resultado atualizado de composição não retroage automaticamente sobre o período anterior; ele deve corrigir as medições feitas depois de cada nova análise.",
+      "resposta_padrao": "Desde a última análise válida.",
+      "por_que_nao": "O critério aplicável é compensar somente as medições subsequentes após cada nova análise.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a quantidade transferida depende não apenas do sinal do medidor principal, mas também das correções de propriedades"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as variações de composição registradas devem ser compensadas nas medições subsequentes após cada nova análise."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "No fechamento de medição dinâmica de óleo, o volume bruto em linha deve ser corrigido pelo teor de água e sedimentos.",
+      "pergunta": "O volume em linha foi corrigido por temperatura e pressão, mas o fechamento do lote usou o total bruto bombeado. Que entrada do algoritmo falta aplicar para apurar o óleo transferido?",
+      "resposta": "Teor de água e sedimentos.",
+      "explicacao": "Na medição dinâmica de óleo, a quantidade transferida não depende só do medidor principal e das correções P/T; o cálculo também considera água e sedimentos para chegar ao óleo efetivo.",
+      "resposta_padrao": "Dilatação térmica do óleo.",
+      "por_que_nao": "A correção térmica já foi aplicada; o fechamento ainda está errado por usar volume bruto sem descontar água e sedimentos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a quantidade transferida depende não apenas do sinal do medidor principal, mas também das correções de propriedades e da representatividade da amostra para água e sedimentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "os algoritmos de compensação consideram dilatação térmica, pressão, compressibilidade e teor de água e sedimentos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

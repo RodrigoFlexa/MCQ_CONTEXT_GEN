@@ -1,0 +1,79 @@
+{
+  "item": "07_03",
+  "foco": 22,
+  "rodada": 2,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falhas baseadas em demanda devem ser comparadas pela exposição em número de solicitações, não por tempo.",
+      "pergunta": "Uma função de proteção ficou em standby no período e as perdas de função só apareceram quando ela foi solicitada. Para comparar esse comportamento entre períodos, qual exposição deve entrar no denominador do indicador?",
+      "resposta": "Número de demandas da função.",
+      "explicacao": "Como a perda de função só se revela quando a função é solicitada, trata-se de falha baseada em demanda; usar tempo em standby mistura bases de exposição e distorce a comparação.",
+      "resposta_padrao": "Horas em standby no período.",
+      "por_que_nao": "A falha descrita é baseada em demanda; usar tempo em standby mistura base temporal com solicitações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distinguir taxas de falha baseadas em tempo das baseadas em demanda"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso evita combinar em um mesmo número equipamentos, regimes ou funções que falham por mecanismos diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "MTTR deve medir apenas o intervalo de reparo definido no indicador, separado da indisponibilidade total.",
+      "pergunta": "Para comparar reparabilidade por MTTR sem incorporar atrasos logísticos e administrativos, que intervalo deve entrar no cálculo?",
+      "resposta": "O intervalo de reparo definido no indicador.",
+      "explicacao": "MTTR mede o intervalo de reparo definido no indicador. Esperas por material ou liberação pertencem à indisponibilidade total, não ao tempo de reparo usado para comparar reparabilidade.",
+      "resposta_padrao": "Todo o intervalo da falha até o retorno à função.",
+      "por_que_nao": "Esse intervalo inclui esperas logísticas e administrativas, que não compõem o MTTR de reparo.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador, enquanto o tempo total indisponível pode incluir esperas logísticas e administrativas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "MTBF e MTTR resumem comportamento observado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparação de disponibilidade exige a mesma base de apuração do tempo total.",
+      "pergunta": "Relatórios de disponibilidade do mesmo equipamento usam o mesmo tempo apto, mas um exclui paradas planejadas do tempo total e o outro não. O que precisa ser equalizado antes da comparação?",
+      "resposta": "O tempo total considerado na base de apuração.",
+      "explicacao": "Disponibilidade observada depende do tempo apto dividido pelo tempo total considerado. Se o denominador muda entre relatórios, os percentuais deixam de ser comparáveis.",
+      "resposta_padrao": "Só o tempo indisponível acumulado.",
+      "por_que_nao": "Disponibilidade depende do denominador adotado; mesmo downtime gera percentuais diferentes com bases totais distintas.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

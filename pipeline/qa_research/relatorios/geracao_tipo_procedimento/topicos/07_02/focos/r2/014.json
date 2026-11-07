@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Condição necessária no teste para validar a UPS como último recurso de alimentação das funções críticas.",
+      "pergunta": "Para que um teste de contingência de perda da geração principal comprove a UPS como último recurso de alimentação das funções críticas, que condição adicional deve ser incluída?",
+      "resposta": "Falha de partida do gerador de emergência.",
+      "explicacao": "No cenário de F, a UPS só se torna o meio remanescente de alimentação quando a geração principal se perde e o gerador de emergência não parte.",
+      "resposta_padrao": "Transferência automática bem-sucedida para o gerador de emergência.",
+      "por_que_nao": "Se o gerador de emergência assumir a carga, a UPS deixa de ser o único meio restante de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se a geração principal for perdida e o gerador de emergência não partir, ela é o meio que resta para manter alimentadas as funções críticas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda da geração principal, somada à falha de partida do gerador de emergência e à indisponibilidade da UPS, pode deixar sem energia as funções de segurança"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Elemento a verificar junto com a UPS para validar a sustentação das funções críticas sem geração disponível.",
+      "pergunta": "Na verificação da autonomia da alimentação ininterrupta durante indisponibilidade simultânea de geração principal e gerador de emergência, qual elemento deve ser conferido junto com a UPS?",
+      "resposta": "Bancos de baterias.",
+      "explicacao": "F inclui os bancos de baterias na cadeia de suporte da disponibilidade; sem eles, a UPS não sustenta as funções críticas na falta de geração.",
+      "resposta_padrao": "Bypass seguro.",
+      "por_que_nao": "Sem fonte a montante disponível, o bypass não fornece autonomia; a sustentação vem da energia armazenada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incluindo alimentação elétrica, Uninterruptible Power Supply (UPS), bancos de baterias e modos de bypass."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ela é o meio que resta para manter alimentadas as funções críticas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Caminho de alimentação a confirmar quando o inversor falha e precisa ser isolado.",
+      "pergunta": "Com a seção inversora isolada por falha, qual caminho de alimentação deve ser confirmado para manter cargas críticas energizadas durante a inspeção?",
+      "resposta": "Bypass seguro.",
+      "explicacao": "Os blocos associam fumaça e arco no inversor à necessidade de isolar as fontes da UPS avariada e transferir as cargas críticas para bypass seguro.",
+      "resposta_padrao": "Barramento CC do inversor.",
+      "por_que_nao": "Com o inversor isolado por falha, o barramento CC não mantém as cargas através da seção avariada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

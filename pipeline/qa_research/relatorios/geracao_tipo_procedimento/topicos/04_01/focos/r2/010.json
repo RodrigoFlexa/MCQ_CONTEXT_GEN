@@ -1,0 +1,101 @@
+{
+  "item": "04_01",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A revalidação da checagem de contato e curvatura no topo após troca do bend stiffener depende da rigidez real do componente.",
+      "pergunta": "Bend stiffener substituído por outro com mesmo encaixe e dimensões externas. Para revalidar a checagem de contato e curvatura no topo, qual propriedade do componente precisa entrar no modelo?",
+      "resposta": "Rigidez do bend stiffener.",
+      "explicacao": "A transferência de cargas no topo não depende só da geometria visível. O bloco F explicita a rigidez do bend stiffener como variável que altera a forma deformada, o contato e os esforços locais.",
+      "resposta_padrao": "As dimensões externas do bend stiffener.",
+      "por_que_nao": "Mesmo com o mesmo encaixe, o comportamento estrutural muda com a rigidez, que é o parâmetro ligado à curvatura e ao contato.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento depende de excentricidade, posição do hang-off, forma deformada do riser, rigidez do bend stiffener, folgas disponíveis e movimentos operacionais da unidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o bend stiffener, ou enrijecedor à flexão, controla a curvatura na transição"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Se o ponto de suspensão muda após a análise preliminar, a verificação de contato no topo só continua válida com atualização da posição do hang-off.",
+      "pergunta": "Excentricidade, folgas e bend stiffener já foram conferidos. Depois, o ponto de suspensão definitivo foi deslocado alguns centímetros. Antes de reaproveitar a análise de contato, qual parâmetro ainda falta atualizar?",
+      "resposta": "Posição do hang-off.",
+      "explicacao": "O bloco F inclui explicitamente a posição do hang-off entre as variáveis que governam a forma deformada e a transferência de cargas no I-tube. Mudar esse ponto altera a geometria válida da análise.",
+      "resposta_padrao": "A tração axial final do riser.",
+      "por_que_nao": "A tração pode permanecer compatível e, ainda assim, a mudança geométrica do ponto de suspensão alterar contato e reação estrutural.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento depende de excentricidade, posição do hang-off, forma deformada do riser, rigidez do bend stiffener, folgas disponíveis e movimentos operacionais da unidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O hang-off é o arranjo que suporta a carga vertical do riser no topo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A análise de contato dentro do I-tube deve usar as folgas realmente disponíveis na configuração instalada, não apenas as nominais de projeto.",
+      "pergunta": "Folgas nominais de projeto não batem com as medidas após montagem do topo. Na verificação de contato dentro do I-tube, qual referência de folga vale para a análise?",
+      "resposta": "Folgas disponíveis na configuração instalada.",
+      "explicacao": "O bloco F diz que o comportamento depende das folgas disponíveis. Se a montagem alterou as folgas úteis, a análise precisa usar a condição realmente instalada para representar contato e reação estrutural.",
+      "resposta_padrao": "Folga nominal de projeto.",
+      "por_que_nao": "A folga nominal não representa necessariamente a montagem final; o contato real depende da folga disponível no arranjo instalado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando o riser não está centralizado, a folga deixa de ser simétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O comportamento depende de excentricidade, posição do hang-off, forma deformada do riser, rigidez do bend stiffener, folgas disponíveis e movimentos operacionais da unidade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para verificar se o contato no I-tube adicionou solicitação às camadas internas do riser, deve-se recalcular a curvatura efetiva da linha.",
+      "pergunta": "Surgiu contato localizado no I-tube, sem dano visual na capa externa. Para verificar se houve solicitação adicional nas camadas internas, que grandeza da linha deve ser recalculada?",
+      "resposta": "Curvatura efetiva do riser.",
+      "explicacao": "Segundo o bloco F, o contato pode carregar adicionalmente as camadas internas por alteração da curvatura efetiva. Essa é a grandeza geométrica que conecta o toque observado ao esforço interno adicional.",
+      "resposta_padrao": "Pressão de contato.",
+      "por_que_nao": "Pressão de contato trata a severidade superficial no ponto de toque; a solicitação nas camadas internas é ligada à curvatura efetiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "introduzir solicitação adicional na capa externa e nas camadas internas por alteração da curvatura efetiva."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso pode modificar esforços locais, gerar pressão de contato, aumentar atrito"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "item": "02_10",
+  "foco": 25,
+  "rodada": 3,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validação do monitoramento de pressão exige confirmar o envio do sinal do PT ao registrador, não apenas ao controle.",
+      "pergunta": "O trend de pressão desapareceu, mas a válvula regulatória continua respondendo e a pressão segue estável. Para validar o monitoramento do vaso, qual destino do sinal do PT deve ser verificado?",
+      "resposta": "O registrador.",
+      "explicacao": "No arranjo descrito, o PT envia o valor ao controlador e ao registrador; controle normal não comprova que o histórico da pressão está sendo capturado.",
+      "resposta_padrao": "O PIC da malha de pressão.",
+      "por_que_nao": "O PIC pode estar recebendo o sinal e controlando normalmente mesmo sem registro histórico disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O acompanhamento contínuo das variáveis de processo ajuda a perceber desvios de comportamento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Na checagem funcional da malha de pressão, a referência correta para o PIC é o setpoint operacional, distinto dos ajustes de proteção.",
+      "pergunta": "Na checagem funcional do controlador de pressão, qual referência deve ser usada para confrontar a leitura do PT antes de concluir que a malha está agindo corretamente?",
+      "resposta": "O setpoint operacional do PIC.",
+      "explicacao": "O PIC compara a pressão medida com a condição normal ou necessária; ajustes de ESDV ou PSV pertencem às funções de proteção, não ao critério da malha regulatória.",
+      "resposta_padrao": "A pressão de ajuste da PSV.",
+      "por_que_nao": "Esse ajuste define alívio de sobrepressão e não a referência usada pelo controlador para manter a pressão na faixa operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controlador e indicador de pressão, PIC, compara a pressão medida com a condição normal ou necessária"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

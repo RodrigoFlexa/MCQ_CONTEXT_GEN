@@ -1,0 +1,105 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Validade de prova de redundância depende de provocar a perda ou a transferência real de um canal, não de observar estado nominal.",
+      "pergunta": "Na prova de uma arquitetura redundante, que etapa torna o ensaio válido em vez de apenas confirmar disponibilidade nominal?",
+      "resposta": "Falha ou comutação forçada de um canal.",
+      "explicacao": "Redundância só se comprova observando a função sob perda real ou transferência de canal; ver os dois caminhos saudáveis não mostra o comportamento no chaveamento.",
+      "resposta_padrao": "Checar os dois canais online e sem alarme.",
+      "por_que_nao": "Estado nominal simultâneo não demonstra preservação da função durante a transferência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O princípio técnico mais geral é que redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em cobertura parcial da automação, a distinção entre perda de visibilidade e perda de medição começa pela indicação complementar fora do PLC.",
+      "pergunta": "Leitura local segue coerente, mas o valor desaparece do supervisório em um ativo acompanhado também fora do PLC. Que verificação distingue perda de visibilidade de perda de medição?",
+      "resposta": "Conferência da indicação complementar fora do PLC.",
+      "explicacao": "Se a observação complementar permanece coerente, a medição pode estar íntegra e a perda restrita à supervisão ou à comunicação.",
+      "resposta_padrao": "Recalibrar o transmissor.",
+      "por_que_nao": "O sintoma pode estar só na camada de visibilidade; recalibração não distingue medição íntegra de falha de integração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "O diagnóstico por camadas deve iniciar organizando o sintoma pela função afetada antes de escolher a camada provável.",
+      "pergunta": "Diante de uma falha ainda sem causa definida, no diagnóstico por camadas o sintoma deve ser organizado primeiro por qual eixo técnico?",
+      "resposta": "Pela função afetada.",
+      "explicacao": "A técnica separa perda de visibilidade, de medição e de comando para apontar a camada provável e evitar começar na camada errada.",
+      "resposta_padrao": "Pela topologia física da rede.",
+      "por_que_nao": "A decomposição inicial é funcional; só depois se aprofunda a camada física correspondente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Valor atualizado só é confiável para diagnóstico de arquitetura quando mantém coerência com variáveis de processo relacionadas.",
+      "pergunta": "O valor chega atualizado ao painel, sem indicação de falha, mas diverge das variáveis fisicamente acopladas. Antes de concluir por defeito de sensor, que verificação da informação deve ser feita?",
+      "resposta": "Coerência entre variáveis relacionadas.",
+      "explicacao": "Valor instantâneo e atualização não bastam; consistência com variáveis ligadas fisicamente ajuda a separar problema de informação de defeito real de processo ou instrumento.",
+      "resposta_padrao": "Aceitar o dado por estar atualizando normalmente.",
+      "por_que_nao": "Atualização isolada não confirma consistência da informação na cadeia de automação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

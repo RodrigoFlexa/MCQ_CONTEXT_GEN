@@ -1,0 +1,105 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Estimativa de disponibilidade sem histórico direto de uptime e downtime usa a relação entre MTBF e MTTR.",
+      "pergunta": "Sem histórico direto de uptime e downtime, que relação deve ser usada para estimar a disponibilidade de um sistema reparável?",
+      "resposta": "MTBF dividido por MTBF mais MTTR",
+      "explicacao": "Sem tempos observados, a disponibilidade pode ser aproximada por valores médios de falha e reparo; por isso a relação correta combina MTBF e MTTR.",
+      "resposta_padrao": "Uptime dividido pelo tempo total observado.",
+      "por_que_nao": "Essa forma exige históricos diretos de operação e indisponibilidade, ausentes no caso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma forma de referência relaciona disponibilidade a MTBF (Mean Time Between Failures, tempo médio entre falhas) e MTTR (Mean Time To Repair, tempo médio para reparo)"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reserva fria só deve contar como ganho de disponibilidade após verificação de partida e comutação.",
+      "pergunta": "Bomba em reserva fria nunca entrou em carga, mas o KPI já creditou ganho de disponibilidade. Qual verificação funcional precisa anteceder esse crédito?",
+      "resposta": "teste de partida e comutação do reserva",
+      "explicacao": "Reserva fria pode ter menos desgaste, mas continua sujeita a falha em espera, na partida e na comutação; só esse teste demonstra capacidade de assumir a função.",
+      "resposta_padrao": "Inspeção de preservação e ausência de desgaste.",
+      "por_que_nao": "Preservação não demonstra que o reserva assumirá a função quando acionado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O ganho real de disponibilidade por redundância deve ser verificado contra dependências comuns que derrubam ambos os trens.",
+      "pergunta": "Dois trens duplicados param juntos quando falta a mesma água de resfriamento. Ao apurar o efeito da redundância na disponibilidade, qual ponto do arranjo deve ser verificado?",
+      "resposta": "a utilidade comum de água de resfriamento",
+      "explicacao": "Se ambos dependem da mesma água de resfriamento, a duplicação não preserva a função quando a utilidade falha; verificar essa dependência evita superestimar a disponibilidade.",
+      "resposta_padrao": "Apenas a existência de dois trens em paralelo.",
+      "por_que_nao": "Duplicação física não basta quando a função depende de uma utilidade compartilhada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A razão uptime/tempo total como representação de disponibilidade requer condição de estado estacionário.",
+      "pergunta": "Logo após start-up com correções iniciais frequentes, qual condição deve ser confirmada antes de usar uptime sobre tempo total observado como representação da disponibilidade?",
+      "resposta": "estado estacionário",
+      "explicacao": "A razão uptime/tempo total é apresentada como referência em estado estacionário; durante transientes de start-up e correções iniciais, a fração observada pode não representar a disponibilidade.",
+      "resposta_padrao": "Qualquer janela observada já serve.",
+      "por_que_nao": "A representação citada pressupõe regime estacionário; no transiente pós-start-up ela pode distorcer o desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em estado estacionário, pode ser representada pela razão entre uptime e tempo total observado."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

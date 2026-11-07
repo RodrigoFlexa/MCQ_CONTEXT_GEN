@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 2,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Teste de perfil restrito à observação pelo bloqueio de escrita de setpoint.",
+      "pergunta": "Qual escrita de processo deve falhar no teste de um perfil restrito à observação em sistema supervisório?",
+      "resposta": "Escrita de setpoint.",
+      "explicacao": "Observação só expõe informação; operação atua no processo. Como mudança de setpoint é atuação operacional citada, sua escrita deve falhar para provar que o perfil não ultrapassou a observação.",
+      "resposta_padrao": "Reconhecimento de alarme.",
+      "por_que_nao": "O teste pedido é de escrita no processo; reconhecer alarme não altera o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudança de setpoint"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de que um acesso operacional não recebeu privilégio de engenharia pelo bloqueio de alteração de lógica.",
+      "pergunta": "Durante um ensaio em que o técnico pode comandar a malha e ajustar setpoints, que alteração deve permanecer bloqueada para confirmar que o acesso não recebeu privilégio de engenharia?",
+      "resposta": "Download de lógica do controlador.",
+      "explicacao": "Se comandar a malha e ajustar setpoints já é permitido, a fronteira restante é engenharia. Nos blocos, engenharia é o privilégio que altera configuração, lógica e firmware; por isso o bloqueio decisivo é na lógica.",
+      "resposta_padrao": "Criação de contas de usuário.",
+      "por_que_nao": "Isso testa privilégio administrativo; aqui a fronteira avaliada é operação versus engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Prova de que um perfil de engenharia não recebeu privilégio administrativo pela impossibilidade de criar contas.",
+      "pergunta": "Antes de liberar um perfil de engenharia para carga de firmware, qual função de identidade precisa ser verificada como bloqueada?",
+      "resposta": "Criação de contas de usuário.",
+      "explicacao": "O perfil de engenharia pode alterar configuração, lógica e firmware, mas o administrativo cria contas. Ao verificar especificamente uma função de identidade, o bloqueio da criação de contas confirma que não houve escalada para administrativo.",
+      "resposta_padrao": "Desabilitar proteções de segurança.",
+      "por_que_nao": "A pergunta restringe a checagem à função de identidade; nesse domínio, o teste correto é criação de contas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Segregação entre implementação e validação na checagem funcional após mudança remota.",
+      "pergunta": "A lógica já foi aprovada e será carregada remotamente pelo fornecedor. Na checagem funcional que encerra a intervenção, de quem a identidade deve ser diferente da usada no carregamento?",
+      "resposta": "Do validador da mudança.",
+      "explicacao": "A etapa citada é a validação pós-implementação. O bloco F exige segregação entre quem implementa e quem valida, especialmente em suporte remoto, para reduzir erros não detectados.",
+      "resposta_padrao": "Do aprovador da mudança.",
+      "por_que_nao": "A aprovação ocorre antes do carregamento; na checagem funcional pós-implementação, a segregação relevante é com a validação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

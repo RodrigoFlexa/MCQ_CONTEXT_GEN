@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A liberação de acesso remoto endurecido exige verificar o controle das configurações do endpoint, não só o túnel VPN.",
+      "pergunta": "A VPN do fornecedor está atualizada e a estação de origem passou na checagem de malware. Qual verificação adicional dessa estação ainda é decisiva para liberar o acesso remoto?",
+      "resposta": "Controle das configurações do dispositivo conectado.",
+      "explicacao": "No hardening de acesso remoto, o túnel seguro não basta; a segurança também depende das configurações do endpoint que entra na rede.",
+      "resposta_padrao": "Validar apenas o cliente VPN.",
+      "por_que_nao": "VPN atualizada não cobre configurações inseguras do dispositivo conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "é tecnicamente importante verificar a condição do dispositivo usado na conexão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A sessão de suporte remoto deve ser limitada ao escopo técnico estritamente necessário à atividade.",
+      "pergunta": "No suporte remoto para diagnóstico de um controlador, que delimitação deve ser aplicada à sessão para manter o acesso aderente à tarefa?",
+      "resposta": "Escopo da sessão restrito ao ativo e à função necessários.",
+      "explicacao": "O acesso remoto de terceiros deve ser delimitado por necessidade operacional e por escopo compatível com a tarefa executada.",
+      "resposta_padrao": "Perfil de administrador temporário.",
+      "por_que_nao": "Ampliar privilégios contraria a delimitação de escopo exigida para a atividade.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "restringe rotas de acesso"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A publicação direta de portas na borda invalida o hardening mesmo quando há firewall e VPN disponíveis.",
+      "pergunta": "Um ativo usa IP privado, mas sua porta de programação é alcançada externamente sem iniciar a VPN. Qual configuração de borda precisa ser removida para o hardening ficar válido?",
+      "resposta": "Encaminhamento direto de porta/NAT para o ativo.",
+      "explicacao": "Se o serviço é alcançado da rede externa sem VPN e o ativo não tem IP público, a borda está publicando esse acesso diretamente.",
+      "resposta_padrao": "Atualizar a VPN.",
+      "por_que_nao": "O problema é a exposição direta do serviço à internet, não a versão do túnel.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A remoção de serviços no hardening só se confirma quando esses serviços deixam de responder à varredura.",
+      "pergunta": "Depois de desabilitar serviços não usados em uma estação de engenharia, qual verificação em varredura confirma que a superfície de ataque realmente caiu?",
+      "resposta": "Ausência de resposta desses serviços na varredura de rede.",
+      "explicacao": "O hardening reduz caminhos de exploração ao remover serviços desnecessários; o teste válido é não obter resposta deles na varredura.",
+      "resposta_padrao": "Inicialização normal da estação.",
+      "por_que_nao": "Boot sem falha não demonstra que os serviços expostos foram eliminados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduz a chance de varredura externa"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

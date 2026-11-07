@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Primeira verificação antes de planejar remediação: confirmar se o ativo realmente usa o componente vulnerável.",
+      "pergunta": "Sai um alerta sobre falhas em uma pilha TCP/IP embarcada amplamente usada e vários ativos OT têm firmwares parecidos. Antes de abrir mudança para patch, qual verificação técnica precisa ser feita em cada ativo?",
+      "resposta": "Confirmar se usa a pilha TCP/IP afetada.",
+      "explicacao": "O alerta não comprova impacto universal. Em OT, o tratamento começa confirmando se o ativo realmente usa o componente vulnerável e avaliando a exposição caso a caso.",
+      "resposta_padrao": "Atualizar todos os ativos para a versão mais recente.",
+      "por_que_nao": "Sem confirmar o componente afetado e a compatibilidade, a atualização pode ser desnecessária e introduzir indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há alerta de que múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar sistemas de controle industrial do setor de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério para não extrapolar a mesma consequência operacional entre ativos com a mesma vulnerabilidade.",
+      "pergunta": "A mesma vulnerabilidade confirmada aparece em dois ativos OT. Antes de assumir a mesma consequência operacional para ambos, o que precisa ser verificado?",
+      "resposta": "A função do sistema atingido no processo.",
+      "explicacao": "No IACS, a relevância operacional da vulnerabilidade depende do papel do sistema. Funções que atuam no processo podem alterar comportamento ou retirar serviço.",
+      "resposta_padrao": "Apenas a criticidade nominal do boletim.",
+      "por_que_nao": "A mesma vulnerabilidade pode ter consequências diferentes conforme o ativo atua ou não diretamente no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de inclusão de sistemas de negócios no escopo de avaliação de vulnerabilidades do IACS.",
+      "pergunta": "Que verificação define se um sistema de negócios entra no escopo da avaliação de vulnerabilidades do IACS offshore?",
+      "resposta": "Conexão pela infraestrutura de rede do IACS.",
+      "explicacao": "O escopo do IACS não se limita a controle e segurança; inclui sistemas de informação e negócios quando conectados pela infraestrutura de rede do IACS.",
+      "resposta_padrao": "Ter acesso à internet.",
+      "por_que_nao": "O critério de escopo é a conexão à infraestrutura do IACS, não a simples presença de internet.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No contexto offshore, o escopo de IACS abrange sistemas básicos de controle de processo, funções de camada independente de proteção, sistemas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Verificação decisiva de hardening quando acesso remoto a ativos de controle é necessário.",
+      "pergunta": "Quando acesso remoto a um controlador é indispensável, qual verificação de hardening distingue a configuração correta da apenas funcional?",
+      "resposta": "Ausência de acessibilidade direta pela internet.",
+      "explicacao": "Mesmo com VPN atualizada, o ativo não deve ficar diretamente acessível pela internet; a barreira adicional reduz exposição e superfície de ataque.",
+      "resposta_padrao": "Uso de VPN atualizada.",
+      "por_que_nao": "A VPN reduz exposição, mas não elimina o risco nem substitui o bloqueio de acesso direto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando acesso remoto é necessário, métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

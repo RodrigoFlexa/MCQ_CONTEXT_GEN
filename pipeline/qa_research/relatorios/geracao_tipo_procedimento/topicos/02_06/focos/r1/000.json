@@ -1,0 +1,109 @@
+{
+  "item": "02_06",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação do estado real do equipamento por leitura independente quando há bypass, override ou forcing na manobra.",
+      "pergunta": "Com override ou forcing ativos numa partida, que verificação deve confirmar o estado real do equipamento antes de seguir a sequência?",
+      "resposta": "Leitura local independente fora do CLP.",
+      "explicacao": "Em condição anormal, bypass, override ou forcing podem tornar insuficiente a indicação do sistema de controle; a confirmação correta é pela leitura do equipamento fora do CLP.",
+      "resposta_padrao": "Basta conferir a tela do sistema de controle.",
+      "por_que_nao": "Com forcing, override ou bypass, a indicação no CLP pode não representar a condição física.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing, leitura de equipamentos fora do Controlador Lógico Programável (CLP)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o operador de área e o operador de sala de controle acompanham parâmetros"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de verificação da estabilização após uma manobra, baseado na faixa esperada e no fim da dependência forte do histórico.",
+      "pergunta": "A bomba já atingiu rotação nominal, mas pressão, nível e vazão ainda se acomodam. Qual critério confirma que a manobra entrou em estabilização?",
+      "resposta": "Variáveis dentro da faixa esperada para arranjo, fluido e carga.",
+      "explicacao": "Estabilização não é o acionamento em si; ocorre quando o sistema deixa de responder fortemente ao histórico da manobra e opera na faixa esperada.",
+      "resposta_padrao": "Ausência de alarmes com motor em regime.",
+      "por_que_nao": "Sem verificar a faixa esperada das variáveis, o sistema ainda pode estar em transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O ponto crítico não é apenas o acionamento inicial ou o fechamento final, mas o comportamento intermediário até que as variáveis atinjam condição estável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "estabilização é a etapa em que o sistema deixa de responder fortemente ao histórico da manobra e passa a operar dentro da faixa esperada para aquele arranjo, fluido e carga."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de aceitação do teste de shutdown por gás: remoção ou isolamento automático de toda fonte que ainda possa alimentar o cenário.",
+      "pergunta": "No teste de causa e efeito por gás, uma bomba ainda pode movimentar hidrocarboneto após o alarme. Que verificação define se o shutdown da área está completo?",
+      "resposta": "Desenergização ou isolamento automático dessa fonte pelo shutdown de gás.",
+      "explicacao": "A lógica só é eficaz se cobrir todas as fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos; se uma permanece admitida, o shutdown está incompleto.",
+      "resposta_padrao": "Confirmar apenas sirene, beacon e registro do alarme.",
+      "por_que_nao": "Alerta sem retirar ou isolar a fonte relevante mantém o cenário perigoso alimentado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interface com detecção de vazamentos e resposta a emergências."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Método de análise a aplicar antes da abertura de poço de gás em partida para prever resposta transiente e instabilidades.",
+      "pergunta": "Antes de abrir um poço de gás na partida, que método deve ser aplicado para antecipar pressão, vazão e risco de instabilidades?",
+      "resposta": "Simulação transiente específica do poço e do sistema.",
+      "explicacao": "Em poços de gás, o comportamento durante abertura depende do tempo; análises estacionárias tendem a ser insuficientes para manobras.",
+      "resposta_padrao": "Uma análise estacionária com as condições de projeto.",
+      "por_que_nao": "Na manobra, massa e quantidade de movimento não se redistribuem instantaneamente; o transiente domina a resposta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Partida e parada são transições entre estados operacionais de um sistema, equipamento, poço ou trecho de processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em poços de gás, simulações transientes podem antecipar comportamento de pressão, vazão e risco de instabilidades antes da abertura."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "análises puramente estacionárias tendem a ser insuficientes para manobras."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

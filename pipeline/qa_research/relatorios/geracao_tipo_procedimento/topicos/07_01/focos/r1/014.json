@@ -1,0 +1,117 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Validação de análise em historian exige coerência temporal dos sinais, não só plausibilidade dos valores.",
+      "pergunta": "Antes de usar tendências do historian para confirmar a ordem entre uma perturbação, a ação do controlador e a resposta do processo, qual verificação torna essa análise válida?",
+      "resposta": "Coerência temporal entre os sinais comparados.",
+      "explicacao": "Sem alinhamento temporal, a sequência entre perturbação, cálculo e resposta pode parecer diferente da real, mesmo com valores plausíveis exibidos na supervisão.",
+      "resposta_padrao": "Confirmar apenas a calibração dos instrumentos envolvidos.",
+      "por_que_nao": "Calibração não assegura alinhamento no tempo; sinais corretos em valor ainda podem distorcer a sequência observada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para comprovar execução pela lógica configurada, o ponto decisivo é a saída do controlador, não a indicação da HMI.",
+      "pergunta": "O comando remoto muda de estado na HMI, mas a manobra precisa ser validada como executada pela lógica configurada. Que ponto deve ser acompanhado?",
+      "resposta": "Saída do controlador para o atuador.",
+      "explicacao": "A HMI é interface de operação; a lógica configurada é executada na camada de controle. Validar a manobra exige acompanhar o sinal efetivamente emitido pelo controlador.",
+      "resposta_padrao": "O estado mostrado na própria HMI.",
+      "por_que_nao": "A interface pode refletir o comando do operador sem comprovar que o controlador enviou a ação ao elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando existe HMI (Interface Homem-Máquina), o operador passa a compartilhar a condução do processo com o sistema automatizado: a automação executa a lógica configurada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Se o controle permanece normal e só a visualização falha, a verificação inicial deve focar a comunicação entre controlador e supervisão.",
+      "pergunta": "A malha segue controlando normalmente, mas a tendência no supervisório congela de forma intermitente. Qual enlace deve ser verificado primeiro?",
+      "resposta": "Comunicação entre controlador e supervisão.",
+      "explicacao": "Se o processo continua sob controle, os dados ainda alimentam a lógica. Congelamento restrito à tendência indica verificar primeiro o caminho de dados até a supervisão.",
+      "resposta_padrao": "Recalibrar o transmissor de campo.",
+      "por_que_nao": "Se o controlador continua agindo corretamente, o caminho medição-controlador permanece funcional; a falha está acima dessa camada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em plataformas e unidades offshore, essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Confirmação do sentido correto de atuação exige observar a resposta da variável de processo, não apenas o movimento do elemento final.",
+      "pergunta": "Na prova dinâmica de uma malha recém-configurada, que indicação precisa ser conferida para validar o sentido correto de atuação, e não só a transmissão do comando?",
+      "resposta": "Variação da variável de processo na direção esperada.",
+      "explicacao": "Saída do controlador ou posição do atuador podem mudar e, ainda assim, o efeito físico estar invertido. A confirmação do sentido correto vem da resposta do processo.",
+      "resposta_padrao": "A mudança da posição indicada do atuador.",
+      "por_que_nao": "Isso só comprova movimento do elemento final, não que a ação produziu o efeito correto sobre o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sentido incorreto de atuação"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sob restrição logística, a fila deve seguir a penalidade por atraso, não FIFO.",
+      "pergunta": "Há uma única vaga de embarque e duas requisições liberadas: uma de consumo rotineiro e outra cuja espera para restaurar função crítica gera parada. Qual critério deve ordenar o atendimento?",
+      "resposta": "Penalidade por atraso da demanda.",
+      "explicacao": "Quando o custo da espera difere entre demandas, a regra correta é priorizar pela consequência operacional da espera. FIFO ignora essa diferença e pode elevar o custo total.",
+      "resposta_padrao": "Atender por ordem de chegada, FIFO.",
+      "por_que_nao": "Neste caso, a espera da demanda crítica tem consequência operacional maior, então a ordem de chegada não é o critério correto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada, FIFO."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional."
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Melhoria entre políticas de atendimento se verifica por custo total com penalidades, não por redução de frota.",
+      "pergunta": "Na comparação entre duas regras de despacho com mesma demanda, a política por prioridade reduziu o custo e a frota necessária não mudou. Qual critério confirma a melhoria nesse teste?",
+      "resposta": "Menor custo total com penalidades por atraso.",
+      "explicacao": "No foco, a priorização foi associada à redução de custo frente ao FIFO. O texto também alerta que isso não implica menor frota em todo cenário.",
+      "resposta_padrao": "Redução do número de embarcações.",
+      "por_que_nao": "A política pode ser melhor mesmo sem cortar frota; o efeito validado no cenário é o custo total menor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a priorização de tarefas foi associada a redução de custo frente ao FIFO"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não implica menor frota em todo cenário."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "O teste de valor da priorização frente ao FIFO é sensível ao custo de penalidade por atraso.",
+      "pergunta": "Para verificar se critérios de prioridade realmente ganham valor sobre o FIFO em um modelo já calibrado, qual variável do caso deve ser tensionada?",
+      "resposta": "Custo de penalidade por atraso.",
+      "explicacao": "O foco indica que penalidades elevadas por atraso reforçam o valor de critérios de prioridade. Logo, essa é a variável a ser alterada no teste de sensibilidade.",
+      "resposta_padrao": "Capacidade da frota disponível.",
+      "por_que_nao": "Mudar frota testa restrição de recurso, não se o custo da espera torna a priorização mais valiosa que o FIFO.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "penalidades elevadas por atraso reforçaram o valor de critérios de prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O resultado depende da demanda, das penalidades, das capacidades e das janelas adotadas; não implica menor frota em todo cenário."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Baixo consumo não elimina prioridade quando a ruptura afeta segurança ou produção.",
+      "pergunta": "Um sobressalente de baixo giro compete por espaço com carga recorrente. Antes de mantê-lo no fim da fila, qual verificação técnica pode elevar sua prioridade?",
+      "resposta": "Efeito da ruptura sobre segurança ou produção.",
+      "explicacao": "A frequência de consumo não basta para definir prioridade. Se a falta comprometer segurança, produção ou restauração de função, o item pode exigir tratamento prioritário mesmo com baixo giro.",
+      "resposta_padrao": "Frequência de consumo do item.",
+      "por_que_nao": "Baixo consumo não define baixa prioridade quando a consequência da falta é alta para segurança, produção ou continuidade.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "selecionar a estratégia exige observar pelo menos quatro variáveis: frequência de consumo, impacto da falta, prazo de reposição e possibilidade de consolidação da demanda."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Assim, decisões de compras e estoques precisam considerar ao menos o padrão de demanda do item, a urgência potencial da reposição, o efeito da ruptura sobre segurança ou produção e a dificuldade logística de reabastecimento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada, FIFO."
+        }
+      ],
+      "k": 4,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    }
+  ]
+}

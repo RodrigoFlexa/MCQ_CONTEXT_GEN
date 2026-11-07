@@ -1,0 +1,97 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Validação de estimativa de estado de mar por movimentos requer dados compatíveis com a própria embarcação e com o envelope ambiental analisado.",
+      "pergunta": "Na validação de um modelo que infere estado de mar pelos movimentos, que compatibilidade do conjunto de dados precisa ser confirmada antes de aceitar o ajuste?",
+      "resposta": "Compatibilidade com a própria embarcação e o envelope ambiental avaliado.",
+      "explicacao": "A validação só sustenta o modelo quando os dados representam a mesma resposta hidrodinâmica no envelope considerado; bom ajuste em mar ameno não comprova precisão em condições extremas.",
+      "resposta_padrao": "Uma série longa obtida em mar calmo já é suficiente.",
+      "por_que_nao": "Mar ameno não demonstra a mesma precisão em condições extremas, e a validação exige compatibilidade com a unidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desempenho em mar ameno não demonstra a mesma precisão em condições extremas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de aceitar a direção recuperada pelos movimentos, deve-se verificar se o aproamento está em região de baixa sensibilidade dos RAOs.",
+      "pergunta": "Com pequenos giros de aproamento, a direção do mar estimada pelos movimentos passa a variar erraticamente. Qual verificação específica nos RAOs define se esse resultado ainda é confiável?",
+      "resposta": "Se o aproamento entrou em região de baixa sensibilidade dos RAOs.",
+      "explicacao": "Quando os RAOs têm baixa sensibilidade direcional, pequenas mudanças de aproamento degradam a recuperação da direção, mesmo sem defeito evidente de aquisição.",
+      "resposta_padrao": "Basta aumentar o tempo de média da série.",
+      "por_que_nao": "A média não recupera informação direcional quando a resposta hidrodinâmica está numa região pouco sensível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Na validação com embarcação turret-moored, trechos com aproamentos distintos devem ser segmentados, não misturados, porque a resposta hidrodinâmica muda com o heading.",
+      "pergunta": "Para testar um estimador de estado de mar por movimentos numa embarcação com turret na proa, como tratar trechos coletados com aproamentos diferentes durante a validação?",
+      "resposta": "Segmentá-los por faixas de aproamento compatíveis.",
+      "explicacao": "A liberdade de rotação altera a resposta com o aproamento; misturar headings diferentes compromete a compatibilidade dos dados e a recuperação direcional.",
+      "resposta_padrao": "Juntar todos os trechos para aumentar a amostra.",
+      "por_que_nao": "A variação de heading modifica a resposta hidrodinâmica e pode introduzir erros importantes na análise.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Essa liberdade de rotação permite que o navio busque aproamento mais favorável à resultante ambiental"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "em unidades com turret na proa, simplificações que ignorem a variação de heading podem introduzir erros importantes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Parâmetros de ensaio como janela temporal e variação angular precisam ser revalidados para cada caso, sem universalização.",
+      "pergunta": "Um ensaio mostrou bom ajuste com certa janela temporal e uma variação angular limitada. Ao aplicar o método em outro regime ambiental, qual etapa deve ser refeita?",
+      "resposta": "Revalidar a janela temporal e a variação angular do novo caso.",
+      "explicacao": "O resultado experimental é restrito ao caso validado; o próprio bloco veda tratar intervalo de tempo e variação angular de um ensaio como regra universal.",
+      "resposta_padrao": "Repetir a mesma janela e a mesma faixa angular do ensaio.",
+      "por_que_nao": "Esses parâmetros não podem ser herdados automaticamente para outro regime ambiental.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Resultados do modelo devem ser interpretados com essas limitações, sem adotar um intervalo de tempo ou variação angular de um ensaio como regra universal."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

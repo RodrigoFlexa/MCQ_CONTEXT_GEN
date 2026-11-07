@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 2,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Revisão de segmentação em infraestrutura compartilhada deve verificar conectividade desnecessária entre domínios de criticidade distinta.",
+      "pergunta": "DCS, SIS e gerenciamento elétrico compartilham a mesma infraestrutura de comunicação sem perda aparente de desempenho. Na revisão de segmentação, o que determina se esse compartilhamento pode permanecer?",
+      "resposta": "Ausência de conectividade entre domínios além do necessário.",
+      "explicacao": "O ponto decisivo não é desempenho da rede, mas se a arquitetura evita caminhos desnecessários entre conjuntos com funções e consequências diferentes, reduzindo propagação de falhas, erros de configuração ou ações maliciosas.",
+      "resposta_padrao": "Largura de banda suficiente na rede comum.",
+      "por_que_nao": "Capacidade de tráfego não limita a propagação entre domínios de criticidade distinta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A comprovação de defesa em profundidade exige validar o encadeamento de barreiras sucessivas até o domínio crítico.",
+      "pergunta": "Ao testar o alcance de um acesso indevido vindo da borda, que sequência de verificação comprova defesa em profundidade até o domínio crítico?",
+      "resposta": "Validar cada barreira sucessiva entre a origem e o domínio crítico.",
+      "explicacao": "Defesa em profundidade não se demonstra em uma única fronteira. A verificação correta precisa percorrer o encadeamento de barreiras que reduz os caminhos de propagação entre domínios.",
+      "resposta_padrao": "Testar apenas o firewall perimetral externo.",
+      "por_que_nao": "Uma única fronteira não comprova o encadeamento de barreiras sucessivas exigido pela defesa em profundidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na avaliação imediata de vulnerabilidade exposta, a verificação decisiva é a alcançabilidade das funções de controle a partir do ponto exposto.",
+      "pergunta": "Um serviço vulnerável segue acessível na rede industrial. Qual verificação define se a exploração pode chegar às malhas de controle?",
+      "resposta": "Alcançabilidade das funções de controle a partir da interface exposta.",
+      "explicacao": "A vulnerabilidade só pode interferir no processo quando as condições de exposição permitem alcançar funções de controle. A segmentação existe justamente para cortar esse caminho de propagação.",
+      "resposta_padrao": "Pontuação de severidade da vulnerabilidade.",
+      "por_que_nao": "Severidade isolada não mostra se há caminho técnico até as funções de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando sistemas industriais expostos em rede têm vulnerabilidades exploráveis, um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

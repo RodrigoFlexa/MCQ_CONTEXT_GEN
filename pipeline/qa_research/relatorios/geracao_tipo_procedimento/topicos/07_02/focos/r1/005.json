@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Menor privilégio inclui limitar tecnicamente a duração de credenciais temporárias ao período da atividade.",
+      "pergunta": "Uma credencial emergencial foi criada para uma janela única de manutenção por fornecedor. Qual ajuste do cadastro deve ser conferido antes da liberação para que o acesso não permaneça ativo depois do serviço?",
+      "resposta": "Data e hora de expiração do acesso",
+      "explicacao": "O menor privilégio em IACS vale também no tempo: a permissão deve durar apenas o período compatível com a atividade definida.",
+      "resposta_padrao": "Autenticação multifator",
+      "por_que_nao": "Reforça a autenticação, mas não encerra automaticamente o privilégio após a tarefa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Conta de observação deve ser testada sem capacidade de atuar no processo.",
+      "pergunta": "Na prova de uma conta destinada só a observar tendências e alarmes, qual ação não pode ser bem-sucedida se o menor privilégio foi aplicado corretamente?",
+      "resposta": "Escrita de setpoints",
+      "explicacao": "Observação apenas expõe informações. Se a conta escreve setpoints, ela já tem capacidade operacional de atuar no processo.",
+      "resposta_padrao": "Exportação de tendências",
+      "por_que_nao": "Exportar dados ainda é compatível com observação; escrever setpoints caracteriza atuação no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo;"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Acesso de engenharia necessário para firmware não deve incluir capacidade administrativa.",
+      "pergunta": "Durante atualização de firmware em um controlador, qual ação deve continuar impossível na conta temporária para provar que o perfil não recebeu privilégio administrativo?",
+      "resposta": "Criar contas",
+      "explicacao": "A tarefa pode exigir privilégio de engenharia, mas privilégio administrativo é o que permite gerenciar contas, proteções e rastros.",
+      "resposta_padrao": "Alterar setpoints",
+      "por_que_nao": "Mudança de setpoint é privilégio de operação; o marcador administrativo está no gerenciamento de contas e proteções.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Segregação de funções exige aprovação independente da implementação de mudanças em IACS.",
+      "pergunta": "No fluxo de mudança aplicado por suporte remoto, qual função deve ficar em identidade diferente da de quem implementa a alteração?",
+      "resposta": "Aprovação formal da mudança",
+      "explicacao": "A segregação de funções pede que quem aprova não seja, por padrão, o mesmo que implementa e valida, reduzindo erros não detectados.",
+      "resposta_padrao": "Registro em log da implementação",
+      "por_que_nao": "Logs aumentam rastreabilidade, mas não separam a função de aprovar da de executar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

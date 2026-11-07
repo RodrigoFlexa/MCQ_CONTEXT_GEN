@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Condição correta de disparo do pulso de compensação para vencer atrito sem aumentar movimentação desnecessária.",
+      "pergunta": "O sinal do controlador varia, mas a haste permanece parada até ocorrer um salto. Na compensação por pulsos, em que condição o pulso deve ser inserido no sinal?",
+      "resposta": "Quando o comando usual não consegue iniciar o movimento.",
+      "explicacao": "A técnica injeta energia adicional só quando o comando normal não vence o atrito. Aplicar pulsos fora dessa condição aumenta a movimentação e o desgaste sem necessidade.",
+      "resposta_padrao": "Em toda variação do sinal de controle.",
+      "por_que_nao": "Os pulsos não são contínuos; entram apenas quando o comando usual falha em iniciar o movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fornecer energia adicional quando o comando usual não consegue iniciar o movimento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Base prática usada na parametrização de uma compensação por pulsos não baseada em modelo.",
+      "pergunta": "Na parametrização dessa compensação sem modelo, qual base prática deve orientar o ajuste dos pulsos?",
+      "resposta": "Dados de operação da válvula.",
+      "explicacao": "A abordagem descrita evita modelagem detalhada e define os parâmetros a partir do comportamento observado em operação, simplificando a implementação em relação a métodos baseados em modelo.",
+      "resposta_padrao": "Modelo detalhado do conjunto válvula-atuador.",
+      "por_que_nao": "Aqui a parametrização é não baseada em modelo e deve usar dados de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa estratégia tem implementação e parametrização mais simples do que métodos que exigem modelagem detalhada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de aceitação que limita a sintonia dos pulsos para equilibrar desempenho e desgaste.",
+      "pergunta": "Ao escolher os parâmetros dos pulsos, que limite deve ser atendido para considerar a compensação aceitável?",
+      "resposta": "A especificação máxima de erro.",
+      "explicacao": "Os parâmetros devem ser escolhidos respeitando um erro máximo definido. Esse limite é o critério de aceitação que equilibra recuperação de desempenho e desgaste adicional.",
+      "resposta_padrao": "A menor movimentação possível da válvula.",
+      "por_que_nao": "Movimentar pouco não basta; a parametrização só é válida se atender ao erro máximo especificado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Existe, portanto, um compromisso entre recuperar desempenho da malha e limitar desgaste adicional do elemento final."
+        },
+        {
+          "bloco": "F",
+          "trecho": "em uma especificação máxima de erro"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Verificação da função correta da válvula antes de aplicar compensação por pulsos contra atrito.",
+      "pergunta": "Antes de testar compensação por pulsos contra atrito, que função da válvula precisa ser confirmada para que a aplicação seja pertinente?",
+      "resposta": "Válvula de controle modulante.",
+      "explicacao": "A compensação por pulsos é tratada para válvulas de controle na malha. Válvulas de desligamento de emergência exercem isolamento de segurança em lógica abre-fecha.",
+      "resposta_padrao": "Função de isolamento da ESDV.",
+      "por_que_nao": "ESDV e válvula modulante podem coexistir, mas não têm a mesma função operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma abordagem não baseada em modelo para compensar atrito em válvulas de controle consiste em adicionar pulsos ao sinal de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

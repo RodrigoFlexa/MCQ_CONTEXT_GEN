@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A compensação temporária de reativos na partida direta deve ser retirada ou reduzida ao fim da aceleração.",
+      "pergunta": "A tensão do barramento sobe logo depois que um grande motor completa a aceleração com compensação temporária de reativos em serviço. Que etapa específica da sequência de partida deveria ter sido executada nesse ponto?",
+      "resposta": "Retirar ou reduzir a compensação temporária ao fim da aceleração.",
+      "explicacao": "Durante a aceleração, o motor exige mais reativos; perto da velocidade nominal essa demanda cai. Se a compensação temporária permanecer, passa a haver excesso de reativos e a tensão tende a subir.",
+      "resposta_padrao": "Manter a compensação até a potência ativa do motor estabilizar.",
+      "por_que_nao": "O critério aqui é a queda da demanda reativa perto da velocidade nominal, não a estabilização da potência ativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Próximo à velocidade nominal do motor, a demanda reativa cai."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a compensação temporária deve ser retirada ou reduzida ao fim da aceleração."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Na partida assistida por PMS, a redução das correções rápidas deve ser comandada pela queda da potência reativa.",
+      "pergunta": "Na lógica do PMS para partida assistida de grande motor, qual variável confirma o momento de reduzir as correções rápidas aplicadas após o fechamento do disjuntor?",
+      "resposta": "Queda da potência reativa.",
+      "explicacao": "O PMS aplica correções rápidas após o fechamento para sustentar a rede durante a aceleração. Quando detecta a redução da potência reativa, reduz essas correções para evitar sobrecompensação.",
+      "resposta_padrao": "Corrente do motor abaixo da nominal.",
+      "por_que_nao": "O texto vincula a redução das correções à queda da potência reativa, que é o sinal da mudança de demanda do motor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        },
+        {
+          "bloco": "F",
+          "trecho": "depois, ao detectar queda da potência reativa, reduz essas correções."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Na verificação de step-out longo em CA, o reativo do cabo deve ser avaliado com dependência quadrática da tensão.",
+      "pergunta": "Ao revisar um step-out longo em corrente alternada, que relação com a tensão deve ser usada na verificação do reativo do cabo?",
+      "resposta": "Dependência com o quadrado da tensão.",
+      "explicacao": "Nos cabos submarinos em CA, o reativo associado ao cabo aumenta com o comprimento e com o quadrado da tensão. Ignorar essa dependência subestima desvios de tensão, perdas e risco de sobretensão.",
+      "resposta_padrao": "Crescimento linear com a tensão.",
+      "por_que_nao": "Neste caso, a sensibilidade do reativo à tensão é quadrática, não linear.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a potência reativa associada ao cabo cresce com o comprimento e com o quadrado da tensão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em HVAC offshore, a tensão de operação deve ser escolhida em balanço com perdas, reativos do cabo e perfil de carga."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A lógica de correção rápida do PMS deve ler o estado do bus tie para distinguir barramento seccionado de acoplado.",
+      "pergunta": "Barramentos que ora operam seccionados, ora acoplados alimentam a partida do mesmo motor. Na lógica de correção rápida do PMS, que estado precisa ser lido para distinguir essas duas condições?",
+      "resposta": "Estado do bus tie.",
+      "explicacao": "As correções rápidas dependem da configuração real da rede. O estado do bus tie altera a topologia elétrica vista na partida e, portanto, a resposta de tensão e reativos.",
+      "resposta_padrao": "Posição do disjuntor do próprio motor.",
+      "por_que_nao": "O disjuntor do motor só indica a conexão da carga; a distinção entre barramento seccionado e acoplado vem do bus tie.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a filosofia de sincronismo, que depende de controles, permissivos, proteções e sequência de fechamento."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

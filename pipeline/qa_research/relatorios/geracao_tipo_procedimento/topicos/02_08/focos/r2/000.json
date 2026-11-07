@@ -1,0 +1,109 @@
+{
+  "item": "02_08",
+  "foco": 0,
+  "rodada": 2,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Quando a redução da carga dinâmica depende de malhas atuando em sequência, a validação exige representar a ordem temporal das respostas de controle.",
+      "pergunta": "A redução da carga calculada só aparece quando uma malha limita a vazão antes de outra ação liberar inventário. No modelo usado para validar esse resultado, qual ponto deve estar corretamente representado?",
+      "resposta": "Sequenciamento das respostas de controle.",
+      "explicacao": "O bloco foco atribui diferenças entre estático e dinâmico à evolução temporal do evento, incluindo interação com controles e sequenciamento de respostas. Se a redução depende da ordem das atuações, esse é o ponto decisivo.",
+      "resposta_padrao": "A vazão máxima individual de cada fonte.",
+      "por_que_nao": "Somar máximos não reproduz o transiente quando a carga depende da ordem temporal das atuações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A razão física dessa diferença é que a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essas aplicações são tecnicamente coerentes com situações em que a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reaproveitar um modelo dinâmico para outro regime operacional exige redefinir as condições iniciais coerentes com o novo evento.",
+      "pergunta": "O mesmo arranjo de alívio será reavaliado para uma partida, mas o modelo dinâmico disponível foi montado para parada de emergência. Antes de reutilizá-lo, o que deve ser redefinido?",
+      "resposta": "As condições iniciais do processo.",
+      "explicacao": "A utilidade da abordagem dinâmica depende das condições iniciais. Mudando o estado operacional do evento, manter o estado inicial do caso anterior invalida a carga calculada.",
+      "resposta_padrao": "Os setpoints dos dispositivos de proteção.",
+      "por_que_nao": "Os setpoints podem permanecer os mesmos; o transiente muda quando o estado inicial do sistema muda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses resultados permanecem dependentes das hipóteses adotadas para simultaneidade e dinâmica do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ainda assim, a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudança de interligação entre equipamentos exige atualizar a representação dos volumes comunicantes no estudo dinâmico de alívio.",
+      "pergunta": "Após interligar permanentemente dois vasos antes isolados, a lógica de proteção e as PSVs não mudaram. No estudo dinâmico de alívio, que representação precisa ser atualizada?",
+      "resposta": "Os volumes comunicantes.",
+      "explicacao": "A interligação altera o acoplamento entre equipamentos e o inventário efetivamente participante do transiente. O apoio destaca explicitamente a representação de volumes comunicantes como condição de validade do modelo.",
+      "resposta_padrao": "Só a capacidade nominal das PSVs.",
+      "por_que_nao": "A placa das válvulas pode não mudar, mas a comunicação de volumes altera a dinâmica de pressurização e alívio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A razão física dessa diferença é que a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ainda assim, a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Na adoção de duas PSVs com ajustes diferentes para cargas alta e baixa, a aceitação do arranjo requer verificar a manutenção da cobertura do caso governante.",
+      "pergunta": "Ao adotar duas PSVs com ajustes diferentes para acomodar cargas alta e baixa, qual verificação não pode ficar restrita ao evento de menor vazão?",
+      "resposta": "Manutenção da cobertura do caso governante.",
+      "explicacao": "A solução com duas PSVs é contextual. Além de resolver o comportamento no caso leve, o arranjo deve continuar protegendo o cenário dimensionante.",
+      "resposta_padrao": "Que apenas a PSV de menor ajuste abra na baixa carga.",
+      "por_que_nao": "Isso pode resolver a dinâmica do caso leve e ainda deixar o caso dimensionante sem cobertura adequada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A abordagem estática e a abordagem dinâmica podem levar a conclusões diferentes sobre a carga de alívio e sobre o sistema receptor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para um caso com essa característica, foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em qualquer arranjo com mais de um dispositivo, passam a ser relevantes a repartição de vazão, a estabilidade de abertura, a contrapressão do sistema receptor e a manutenção da cobertura do caso governante."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

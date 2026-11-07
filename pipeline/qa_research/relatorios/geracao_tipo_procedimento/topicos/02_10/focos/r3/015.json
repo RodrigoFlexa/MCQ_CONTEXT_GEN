@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com o DPR mantido, a validação da sintonia da interface deve verificar a estabilidade da vazão de descarga para o hidrociclone.",
+      "pergunta": "Com DPR mantido pela malha de overflow, a água descartada ainda oscila quando a malha de interface atua no underflow. Qual grandeza hidráulica da descarga para o hidrociclone deve ficar menos oscilatória para validar a sintonia?",
+      "resposta": "A vazão enviada ao hidrociclone.",
+      "explicacao": "Mantido o split aproximadamente constante via DPR, o ganho esperado da filosofia aparece na regularidade da descarga. Menor oscilação de vazão ao hidrociclone reduz a variabilidade do tratamento de água.",
+      "resposta_padrao": "A interface do separador mais próxima do setpoint.",
+      "por_que_nao": "No sistema acoplado, interface rígida não garante melhor alimentação ao hidrociclone; com DPR controlado, a verificação decisiva é a vazão de descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na investigação da interação entre interface e hidrociclone, deve-se verificar o fechamento do balanço de massa local entre alimentação, underflow e overflow.",
+      "pergunta": "Uma correção no underflow desorganiza ao mesmo tempo a interface e a descarga de água. Qual fechamento deve ser verificado no próprio hidrociclone antes de concluir por falha de sintonia?",
+      "resposta": "O balanço de massa entre alimentação, underflow e overflow.",
+      "explicacao": "As duas saídas pertencem ao mesmo equipamento e compartilham a alimentação. Fechar esse balanço confirma a interação física local antes de atribuir o efeito apenas à lógica de controle.",
+      "resposta_padrao": "A calibração do transmissor de interface.",
+      "por_que_nao": "Erro de medição pode existir, mas o acoplamento descrito decorre primeiro do balanço comum das duas saídas do hidrociclone.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha da interface água-óleo não deve ser analisada isoladamente."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validação pré-aplicação da filosofia de interface em sistema acoplado deve incluir teste sob golfadas de alimentação, não só em regime médio.",
+      "pergunta": "Regime médio estável não reproduziu a piora observada no tratamento de água durante transientes de produção. Que perturbação deve entrar no teste da filosofia de interface antes da aplicação?",
+      "resposta": "Golfadas de alimentação.",
+      "explicacao": "A filosofia precisa ser julgada também sob transientes que desorganizam a descarga ao hidrociclone. Testes apenas em regime médio ou com pequenas mudanças de referência não captam esse efeito.",
+      "resposta_padrao": "Um degrau pequeno no setpoint da interface.",
+      "por_que_nao": "Esse ensaio avalia a malha local, mas não reproduz a perturbação hidráulica que realmente desestabiliza o sistema acoplado.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

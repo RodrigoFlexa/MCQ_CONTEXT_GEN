@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de comando remoto exige confirmação da execução no elemento final, não só na supervisão ou no controlador.",
+      "pergunta": "O comando remoto de fechamento muda na HMI e o controlador registra a solicitação. Para provar que a ação saiu da supervisão e chegou ao processo, onde a confirmação precisa ocorrer?",
+      "resposta": "No atuador executando o comando.",
+      "explicacao": "Na cadeia de automação, a supervisão ajusta o controlador, mas a ação de controle só se concretiza quando o atuador atua sobre o processo.",
+      "resposta_padrao": "Na mudança do comando exibido na HMI.",
+      "por_que_nao": "A tela pode refletir o pedido sem comprovar a execução física pelo elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Cobertura parcial da automação exige observação local complementar para confirmar a visibilidade real do processo.",
+      "pergunta": "Quando parte do equipamento é acompanhada fora do PLC, qual verificação precisa entrar no teste para confirmar a visibilidade real do seu estado?",
+      "resposta": "Observação complementar local do operador.",
+      "explicacao": "Se a automação cobre apenas parte do equipamento, a leitura do controlador não fecha sozinha a visibilidade do estado real.",
+      "resposta_padrao": "Basta a indicação disponível no PLC ou DCS.",
+      "por_que_nao": "Em cobertura parcial, parte da visibilidade do processo depende de observação fora do controlador.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Nesses casos, parte da visibilidade do processo depende de observação complementar do operador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Inferência de causa e efeito entre tendências requer coerência temporal entre sinais, não apenas atualização individual.",
+      "pergunta": "Ao usar tendências de duas variáveis para inferir causa e efeito no historian, qual condição específica dos sinais deve ser verificada primeiro?",
+      "resposta": "Coerência temporal entre os sinais comparados.",
+      "explicacao": "Comparações e inferências só fazem sentido se as séries estiverem temporalmente coerentes; atualização individual não garante relação física válida entre eventos.",
+      "resposta_padrao": "Confirmar apenas que cada tag está atualizando normalmente.",
+      "por_que_nao": "Atualização individual não assegura alinhamento temporal suficiente entre as duas séries.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Perda de estados e de comando remoto com leitura ainda atualizando exige concentrar o diagnóstico na remota ou módulo especializado.",
+      "pergunta": "A leitura de processo continua atualizando, mas somem os estados e o comando remoto de um skid fica indisponível via remota. Antes de atribuir a falha à rede principal, em que ponto a checagem deve se concentrar?",
+      "resposta": "Na remota ou módulo especializado do skid.",
+      "explicacao": "Com módulos remotos, esse padrão pode vir da integridade local do equipamento, incluindo alimentação, comunicação e lógica, e não só da rede principal.",
+      "resposta_padrao": "Na rede de comunicação principal.",
+      "por_que_nao": "Esse comportamento também pode ser produzido pela remota local, mesmo com tráfego geral ainda presente.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Em termos técnicos gerais, a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

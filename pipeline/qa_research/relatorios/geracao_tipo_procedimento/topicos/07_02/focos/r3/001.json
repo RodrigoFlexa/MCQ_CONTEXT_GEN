@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 3,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Com múltiplos controladores de campo, a observação inicial de tráfego para revisar segmentação deve começar na camada SCADA/supervisória.",
+      "pergunta": "Com múltiplos controladores de campo, em que camada vale posicionar primeiro a observação de tráfego para enxergar os fluxos consolidados rumo à supervisão e a consumidores externos?",
+      "resposta": "Na camada SCADA/supervisória.",
+      "explicacao": "Nessa topologia, o SCADA tende a agregar os dados dos controladores e concentrar a troca com supervisão e consumidores externos, tornando-se o ponto inicial mais representativo para observar os fluxos relevantes.",
+      "resposta_padrao": "Nos controladores de campo.",
+      "por_que_nao": "Os fluxos consolidados para supervisão e consumidores externos tendem a se concentrar no SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora"
+        },
+        {
+          "bloco": "F",
+          "trecho": "concentram troca de dados entre controladores, supervisão e consumidores externos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na revisão de segmentação, conectividade simultânea de controlador de borda para nuvem e SCADA local deve ser inventariada como interfaces separadas.",
+      "pergunta": "O mesmo controlador de borda publica em broker MQTT na nuvem e fornece variáveis em tempo real ao SCADA local. No inventário usado para conferir a segmentação, que separação precisa aparecer?",
+      "resposta": "Separação entre a interface MQTT/nuvem e a interface em tempo real com SCADA.",
+      "explicacao": "Os dois fluxos cruzam fronteiras distintas e atendem finalidades operacionais diferentes. Tratá-los separadamente evita mascarar necessidades específicas de segmentação e controle de tráfego.",
+      "resposta_padrao": "Uma única interface de saída do controlador.",
+      "por_que_nao": "Agrupar os fluxos oculta destinos e fronteiras diferentes entre nuvem e supervisão local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

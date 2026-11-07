@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 4,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Participação do gerador na resposta coordenada da partida automática depende de ele estar eletricamente acoplado ao barramento.",
+      "pergunta": "Com um gerador pronto mecanicamente, mas ainda desacoplado do barramento, que confirmação deve habilitar sua participação na resposta coordenada da partida automática de um grande motor?",
+      "resposta": "Disjuntor do gerador fechado no barramento.",
+      "explicacao": "A lógica usa o estado dos disjuntores dos geradores; só a máquina eletricamente conectada contribui para rigidez, reserva dinâmica e compartilhamento durante o transitório.",
+      "resposta_padrao": "Gerador em rotação nominal e marcado como disponível no supervisório.",
+      "por_que_nao": "Disponibilidade mecânica sem acoplamento elétrico não acrescenta suporte ao barramento nem divide a carga da partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "usando informações de configuração da rede, estados de bus tie, disjuntores dos geradores, ajustes de droop e parâmetros configuráveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando todos os geradores participantes operam em paralelo sob controle do PMS, a resposta coordenada tende a ser mais previsível"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A aprovação de partida com geração em paralelo exige verificação específica do compartilhamento de carga entre as fontes.",
+      "pergunta": "Além de respeitar mínimos de tensão e frequência, qual verificação entre as fontes conclui a aprovação de uma partida de grande consumidor com geração em paralelo?",
+      "resposta": "Compartilhamento de carga entre os geradores participantes.",
+      "explicacao": "Limites globais de tensão e frequência podem ser atendidos mesmo com divisão ruim do degrau. A partida correta também requer conferir como a carga transitória se reparte entre as máquinas.",
+      "resposta_padrao": "Reserva girante total disponível.",
+      "por_que_nao": "Pode haver reserva total suficiente e, ainda assim, um gerador absorver desproporcionalmente a carga da partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a partida de grande consumidor precisa considerar a rigidez do barramento, a reserva dinâmica das fontes, o compartilhamento de carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando todos os geradores participantes operam em paralelo sob controle do PMS"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação final da lógica de partida de grande motor precisa incluir ensaio operacional sob carga para captar interação real rede-controles.",
+      "pergunta": "Mudanças de droop, bus tie e parâmetros do PMS foram implantadas na sequência de partida. Que teste deve complementar simulação e injeção para validar a interação real entre controles e rede?",
+      "resposta": "Ensaio operacional sob carga aplicável.",
+      "explicacao": "Parte das falhas aparece apenas com esforço elétrico real. Como a partida de motor interage fortemente com a distribuição, a validação final precisa reproduzir essa condição.",
+      "resposta_padrao": "Injeção secundária completa dos sinais e permissivos.",
+      "por_que_nao": "Ela não reproduz afundamento de tensão, desvio de frequência, aquecimento e interação efetiva entre controles e rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A partida de motores é um dos eventos que mais interagem com a distribuição elétrica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ensaios operacionais sob carga aplicável são relevantes porque parte das falhas só se manifesta com esforço elétrico real, interação entre controles ou aquecimento."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

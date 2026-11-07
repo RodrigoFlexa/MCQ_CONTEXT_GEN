@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 13,
+  "rodada": 3,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falhas de sequência e temporização só são validadas pela execução da sequência automática completa no sistema integrado.",
+      "pergunta": "Permissivos e atuadores passaram em testes isolados, mas ainda se quer detectar inversão de etapas e temporizações erradas antes da partida. Que ensaio falta executar?",
+      "resposta": "Execução da sequência automática completa no sistema integrado.",
+      "explicacao": "Etapas isoladas não reproduzem a ordem nem os tempos reais. A sequência automática completa, com comunicações e dispositivos reais, é que expõe falhas de sequência no comissionamento.",
+      "resposta_padrao": "Forçar cada etapa da lógica separadamente no PLC.",
+      "por_que_nao": "Etapas isoladas não verificam ordem, temporização nem a resposta dos dispositivos reais ao longo da sequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura de automação precisa ser verificada como sistema integrado, não apenas como coleção de equipamentos energizados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validação de associação correta de alarme exige que o estímulo de teste se origine no dispositivo físico correspondente.",
+      "pergunta": "Banner e sirene aparecem quando a entrada é forçada no controlador. Para confirmar que o alarme pertence ao ponto físico correto, de onde deve partir o estímulo do teste?",
+      "resposta": "Do dispositivo de campo correspondente.",
+      "explicacao": "Alarme mal associado só aparece quando o evento nasce no ponto físico real. Forçar a entrada no controlador pula campo, cabeamento e mapeamento.",
+      "resposta_padrao": "Da própria entrada forçada no controlador.",
+      "por_que_nao": "Esse atalho bypassa a cadeia real e não detecta cruzamento de tags, cabos ou associações erradas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a automação resulta da integração de dispositivos de campo, sistemas controladores e supervisão."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comunicação intermitente entre campo e controlador exige verificação dinâmica pelo caminho real, não apenas diagnóstico estático de link.",
+      "pergunta": "Sinais estáveis na tela e diagnóstico da rede sem falhas não afastam perda intermitente entre campo e controlador. Que verificação torna esse defeito visível?",
+      "resposta": "Ciclagem dinâmica do sinal pelo caminho real campo-controlador.",
+      "explicacao": "Falhas intermitentes podem não aparecer com variáveis paradas ou link saudável. Ciclar o sinal exercita atualizações e transições entre as camadas da automação.",
+      "resposta_padrao": "Checar o status de link ou comunicação em repouso.",
+      "por_que_nao": "Status estático não exercita transições nem captura perdas intermitentes de atualização no caminho operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A tendência historizada só serve para analisar fenômenos rápidos quando a periodicidade de coleta representa a dinâmica observada.",
+      "pergunta": "Uma oscilação que dura poucos segundos é visível no processo, mas quase não aparece na tendência historizada. Antes de concluir que o laço está estável, qual verificação específica da série deve ser feita?",
+      "resposta": "Periodicidade de coleta compatível com a dinâmica da oscilação.",
+      "explicacao": "No historian, a coleta é periódica. Mesmo com sinais coerentes, amostragem lenta pode suavizar ou perder uma oscilação rápida e tornar inválida a inferência de estabilidade.",
+      "resposta_padrao": "Conferir apenas se o carimbo de tempo está avançando normalmente.",
+      "por_que_nao": "Coerência temporal não garante resolução suficiente para registrar um fenômeno de poucos segundos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Cobertura parcial da automação exige observação local complementar para validar o estado operacional real.",
+      "pergunta": "Na partida, todos os permissivos telemetrizados estão satisfeitos, mas um subsistema do pacote não entrega seus estados ao PLC. Que comprovação precisa completar o teste antes de aceitar o estado operacional?",
+      "resposta": "Observação local complementar do subsistema não coberto pelo PLC.",
+      "explicacao": "Quando parte do equipamento fica fora da automação, permissivos e telas não confirmam toda a condição real. A validação do estado operacional precisa ser completada localmente.",
+      "resposta_padrao": "Basta liberar pela ausência de alarmes e pelos permissivos no supervisório.",
+      "por_que_nao": "Com cobertura parcial da automação, a visibilidade do processo não está toda no PLC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o operador passa a compartilhar a condução do processo com o sistema automatizado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Nesses casos, parte da visibilidade do processo depende de observação complementar do operador."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para separar falha de medição de falha nas camadas de supervisão ou historização, o ponto decisivo é a entrada da variável no controlador.",
+      "pergunta": "O processo reage a uma manobra e a válvula se move, mas HMI e historian quase não mostram alteração da variável. Para separar problema de medição de problema nas camadas superiores, qual ponto deve ser conferido primeiro?",
+      "resposta": "A entrada da variável no controlador.",
+      "explicacao": "É no controlador que a medição passa a alimentar a ação de controle. Verificar esse ponto separa falha no campo/medição de falha na supervisão ou na historização.",
+      "resposta_padrao": "Comparar apenas o valor mostrado na HMI com o do historian.",
+      "por_que_nao": "As duas camadas podem reproduzir o mesmo dado incorreto; o corte diagnóstico está no controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses dados alimentam os sistemas controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "recebe informações do processo e coordena ações de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

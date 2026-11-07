@@ -1,0 +1,83 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do vínculo correto entre a variável do controlador e a indicação exibida no supervisório.",
+      "pergunta": "No teste funcional, o evento aparece no controlador com o ponto certo, mas a tela do operador associa a atuação a outro equipamento. Qual vínculo deve ser conferido para validar a função?",
+      "resposta": "Vinculação do tag da HMI à variável correta do controlador.",
+      "explicacao": "A validação não termina no controlador. Se a tela indica outro ponto, há incoerência entre lógica e supervisório, típica de erro de mapeamento ou binding do sinal.",
+      "resposta_padrao": "Aceitar a reação correta do controlador como validação suficiente.",
+      "por_que_nao": "A integridade funcional exige coerência até o supervisório; tela divergente mantém a proteção incompleta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inconsistências entre telas e lógica podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Monitoramento da disponibilidade pela supervisão de perda de comunicação do ponto, além da saúde local do detector.",
+      "pergunta": "Na rotina de disponibilidade de F&G, que alarme de supervisão deve ser acompanhado mesmo com detector energizado e sem falha local?",
+      "resposta": "Alarme de perda de comunicação do ponto com lógica e supervisório.",
+      "explicacao": "Um detector pode permanecer saudável em campo e ainda não entregar proteção se o caminho do sinal estiver degradado. A disponibilidade relevante inclui essa comunicação até a lógica e a interface do operador.",
+      "resposta_padrao": "Falha eletrônica interna do detector.",
+      "por_que_nao": "O diagnóstico local não revela interrupção do caminho do sinal, que também remove a função de proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade de um detector não produz proteção completa se a comunicação com a lógica e com a interface do operador estiver degradada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Etapa obrigatória de validação pós-alteração de lógica: confirmação posterior do evento no supervisório.",
+      "pergunta": "Alteração de lógica já mostrou confirmação local do disparo. Que etapa posterior ainda precisa ser executada para aceitar a implementação?",
+      "resposta": "Confirmação do mesmo evento no supervisório.",
+      "explicacao": "A mudança só fica validada com a dupla verificação prevista. Se o evento não aparece no supervisório, há indício de falha de implementação mesmo com atuação local observada.",
+      "resposta_padrao": "Encerrar a validação com a confirmação local.",
+      "por_que_nao": "A verificação local sozinha não confirma a implementação completa nem a rastreabilidade do comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a gestão de mudança previa dupla verificação, envolvendo confirmação local e confirmação posterior no supervisório."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a ausência de registros esperados no evento investigado indicou indício de falha de implementação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

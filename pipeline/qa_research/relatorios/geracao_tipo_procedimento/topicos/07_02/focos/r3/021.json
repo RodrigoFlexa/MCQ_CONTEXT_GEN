@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de analytics exige associar cada amostra ao modo operacional relevante.",
+      "pergunta": "A vibração de uma bomba dispara alerta preditivo só quando a recirculação abre em baixa vazão, e o modelo vem treinando tudo como uma única condição. Que vínculo deve acompanhar cada amostra para validar o treinamento?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "O bloco foco diz que diagnósticos e comparações ficam frágeis quando o dado não traz o modo de operação. Misturar recirculação em baixa vazão com carga normal distorce o comportamento esperado do equipamento.",
+      "resposta_padrao": "Sincronismo temporal das amostras.",
+      "por_que_nao": "Mesmo sincronizadas, amostras de recirculação e de carga normal não podem ser tratadas como equivalentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Consolidação histórica por ativo requer confirmar o vínculo único das séries ao mesmo equipamento.",
+      "pergunta": "O indicador consolidado de um compressor passou a alternar entre patamares impossíveis depois que tags antigas e novas ficaram ativas no historiador. Que verificação deve vir antes de juntar essas séries?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "Sem identificar de forma consistente o equipamento, a consolidação de séries produz comparações enganosas. Tags antigas e novas podem apontar para um mesmo ativo ou para ativos diferentes.",
+      "resposta_padrao": "Padronização dos nomes das tags.",
+      "por_que_nao": "Nome semelhante ou padronizado não garante vínculo correto com o equipamento físico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comparações enganosas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Resposta operacional a alertas digitais exige distinguir advisory analítico de comando executado pelo controle.",
+      "pergunta": "Um popup do analytics recomenda reduzir carga, mas nenhum setpoint mudou no controle e não há atuação automática registrada. Antes de o operador intervir, qual distinção deve ser confirmada?",
+      "resposta": "Recomendação analítica versus comando de controle.",
+      "explicacao": "Treinamento eficaz deve capacitar a diferenciar uma sugestão de analytics de uma ação automática do controle. Isso evita tratar um advisory como comando já executado pelo sistema.",
+      "resposta_padrao": "Prioridade do alarme na HMI.",
+      "por_que_nao": "A prioridade exibida não define se a mensagem é advisory analítico ou comando do controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "diferenciar recomendação analítica de comando de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

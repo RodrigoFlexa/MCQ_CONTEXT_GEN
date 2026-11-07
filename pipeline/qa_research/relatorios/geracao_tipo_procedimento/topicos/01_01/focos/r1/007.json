@@ -1,0 +1,109 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Marco temporal correto para calcular MTTR e disponibilidade observada.",
+      "pergunta": "Para calcular o MTTR observado de um item crítico, além do instante da falha, que marco do evento deve ser registrado?",
+      "resposta": "o tempo de retorno ao estado operacional",
+      "explicacao": "MTTR observado usa o intervalo entre início da falha e retorno ao estado operacional, não apenas a conclusão administrativa ou física do reparo.",
+      "resposta_padrao": "O horário de encerramento da ordem de manutenção.",
+      "por_que_nao": "Fechar a ordem não garante que o item já voltou ao estado operacional usado no MTTR observado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de dependências compartilhadas antes de creditar redundância no modelo RAM.",
+      "pergunta": "Dois trens idênticos compartilham utilidades e a mesma lógica de intertravamento. Antes de aceitá-los como redundantes no RAM, o que precisa ser representado?",
+      "resposta": "as dependências compartilhadas que eliminam a redundância funcional",
+      "explicacao": "O modelo precisa mostrar dependências comuns; se utilidades ou intertravamentos derrubam ambos os trens, o paralelo simples superestima a disponibilidade.",
+      "resposta_padrao": "Basta representar os dois trens em paralelo 1-de-2.",
+      "por_que_nao": "Recursos e lógicas comuns podem indisponibilizar ambos os trens e anular o ganho esperado da redundância.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Inclusão de falha de partida ou comutação na verificação de modelos com reserva fria.",
+      "pergunta": "Reserva fria incluída no arranjo. Na verificação do modelo, que evento do equipamento reserva não pode ficar de fora?",
+      "resposta": "a falha de partida ou de comutação do reserva",
+      "explicacao": "Em reserva fria, o reserva não sofre a mesma carga do ativo; a indisponibilidade relevante inclui falhas em espera, de partida e de comutação.",
+      "resposta_padrao": "A mesma taxa de desgaste em serviço do equipamento ativo.",
+      "por_que_nao": "Na reserva fria o equipamento não opera sob a mesma carga; o erro crítico está na transferência para o reserva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Recalibração de tempos de reparo com dados locais quando a acessibilidade difere da base genérica.",
+      "pergunta": "Se o acesso para reparo é mais restrito que o assumido no banco setorial usado na estimativa inicial, qual parâmetro deve ser recalibrado com dado local?",
+      "resposta": "os tempos de reparo característicos do sistema",
+      "explicacao": "Quando a acessibilidade muda, os tempos de reparo deixam de representar o sistema local; banco setorial ajuda, mas não substitui o dado da instalação.",
+      "resposta_padrao": "As taxas de falha médias do banco setorial.",
+      "por_que_nao": "A diferença descrita é de acessibilidade, que altera primeiro o tempo para restaurar a função, não necessariamente a falha intrínseca.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada, porque tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

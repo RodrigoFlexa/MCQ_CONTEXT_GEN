@@ -1,0 +1,101 @@
+{
+  "item": "02_08",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Separar o atraso de atuação do tempo hidráulico na verificação do blowdown.",
+      "pergunta": "Após o comando de ESD, a pressão do segmento fica alguns segundos estável e só então começa a cair. Na verificação do blowdown, que intervalo deve ser medido separadamente do tempo até a pressão final?",
+      "resposta": "Atraso de atuação da BDV até iniciar a despressurização.",
+      "explicacao": "Se a pressão não cai logo após o comando, parte do desvio está antes do escoamento. O bloco foco indica que o tempo real também é afetado pelo atraso de atuação.",
+      "resposta_padrao": "O tempo total até a pressão final.",
+      "por_que_nao": "Ele mistura resposta do atuador e escoamento; o patamar inicial exige isolar o atraso de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pelo atraso de atuação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Testes controlados de blowdown são indicados para verificar a efetividade da função"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitorar a contrapressão do flare quando descargas simultâneas alongam a despressurização.",
+      "pergunta": "Quando o mesmo trecho atinge o tempo previsto em teste isolado, mas fica mais lento com outros blowdowns simultâneos, qual variável do sistema deve ser monitorada para validar a causa do desvio?",
+      "resposta": "Contrapressão no sistema de flare.",
+      "explicacao": "Se a diferença aparece apenas com descargas simultâneas, a causa relevante está no sistema receptor. O bloco foco liga o aumento do tempo real à contrapressão no flare.",
+      "resposta_padrao": "A pressão a montante da BDV.",
+      "por_que_nao": "A piora só com descargas simultâneas aponta influência a jusante, não da condição inicial do segmento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pela contrapressão no sistema de flare"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "interação entre segmentos e contrapressão variável no flare"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representar a evolução de propriedades e fase do fluido na verificação do tempo real de blowdown.",
+      "pergunta": "Durante o blowdown de gás rico, surgem condensado e névoa a jusante, e a simulação com propriedades fixas não acompanha o tempo medido. O que precisa ser representado na verificação?",
+      "resposta": "Evolução das propriedades do fluido ao longo do evento.",
+      "explicacao": "Com condensação e névoa, densidade, regime de escoamento e força motriz mudam durante o blowdown. Os blocos indicam que propriedades e fase evoluem ao longo do evento.",
+      "resposta_padrao": "Apenas as perdas de carga em regime monofásico.",
+      "por_que_nao": "Condensação e névoa mudam propriedades e fases; supor gás único deixa de reproduzir a resposta real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "podem ocorrer condensação de frações mais pesadas, névoa"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Incluir a sequência de abertura entre segmentos na análise de blowdown escalonado.",
+      "pergunta": "Ao revisar uma lógica de ESD que passa a abrir grupos em instantes diferentes, sem mudar válvulas ou linhas, que elemento do evento deve entrar explicitamente na análise do blowdown?",
+      "resposta": "Sequência de abertura entre segmentos.",
+      "explicacao": "Com a mesma capacidade instalada, a resposta do sistema ainda pode mudar. O bloco foco afirma que o tempo real depende da forma como a abertura é sequenciada entre segmentos.",
+      "resposta_padrao": "Apenas a capacidade total instalada de blowdown.",
+      "por_que_nao": "Mesma área total não preserva a resposta quando a ordem de abertura muda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode ser necessário blowdown faseado ou escalonado por configuração do ESD"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

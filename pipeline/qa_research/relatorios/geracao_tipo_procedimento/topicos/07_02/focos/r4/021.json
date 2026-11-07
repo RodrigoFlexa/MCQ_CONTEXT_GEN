@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Camada correta para implementar a normalização de dados quando há controladores heterogêneos e consumo local e em nuvem.",
+      "pergunta": "Controladores heterogêneos alimentam um SCADA local e também publicam dados para aplicações em nuvem. Sem alterar a lógica de controle, em que camada a normalização de nomes e estruturas deve ser implementada para servir HMI e analytics?",
+      "resposta": "No SCADA local.",
+      "explicacao": "Quando a padronização não é viável na camada de controle, a normalização deve ficar na camada mais próxima da fonte que ainda a comporte. No arranjo descrito, isso é o SCADA local.",
+      "resposta_padrao": "No broker MQTT ou diretamente na nuvem.",
+      "por_que_nao": "Normalizar longe da fonte mantém divergências na HMI local e multiplica retrabalho nas aplicações consumidoras.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Informação que deve acompanhar amostras de dados para treino ou comparação válida de modelos quando o equipamento opera em regimes distintos.",
+      "pergunta": "A mesma bomba alterna partida, recirculação e carga normal, e o modelo preditivo vem tratando tudo como um único conjunto. Que informação deve acompanhar cada amostra antes do treino ou da comparação?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Sem o modo operacional associado à amostra, o modelo mistura comportamentos normais de regimes diferentes e produz diagnósticos frágeis ou comparações enganosas.",
+      "resposta_padrao": "Apenas a faixa numérica da variável.",
+      "por_que_nao": "A mesma faixa pode ser normal em um modo e anômala em outro; o discriminante correto é o regime de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação cadastral necessária antes de consolidar séries históricas com tags diferentes em um indicador por ativo.",
+      "pergunta": "Após um revamp, tags antiga e nova continuam ativas no historiador para o mesmo pacote. Antes de unir as séries num KPI por ativo, qual confirmação cadastral é indispensável?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "A consolidação só é válida se ambas as séries estiverem vinculadas de forma inequívoca ao mesmo equipamento físico; sem isso, a comparação ou soma fica enganosa.",
+      "resposta_padrao": "Correspondência do nome ou descrição da tag.",
+      "por_que_nao": "Nomes harmonizados não garantem o mesmo equipamento físico nem evitam mistura indevida de séries.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

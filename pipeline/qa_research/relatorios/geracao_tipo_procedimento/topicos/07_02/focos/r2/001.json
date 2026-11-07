@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em arranjo com múltiplos controladores e operação centralizada, o primeiro nó a inspecionar como ponto de interconexão é o SCADA.",
+      "pergunta": "Alarmes de vários controladores aparecem numa única HMI, com histórico centralizado e operação por um ponto comum. Para localizar o nó que deve receber tratamento arquitetural específico, qual sistema você inspeciona primeiro?",
+      "resposta": "O SCADA.",
+      "explicacao": "Com múltiplos controladores, o SCADA tende a agregar alarmes, histórico e interface operacional, concentrando a troca de dados que exige tratamento arquitetural específico.",
+      "resposta_padrao": "O historiador central.",
+      "por_que_nao": "O histórico é só parte da agregação; o ponto comum de alarmes e operação é o SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com modelos de dados distintos entre fornecedores, a verificação da tradução ou integração deve começar na camada supervisória.",
+      "pergunta": "Modelos de dados diferentes entre fornecedores limitaram a padronização perto da fonte. Ao procurar onde a tradução entre esses dados foi concentrada, em que camada você verifica primeiro?",
+      "resposta": "A camada supervisória.",
+      "explicacao": "Quando os modelos diferem, a padronização próxima à fonte fica limitada e a integração tende a migrar para a supervisão.",
+      "resposta_padrao": "Nos gateways próximos à fonte.",
+      "por_que_nao": "Nesse cenário, a integração deixa de ficar perto dos controladores e sobe para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na cartografia de consumo de dados, a travessia relevante é a saída da camada de controle para o consumidor, como o historiador.",
+      "pergunta": "Dados do controle passaram a ser lidos diretamente por um historiador. Ao mapear a fronteira de consumo desse fluxo, em que passagem você a marca?",
+      "resposta": "Na saída do controle para o historiador.",
+      "explicacao": "A fronteira prática desse consumo aparece quando os dados deixam a camada de controle e passam a ser consumidos pelo historiador.",
+      "resposta_padrao": "Na saída do historiador para a rede corporativa.",
+      "por_que_nao": "O consumo pelo historiador já caracteriza a travessia; o envio posterior é outra interface.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

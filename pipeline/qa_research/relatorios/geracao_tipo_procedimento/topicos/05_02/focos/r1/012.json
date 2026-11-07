@@ -1,0 +1,109 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Redundância entre estações master só é efetiva quando a alimentação de cada canal é segregada por UPS.",
+      "pergunta": "Ao auditar duas estações master de supervisão declaradas redundantes, qual conferência de alimentação mostra se a independência entre canais é real?",
+      "resposta": "Cada estação master em UPS diferente.",
+      "explicacao": "Quando ambas as estações ficam no mesmo UPS, a falha dessa fonte elimina a independência elétrica e derruba os dois canais de supervisão.",
+      "resposta_padrao": "Confirmar só a redundância lógica entre as estações.",
+      "por_que_nao": "Sem UPS segregados, uma única falha elétrica remove os dois canais ao mesmo tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Bloqueios de trip mascarados no reboot normal devem ser testados na reinicialização sem alimentação de bateria.",
+      "pergunta": "Várias tentativas de fechar o disjuntor do gerador de emergência falham só na recomposição total; no reboot usual o problema não aparece. Em que condição o teste deve ser repetido?",
+      "resposta": "Reboot do controle sem alimentação de bateria.",
+      "explicacao": "O sinal de trip persistia durante a reinicialização, mas a falha ficava escondida quando o sistema reiniciava no modo usual alimentado por bateria.",
+      "resposta_padrao": "Repetir o reboot normal com a bateria disponível.",
+      "por_que_nao": "Esse modo oculta a condição em que a lógica mantém o trip durante a reinicialização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Back feeding de recomposição parcial exige isolamento prévio dos geradores principais em relação ao barramento.",
+      "pergunta": "Pretende-se usar o gerador de emergência para restaurar controles no painel principal. Qual verificação de isolamento das fontes deve anteceder o back feeding?",
+      "resposta": "Geradores principais isolados do barramento.",
+      "explicacao": "A realimentação parcial só é válida com as fontes principais isoladas, evitando paralelismo indevido e retroalimentação de trechos não previstos.",
+      "resposta_padrao": "Checar apenas se a potência emergencial suporta as cargas.",
+      "por_que_nao": "Capacidade disponível não impede paralelismo indevido nem retroalimentação não prevista.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa realimentação só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ela depende de permissivos, isolamento adequado das fontes e compatibilidade entre o segmento da rede a ser energizado e a capacidade disponível da geração de emergência."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A perda da alimentação de 24 Vcc dos painéis de controle deve ser ensaiada para verificar permanência e controlabilidade do gerador.",
+      "pergunta": "Sem falha no barramento de potência, qual alimentação deve ser interrompida no teste para verificar se o gerador permanece conectado e controlável?",
+      "resposta": "24 Vcc dos painéis de controle do gerador.",
+      "explicacao": "A queda dessa alimentação derrubou a geração principal mesmo com a máquina disponível, mostrando que ela decide a permanência conectado e o controle do gerador.",
+      "resposta_padrao": "A saída CA do gerador para o barramento.",
+      "por_que_nao": "Isso testa perda de potência, não a vulnerabilidade da alimentação de comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

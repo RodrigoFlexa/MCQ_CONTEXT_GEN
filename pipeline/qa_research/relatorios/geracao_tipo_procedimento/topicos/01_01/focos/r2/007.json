@@ -1,0 +1,101 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Levantamento inicial de falhas para RAM deve incluir apenas os modos que retiram a função do sistema.",
+      "pergunta": "Ao preparar os dados para uma análise RAM de um sistema com muitas ocorrências sem impacto operacional, que recorte deve entrar no levantamento de falhas?",
+      "resposta": "os modos de falha que geram perda ao sistema",
+      "explicacao": "A entrada correta da análise RAM são as falhas com efeito funcional no sistema; ocorrências sem perda não orientam adequadamente a modelagem nem a priorização.",
+      "resposta_padrao": "Todas as avarias registradas no equipamento.",
+      "por_que_nao": "Isso serve para histórico de manutenção, mas RAM precisa do efeito funcional da falha no sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "seu significado depende da criticidade funcional do item no sistema"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelagem RAM de sistemas multimodo exige representar a lógica funcional separadamente por modo operacional.",
+      "pergunta": "Partida, regime e exportação usam caminhos diferentes do mesmo sistema. Na análise RAM, que representação impede tratar essas condições como um único arranjo equivalente?",
+      "resposta": "a lógica funcional de cada modo operacional",
+      "explicacao": "Quando a função é satisfeita por caminhos distintos conforme o modo, o modelo deve representar dependências e modos de operação separadamente.",
+      "resposta_padrao": "Um diagrama único do arranjo nominal.",
+      "por_que_nao": "Ele elimina dependências que mudam entre os modos e distorce a previsão de disponibilidade e confiabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar dependências e modos de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Seu efeito depende da lógica funcional do sistema"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com o sistema detalhado, a priorização de melhorias em RAM deve partir dos maiores contribuintes de falha do sistema.",
+      "pergunta": "Com o sistema já detalhado e várias intervenções concorrentes, qual saída do modelo RAM deve ser verificada primeiro para escolher onde atuar?",
+      "resposta": "os maiores contribuintes de falha do sistema",
+      "explicacao": "Nessa etapa, o modelo completo deve mostrar quais falhas mais pesam no desempenho do sistema, orientando a priorização efetiva das ações.",
+      "resposta_padrao": "O equipamento com maior número de falhas registradas.",
+      "por_que_nao": "Contagem bruta ignora a lógica funcional e pode superpriorizar itens pouco limitantes para o desempenho do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelos mais completos permitem identificar os maiores contribuintes de falha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "monitorar apenas médias sem contexto funcional pode mascarar os verdadeiros limitantes do desempenho"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização de RAM após mudança de regime operacional deve revisar as frequências de falha representativas da operação real.",
+      "pergunta": "O estudo inicial usou dados setoriais, mas a operação real passou a alternar carga e paradas com frequência maior. Antes de atualizar a disponibilidade prevista, que parâmetro do RAM deve ser revisto?",
+      "resposta": "as frequências de falha no regime operacional real",
+      "explicacao": "O contexto operacional altera a exposição à falha; manter taxas genéricas compromete a aderência do modelo à operação observada.",
+      "resposta_padrao": "Apenas os tempos de reparo locais.",
+      "por_que_nao": "A mudança descrita atua sobre a incidência de falhas; corrigir só reparo preserva um parâmetro inadequado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não substituem dados da unidade quando o objetivo é representar condições locais"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

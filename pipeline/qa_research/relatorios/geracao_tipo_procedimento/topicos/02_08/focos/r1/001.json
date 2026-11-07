@@ -1,0 +1,109 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Picos de temperatura e vazão de alívio devem ser buscados por simulação dinâmica em cada cenário operacional distinto.",
+      "pergunta": "Para localizar a máxima temperatura de alívio num processo com modos operacionais diferentes, qual execução do estudo não pode ser substituída por um único caso governante?",
+      "resposta": "A simulação dinâmica de cada cenário operacional.",
+      "explicacao": "Os máximos de temperatura e vazão podem ocorrer em modos e instantes diferentes. Por isso, o estudo deve ser rodado dinamicamente para cada cenário operacional relevante.",
+      "resposta_padrao": "Simular só o cenário de maior vazão nominal.",
+      "por_que_nao": "O maior regime nominal não governa automaticamente o pico transiente de temperatura ou vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A verificação dinâmica de surge em compressão deve incluir parada programada, não apenas parada de emergência.",
+      "pergunta": "No estudo de surge de compressão, qual sequência precisa ser testada além da parada de emergência para a verificação não ficar incompleta?",
+      "resposta": "A parada programada.",
+      "explicacao": "O risco de surge foi associado às duas sequências. Limitar a análise à emergência deixa sem verificação outro transiente relevante do sistema de compressão.",
+      "resposta_padrao": "Só a parada de emergência.",
+      "por_que_nao": "A parada programada também altera reciclo, controles e inventário ao longo do transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a sequência temporal dos eventos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Resultados dinâmicos de alívio só são válidos quando a atuação das malhas e controles está representada no modelo.",
+      "pergunta": "Com o mesmo arranjo hidráulico, o pico de alívio cai quando o modelo passa a impor posições fixas de válvulas e setpoints constantes durante o evento. Antes de aceitar o resultado, que parte da modelagem deve ser revista?",
+      "resposta": "A representação dos controles.",
+      "explicacao": "Quando o transiente depende da atuação das malhas, congelar válvulas e setpoints muda a sequência de resposta e os picos calculados.",
+      "resposta_padrao": "A perda de carga das linhas.",
+      "por_que_nao": "Aqui a mudança decisiva veio da forma de tratar as malhas; o transiente depende da atuação dos controles.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da atuação de controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em estudos dinâmicos de alívio, vasos e equipamentos interligados sem bloqueio devem ser modelados como volumes comunicantes.",
+      "pergunta": "Dois vasos ligados por linha sempre aberta aparecem no modelo com pressões que evoluem de forma independente durante o upset. Que representação precisa ser corrigida para validar a vazão de alívio calculada?",
+      "resposta": "Os volumes comunicantes.",
+      "explicacao": "Se equipamentos interligados são tratados como isolados, o inventário compartilhado e a equalização de pressão do transiente ficam incorretos, distorcendo a vazão de alívio.",
+      "resposta_padrao": "O fator de compressibilidade do gás.",
+      "por_que_nao": "Mesmo com propriedades corretas, isolar volumes que se comunicam altera o inventário e a resposta transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

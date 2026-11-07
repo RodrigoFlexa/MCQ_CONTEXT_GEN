@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em arranjo com duas PSVs, a validação do caso de alta carga exige conferir a repartição de vazão entre válvulas, não só a soma aliviada.",
+      "pergunta": "Duas PSVs escalonadas foram adotadas e o relatório do caso de alta carga mostra só a vazão combinada. Que resultado de vazão por dispositivo precisa ser conferido antes de aceitar esse arranjo?",
+      "resposta": "A repartição de vazão entre as PSVs.",
+      "explicacao": "Com mais de um dispositivo, a suficiência da vazão total não garante funcionamento correto; é necessário verificar quanto cada PSV realmente assume no evento.",
+      "resposta_padrao": "A vazão total descarregada para o header.",
+      "por_que_nao": "Em arranjo com mais de uma PSV, a soma pode parecer suficiente e esconder repartição inadequada entre válvulas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A abordagem estática e a abordagem dinâmica podem levar a conclusões diferentes sobre a carga de alívio e sobre o sistema receptor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em qualquer arranjo com mais de um dispositivo, passam a ser relevantes a repartição de vazão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Se o instante do pico diverge após acerto de estado inicial, volumes e válvulas, a validação do modelo deve revisar o sequenciamento de controles e intertravamentos.",
+      "pergunta": "Na calibração do modelo dinâmico, o estado inicial medido, os volumes comunicantes e as curvas das válvulas já conferem, mas o pico calculado ocorre cedo demais. Que parte da representação temporal deve ser revista?",
+      "resposta": "Sequenciamento das respostas de controle e intertravamento.",
+      "explicacao": "Com estado inicial, volumes e dispositivos já coerentes, a antecipação do pico aponta para erro na ordem temporal das atuações automáticas durante o transiente.",
+      "resposta_padrao": "As condições iniciais do processo.",
+      "por_que_nao": "Se o estado de partida já confere com o observado, o desvio remanescente está na ordem temporal das respostas automáticas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na revisão de flare por radiação com fontes defasadas, a aceitação da altura deve usar o instante de maior radiação incidente do transiente.",
+      "pergunta": "Com fontes de alívio que atingem seus picos em instantes diferentes, qual instante do transiente deve governar a aceitação da altura da tocha pelo critério de radiação?",
+      "resposta": "O instante de maior radiação incidente.",
+      "explicacao": "Picos defasados mudam o instante governante; a altura deve ser verificada no máximo de radiação do evento, não por combinações estáticas de máximos.",
+      "resposta_padrao": "A soma das vazões máximas de alívio.",
+      "por_que_nao": "Com defasagens, os máximos individuais podem não coincidir nem produzir a maior radiação no receptor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a avaliação dinâmica reduziu a altura requerida de flare quando comparada à análise estática, em função do critério de radiação térmica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

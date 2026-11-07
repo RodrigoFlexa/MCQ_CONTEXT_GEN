@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 4,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério para reduzir um pedido de acesso administrativo ao nível de engenharia em atualização de firmware.",
+      "pergunta": "Fornecedor pediu perfil administrativo para carregar firmware em um controlador. Qual verificação do escopo decide se o pedido pode ser reduzido antes da liberação?",
+      "resposta": "Se a tarefa altera só firmware, sem função administrativa.",
+      "explicacao": "O menor privilégio concede apenas o necessário para a tarefa definida. Carregar firmware é atividade de engenharia; sem função administrativa envolvida, o pedido deve ser reduzido.",
+      "resposta_padrao": "A criticidade do controlador.",
+      "por_que_nao": "Criticidade aumenta autorização e rastreabilidade, mas não muda a permissão mínima exigida pela tarefa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparação de identidades que completa a checagem de segregação entre aprovação, implementação e validação.",
+      "pergunta": "Os logs já mostram aprovador diferente de quem implementou a alteração. Para completar a verificação de segregação de funções, qual confronto de identidades ainda falta?",
+      "resposta": "Aprovador versus validador da mudança.",
+      "explicacao": "A segregação indicada exige que quem aprova não coincida com quem implementa nem com quem valida. Se aprovação e implementação já estão separadas, falta comparar aprovação e validação.",
+      "resposta_padrao": "Implementador versus validador da mudança.",
+      "por_que_nao": "Essa comparação pode ser útil, mas não comprova a separação exigida entre quem aprova e quem valida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A segregação de funções complementa o menor privilégio."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento de bus tie entre barramentos energizados depende de confirmação de sincronismo.",
+      "pergunta": "Dois barramentos energizados serão interligados para transferência de carga. Qual condição deve ser confirmada antes do fechamento do bus tie?",
+      "resposta": "Sincronismo elétrico entre os barramentos.",
+      "explicacao": "Interligar barramentos já energizados exige controle da condição elétrica; sem sincronização, o fechamento pode gerar transitórios severos e perda ampla de cargas.",
+      "resposta_padrao": "Basta confirmar tensão presente nos dois lados.",
+      "por_que_nao": "Ter tensão nos dois lados não garante sincronismo, e o fechamento fora de fase pode causar transitórios severos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudança de operação para bus tie fechado exige usar a topologia interligada como base da coordenação de proteções.",
+      "pergunta": "Ao passar a operação normal de bus tie aberto para fechado, qual topologia deve orientar os ajustes e a coordenação das proteções?",
+      "resposta": "A topologia interligada com bus tie fechado.",
+      "explicacao": "Fechar o bus tie altera caminhos de corrente de falta, níveis de curto-circuito, sensibilidades e tempos de atuação; a coordenação precisa refletir essa configuração.",
+      "resposta_padrao": "Manter como referência os ajustes válidos com bus tie aberto.",
+      "por_que_nao": "A interligação cria novos caminhos de falta e muda a base elétrica da coordenação das proteções.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Proteção de barramento referida ao primário do transformador requer abertura da fonte primária para eliminar a falta.",
+      "pergunta": "Proteção de barramento referida às buchas primárias do transformador detecta falta no barramento secundário. Qual disjuntor deve abrir para isolar a zona protegida?",
+      "resposta": "O disjuntor primário da fonte do transformador.",
+      "explicacao": "Nessa arquitetura, a proteção do barramento é referida ao lado primário; por isso, a eliminação da falta exige abertura da fonte primária.",
+      "resposta_padrao": "Abrir o disjuntor do alimentador onde apareceu a sobrecorrente.",
+      "por_que_nao": "A zona protegida é o barramento, e essa proteção requer abertura da fonte primária do transformador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos com transformadores em paralelo e secundários conectados por barramento interligado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a proteção de barramento pode usar transformadores de corrente nas buchas primárias ou proteção diferencial de terra, exigindo abertura da fonte primária."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Ajustes de retaguarda de fase e terra do transformador devem ser coordenados com os relés dos alimentadores a jusante.",
+      "pergunta": "Nos ajustes da retaguarda de fase e de terra do transformador, com quais relés a coordenação deve ser feita para preservar a seletividade?",
+      "resposta": "Com os relés dos alimentadores do barramento secundário.",
+      "explicacao": "A retaguarda do transformador deve discriminar faltas nos alimentadores; sem coordenar com seus relés, uma falta a jusante pode desligar todo o barramento ou o transformador.",
+      "resposta_padrao": "Coordenar apenas com a proteção principal do próprio transformador.",
+      "por_que_nao": "Sem coordenação com os alimentadores a jusante, uma falta em feeder pode desligar indevidamente o barramento ou o transformador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

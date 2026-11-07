@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 3,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Teste funcional que distingue privilégio operacional de privilégio de engenharia em perfil de console.",
+      "pergunta": "Perfil de console de operação: qual tentativa deve falhar no comissionamento para confirmar que o acesso permaneceu operacional e não avançou para engenharia?",
+      "resposta": "Alteração de configuração do supervisório.",
+      "explicacao": "No bloco F, operar permite atuar no processo; engenharia permite alterar configuração. Em perfil de console, a verificação decisiva é bloquear mudança de configuração, não ação operacional.",
+      "resposta_padrao": "Ajuste de setpoint.",
+      "por_que_nao": "Setpoint é atuação de operação e pode ser permitido sem conceder privilégio de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de que uma conta de engenharia não recebeu privilégio administrativo pela impossibilidade de desabilitar proteções.",
+      "pergunta": "Intertravamentos mantidos ativos, durante a prova de uma conta de engenharia para atualizar controlador, que ação deve continuar impossível para mostrar que o acesso não virou administrativo?",
+      "resposta": "Desabilitar proteções.",
+      "explicacao": "O bloco F separa engenharia de administração: engenharia cobre configuração, lógica e firmware; administração inclui desabilitar proteções. Se essa ação for possível, houve escalonamento indevido de privilégio.",
+      "resposta_padrao": "Carregar firmware do controlador.",
+      "por_que_nao": "Carga de firmware pertence ao escopo de engenharia e não caracteriza privilégio administrativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "desabilitação de alarmes ou comprometimento de funções de segurança"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Checagem de menor privilégio em acesso remoto de fornecedor para diagnóstico de vulnerabilidade sem autorização de atualização.",
+      "pergunta": "Diagnóstico remoto de vulnerabilidade em dispositivo embarcado foi liberado sem janela de atualização. Que ação deve falhar na sessão para comprovar aplicação correta do menor privilégio?",
+      "resposta": "Alteração de firmware.",
+      "explicacao": "O menor privilégio exige só as permissões necessárias à tarefa definida. Sem janela de atualização, diagnóstico não deve permitir modificar firmware, ação que traz risco funcional e depende do fornecedor.",
+      "resposta_padrao": "Leitura da versão instalada.",
+      "por_que_nao": "Ler versão e coletar diagnóstico faz parte do escopo necessário para identificar o ativo afetado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

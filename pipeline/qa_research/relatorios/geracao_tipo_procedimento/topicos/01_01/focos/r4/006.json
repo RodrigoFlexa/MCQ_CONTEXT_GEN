@@ -1,0 +1,83 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 4,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em reserva fria, perda de função apenas na demanda exige modelar falha de partida/comutação, não só falha em espera.",
+      "pergunta": "Nas raras demandas, a reserva não assume a função apesar de inspeções sem anomalia enquanto parada. Ao modelar o arranjo, que evento precisa entrar explicitamente?",
+      "resposta": "falha de partida/comutação sob demanda",
+      "explicacao": "Em reserva fria, a indisponibilidade pode aparecer só quando a reserva é acionada. O modelo precisa representar a forma de acionamento e as falhas que surgem na partida ou na transferência da função.",
+      "resposta_padrao": "A taxa de falha em espera do equipamento parado.",
+      "por_que_nao": "Ela cobre degradação durante a espera, mas não a perda de função que só aparece na demanda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O ganho real de redundância deve ser verificado contra intertravamentos que propagam a parada ao ramo saudável.",
+      "pergunta": "Dois equipamentos 100% existem, mas a parada de um também derruba o outro por trip encadeado. Na verificação do ganho real de disponibilidade, que ponto deve ser testado?",
+      "resposta": "a lógica de intertravamento entre os ramos",
+      "explicacao": "Duplicação física não basta se o intertravamento remove o ramo saudável. A verificação correta é da lógica que propaga a parada e impede a preservação da função requerida.",
+      "resposta_padrao": "A capacidade nominal isolada de cada equipamento.",
+      "por_que_nao": "Capacidade 100% não garante serviço se a lógica de proteção desarma o ramo que restou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Assumir independência entre trens redundantes requer verificar e modelar falha de causa comum.",
+      "pergunta": "Antes de representar dois trens segregados como paralelos independentes, qual verificação evita superestimar a confiabilidade quando ambos dependem do mesmo permissivo de proteção?",
+      "resposta": "a hipótese de falha de causa comum no permissivo",
+      "explicacao": "Segregação física não elimina dependência se um mesmo elemento de proteção puder retirar os dois trens. O modelo deve incluir a possibilidade de falha comum nesse permissivo.",
+      "resposta_padrao": "Modelar os dois trens como independentes por estarem segregados.",
+      "por_que_nao": "O permissivo compartilhado acopla os ramos e pode provocar perda simultânea da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

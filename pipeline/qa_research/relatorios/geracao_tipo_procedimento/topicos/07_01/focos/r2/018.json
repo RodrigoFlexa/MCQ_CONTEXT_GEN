@@ -1,0 +1,95 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Teste de redundância válido exige evidência de detecção da perda da redundância, não só continuidade funcional.",
+      "pergunta": "Durante o teste de comutação de um controlador redundante, além da continuidade da função, que indicação precisa ser confirmada para o teste valer tecnicamente?",
+      "resposta": "Diagnóstico de perda de redundância.",
+      "explicacao": "Sem indicação da degradação, a função pode continuar ativa, mas o sistema fica exposto a perder o serviço numa segunda falha.",
+      "resposta_padrao": "Basta comprovar que a malha seguiu controlando sem perturbação.",
+      "por_que_nao": "Continuidade sem diagnóstico não prova que o estado degradado será percebido e tratado a tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "eventuais sinais de indisponibilidade do sistema que o transporta ou processa"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diagnóstico por camadas: se a variável está correta no controlador e em campo, a primeira verificação é o caminho de visibilidade até o supervisório.",
+      "pergunta": "A variável muda corretamente no controlador e em campo, mas a tendência da HMI permanece parada. No diagnóstico por camadas, qual trecho do caminho deve ser verificado primeiro?",
+      "resposta": "Caminho de supervisão do dado até a HMI.",
+      "explicacao": "Como o controlador e o campo acompanham a mudança, a medição existe; o defeito está na visibilidade do dado no nível de supervisão.",
+      "resposta_padrao": "O transmissor e sua calibração.",
+      "por_que_nao": "Se o valor já está correto no controlador, a primeira camada suspeita não é a medição de campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Observações locais não integradas só se correlacionam tecnicamente com a automação se tiverem referência temporal comum.",
+      "pergunta": "Parte da condição de processo é confirmada por leitura local não integrada ao PLC. Para correlacioná-la depois com alarmes e tendências, o que o registro precisa trazer?",
+      "resposta": "Horário sincronizado com a automação.",
+      "explicacao": "Quando a observação fica fora do PLC, só uma referência temporal comum permite correlacioná-la de forma confiável com alarmes e tendências.",
+      "resposta_padrao": "Uma descrição detalhada no livro de turno.",
+      "por_que_nao": "Sem referência temporal comum, a observação local não se alinha tecnicamente aos eventos automáticos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito e pode retardar a identificação de desvios, dependendo da disciplina operacional e da forma de registro."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ajuste inicial de nível e sintonia de controladores antes do primeiro gás requer circulação de N2 em alta temperatura.",
+      "pergunta": "Circuito já foi inertizado e os instrumentos passaram em verificação a frio. Antes do primeiro gás, qual condição de teste ainda permite acertar nível e fazer a sintonia inicial com comportamento mais representativo?",
+      "resposta": "Circulação de N2 em alta temperatura.",
+      "explicacao": "O bloco foco liga explicitamente a circulação de N2 em altas temperaturas ao ajuste de instrumentos, especialmente medição de nível e sintonia inicial de controladores, algo que o teste a frio não reproduz.",
+      "resposta_padrao": "Teste a frio com N2.",
+      "por_que_nao": "Sem alta temperatura, não aparecem a acomodação térmica nem a dinâmica usada para ajustar nível e sintonia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em altas temperaturas, a circulação de N2 também favoreceu a identificação de vazamentos associados à acomodação térmica e apoiou ajuste de instrumentos, em especial medição de nível e sintonia inicial de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A operação em circuito fechado com nitrogênio (N2) foi usada para confirmar desempenho, testar antecipadamente a lógica de regeneração e permitir ajustes antes do primeiro gás."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ação direta ou reversa correta de um elemento final só se confirma observando o sentido do atuador em campo sob comando remoto.",
+      "pergunta": "A válvula responde localmente e a posição aparece coerente na tela. Antes de liberar o controle remoto, que verificação em campo ainda elimina atuação invertida?",
+      "resposta": "Sentido do movimento do atuador ao comando remoto.",
+      "explicacao": "Sinal exibido e curso local não bastam. O teste integrado precisa excluir sentido incorreto de atuação, observando em campo se o atuador se move no sentido esperado quando comandado remotamente.",
+      "resposta_padrao": "Stroke test local completo da válvula.",
+      "por_que_nao": "Ele confirma curso mecânico, não a relação entre a saída remota e o sentido real de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "resposta observável do atuador em campo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Associação correta de alarme exige teste ponta a ponta com a condição real gerada no campo, não apenas forcing no controlador.",
+      "pergunta": "Banner e sirene aparecem quando um bit é forçado no controlador, mas isso ainda não valida o alarme de processo. Que teste comprova a associação correta do evento de campo ao alarme exibido?",
+      "resposta": "Teste ponta a ponta com a condição real de campo.",
+      "explicacao": "Forçar o ponto valida apenas parte da cadeia. Para excluir alarme mal associado, é preciso provocar a condição no campo e verificar a chegada correta do evento à supervisão.",
+      "resposta_padrao": "Forçar o alarme no controlador e conferir a tela.",
+      "por_que_nao": "Esse atalho contorna instrumento, mapeamento e comunicação ponta a ponta do evento real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

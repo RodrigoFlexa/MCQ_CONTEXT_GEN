@@ -1,0 +1,105 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O tempo calculado de blowdown só é válido quando o modelo inclui o atraso de atuação da BDV.",
+      "pergunta": "A pressão do vaso só começa a cair vários segundos depois do comando de ESD, embora a BDV esteja dimensionada como antes. No modelo de blowdown, que elemento precisa ser representado para que o tempo calculado seja válido?",
+      "resposta": "Atraso de atuação da BDV.",
+      "explicacao": "F e A2 ligam o tempo real de despressurização ao atraso de atuação; sem esse retardo no modelo, a queda de pressão começa cedo demais.",
+      "resposta_padrao": "A área efetiva da BDV.",
+      "por_que_nao": "Sem queda imediata de pressão após o ESD, o erro está no atraso até a abertura, não na capacidade após abrir.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele também é afetado pelo atraso de atuação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A redução de pico em blowdown faseado depende de reproduzir a sequência real de abertura definida no ESD.",
+      "pergunta": "Com blowdown escalonado para limitar carga no flare, qual verificação do modelo decide se o pico calculado de vazão é representativo do evento real?",
+      "resposta": "A sequência real de abertura dos segmentos no ESD.",
+      "explicacao": "F aponta erro quando a lógica de ESD está incorreta; A2 diz que o tempo e o pico dependem de como a abertura é sequenciada entre segmentos.",
+      "resposta_padrao": "A soma das vazões máximas de todos os segmentos.",
+      "por_que_nao": "No blowdown faseado, o pico depende da ordem e do intervalo de abertura definidos no ESD, não da simultaneidade total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "lógica de ESD"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A contrapressão prevista em blowdown só é válida quando as fronteiras incluem o sistema de flare compartilhado.",
+      "pergunta": "Um cálculo dinâmico de blowdown foi montado só com o equipamento protegido e a BDV. A descarga real segue para header comum de flare. Que fronteira do sistema deve ser incluída antes de aceitar a contrapressão prevista?",
+      "resposta": "O sistema de flare compartilhado a jusante da BDV.",
+      "explicacao": "F destaca contrapressão variável no flare e a importância das fronteiras do sistema; modelar só o equipamento protegido não representa o receptor comum.",
+      "resposta_padrao": "Só a tubulação imediatamente após a BDV.",
+      "por_que_nao": "A contrapressão é gerada pelo sistema receptor comum; limitar o modelo à saída local subestima o evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contrapressão variável no flare."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a qualidade do resultado depende da coerência entre cenário, modelo, fronteiras do sistema e objetivo da decisão de segurança."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A previsão de vazão no blowdown requer modelar a depleção do inventário, não manter montante constante.",
+      "pergunta": "Se o cálculo de blowdown mantém a mesma pressão de montante durante todo o evento, que passo de modelagem falta para a previsão de vazão ao flare ser representativa?",
+      "resposta": "O esvaziamento progressivo do inventário.",
+      "explicacao": "F afirma que pressão, temperatura, composição e vazão variam no tempo e que um modelo simplificado pode perder o esvaziamento progressivo do inventário.",
+      "resposta_padrao": "Usar a pressão inicial constante já é conservador.",
+      "por_que_nao": "Isso ignora a depleção do inventário e distorce o perfil temporal e a duração da vazão descarregada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "esvaziamento progressivo do inventário"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

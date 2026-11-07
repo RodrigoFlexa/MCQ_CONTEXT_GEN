@@ -1,0 +1,101 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "rodada": 4,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representatividade do pico de blowdown em grupos múltiplos depende da sequência real de abertura imposta pela lógica de ESD.",
+      "pergunta": "No teste, o pico no flare saiu menor e mais tardio que o cálculo com abertura simultânea das BDVs de dois grupos. Que detalhe da lógica deve ser reproduzido no modelo?",
+      "resposta": "A sequência real de abertura entre os segmentos.",
+      "explicacao": "A2 afirma que o tempo e o pico dependem de como a abertura é sequenciada entre segmentos; F liga o resultado às premissas do modelo.",
+      "resposta_padrao": "Recalibrar apenas a área efetiva das BDVs.",
+      "por_que_nao": "Com válvulas atuando, a diferença de pico e de instante aponta para temporização da lógica, não para a capacidade nominal.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "premissas de inventário, lógica de ESD ou propriedades do fluido"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Volumes conectados por restrição comum devem ser modelados com interação dinâmica mútua para prever corretamente o pico conjunto de blowdown.",
+      "pergunta": "Dois volumes ligados por restrição comum descarregam para a mesma linha, e a soma de simulações isoladas não reproduz o pico observado. O que deve ser incorporado ao modelo?",
+      "resposta": "O acoplamento dinâmico entre os segmentos.",
+      "explicacao": "F diz que um modelo simplificado pode não captar a interação entre segmentos; no blowdown, as variáveis mudam no tempo e alteram o pico conjunto.",
+      "resposta_padrao": "Somar conservativamente os picos individuais.",
+      "por_que_nao": "A restrição comum faz um segmento modificar o transiente do outro; a soma isolada não preserva magnitude nem instante do pico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interação entre segmentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A vazão de blowdown só é representativa quando o modelo inclui a depleção temporal do inventário do segmento.",
+      "pergunta": "A simulação mantém vazão alta por quase todo o blowdown de um vaso grande, sem queda compatível com a massa já descarregada. Que representação está faltando?",
+      "resposta": "Esvaziamento progressivo do inventário.",
+      "explicacao": "F aponta que um modelo simplificado pode perder a depleção do inventário; sem isso, a fonte de descarga fica artificialmente sustentada ao longo do evento.",
+      "resposta_padrao": "Usar apenas a pressão inicial com a Cv da BDV.",
+      "por_que_nao": "Isso trata o segmento como fonte praticamente constante e distorce a vazão prevista durante a despressurização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esvaziamento progressivo do inventário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Divergência de temperatura e vazão com sinais de condensação durante blowdown exige modelar a mudança de fase no transiente.",
+      "pergunta": "Surge névoa na descarga e a temperatura medida cai mais que o previsto no terço intermediário do blowdown, embora a pressão acompanhe o cálculo. Que fenômeno falta representar?",
+      "resposta": "Mudança de fase no transiente.",
+      "explicacao": "F destaca que modelos simplificados podem perder a mudança de fase; isso afeta temperatura, composição e vazão mesmo com curva de pressão aparentemente correta.",
+      "resposta_padrao": "Ajustar só o coeficiente de descarga da BDV.",
+      "por_que_nao": "Os sinais de névoa e resfriamento apontam alteração termodinâmica do escoamento, não erro isolado de capacidade da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mudança de fase"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

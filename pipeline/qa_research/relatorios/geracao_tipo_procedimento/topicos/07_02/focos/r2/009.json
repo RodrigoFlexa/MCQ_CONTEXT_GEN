@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 2,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Verificação arquitetural de redução de exposição em acesso remoto a IACS.",
+      "pergunta": "Na revisão da arquitetura de acesso remoto para automação, que condição deve ser confirmada para considerar reduzida a exposição de rede?",
+      "resposta": "Ausência de acessibilidade direta a partir da internet.",
+      "explicacao": "Reduzir exposição, neste contexto, significa remover a alcançabilidade direta por agentes externos. Se acesso remoto for necessário, ele deve ocorrer por método seguro e controlado, não por publicação direta.",
+      "resposta_padrao": "Firewall perimetral com portas liberadas só para suporte.",
+      "por_que_nao": "Mesmo restrito, isso mantém acessibilidade direta a partir da internet; o critério é evitá-la.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reduzir a exposição de rede diminui a chance de alcançabilidade por agentes externos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "recomenda-se evitar acessibilidade direta a partir da internet"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando o acesso remoto for necessário, recomenda-se usar método seguro, como Rede Privada Virtual (VPN)."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Checagem do estado de segurança do ativo de destino antes de suporte remoto.",
+      "pergunta": "A estação de engenharia ficou semanas fora de serviço e volta a receber suporte remoto. A VPN autenticou e o notebook do fornecedor está conforme. O que precisa ser verificado no lado acessado antes de liberar a sessão?",
+      "resposta": "Estado de segurança do equipamento de destino.",
+      "explicacao": "A VPN protege o canal, mas não corrige comprometimento, desatualização ou má configuração no ativo acessado. Uma sessão válida ainda pode introduzir risco se o destino estiver inseguro.",
+      "resposta_padrao": "Apenas a conformidade do notebook de origem.",
+      "por_que_nao": "A eficácia do acesso remoto também depende do estado do equipamento de destino conectado à VPN.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Limitação de privilégios da sessão remota ao escopo técnico da tarefa.",
+      "pergunta": "Suporte remoto foi aberto só para coleta de logs, mas o perfil da sessão permite editar parâmetros e enviar arquivos. Que verificação deveria ter barrado essa liberação?",
+      "resposta": "Permissões compatíveis com a tarefa executada.",
+      "explicacao": "Nos acessos remotos a IACS, o risco não depende apenas do canal e do dispositivo. As permissões da sessão também precisam ser compatíveis com a necessidade operacional da atividade.",
+      "resposta_padrao": "Somente a criptografia da VPN.",
+      "por_que_nao": "Canal protegido não impede atuação indevida se a sessão mantiver privilégios acima do necessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

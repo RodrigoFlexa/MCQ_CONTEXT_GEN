@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Modelagem de redundância com reserva por demanda exige explicitar a lógica de acionamento/comutação, não apenas a duplicação física.",
+      "pergunta": "Arranjo com reserva que só entra por demanda: qual parte da lógica precisa aparecer explicitamente no modelo RAM para o ganho de disponibilidade não ser superestimado?",
+      "resposta": "A lógica de acionamento e comutação da reserva.",
+      "explicacao": "O efeito da redundância depende de como a reserva é acionada. Tratar o arranjo só como paralelo ignora falhas de partida e de transferência da função.",
+      "resposta_padrao": "Representar apenas dois ramos em paralelo idênticos.",
+      "por_que_nao": "Isso omite o modo de acionamento da reserva e superestima o ganho quando a troca depende de demanda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparação de arquiteturas redundantes para missão longa deve usar a evolução temporal da confiabilidade, não apenas o desempenho inicial.",
+      "pergunta": "Duas arquiteturas redundantes empatam no start-up. Para decidir qual tem maior probabilidade de cumprir a missão em horizonte longo, qual curva deve ser comparada?",
+      "resposta": "A curva de confiabilidade ao longo do tempo de missão.",
+      "explicacao": "A redundância pode trazer ganho no início da missão e perder efeito em tempos longos, quando a degradação dos ativos deixa de ser compensada pelo reserva.",
+      "resposta_padrao": "Comparar apenas a disponibilidade inicial.",
+      "por_que_nao": "O resultado no início não mostra a perda de benefício da redundância ao longo do horizonte da missão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode elevar a confiabilidade e a disponibilidade no início da missão, mas esse benefício não é ilimitado: em tempos mais longos, a degradação dos equipamentos ativos pode deixar de ser compensada pelo reserva."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comparar modos operacionais e refinar previsões de disponibilidade e confiabilidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Parametrização de reserva fria deve usar falha em espera no período parado, em vez de copiar a taxa do equipamento em operação.",
+      "pergunta": "Reserva fria permanece parada por meses e só entra quando o ativo falha. Ao parametrizar esse período no modelo, que taxa específica deve ser usada?",
+      "resposta": "Taxa de falha em espera.",
+      "explicacao": "Em reserva fria, o item não opera sob a mesma carga do ativo. O período parado mantém falhas próprias de espera e deve ser modelado separadamente.",
+      "resposta_padrao": "A mesma taxa de falha do equipamento em serviço.",
+      "por_que_nao": "Parado, o reserva fria não sofre a mesma solicitação do ativo e conserva falhas próprias do estado de espera.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "item": "02_01",
+  "foco": 24,
+  "rodada": 3,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Recalcular o fator de compressibilidade do gás com pressão, temperatura e composição medidos.",
+      "pergunta": "Na revisão do volume de gás corrigido, pressão, temperatura e composição do período já estão disponíveis. Qual parâmetro do algoritmo deve ser recalculado com esses dados antes do registro fiscal?",
+      "resposta": "Fator de compressibilidade do gás.",
+      "explicacao": "O volume compensado de gás depende da compressibilidade; como a densidade varia com pressão, temperatura e composição, o algoritmo deve recalcular esse fator com os dados medidos do período.",
+      "resposta_padrao": "Densidade padrão fixa do contrato.",
+      "por_que_nao": "No gás, a conversão depende do estado medido e da composição; densidade fixa não acompanha a variação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No caso de fluidos compressíveis, a compressibilidade e a composição influenciam o cálculo do volume compensado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para gás natural, a necessidade de algoritmo de cálculo decorre justamente da dependência da densidade em relação à pressão, temperatura e composição."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Incluir no balanço as correntes que cruzam a fronteira da estocagem durante o alívio.",
+      "pergunta": "Com a linha fiscal antes da estocagem, o balanço do offloading já tem inventários inicial e final. Que movimentação ainda deve entrar na janela para fechar o volume transferido?",
+      "resposta": "Movimentações que cruzam a fronteira do armazenamento.",
+      "explicacao": "Com a medição a montante da estocagem, a vazão não representa sozinha a entrega; o balanço precisa incluir todas as correntes que cruzam o armazenamento na janela do alívio.",
+      "resposta_padrao": "Só a produção fiscalizada do período.",
+      "por_que_nao": "Quando a medição está antes da estocagem, a produção não substitui os fluxos que entram ou saem do armazenamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em offloading de óleo, a estabilidade também importa: partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

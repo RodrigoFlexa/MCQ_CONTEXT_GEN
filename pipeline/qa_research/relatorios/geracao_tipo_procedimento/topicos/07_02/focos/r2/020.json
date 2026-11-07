@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 2,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso do status de qualidade do sinal para bloquear pontos substituídos antes de analytics online.",
+      "pergunta": "O valor numérico chega com timestamp válido, mas o ponto foi substituído após perda temporária de comunicação. Que verificação deve barrar seu uso direto em analytics?",
+      "resposta": "Status de qualidade do sinal.",
+      "explicacao": "Execução online depende de dados operacionais confiáveis. Mesmo com valor e horário presentes, ponto substituído sem tratamento de qualidade pode contaminar diagnósticos e previsões.",
+      "resposta_padrao": "Coerência da tendência nas últimas amostras.",
+      "por_que_nao": "Tendência coerente não transforma valor substituído em medição válida para uso analítico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do sincronismo entre fontes antes de correlacionar dados usados em ajustes operacionais frequentes.",
+      "pergunta": "Eventos de controle serão correlacionados com medições de outra origem para orientar ajustes frequentes. A transmissão atende ao atraso esperado. Que verificação temporal ainda define se a correlação é válida?",
+      "resposta": "Qualidade de sincronismo entre as fontes.",
+      "explicacao": "Aplicações próximas do controle exigem coerência temporal real entre origens. Latência aceitável não basta se os relógios estiverem defasados e os eventos parecerem correlacionados artificialmente.",
+      "resposta_padrao": "Mesma taxa de atualização dos sinais.",
+      "por_que_nao": "Amostragem parecida não corrige defasagem de tempo entre fontes diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Checagem da assinatura e entrega no broker MQTT quando o consumidor local não atualiza apesar da publicação existir.",
+      "pergunta": "O controlador de borda publica normalmente e a nuvem segue recebendo, mas o SCADA local deixa de atualizar em tempo real. Que ponto da cadeia deve ser verificado primeiro?",
+      "resposta": "Assinatura e entrega no broker MQTT ao SCADA.",
+      "explicacao": "Se a publicação já chega a outro consumidor, a conversão na origem existe. O primeiro ponto distintivo passa a ser a distribuição pelo broker até o SCADA local.",
+      "resposta_padrao": "Calibração do sensor de campo.",
+      "por_que_nao": "A mudança já percorreu a origem e chegou a outro destino; o problema está na distribuição ao consumidor local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também aparecem arquiteturas híbridas, nas quais controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "protocolos e brokers distribuem esses dados"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Conferência da base de modelagem comum antes de confrontar resultados de disciplinas integradas offline.",
+      "pergunta": "Antes de confrontar resultados de reservatório, poços e facilidades numa plataforma offline unificada, qual alinhamento técnico deve ser verificado entre os modelos?",
+      "resposta": "Base físico-termodinâmica e numérica comum.",
+      "explicacao": "A vantagem da integração offline é reduzir divergências entre disciplinas. Isso depende de propriedades físicas, termodinâmica e métodos de solução permanecerem alinhados no mesmo ambiente.",
+      "resposta_padrao": "Mesma malha temporal de execução.",
+      "por_que_nao": "Malha temporal comum não evita divergências se cada disciplina usa bases físicas e solucionadores distintos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo offline, uma plataforma unificada de simulação pode reunir reservatório, poços, escoamento, facilidades de produção e cenários de segurança em um mesmo ambiente de modelagem."
+        },
+        {
+          "bloco": "F",
+          "trecho": "propriedades físicas, termodinâmica e métodos de solução permanecem alinhados entre disciplinas, reduzindo divergências entre modelos paralelos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

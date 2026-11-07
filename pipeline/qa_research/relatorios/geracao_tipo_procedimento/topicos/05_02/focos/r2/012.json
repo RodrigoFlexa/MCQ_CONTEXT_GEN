@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validação da lógica de recomposição deve reproduzir o estado degradado real de alimentação de controle, não apenas o reboot normal sustentado.",
+      "pergunta": "Várias tentativas de energizar o gerador de emergência falham só após blackout total; no reboot rotineiro, a sequência passa. Em que condição de reinicialização a lógica de recomposição deve ser testada para que o resultado seja válido?",
+      "resposta": "Reboot sem sustentação das alimentações de controle.",
+      "explicacao": "O bloqueio ficou oculto no reinício usual com bateria. A verificação válida precisa reproduzir o modo anormal pós-blackout, quando UPS, bateria ou controle podem estar indisponíveis.",
+      "resposta_padrao": "No reboot normal, com bateria e UPS mantendo o controle.",
+      "por_que_nao": "Esse modo mascara intertravamentos que só aparecem no estado degradado pós-blackout.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na recomposição malsucedida, o ponto decisivo de monitoração é a saída de trip da lógica para o disjuntor do gerador de emergência.",
+      "pergunta": "Durante a recomposição, o disjuntor do gerador de emergência fecha e torna a abrir no reboot do controle. Qual sinal deve ser acompanhado para provar que a própria lógica está bloqueando a energização?",
+      "resposta": "Saída de trip da lógica para o disjuntor.",
+      "explicacao": "No evento descrito, o bloqueio veio de um trip ainda enviado pela lógica durante o reboot. Monitorar essa saída distingue bloqueio lógico de falta mecânica ou ausência de fechamento.",
+      "resposta_padrao": "Comando de fechamento do disjuntor.",
+      "por_que_nao": "Pode haver comando de fechar; se o trip permanece ativo, o disjuntor reabre mesmo com fechamento solicitado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle;"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

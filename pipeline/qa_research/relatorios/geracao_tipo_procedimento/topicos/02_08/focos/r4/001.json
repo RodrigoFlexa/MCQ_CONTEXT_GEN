@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 4,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em arranjo com duas PSVs escalonadas, a filosofia do caso de baixa carga se valida pela repartição da descarga entre as válvulas.",
+      "pergunta": "Com duas PSVs em paralelo e ajustes escalonados, a pressão protegida permaneceu aceitável no transiente de menor carga. Que verificação do resultado confirma que a filosofia de abrir só a primeira válvula foi realmente atendida?",
+      "resposta": "Repartição de vazão entre as PSVs.",
+      "explicacao": "Em arranjos com mais de um dispositivo, pressão máxima aceitável não basta. É preciso ver como a descarga se distribuiu para confirmar que a segunda PSV não participou do caso de menor carga.",
+      "resposta_padrao": "A pressão máxima atingida pelo equipamento protegido.",
+      "por_que_nao": "Mesmo com pressão aceitável, as duas PSVs podem ter aliviado; só a repartição mostra quem assumiu a descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela também foi aplicada para obter máxima temperatura e vazão de alívio em cenários operacionais distintos, estudar o comportamento de PSVs"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em qualquer arranjo com mais de um dispositivo, passam a ser relevantes a repartição de vazão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na reconciliação de modelo dinâmico de alívio, desvio já no início do evento exige refazer a inicialização nas condições reais.",
+      "pergunta": "Na reconciliação entre teste de parada e modelo dinâmico, a vazão simulada já nasce maior que a medida antes da primeira atuação automática. Que etapa da preparação do caso deve ser refeita antes de revisar a lógica?",
+      "resposta": "Inicialização do modelo nas condições reais do processo.",
+      "explicacao": "Se a divergência aparece antes de qualquer atuação, o ponto decisivo está no estado inicial adotado. O bloco vincula a utilidade da abordagem às condições iniciais do modelo.",
+      "resposta_padrao": "Representação dos controles.",
+      "por_que_nao": "Antes da primeira atuação automática, controles ainda não explicam o desvio inicial de vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A razão física dessa diferença é que a simulação dinâmica representa a evolução temporal do evento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O amortecimento dinâmico entre equipamentos interligados só é verificado corretamente com a representação adequada dos volumes comunicantes.",
+      "pergunta": "Um volume pulmão ligado por equalização sem bloqueio não amortece, no modelo, a queda de pressão do equipamento vizinho durante o transiente observado em campo. Que representação deve ser conferida antes de ajustar setpoints ou válvulas?",
+      "resposta": "Representação dos volumes comunicantes.",
+      "explicacao": "Sem a comunicação correta entre volumes interligados, o modelo perde o acoplamento que amortece o transiente. O bloco cita volumes comunicantes como hipótese decisiva para a utilidade da simulação.",
+      "resposta_padrao": "Sintonia das malhas de controle.",
+      "por_que_nao": "A perda do efeito de amortecimento entre volumes interligados decorre do acoplamento hidráulico, não da sintonia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

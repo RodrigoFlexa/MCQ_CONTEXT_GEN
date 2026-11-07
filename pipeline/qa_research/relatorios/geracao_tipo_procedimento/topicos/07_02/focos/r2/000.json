@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 2,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de alcançabilidade em rede antes de concluir que uma vulnerabilidade exposta pode afetar funções físicas de controle.",
+      "pergunta": "Detectada vulnerabilidade explorável em um ativo industrial exposto em rede, qual evidência arquitetural deve ser confirmada antes de concluir que ela pode atingir atuação de válvulas ou controle de vazão?",
+      "resposta": "Caminho de propagação em rede até a função de controle.",
+      "explicacao": "A explorabilidade só se traduz em risco operacional direto quando a arquitetura permite alcance remoto à função industrial; a segmentação existe justamente para restringir esses caminhos.",
+      "resposta_padrao": "A nota CVSS da vulnerabilidade.",
+      "por_que_nao": "Sem caminho de exposição até o controle, a severidade isolada não comprova alcance operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Arquitetura IT/OT é a organização dos sistemas, redes e interfaces que conectam tecnologia da informação (IT) e tecnologia operacional (OT) em uma instalação industrial."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando sistemas industriais expostos em rede têm vulnerabilidades exploráveis, um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério arquitetural que comprova defesa em profundidade entre domínios industriais de criticidade diferente.",
+      "pergunta": "Que evidência arquitetural demonstra defesa em profundidade entre controle de processo, proteção independente, SIS e sistema elétrico?",
+      "resposta": "Barreiras sucessivas entre os domínios.",
+      "explicacao": "Nos blocos, defesa em profundidade é o encadeamento de barreiras sucessivas. Um único perímetro não demonstra contenção interna entre domínios de criticidade distinta.",
+      "resposta_padrao": "Um firewall único na borda da rede industrial.",
+      "por_que_nao": "Isso cria perímetro, mas não o encadeamento de barreiras internas exigido entre domínios distintos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo pode incluir o sistema básico de controle de processo, funções de camada independente de proteção, sistemas instrumentados de segurança, sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O princípio ganha importância porque a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação decisiva para liberar mudança de TI que introduz latência variável em rede operacional.",
+      "pergunta": "Uma mudança de TI aumenta sincronizações e introduz latência variável na rede operacional. Antes da liberação, qual verificação decide se o ajuste é compatível com o ambiente OT?",
+      "resposta": "Manutenção do controle determinístico.",
+      "explicacao": "No ambiente OT, a aceitação da mudança depende de preservar o comportamento temporal necessário ao processo; flexibilidade administrativa não prevalece sobre determinismo, segurança operacional e disponibilidade.",
+      "resposta_padrao": "Conformidade com as políticas administrativas de TI.",
+      "por_que_nao": "No OT, a prioridade é preservar determinismo, segurança operacional e disponibilidade do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes:"
+        },
+        {
+          "bloco": "F",
+          "trecho": "OT prioriza controle determinístico, segurança operacional e disponibilidade do processo; IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

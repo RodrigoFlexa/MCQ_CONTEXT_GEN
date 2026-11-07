@@ -1,0 +1,79 @@
+{
+  "item": "02_12",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validade da partida de compressor elétrico depende da margem de geração disponível no barramento.",
+      "pergunta": "Na liberação de partida de um compressor acionado por motor elétrico, os geradores já operam próximos da carga. Qual verificação define se o teste pode prosseguir sem falsear a avaliação do conjunto?",
+      "resposta": "Reserva de potência disponível no barramento elétrico.",
+      "explicacao": "A partida e o carregamento do motor dependem da coordenação com o sistema elétrico. Sem margem de geração, o teste reflete limitação do barramento, não do compressor nem do controle.",
+      "resposta_padrao": "Estabilidade da pressão de sucção.",
+      "por_que_nao": "Pressão estável não garante que o motor possa partir e carregar sem restrição do sistema elétrico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso evidencia que a escolha e a operação do acionamento se conectam à arquitetura energética do FPSO."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele também influencia partidas, paradas e a coordenação com o sistema elétrico e com as utilidades da unidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A validação de transientes em simulação deve representar explicitamente a dinâmica do acionador.",
+      "pergunta": "Para validar em simulação dinâmica a resposta de um trem de compressão a um degrau rápido de carga, qual parte do conjunto precisa ter dinâmica explícita?",
+      "resposta": "O acionador.",
+      "explicacao": "A forma como torque e potência chegam ao compressor depende do acionador. Sem sua dinâmica, a simulação erra a rapidez de resposta e a travessia dos transientes.",
+      "resposta_padrao": "Apenas o compressor.",
+      "por_que_nao": "O mapa do compressor não representa a entrega de torque e potência que governa o comportamento transitório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o acionador define como o torque e a potência chegam ao compressor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "condiciona a rapidez de resposta, a faixa de modulação e a forma de atravessar transientes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em controle de capacidade por rotação, saturação sustentada exige verificar o limite de rotação do acionador antes de retunar a malha.",
+      "pergunta": "Num trem cuja capacidade é ajustada por rotação, o comando e a velocidade real atingem o máximo e a pressão não recupera, com o ponto longe de surge e stonewall. O que verificar antes de retunar a malha?",
+      "resposta": "O limite de rotação disponível do acionador.",
+      "explicacao": "Se a capacidade é modulada por rotação e o conjunto já atingiu a máxima velocidade disponível sem estar nos limites aerodinâmicos, a restrição relevante está no acionador, não na sintonia.",
+      "resposta_padrao": "O ganho da malha de pressão.",
+      "por_que_nao": "Com comando e velocidade já saturados, sintonia não amplia a rotação máxima que o acionador consegue fornecer.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando o acionador é de velocidade variável ou governado por turbina, o controle de capacidade pode atuar diretamente sobre a rotação;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "condiciona a rapidez de resposta, a faixa de modulação e a forma de atravessar transientes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

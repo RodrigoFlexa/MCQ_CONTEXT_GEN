@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do tratamento de qualidade do dado para distinguir medição válida de valor mantido.",
+      "pergunta": "O link oscila e o analytics continua recebendo valores sem lacunas. Qual verificação no tratamento do dado confirma que a amostra representa medição boa, e não valor mantido?",
+      "resposta": "Propagação do indicador de qualidade da amostra.",
+      "explicacao": "O bloco foco aponta que, sem tratamento de qualidade, os diagnósticos ficam frágeis. A checagem decisiva é se a qualidade acompanha a amostra para distinguir valor bom de congelado, substituído ou inválido.",
+      "resposta_padrao": "Atualização do timestamp da tag.",
+      "por_que_nao": "Timestamp pode continuar avançando em republicação ou retenção; sem qualidade propagada, o valor ainda pode não ser medição válida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem tratamento de qualidade tendem a produzir diagnósticos frágeis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "interpretar qualidade de dados"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Conferência da unidade de engenharia antes de ajustar modelos ou limiares analíticos.",
+      "pergunta": "Após migração de dados, o mesmo transmissor passa a parecer desviado no modelo sem mudança de processo. Antes de ajustar o analytics, qual conferência no cadastro da variável vem primeiro?",
+      "resposta": "Unidade de engenharia confiável.",
+      "explicacao": "A utilidade analítica depende da coerência dos dados. Se a unidade estiver incorreta ou ambígua, o desvio pode ser apenas erro de conversão ou escala, e qualquer ajuste posterior incorporará esse erro.",
+      "resposta_padrao": "Faixa numérica atual da série.",
+      "por_que_nao": "Valores podem permanecer em faixa plausível e ainda estar em unidade incorreta; a comparação continua enganosa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Vínculo técnico a verificar antes de consolidar séries históricas por ativo após mudanças de tags.",
+      "pergunta": "Depois de um revamp, séries antigas e novas permanecem no historiador com tags diferentes. Ao unir o histórico para calcular um indicador por ativo, qual vínculo deve ser verificado antes da consolidação?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "Sem uma identidade estável do equipamento, a consolidação pode unir sinais de ativos distintos ou separar o mesmo ativo após renomeações, comprometendo indicadores e comparações históricas.",
+      "resposta_padrao": "Nome ou descrição da tag.",
+      "por_que_nao": "Tags e descrições mudam entre fornecedores e revamps; a junção correta depende da identidade do equipamento, não do rótulo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comparação entre ativos sem retrabalho"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Classificação funcional da aplicação para definir o rigor dos testes de latência e indisponibilidade.",
+      "pergunta": "Antes de definir latência e indisponibilidade aceitáveis para uma aplicação online, qual distinção funcional deve ser verificada para escolher o rigor do teste?",
+      "resposta": "Influência em ajustes operacionais frequentes.",
+      "explicacao": "O bloco foco diferencia aplicações de apoio à decisão das que influenciam ajustes frequentes. A tolerância a atraso e indisponibilidade depende desse acoplamento funcional com o controle do processo.",
+      "resposta_padrao": "Criticidade do equipamento monitorado.",
+      "por_que_nao": "Mesmo em ativo crítico, uma ferramenta apenas consultiva tolera mais atraso do que uma aplicação que afeta ajustes frequentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

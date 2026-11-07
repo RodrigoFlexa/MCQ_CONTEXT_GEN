@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Defesa em profundidade na segmentação se verifica pela presença de barreiras sucessivas entre domínios de criticidade distinta.",
+      "pergunta": "Na revisão de segmentação entre controle de processo, proteção independente e sistema elétrico, que evidência caracteriza defesa em profundidade?",
+      "resposta": "Barreiras sucessivas entre os domínios.",
+      "explicacao": "No contexto de segmentação, defesa em profundidade não é uma fronteira única; é o encadeamento de barreiras que reduz a propagação entre domínios com funções e consequências diferentes.",
+      "resposta_padrao": "Um firewall entre as redes.",
+      "por_que_nao": "Uma única fronteira não representa o encadeamento de barreiras exigido para conter propagação entre domínios críticos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O princípio ganha importância porque a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com modelos de dados incompatíveis entre fornecedores, a inspeção de segmentação deve focar a camada supervisória, onde a interconexão tende a se concentrar.",
+      "pergunta": "Com modelos de dados incompatíveis entre fornecedores, onde a revisão de segmentação deve procurar primeiro o ponto que concentra trocas entre controle e consumidores externos?",
+      "resposta": "Na camada supervisória/SCADA.",
+      "explicacao": "Quando a padronização próxima à fonte fica limitada, a integração migra para a camada supervisória, que passa a concentrar a troca de dados e merece tratamento arquitetural específico.",
+      "resposta_padrao": "Nos controladores de campo.",
+      "por_que_nao": "Nessa condição, a integração tende a sair da fonte e se concentrar na supervisão, não nos controladores isoladamente.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A monitoração da arquitetura segmentada deve verificar se as barreiras seguem compatíveis com a criticidade das funções, independentemente do backup de energia do SCADA.",
+      "pergunta": "SCADA permaneceu ativo pela UPS durante perda da alimentação principal. Qual verificação ainda determina se a arquitetura segue adequada às funções críticas?",
+      "resposta": "Compatibilidade das barreiras com a criticidade das funções.",
+      "explicacao": "A continuidade elétrica mantém supervisão e comunicação, mas a monitoração da arquitetura precisa confirmar que as barreiras continuam proporcionais à criticidade das funções envolvidas.",
+      "resposta_padrao": "Autonomia da UPS do SCADA.",
+      "por_que_nao": "Backup de energia preserva disponibilidade da supervisão, mas não demonstra contenção lógica entre domínios críticos.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Como princípio técnico transferível, a monitoração da arquitetura deve confirmar se o escopo dos sistemas conectados permanece coerente, se os fluxos entre domínios continuam necessários e se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A disponibilidade elétrica interage com essa arquitetura porque sistemas SCADA dependem de energia confiável e ininterrupta; assim, backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O princípio ganha importância porque a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A efetividade da segmentação é comprovada pela contenção da propagação a partir de uma interface vulnerável, não pela remoção da vulnerabilidade de origem.",
+      "pergunta": "Durante um teste controlado, a vulnerabilidade do ativo exposto permanece aberta. Que evidência confirma que a segmentação está funcionando?",
+      "resposta": "Que o problema não alcança os demais ativos conectados.",
+      "explicacao": "Segmentar não elimina a vulnerabilidade original; sua função é dificultar que um problema em uma interface se propague aos outros ativos conectados.",
+      "resposta_padrao": "Que a vulnerabilidade foi eliminada no ativo exposto.",
+      "por_que_nao": "Eliminar a origem é correção da vulnerabilidade; segmentação se comprova pela contenção do alcance.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Separar domínios não remove a vulnerabilidade de origem, mas dificulta que um problema em uma interface alcance todos os ativos conectados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando sistemas industriais expostos em rede têm vulnerabilidades exploráveis, um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

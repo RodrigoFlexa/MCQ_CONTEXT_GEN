@@ -1,0 +1,105 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância de 120 Vca só permanece válida se um único UPS sustentar toda a estação em contingência.",
+      "pergunta": "Novas cargas foram incluídas nas estações alimentadas por UPS A/B. Que verificação de contingência confirma que a arquitetura ainda suporta a perda de um dos UPS?",
+      "resposta": "Capacidade de um único UPS suprir integralmente as cargas da estação.",
+      "explicacao": "A filosofia descrita exige que cada UPS consiga assumir sozinho as cargas da estação; após modificações, essa capacidade deve ser revalidada na configuração instalada.",
+      "resposta_padrao": "Verificar a capacidade somada dos dois UPS instalados.",
+      "por_que_nao": "Capacidade total instalada não demonstra tolerância à falha simples; o critério é o UPS remanescente levar sozinho a carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações, distribuídos em barramentos “A” e “B”, também com interligação por disjuntor em contingência."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Prontidão para blackout ou black start depende de testar a coerência das lógicas de reboot e trip.",
+      "pergunta": "No teste de blackout, a bateria permanece disponível, mas a recomposição falha e surge trip indevido. Que verificação funcional específica faltou?",
+      "resposta": "Coerência das lógicas de reboot e de trip.",
+      "explicacao": "Os blocos associam falhas de recomposição em blackout a problemas de lógica; bateria disponível, por si só, não garante retorno correto dos sistemas essenciais.",
+      "resposta_padrao": "Conferir apenas a autonomia das baterias.",
+      "por_que_nao": "A autonomia pode estar adequada e, ainda assim, a recomposição falhar por lógica incoerente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A confiabilidade dos sistemas essenciais aumenta quando a arquitetura evita ponto único de falha."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Verificação de continuidade em UPS essencial exige confirmar a disponibilidade do bypass.",
+      "pergunta": "Na verificação periódica de um UPS que alimenta cargas essenciais, qual caminho elétrico precisa ter disponibilidade confirmada além do inversor e do retificador?",
+      "resposta": "Bypass do UPS.",
+      "explicacao": "A continuidade de alimentação não depende só dos conversores principais; o caminho alternativo do UPS também precisa estar disponível para a contingência ser efetiva.",
+      "resposta_padrao": "Somente a presença de tensão na saída do UPS.",
+      "por_que_nao": "Saída energizada não comprova que exista caminho alternativo disponível quando o inversor ficar indisponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O princípio por trás disso é a redundância funcional: dois caminhos capazes de assumir a carga reduzem a probabilidade de perda total por falha simples."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste de tolerância à falha no 24 Vcc deve exercer a alimentação cruzada pelo TIE.",
+      "pergunta": "Falha simulada de um conjunto retificador/bateria 24 Vcc sem perda do quadro é o objetivo do ensaio. Que manobra deve ser executada?",
+      "resposta": "Fechamento do disjuntor TIE de alimentação cruzada.",
+      "explicacao": "A arquitetura de 24 Vcc prevê suprimento cruzado via TIE quando um conjunto falha; o ensaio precisa operar esse caminho previsto.",
+      "resposta_padrao": "Testar apenas a descarga do banco de baterias remanescente.",
+      "por_que_nao": "Esse ensaio verifica autonomia, mas não demonstra a transferência pelo caminho alternativo previsto no arranjo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias, cada um capaz de suprir integralmente a demanda do quadro, com possibilidade de alimentação cruzada por disjuntor TIE em caso de falha de um conjunto."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

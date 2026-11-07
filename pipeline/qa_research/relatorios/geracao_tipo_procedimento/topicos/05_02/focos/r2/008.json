@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 2,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na partida de grande motor, a suficiência do suporte elétrico no ponto de conexão se verifica pelo afundamento de tensão local, não pela frequência.",
+      "pergunta": "Na partida de um grande motor, a corrente fica alta por vários segundos e os reguladores de velocidade quase não reagem. Qual verificação no ponto de alimentação confirma se o suporte elétrico está suficiente?",
+      "resposta": "Afundamento de tensão no barramento de alimentação do motor.",
+      "explicacao": "A partida impõe forte demanda reativa e alta corrente; com pouca resposta dos reguladores, o indicador decisivo de suficiência da rede é a queda de tensão no barramento que alimenta o motor.",
+      "resposta_padrao": "Queda de frequência do sistema.",
+      "por_que_nao": "Frequência traduz déficit de potência ativa; aqui a limitação dominante aparece como afundamento de tensão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "impõe corrente elevada e consumo significativo de potência reativa, causando afundamento de tensão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "partida de grande consumidor precisa considerar a rigidez do barramento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Correções rápidas associadas à partida só devem ser liberadas após confirmação do fechamento real do disjuntor do motor.",
+      "pergunta": "O comando de partida já foi enviado, mas o dispositivo de manobra pode atrasar ou falhar. Que confirmação deve liberar as correções rápidas aplicadas logo depois da entrada do motor?",
+      "resposta": "Fechamento efetivo do disjuntor do motor.",
+      "explicacao": "Se as correções dependem da inserção do motor, a lógica deve usar o estado real do disjuntor; isso evita comandos indevidos e trata falha ou atraso de fechamento.",
+      "resposta_padrao": "Decurso de uma temporização fixa após o comando.",
+      "por_que_nao": "Tempo fixo não garante que o motor entrou; a correção pode atuar sem fechamento real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas após o fechamento do disjuntor do motor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Salvaguardas na lógica de partida são relevantes para evitar comandos indevidos, abortar sequências anormais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com geração em droop, a liberação de partida de grande motor exige verificar a reserva dinâmica das fontes para conter desvio de frequência.",
+      "pergunta": "Afundamento de tensão pequeno não basta quando a geração opera em droop. Para evitar desvio excessivo de frequência na partida, qual verificação ainda é decisiva antes da liberação?",
+      "resposta": "Reserva dinâmica das fontes.",
+      "explicacao": "Mesmo com barramento suficientemente rígido, a aceleração pode provocar desvio de frequência se as fontes não responderem com reserva transitória de potência ativa.",
+      "resposta_padrao": "Potência reativa disponível no barramento.",
+      "por_que_nao": "Com tensão preservada, o risco remanescente vem da resposta ativa transitória das fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possível desvio de frequência quando a geração opera em droop"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a reserva dinâmica das fontes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

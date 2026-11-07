@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 2,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de estado aparente após intervenção exige verificar a validade do dado, não apenas valor exibido e atualização temporal.",
+      "pergunta": "Um permissivo segue atendido depois de intervenção de rede; o valor mostrado é plausível e o carimbo de tempo avança. Antes de aceitar essa condição como real, que atributo do ponto deve ser verificado?",
+      "resposta": "Validade do dado.",
+      "explicacao": "No diagnóstico de arquitetura, valor instantâneo e atualização não bastam. A validade do dado é necessária para não tomar como real um estado que o sistema transporta ou processa de forma indevida.",
+      "resposta_padrao": "Confirmar só a atualização do sinal e a tendência.",
+      "por_que_nao": "Sinal atualizado e plausível ainda pode estar inválido para uso pelo sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com override temporário, a representação do estado deve ser validada pela coerência entre variáveis correlatas.",
+      "pergunta": "Com um override temporário ativo, a variável exibida parece normal. Qual verificação de diagnóstico ajuda a confirmar que a representação do estado ainda fecha fisicamente com o processo?",
+      "resposta": "Coerência entre variáveis relacionadas.",
+      "explicacao": "Se parte da supervisão normal foi retirada, um valor isolado pode continuar plausível. A consistência com variáveis correlatas é o que sustenta a confirmação do estado real.",
+      "resposta_padrao": "Checar apenas se o valor continua dentro da faixa e sem alarme.",
+      "por_que_nao": "Faixa normal não demonstra consistência física quando a supervisão pode ter sido alterada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "retiram temporariamente parte da lógica normal de atuação ou de supervisão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "coerência entre variáveis relacionadas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "O alcance de um bypass sobre supervisão e atuação se determina rastreando sua inserção na arquitetura até a saída final da função.",
+      "pergunta": "Para determinar se um bypass temporário afeta só supervisão ou também atuação automática, que trecho da implementação deve ser rastreado?",
+      "resposta": "Do ponto de bypass até a saída final da função.",
+      "explicacao": "O efeito do bypass depende de onde ele entra na arquitetura. Só seguir o caminho lógico até a saída mostra se alcançou alarme, permissivo ou intertravamento.",
+      "resposta_padrao": "Verificar só o status do alarme na HMI.",
+      "por_que_nao": "O status do alarme não revela se o bypass foi inserido antes do ramo de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o alcance concreto depende da arquitetura e da função afetada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

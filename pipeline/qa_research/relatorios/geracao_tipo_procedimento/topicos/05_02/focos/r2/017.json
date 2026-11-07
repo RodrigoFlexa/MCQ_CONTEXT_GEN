@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do estágio que distingue operação pelo inversor de simples alimentação via bypass.",
+      "pergunta": "Saída do UPS energizada, entrada CA normal e bypass disponível. Qual verificação confirma que a alimentação está passando pelo caminho condicionado e não apenas pelo contorno?",
+      "resposta": "Saúde do inversor.",
+      "explicacao": "A saída pode permanecer energizada via bypass. Para confirmar suprimento condicionado do UPS, é preciso verificar o inversor, não só presença de tensão ou disponibilidade do contorno.",
+      "resposta_padrao": "Disponibilidade do bypass.",
+      "por_que_nao": "Bypass disponível mantém continuidade em contingência, mas não comprova operação pelo caminho condicionado do UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação do retificador/carregador como condição de autonomia futura com rede presente.",
+      "pergunta": "Baterias aprovadas no teste recente, entrada CA presente e cargas estáveis. Para assegurar autonomia numa perda posterior da rede, qual estágio deve estar comprovadamente operante agora?",
+      "resposta": "Retificador/carregador operante.",
+      "explicacao": "Com rede presente e baterias já aprovadas, a prontidão da autonomia depende do estágio que mantém o barramento CC e a recarga. Tensão na saída não comprova essa condição.",
+      "resposta_padrao": "Presença de tensão na saída do UPS.",
+      "por_que_nao": "Saída energizada pode coexistir com falha do retificador/carregador e perda de prontidão da autonomia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de capacidade do ramo remanescente antes de transferir um quadro 24 Vcc via TIE.",
+      "pergunta": "Antes de transferir um quadro 24 Vcc inteiro para o conjunto remanescente pelo TIE, qual critério de capacidade do arranjo deve ser confirmado?",
+      "resposta": "Capacidade do conjunto remanescente para suprir integralmente a demanda do quadro.",
+      "explicacao": "No arranjo descrito, cada conjunto independente deve atender sozinho toda a demanda do quadro. A transferência por TIE só preserva a contingência se esse critério estiver atendido.",
+      "resposta_padrao": "Fechar o TIE e verificar se a tensão se mantém normal.",
+      "por_que_nao": "Tensão normal após o fechamento não prova que o único conjunto remanescente suporte continuamente toda a demanda.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "cada um capaz de suprir integralmente a demanda do quadro, com possibilidade de alimentação cruzada por disjuntor TIE em caso de falha de um conjunto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

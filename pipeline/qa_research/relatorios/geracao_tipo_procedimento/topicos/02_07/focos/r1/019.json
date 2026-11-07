@@ -1,0 +1,83 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicação do modelo simplificado de nível requer verificar a linearidade entre altura e volume no separador.",
+      "pergunta": "O separador tem seção transversal que varia ao longo da altura. Antes de usar o balanço simplificado de nível para sintonizar a malha, que verificação geométrica precisa ser feita?",
+      "resposta": "Relação aproximadamente linear entre altura e volume armazenado.",
+      "explicacao": "A modelagem simplificada só representa adequadamente a dinâmica de nível quando a altura pode ser tomada como proporcional ao volume; o bloco ressalta que essa hipótese não vale automaticamente para vasos reais.",
+      "resposta_padrao": "Calibrar o transmissor de nível.",
+      "por_que_nao": "Calibração melhora a medição, mas não valida a hipótese de linearidade altura-volume do modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode-se assumir relação linear entre altura e volume"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A aproximação da abertura da válvula pela ação de controle só é válida se a válvula for rápida frente à dinâmica do vaso.",
+      "pergunta": "A geometria do vaso já permite tratar altura e volume como proporcionais. Antes de igualar a abertura da válvula à ação de controle no modelo, que condição dinâmica deve ser confirmada?",
+      "resposta": "Válvula suficientemente rápida frente à dinâmica do vaso.",
+      "explicacao": "O modelo simplificado pressupõe que a válvula responda rápido o bastante para que sua abertura acompanhe a própria ação de controle; sem isso, a aproximação distorce a dinâmica real da malha.",
+      "resposta_padrao": "Confirmar apenas que a válvula tem curso e autoridade suficientes.",
+      "por_que_nao": "Autoridade e curso não substituem a exigência de resposta rápida para aproximar abertura e ação de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "No controle por bandas, a ação rápida corrige o inventário até a faixa permitida, sem perseguir setpoint exato.",
+      "pergunta": "Quando o nível ultrapassa a banda e a lógica comuta para correção rápida, qual é o alvo correto dessa ação antes de voltar ao regime normal?",
+      "resposta": "Inventário líquido de volta à faixa permitida.",
+      "explicacao": "No controle por bandas, a ação rápida existe para recolocar o inventário dentro dos limites aceitáveis; perseguir um setpoint exato contraria a lógica de reduzir movimentação desnecessária da válvula.",
+      "resposta_padrao": "Levar o nível exatamente ao setpoint central.",
+      "por_que_nao": "No controle por bandas, a meta é recolocar o inventário na faixa permitida e evitar movimentação desnecessária da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "para retornar o inventário à faixa permitida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

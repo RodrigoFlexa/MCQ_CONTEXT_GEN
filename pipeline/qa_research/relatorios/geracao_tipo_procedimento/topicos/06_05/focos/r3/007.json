@@ -1,0 +1,79 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 3,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudança de comportamento da votação entre modos operacionais se verifica nas permissivas de habilitação dos canais.",
+      "pergunta": "Com a linha em recirculação, A+B liberam o fechamento automático; em exportação, A+B geram só alarme individual. Qual parte da lógica deve ser auditada primeiro para validar a votação real?",
+      "resposta": "Permissivas de habilitação dos canais por modo operacional.",
+      "explicacao": "A resposta mudar com o modo operacional indica participação condicional na decisão lógica. Em votação, não importa só a contagem, mas quais detectores participam e sob quais condições.",
+      "resposta_padrao": "Associação dos detectores à zona lógica cadastrada.",
+      "por_que_nao": "Um erro de zoneamento seria estável; a mudança entre recirculação e exportação aponta habilitação lógica dependente do modo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Endurecimento da votação para função automática se aceita pela comparação entre atraso de coincidência e janela de resposta.",
+      "pergunta": "Cobertura efetiva e cenário perigoso já foram confirmados na zona. Antes de elevar a confirmação para reduzir disparos indesejados numa função que fecha válvulas de shutdown, qual verificação temporal decide a aceitação da mudança?",
+      "resposta": "Atraso da coincidência até o isolamento final versus tempo disponível.",
+      "explicacao": "Com cobertura e cenário já confirmados, o ponto crítico passa a ser o atraso adicional até a ação automática. A votação deve considerar o tempo disponível para resposta e a consequência da ação associada.",
+      "resposta_padrao": "Confirmar apenas que dois detectores continuam cobrindo a zona.",
+      "por_que_nao": "A cobertura já foi confirmada; o risco remanescente é perder a janela útil para a ação automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o cenário exige redução rápida da massa liberada, da energia disponível ou das fontes de ignição, limitar a resposta ao alarme pode ser insuficiente."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Prova funcional de votação por contagem nominal exige ensaiar combinações permitidas e bloqueadas de canais.",
+      "pergunta": "Numa lógica 2oo4, o par A+B libera a saída e todos os canais alarmam sozinhos. Qual ensaio ainda falta para demonstrar a regra de votação completa?",
+      "resposta": "Teste cruzado dos pares permitidos e bloqueados da lógica.",
+      "explicacao": "Votação é definida pelas combinações suficientes de entradas. Provar A+B e alarmes individuais não demonstra se outros pares também atuam ou se alguns devem permanecer bloqueados.",
+      "resposta_padrao": "Comprovar que qualquer outro par também libera a saída.",
+      "por_que_nao": "A regra pode aceitar alguns pares e bloquear outros; repetir com um par arbitrário não prova a lógica completa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

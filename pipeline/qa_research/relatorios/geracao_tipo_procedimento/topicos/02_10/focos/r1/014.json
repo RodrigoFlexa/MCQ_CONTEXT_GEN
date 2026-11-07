@@ -1,0 +1,109 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de saturação do elemento final como causa limitante da malha de interface.",
+      "pergunta": "Com a interface oscilando e a posição de válvula ou rotação comandada repetidamente no máximo, qual verificação confirma limitação do elemento final antes de culpar a sintonia?",
+      "resposta": "Atuador saturado no limite com erro de nível persistente.",
+      "explicacao": "Se o elemento final opera no limite, a malha perde margem para corrigir perturbações; a instabilidade pode vir da falta de capacidade do atuador, não da lógica de controle.",
+      "resposta_padrao": "Retunar o PID para amortecer a oscilação.",
+      "por_que_nao": "Sem margem no elemento final, nova sintonia não cria capacidade adicional de correção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode surgir porque o elemento final de controle perdeu margem operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de aceite do anti-windup em Dead Band Assimétrico sob saturação do atuador.",
+      "pergunta": "No teste de um Dead Band Assimétrico, o atuador satura durante um distúrbio. O que deve ser observado no integrador para aceitar o anti-windup?",
+      "resposta": "Integral bloqueada enquanto a saída estiver saturada.",
+      "explicacao": "Sem anti-windup, a ação integral continua acumulando durante a saturação, distorce a resposta e retarda a recuperação depois que o atuador volta à faixa útil.",
+      "resposta_padrao": "Basta verificar se a interface retorna ao setpoint no fim do teste.",
+      "por_que_nao": "Pode haver retorno mesmo com windup, porém com recuperação lenta e transientes mascarados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem distorcer a resposta integral, retardar recuperação e mascarar riscos em transientes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de comparação entre estratégias de controle de interface em sistema acoplado a hidrociclone.",
+      "pergunta": "Com a água indo para hidrociclones e a concentração de óleo variando mais lentamente que a dinâmica do equipamento, qual critério deve prevalecer na comparação das estratégias de interface?",
+      "resposta": "Estabilidade da descarga para o hidrociclone.",
+      "explicacao": "Nessa condição, alguma oscilação da interface pode ser tolerável; o desempenho a jusante depende mais de uma alimentação estável ao hidrociclone.",
+      "resposta_padrao": "Menor oscilação possível da interface.",
+      "por_que_nao": "A corrente a jusante pode responder melhor à vazão estável do que à interface rigidamente centrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "desloca o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Escopo mínimo do modelo dinâmico para comparar filosofias de controle de interface com tratamento de água a jusante.",
+      "pergunta": "Ao montar a simulação para comparar controles de interface com hidrociclone a jusante, qual escopo mínimo precisa estar no modelo?",
+      "resposta": "O acoplamento dinâmico entre separador e hidrociclone.",
+      "explicacao": "Para que a comparação seja aplicável, o modelo deve incluir a interação entre separador e hidrociclone, já que as malhas compartilham o balanço de massa do equipamento a jusante.",
+      "resposta_padrao": "Só a dinâmica do separador é suficiente.",
+      "por_que_nao": "A interface não deve ser analisada isoladamente, pois mudanças em uma malha alteram a condição enfrentada pela outra.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a malha da interface água-óleo não deve ser analisada isoladamente."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

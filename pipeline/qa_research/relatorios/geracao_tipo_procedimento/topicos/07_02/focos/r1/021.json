@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Quando a padronização não é viável nos controladores heterogêneos, a normalização deve ser feita no SCADA, como camada mais próxima da fonte.",
+      "pergunta": "Controladores de fornecedores diferentes alimentam um SCADA comum, e padronizar nomes e estruturas na camada de controle ficou inviável. Onde a normalização deve ser implementada mais perto da fonte?",
+      "resposta": "Na camada SCADA.",
+      "explicacao": "Com controladores heterogêneos, a padronização na própria camada de controle pode não ser viável; o bloco indica o SCADA como a camada mais próxima da fonte onde essa normalização ainda é aplicável.",
+      "resposta_padrao": "Na nuvem ou na aplicação analítica.",
+      "por_que_nao": "Mais a jusante, a padronização não corrige a base operacional comum nem resolve a falta de normalização perto da fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de comparar ou treinar dados operacionais, cada amostra deve estar associada ao contexto de modo operacional.",
+      "pergunta": "Duas bombas equivalentes geram alarmes preditivos diferentes. As variáveis têm mesma unidade e mesma faixa, mas uma alterna entre recirculação e carga normal. Que contexto precisa acompanhar cada amostra antes da comparação?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Misturar amostras de regimes distintos torna a comparação enganosa. O bloco destaca que dados sem contexto de modo operacional produzem diagnósticos frágeis, alarmes espúrios e comparações incorretas.",
+      "resposta_padrao": "A unidade de engenharia da variável.",
+      "por_que_nao": "Mesmo com unidade correta, comparar dados de modos operacionais diferentes distorce o comportamento esperado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na validação de aplicações próximas ao controle, a verificação decisiva é o sincronismo temporal entre fontes de dados.",
+      "pergunta": "Uma aplicação online correlaciona eventos de proteção, medições e comandos para sugerir ajustes frequentes. Os dados chegam sem perda aparente, mas a sequência entre fontes diverge alguns segundos. Que verificação temporal decide se o teste é válido?",
+      "resposta": "Sincronismo temporal entre as fontes.",
+      "explicacao": "Para aplicações próximas ao controle, receber todos os dados não basta; a validade depende do alinhamento temporal entre fontes, porque o bloco aponta a qualidade de sincronismo como cuidado crítico.",
+      "resposta_padrao": "A latência média da comunicação.",
+      "por_que_nao": "Latência baixa não garante que registros de fontes diferentes estejam temporalmente alinhados para correlação confiável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de consolidar indicadores entre pacotes ou ativos, deve-se verificar a identificação consistente do equipamento.",
+      "pergunta": "No historiador, sinais de compressores de pacotes diferentes chegam com tags herdadas dos fabricantes e nomes parecidos. Antes de consolidar um indicador por ativo, qual verificação evita misturar equipamentos distintos?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "Nomes de fornecedores não asseguram correspondência correta entre ativos. O bloco afirma que, sem identificação consistente do equipamento, a coerência semântica se perde e as comparações ficam enganosas.",
+      "resposta_padrao": "O nome da tag recebido do fornecedor.",
+      "por_que_nao": "Nomenclaturas de fornecedores variam e podem parecer equivalentes sem representar o mesmo equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

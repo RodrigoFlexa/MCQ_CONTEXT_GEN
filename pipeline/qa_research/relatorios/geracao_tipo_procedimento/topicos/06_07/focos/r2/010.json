@@ -1,0 +1,79 @@
+{
+  "item": "06_07",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de sequência operacional requer verificar o efeito de cada manobra nos estados intermediários das barreiras.",
+      "pergunta": "Se a configuração inicial e a final de uma abertura de linha parecem equivalentes, que ponto da sequência ainda precisa ser verificado para validar o plano?",
+      "resposta": "Cada passo intermediário e seu efeito nas barreiras.",
+      "explicacao": "A verificação é sequencial: cada operação pode alterar o estado das barreiras. Estados inicial e final equivalentes não garantem proteção suficiente entre os passos.",
+      "resposta_padrao": "Comparar apenas as condições inicial e final.",
+      "por_que_nao": "A transição pode criar um passo com proteção insuficiente mesmo quando os extremos parecem seguros.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em seguida, cada operação da sequência é analisada quanto ao seu impacto sobre o estado dessas barreiras."
+        },
+        {
+          "bloco": "F",
+          "trecho": "se a passagem de um passo para o seguinte preserva um conjunto de proteção suficiente."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Desvio temporário de método exige checar se as premissas da análise de barreiras ainda representam a execução real.",
+      "pergunta": "Surgiu uma alteração temporária de método durante a despressurização, sem mudar o objetivo do serviço. Antes de confiar na análise de barreiras já feita, o que deve ser verificado?",
+      "resposta": "A representatividade atual das premissas da análise.",
+      "explicacao": "Se método ou configuração mudam durante o trabalho, a análise anterior pode perder validade. É preciso confirmar que suas premissas ainda correspondem à atividade real.",
+      "resposta_padrao": "A mesma permissão de trabalho ainda emitida.",
+      "por_que_nao": "Continuidade documental não prova que a base analítica ainda representa o método executado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "situações em que o sistema muda de configuração ao longo do trabalho."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando método, dados de entrada, premissas, limitações ou configuração da instalação mudam, o resultado analítico anterior pode deixar de sustentar decisões seguras."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Contagem binária de barreiras não substitui a verificação de independência quando existe dependência comum.",
+      "pergunta": "Dois detectores seguem marcados como ativos na mesma etapa, mas a manobra retira a alimentação comum a ambos. Que verificação decide se contam como duas barreiras?",
+      "resposta": "A independência real entre as barreiras.",
+      "explicacao": "A contagem binária ajuda a comparar etapas, mas não mostra dependências ocultas. Barreiras com a mesma alimentação podem falhar em conjunto e não valer como independentes.",
+      "resposta_padrao": "Somar duas barreiras ativas na planilha.",
+      "por_que_nao": "Sem independência, a perda do mesmo recurso pode derrubar ambas ao mesmo tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "barreiras ativadas receberam valor um e desativadas valor zero, como simplificação binária"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não representa sozinha degradação parcial, desempenho degradado, dependências ocultas nem incertezas operacionais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 4,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicabilidade da correção à revisão instalada deve ser verificada antes da qualificação do patch no ativo.",
+      "pergunta": "Componente vulnerável já confirmado no controlador. O fornecedor publicou a correção para a família do produto, mas há revisões instaladas diferentes em campo. Qual conferência define se esse patch pode seguir para qualificação naquele ativo?",
+      "resposta": "Versão aplicável no ativo.",
+      "explicacao": "Depois de confirmar o componente afetado, a correção só entra na avaliação se for aplicável à revisão instalada; pertencer à mesma família de produto não basta.",
+      "resposta_padrao": "A presença do componente vulnerável no controlador.",
+      "por_que_nao": "Isso já foi confirmado; ainda falta saber se a correção atende à revisão instalada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Qualificação de correção em OT não pode ser herdada entre produtos diferentes, mesmo do mesmo fornecedor.",
+      "pergunta": "Que validação não pode ser herdada de um produto para outro, mesmo sendo do mesmo fornecedor, ao liberar uma correção de OT?",
+      "resposta": "Qualificação da correção no produto alvo.",
+      "explicacao": "A validação obtida em outro produto não libera aplicação automática no destino; a qualificação precisa existir no contexto do produto que receberá a mudança.",
+      "resposta_padrao": "A qualificação obtida no produto semelhante.",
+      "por_que_nao": "O tratamento não deve ser generalizado para outros produtos fora daquele contexto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa ação não deve ser generalizada para outros produtos fora desse contexto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Liberação de atualização em controle requer comprovar compatibilidade conjunta de firmware, comunicação e funções de processo.",
+      "pergunta": "A atualização troca firmware e também o driver de comunicação. Antes da janela de manutenção, qual compatibilidade precisa estar comprovada para a aplicação ser aceitável em controle?",
+      "resposta": "Compatibilidade entre firmware, comunicação e funções de processo.",
+      "explicacao": "Em controle, inicializar e comunicar não basta; a mudança pode introduzir indisponibilidade ou comportamento não previsto se não preservar também as funções de processo.",
+      "resposta_padrao": "Apenas a comunicação com I/O e a partida do sistema.",
+      "por_que_nao": "Comunicação restabelecida não garante que permissivos, intertravamentos e controle do processo permaneçam corretos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de aceitação de teste de redundância em controladores, redes e fontes.",
+      "pergunta": "Na prova de redundância de um controlador, rede ou fonte, qual critério confirma que o canal reserva realmente protege a função?",
+      "resposta": "Preservação da função durante falha ou comutação de um canal.",
+      "explicacao": "O teste valida a redundância pela continuidade funcional após falha ou switchover de um canal, não pela simples existência do reserva.",
+      "resposta_padrao": "Basta comprovar que houve comutação para o canal reserva.",
+      "por_que_nao": "Comutação sem manutenção da função não demonstra benefício operacional da redundância.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação necessária para não operar inadvertidamente com a resiliência reduzida após perda de um canal redundante.",
+      "pergunta": "Um canal redundante ficou indisponível, o processo seguiu operando e ninguém percebeu até a próxima intervenção. Que verificação deveria existir no sistema?",
+      "resposta": "Detecção da perda de redundância.",
+      "explicacao": "Se a degradação não for percebida, o sistema continua em serviço com resiliência reduzida até que uma segunda falha elimine a função.",
+      "resposta_padrao": "Confirmar só que o canal remanescente manteve o processo operando.",
+      "por_que_nao": "Manter o serviço sem indicar estado degradado não evita a exposição à segunda falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando a perda dessa condição pode ser percebida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Camada inicial de triagem quando há perda de visibilidade sem perda da função de controle.",
+      "pergunta": "O valor fica congelado no supervisório, mas a malha continua controlando a variável. Em que camada a análise deve começar?",
+      "resposta": "Na supervisão e sua comunicação com o controlador.",
+      "explicacao": "Se a malha segue atuando, a função de medição e controle ainda existe; o sintoma aponta primeiro para perda de visibilidade.",
+      "resposta_padrao": "No transmissor de campo.",
+      "por_que_nao": "Controle automático ainda ativo indica que a medição útil ao controlador não foi a primeira função perdida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Caminho de verificação inicial quando o sintoma é perda de comando, com medição e atuação local preservadas.",
+      "pergunta": "Comando automático gerado pela lógica não aciona o equipamento; estados e medições seguem chegando e a atuação local funciona. Qual caminho deve ser verificado primeiro?",
+      "resposta": "Do controlador até a saída de comando.",
+      "explicacao": "Com medições atualizadas e atuação local disponível, o primeiro foco não é campo nem visibilidade, e sim a cadeia de comando.",
+      "resposta_padrao": "O elemento final em campo.",
+      "por_que_nao": "A atuação local funcional mostra que o equipamento ainda responde; a perda está no caminho do comando automático.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

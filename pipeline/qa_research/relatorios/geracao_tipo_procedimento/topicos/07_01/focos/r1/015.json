@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Validação do caminho de escrita da HMI até o controlador antes de aceitar ajuste operacional.",
+      "pergunta": "Ao testar uma alteração de setpoint feita pela HMI, em que ponto a escrita precisa ser confirmada para provar que o ajuste entrou na malha de controle?",
+      "resposta": "No setpoint recebido pelo controlador.",
+      "explicacao": "A HMI permite ajuste do controlador, mas a interface sozinha não comprova a integração funcional. O ponto decisivo é a variável efetivamente recebida no controlador que executa a lógica.",
+      "resposta_padrao": "Na própria tela da HMI.",
+      "por_que_nao": "A interface pode refletir o comando sem que a escrita tenha chegado ao controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o operador passa a compartilhar a condução do processo com o sistema automatizado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da atualidade temporal do sinal antes de usar tendência ou valor exibido para inferência operacional.",
+      "pergunta": "A tendência continua desenhando pontos, mas a resposta à manobra não aparece com o atraso físico esperado. Qual verificação pontual decide se esse dado ainda serve para análise de desempenho?",
+      "resposta": "Avanço coerente do carimbo de tempo do sinal.",
+      "explicacao": "O arranjo só sustenta tendências e inferências quando os sinais são temporalmente coerentes. Valores ainda exibidos podem não representar mais o estado físico se perderem atualização confiável.",
+      "resposta_padrao": "Checar se o valor numérico permanece em faixa normal.",
+      "por_que_nao": "Um valor plausível pode continuar exibido mesmo sem acompanhar corretamente o processo real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Confirmação de comunicação campo-PLC como etapa de liberação funcional, além de energização e calibração local.",
+      "pergunta": "Energização confirmada e calibração local concluída não bastam para liberar um ponto ao controle automático. Qual verificação adicional fecha a integração funcional com o PLC?",
+      "resposta": "Confirmação da comunicação entre campo e PLC.",
+      "explicacao": "Para que a informação percorra medição, controle e supervisão, o equipamento de campo precisa comunicar-se com o controlador. Presença física e calibração isolada não comprovam integração ao sistema.",
+      "resposta_padrao": "Aceitar o ponto após energização e calibração do instrumento.",
+      "por_que_nao": "Sem comunicação com o PLC, o ponto não participa da arquitetura integrada nem alimenta o controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O encadeamento básico começa com a medição das variáveis de processo por sensores e transmissores. Esses dados alimentam os sistemas controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

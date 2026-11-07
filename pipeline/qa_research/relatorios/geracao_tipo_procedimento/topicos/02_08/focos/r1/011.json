@@ -1,0 +1,89 @@
+{
+  "item": "02_08",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparação válida entre dados operacionais e simulação de regime em header/KOD exige selecionar períodos estáveis.",
+      "pergunta": "Dados de pressão e temperatura do header variam com partidas e recirculações. Antes de confrontá-los com uma simulação de regime, que parte do histórico deve ser selecionada?",
+      "resposta": "Os períodos estáveis do regime de interesse.",
+      "explicacao": "O monitoramento útil foi vinculado à identificação de períodos estáveis e à simulação adequada ao regime de interesse; misturar transientes distintos distorce a comparação com o modelo.",
+      "resposta_padrao": "A média do histórico completo.",
+      "por_que_nao": "Misturar trechos transitórios e estáveis mascara o regime que a simulação pretende representar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento útil combina pressões, temperaturas e identificação de períodos estáveis com simulação adequada ao regime de interesse."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Checagem dinâmica de capacidade do knock-out drum deve rastrear inventário líquido acumulado, não só vazão instantânea.",
+      "pergunta": "Pulsos de líquido chegam ao knock-out drum após trechos inclinados operando com baixa vazão de gás. Na checagem de capacidade, que grandeza deve ser acompanhada no tempo além da vazão na entrada?",
+      "resposta": "O inventário líquido acumulado nas linhas e no header.",
+      "explicacao": "Quando há acúmulo e liberação intermitente de líquido, o inventário estocado altera o pico de carga e a quantidade efetivamente coletada pelo vaso.",
+      "resposta_padrao": "Só a vazão instantânea na entrada do vaso.",
+      "por_que_nao": "A carga ao vaso inclui o líquido acumulado e liberado em pulsos, não apenas o que entra naquele instante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inventário líquido, simultaneidade de fontes, variação temporal das vazões e compressibilidade do gás podem alterar pico de carga, contrapressão e quantidade de líquido efetivamente coletada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a vazão de gás for baixa, o arraste diminui e o inventário líquido cresce, agravando instabilidade e necessidade de remoção periódica."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelo de header para verificar contrapressão transitória precisa representar a compressibilidade do gás.",
+      "pergunta": "Descargas gasosas com a mesma vazão mássica total produzem contrapressões transitórias diferentes no mesmo header. Que característica do fluido precisa estar representada no modelo para a verificação valer?",
+      "resposta": "A compressibilidade do gás.",
+      "explicacao": "O texto afirma que a compressibilidade do gás altera pico de carga e contrapressão; tratá-lo com densidade fixa pode falsear o resultado do transiente.",
+      "resposta_padrao": "A densidade média do gás.",
+      "por_que_nao": "Densidade fixa não reproduz o efeito transitório da compressibilidade sobre a contrapressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inventário líquido, simultaneidade de fontes, variação temporal das vazões e compressibilidade do gás podem alterar pico de carga, contrapressão e quantidade de líquido efetivamente coletada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Extrapolação de um caso modelado para outro sistema só vale com comparabilidade técnico-operacional do sistema.",
+      "pergunta": "Um resultado de modelagem de header e knock-out drum obtido em outro ativo será usado como referência. Qual critério deve ser confirmado antes dessa extrapolação?",
+      "resposta": "Fluidos, geometria, controle e cenários operacionais comparáveis.",
+      "explicacao": "O caso modelado não deve ser universalizado; a extrapolação só é válida se o sistema comparado tiver fluidos, geometria, controle e cenários operacionais equivalentes.",
+      "resposta_padrao": "A mesma vazão total de alívio.",
+      "por_que_nao": "Vazão total igual não garante equivalência do transiente nem da hidráulica do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ainda assim, resultados de um caso modelado não devem ser universalizados; a transferência para FPSO depende de fluidos, geometria, malha de controle e cenários de operação comparáveis."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

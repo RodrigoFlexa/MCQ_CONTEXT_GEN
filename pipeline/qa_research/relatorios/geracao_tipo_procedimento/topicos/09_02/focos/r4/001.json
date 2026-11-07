@@ -1,0 +1,57 @@
+{
+  "item": "09_02",
+  "foco": 1,
+  "rodada": 4,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudança no arranjo de lingas invalida o reaproveitamento da análise dinâmica sem atualizar a representação das lingas.",
+      "pergunta": "Mudou o arranjo de duas para quatro pernas, mantendo peso, centro de gravidade, raio e mar previstos. Antes de reaproveitar a análise dinâmica, que parte do sistema suspenso precisa ser atualizada no modelo?",
+      "resposta": "As lingas do arranjo real.",
+      "explicacao": "O bloco [F] indica que, em análises complexas, pode ser necessário modelar as lingas. Alterar o arranjo muda a geometria e a resposta dinâmica; redistribuição estática por perna não substitui isso.",
+      "resposta_padrao": "Basta recalcular o ângulo e a carga estática por perna.",
+      "por_que_nao": "Isso atende à checagem estática, mas não representa a dinâmica do conjunto com o novo arranjo de lingas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em análises mais complexas, pode ser necessário modelar respostas hidrodinâmicas da embarcação, posição do guindaste, cabo, lingas, padeyes e possibilidade de snap load."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esses elementos governam a distribuição de esforços"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aceitação de perfil de manobra mais rápido exige verificar aceleração e desaceleração, não só a velocidade máxima.",
+      "pergunta": "Ao testar um perfil de manobra mais rápido no guindaste, que aspecto das partidas e paradas deve ser verificado antes de aceitar que o esforço continuará compatível com o cálculo estático?",
+      "resposta": "A aceleração e a desaceleração da manobra.",
+      "explicacao": "O bloco [F] aponta aceleração e desaceleração como fontes de força dinâmica. Mesmo com a mesma carga e velocidade final, transientes mais bruscos podem alterar o resultado do içamento.",
+      "resposta_padrao": "Só a velocidade máxima programada.",
+      "por_que_nao": "Velocidade final igual não elimina as forças adicionais geradas nas partidas e paradas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essas forças aparecem quando há aceleração, desaceleração, oscilação, impacto, movimento relativo entre unidade e embarcação ou liberação brusca de uma carga que estava presa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma carga oscilante pode surgir por parada súbita"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

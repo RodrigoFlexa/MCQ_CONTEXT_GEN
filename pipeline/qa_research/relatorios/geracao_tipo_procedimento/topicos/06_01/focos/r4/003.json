@@ -1,0 +1,79 @@
+{
+  "item": "06_01",
+  "foco": 3,
+  "rodada": 4,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Validação de redundância exige ensaio sob falha simulada de elemento relevante, não mera duplicação em operação normal.",
+      "pergunta": "Qual condição deve estar presente no ensaio para que uma rede duplicada seja realmente validada como redundante?",
+      "resposta": "Falha simulada de elemento relevante.",
+      "explicacao": "Redundância é manter a função requerida após a falha de um elemento relevante. Ensaiar a rede íntegra só demonstra operação normal; A2 exige testes conclusivos.",
+      "resposta_padrao": "Operação alternada dos equipamentos duplicados com a rede íntegra.",
+      "por_que_nao": "Isso mostra duplicação em serviço normal, não preservação da função após a falha relevante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Redundância, em sistemas de segurança, significa preservar a função requerida mesmo após falha de elemento relevante; não é apenas duplicar equipamentos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Testes de equipamentos e sistemas precisam ter critérios de aceitação previamente definidos e ser conclusivos quanto ao atendimento dos requisitos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Co-localização de equipamentos ditos redundantes exige testar perda do compartimento comum por vulnerabilidade local.",
+      "pergunta": "Bombas, acionamentos e linhas são independentes no esquema, mas a inspeção de campo mostra as duas instaladas no mesmo compartimento. Na validação da redundância, que hipótese de ensaio não pode faltar?",
+      "resposta": "Dano localizado no compartimento comum.",
+      "explicacao": "O bloco foco exige considerar vulnerabilidade local e danos capazes de atingir mais de um caminho funcional ao mesmo tempo. Equipamentos co-localizados podem ser perdidos juntos por um único evento.",
+      "resposta_padrao": "Falha alternada de cada bomba.",
+      "por_que_nao": "Isso cobre falhas independentes e deixa sem prova a perda simultânea causada pela co-localização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação da rede deve considerar dependências comuns, vulnerabilidade local, isolamento inadvertido, manutenção simultânea e danos que possam atingir mais de um caminho funcional ao mesmo tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A consequência prática é que a filosofia de redundância deve ser testada contra falhas localizadas e contra danos de causa comum."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dependência elétrica comum entre bombas aparentemente redundantes deve ser desafiada no ensaio por perda do barramento compartilhado.",
+      "pergunta": "Duas bombas têm motores e partidas independentes, sucções segregadas e aprovam ensaio alternado da área remota. O diagrama elétrico mostra ambos os painéis no mesmo barramento de emergência. Qual indisponibilidade deve integrar a prova de redundância?",
+      "resposta": "Perda do barramento elétrico comum.",
+      "explicacao": "Mesmo com duplicação hidráulica e mecânica, o bloco foco manda considerar dependências comuns. Um barramento compartilhado pode indisponibilizar simultaneamente os dois caminhos.",
+      "resposta_padrao": "Falha alternada de cada bomba.",
+      "por_que_nao": "Essa manobra não desafia a dependência elétrica comum que pode retirar ambas do serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação da rede deve considerar dependências comuns, vulnerabilidade local, isolamento inadvertido, manutenção simultânea e danos que possam atingir mais de um caminho funcional ao mesmo tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma rede pode existir fisicamente e ainda não ser confiável se sucção, suportes, linhas e equipamentos compartilharem vulnerabilidades críticas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

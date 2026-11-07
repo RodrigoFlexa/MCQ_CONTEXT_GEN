@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Monitoramento do sinal de trip do disjuntor do gerador de emergência durante reboot para validar a recomposição.",
+      "pergunta": "Durante a prova de recomposição após blackout, qual saída lógica deve ser monitorada ao longo do reboot do controle para revelar bloqueio indevido do gerador de emergência?",
+      "resposta": "Sinal de trip do disjuntor do gerador de emergência.",
+      "explicacao": "O bloqueio observado não era falta de potência, mas um trip mantido pela lógica durante o reboot, impedindo a energização do gerador de emergência.",
+      "resposta_padrao": "O permissivo de fechamento do disjuntor do gerador de emergência.",
+      "por_que_nao": "O caso relevante era um comando de trip persistente; olhar só o permissivo não evidencia a ordem que mantém o disjuntor aberto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Teste de reinicialização em condição anormal, sem bateria disponível, para expor intertravamentos ocultos na retomada.",
+      "pergunta": "Quando validar scripts de reinicialização do sistema elétrico, em que condição de alimentação o reboot deve ocorrer para expor intertravamentos ocultos da retomada?",
+      "resposta": "Sem a alimentação de bateria normalmente usada no reinício.",
+      "explicacao": "O intertravamento ficou oculto no reinício usual com bateria disponível e apareceu no estado anormal, exatamente quando a recomposição era necessária.",
+      "resposta_padrao": "Com a bateria disponível, reproduzindo a retomada normal.",
+      "por_que_nao": "Essa condição mascarou o problema no caso descrito e não validou a lógica no estado degradado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Comprovação de redundância efetiva do 24 Vcc por ensaio de falha simples com um lado isolado.",
+      "pergunta": "Diante de dois sistemas de 24 Vcc com TIE e ambos capazes de atender toda a carga, que ensaio confirma redundância efetiva dos painéis de controle?",
+      "resposta": "Ensaio de falha simples com um lado isolado suprindo toda a demanda.",
+      "explicacao": "A existência de dois conjuntos não basta; é preciso provar, na configuração implantada, que a perda de um lado não desenergiza os controles.",
+      "resposta_padrao": "Conferir a existência de dois retificadores, dois bancos e um TIE instalado.",
+      "por_que_nao": "Isso só confirma redundância nominal e não demonstra manutenção da alimentação após a perda de um lado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "com dois conjuntos retificador/carregador e banco de baterias, cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Identificação da fronteira prática IT/OT pelo ponto em que os dados deixam a camada de controle.",
+      "pergunta": "Ao mapear fronteiras IT/OT, em que transição de dados a fronteira prática deve ser marcada?",
+      "resposta": "Na saída dos dados da camada de controle para a camada consumidora.",
+      "explicacao": "A fronteira prática aparece quando os dados deixam o controle e passam a ser consumidos por supervisão, historiadores, analytics, telecomunicações ou sistemas corporativos.",
+      "resposta_padrao": "No firewall perimetral entre a rede corporativa e a industrial.",
+      "por_que_nao": "A fronteira não existe só no perímetro; ela surge assim que os dados saem da camada de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Localização da camada de integração quando controladores de fornecedores distintos precisam alimentar consumidores superiores.",
+      "pergunta": "Controladores de fornecedores distintos precisam alimentar historiador e aplicação analítica. Para localizar o ponto de integração que deve receber tratamento arquitetural, que camada você inspeciona?",
+      "resposta": "A camada supervisória, tipicamente o SCADA.",
+      "explicacao": "Com modelos de dados distintos, a padronização perto da fonte fica limitada; por isso, a integração frequentemente migra para a camada supervisória, onde o SCADA agrega dados.",
+      "resposta_padrao": "A padronização direta em cada controlador de campo.",
+      "por_que_nao": "Quando os modelos de dados diferem, a integração frequentemente não fecha na fonte e migra para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação objetiva de contenção entre domínios de criticidade distinta em um ponto de interconexão.",
+      "pergunta": "Um ponto de interconexão concentra troca entre controle, supervisão e consumidores externos. Qual verificação decide se a segmentação ainda contém a propagação entre domínios?",
+      "resposta": "Se a conectividade compartilhada está restrita ao necessário.",
+      "explicacao": "A contenção entre domínios depende de evitar conectividade além do necessário; caso contrário, falha, erro de configuração ou ação maliciosa pode ampliar consequências para outros conjuntos.",
+      "resposta_padrao": "Confirmar apenas que o tráfego passa por um firewall.",
+      "por_que_nao": "Firewall não basta se o ponto mantém caminhos desnecessários entre domínios com funções e consequências diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Tratamento de conectividade híbrida de controlador de borda como interfaces distintas na revisão de segmentação.",
+      "pergunta": "Controlador de borda publica em broker MQTT na nuvem e também alimenta SCADA local em tempo real. Na revisão da segmentação, como essa conectividade deve ser verificada?",
+      "resposta": "Como duas interfaces independentes do controlador de borda.",
+      "explicacao": "Na arquitetura híbrida, o mesmo controlador atende nuvem e SCADA local; isso amplia fronteiras e exige verificação separada de cada interface.",
+      "resposta_padrao": "Como uma única saída de dados do edge.",
+      "por_que_nao": "Os dois caminhos terminam em consumidores e domínios diferentes, então não formam uma única fronteira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

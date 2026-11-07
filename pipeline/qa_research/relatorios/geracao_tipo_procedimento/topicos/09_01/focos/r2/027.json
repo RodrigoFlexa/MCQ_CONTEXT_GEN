@@ -1,0 +1,101 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "rodada": 2,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação no modelo da espera externa que gera variabilidade de atendimento sem alterar a navegação.",
+      "pergunta": "Chegadas ao campo seguem o planejado, mas a fila cresce por janelas fechadas de operação, meteorologia e outras liberações externas. Que componente de tempo precisa entrar no modelo para reproduzir esse desvio?",
+      "resposta": "Espera por fatores exógenos.",
+      "explicacao": "O desvio não vem da navegação nem do porto, e sim do aguardo por liberações externas, explicitamente citado como incerteza operacional a representar.",
+      "resposta_padrao": "Tempo de navegação.",
+      "por_que_nao": "A navegação já está aderente ao planejado; a variabilidade nasce no aguardo antes da operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "espera por fatores exógenos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "aumentam as esperas, as reprogramações e a variabilidade do tempo de atendimento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelagem explícita da etapa de transferência para comparar políticas com cargas múltiplas e diferentes volumes descarregados.",
+      "pergunta": "Rotas e esperas ficaram constantes, mas a duração das viagens mudou conforme a mistura de entregas e o volume descarregado no destino. Que etapa precisa ter tempo explicitamente modelado?",
+      "resposta": "Transferência de carga.",
+      "explicacao": "Se rotas e esperas não explicam a variação, o componente que muda com volume e composição da entrega é a interface de transferência.",
+      "resposta_padrao": "Tempo de navegação.",
+      "por_que_nao": "O trajeto permaneceu igual; a diferença aparece na operação de descarga e não no deslocamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "transferência de carga"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Arrumar a carga exige considerar segregação, amarração, sequência de atendimento e acesso para içamento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento de ruptura intermitente de combustível que não aparece no total mensal entregue.",
+      "pergunta": "O fechamento mensal mostra todo o diesel recebido, mas houve acionamentos extraordinários entre viagens para manter geradores operando. No monitoramento da política, que indicador separa esse problema do volume total entregue?",
+      "resposta": "Stockout de diesel.",
+      "explicacao": "O total mensal pode fechar sem déficit e ainda haver ruptura entre reabastecimentos; o indicador decisivo é a ocorrência de falta do insumo.",
+      "resposta_padrao": "Volume mensal atendido.",
+      "por_que_nao": "O agregado do mês não mostra a ruptura momentânea que força acionamentos fora da programação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "stockout de insumos críticos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "manter baixo stockout de diesel com menor consumo pela frota total utilizada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Critério de validade para comparar resultados de políticas simuladas sem contaminar a conclusão por premissas diferentes.",
+      "pergunta": "Ao comparar duas políticas simuladas, que condição do estudo deve permanecer igual para que a superioridade observada não seja artefato do modelo?",
+      "resposta": "Hipóteses de modelagem adotadas.",
+      "explicacao": "As conclusões de viabilidade e desempenho só valem sob as mesmas premissas de representação; mudar hipóteses invalida a comparação direta.",
+      "resposta_padrao": "Mesmo horizonte de planejamento.",
+      "por_que_nao": "Horizonte igual não corrige diferenças nas premissas sobre porto, esperas, transferências e demais incertezas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "explorar cenários e comparar alternativas antes da aplicação operacional"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

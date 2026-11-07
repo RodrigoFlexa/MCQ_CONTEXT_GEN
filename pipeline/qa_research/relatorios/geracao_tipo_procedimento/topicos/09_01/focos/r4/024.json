@@ -1,0 +1,79 @@
+{
+  "item": "09_01",
+  "foco": 24,
+  "rodada": 4,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Comparação de políticas logísticas deve incluir o fluxo de retorno para representar capacidade e custo reais.",
+      "pergunta": "Na comparação entre programação fixa e despacho sob chamada, que fluxo deve entrar no modelo para representar a ocupação real da embarcação?",
+      "resposta": "Fluxo de retorno de cargas.",
+      "explicacao": "Ao comparar políticas, o modelo deve representar restrições reais. O retorno consome embarcação, área de convés, equipamentos de movimentação e coordenação em terra, alterando capacidade e custo efetivos.",
+      "resposta_padrao": "Só a carga de ida planejada.",
+      "por_que_nao": "O retorno também usa convés, meios de movimentação e janela logística, mudando o desempenho da política.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Modelos de roteamento e simulação indicam utilidade para representar restrições reais, avaliar mix de frota heterogênea, posicionar recursos de reabastecimento intermediário e comparar políticas de atendimento."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os fluxos de retorno participam desse quadro porque utilizam embarcação, área de convés, equipamentos de movimentação e coordenação em terra."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falha da política logística no retorno de materiais é monitorada pelo tempo de permanência do backload a bordo.",
+      "pergunta": "Materiais reparáveis seguem acumulados no convés por mais de uma viagem programada. Qual parâmetro confirma que a política está retendo backload indevidamente?",
+      "resposta": "Tempo de permanência do backload a bordo.",
+      "explicacao": "Backload mal planejado causa permanência desnecessária a bordo, mais manuseios e atraso no envio para manutenção, reparo, reciclagem ou destinação final.",
+      "resposta_padrao": "Peso total acumulado no convés.",
+      "por_que_nao": "Peso indica ocupação, mas não mede retenção nem atraso do retorno para terra.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Modelos de roteamento e simulação indicam utilidade para representar restrições reais, avaliar mix de frota heterogênea, posicionar recursos de reabastecimento intermediário e comparar políticas de atendimento."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando o backload é mal planejado, pode haver permanência desnecessária de materiais a bordo, aumento de manuseios e atraso no envio de itens para manutenção, reparo, reciclagem ou destinação final."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Avaliação de regra priorizada de despacho usa FIFO como referência de comparação de custo entre disciplinas de fila.",
+      "pergunta": "Ao testar economicamente uma regra de despacho priorizada, que disciplina de atendimento deve ficar como caso-controle da comparação?",
+      "resposta": "FIFO.",
+      "explicacao": "O bloco informa redução de custo da priorização em relação ao FIFO; portanto, a referência equivalente é a fila sem prioridade, não um critério de roteamento.",
+      "resposta_padrao": "Sequência de menor distância total.",
+      "por_que_nao": "A comparação pedida é entre regras de despacho; distância mínima é outro objetivo e pode nem refletir criticidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em outro cenário modelado, a priorização de tarefas foi associada a redução de custo em relação ao FIFO."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A lógica técnica por trás desses resultados é que políticas orientadas por criticidade podem direcionar capacidade escassa para evitar atrasos mais caros, mesmo sem minimizar distância ou ocupação média."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}
