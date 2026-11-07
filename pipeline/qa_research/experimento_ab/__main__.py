@@ -28,6 +28,9 @@
                         o esquema de exemplos da variada (--tipos escolhe quais; padrão os três, em sequência)
   rubrica               classifica o dataset final v2 em fácil/média/difícil pela rubrica do especialista e compara
                         com a dificuldade empírica -> petroquest_final_v2/rubrica/RUBRICA.md
+  banco                 banco final: poda do dataset final v2 (regras R1-R4), revisão de unicidade das questões que
+                        o GPT-5 erra (R5-R7, juiz GPT-5.4) e teto por tópico (R8) -> petroquest_banco_v1/BANCO.md;
+                        --sem-revisao monta o banco provisório sem chamar a API
   final-v2              dataset final v2: v23 + v23 completo + v22 + antigo + conceitos + variada, deduplicado, só gabaritos totalmente
                         sustentados, avaliado com resposta de até --palavras (20) por GPT-4.1 Nano/Mini/4.1,
                         GPT-5 nano/mini/5 e GPT-5.4 (referência), com e sem contexto -> petroquest_final_v2/QUALIDADE.md
@@ -136,7 +139,7 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
-                                        "v23-completo", "conceitos", "variada", "tipos", "rubrica",
+                                        "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco",
                                         "final-v2"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
@@ -151,6 +154,8 @@ def main(argv=None) -> int:
     ap.add_argument("--onda", type=int, default=4, help="v22/v23: focos gerados ao mesmo tempo em cada documento")
     ap.add_argument("--tipos", default="decisao,diagnostico,procedimento",
                     help="tipos: quais gerações por tipo rodar, separados por vírgula")
+    ap.add_argument("--sem-revisao", action="store_true", help="banco: sem a revisão de unicidade (provisório)")
+    ap.add_argument("--teto-topico", type=int, default=150, help="banco: máximo de questões por tópico")
     ap.add_argument("--so-relatorio", action="store_true",
                     help="final-v2: só refaz o QUALIDADE.md com o que já foi avaliado, sem montar nem avaliar")
     ap.add_argument("--docs-simultaneos", type=int, default=6, help="v23-completo: documentos gerados ao mesmo tempo")
@@ -257,6 +262,16 @@ def main(argv=None) -> int:
                 return 2
             print(f"[tipos] {t} concluído: {C.relativo(Path(str(SAIDA_TIPO).format(t)) / 'RELATORIO.md')}")
         return 0
+    if a.comando == "banco":
+        from .banco import Banco, SAIDA as SAIDA_BANCO
+        with _trava(exp, "banco"):
+            try:
+                st = Banco(workers=a.workers, teto=a.teto_topico, exp=exp).executar(revisar=not a.sem_revisao)
+            except ValueError as exc:
+                raise SystemExit(f"[banco] {exc}") from exc
+        print(f"[banco] {'concluído' if st == 0 else 'incompleto; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_BANCO / 'BANCO.md')}")
+        return st
     if a.comando == "rubrica":
         from .rubrica import executar as rubrica
         with _trava(exp, "rubrica"):

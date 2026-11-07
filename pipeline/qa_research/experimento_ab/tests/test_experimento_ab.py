@@ -1410,3 +1410,86 @@ class RubricaTests(unittest.TestCase):
         self.assertEqual(cli.n, 3)                                          # retomada sem novas chamadas
         with self.assertRaises(ValueError):
             RU.validar({"criterios": ["Z9"], "nivel": "facil", "justificativa": "x"})
+
+
+class BancoTests(unittest.TestCase):
+    def test_poda_unicidade_teto_e_retomada(self):
+        from pipeline.qa_research.experimento_ab import banco as BA
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        exp = tmp / "exp"
+        C.preparar_documentos(exp, itens=[ITEM])
+        calibracao_falsa(exp / "calibracao", auto=0.97)
+        orig = tmp / "final"
+        perguntas = {
+            0: ("Qual técnica acompanha a perda de espessura sem parar o processo?", "Ultrassom contínuo."),
+            1: ("O ar deve vir do ramo de instrumentos ou do de serviço?", "Do ramo de instrumentos."),
+            2: ("Por que a calibração isolada não basta para validar a malha?", "Falta o teste de ponta a ponta."),
+            3: ("Que causa explica a queda de vazão com pressão a montante subindo?", "Restrição na válvula."),
+            4: ("Que fenômeno explica a perda de inibidor após a cloração?", "Oxidação do inibidor."),
+            5: ("Que linha recebe o vent durante o carregamento nesta unidade?", "Linha 7 do header B."),
+            6: ("Qual propriedade do MEG limita sua perda para o gás?", "Baixa volatilidade."),
+            7: ("Que mecanismo reduz o oxigênio nas fibras ocas?", "Difusão pela membrana."),
+        }
+        qs = [{"uid": f"v23c:{ITEM}:j:r1:{k:03d}:1", "fonte": "v23c", "item": ITEM,
+               "tipo": "consequencia" if k == 4 else "mecanismo", "cenario": False,
+               "pergunta": p, "resposta": r, "explicacao": "e", "resposta_padrao": "x", "por_que_nao": "y",
+               "contexto_tecnico": "texto do documento", "blocos_contexto": [{"texto": "texto do documento"}],
+               "sinalizar": "forma 'por que X não basta/garante'" if k == 2 else None} for k, (p, r) in perguntas.items()]
+        C.gravar_jsonl(orig / "dataset.jsonl", qs)
+        modelos = ("gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5", "gpt-5-4")
+        with (orig / "pares.csv").open("w", encoding="utf-8-sig", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["uid", "modelo", "resposta_closed_book", "veredito_closed_book", "resposta_open_book",
+                        "veredito_open_book"])
+            for k, q in enumerate(qs):
+                for m in modelos:
+                    fech = "incorreta" if k in (3, 4, 5) and m != "gpt-5-4" else "correta"
+                    aberto = "incorreta" if k == 0 and m in ("gpt-5", "gpt-5-4") else "correta"
+                    w.writerow([q["uid"], m, f"resposta {m} {k}", fech, "r", aberto])
+        C.gravar_jsonl(orig / "rubrica" / "rubrica.jsonl", [{"uid": q["uid"], "nivel": "media", "criterios": ["M1"]}
+                                                            for q in qs])
+
+        class Juiz:
+            def __init__(self):
+                self.n = 0
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                self.n += 1
+                d = json.loads(user)
+                assert d["documento"] and len(d["respostas"]) == 3 and "unicidade" not in system.lower()[:0]
+                k = int(re.search(r"\d+$", d["respostas"][0]["resposta"]).group())
+                aval = {3: "alternativa_valida", 4: "equivalente", 5: "incorreta"}[k]
+                out = {"respostas": [{"id": r["id"], "avaliacao": aval if r["id"] == "R1" else "incorreta"}
+                                     for r in d["respostas"]],
+                       "gabarito_especifico": True, "gabarito_unico": True, "depende_documento": k == 5,
+                       "justificativa": "ok"}
+                validate(out)
+                return out
+
+        juiz = Juiz()
+        b = BA.Banco(orig, tmp / "banco", teto=2, cliente=juiz, embedder=Emb(), exp=exp, **SILENCIO)
+        self.assertEqual(b.executar(), 0)
+        poda = {r["uid"].split(":")[4]: r["regra"] for r in C.linhas(tmp / "banco" / "poda.jsonl")}
+        self.assertEqual({k: v for k, v in poda.items() if v != "R8"},
+                         {"000": "R1", "001": "R2", "002": "R3", "003": "R5", "005": "R7"})
+        self.assertEqual(list(poda.values()).count("R8"), 1)
+        banco = C.linhas(tmp / "banco" / "banco.jsonl")
+        self.assertEqual(len(banco), 2)
+        self.assertEqual([x["id"] for x in banco], ["PQ-0001", "PQ-0002"])
+        q4 = [x for x in banco if x["uid"].endswith(":004:1")]           # consequência: protegida do teto
+        self.assertTrue(q4)
+        if q4:                                                           # veredito corrigido pela revisão
+            self.assertEqual(q4[0]["dificuldade"]["sem_contexto"]["gpt-5"], "correta")
+            self.assertEqual(q4[0]["dificuldade"]["veredito_corrigido"], ["gpt-5"])
+        res = read_json(tmp / "banco" / "resumo.json")
+        self.assertFalse(res["provisorio"])
+        self.assertEqual((res["unicidade_revisadas"], res["vereditos_corrigidos"]), (3, 1))
+        self.assertIn("| R5 |", (tmp / "banco" / "BANCO.md").read_text(encoding="utf-8"))
+        n = juiz.n
+        self.assertEqual(BA.Banco(orig, tmp / "banco", teto=2, cliente=juiz, embedder=Emb(), exp=exp,
+                                  **SILENCIO).executar(), 0)
+        self.assertEqual(juiz.n, n)                                         # retomada sem novas chamadas
+        prov = BA.Banco(orig, tmp / "prov", teto=10, cliente=juiz, embedder=Emb(), exp=exp, **SILENCIO)
+        self.assertEqual(prov.executar(revisar=False), 0)
+        self.assertTrue(read_json(tmp / "prov" / "resumo.json")["provisorio"])
