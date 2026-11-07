@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da desativação de serviços desnecessários como hardening imediato em ativo legado sem janela de patch.",
+      "pergunta": "A estação de engenharia é legada, permanecerá na mesma sub-rede nesta janela e só precisa falar com os controladores em horários programados, mas mantém serviço web e compartilhamento de arquivos habilitados. Qual medida de hardening aplicar agora?",
+      "resposta": "Desabilitar os serviços de rede desnecessários.",
+      "explicacao": "Sem mudar a topologia, remover serviços sem papel operacional reduz caminhos de exploração e preserva a função da estação legada na janela curta.",
+      "resposta_padrao": "Aplicar um patch emergencial no sistema.",
+      "por_que_nao": "Neste cenário há restrição de janela e legado; o ganho imediato e compatível com a função vem da remoção dos serviços expostos que não são necessários.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restrição de alcance do acesso remoto ao escopo exato da tarefa, mesmo com VPN já implantada.",
+      "pergunta": "Com a VPN já estabelecida, o notebook da contratada alcança toda a sub-rede de automação, embora a tarefa seja ajustar apenas um monitor de vibração. Que ajuste técnico deve ser feito na conexão?",
+      "resposta": "Restrição de rotas do túnel ao ativo necessário.",
+      "explicacao": "A tarefa é limitada a um ativo; limitar o alcance do túnel reduz exposição e consequências caso a sessão ou o endpoint sejam comprometidos.",
+      "resposta_padrao": "Manter a VPN aberta para toda a sub-rede, já que o túnel é criptografado.",
+      "por_que_nao": "A VPN reduz exposição externa, mas não substitui a limitação de alcance compatível com a necessidade operacional da intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "restringe rotas de acesso"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle prévio da conformidade de configuração do endpoint remoto como condição para acesso via VPN.",
+      "pergunta": "A conexão remota do fornecedor usará VPN atualizada, mas partirá de um notebook com sincronização em nuvem e serviços automáticos ainda ativos. Antes de liberar a sessão, qual ponto técnico deve ser controlado?",
+      "resposta": "A conformidade de configuração do dispositivo conectado.",
+      "explicacao": "A proteção do túnel não compensa endpoint inseguro; a sessão só deve partir de dispositivo com configuração sob controle.",
+      "resposta_padrao": "Autorizar a sessão porque a VPN já está atualizada.",
+      "por_que_nao": "A segurança da VPN também depende do estado e da configuração do equipamento que entra no ambiente de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "verificar a condição do dispositivo usado na conexão"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de firewall como barreira arquitetural entre rede corporativa e rede de controle quando um servidor precisa comunicar com ambas.",
+      "pergunta": "Um servidor de supervisão ficou com uma interface na rede de controle e outra na corporativa, sem filtragem entre elas; ele precisa continuar trocando dados com ambos os lados. Qual arranjo técnico adotar?",
+      "resposta": "Firewall isolando a rede de controle da corporativa.",
+      "explicacao": "O firewall cria a barreira entre ambiente menos confiável e funções de processo, mantendo somente o tráfego necessário entre os dois domínios.",
+      "resposta_padrao": "Endurecer apenas o servidor com antivírus e senha forte.",
+      "por_que_nao": "Hardening do host ajuda, mas não substitui a barreira de rede exigida para isolar o controle do ambiente corporativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "cria barreiras adicionais entre falha em ambiente menos confiável e funções de processo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

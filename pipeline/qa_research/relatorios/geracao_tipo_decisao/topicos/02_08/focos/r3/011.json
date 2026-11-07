@@ -1,0 +1,65 @@
+{
+  "item": "02_08",
+  "foco": 11,
+  "rodada": 3,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelagem da geometria real após retrofit para revalidar a capacidade transitória de header e knock-out drum.",
+      "pergunta": "Retrofit mudou suportação e traçado; desde então o mesmo pico de alívio gera nível mais alto no knock-out drum, com fluido e lógica de ESD inalterados. O que precisa entrar no modelo?",
+      "resposta": "A geometria real do header e do knock-out drum.",
+      "explicacao": "Com o layout alterado, holdup, contrapressão e líquido coletado deixam de seguir o caso antigo; a capacidade transitória depende da geometria efetivamente instalada.",
+      "resposta_padrao": "Atualizar só a simultaneidade das fontes de alívio.",
+      "por_que_nao": "Isso serve quando muda a sequência de descarga, não quando o novo traçado altera retenção líquida e hidráulica transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a transferência para FPSO depende de fluidos, geometria, malha de controle e cenários de operação comparáveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "inventário líquido, simultaneidade de fontes, variação temporal das vazões e compressibilidade do gás podem alterar pico de carga, contrapressão e quantidade de líquido efetivamente coletada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o líquido acumulado altera a hidráulica, aumenta carga intermitente sobre equipamentos e pode degradar a estabilidade do escoamento."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão da temperatura do fluido no monitoramento quando a variação de líquido coletado sugere mudança de fase no header.",
+      "pergunta": "Com a mesma sequência de abertura e pressões semelhantes, o knock-out drum coleta muito mais líquido de madrugada do que à tarde. Para calibrar o modelo do header, qual variável deve ser adicionada ao histórico básico?",
+      "resposta": "Temperatura do fluido no header.",
+      "explicacao": "Diferenças térmicas podem gerar condensação e mudar o regime; pressão isolada não captura a formação de líquido que altera carga e volume coletado.",
+      "resposta_padrao": "Mais pontos de pressão ao longo da linha.",
+      "por_que_nao": "Sem temperatura, o modelo continua cego para a mudança de fase que explica a diferença de líquido coletado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento útil combina pressões, temperaturas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar desempenho apenas por uma visão estática pode ser insuficiente quando o fenômeno dominante é transitório ou multifásico."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em dutos de gás com condensação da fração pesada, a queda de temperatura e pressão pode gerar líquido"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

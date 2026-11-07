@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Manter o DPR no overflow para preservar split aproximadamente constante quando a interface usa o underflow.",
+      "pergunta": "Se a interface do separador já é corrigida pelo underflow do hidrociclone e o objetivo é manter o split aproximadamente constante, qual variável a malha do overflow deve controlar?",
+      "resposta": "Differential Pressure Ratio (DPR).",
+      "explicacao": "No arranjo acoplado, a malha do overflow mantém o DPR para conservar o split aproximadamente constante, enquanto a interface é ajustada pelo underflow.",
+      "resposta_padrao": "A vazão de overflow.",
+      "por_que_nao": "Fixar só a vazão de overflow não compensa o acoplamento com o underflow, e o split varia com as mudanças impostas pela outra malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Migrar a variável manipulada da interface para o overflow quando a camada de emulsão espessa inviabiliza a faixa admissível.",
+      "pergunta": "A camada de emulsão engrossou e a faixa segura da interface ficou estreita para a geometria do vaso; com hidrociclone a jusante, em qual corrente convém atuar?",
+      "resposta": "Overflow do hidrociclone.",
+      "explicacao": "Quando a emulsão fica muito espessa, a faixa admissível da interface passa a ser limitada pela geometria e pela sensibilidade a jusante, favorecendo estratégia atuando no overflow.",
+      "resposta_padrao": "Underflow do hidrociclone.",
+      "por_que_nao": "Com emulsão muito espessa, a variável manipulada mais adequada pode mudar, e o overflow passa a ser a opção mais favorável nesse cenário.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "essa filosofia depende de a faixa admissível ser compatível com a geometria do separador, com a espessura da camada de emulsão e com a sensibilidade do equipamento a jusante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de emulsão se torna muito espessa, a variável manipulada mais adequada pode mudar, havendo indicação de que uma estratégia de controle de overflow pode ser mais favorável nesse cenário específico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Usar modelo dinâmico fenomenológico acoplado para avaliar filosofia de controle sob golfadas e oscilações de carga.",
+      "pergunta": "Golfadas frequentes e oscilações de carga perturbam interface e hidrociclone; antes de trocar a filosofia de controle, que técnica permite comparar opções considerando o acoplamento dinâmico?",
+      "resposta": "Modelo dinâmico fenomenológico separador-hidrociclone.",
+      "explicacao": "Essa técnica reproduz o acoplamento entre separador e hidrociclone e permite comparar filosofias sob oscilações de carga e golfadas antes da aplicação.",
+      "resposta_padrao": "Simulação estacionária do separador.",
+      "por_que_nao": "Uma análise estacionária não representa os transientes nem o acoplamento dinâmico entre interface, underflow e overflow.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha da interface água-óleo não deve ser analisada isoladamente."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

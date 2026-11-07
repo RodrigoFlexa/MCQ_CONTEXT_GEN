@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 2,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aproximação da disponibilidade de sistemas reparáveis por MTBF e MTTR quando não há uptime/downtime diretos.",
+      "pergunta": "Os registros de estado ficaram inválidos após a troca do supervisório; do trimestre restaram apenas MTBF e MTTR consolidados. Para aproximar a disponibilidade de um sistema reparável no KPI, que formulação usar?",
+      "resposta": "MTBF/(MTBF+MTTR)",
+      "explicacao": "Sem uptime e downtime diretos, a aproximação deve combinar frequência de falha e duração de reparo; usar só um desses termos distorce a disponibilidade.",
+      "resposta_padrao": "Usar apenas o MTBF.",
+      "por_que_nao": "MTBF mede intervalo entre falhas, mas não incorpora o tempo perdido para restaurar a função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma forma de referência relaciona disponibilidade a MTBF (Mean Time Between Failures, tempo médio entre falhas) e MTTR (Mean Time To Repair, tempo médio para reparo)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso ocorre porque a disponibilidade combina frequência de interrupções e duração de recuperação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Encerramento do downtime operacional no retorno seguro à operação, não no fim do reparo ativo.",
+      "pergunta": "A intervenção mecânica termina às 10:00, mas o processo só retoma a função às 16:00 após testes, liberação e estabilização. Que marco deve fechar o downtime dessa falha na disponibilidade operacional?",
+      "resposta": "retorno seguro à operação",
+      "explicacao": "Na disponibilidade operacional, a indisponibilidade só termina quando a função é restabelecida com liberação e retorno seguro, não no fim do reparo físico.",
+      "resposta_padrao": "Fim da intervenção mecânica.",
+      "por_que_nao": "Liberação, testes e retorno seguro ainda compõem o downtime operacional da falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "como diagnóstico, mobilização de pessoal, espera por sobressalentes, acesso, liberação do equipamento e retorno seguro à operação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelagem de disponibilidade com dependências comuns em série e redundância apenas no trecho independente.",
+      "pergunta": "Duas bombas 100% alternadas compartilham sucção, lógica de intertravamento e linha de descarga comum. No modelo de disponibilidade da função de bombeio, que arranjo adotar?",
+      "resposta": "bloco comum em série com arranjo 1oo2 das bombas",
+      "explicacao": "A redundância só vale para o trecho independente; dependências comuns continuam limitando a função e devem entrar em série no modelo.",
+      "resposta_padrao": "Paralelo ideal entre as bombas.",
+      "por_que_nao": "Os elementos compartilhados podem retirar simultaneamente a função dos dois caminhos e reduzem o ganho real da redundância.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A fração de tempo disponível depende de quais indisponibilidades são incluídas no indicador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Além disso, redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

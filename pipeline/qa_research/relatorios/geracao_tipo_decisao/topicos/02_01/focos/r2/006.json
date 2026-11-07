@@ -1,0 +1,87 @@
+{
+  "item": "02_01",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dependência da correção volumétrica da densidade do produto, além da temperatura observada.",
+      "pergunta": "Novo lote entrou com temperatura semelhante à campanha anterior, mas densidade diferente, e o sistema vinha reaproveitando o mesmo fator de correção. Que variável de entrada precisa ser trocada para recalcular o volume na referência?",
+      "resposta": "Densidade do produto usada na tabela.",
+      "explicacao": "A conversão para a referência não depende só da temperatura observada. Mudança de densidade entre lotes altera o fator aplicável e invalida reaproveitar a mesma correção.",
+      "resposta_padrao": "Manter o fator e atualizar só a temperatura observada.",
+      "por_que_nao": "O fator aplicável também depende da densidade do produto; mesma faixa térmica não preserva a correção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento depende da temperatura observada, da densidade do produto e do fator tabelado aplicável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A densidade medida à temperatura observada é convertida para uma densidade de referência por fórmula que usa um fator de correção tabelado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do volume líquido na referência como base comparável entre remessas medidas em temperaturas distintas.",
+      "pergunta": "No fechamento volumétrico de duas remessas do mesmo óleo, uma foi medida quente e outra fria. Qual volume usar para compará-las sem viés térmico?",
+      "resposta": "Volume líquido na referência.",
+      "explicacao": "A massa pode permanecer a mesma, mas o volume observado muda com a temperatura. Para comparação comercial ou regulatória, as remessas precisam estar na mesma base volumétrica.",
+      "resposta_padrao": "Volume observado em cada medição.",
+      "por_que_nao": "O volume observado varia com a dilatação térmica e não é comparável entre remessas em temperaturas diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o líquido varia de volume com a temperatura"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o volume líquido observado é corrigido para um volume líquido na referência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A condição de referência e os fatores de correção devem ser explicitados na base de cálculo, para que os volumes sejam comparáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A correção à referência deve partir do volume líquido observado, excluindo água livre e sedimentos.",
+      "pergunta": "A medição estática mostra água livre no fundo e o cálculo preliminar usou o volume total indicado pelo nível. Que volume deve seguir para a correção à condição de referência?",
+      "resposta": "Volume líquido observado.",
+      "explicacao": "A correção volumétrica deve ser aplicada ao hidrocarboneto líquido. Se houver água livre ou sedimentos, o volume total indicado pelo nível não representa a quantidade de óleo a comparar.",
+      "resposta_padrao": "Volume bruto observado do tanque.",
+      "por_que_nao": "O volume observado sozinho pode incluir água e sedimentos; a conversão metrológica deve usar o volume líquido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o líquido varia de volume com a temperatura e pode conter água e sedimentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o volume líquido observado é corrigido para um volume líquido na referência."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "água livre no fundo, emulsão e deformações geométricas podem alterar a representatividade das variáveis."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de análise de qualidade de energia quando a perturbação é reproduzível e afeta cargas sensíveis na manobra.",
+      "pergunta": "Controladores reiniciam sempre na partida de um grande motor; frequência e carga dos geradores permanecem estáveis no evento. Para definir a correção elétrica adequada, qual avaliação deve ser priorizada?",
+      "resposta": "Análise de qualidade de energia.",
+      "explicacao": "Como o distúrbio é reproduzível e o efeito dominante aparece em cargas sensíveis, a prioridade é caracterizar a perturbação elétrica da manobra, não capturar eventos aleatórios ao longo do tempo.",
+      "resposta_padrao": "Monitoramento contínuo da qualidade de energia.",
+      "por_que_nao": "Monitoramento contínuo é mais indicado para perturbações intermitentes e sem gatilho definido; aqui o evento ocorre numa manobra conhecida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A confiabilidade elétrica se beneficia do uso de análise de qualidade de energia, estudos de harmônicos, monitoramento contínuo, proteção e coordenação, dinâmica de rede e filosofia de power management."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses recursos ajudam a entender se a configuração instalada mantém margem suficiente diante de partidas de motores, rejeição de cargas, separação de barramentos e falhas em equipamentos sensíveis."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização dos thrusters na rejeição automática apenas quando a manutenção de posição depende deles.",
+      "pergunta": "Revendo os primeiros estágios de rejeição automática em dois arranjos com a mesma planta, um mantém posição por thrusters e o outro é ancorado, com cargas de segurança já asseguradas por fonte própria: em qual deles os thrusters não devem entrar no descarte inicial?",
+      "resposta": "No arranjo com posicionamento dinâmico.",
+      "explicacao": "Quando a posição depende de thrusters e controles, perda de geração compromete diretamente a manutenção de posição. No arranjo ancorado, o apagão traz outras consequências, mas não essa vulnerabilidade específica.",
+      "resposta_padrao": "Manter thrusters fora do descarte nos dois arranjos.",
+      "por_que_nao": "A retenção prioritária dos thrusters para manter posição só se justifica quando a posição depende deles eletricamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em embarcações com posicionamento dinâmico, a disponibilidade elétrica se relaciona diretamente à capacidade de manter propulsores e controles; por isso, perda de geração pode afetar não só o processo, mas também a manutenção de posição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já sistemas ancorados ou autoeleváveis foram caracterizados como não vulneráveis ao blackout para manutenção de posição por não dependerem de thrusters, embora isso não elimine outras consequências operacionais do apagão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Permissivo elétrico indispensável para recomposição parcial por back feeding após blackout.",
+      "pergunta": "Com a chave de realimentação já selecionada, pretende-se usar a geração de emergência para energizar instrumentos de retomada, mas os disjuntores dos geradores principais permanecem fechados. O que deve ser feito antes do back feeding?",
+      "resposta": "Abrir os disjuntores dos geradores principais.",
+      "explicacao": "A realimentação parcial só é segura com as fontes principais isoladas. Isso evita paralelismo indevido, retroalimentação de trechos não previstos e uso inadequado da fonte emergencial.",
+      "resposta_padrao": "Fechar imediatamente o alimentador da emergência.",
+      "por_que_nao": "Sem isolar a geração principal, a recomposição pode criar paralelismo ou retroalimentação indevida em partes não previstas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A prevenção e a análise de blackouts exigem mais do que verificar potência instalada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essa realimentação só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O motivo técnico é evitar paralelismo indevido, retroalimentação de partes não previstas e energização de cargas que excedam a finalidade da fonte emergencial."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

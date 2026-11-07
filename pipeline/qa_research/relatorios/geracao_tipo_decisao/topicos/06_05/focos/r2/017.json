@@ -1,0 +1,91 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Fonte de registro que deve prevalecer para confirmar a ordem temporal de eventos de F&G quando a HMI não resolve a sequência.",
+      "pergunta": "Confirmação local e indicação de CO2 disparado aparecem no mesmo minuto na HMI, mas a alteração exige provar que a segunda veio depois. Que registro técnico deve prevalecer nessa verificação?",
+      "resposta": "Registro temporal do controlador de segurança",
+      "explicacao": "A HMI pode não resolver a ordem real. O foco exige coerência entre campo, controlador e supervisório e destaca que a sequência temporal deve ser verificada no ponto onde o comando é processado e registrado.",
+      "resposta_padrao": "Usar o histórico de alarmes da HMI.",
+      "por_que_nao": "A interface pode ter resolução insuficiente ou inconsistência de mapeamento e não ser a referência mais confiável para a sequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre campo, controlador e supervisório, e a rastreabilidade temporal dos eventos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O intervalo registrado entre disparo local e indicação de CO2 disparado também mostra que a sequência temporal é relevante"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Etapa de aceite necessária quando a filosofia da lógica exige confirmação no supervisório além da confirmação local.",
+      "pergunta": "Na prova de uma lógica modificada, o elemento final atua e há confirmação local, mas a filosofia também exige confirmação posterior ao operador. Que etapa específica deve entrar no aceite antes da liberação?",
+      "resposta": "Verificação do registro do evento no supervisório",
+      "explicacao": "A ausência de registros esperados pode indicar falha de implementação. A integridade funcional inclui a confirmação no supervisório e o registro dos comandos, não apenas a atuação física observada no campo.",
+      "resposta_padrao": "Aceitar o teste só com a atuação local e do elemento final.",
+      "por_que_nao": "Sem confirmar o registro no supervisório, uma falha de implementação na cadeia de processamento e registro pode permanecer oculta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a gestão de mudança previa dupla verificação, envolvendo confirmação local e confirmação posterior no supervisório"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a ausência de registros esperados no evento investigado indicou indício de falha de implementação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Parte da barreira de F&G que deve entrar no monitoramento de disponibilidade quando o hardware de campo responde, mas a rastreabilidade operacional falha.",
+      "pergunta": "O detector passa no desafio em campo, mas os comandos associados deixam de aparecer no histórico do operador por falha intermitente de interface. Além do sensor, que parte específica deve entrar no monitoramento de disponibilidade?",
+      "resposta": "Cadeia de processamento e registro dos comandos",
+      "explicacao": "O foco afirma que a proteção completa depende da comunicação com a lógica e a interface do operador. Disponibilidade não se limita ao sensor quando o processamento e a rastreabilidade do comando estão degradados.",
+      "resposta_padrao": "Monitorar apenas a saúde do detector.",
+      "por_que_nao": "Hardware em campo preservado não garante resposta de segurança se a cadeia do sinal e dos registros falhar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade de um detector não produz proteção completa se a comunicação com a lógica e com a interface do operador estiver degradada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

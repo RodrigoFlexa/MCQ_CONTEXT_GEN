@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Coerência semântica da variável antes de combinar sinais de origens diferentes em analytics.",
+      "pergunta": "Dois pacotes exportam “pressão de sucção” com mesma unidade e timestamps alinhados; em um, o valor vem do transmissor da linha e, no outro, é cálculo já compensado. Antes de usar ambos no mesmo modelo, o que deve ser harmonizado?",
+      "resposta": "a definição semântica da variável",
+      "explicacao": "Tempo e unidade corretos não resolvem sinais com significados físicos diferentes. Sem coerência semântica, o modelo mistura grandezas não equivalentes e gera comparação enganosa.",
+      "resposta_padrao": "Padronizar a unidade de engenharia do sinal.",
+      "por_que_nao": "A unidade já coincide; o desvio está no significado técnico e na origem do valor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle da latência de comunicação em aplicações que atuam perto do controle do processo.",
+      "pergunta": "Os relógios estão sincronizados, mas o broker entrega medições em rajadas de alguns segundos; a aplicação recalcula ajuste de carga continuamente. Qual variável de infraestrutura deve ser controlada antes de liberar atuação automática?",
+      "resposta": "a latência ponta a ponta",
+      "explicacao": "Com sincronismo preservado, o problema passa a ser a entrega tardia dos dados. Aplicações que influenciam ajustes frequentes exigem controle rigoroso da latência para evitar atuação fora de tempo.",
+      "resposta_padrao": "A largura de banda do enlace.",
+      "por_que_nao": "Pode haver banda suficiente e ainda assim ocorrer atraso em rajadas, inadequado para ajuste operacional frequente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "protocolos e brokers distribuem esses dados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

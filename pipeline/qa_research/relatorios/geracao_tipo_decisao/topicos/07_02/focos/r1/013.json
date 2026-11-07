@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Preferência por isolamento adicional do conduíte exposto quando o patch imediato em ativo legado crítico não é viável ou seguro.",
+      "pergunta": "Uma regra temporária any-any mantém um PLC legado alcançável pela rede de manutenção, e esse enlace precisa continuar ativo. A vulnerabilidade foi confirmada, mas o fornecedor ainda não qualificou o patch e a parada agora retiraria função crítica de serviço. Qual intervenção imediata adotar até existir remediação compatível?",
+      "resposta": "isolamento adicional do conduíte de manutenção",
+      "explicacao": "Sem patch qualificado e com alto risco operacional da mudança, a melhor ação temporária é restringir tecnicamente o caminho exposto até haver correção compatível.",
+      "resposta_padrao": "Aplicar imediatamente a versão mais recente do patch.",
+      "por_que_nao": "Sem validação de compatibilidade e qualificação, o patch pode introduzir indisponibilidade ou comportamento não previsto; neste cenário, o preferível é compensar com isolamento adicional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de validar compatibilidade entre firmware, comunicação e funções de processo antes de aplicar patch em controle legado.",
+      "pergunta": "O fornecedor liberou correção para um controlador legado com módulos remotos antigos. A atualização exige reinício, e uma mudança anterior da mesma família perdeu comunicação de I/O na volta. Antes de autorizar o patch, o que precisa ser validado tecnicamente?",
+      "resposta": "compatibilidade entre firmware, comunicação e funções de processo",
+      "explicacao": "Em controle legado, a correção só é segura quando firmware, enlaces e funções continuam operando após a atualização, sem introduzir comportamento não previsto.",
+      "resposta_padrao": "Instalar a versão mais recente homologada pelo fornecedor.",
+      "por_que_nao": "Versão homologada não basta quando a interação com comunicação e funções de processo ainda não foi validada no contexto instalado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O tratamento de vulnerabilidade deve começar pela confirmação, ativo a ativo, do uso do componente afetado e da exposição real.",
+      "pergunta": "Dois controladores do mesmo modelo coexistem, mas um recebeu retrofit de CPU e o inventário de campo não mostra a biblioteca de comunicação instalada. Saiu alerta de vulnerabilidade nesse componente. Sem janela para parar ambos, qual checagem deve anteceder qualquer remediação?",
+      "resposta": "confirmar se cada controlador usa o componente afetado",
+      "explicacao": "Mesmo modelo não garante a mesma pilha embarcada. O tratamento correto começa verificando a presença do componente vulnerável e a exposição real antes de planejar patch ou isolamento.",
+      "resposta_padrao": "Tratar os dois controladores como igualmente afetados e atualizar ambos.",
+      "por_que_nao": "O alerta não confirma comprometimento em todos os ativos; retrofit e variações de implementação exigem verificação caso a caso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em OT legado, a decisão de patch deve ser governada também pelo risco operacional da mudança e pela consequência da indisponibilidade introduzida.",
+      "pergunta": "Servidor de operação legado sem redundância tem vulnerabilidade grave confirmada, mas só é acessível por console local. A atualização exige reboot e interrompe supervisão e comando da área. Nessa decisão, qual variável técnica deve prevalecer sobre a urgência de instalar o patch?",
+      "resposta": "o risco operacional da própria mudança",
+      "explicacao": "Quando a exploração é pouco exposta e a atualização derruba funções operacionais, a decisão não pode seguir só a severidade da falha; deve ponderar a indisponibilidade introduzida pela mudança.",
+      "resposta_padrao": "A severidade publicada da vulnerabilidade.",
+      "por_que_nao": "Em OT, a intervenção raramente é apenas atualizar ou não; a mudança pode causar impacto operacional maior que o risco de exploração nesse cenário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

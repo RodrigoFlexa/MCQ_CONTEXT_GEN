@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da remediação correta em equipamento embarcado vulnerável quando existe patch genérico e firmware homologado.",
+      "pergunta": "Um controlador embarcado usa uma biblioteca TCP/IP vulnerável. A correção pública do sistema operacional já saiu, mas o fabricante liberou a remediação somente dentro de um firmware homologado para esse hardware. Que atualização aplicar?",
+      "resposta": "o firmware homologado pelo fabricante do controlador",
+      "explicacao": "Em sistema embarcado, a correção deve seguir a estratégia de remediação homologada pelo fornecedor; pacote genérico pode quebrar compatibilidade e disponibilidade do ativo.",
+      "resposta_padrao": "Aplicar o pacote público do sistema operacional.",
+      "por_que_nao": "Em equipamento embarcado, atualização fora da estratégia homologada pode romper compatibilidade, suporte e disponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter patches e estratégias de remediação com fornecedores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da contenção por exposição potencial de rede quando a criticidade de processo é equivalente.",
+      "pergunta": "Dois ativos vulneráveis têm a mesma criticidade de processo; um recebe tráfego da rede de negócios e o outro fica em célula isolada, com só fluxos essenciais. Para ordenar a contenção agora, qual variável técnica deve prevalecer?",
+      "resposta": "a exposição potencial de rede",
+      "explicacao": "Com a criticidade equivalente, a prioridade de contenção deve seguir a exposição potencial do ativo, que determina os caminhos mais prováveis de exploração remota.",
+      "resposta_padrao": "Priorizar pela criticidade do equipamento.",
+      "por_que_nao": "Com a criticidade empatada, o risco imediato de exploração remota passa a ser definido pela exposição de rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar a exposição potencial dos dispositivos afetados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do conduíte externo como primeiro ponto de isolamento para conter tráfego hostil sem perder funções essenciais de controle.",
+      "pergunta": "Rajadas de SYN entram na célula de controle pelo único uplink com a rede de negócios. IHMs, controladores e proteções seguem estáveis, e a manobra atual não precisa de troca com sistemas corporativos. Qual ponto isolar primeiro?",
+      "resposta": "o uplink com a rede de negócios",
+      "explicacao": "Isolar o enlace com a rede de negócios corta o caminho de entrada mantendo IHMs, controladores e proteções em serviço; isolar a célula inteira ampliaria o risco operacional.",
+      "resposta_padrao": "Desligar a célula de controle inteira.",
+      "por_que_nao": "Isso remove funções essenciais de controle e possivelmente salvaguardas, contrariando a contenção que deve reduzir exposição sem aumentar o risco operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        },
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 4,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na priorização de contenção de vulnerabilidades em IACS, a variável dominante é a função operacional do ativo, não a severidade genérica do boletim.",
+      "pergunta": "Saiu um boletim para vários ativos digitais do mesmo fabricante, mas a campanha só permite conter parte deles agora. Qual variável técnica deve comandar a prioridade de contenção?",
+      "resposta": "a função operacional do ativo afetado",
+      "explicacao": "Em IACS, a relevância da vulnerabilidade muda conforme o ativo pode alterar o processo ou retirar funções de serviço; por isso a função supera a severidade genérica do boletim na priorização.",
+      "resposta_padrao": "A pontuação de severidade genérica do boletim.",
+      "por_que_nao": "Ela não distingue se o ativo apenas registra dados ou se pode alterar processo e remover funções de serviço.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a rede já está minimizada e o host legado não dispõe de filtro local, o hardening decisivo é remover serviço sem papel operacional.",
+      "pergunta": "Mesmo com a sub-rede já segmentada, um posto de operação legado segue oferecendo Telnet pela imagem padrão, e esse host não dispõe de firewall local. O serviço não tem uso operacional. Qual medida aplicar no host?",
+      "resposta": "desabilitação do serviço Telnet",
+      "explicacao": "Com a exposição de rede já reduzida e sem filtro local disponível, o caminho residual de exploração é o serviço sem função. Removê-lo reduz a superfície sem alterar o papel do posto.",
+      "resposta_padrao": "Ajustar apenas o firewall da sub-rede.",
+      "por_que_nao": "Os pares autorizados ao posto continuam existindo, e o serviço inútil permanece ativo no próprio host; neste cenário o hardening correto é removê-lo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "minimizar exposição de rede"
+        },
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando serviços embutidos precisam permanecer por limitação da ferramenta legada, o hardening adequado passa a ser restringir as rotas da estação aos ativos estritamente necessários.",
+      "pergunta": "A estação de engenharia ficará na mesma sub-rede nesta parada, e a ferramenta legada do fornecedor exige manter seus serviços embutidos habilitados. Ela só precisa comunicar com dois PLCs. Que hardening aplicar agora?",
+      "resposta": "restrição das rotas de acesso da estação aos dois PLCs necessários",
+      "explicacao": "Como desabilitar os serviços não é viável nesta janela e a topologia não mudará, a medida seletiva compatível com a função é limitar a estação aos ativos e fluxos estritamente necessários.",
+      "resposta_padrao": "Desabilitar os serviços de rede da estação.",
+      "por_que_nao": "Neste cenário eles precisam permanecer pela ferramenta legada; isso não resolveria o alcance excessivo da estação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "restringe rotas de acesso"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em FPSO, a aplicação precisa considerar restrições de disponibilidade, janelas curtas de manutenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

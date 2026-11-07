@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Resposta imediata de alimentação diante de falha física na UPS que sustenta múltiplas funções críticas.",
+      "pergunta": "Fumaça na seção inversora, arco elétrico e atuação de proteções coincidem com perda do DCS, ESD e F&G na mesma UPS. Depois de isolar e bloquear as fontes, qual arranjo de alimentação deve ser estabelecido para manter as funções críticas?",
+      "resposta": "o bypass seguro das cargas críticas",
+      "explicacao": "Os sinais físicos locais e a perda simultânea em sistemas com alimentação comum apontam para falha da UPS. Nessa condição, o arranjo correto para preservar funções críticas é transferi-las para bypass seguro.",
+      "resposta_padrao": "Reinicializar a UPS e os controladores para retomar a operação.",
+      "por_que_nao": "Com fumaça, arco e proteções atuadas, a UPS é a fonte provável da falha; reenergizá-la antes do bypass seguro pode agravar a indisponibilidade e o dano.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se manifestar com fumaça e arco elétrico na seção inversora; nesse caso, a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de intervenção entre vulnerabilidade digital e suporte elétrico comum a barreiras críticas.",
+      "pergunta": "Só cabe uma intervenção na parada. O servidor com CVE confirmada não tem exposição externa nem eventos anômalos; a UPS comum a DCS, ESD e mitigação está com manutenção vencida, e o gerador de emergência está indisponível. Qual intervenção deve entrar primeiro na janela?",
+      "resposta": "a manutenção da UPS compartilhada das funções críticas",
+      "explicacao": "Sem exposição real nem indício de exploração, a vulnerabilidade pode ficar sob medidas compensatórias. Já a UPS vencida é falha comum para controle, shutdown e mitigação, além de ser o último suporte se faltar geração.",
+      "resposta_padrao": "Aplicar primeiro o patch da CVE no servidor afetado.",
+      "por_que_nao": "O tratamento de vulnerabilidade depende da exposição real; nesta condição, o risco operacional imediato maior está na UPS comum e na ausência do gerador de emergência.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A falta de manutenção em UPS pode levar à perda simultânea de energia para sistemas de controle industrial, de shutdown de emergência e de mitigação de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se a geração principal for perdida e o gerador de emergência não partir, ela é o meio que resta para manter alimentadas as funções críticas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

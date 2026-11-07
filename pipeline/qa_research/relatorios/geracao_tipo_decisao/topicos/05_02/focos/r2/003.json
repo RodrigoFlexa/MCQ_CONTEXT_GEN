@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 3,
+  "rodada": 2,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Decidir o instante de fechamento pelo ângulo de fase quando tensão, frequência e sequência já estão corretas.",
+      "pergunta": "Picos de torque e degrau de kW aparecem no fechamento, embora sequência de fases, tensão e frequência do gerador entrante já estejam praticamente alinhadas ao barramento. Na próxima tentativa, que ação técnica deve ser tomada?",
+      "resposta": "Fechar o disjuntor no instante de coincidência de fase.",
+      "explicacao": "Com sequência correta e tensão/frequência já próximas, o transitório de torque e potência indica fechamento fora do ângulo adequado. O acoplamento suave exige compatibilidade das tensões instantâneas no instante do fechamento.",
+      "resposta_padrao": "Reajustar a excitação do gerador entrante.",
+      "por_que_nao": "Diferença de tensão produz principalmente circulação reativa; aqui o sinal dominante aponta para erro no instante de fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ângulo de fase adequado no instante do fechamento do disjuntor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dois sistemas de corrente alternada só podem ser acoplados suavemente quando suas tensões instantâneas são compatíveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sem produzir transitórios excessivos de corrente, torque e potência"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Remover a compensação temporária de reativos ao fim da aceleração de grande motor para evitar sobretensão.",
+      "pergunta": "Durante a partida direta de um grande motor com geradores em paralelo, a tensão se sustenta na aceleração, mas sobe no fim da partida e o apoio usado passa a exportar kVAr ao barramento. Qual ação técnica tomar?",
+      "resposta": "Retirar ou reduzir a compensação temporária de reativos.",
+      "explicacao": "Na aceleração o motor exige muitos reativos; perto da rotação nominal essa demanda cai. Se o apoio permanecer ligado, passa a fornecer reativos em excesso e eleva a tensão do barramento.",
+      "resposta_padrao": "Baixar o setpoint de tensão dos geradores.",
+      "por_que_nao": "O problema não é AVR ajustado alto, mas a compensação de reativos que continuou conectada além do necessário.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Próximo à velocidade nominal do motor, a demanda reativa cai."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a compensação temporária de reativos usada para sustentar a tensão durante a partida não for retirada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a tensão do barramento tende a subir, podendo chegar a sobretensão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sincronismo é a etapa que antecede qualquer compartilhamento de carga em paralelo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Manter bloqueado o fechamento quando a sequência de fases do gerador não coincide com a do barramento.",
+      "pergunta": "O relé de verificação mostra tensão e frequência alinhadas, mas a ordem de fases do gerador entrante não coincide com a do barramento. Na automatização de paralelismo, que ação deve permanecer imposta?",
+      "resposta": "Bloquear o fechamento do disjuntor.",
+      "explicacao": "Mesmo com tensão e frequência compatíveis, sequência de fases incorreta torna o acoplamento impraticável. A lógica de sincronismo deve impedir o paralelo até restabelecer compatibilidade de fases.",
+      "resposta_padrao": "Aguardar nova coincidência angular e tentar fechar.",
+      "por_que_nao": "Ângulo favorável não corrige sequência de fases errada; com ordem incompatível, a conexão continua impraticável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sequência de fases compatível"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se a sequência de fases estiver incorreta, a conexão é impraticável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas condições são necessárias"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

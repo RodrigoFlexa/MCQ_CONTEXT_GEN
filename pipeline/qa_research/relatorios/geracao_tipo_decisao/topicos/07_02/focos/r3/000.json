@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão de sistemas elétricos de controle e aquisição no escopo arquitetural do IACS quando compartilham a infraestrutura de automação.",
+      "pergunta": "O sistema de gerenciamento de carga troca comandos e estados pela mesma infraestrutura usada por supervisão e controle de processo. Na revisão de arquitetura e segmentação, qual sistema você deve incluir explicitamente no escopo do IACS?",
+      "resposta": "o sistema elétrico de controle e aquisição de dados",
+      "explicacao": "Quando compartilha a infraestrutura do IACS, o escopo não se limita ao processo; inclui também os sistemas elétricos de controle e aquisição, que têm interdependências e consequências operacionais próprias.",
+      "resposta_padrao": "Apenas o controle de processo e a supervisão associada.",
+      "por_que_nao": "O IACS pode incluir sistemas elétricos de controle e aquisição; deixá-los fora distorce a segmentação e as interdependências reais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sistemas corporativos conectados pela infraestrutura de rede do IACS devem ser tratados no escopo arquitetural do IACS.",
+      "pergunta": "Ligaram um servidor de relatórios corporativos aos switches da automação para coletar produção do historiador. Na definição de zonas e conduítes, sob qual escopo arquitetural esse servidor deve ser tratado?",
+      "resposta": "no escopo do IACS",
+      "explicacao": "Mesmo com finalidade de negócio, ao se conectar pela infraestrutura de rede do IACS ele passa a integrar o escopo arquitetural relevante para segmentação e tratamento das interconexões.",
+      "resposta_padrao": "No escopo de TI corporativa apenas.",
+      "por_que_nao": "Sistemas de informação e de negócio conectados pela infraestrutura de rede do IACS entram nesse escopo arquitetural.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e de negócio conectados pela infraestrutura de rede do IACS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicações analíticas devem ser posicionadas acima ou ao redor da camada supervisória, e não confundidas com funções típicas de SCADA/HMI/historiador.",
+      "pergunta": "Para simplificar suporte, querem instalar uma aplicação analítica no mesmo nó que executa HMI, alarmes e historiador. Em que posição arquitetural essa aplicação deve ficar?",
+      "resposta": "acima ou ao redor da camada supervisória",
+      "explicacao": "A camada supervisória concentra SCADA, historiadores, alarmes e HMI. O texto distingue dela as aplicações analíticas, que ficam acima ou ao redor dessa camada.",
+      "resposta_padrao": "Na própria camada supervisória, junto do HMI e do historiador.",
+      "por_que_nao": "A camada supervisória é descrita para SCADA, historiadores, alarmes e HMI; aplicações analíticas ficam acima ou ao redor dela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima ou ao redor dela podem existir bases de dados, aplicações analíticas e sistemas corporativos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição de tráfego autorizado através da fronteira IT/OT com base na finalidade operacional de cada fluxo.",
+      "pergunta": "RTU, telemetria e software analítico passarão a compartilhar o mesmo enlace com o SCADA. Para não alargar a fronteira além do necessário, qual variável deve governar os fluxos liberados nesse enlace?",
+      "resposta": "a finalidade operacional de cada fluxo",
+      "explicacao": "Cada nova interface exige definir claramente que tráfego cruza a fronteira e com qual finalidade operacional. Esse recorte limita exposições desnecessárias entre domínios distintos.",
+      "resposta_padrao": "A banda disponível do enlace.",
+      "por_que_nao": "Capacidade de rede não define o que pode atravessar a fronteira; o critério é o propósito operacional do fluxo.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

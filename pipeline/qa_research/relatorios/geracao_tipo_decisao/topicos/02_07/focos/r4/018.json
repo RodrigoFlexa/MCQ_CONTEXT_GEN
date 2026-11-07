@@ -1,0 +1,83 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 4,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar a malha de pressão do separador para amortecer transientes da fase gasosa que se propagam ao compressor, em vez de agir pela saída líquida.",
+      "pergunta": "Durante ciclos de poço, o nível do separador oscila e o operador tende a abrir mais a saída de líquido. O tratador a jusante perde estabilidade, mas os picos que chegam ao compressor persistem. Que malha do separador deve absorver prioritariamente esse transiente?",
+      "resposta": "Controle de pressão na saída de gás",
+      "explicacao": "O separador também amortece surge de pressão a jusante. Se mexer na saída líquida já desestabiliza o tratamento e não elimina os picos no compressor, a variável correta para absorver o transiente é a pressão do gás.",
+      "resposta_padrao": "Apertar o controle de nível do líquido.",
+      "por_que_nao": "O inventário líquido não amortece diretamente o surge da fase gasosa e ainda retransmite perturbações ao tratamento seguinte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reduzindo o surge de pressão a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle de nível, pressão e interface é central para a estabilidade da planta."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Incluir explicitamente a dinâmica da válvula de controle no modelo da malha quando a hipótese de atuador rápido deixa de valer.",
+      "pergunta": "Trocada a válvula de saída por atuador mais lento, a resposta real de nível deixou de seguir o modelo que tratava a abertura como instantânea. Antes de novo ajuste, que elemento deve entrar explicitamente na modelagem?",
+      "resposta": "Dinâmica da válvula de controle",
+      "explicacao": "A hipótese de válvula rápida deixou de ser válida. O atraso e a velocidade do atuador passam a compor a dinâmica dominante da malha e precisam ser representados antes de retunar.",
+      "resposta_padrao": "Aumentar a ação integral do PI.",
+      "por_que_nao": "Retunar sem representar o atraso do atuador corrige o sintoma, mas mantém o erro estrutural do modelo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar bloqueio de saídas como perturbação de robustez quando a proteção a jusante pode isolar o vaso antes do corte efetivo da alimentação.",
+      "pergunta": "A lógica de proteção a jusante pode selar simultaneamente as linhas de óleo e água, enquanto o fechamento a montante leva alguns segundos. Na requalificação da malha de nível do separador, que perturbação deve ser reproduzida?",
+      "resposta": "Bloqueio de saídas",
+      "explicacao": "Com as saídas líquidas seladas e a entrada ainda chegando por alguns segundos, o cenário crítico é acumulação sem escoamento. A robustez da malha deve ser testada contra esse desequilíbrio, mais severo que perda instantânea de alimentação.",
+      "resposta_padrao": "Parada de alimentação.",
+      "por_que_nao": "Se a montante demora a isolar, o risco dinâmico imediato é entrada sem saída, não simplesmente falta de entrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o desequilíbrio entre entradas e saídas pode levar o nível aos limites do vaso"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "item": "06_05",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "A2": 18,
+    "F": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restauração de parâmetros de F&G deve usar a matriz de causa e efeito local; limiares e votações não são universais.",
+      "pergunta": "Após troca do controlador, os canais de gás voltaram sem parâmetros e há um arquivo pronto de outra instalação com mesmo gás e detectores. Qual configuração deve ser carregada para restabelecer alarmes e ações automáticas?",
+      "resposta": "Os limiares, a votação e as respostas da matriz de causa e efeito local.",
+      "explicacao": "Esses parâmetros são definidos para cada instalação; copiar arquivo de outra pode aplicar alarmes e atuações incompatíveis.",
+      "resposta_padrao": "Carregar os setpoints e votações da outra instalação semelhante.",
+      "por_que_nao": "Limiares, votação e respostas não são universais; devem seguir a causa e efeito local aprovada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Limiares, votação e respostas devem estar definidos na matriz de causa e efeito da unidade; valores de uma instalação não constituem ajustes universais."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inibições na mesma zona devem ser sequenciadas para preservar o mínimo de canais exigido pela votação automática.",
+      "pergunta": "Com um canal já inibido na mesma zona de fogo e gás e votação 2ooN para o disparo automático, outro detector precisa de calibração. Que arranjo de manutenção adotar?",
+      "resposta": "Restabelecer um canal da zona antes de inibir o segundo.",
+      "explicacao": "Retirar mais um canal pode eliminar o mínimo necessário para confirmação e votação, mantendo detectores instalados mas sem atuação automática válida.",
+      "resposta_padrao": "Inibir o segundo e seguir com a calibração, porque ainda restam detectores na área.",
+      "por_que_nao": "Cobertura por quantidade remanescente não garante confirmação, lógica de votação nem disparo automático requerido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A indisponibilidade do F&G pode comprometer tanto o alarme quanto as ações automáticas previstas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "possibilidade de redução significante de cobertura, ausência de um mínimo de detectores para cumprir a matriz de causa e efeito"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não satisfazer confirmação de evento, lógica de votação ou disparo automático requerido."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sem propagação coerente do sinal até lógica e supervisório, a função de F&G perde crédito mesmo com detector em campo ativo.",
+      "pergunta": "O detector sinaliza alarme no campo, mas o supervisório não mostra evento nem registra horário, e a ação automática associada não ocorre. O que deve ser considerado indisponível na operação?",
+      "resposta": "A função de detecção e atuação associada.",
+      "explicacao": "Sem indicação, registro e atuação, o caminho do sinal até lógica e supervisório não está íntegro; a barreira não pode ser creditada.",
+      "resposta_padrao": "Tratar como falha apenas de supervisório e manter a proteção automática creditada.",
+      "por_que_nao": "Falhas de comunicação ou lógica preservam o hardware em campo, mas comprometem alarme, isolamento e mitigação.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Esse tipo de situação evidencia que a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório, e a rastreabilidade temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Por isso, monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Falhas de detecção, comunicação ou lógica podem atrasar isolamento e mitigação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

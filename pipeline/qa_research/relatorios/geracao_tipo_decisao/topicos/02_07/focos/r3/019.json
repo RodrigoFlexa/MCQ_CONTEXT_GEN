@@ -1,0 +1,83 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 3,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelagem da malha de nível quando a hipótese de válvula rápida não é válida.",
+      "pergunta": "A sintonia obtida por balanço de massa funciona no simulador, mas no campo a válvula de saída demora a acompanhar o sinal e o nível passa a oscilar. Que elemento técnico deve entrar no modelo antes de retunar a malha?",
+      "resposta": "Dinâmica da válvula de controle e do atuador.",
+      "explicacao": "O modelo simplificado supõe válvula rápida. Se a abertura não acompanha prontamente o comando, a dinâmica do atuador/válvula passa a influenciar a malha e precisa ser representada antes de nova sintonia.",
+      "resposta_padrao": "Ajustar apenas o ganho do PI.",
+      "por_que_nao": "A oscilação nasce de uma hipótese de modelagem violada; retunar sem incluir a dinâmica da válvula mantém a malha mal representada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle; essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de usar a geometria real do vaso quando a relação nível-inventário não é linear.",
+      "pergunta": "Sob a mesma diferença entre entrada e saída, o nível sobe devagar na faixa média e muito mais rápido perto do topo, repetidamente. Antes de retunar, que elemento do modelo do vaso deve ser corrigido?",
+      "resposta": "A curva real altura-volume do vaso.",
+      "explicacao": "Com a mesma diferença de vazões, mudanças distintas de velocidade do nível indicam que centímetros de altura não representam o mesmo inventário ao longo da faixa. A geometria real deve substituir a aproximação linear.",
+      "resposta_padrao": "Retunar o controlador para a região alta de nível.",
+      "por_que_nao": "A falha vem da conversão incorreta entre nível e inventário; sem corrigir a relação altura-volume, a sintonia continua dependente da faixa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode-se assumir relação linear entre altura e volume"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição da referência de saída no controle por bandas com média de alimentação variável.",
+      "pergunta": "Com o nível estável dentro da banda, a alimentação oscila rápido, mas sua média sobe lentamente ao longo do turno; a jusante pede vazão lisa. Na lógica por bandas, que referência deve comandar a saída nessa condição?",
+      "resposta": "Vazão de saída próxima à média estimada da entrada.",
+      "explicacao": "Dentro da banda, a saída não deve seguir cada oscilação. Ela deve acompanhar a média estimada da entrada para evitar deriva do inventário sem sacrificar a estabilidade a jusante.",
+      "resposta_padrao": "Um setpoint fixo de vazão de saída.",
+      "por_que_nao": "Se a média de entrada se desloca, uma referência fixa acumula erro de inventário até empurrar o nível para fora da banda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando a alimentação varia com frequência, o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

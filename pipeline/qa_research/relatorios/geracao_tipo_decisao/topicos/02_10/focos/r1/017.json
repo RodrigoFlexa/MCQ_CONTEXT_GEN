@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar a rotação da bomba via VSD como variável manipulada da interface quando não há válvula modulante.",
+      "pergunta": "Sem válvula submarina modulante no circuito de água, um vaso com bomba injetora a jusante precisa manter a interface óleo-água estável enquanto envia água para reinjeção. Qual variável manipulada deve assumir a malha de interface?",
+      "resposta": "Rotação da bomba injetora via VSD.",
+      "explicacao": "Nesse arranjo, a interface pode ser controlada pela velocidade da bomba injetora; a variável manipulada não precisa ser uma válvula de controle.",
+      "resposta_padrao": "Usar a válvula de controle da saída de água.",
+      "por_que_nao": "Aqui a arquitetura de controle atua pela bomba, e a malha de interface não depende de válvula modulante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A variável manipulada da malha de interface não precisa ser, necessariamente, uma válvula de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o nível de interface óleo-água no vaso é controlado pela rotação da bomba injetora por meio de Variable Speed Drive (VSD)"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar TOG para acompanhar a qualidade da água separada quando o controle da interface usa outro atuador.",
+      "pergunta": "A interface já é controlada pela rotação da bomba, mas a água separada precisa ser acompanhada para descarte ou reinjeção. Que instrumento deve monitorar essa qualidade na corrente aquosa?",
+      "resposta": "Analisador de teor de óleo e graxa (TOG).",
+      "explicacao": "Nessa arquitetura, controle da interface e monitoramento da qualidade têm funções distintas; a corrente aquosa deve ser acompanhada por TOG para indicar óleo remanescente.",
+      "resposta_padrao": "Instalar um medidor de turbidez.",
+      "por_que_nao": "Turbidez é indireta e não acompanha especificamente teor de óleo e graxa, que é a variável de qualidade relevante aqui.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a qualidade da água separada é acompanhada por analisador de teor de óleo e graxa (TOG)."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a água produzida pode carregar óleo remanescente que exige tratamento adicional antes de descarte ou reinjeção."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Preferir válvula submarina modulante a choke descontínuo quando a continuidade e a resolução do controle afetam o split do hidrociclone.",
+      "pergunta": "O arranjo submarino admite válvula modulante, mas propõem trocá-la por choke descontínuo na descarga de um hidrociclone. A produção varia continuamente e pequenas oscilações pioram o split. Que atuador deve ser mantido?",
+      "resposta": "Válvula submarina modulante.",
+      "explicacao": "Com split sensível a pequenas oscilações, a atuação contínua e com maior resolução da válvula modulante reduz a incerteza operacional frente ao choke descontínuo.",
+      "resposta_padrao": "Trocar por um choke descontínuo.",
+      "por_que_nao": "Nesse serviço, a ação em degraus reduz continuidade e resolução do controle, aumentando a variabilidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a indisponibilidade de válvulas submarinas modulantes levou ao uso de chokes descontínuos e ejetores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa substituição tende a reduzir a continuidade e a resolução da ação de controle, o que pode aumentar a incerteza operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

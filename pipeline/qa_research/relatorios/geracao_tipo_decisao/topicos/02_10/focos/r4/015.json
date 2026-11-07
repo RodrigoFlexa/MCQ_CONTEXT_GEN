@@ -1,0 +1,65 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 4,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratar separador e hidrociclone como sistema único na sintonia da interface quando a descarga a jusante oscila.",
+      "pergunta": "Água separada segue para hidrociclones. Depois de apertar a malha da interface, o nível ficou mais parado, mas a vazão de descarte e o TOG passaram a oscilar. Na nova sintonia, qual sistema físico deve ser tratado como uma única planta?",
+      "resposta": "O conjunto separador-hidrociclone acoplado.",
+      "explicacao": "Com água indo aos hidrociclones, a interface não deve ser avaliada isoladamente. A ação nas correntes do ciclone altera o balanço do próprio equipamento e pode desestabilizar a descarga mesmo com o inventário do vaso mais estável.",
+      "resposta_padrao": "Somente o separador, focando na interface e no nível do vaso.",
+      "por_que_nao": "Isso ignora o acoplamento entre underflow, overflow e tratamento de água, onde a sintonia pode piorar a descarga apesar de melhorar o nível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a malha da interface água-óleo não deve ser analisada isoladamente."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Adequar o modelo dinâmico do sistema acoplado para incluir espuma quando esse fenômeno domina os transientes antes de comparar filosofias de controle.",
+      "pergunta": "Espuma persistente passou a dominar os transientes, e a equipe quer usar um modelo dinâmico existente para escolher entre recentrar a interface ou operá-la em banda antes dos hidrociclones. Que modificação específica fazer primeiro?",
+      "resposta": "Incluir a dinâmica de espuma no modelo.",
+      "explicacao": "A comparação entre filosofias depende da dinâmica real do sistema acoplado. Se o fenômeno dominante foi omitido, o modelo deixa de representar corretamente a resposta usada para tomar a decisão.",
+      "resposta_padrao": "Usar o modelo atual e apenas comparar as duas sintonias.",
+      "por_que_nao": "Quando a espuma domina os transientes, um modelo que a desconsidera perde validade justamente no regime que se quer decidir.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do mapeamento de dependências entre controle, proteção e energia para decidir contenção sem agravar o evento.",
+      "pergunta": "Alarmes de comunicação no controle coincidem com atuação da UPS e perda breve de supervisão elétrica. Antes de isolar o segmento de rede suspeito sem cortar função necessária à proteção, qual referência técnica deve orientar a decisão?",
+      "resposta": "mapeamento das dependências entre controle, proteção e energia",
+      "explicacao": "Sintomas simultâneos em rede e alimentação podem ter causa comum. O mapeamento de dependências evita uma contenção que derrube supervisão, controle ou proteção necessários.",
+      "resposta_padrao": "Desconectar imediatamente o segmento OT que gerou mais alarmes.",
+      "por_que_nao": "Sem avaliar dependências, o isolamento pode remover caminhos necessários à proteção ou apenas atacar uma consequência de uma perda de energia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quem autoriza isolamento ou bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de registros confiáveis de estado do sistema para ordenar causa e consequência em resposta a incidentes.",
+      "pergunta": "Perdas breves de comunicação surgem em IHMs diferentes, com horários divergentes entre estações e relatos incompatíveis do turno. Para reconstituir a sequência antes de conter, qual base técnica deve prevalecer?",
+      "resposta": "registros confiáveis dos estados do sistema",
+      "explicacao": "Com IHMs dessincronizadas e relatos conflitantes, os registros confiáveis dos estados permitem reconstruir a sequência real e separar origem de efeitos secundários.",
+      "resposta_padrao": "Usar a lista de alarmes da sala de controle como cronologia do evento.",
+      "por_que_nao": "Listas de alarmes e relatos podem refletir efeitos tardios ou estações dessincronizadas, sem representar a sequência real dos estados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registros confiáveis dos estados do sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem esse preparo, a organização pode confundir consequência com causa"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de referência histórica do comportamento para qualificar anomalias e escalonamento em monitoramento OT.",
+      "pergunta": "Modelos de edge analytics recém-integrados passaram a sinalizar anomalias, mas o processo segue estável e sem perda funcional. Para decidir se o caso deve escalar como comprometimento digital, qual comparação priorizar?",
+      "resposta": "comparação com a referência histórica do comportamento",
+      "explicacao": "Sem comparar o comportamento atual com a referência histórica, alertas de analytics podem refletir variabilidade conhecida ou ajuste recente, e não comprometimento digital.",
+      "resposta_padrao": "Tratar o alerta do analytics como evidência suficiente para escalar o incidente.",
+      "por_que_nao": "Analytics ampliam a observação, mas não substituem monitoramento de segurança nem distinguem desvio novo de comportamento histórico conhecido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capacidade de comparar comportamento atual com referência histórica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "analytics em dispositivos, edge computing e modelos digitais podem ampliar observação e previsão de falhas, porém não substituem monitoramento de segurança nem garantem resposta adequada sem integração com funções críticas e decisão operacional"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

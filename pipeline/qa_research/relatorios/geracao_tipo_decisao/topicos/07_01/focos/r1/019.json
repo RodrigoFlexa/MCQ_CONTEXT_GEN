@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de bypass no ponto lógico afetado, em vez de forcing no sinal de campo, para preservar supervisão e alarmes.",
+      "pergunta": "O valor do transmissor está coerente na HMI e no indicador local, mas a partida bloqueia por uma única linha lógica associada a esse sinal; os alarmes de processo precisam continuar ativos. Que intervenção técnica temporária deve ser aplicada?",
+      "resposta": "bypass seletivo na lógica do permissivo",
+      "explicacao": "Quando o problema está restrito à função lógica, forçar o sinal de campo remove supervisão além do necessário. O bypass no permissivo limita o efeito da intervenção e preserva a leitura e os alarmes do processo.",
+      "resposta_padrao": "Forçar o transmissor para um valor normal.",
+      "por_que_nao": "Nesse cenário, o forcing mascara a condição real e pode afetar alarmes e outras lógicas além do permissivo bloqueado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de operação assistida em circuito fechado com N2 para recuperar confiança na automação após longa inatividade e antes de hidrocarboneto.",
+      "pergunta": "Meses após parada prolongada, sopradores, aquecedores e instrumentos do circuito de regeneração voltarão a operar, e o arranjo tem pouca experiência industrial. Antes de introduzir gás combustível, qual arranjo de teste deve ser adotado?",
+      "resposta": "operação assistida em circuito fechado com N2",
+      "explicacao": "Esse arranjo exercita lógica, comunicação, desempenho e estanqueidade em condição representativa, mas sem o mesmo inventário inflamável da operação normal. É a forma mais adequada para reduzir incertezas após longa inatividade.",
+      "resposta_padrao": "Fazer a partida direta com gás em carga reduzida.",
+      "por_que_nao": "A carga reduzida ainda introduz o inventário inflamável antes de confirmar integração, vazamentos e sintonia inicial da automação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tecnologias com poucas aplicações na indústria, ainda podem permanecer incertezas sobre manutenção, condições operacionais e consequências de longos períodos de inatividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica, confirmar desempenho, identificar vazamentos induzidos por acomodação térmica e ajustar instrumentos e controladores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem introduzir o mesmo inventário inflamável da operação normal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação da atualização do dado para distinguir estabilidade real de sinal congelado sob override.",
+      "pergunta": "PV, comando e vazão ficam num platô idêntico por 20 minutos no historian durante um override ativo; o indicador local segue variando e não há bad quality na tela. Antes de mexer na sintonia, o que deve ser verificado?",
+      "resposta": "timestamp de atualização do sinal",
+      "explicacao": "Com override ativo, a tela pode sugerir estabilidade sem refletir o processo. Antes de retunar a malha, é preciso confirmar que o dado continua sendo atualizado e não está congelado no transporte ou processamento.",
+      "resposta_padrao": "Ajustar a sintonia do controlador.",
+      "por_que_nao": "Se o dado estiver congelado, a aparente estabilidade não é dinâmica de controle e qualquer retuning atacará o problema errado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

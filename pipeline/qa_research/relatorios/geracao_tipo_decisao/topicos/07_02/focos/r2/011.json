@@ -1,0 +1,113 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Posicionamento de dispositivo remoto de manutenção atrás de barreira de rede, fora da rede corporativa.",
+      "pergunta": "Um gateway de manutenção de analisador fala com controladores e foi ligado diretamente à rede corporativa por conveniência do suporte. Como posicioná-lo na arquitetura sem tirar sua função?",
+      "resposta": "isolado da rede corporativa por firewall",
+      "explicacao": "Para dispositivos remotos com impacto potencial sobre controle, o hardening indicado é colocá-los atrás de firewall e separados da rede corporativa, criando barreira entre ambiente menos confiável e funções de processo.",
+      "resposta_padrao": "Mantê-lo na rede corporativa com antivírus e senha forte.",
+      "por_que_nao": "Isso melhora o host, mas não cria a barreira de rede exigida entre o ambiente corporativo e as funções de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "cria barreiras adicionais entre falha em ambiente menos confiável e funções de processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restrição de origens e rotas como hardening imediato de ativo legado quando a porta necessária deve permanecer aberta.",
+      "pergunta": "Tentativas de conexão chegam a um PLC legado pela porta legítima de programação, mas só uma estação de engenharia precisa alcançá-lo e não há janela para atualizar firmware. Que endurecimento aplicar agora?",
+      "resposta": "restrição das origens e rotas de acesso ao PLC",
+      "explicacao": "Como a porta necessária deve permanecer disponível, o endurecimento útil é reduzir a exposição de rede permitindo apenas o caminho estritamente necessário ao ativo.",
+      "resposta_padrao": "Agendar atualização de firmware assim que possível.",
+      "por_que_nao": "Sem janela e com ativo legado, a mitigação imediata sustentada é reduzir a exposição de rede, não depender de atualização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "minimizar exposição de rede"
+        },
+        {
+          "bloco": "F",
+          "trecho": "restringe rotas de acesso"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coexistência com equipamentos embarcados sem suporte pleno a atualizações frequentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade da intervenção remota por registro de sessão associado ao ativo acessado.",
+      "pergunta": "Dois ativos iguais serão ajustados remotamente por terceiros na mesma janela; a VPN e o escopo já estão corretos. Que controle de sessão exigir para saber depois onde houve atuação?",
+      "resposta": "registro de sessão vinculado ao ativo acessado",
+      "explicacao": "O controle deve permitir reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação; sem esse vínculo, investigação e contenção ficam incompletas.",
+      "resposta_padrao": "Guardar apenas o log de conexão da VPN.",
+      "por_que_nao": "O log da VPN mostra a sessão, mas pode não indicar em qual ativo ocorreu a intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Remoção de acessibilidade direta à internet quando o ativo não precisa receber conexões entrantes.",
+      "pergunta": "Varreduras externas atingem o serviço de diagnóstico de um registrador remoto. Ele só publica telemetria ao supervisório e não precisa receber conexões nesta semana. Que mudança fazer primeiro?",
+      "resposta": "retirar a acessibilidade direta pela internet",
+      "explicacao": "Se o ativo não precisa receber conexões, eliminar a exposição pública reduz varredura externa e caminhos de exploração sem afetar sua função de envio de dados.",
+      "resposta_padrao": "Trocar senhas e manter o serviço público monitorado.",
+      "por_que_nao": "A troca de credenciais não remove a superfície exposta nem a chance de exploração do serviço publicado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduz a chance de varredura externa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "minimizar exposição de rede"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

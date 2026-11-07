@@ -1,0 +1,83 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 3,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Associação correta de canais à zona lógica para preservar votação e causa e efeito",
+      "pergunta": "Durante prova funcional com dois detectores da mesma zona em alarme, ambos LEDs locais atuam, mas o controlador contabiliza um deles em zona adjacente e a lógica 2oo2 da zona ensaiada não fecha a válvula. Que correção técnica específica aplicar?",
+      "resposta": "Remapear o canal para a zona correta na lógica",
+      "explicacao": "A detecção em campo ocorreu, mas a votação por zona falha porque um canal está associado à zona errada. Em F&G, coerência entre campo e lógica e análise por zona sustentam a correção do mapeamento.",
+      "resposta_padrao": "Recalibrar os detectores da zona ensaiada.",
+      "por_que_nao": "Os detectores já entram em alarme; o defeito está na associação do sinal à zona lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mapeamento incorreto de sinais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre campo, controlador e supervisório"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a disponibilidade relevante deve ser analisada por zona e por função"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade temporal entre controlador e supervisório para validar sequência de lógica modificada",
+      "pergunta": "No aceite periódico de uma lógica alterada, o SOE do controlador e o histórico do supervisório precisam ser comparados automaticamente, mas há defasagem fixa entre os carimbos de tempo. Que ajuste técnico viabiliza essa validação?",
+      "resposta": "Sincronização dos relógios do controlador e do supervisório",
+      "explicacao": "Sem base temporal comum, a comparação entre os dois registros não comprova a ordem exigida. A rastreabilidade temporal dos eventos é parte da integridade funcional quando a sequência valida a lógica.",
+      "resposta_padrao": "Usar só o SOE do controlador.",
+      "por_que_nao": "Aqui o aceite exige coerência entre controlador e supervisório; sem relógios alinhados, a comparação cruzada perde validade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rastreabilidade temporal dos eventos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a sequência temporal é relevante para verificar se a lógica configurada foi realmente executada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Crédito funcional do alarme ao operador quando a interface supervisória está degradada",
+      "pergunta": "Falhas de rede deixam os alarmes de gás ausentes na tela da sala de controle, embora detectores e desligamento automático sigam atuando pelo controlador. Na operação degradada, qual função específica não pode ser creditada?",
+      "resposta": "Alarme ao operador no supervisório",
+      "explicacao": "A interface do operador integra a disponibilidade funcional. Se o alarme não chega ao supervisório, a função de aviso ao operador fica indisponível, mesmo com detecção e atuação automáticas preservadas.",
+      "resposta_padrao": "Manter o sistema totalmente creditado porque o automático atua.",
+      "por_que_nao": "Sem indicação no supervisório, a função dependente da interface do operador não está disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "com a lógica e com a interface do operador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "preservar hardware em campo e, ainda assim, comprometer a resposta de segurança"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

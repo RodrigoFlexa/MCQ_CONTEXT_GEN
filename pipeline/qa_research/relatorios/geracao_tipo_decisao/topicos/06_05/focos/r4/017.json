@@ -1,0 +1,65 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 4,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Coerência entre controlador e supervisório quando a lógica atua na zona correta, mas a interface do operador associa o evento à zona errada.",
+      "pergunta": "Na prova de um disparo, a sirene e o LED local atuam na área leste, o controlador registra a zona leste e a ação automática dessa zona ocorre, mas a tela do operador e o histórico vinculam o evento à área oeste. Que correção técnica específica deve preceder a liberação?",
+      "resposta": "Remapeamento do evento para a zona correta no supervisório.",
+      "explicacao": "Campo e controlador já confirmam a zona leste e a lógica atuou corretamente. A divergência remanescente está entre controlador e supervisório, que devem manter a mesma zona para coerência e rastreabilidade.",
+      "resposta_padrao": "Ajustar a lógica do controlador da zona leste.",
+      "por_que_nao": "A lógica já executou corretamente para a zona leste; o erro está na associação apresentada ao operador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre campo, controlador e supervisório"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mapeamento incorreto de sinais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inconsistências entre telas e lógica"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Disponibilidade de ponto sem ação automática depende da annunciação ao operador, não apenas da recepção do sinal no controlador.",
+      "pergunta": "Detector de H₂S em área ocupada entra em alarme local, e o estado chega ao controlador, mas nenhum alarme novo aparece para o operador na sala de controle; esse ponto não tem ação automática associada. Que parte específica precisa ser restaurada antes de considerá-lo disponível?",
+      "resposta": "Annunciação do alarme no supervisório da sala de controle.",
+      "explicacao": "Sem atuação automática, a resposta depende do operador. Se o sinal chega ao controlador, mas não alcança a interface do operador, a cadeia de proteção permanece degradada.",
+      "resposta_padrao": "Contá-lo como disponível porque o controlador continua recebendo o alarme.",
+      "por_que_nao": "Sem alarme ao operador, esse cenário perde a resposta humana prevista, mesmo com sensor e controlador ativos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a comunicação com a lógica e com a interface do operador estiver degradada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comprometer a resposta de segurança"
+        },
+        {
+          "bloco": "F",
+          "trecho": "observar não só o sensor, mas também a cadeia de processamento e registro dos comandos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

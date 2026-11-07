@@ -1,0 +1,87 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de controle por bandas para o nível quando o separador deve amortecer transientes sem caçar válvula.",
+      "pergunta": "A válvula de saída do separador caça a cada oscilação de alimentação, e a etapa seguinte perde estabilidade mesmo com nível dentro da faixa segura. Que estratégia de controle de nível adotar?",
+      "resposta": "Controle de nível por bandas.",
+      "explicacao": "Dentro da faixa, a saída fica próxima da vazão média estimada, usando o volume de retenção do vaso; fora dela, a ação rápida recupera o inventário sem movimentação desnecessária da válvula.",
+      "resposta_padrao": "Reapertar o PI do nível.",
+      "por_que_nao": "PI mais agressivo aumenta a movimentação da válvula e repassa a variabilidade para jusante, em vez de explorar a função amortecedora do separador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a alimentação varia com frequência, o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de controlar diretamente a interface óleo-água quando a razão entre fases varia e o nível total deixa de representar a separação.",
+      "pergunta": "Cortes de água alternam ao longo do turno; o nível total do trifásico fica estável, mas o óleo enviado adiante passa a levar água livre intermitente. Que variável deve ser controlada diretamente?",
+      "resposta": "Nível da interface óleo-água.",
+      "explicacao": "Com variação da fração de água, o nível total pode permanecer aceitável enquanto o inventário relativo das fases líquidas se desloca. Controlar a interface preserva a separação e reduz arraste entre fases.",
+      "resposta_padrao": "Nível total do vaso.",
+      "por_que_nao": "O nível total não revela sozinho o deslocamento entre os inventários de óleo e água quando a composição da alimentação muda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em separadores trifásicos, a separação entre gás, óleo e água decorre principalmente das diferenças de propriedades físicas entre as fases"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa função amortecedora explica por que o controle de nível, pressão e interface é central para a estabilidade da planta."
+        },
+        {
+          "bloco": "F",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da malha de pressão no separador para amortecer transientes dominados pela fase gasosa.",
+      "pergunta": "Golfadas ricas em gás geram pulsos no cabeçalho a jusante, enquanto níveis e interface seguem normais. Qual malha do separador deve atuar prioritariamente para amortecer esse transiente?",
+      "resposta": "Controle de pressão na saída de gás.",
+      "explicacao": "O distúrbio dominante está na fase gasosa e aparece como surge de pressão a jusante. A malha de pressão é a que atua diretamente sobre essa dinâmica sem perturbar desnecessariamente os inventários líquidos.",
+      "resposta_padrao": "Apertar a malha de nível do líquido.",
+      "por_que_nao": "Mexer no inventário líquido não regula a descarga da fase gasosa e pode degradar a separação sem conter os pulsos de pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também amortecem flutuações de vazão e atenuam oscilações vindas dos poços, reduzindo o surge de pressão a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa função amortecedora explica por que o controle de nível, pressão e interface é central para a estabilidade da planta."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

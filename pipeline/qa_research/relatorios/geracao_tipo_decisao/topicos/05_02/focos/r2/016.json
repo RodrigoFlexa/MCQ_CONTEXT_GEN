@@ -1,0 +1,99 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de cargas de UPS pela consequência da perda de energia, não pela potência consumida.",
+      "pergunta": "O quadro de UPS chegou ao limite após ampliações, e as menores cargas viraram candidatas automáticas à retirada. Que variável deve comandar essa triagem para não degradar as funções essenciais?",
+      "resposta": "Consequência da perda de energia.",
+      "explicacao": "Na seleção de cargas essenciais, a criticidade da perda é o critério correto; potência baixa não significa baixa importância para controle, segurança ou mitigação.",
+      "resposta_padrao": "Potência consumida da carga.",
+      "por_que_nao": "Carga pequena pode ser a mais crítica para comando, shutdown ou mitigação; cortar por kW contraria a filosofia de continuidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A confiabilidade dos sistemas essenciais aumenta quando a arquitetura evita ponto único de falha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar teste de capacidade das baterias quando a falha aparece apenas na descarga do UPS.",
+      "pergunta": "A saída do UPS fica estável com rede presente, mas no teste de perda da alimentação de entrada as estações caem muito antes da retaguarda prevista. Que verificação técnica priorizar?",
+      "resposta": "Teste de capacidade do banco de baterias.",
+      "explicacao": "Se a saída permanece normal com rede presente, a falha aparece quando a carga depende do armazenamento. Isso aponta para autonomia real insuficiente das baterias.",
+      "resposta_padrao": "Verificar primeiro o inversor do UPS.",
+      "por_que_nao": "O problema só surge em descarga; isso aponta para a capacidade das baterias, não para a conversão com alimentação presente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dois UPS dimensionados para suprir integralmente as cargas das estações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dois conjuntos independentes de retificador/carregador e banco de baterias"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "condição de baterias, saúde do inversor e do retificador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Usar separação de barramento por bus tie como load shedding rápido quando a seção a rejeitar já está agrupada.",
+      "pergunta": "Perdendo um gerador, a frequência cai rápido demais para abrir vários alimentadores; as cargas menos prioritárias estão numa seção sem fonte própria, alimentada pelo bus tie. Que atuação automática escolher?",
+      "resposta": "Abrir o disjuntor do bus tie dessa seção.",
+      "explicacao": "Com as cargas menos prioritárias agrupadas e dependentes da interligação, a separação da seção rejeita o bloco inteiro mais rápido que trips individuais e ajuda a conter a queda de frequência.",
+      "resposta_padrao": "Tripar consumidores individualmente.",
+      "por_que_nao": "A atuação alimentador a alimentador tende a ser lenta para esse transitório; a rejeição em bloco pela seção é mais eficaz.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuídos em barramentos “A” e “B”, também com interligação por disjuntor em contingência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

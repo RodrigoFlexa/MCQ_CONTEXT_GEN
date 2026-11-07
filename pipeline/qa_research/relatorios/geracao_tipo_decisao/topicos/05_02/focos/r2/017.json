@@ -1,0 +1,113 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de UPS para cargas 120 Vca de automação e comunicação que não podem reiniciar na transferência.",
+      "pergunta": "No black start, estações de supervisão e switches 120 Vca reiniciam na transferência, embora o gerador de emergência entre normalmente. Que alimentação deve ser adotada para esses equipamentos?",
+      "resposta": "UPS 120 Vca",
+      "explicacao": "Essas cargas precisam atravessar a microinterrupção sem reboot. A geração de emergência repõe a energia com tempo morto; para supervisão e comunicação crítica, a alimentação contínua por UPS é a opção adequada.",
+      "resposta_padrao": "Alimentação pela geração de emergência.",
+      "por_que_nao": "A entrada do gerador não elimina a descontinuidade da transferência; o reboot desses equipamentos interrompe permissivos e a recomposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a exigir maior continuidade ou maior independência de alimentação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do monitoramento do retificador quando o problema aparece com CA disponível e recuperação insuficiente do barramento CC.",
+      "pergunta": "Com a CA de entrada restabelecida, o banco permanece descarregado e o barramento CC do UPS não volta ao normal, embora a saída CA siga estável. O que deve ser monitorado prioritariamente?",
+      "resposta": "Saúde do retificador",
+      "explicacao": "Se a CA já voltou e o barramento CC não se recompõe, o elemento decisivo é o estágio que alimenta o barramento e recarrega as baterias em regime normal.",
+      "resposta_padrao": "Condição das baterias.",
+      "por_que_nao": "Bateria degradada compromete autonomia, mas não explica a falta de recuperação do barramento CC com alimentação CA presente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "condição de baterias, saúde do inversor e do retificador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do teste de autonomia para verificar a condição real de bancos 24 Vcc além da simples tensão de flutuação.",
+      "pergunta": "A tensão de flutuação do quadro 24 Vcc está normal e o retificador não alarma, mas na perda de CA a carga essencial se perde antes da recomposição. Que verificação periódica deve ser adotada?",
+      "resposta": "Teste de autonomia do banco de baterias",
+      "explicacao": "Presença de tensão com carregador ativo não comprova capacidade sob descarga. Quando a falha ocorre justamente sem CA, a verificação decisiva é a autonomia real do banco alimentando a carga.",
+      "resposta_padrao": "Monitorar apenas a tensão de flutuação.",
+      "por_que_nao": "Tensão correta em flutuação pode coexistir com capacidade degradada e colapso precoce durante a descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comissionamento, testes periódicos e gestão de mudanças são decisivos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cada um capaz de suprir integralmente a demanda do quadro"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de teste funcional de blackout/black start na configuração instalada para validar redundância e lógicas após modificações acumuladas.",
+      "pergunta": "Anos de modificações mantiveram o diagrama aparentemente redundante, mas um exercício revelou perda de recomposição por interações de alimentação e lógica. Que ação técnica deve ser priorizada para confirmar a redundância real?",
+      "resposta": "Teste funcional periódico de blackout/black start na configuração instalada",
+      "explicacao": "A redundância pode sobreviver no diagrama e falhar no arranjo montado. Só um teste funcional do cenário real evidencia efeitos combinados de modificações, reboot, trips e alimentações durante a recomposição.",
+      "resposta_padrao": "Revisar apenas os diagramas e a documentação de mudanças.",
+      "por_que_nao": "Documentos não provam a configuração instalada nem reproduzem o comportamento real de lógica e alimentação no blackout.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "efeitos de modificações acumuladas ao longo da vida operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

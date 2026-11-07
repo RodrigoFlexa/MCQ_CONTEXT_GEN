@@ -1,0 +1,79 @@
+{
+  "item": "02_12",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle da temperatura de descarga por redução da razão de compressão quando a sucção está mais quente e o resfriamento já saturou.",
+      "pergunta": "Sucção 15 °C acima do habitual, resfriamento já no máximo e a descarga do centrífugo encosta no limite térmico. Sem problema de estabilidade e com o sistema a jusante aceitando menor setpoint, qual ajuste específico no estágio deve ser feito para conter a temperatura?",
+      "resposta": "Reduzir a pressão de descarga requerida do estágio",
+      "explicacao": "Com sucção mais quente, a descarga sobe ainda mais para a mesma elevação de pressão. Sem folga adicional de resfriamento, a ação direta para aliviar o limite térmico é reduzir a razão de compressão do estágio.",
+      "resposta_padrao": "Abrir mais o reciclo anti-surge.",
+      "por_que_nao": "O reciclo protege contra surge e recircula gás comprimido; com sucção mais quente, não remove a causa térmica ligada à elevação de pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a temperatura de sucção sobe, o gás entra menos denso e a temperatura de descarga tende a se elevar ainda mais para a mesma elevação de pressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para um estágio centrífugo, pressão de sucção, temperatura de sucção, pressão de descarga, peso molecular da mistura, compressibilidade, razão de calores específicos e eficiência politrópica definem a vazão que a máquina consegue processar, a potência requerida e a temperatura de descarga."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Limitação operacional por potência quando a composição altera a carga do estágio sem mudar necessariamente a razão de pressão.",
+      "pergunta": "Mantida a mesma razão de pressão do caso-base, a corrente ficou mais rica em pesados e o acionador se aproxima do limite térmico. Para impor um limite operacional temporário, qual variável do estágio deve ser limitada diretamente?",
+      "resposta": "Potência absorvida do compressor",
+      "explicacao": "Gás mais pesado pode exigir mais head e mais potência para o mesmo par de pressões. Perto do limite do acionador, a contenção deve seguir a potência real do estágio, não a razão de pressão.",
+      "resposta_padrao": "A própria razão de pressão do estágio.",
+      "por_que_nao": "A mesma razão de pressão pode representar carga bem maior quando mudam peso molecular, compressibilidade e razão de calores específicos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças em peso molecular, fator de compressibilidade e razão de calores específicos alteram o head necessário para atingir determinada pressão e também a potência consumida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Peso molecular, compressibilidade e razão de calores específicos afetam head, potência requerida, vazão processável e temperatura de descarga."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso da eficiência politrópica para decidir intervenção quando potência e temperatura sobem em condições de processo equivalentes.",
+      "pergunta": "Potência absorvida e temperatura de descarga subiram, mas sucção, descarga e composição voltaram ao histórico. Antes de redistribuir carga entre trens, qual parâmetro do estágio deve orientar a decisão de intervenção?",
+      "resposta": "Eficiência politrópica do estágio",
+      "explicacao": "Com condições equivalentes, menor eficiência politrópica explica aumento simultâneo de potência e temperatura. Esse parâmetro separa degradação do estágio de simples variações das condições de processo.",
+      "resposta_padrao": "Temperatura de descarga.",
+      "por_que_nao": "Temperatura é efeito do desempenho e das condições operacionais; eficiência é a medida que evidencia perda real do estágio para o mesmo serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A eficiência politrópica representa quão próxima a compressão real está de um caminho idealizado com pequenas etapas de compressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Eficiência menor implica maior parcela de energia dissipada, o que normalmente aumenta a potência requerida para um mesmo serviço e eleva a temperatura de descarga."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

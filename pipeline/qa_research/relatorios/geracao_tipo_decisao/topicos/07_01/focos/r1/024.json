@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 24,
+  "rodada": 1,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acúmulo de testes vencidos na mesma barreira exige bloquear a partida até recompor integralmente a função de proteção.",
+      "pergunta": "Dois testes periódicos vencidos recaem sobre elementos da mesma barreira, e a janela permite recuperar só um antes da partida. Que decisão tomar com a partida?",
+      "resposta": "Bloquear a partida até recompor integralmente a barreira.",
+      "explicacao": "A postergação acumulada em elementos da mesma barreira eleva a criticidade, sobretudo na partida, quando sequências corretas e premissas temporárias pesam mais no desempenho da proteção.",
+      "resposta_padrao": "Partir após testar o elemento mais crítico e monitorar o outro.",
+      "por_que_nao": "Esse contingenciamento pode caber em degradação isolada; aqui há acúmulo na mesma barreira, aumentando a indisponibilidade combinada.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A criticidade cresce quando a postergação se acumula em elementos que compõem a mesma barreira."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Partidas, paradas, isolamento de sistemas, comissionamento, regeneração, indisponibilidade simultânea de equipes ou de equipamentos críticos e execução de serviços concorrentes tendem a aumentar a dependência de sequências corretas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes e compensações não devem ser avaliados como eventos isolados"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compensação temporária em utilidade que afeta permissivos requer teste funcional da matriz de causa e efeito no arranjo realmente disponível.",
+      "pergunta": "Um teste isolado confirmou sensor, lógica e atuador separadamente, mas há compensação temporária ativa em utilidade que participa dos permissivos de partida. Que verificação adicional deve ser feita no arranjo disponível?",
+      "resposta": "Teste funcional da matriz de causa e efeito.",
+      "explicacao": "Com compensação e dependência entre utilidades e permissivos, é preciso validar o encadeamento causa-decisão-efeito no arranjo real, não apenas componentes isolados.",
+      "resposta_padrao": "Repetir apenas os testes de malha dos componentes envolvidos.",
+      "por_que_nao": "Loop checks não demonstram a resposta automática da função completa nem sua coerência no arranjo temporário disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes e compensações não devem ser avaliados como eventos isolados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo é confirmar que as condições de entrada levam aos efeitos definidos para os intertravamentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o comportamento observado no teste, porém, vale para os cenários exercitados e para o arranjo disponível naquele momento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança do fluido e do regime operacional pode tornar inadequada uma compensação temporária antes aceita em permissivo de partida.",
+      "pergunta": "Uma compensação temporária aceita durante circulação com água permanece no permissivo de partida de um equipamento que passará a receber hidrocarboneto. Qual ação tomar antes da admissão do fluido?",
+      "resposta": "Retirar a compensação antes da admissão de hidrocarboneto.",
+      "explicacao": "O significado da compensação muda com o fluido e com as condições de operação; o que era aceitável sem inventário inflamável deixa de ser adequado na nova fase.",
+      "resposta_padrao": "Mantê-la ativa, já que a lógica e o hardware não mudaram.",
+      "por_que_nao": "A aceitabilidade não depende só da lógica instalada; depende também do fluido em serviço e do impacto potencial da operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seu significado depende do fluido, das condições de operação, da importância do equipamento para o processo e do impacto potencial em segurança, meio ambiente e continuidade operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária deve confirmar que a função protegida voltou à configuração pretendida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O desempenho de intertravamentos, permissivos e compensações muda com o regime operacional e com o contexto da instalação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

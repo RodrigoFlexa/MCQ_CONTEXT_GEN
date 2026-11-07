@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 4,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O KPI de disponibilidade deve medir a função de processo preservada quando há gargalo comum, e não a média de equipamentos redundantes.",
+      "pergunta": "Cada trem fecha o mês acima da meta, mas um bloqueio na linha comum de exportação interrompe o escoamento dos dois sempre que ocorre. Para que o KPI represente a perda real, qual disponibilidade deve substituir a média dos trens?",
+      "resposta": "disponibilidade da função de processo relevante",
+      "explicacao": "Com gargalo comum, os trens podem aparecer disponíveis e, ainda assim, a função ficar indisponível. O indicador correto precisa medir o serviço efetivamente entregue.",
+      "resposta_padrao": "Média da disponibilidade individual dos dois trens.",
+      "por_que_nao": "Esse cálculo ignora o caminho comum que zera a função mesmo com equipamentos duplicados aptos.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em compressão, geração e tratamento em FPSO, a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A meta de desempenho de arranjo redundante deve usar o horizonte da missão, não o ganho transitório observado no início da operação.",
+      "pergunta": "Quase sem perdas nas primeiras semanas, o arranjo redundante passa a registrar mais falhas dos ativos em serviço no restante do ano. Ao definir a meta anual, que horizonte deve ancorar o KPI?",
+      "resposta": "o horizonte anual da missão",
+      "explicacao": "A redundância tende a melhorar o resultado no início, mas esse benefício não se mantém indefinidamente. Para meta anual, vale o comportamento ao longo de toda a missão.",
+      "resposta_padrao": "As primeiras semanas de operação.",
+      "por_que_nao": "Esse recorte superestima o ganho inicial da redundância e não representa a degradação observada depois.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No conjunto, a redundância pode elevar a confiabilidade e a disponibilidade no início da missão, mas esse benefício não é ilimitado: em tempos mais longos, a degradação dos equipamentos ativos pode deixar de ser compensada pelo reserva."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Assim, o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a operação já revelou dependências e tempos reais de recuperação, a previsão de disponibilidade deve migrar para modelo RAM atualizado com dados próprios.",
+      "pergunta": "A meta de produção ainda usa uma estimativa que tratou dois trens como independentes. Meses de operação mostraram paradas simultâneas por utilidade comum e reparos mais longos por acesso difícil. Para revisar a previsão, qual base analítica adotar?",
+      "resposta": "modelo RAM atualizado com dados próprios",
+      "explicacao": "A estimativa simplificada não representa dependências comuns nem tempos reais de falha e reparo. Com histórico próprio e lógica conhecida, a previsão deve usar RAM aderente à operação.",
+      "resposta_padrao": "Manter a média histórica de disponibilidade dos equipamentos.",
+      "por_que_nao": "Médias isoladas não capturam a lógica funcional nem o efeito das dependências e reparos reais sobre a função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada, porque tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Assim, o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

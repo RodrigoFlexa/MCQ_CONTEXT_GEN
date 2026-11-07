@@ -1,0 +1,105 @@
+{
+  "item": "02_01",
+  "foco": 23,
+  "rodada": 2,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Influência da interface óleo-água dos tanques na reconciliação do inventário transferido.",
+      "pergunta": "Níveis quase constantes e BS&W do óleo exportado variando ao longo do alívio. No fechamento do inventário, qual variável dos tanques deve ser acompanhada além do nível?",
+      "resposta": "Interface óleo-água dos tanques.",
+      "explicacao": "Com interface móvel, a variação do nível total não representa a parcela de óleo armazenada; o balanço da entrega precisa capturar essa mudança de inventário.",
+      "resposta_padrao": "Apenas a variação do nível total dos tanques.",
+      "por_que_nao": "Nível total não distingue deslocamento entre óleo e água, que altera o inventário de óleo transferível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "há retenção de volume nos tanques, variação de interface óleo-água, possíveis correntes internas de recirculação e mudanças operacionais que alteram a composição do fluido entregue."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição da janela temporal correta para o balanço de transferência de custódia.",
+      "pergunta": "O carregamento começou antes da meia-noite e terminou horas depois, enquanto a produção fiscal é fechada por dia civil. Para reconciliar essa entrega, que intervalo de cálculo deve ser adotado?",
+      "resposta": "Janela do alívio entre inventário inicial e final.",
+      "explicacao": "Produção e entrega ficam desacopladas pela estocagem; o fechamento deve usar inventário inicial/final e entradas/saídas ocorridas no período efetivo da transferência.",
+      "resposta_padrao": "O dia civil do fechamento fiscal da produção.",
+      "por_que_nao": "O fechamento diário não representa a entrega quando a medição fiscal está a montante da estocagem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o tanque de carga introduz desacoplamento entre produção e entrega: o volume que entrou no tanque em um período não é necessariamente o mesmo volume transferido ao comprador naquele mesmo período."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da temperatura representativa para conversão do volume medido durante a transferência.",
+      "pergunta": "Na descarga, o tanque exportador estava termicamente estratificado e a linha operou sob forte variação ambiental. Para converter o volume medido para referência, qual temperatura deve alimentar o cálculo?",
+      "resposta": "Temperatura do escoamento na linha de transferência.",
+      "explicacao": "O volume corrigido depende do estado termodinâmico do fluido que passa pelo ponto de medição; a temperatura do tanque não representa necessariamente a corrente transferida.",
+      "resposta_padrao": "Temperatura média do tanque exportador.",
+      "por_que_nao": "A conversão deve usar o estado do fluido medido na transferência, não uma condição estática do armazenamento.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "pressão e temperatura do escoamento são variáveis relevantes para as conversões de volume e densidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a conversão para condições de referência depende de medir o estado do fluido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O balanço da transferência serve para reconciliar três grandezas que podem divergir: produção medida, variação de inventário nos tanques e volume efetivamente transferido."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do inventário agregado do sistema de armazenamento quando há movimentações internas entre tanques.",
+      "pergunta": "Houve troca do tanque de sucção e equalização entre tanques durante o alívio. Para fechar a entrega sem contar movimentações internas como transferência ao comprador, qual inventário deve ser comparado no início e no fim?",
+      "resposta": "Inventário total do sistema de armazenamento.",
+      "explicacao": "Troca de sucção e equalizações são movimentações internas; para não confundi-las com entrega, o balanço deve comparar o inventário agregado do armazenamento.",
+      "resposta_padrao": "Inventário do tanque que iniciou a descarga.",
+      "por_que_nao": "Mudança de sucção e equalização redistribuem volume internamente e não representam transferência líquida ao comprador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        },
+        {
+          "bloco": "F",
+          "trecho": "há retenção de volume nos tanques, variação de interface óleo-água, possíveis correntes internas de recirculação e mudanças operacionais que alteram a composição do fluido entregue."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

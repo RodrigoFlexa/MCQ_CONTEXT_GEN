@@ -1,0 +1,83 @@
+{
+  "item": "02_04",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Decisão de desviar a corrente quando há pressão disponível, mas a qualidade monitorada não atende.",
+      "pergunta": "A pressão de descarga continua suficiente para vencer a linha e o reservatório, mas o monitoramento de qualidade no ponto de decisão saiu da faixa aceitável durante a reinjeção. Qual ação imediata deve ser tomada com essa corrente?",
+      "resposta": "Desviar a corrente para o topside pelo choke da água de injeção.",
+      "explicacao": "Nesse arranjo, o destino da corrente é definido no choke pela qualidade monitorada. Pressão disponível não autoriza reinjeção se a água estiver fora da especificação.",
+      "resposta_padrao": "Manter a reinjeção e tentar compensar ajustando o bombeio.",
+      "por_que_nao": "A arquitetura não libera reinjeção só por haver pressão; qualidade fora de faixa exige desvio da corrente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já o módulo do choke da água de injeção direciona a corrente para reinjeção quando a qualidade monitorada está em níveis aceitáveis, ou para o topside quando isso não ocorre"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nesse tipo de arquitetura, a aptidão para injetar depende ao mesmo tempo de pressão disponível e de conformidade da qualidade da água na linha de reinjeção."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do módulo de bombeio, e não do choke, para suprir a pressão requerida de reinjeção.",
+      "pergunta": "Qualidade da água está conforme e a reinjeção segue liberada, mas a vazão cai enquanto o choke já está amplamente aberto. Onde a intervenção deve buscar a pressão faltante para o reservatório?",
+      "resposta": "No módulo de bombeio.",
+      "explicacao": "Com qualidade conforme e choke sem recuperar a vazão, o ganho de pressão necessário para injetar deve vir do módulo de bombeio.",
+      "resposta_padrao": "Abrir mais o choke da água de injeção.",
+      "por_que_nao": "O choke direciona e estrangula a corrente, mas não fornece a variação de pressão exigida para vencer o reservatório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O módulo de bombeio fornece a variação de pressão necessária para a injeção no reservatório."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já o módulo do choke da água de injeção direciona a corrente para reinjeção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No acompanhamento operacional, medições de vazão, pressão e qualidade da água ajudam a distinguir, com as limitações do sistema de medição, se uma perda de desempenho decorre principalmente de restrição hidráulica superficial, piora do tratamento ou redução da capacidade de absorção do reservatório."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto correto de aplicação da lógica de desvio automático integrada à medição de vazão e qualidade.",
+      "pergunta": "A água alterna rapidamente entre conforme e fora de especificação, e o desvio automático precisa ocorrer no mesmo ponto em que se confirmam vazão e qualidade da corrente. Em que ponto do arranjo essa lógica deve atuar?",
+      "resposta": "No módulo do choke da água de injeção.",
+      "explicacao": "Nesse arranjo, medição de fluxo, monitoramento da qualidade e direcionamento da corrente ficam reunidos no módulo do choke da água de injeção.",
+      "resposta_padrao": "Na saída do tratamento, antes do choke.",
+      "por_que_nao": "O ponto associado à decisão de destino e às medições de vazão e qualidade é o módulo do choke.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "nesse módulo também há medição de fluxo e monitoramento da qualidade da água."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já o módulo do choke da água de injeção direciona a corrente para reinjeção quando a qualidade monitorada está em níveis aceitáveis, ou para o topside quando isso não ocorre"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

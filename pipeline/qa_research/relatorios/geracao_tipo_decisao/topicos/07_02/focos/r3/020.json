@@ -1,0 +1,117 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 3,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de plataforma unificada offline quando o problema dominante é a inconsistência entre modelos disciplinares, não a falta de dados correntes.",
+      "pergunta": "Revisões semanais conciliam poços, escoamento, facilidades e cenários de segurança; há histórico operacional disponível, mas bibliotecas termodinâmicas e solucionadores diferentes geram previsões divergentes entre disciplinas. Sem exigência de tempo real, que arranjo técnico adotar?",
+      "resposta": "plataforma unificada de simulação offline",
+      "explicacao": "Ela reúne as disciplinas no mesmo ambiente de modelagem, mantendo alinhados propriedades físicas, termodinâmica e métodos de solução para reduzir divergências entre modelos paralelos.",
+      "resposta_padrao": "Integração online com dados de SCADA e controle.",
+      "por_que_nao": "Dados correntes ajudam na atualização programada, mas não eliminam a inconsistência entre bibliotecas e solucionadores separados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo offline, uma plataforma unificada de simulação pode reunir reservatório, poços, escoamento, facilidades de produção e cenários de segurança em um mesmo ambiente de modelagem."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ganho principal é a consistência: propriedades físicas, termodinâmica e métodos de solução permanecem alinhados entre disciplinas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduzindo divergências entre modelos paralelos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição da camada SCADA como ponto de normalização quando a camada de controle é heterogênea e não será alterada.",
+      "pergunta": "A HMI e os comparativos entre ativos perderam padronização após integrar controladores de fornecedores diferentes; nesta intervenção não haverá reprogramação dos controladores nem novo middleware. Para unificar nomes e unidades antes de analytics, em que camada aplicar a normalização?",
+      "resposta": "na camada SCADA",
+      "explicacao": "Com diversidade de modelos de dados no controle e sem mexer nos controladores nem inserir outra camada, o SCADA é o ponto viável mais próximo da fonte para normalizar.",
+      "resposta_padrao": "Nos próprios controladores.",
+      "por_que_nao": "A heterogeneidade entre fornecedores e a ausência de reprogramação tornam inviável padronizar a camada de controle neste cenário.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade da identidade semântica do ativo para evitar comparações enganosas em analytics e modelos preditivos.",
+      "pergunta": "Séries preditivas chegam com unidade validada, qualidade tratada e carimbos coerentes, mas trocas de tags fizeram o modelo comparar históricos de máquinas diferentes como se fossem o mesmo ativo. Que elemento do dado corrigir primeiro?",
+      "resposta": "identificação consistente do equipamento",
+      "explicacao": "Com unidade, tempo e qualidade já tratados, a fragilidade restante é semântica: o sinal precisa manter associação inequívoca com o ativo para evitar comparações enganosas.",
+      "resposta_padrao": "Contexto de modo operacional.",
+      "por_que_nao": "Mesmo com modos equivalentes, o erro persiste se a identidade do ativo vinculada ao sinal estiver errada.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comparações enganosas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "aplicações analíticas e modelos os transformam em informação operacional útil."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do comportamento em perda de conectividade para aplicações próximas ao controle que influenciam ajustes frequentes.",
+      "pergunta": "Aplicação que influencia ajustes frequentes roda perto do controle; quando o enlace externo cai por segundos, as saídas ficam inconsistentes, embora a rede opere com baixa ocupação e latência normal no restante do tempo. Que aspecto técnico da integração deve ser priorizado?",
+      "resposta": "comportamento em perda de conectividade",
+      "explicacao": "Para aplicações próximas ao controle e com ajustes frequentes, quedas breves do enlace podem produzir ação inconsistente; por isso o comportamento sob desconexão é a variável decisiva.",
+      "resposta_padrao": "Largura de banda do enlace.",
+      "por_que_nao": "Com baixa ocupação e latência normal, o risco dominante passa a ser como a aplicação reage às interrupções de conectividade.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

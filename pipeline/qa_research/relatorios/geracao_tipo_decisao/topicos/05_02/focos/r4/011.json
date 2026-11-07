@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 4,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação real da alimentação 24 Vcc dos painéis de controle dos geradores supera redundância nominal no mesmo quadro.",
+      "pergunta": "Os painéis de controle dos geradores estão no 24 Vcc de serviços gerais, com carregadores e baterias redundantes, mas uma falha única nesse quadro já derrubou a geração principal. Que arranjo de alimentação deve substituí-lo?",
+      "resposta": "Sistema 24 Vcc segregado para os painéis de controle dos geradores.",
+      "explicacao": "O problema decisivo é o ponto comum de distribuição. Mais redundância no mesmo quadro não elimina a falha única que desenergiza todos os painéis e derruba a geração.",
+      "resposta_padrao": "Adicionar mais um retificador e mais baterias no mesmo 24 Vcc de serviços gerais.",
+      "por_que_nao": "Isso aumenta a redundância local, mas mantém o mesmo ponto comum capaz de desenergizar todos os painéis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Gerador sem alimentação de controle não deve compor a reserva girante, mesmo mecanicamente disponível.",
+      "pergunta": "Para liberar a partida de um grande consumidor, um gerador de reserva está com máquina motriz e excitação prontas, porém sem 24 Vcc no painel de controle. Como ele deve entrar na reserva girante?",
+      "resposta": "Indisponível para compor a reserva girante.",
+      "explicacao": "Sem alimentação de comando e supervisão, a máquina pode estar pronta mecanicamente, mas não consegue permanecer conectada nem controlável quando for chamada.",
+      "resposta_padrao": "Contá-lo como reserva, já que a máquina motriz e a excitação estão prontas.",
+      "por_que_nao": "Disponibilidade mecânica não basta quando a perda do 24 Vcc do painel impede conexão e controle do gerador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Validação de recomposição deve ocorrer em modo degradado para revelar bloqueios lógicos ocultos em condição normal.",
+      "pergunta": "O fechamento do gerador de emergência só falha no blackout real, enquanto o controle reinicia; com alimentação normal, todos os testes passam. Em que condição a sequência deve ser validada?",
+      "resposta": "Modo anormal degradado de perda parcial de UPS/bateria/controle.",
+      "explicacao": "É nesse estado que aparecem trips e permissivos ocultos pelo ensaio em condição normal, travando a recomposição justamente quando o sistema reinicia degradado.",
+      "resposta_padrao": "Repetir o ensaio apenas com alimentação normal restabelecida.",
+      "por_que_nao": "Essa condição não reproduz o reboot degradado nem a perda parcial de alimentação e controle que bloqueiam o fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 4,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Numa nova interface IT/OT, se fluxos técnicos já estão definidos, a decisão crítica restante é explicitar a finalidade operacional de cada fluxo.",
+      "pergunta": "Portas, protocolos, origem e destino entre a RTU e o software analítico já estão definidos, mas a mesma conexão passou a ser cogitada para suporte do fornecedor e dashboard corporativo. Antes de liberar a interface, o que deve ser fixado explicitamente?",
+      "resposta": "a finalidade operacional de cada fluxo autorizado",
+      "explicacao": "Os parâmetros de comunicação já existem. Falta amarrar para que uso operacional o fluxo foi criado; sem isso, a mesma interface pode ser estendida para funções e consumidores não pretendidos.",
+      "resposta_padrao": "A lista de portas, protocolos e endereços permitidos.",
+      "por_que_nao": "Isso já está definido no cenário; sem finalidade operacional explícita, a fronteira continua aberta a reutilizações inadequadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando uma nova aplicação alcança apenas parte da OT, a contenção correta é segmentar internamente por criticidade com defesa em profundidade, não só na borda IT/OT.",
+      "pergunta": "Controle de processo, proteção independente e automação elétrica compartilham a mesma infraestrutura, e uma nova aplicação analítica só precisa ler dados de um desses domínios. Para limitar propagação lateral se a interface for comprometida, qual arranjo de rede deve ser implantado?",
+      "resposta": "segmentação interna por domínios de criticidade com barreiras sucessivas",
+      "explicacao": "Como a aplicação precisa só um domínio, a contenção deve existir também dentro da OT. Barreiras sucessivas reduzem o alcance lateral entre funções com consequências diferentes se a nova interface falhar ou for explorada.",
+      "resposta_padrao": "Um único firewall na borda entre IT e OT.",
+      "por_que_nao": "A borda única não contém a propagação lateral entre domínios OT distintos depois que o acesso já entrou na infraestrutura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

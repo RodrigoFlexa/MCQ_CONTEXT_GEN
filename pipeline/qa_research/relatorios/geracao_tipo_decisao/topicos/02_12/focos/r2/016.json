@@ -1,0 +1,65 @@
+{
+  "item": "02_12",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Revisão do setpoint de pressão do destino quando o trem é realinhado para outro serviço com exigência de pressão diferente.",
+      "pergunta": "Realinhado da exportação para gas lift, com rotação já no mínimo, sucção estável e reciclo continuamente aberto mesmo com o cabeçalho já na pressão requerida, qual ajuste técnico deve ser mudado antes da linha anti-surge?",
+      "resposta": "Setpoint de pressão de descarga do gas lift.",
+      "explicacao": "A mudança de destino altera a pressão requerida pelo processo. Com sucção estável e rotação mínima, o reciclo contínuo indica demanda de descarga incompatível com o novo serviço, não erro primário da proteção.",
+      "resposta_padrao": "Deslocar a linha anti-surge.",
+      "por_que_nao": "A proteção só está reagindo ao excesso de capacidade imposto por uma pressão de descarga ainda desalinhada ao destino selecionado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada destino impõe condicionamentos diferentes de pressão e de qualidade do gás."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O destino do gás após tratamento influencia principalmente a pressão requerida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudanças na produção dos poços, no uso de gas lift, na pressão de exportação ou nos modos de tratamento alteram a demanda vista pela compressão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em controle por velocidade, o setpoint do reciclo/anti-surge deve variar com a rotação da máquina.",
+      "pergunta": "A pressão de sucção fica estável, mas cada redução de velocidade antecipa demais a abertura do reciclo, sem mudança de composição. Que parametrização específica da proteção deve ser adotada?",
+      "resposta": "Setpoint do reciclo dependente da rotação.",
+      "explicacao": "Na arquitetura descrita, a rotação sustenta o controle de capacidade e o reciclo por estágio usa setpoint variável ligado à velocidade. Com setpoint fixo, a proteção abre cedo quando a máquina desacelera.",
+      "resposta_padrao": "Setpoint fixo de vazão no reciclo.",
+      "por_que_nao": "Nesse arranjo, um limiar fixo descola a proteção da capacidade real disponível em cada rotação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na prática, a proteção e a confiabilidade da compressão em FPSO devem ser entendidas como resultado da integração entre processo, controle, condicionamento do gás e arquitetura por estágios."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a rotação da máquina controla a pressão de sucção, enquanto válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Há descrição de arquitetura em que a rotação da máquina controla a pressão de sucção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

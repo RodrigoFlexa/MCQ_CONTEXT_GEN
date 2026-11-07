@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar a validade do dado sobre valor plausível e carimbo renovado quando a fonte continua publicando último valor inválido.",
+      "pergunta": "Durante o ajuste de dosagem, o valor do analisador no dashboard continua plausível e o horário renova, mas a faceplate no DCS passou a BAD após perda da amostra. Qual indicação deve prevalecer para decidir a ação operacional?",
+      "resposta": "Bit de qualidade BAD do analisador no DCS",
+      "explicacao": "Valor crível e horário renovado não bastam se a fonte sinaliza dado inválido. O sistema pode apenas republicar o último valor; a decisão deve seguir a validade do dado.",
+      "resposta_padrao": "Usar o valor do dashboard, já que o número parece coerente e o horário atualiza.",
+      "por_que_nao": "A interface pode atualizar sem renovação válida da medição; com qualidade BAD, o dado não é confiável para decisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tornar detectável a perda de redundância mesmo quando a função continua disponível pelo canal remanescente.",
+      "pergunta": "Um dos canais de uma rede redundante falhou, mas malhas, telas e históricos seguem normais pelo canal remanescente. Que indicação técnica precisa entrar em alarme imediato para não operar em resiliência degradada sem perceber?",
+      "resposta": "Alarme de perda de redundância da rede de controle",
+      "explicacao": "Sem sinalizar a degradação, a operação parece normal, mas uma segunda falha elimina o serviço. O estado sem caminho alternativo efetivo precisa ser percebido e tratado.",
+      "resposta_padrao": "Acompanhar só as variáveis de processo; sem impacto visível, não há urgência.",
+      "por_que_nao": "A redundância só traz benefício quando a perda dessa condição é detectada antes que outra falha retire a função.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Validar uma leitura aparentemente normal pela coerência com variáveis relacionadas, usando balanço volumétrico.",
+      "pergunta": "O nível de um tanque permanece imóvel por meia hora no supervisório, enquanto os totalizadores integrados mostram entrada líquida contínua. Antes de pedir recalibração do transmissor, que verificação técnica deve orientar se essa leitura é utilizável?",
+      "resposta": "Balanço volumétrico pelos totalizadores de entrada e saída",
+      "explicacao": "Uma leitura isolada pode parecer normal e ainda assim estar congelada ou inconsistente. A decisão correta é confrontar o inventário com variáveis relacionadas para validar a observabilidade do nível.",
+      "resposta_padrao": "Solicitar recalibração do transmissor de nível.",
+      "por_que_nao": "Antes de intervir no instrumento, é preciso verificar a coerência do inventário; o problema pode estar no dado exibido, não na calibração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coerência entre variáveis relacionadas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

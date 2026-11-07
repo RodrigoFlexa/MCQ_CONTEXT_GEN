@@ -1,0 +1,99 @@
+{
+  "item": "05_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de refazer a análise de carga conforme a configuração instalada antes de repriorizar o load shedding.",
+      "pergunta": "A redistribuição de cargas levou funções essenciais para outro barramento e, no teste de perda de geração, o esquema preservou utilidades secundárias. Antes de alterar tempos ou estágios, qual base técnica deve ser refeita?",
+      "resposta": "Análise de carga atualizada da configuração instalada",
+      "explicacao": "Com cargas redistribuídas, prioridades antigas podem ficar erradas. A base correta para redefinir o descarte é a análise de carga aderente ao arranjo real da distribuição.",
+      "resposta_padrao": "Reduzir os tempos e antecipar os estágios de atuação.",
+      "por_que_nao": "Se a prioridade ficou incompatível com o arranjo atual, atuar mais cedo só desliga as cargas erradas mais rapidamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sua aplicação deve partir de análise de carga atualizada e compatível com a configuração realmente instalada do sistema de distribuição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "porque prioridades válidas em um arranjo podem ser inadequadas em outro."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da separação de barramentos como mecanismo de load shedding quando as cargas não essenciais estão concentradas em uma seção.",
+      "pergunta": "Com o gerador remanescente alimentando a seção das cargas essenciais e a maior parte das cargas não essenciais concentrada na outra, a perda do segundo gerador derruba a frequência rapidamente. Qual ação de load shedding deve atuar primeiro?",
+      "resposta": "Abrir o disjuntor de interligação do barramento não essencial",
+      "explicacao": "Se a carga menos prioritária está concentrada em uma seção sem geração remanescente, separar os barramentos remove um bloco grande de demanda rapidamente e preserva a parte essencial.",
+      "resposta_padrao": "Desligar consumidores individuais do primeiro estágio.",
+      "por_que_nao": "Mesmo correta em arranjos dispersos, a rejeição individual aqui alivia menos e mais devagar que isolar toda a seção não essencial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "se a demanda excede a potência ativa que a geração remanescente consegue sustentar no transitório, a frequência tende a cair"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da rejeição pela corrente de retomada no religamento quando potência e criticidade são equivalentes.",
+      "pergunta": "Na recomposição após perda de geração, a frequência volta a cair quando um dos compressores retorna. Entre dois compressores não essenciais de mesma potência e criticidade, um parte direto e o outro usa partida suave. Qual deve entrar antes no primeiro estágio de load shedding?",
+      "resposta": "O compressor de partida direta",
+      "explicacao": "Com potência e criticidade equivalentes, a diferença decisiva passa a ser a corrente de retomada. Rejeitar primeiro a carga de maior inrush reduz o estresse na recomposição.",
+      "resposta_padrao": "Qualquer um deles, já que a carga em regime é a mesma.",
+      "por_que_nao": "A escolha também depende da corrente de retomada no religamento, não só da potência em regime e da criticidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta só repete os atributos; peça a ação técnica específica"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de descarte por grupo quando a interdependência operacional exige coordenação com automação.",
+      "pergunta": "Vários auxiliares de um pacote são pouco críticos isoladamente, mas a automação derruba o conjunto se apenas parte deles perde alimentação. Para colocar esse pacote no esquema, qual arranjo deve ser adotado?",
+      "resposta": "Descarte por grupo de consumidores",
+      "explicacao": "Quando as cargas são interdependentes, o descarte em grupo preserva a coerência com a automação e evita trips secundários provocados por um desligamento parcial.",
+      "resposta_padrao": "Desligamento individual de cada auxiliar para ganhar seletividade.",
+      "por_que_nao": "Se a automação do pacote exige o conjunto íntegro, a seletividade individual descoordena a operação e reduz a eficácia do esquema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

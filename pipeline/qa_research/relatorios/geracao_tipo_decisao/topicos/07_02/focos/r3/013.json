@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 3,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correção de vulnerabilidade não deve ser generalizada entre produtos distintos sem aplicabilidade e qualificação específicas.",
+      "pergunta": "Um alerta de pilha TCP/IP atinge HMI e PLC de fornecedores distintos. Só o HMI tem hotfix qualificado para a versão instalada; no PLC o fornecedor ainda avalia impacto com módulos remotos antigos. Qual ação técnica aplicar nesta janela?",
+      "resposta": "o hotfix qualificado somente no HMI",
+      "explicacao": "Só o HMI tem correção aplicável e qualificada. No PLC, sem validação do fornecedor para a combinação instalada, atualizar por analogia pode criar indisponibilidade ou comportamento não previsto.",
+      "resposta_padrao": "Atualizar HMI e PLC para as versões mais recentes.",
+      "por_que_nao": "No PLC ainda não há correção aplicável nem compatibilidade validada; generalizar o patch entre produtos é inadequado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa ação não deve ser generalizada para outros produtos fora desse contexto."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Antes de aplicar patch em OT, o teste precisa representar a cadeia de comunicação real quando ela afeta permissivos ou funções de processo.",
+      "pergunta": "Patch do controlador foi qualificado pelo fornecedor, mas os testes dele não incluíram o gateway serial usado em campo; se esse enlace cair, permissivos de partida ficam indisponíveis. Antes de aplicar, que arranjo técnico deve ser usado?",
+      "resposta": "teste representativo com o gateway serial de campo",
+      "explicacao": "A qualificação do patch não cobre a cadeia de comunicação usada em campo. A aplicação exige validar compatibilidade do firmware com a comunicação real e com as funções de processo afetadas.",
+      "resposta_padrao": "Aplicar primeiro no controlador em espera.",
+      "por_que_nao": "Isso não valida a compatibilidade do patch com o gateway e com os permissivos de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na priorização de remediação em legados, suporte do fabricante e risco operacional da mudança podem prevalecer sobre a criticidade isolada do ativo.",
+      "pergunta": "Mesmo componente vulnerável está confirmado em dois ativos no mesmo segmento. O servidor de supervisão tem patch qualificado e retorno testado; o controlador legado saiu de suporte e o fornecedor não garante compatibilidade com seus cartões remotos. Só há uma janela curta. Qual ativo deve receber a correção agora?",
+      "resposta": "o servidor de supervisão",
+      "explicacao": "A janela deve ser usada onde existe remediação compatível e retorno conhecido. No legado fora de suporte, a mudança tem risco operacional maior e pode introduzir indisponibilidade sem recuperação segura.",
+      "resposta_padrao": "Corrigir primeiro o controlador legado, por ser o ativo mais crítico.",
+      "por_que_nao": "Sem suporte e sem compatibilidade garantida, a própria mudança no legado pode causar indisponibilidade não controlada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

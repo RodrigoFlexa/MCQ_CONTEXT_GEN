@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificar segregação elétrica real por rastreamento físico das rotas de alimentação, e não só por documentação.",
+      "pergunta": "O unifilar mostra dois caminhos independentes para controles que precisam sobreviver ao mesmo evento, mas houve vários retrofits sem atualização completa de as-built. Antes de aceitar essa redundância, que verificação específica deve ser feita?",
+      "resposta": "Inspeção de campo das rotas reais de alimentação até o primeiro ponto comum.",
+      "explicacao": "A redundância mostrada em desenho pode ter sido perdida por modificações acumuladas; só o rastreamento físico confirma segregação e revela dependências ocultas.",
+      "resposta_padrao": "Revisar o unifilar e os as-builts existentes.",
+      "por_que_nao": "Documentação pode não refletir a configuração implantada nem pontos comuns criados por retrofits.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coerência entre projeto e configuração implantada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A confiabilidade da distribuição elétrica não depende só do projeto inicial; depende de inspeção, teste, manutenção e controle de mudanças."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar ensaio operacional sob carga quando a falha depende de interação entre UPS, 24 Vcc, controles e aquecimento.",
+      "pergunta": "Testes de bancada dos carregadores, UPS e cartões do CLP passam, mas a perda de comando dos geradores e das válvulas só aparece nas transferências e nos distúrbios da alimentação principal. Que verificação deve ser priorizada?",
+      "resposta": "Ensaio operacional sob carga aplicável.",
+      "explicacao": "Nesse cenário, a falha depende de esforço elétrico real, interação entre controles e aquecimento; por isso o teste isolado não reproduz o defeito.",
+      "resposta_padrao": "Teste funcional isolado de UPS, CLP e cartões em bancada.",
+      "por_que_nao": "Esse teste não captura as interações e os transitórios reais que derrubam o controle em serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A distribuição elétrica interage diretamente com sistemas de controle e segurança"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ensaios operacionais sob carga aplicável são relevantes porque parte das falhas só se manifesta com esforço elétrico real, interação entre controles ou aquecimento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Eliminar ponto comum de distribuição em 24 Vcc para preservar independência funcional entre painéis de controle.",
+      "pergunta": "Dois conjuntos 24 Vcc independentes já suprem toda a carga, mas um retrofit concentrou os dois painéis de controle dos geradores em um único quadro CC intermediário. Que rearranjo específico elimina essa causa comum?",
+      "resposta": "Alimentar cada painel diretamente do seu sistema 24 Vcc, sem quadro comum.",
+      "explicacao": "Mesmo com fontes redundantes, o quadro intermediário único vira ponto comum; cada painel precisa de rota própria até sua fonte.",
+      "resposta_padrao": "Substituir o quadro CC intermediário por outro mais confiável.",
+      "por_que_nao": "Continuaria existindo um único ponto de distribuição cuja falha derruba os dois painéis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "item": "05_02",
+  "foco": 7,
+  "rodada": 3,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do arranjo seccionado para conter propagação de falhas e viabilizar manutenção com menor impacto.",
+      "pergunta": "Metade do quadro precisa ser isolada para manutenção com a outra metade permanecendo em carga; a prioridade é conter propagação de falhas e reduzir o impacto da intervenção. Que arranjo operacional adotar?",
+      "resposta": "Barramento seccionado, com o bus tie aberto.",
+      "explicacao": "O seccionamento limita a propagação de falhas e facilita a manutenção com menor impacto. Interligar as seções aumenta caminhos de falta e a exigência de coordenação de proteção.",
+      "resposta_padrao": "Fechar o bus tie para manter redundância entre as duas metades.",
+      "por_que_nao": "Neste cenário, a interligação amplia a propagação potencial de falhas e o impacto elétrico da manutenção.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "O barramento seccionado reduz a propagação de falhas e facilita manutenção com menor impacto sistêmico"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A função da proteção é eliminar a parte defeituosa com a menor perda possível de continuidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Coordenação da retaguarda de fase do primário com os relés dos alimentadores do secundário para preservar seletividade.",
+      "pergunta": "Curto entre fases em um alimentador do secundário faz abrir o disjuntor primário antes do alimentador correspondente, embora o relé do alimentador já atue no tempo previsto em testes locais. Qual ajuste da proteção a montante revisar para recuperar a seletividade?",
+      "resposta": "Temporização da retaguarda de fase do primário.",
+      "explicacao": "No arranjo com disjuntor primário, a proteção de fase a montante deve ficar como retaguarda dos alimentadores. Se atua primeiro, falta coordenação temporal com a jusante.",
+      "resposta_padrao": "Aumentar o pickup de sobrecorrente do primário.",
+      "por_que_nao": "Isso pode reduzir a cobertura do barramento ou do transformador; a seletividade aqui depende do atraso da retaguarda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O mesmo princípio vale para relés de fase em relação aos alimentadores a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

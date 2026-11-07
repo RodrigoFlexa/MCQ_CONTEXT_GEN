@@ -1,0 +1,105 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em reserva fria, a disponibilidade real depende de revelar falhas em espera, partida e comutação.",
+      "pergunta": "O reserva frio de uma bomba fica meses sem operar; nas chamadas, a perda de produção vem de falha de partida, não de desgaste em serviço. Qual ação técnica deve ser adotada para aumentar a disponibilidade real desse arranjo?",
+      "resposta": "Teste periódico de partida e comutação do reserva frio",
+      "explicacao": "Reserva fria reduz exposição ao desgaste, mas não elimina falhas em espera nem de partida ou comutação; o teste trata exatamente o limitante observado.",
+      "resposta_padrao": "Manter o reserva totalmente parado e isolado até a falha do ativo.",
+      "por_que_nao": "Isso preserva carga, mas deixa ocultas falhas em espera e de partida, que são a causa da indisponibilidade no cenário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O ganho de disponibilidade por redundância só se materializa quando o gargalo compartilhado também é tratado.",
+      "pergunta": "Dois trens de compressão são independentes mecanicamente, mas uma falha no skid comum de ar de instrumentos tira os dois de serviço. Onde a redundância adicional deve ser aplicada para elevar a disponibilidade da função?",
+      "resposta": "No skid comum de ar de instrumentos",
+      "explicacao": "Duplicar apenas os compressores não remove o gargalo compartilhado; a função continua perdida sempre que a utilidade comum falha.",
+      "resposta_padrao": "Em mais um compressor de reserva.",
+      "por_que_nao": "O limitante não é falta de máquina, e sim a utilidade comum que interrompe simultaneamente todos os trens.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para KPI de disponibilidade, o que importa é a função de processo entregue, não a contagem de equipamentos duplicados.",
+      "pergunta": "Os dois trens de tratamento aparecem disponíveis no painel, mas qualquer falha na descarga comum zera a capacidade. Qual indicador de disponibilidade deve orientar a meta operacional desse sistema?",
+      "resposta": "Disponibilidade da função de processo relevante",
+      "explicacao": "O indicador correto deve refletir a capacidade de cumprir a função; a mera disponibilidade individual dos trens superestima o desempenho real.",
+      "resposta_padrao": "Disponibilidade média dos trens duplicados.",
+      "por_que_nao": "Isso ignora o gargalo comum de descarga, que retira a função mesmo com equipamentos individualmente disponíveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O efeito da redundância em metas de produção deve ser estimado com RAM aderente ao horizonte da missão e aos dados reais.",
+      "pergunta": "Uma previsão preliminar tratou dois trens paralelos como ganho permanente de disponibilidade, mas a campanha é longa e já existem dados próprios de falha e reparo. Para definir a meta anual de produção, qual base analítica usar?",
+      "resposta": "Análise RAM atualizada para o horizonte da missão",
+      "explicacao": "Em tempos longos, o benefício da redundância não é ilimitado; a estimativa precisa representar dependências, modos de operação e dados reais da instalação.",
+      "resposta_padrao": "Cálculo série-paralelo com disponibilidade estacionária.",
+      "por_que_nao": "Esse atalho não representa a perda de benefício da redundância ao longo do tempo nem as dependências reais do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "em tempos mais longos, a degradação dos equipamentos ativos pode deixar de ser compensada pelo reserva."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

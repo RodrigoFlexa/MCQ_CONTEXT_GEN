@@ -1,0 +1,101 @@
+{
+  "item": "03_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão das amplitudes de deslocamentos dinâmicos globais no recálculo quase-estático de tensões.",
+      "pergunta": "Séries medidas mantêm o mesmo offset médio e a mesma tração de repouso, mas os extremos de carga aumentam quando a resposta de baixa frequência do casco cresce. No recálculo quase-estático, qual entrada deve ser incorporada para reproduzir esses picos?",
+      "resposta": "Amplitudes dos deslocamentos dinâmicos globais",
+      "explicacao": "Com estado estático médio praticamente igual, a diferença nos picos vem da parcela quase-estática associada aos movimentos globais; pré-tensão sozinha não reproduz o aumento dos extremos de tração.",
+      "resposta_padrao": "Reajustar apenas a pré-tensão da linha.",
+      "por_que_nao": "A pré-tensão corrige o equilíbrio estático; neste caso, os picos adicionais decorrem da excursão dinâmica global considerada na análise quase-estática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a pré-tensão é explicitamente informada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em análise quase-estática, amplitudes dos deslocamentos dinâmicos globais também passam a influenciar a avaliação das tensões."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do setpoint de heading para redistribuir carga de linhas em spread mooring com offloading e heading control ativo.",
+      "pergunta": "Durante alívio em spread mooring com heading control ativo, um setor de linhas aproxima-se do limite enquanto o offset permanece aceitável e a operação admite pequena rotação do casco. Qual variável operacional deve ter o setpoint ajustado para aliviar esse setor?",
+      "resposta": "Setpoint de heading",
+      "explicacao": "No SMS, a escolha do aproamento altera diretamente a geometria relativa com o ambiente e com o navio aliviador, redistribuindo tensões sem exigir intervenção física na amarração.",
+      "resposta_padrao": "Retensionar as linhas mais carregadas.",
+      "por_que_nao": "Retensionar eleva a carga estática de base; aqui a alavanca operacional que muda a distribuição é o aproamento escolhido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "há formulações em que os carregamentos ambientais são tratados como colineares e outras em que se mantém o aproamento constante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em SMS, a seleção de aproamento afeta ainda operações de alívio, porque a geometria relativa entre FPSO, navio aliviador e ambiente muda a capacidade de manter posição durante a operação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Emprego de thrusters para alívio de tensão em sistemas thruster-assisted quando heading não pode variar.",
+      "pergunta": "Aproamento não pode mudar por restrição da operação, o offset segue dentro do envelope e uma linha entra em alarme alto durante rajadas, sem indício de dano. Em arranjo thruster-assisted, que recurso operacional específico deve ser acionado para conter a tração?",
+      "resposta": "Thrusters em assistência à amarração",
+      "explicacao": "Quando o heading está indisponível como variável de controle e não há falha de linha, o recurso próprio do arranjo thruster-assisted é usar propulsão para limitar as tensões nas amarras.",
+      "resposta_padrao": "Aumentar a pré-tensão do setor oposto.",
+      "por_que_nao": "Isso eleva a carga estática e não é a medida operacional indicada para rajadas; o arranjo prevê alívio por thrusters.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso permite relacionar offset da plataforma, rigidez do sistema e tensão no topo das linhas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "em sistemas thruster-assisted, os thrusters também podem ser usados para limitar tensões nas amarras."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da base de cálculo compatível com a não colinearidade ambiental prevista.",
+      "pergunta": "A previsão da janela indica onda de través persistente e corrente quase longitudinal, mas a tabela disponível de tensões foi gerada com vento, onda e corrente colineares. Qual base de cálculo deve sustentar o limite operacional?",
+      "resposta": "Análise com as cargas ambientais não colineares previstas",
+      "explicacao": "A distribuição de esforços depende das premissas direcionais do cálculo; usar tabela colinear fora dessa hipótese pode distorcer tensões e capacidade restauradora aplicáveis à janela real.",
+      "resposta_padrao": "Usar a tabela colinear mais conservadora.",
+      "por_que_nao": "Maior intensidade não substitui a combinação direcional real; a interpretação só vale sob as premissas adotadas na análise.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "há formulações em que os carregamentos ambientais são tratados como colineares"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interpretação do resultado deve respeitar exatamente essas premissas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

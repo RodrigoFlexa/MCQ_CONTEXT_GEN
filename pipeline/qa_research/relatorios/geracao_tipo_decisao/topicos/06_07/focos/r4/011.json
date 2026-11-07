@@ -1,0 +1,65 @@
+{
+  "item": "06_07",
+  "foco": 11,
+  "rodada": 4,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a análise deve migrar de APR/AST estática para avaliação dinâmica da sequência por mudança de estado das barreiras.",
+      "pergunta": "Drenagem, despressurização e abertura de linha foram tratadas numa APR única, mas entre as etapas válvulas, sangrias e bloqueios entram e saem de serviço. Que técnica deve substituir a avaliação estática para decidir a sequência?",
+      "resposta": "Avaliação dinâmica e quantitativa de risco da sequência.",
+      "explicacao": "A técnica adequada precisa representar o efeito de cada passo sobre as barreiras e quantificar o grau de segurança nas transições. Uma APR/AST estática não demonstra se o conjunto de proteção permanece suficiente ao longo da sequência.",
+      "resposta_padrao": "Refazer a APR ou a AST da intervenção.",
+      "por_que_nao": "APR/AST estática não representa explicitamente as mudanças sucessivas no estado das barreiras nem o grau de segurança entre etapas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a base da análise deixou de representar a instalação ou a atividade real"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cada operação da sequência é analisada quanto ao seu impacto sobre o estado dessas barreiras"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "avaliar o grau de segurança ao longo de uma sequência de tarefas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na análise dinâmica da tarefa, a variável que precisa ser atualizada quando a ordem real de execução altera a configuração sucessiva das barreiras.",
+      "pergunta": "A ordem real de drenar, rearmar bloqueios e abrir a linha mudou em campo, e o verificador dinâmico continuará sendo usado para liberar os próximos passos. Antes de cada liberação, que informação técnica atualizar no modelo?",
+      "resposta": "Estado das barreiras em cada etapa.",
+      "explicacao": "Se a ordem muda, muda também quais barreiras estão ativas ou desativadas a cada passo. Manter o modelo com a sequência original invalida o resultado usado para liberar as etapas seguintes.",
+      "resposta_padrao": "Só a condição inicial registrada no planejamento.",
+      "por_que_nao": "A decisão depende dos impactos de cada operação sobre as barreiras; a condição inicial sozinha não representa as transições reais da sequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando método, dados de entrada, premissas, limitações ou configuração da instalação mudam, o resultado analítico anterior pode deixar de sustentar decisões seguras"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Nessa condição inicial, identifica-se quais barreiras estão ativas e quais estão desativadas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "armazenar condições iniciais e impactos de operações sobre barreiras"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

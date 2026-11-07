@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Integração entre controladores heterogêneos e consumidores externos deve ser concentrada na camada supervisória quando a padronização na origem é limitada.",
+      "pergunta": "Controladores de fornecedores distintos precisam alimentar alarmes, historiador e uma aplicação analítica, e a padronização de dados na origem ficou limitada. Em qual ponto da arquitetura você deve concentrar essa integração?",
+      "resposta": "na camada supervisória do SCADA",
+      "explicacao": "Com controladores heterogêneos, a padronização próxima à fonte fica limitada; o SCADA atua como camada agregadora para alarmes, histórico e interface operacional, concentrando a integração com consumidores externos.",
+      "resposta_padrao": "Nos próprios controladores de campo.",
+      "por_que_nao": "Com modelos de dados distintos, a integração direta multiplica interconexões e perde o ponto agregador adequado da supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integração frequentemente migra para a camada supervisória."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Funções instrumentadas de segurança não devem compartilhar conectividade além do necessário com outros domínios do IACS.",
+      "pergunta": "Na revisão de rede, querem colocar controle de processo, historiador, controle elétrico e funções instrumentadas de segurança no mesmo domínio para simplificar suporte. Qual conjunto você deve retirar desse compartilhamento?",
+      "resposta": "o sistema instrumentado de segurança",
+      "explicacao": "O SIS compõe a camada independente de proteção; compartilhar conectividade além do necessário com controle, histórico e elétrico amplia propagação de falhas e ações maliciosas entre domínios de criticidade distinta.",
+      "resposta_padrao": "Manter tudo no mesmo domínio interno e só segregar o acesso corporativo.",
+      "por_que_nao": "A conectividade excessiva entre controle e segurança amplia consequências de falhas, erros de configuração e ações maliciosas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo pode incluir o sistema básico de controle de processo, funções de camada independente de proteção, sistemas instrumentados de segurança, sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em coexistência de tráfego IT/OT, o critério dominante na OT é preservar o determinismo do controle.",
+      "pergunta": "Réplicas de banco corporativo passarão pelo mesmo enlace usado por supervisão e controle; a banda média ainda sobra, mas a latência oscila nos picos. Qual variável deve governar sua decisão técnica?",
+      "resposta": "o determinismo do controle",
+      "explicacao": "Na OT, o critério dominante é manter temporização previsível do controle; sobra média de banda não evita jitter nem perda de disponibilidade do processo.",
+      "resposta_padrao": "A ocupação média de banda do enlace.",
+      "por_que_nao": "Folga média de banda não garante temporização previsível, e a OT prioriza controle determinístico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "OT prioriza controle determinístico, segurança operacional e disponibilidade do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

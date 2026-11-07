@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 3,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição dos fluxos permitidos e de sua finalidade operacional em novas interfaces IT/OT.",
+      "pergunta": "Uma RTU nova passará a enviar dados por telemetria a um software analítico, e o firewall já existe. Antes de liberar a comunicação, o que deve ser definido explicitamente nessa fronteira?",
+      "resposta": "os fluxos autorizados com finalidade operacional definida",
+      "explicacao": "Cada nova interface exige definir que tráfego pode cruzar a fronteira e para qual função operacional; o firewall apenas implementa essa decisão.",
+      "resposta_padrao": "Abrir somente as portas e protocolos estritamente necessários no firewall.",
+      "por_que_nao": "Portas e protocolos não bastam sem especificar quais fluxos são legítimos e para que uso operacional serão permitidos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em artificial lift, também aparecem integrações entre controle local, unidade terminal remota (RTU), telemetria, SCADA e software analítico."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do SCADA como aplicação supervisória agregadora para operação comum de múltiplos controladores.",
+      "pergunta": "Três PLCs autônomos já alimentam um historiador, mas alarmes e telas continuam locais. Sem alterar as lógicas nem abrir novos acessos diretos aos PLCs, que aplicação supervisória deve centralizar interface operacional e alarmes?",
+      "resposta": "o SCADA",
+      "explicacao": "Com múltiplos controladores de campo, o SCADA é a camada agregadora de alarmes e interface operacional; o historiador sozinho não cumpre essa função.",
+      "resposta_padrao": "Adicionar um cliente HMI separado em cada PLC.",
+      "por_que_nao": "Isso mantém a operação fragmentada e multiplica interconexões diretas na camada de controle, em vez de agregá-las.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

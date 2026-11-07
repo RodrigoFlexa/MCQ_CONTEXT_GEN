@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de integração de sinais ao controlador antes de liberar uma sequência automática.",
+      "pergunta": "Permissivos de partida mostram condição normal nos instrumentos locais recém-calibrados, mas o controlador ainda não recebe esses sinais. Antes da liberação da sequência automática, qual ação técnica deve prevalecer?",
+      "resposta": "Confirmação da comunicação entre equipamentos de campo e PLC",
+      "explicacao": "Calibração, energização e indicação local não comprovam integração funcional. Se os sinais participam da lógica automática, leitura local complementar não substitui a chegada deles ao controlador.",
+      "resposta_padrao": "Liberar a partida com leitura local complementar do operador.",
+      "por_que_nao": "Isso só serve em cobertura parcial assumida; aqui os sinais precisam entrar na lógica automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "verificação e calibração de instrumentos e confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Detectabilidade operacional da perda de redundância de comunicação.",
+      "pergunta": "Falha de uma perna da rede redundante só é descoberta no próximo teste periódico; nesse intervalo, medição e comando seguem normais. Que recurso técnico deve ser corrigido?",
+      "resposta": "Alarme de perda de redundância do canal",
+      "explicacao": "Manter o serviço no primeiro defeito não basta. A perda do caminho alternativo precisa ser percebida de imediato, senão o sistema opera degradado sem resposta tempestiva.",
+      "resposta_padrao": "Aumentar a frequência dos testes de comutação.",
+      "por_que_nao": "Mesmo mais frequentes, os testes não tornam a degradação visível entre um teste e outro.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função e quando a perda dessa condição pode ser percebida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A comunicação entre equipamentos de campo e controlador é uma condição prática para que a arquitetura funcione como sistema integrado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

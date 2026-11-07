@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da alimentação adequada para carga crítica nativa em 24 Vcc que deve permanecer disponível durante blackout.",
+      "pergunta": "A bobina 24 Vcc de uma válvula de shutdown está hoje alimentada por fonte ligada ao UPS 120 Vca. Na revisão do arranjo, busca-se eliminar conversões e manter atuação durante blackout. Que alimentação deve ser adotada?",
+      "resposta": "Sistema redundante de 24 Vcc com baterias.",
+      "explicacao": "Para uma carga nativa 24 Vcc de shutdown, o barramento com baterias dá continuidade direta e elimina conversão via UPS e fonte CA-CC, reduzindo pontos únicos de falha.",
+      "resposta_padrao": "Mantê-la no UPS 120 Vca, por já ser uma alimentação essencial e estabilizada.",
+      "por_que_nao": "Para uma bobina 24 Vcc crítica, o UPS acrescenta inversor e fonte CA-CC como pontos de falha sem ganhar continuidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do UPS como alimentação correta para equipamento 120 Vca de comunicação crítica que não pode reiniciar em transferências.",
+      "pergunta": "Um switch industrial 120 Vca faz a comunicação entre CLP, ESD e supervisão; sua perda por poucos segundos derruba permissivas. Há folga no quadro de emergência e querem movê-lo para lá. Qual alimentação deve prevalecer?",
+      "resposta": "Barramento 120 Vca do UPS.",
+      "explicacao": "Comunicação crítica entre controle e segurança não pode depender do intervalo de partida ou transferência da emergência; o UPS mantém alimentação contínua ao equipamento 120 Vca.",
+      "resposta_padrao": "Ligá-lo ao quadro alimentado pela geração de emergência.",
+      "por_que_nao": "A geração de emergência pode restabelecer a energia, mas não garante alimentação sem interrupção para uma carga de comunicação crítica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "tendem a exigir maior continuidade ou maior independência de alimentação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ensaio necessário para comprovar redundância funcional real após modificações acumuladas em ramos de UPS.",
+      "pergunta": "Desenhos, tensão e autonomia dos dois UPS estão conformes após anos de pequenas modificações. Antes de liberar nova expansão de controle, que ensaio funcional confirma que a redundância prevista ainda existe na instalação real?",
+      "resposta": "Teste controlado de perda isolada de cada ramo redundante.",
+      "explicacao": "Só a perda controlada de cada ramo expõe acoplamentos ocultos e concentrações de cargas criadas por modificações; tensão, autonomia e desenho não provam independência funcional.",
+      "resposta_padrao": "Conferir apenas diagramas, tensão presente e autonomia dos UPS.",
+      "por_que_nao": "Essas verificações não detectam cruzamentos e concentrações entre ramos; a independência funcional só aparece com perda isolada de cada caminho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

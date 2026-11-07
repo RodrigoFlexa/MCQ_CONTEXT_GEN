@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 1,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de VPN para substituir exposição direta de serviço OT à internet em acesso remoto necessário.",
+      "pergunta": "A estação de engenharia recebe suporte remoto recorrente, e hoje a porta do serviço está publicada na internet com senha forte e IP liberado ao fornecedor. Que arranjo de acesso deve substituí-la?",
+      "resposta": "VPN sem exposição direta do serviço à internet",
+      "explicacao": "Em IACS, reduzir a exposição de rede diminui a alcançabilidade externa. Quando o acesso remoto é necessário, a VPN protege o tráfego em trânsito e cria entrada mais controlada.",
+      "resposta_padrao": "Manter a publicação direta, reforçando senha e filtro por IP.",
+      "por_que_nao": "Isso ainda deixa o serviço alcançável da internet; o cenário pede reduzir a exposição, não apenas endurecer o login.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "recomenda-se evitar acessibilidade direta a partir da internet."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando o acesso remoto for necessário, recomenda-se usar método seguro, como Rede Privada Virtual (VPN)."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Bloqueio de acesso remoto por condição insegura do endpoint, mesmo com VPN válida.",
+      "pergunta": "O suporte vai entrar por VPN, mas o notebook do fornecedor é reutilizado entre contratos e não teve integridade verificada antes da conexão. Que condição deve impedir a liberação da sessão?",
+      "resposta": "o estado de segurança do notebook de origem",
+      "explicacao": "A VPN protege o canal, mas não corrige comprometimento prévio. Equipamento desatualizado, infectado ou mal configurado pode abrir sessão válida e introduzir risco no ambiente operacional.",
+      "resposta_padrao": "Basta validar usuário, senha e o túnel VPN.",
+      "por_que_nao": "Canal e credenciais válidos não eliminam o risco do dispositivo comprometido que origina a sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sua atualização e integridade não são verificadas antes do uso."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição de perfil somente leitura quando o acesso remoto de terceiro é apenas para consulta.",
+      "pergunta": "O fornecedor precisa apenas coletar tendências e alarmes para diagnóstico, sem alterar lógica, setpoints ou configuração. Que perfil técnico de acesso remoto deve receber?",
+      "resposta": "perfil somente leitura",
+      "explicacao": "O acesso remoto de terceiros deve ter escopo compatível com a tarefa. Se a atividade é apenas consulta, permissões de escrita ou administração ampliam exposição sem necessidade operacional.",
+      "resposta_padrao": "Perfil administrativo temporário para agilizar o suporte.",
+      "por_que_nao": "As permissões disponíveis durante a sessão compõem o risco; administração excede o escopo da tarefa descrita.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de registro rastreável de sessão para intervenção remota de terceiros em IACS.",
+      "pergunta": "A conexão remota da contratada terminou sem alarmes, mas horas depois surgiu alteração inesperada em um ativo acessado. Que controle deveria ter sido mantido durante a sessão para permitir reconstruir a atuação?",
+      "resposta": "registro rastreável de sessão",
+      "explicacao": "Esse registro permite reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação, apoiando investigação, responsabilização e contenção.",
+      "resposta_padrao": "Somente o registro do chamado de manutenção.",
+      "por_que_nao": "O chamado não mostra a atuação efetiva da sessão nem permite rastrear o acesso até o ativo modificado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

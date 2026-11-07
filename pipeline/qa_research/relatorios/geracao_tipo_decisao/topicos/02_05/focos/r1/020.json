@@ -1,0 +1,101 @@
+{
+  "item": "02_05",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Desvio temporário de água produzida fora de especificação para tanque dedicado antes do reprocesso.",
+      "pergunta": "Durante um transiente, a água produzida fica fora de especificação e o retorno imediato ao tratamento já eleva os inventários de montante. Para onde desviar essa corrente antes do reprocesso?",
+      "resposta": "Tanque dedicado de água fora de especificação.",
+      "explicacao": "A segregação em tanque dedicado evita enviar o desvio adiante e desacopla o inventário do reprocesso, que pode sobrecarregar o processo se feito imediatamente.",
+      "resposta_padrao": "Recircular diretamente para a entrada do tratamento.",
+      "por_que_nao": "O retorno imediato não elimina a causa do desvio e pode sobrecarregar o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Água fora de especificação pode ser segregada em tanque dedicado e reprocessada pela rota prevista no projeto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Recircular não corrige sozinho a causa do desvio e pode sobrecarregar o processo se o retorno não for limitado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Limitação da vazão de retorno no reprocesso para não agravar sobrecarga e transientes.",
+      "pergunta": "Com a rota de reprocesso ativa, abrir mais o retorno faz os níveis a montante subirem sem recuperar a qualidade. Qual variável do reprocessamento deve ser limitada nesse cenário?",
+      "resposta": "Vazão de retorno de reprocesso.",
+      "explicacao": "O ponto crítico é limitar a carga devolvida ao processo. Sem esse limite, a recirculação aumenta inventário e vazão de retorno sem remover a origem do desvio.",
+      "resposta_padrao": "Manter a recirculação totalmente aberta.",
+      "por_que_nao": "Recircular sem limite aumenta a carga do processo e não corrige sozinho a causa do desvio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controle de níveis, pressão e destino das correntes contaminadas interage com a drenagem porque o reprocessamento altera inventários e vazões de retorno."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Recircular não corrige sozinho a causa do desvio e pode sobrecarregar o processo se o retorno não for limitado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de vaso pulmão para amortecer oscilações curtas no retorno de correntes para reprocesso.",
+      "pergunta": "Oscilações de poucos minutos no retorno de água off-spec estão chegando ao separador; não é preciso armazenar campanha, só amortecer o fluxo antes do reprocesso. Que equipamento inserir nesse retorno?",
+      "resposta": "Vaso pulmão no retorno de reprocesso.",
+      "explicacao": "Para ciclos curtos, o desacoplamento vem do volume útil entre origem e destino. O vaso pulmão amortece a alimentação sem transformar a função em estocagem.",
+      "resposta_padrao": "Ajustar só a sintonia das malhas e manter retorno direto.",
+      "por_que_nao": "Sem volume de amortecimento, a oscilação de alimentação continua sendo transmitida ao processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Vasos pulmão e tanques intermediários ajudam a desacoplar oscilações de alimentação, mas sua capacidade de amortecimento depende do volume útil, da estratégia de controle e do regime transitório."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de blanketing pressurizado em tanque de drenagem fechada sujeito a ciclos de reprocesso.",
+      "pergunta": "Tanque de drenagem fechada entra em ciclos rápidos de enchimento e esvaziamento por reprocesso; a pressão do espaço de vapor cai nas saídas e o respiro atual admite ar. Que arranjo aplicar nesse espaço?",
+      "resposta": "Blanketing pressurizado do espaço de vapor.",
+      "explicacao": "Os ciclos de inventário alteram a pressão do tanque. O blanketing acomoda expansão e contração do conteúdo, mantém pressurização e limita entrada de ar no espaço de vapor.",
+      "resposta_padrao": "Respiro atmosférico simples.",
+      "por_que_nao": "Com contração do conteúdo, o respiro admite ar e aumenta o risco de atmosfera inflamável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controle de níveis, pressão e destino das correntes contaminadas interage com a drenagem porque o reprocessamento altera inventários e vazões de retorno."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "gás combustível ou nitrogênio podem ser fornecidos a alguns tanques e vasos, inclusive tanques de dreno aberto ou fechado, para manter pressurização, acomodar expansão e contração do conteúdo, excluir ar"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando a entrada de ar é limitada, reduz-se a probabilidade de formação de mistura inflamável no espaço de vapor."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

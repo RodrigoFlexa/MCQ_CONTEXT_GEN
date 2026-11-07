@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério dominante para decidir entre patch imediato e contenção temporária em controlador vulnerável com exposição já reduzida.",
+      "pergunta": "Controlador legado de pressão usa o componente vulnerável confirmado, já está atrás de firewall e a atualização proposta ainda pode romper comunicação com remotas. Para decidir entre patch imediato e contenção temporária, qual variável técnica deve prevalecer?",
+      "resposta": "o risco operacional da própria mudança",
+      "explicacao": "Com exposição já reduzida, o patch pode gerar perda de comunicação ou comportamento não previsto. A escolha deve ser guiada pelo risco que a própria mudança introduz no ativo de controle.",
+      "resposta_padrao": "A severidade publicada da vulnerabilidade deve definir sozinha o patch imediato.",
+      "por_que_nao": "No controle, a atualização pode indisponibilizar o ativo ou alterar seu comportamento; com exposição reduzida, esse risco operacional pode ser dominante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de plano de retorno antes de aplicar patch em controlador legado de processo, mesmo após qualificação.",
+      "pergunta": "Patch de um controlador legado de vazão já foi qualificado em bancada, e backup da configuração foi salvo; a janela de campo é curta e uma regressão pode deixá-lo fora de serviço durante produção. Antes da instalação, que arranjo técnico precisa estar pronto?",
+      "resposta": "plano de retorno",
+      "explicacao": "Mesmo qualificada, a atualização pode introduzir indisponibilidade. Como o ativo controla vazão, a remediação precisa prever reversão rápida dentro da janela para evitar perda prolongada de função.",
+      "resposta_padrao": "Aplicar diretamente a versão liberada pelo fornecedor na janela disponível.",
+      "por_que_nao": "Qualificação e backup não substituem a reversão planejada; sem retorno definido, uma regressão pode prolongar a indisponibilidade do controlador além da janela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade do hardening no endpoint remoto quando o acesso já usa VPN.",
+      "pergunta": "A sessão remota já passa por VPN atualizada, mas o notebook de manutenção também acessa a rede corporativa. Sem trocar a topologia do controle hoje, qual alvo técnico do hardening deve ser tratado primeiro?",
+      "resposta": "o dispositivo remoto conectado à VPN",
+      "explicacao": "A VPN reduz exposição, mas não elimina o risco. Sua segurança depende do endpoint e de suas configurações; se ele circula por ambiente menos confiável, esse é o primeiro foco de endurecimento.",
+      "resposta_padrao": "Endurecer apenas a própria VPN já é suficiente.",
+      "por_que_nao": "A proteção da VPN depende também do dispositivo que a utiliza; manter o endpoint menos confiável preserva um caminho de exploração relevante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

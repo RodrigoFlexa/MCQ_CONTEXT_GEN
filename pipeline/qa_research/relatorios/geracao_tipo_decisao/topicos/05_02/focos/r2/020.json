@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 20,
+  "rodada": 2,
+  "contexto": {
+    "A1": 18,
+    "A2": 19,
+    "F": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controlar a distorção da tensão, e não só o valor RMS, quando cargas com semicondutores instabilizam.",
+      "pergunta": "Com o bus tie fechado, CLPs e acionamentos reinicializam, embora a tensão RMS siga na faixa e não haja aquecimento anormal. Qual grandeza elétrica deve orientar o ajuste do arranjo?",
+      "resposta": "Conteúdo harmônico da tensão no barramento",
+      "explicacao": "Cargas com semicondutores são sensíveis à forma de onda. Correntes não senoidais de cargas não lineares, ao passarem pela impedância do sistema, geram harmônicos de tensão mesmo com RMS normal.",
+      "resposta_padrao": "A tensão RMS do barramento.",
+      "por_que_nao": "RMS aceitável não captura a distorção da forma de onda que afeta estabilidade e funcionamento correto dessas cargas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "especialmente os controlados por semicondutores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a forma de onda pode influenciar estabilidade, aquecimento e funcionamento correto dos equipamentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "surgem componentes harmônicas de tensão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representar no estudo harmônico os elementos reativos realmente conectados, além do unifilar e das cargas.",
+      "pergunta": "O unifilar do estudo já reflete o novo seccionamento, e a participação dos conversores foi mantida; mesmo assim a distorção calculada não reproduz a medida de campo. Que detalhe do arranjo deve ser corrigido no modelo?",
+      "resposta": "Os elementos reativos efetivamente conectados",
+      "explicacao": "Capacitores, indutores e reatores alteram a resposta harmônica do sistema. Se sua condição real de conexão não for representada, o cálculo pode divergir mesmo com topologia e cargas atualizadas.",
+      "resposta_padrao": "A potência ativa total das cargas.",
+      "por_que_nao": "O comportamento harmônico pode mudar pela presença de elementos reativos, sem alteração relevante do kW total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da presença de elementos reativos, como capacitores, indutores e reatores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a análise precisa representar o arranjo real do sistema, e não apenas um diagrama nominal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelar explicitamente a participação de cargas não lineares quando a mesma demanda ativa produz comportamentos harmônicos distintos.",
+      "pergunta": "A demanda ativa do barramento quase não muda entre dois modos operacionais, mas a distorção cresce quando entram retificadores de processo e cai quando predominam motores de partida direta. Na análise que vai definir o despacho, qual parcela da carga deve ser representada explicitamente?",
+      "resposta": "A participação das cargas não lineares",
+      "explicacao": "O conteúdo harmônico não depende só do kW total. Retificadores e conversores absorvem corrente não senoidal e elevam a distorção de tensão conforme sua participação no barramento.",
+      "resposta_padrao": "A demanda ativa total do barramento.",
+      "por_que_nao": "Mesmo kW total pode gerar resposta harmônica diferente quando muda a proporção de cargas não lineares.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da participação de cargas não lineares"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas não lineares, como retificadores e conversores, tendem a absorver corrente não senoidal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando essa corrente percorre a impedância do sistema, surgem componentes harmônicas de tensão."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

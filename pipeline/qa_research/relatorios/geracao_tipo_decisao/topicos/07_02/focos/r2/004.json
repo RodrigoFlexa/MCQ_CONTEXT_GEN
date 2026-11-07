@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 2,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto primário de controle quando o risco de alteração indevida decorre da estação de engenharia, e não de contas comuns.",
+      "pergunta": "Checksums de lógica mudam sem registro de contas anômalas, e a estação portátil com ferramentas de carga fica conectada ao domínio de controle entre intervenções. Que ponto de acesso deve ser tratado primeiro?",
+      "resposta": "o acesso da estação de engenharia portátil",
+      "explicacao": "O desvio aparece na lógica, e o bloco foco deixa claro que o controle de acesso também alcança estações de engenharia, capazes de alterar configuração, lógica e firmware.",
+      "resposta_padrao": "As contas de usuário dos operadores.",
+      "por_que_nao": "O cenário não indica abuso nelas; a superfície decisiva é a estação de engenharia conectada, que permite mudança de lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da retirada de privilégio administrativo compartilhado quando é preciso conter persistência e preservar rastreabilidade no IACS.",
+      "pergunta": "Durante suporte remoto já autorizado, a operação precisa continuar e os registros precisam permanecer íntegros; ainda existe uma credencial comum capaz de criar usuários e limpar logs em servidores e IHMs. Qual privilégio retirar primeiro do uso compartilhado?",
+      "resposta": "o acesso administrativo compartilhado",
+      "explicacao": "A capacidade de criar contas, desabilitar proteções e apagar rastros torna o privilégio administrativo o primeiro a conter quando se quer preservar disponibilidade e rastreabilidade.",
+      "resposta_padrao": "O acesso de engenharia compartilhado.",
+      "por_que_nao": "Ele é perigoso para lógica e firmware, mas o cenário destaca persistência e eliminação de evidências, riscos próprios do administrativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "impacto na disponibilidade e no comportamento do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão de sistemas de informação conectados ao IACS no mesmo escopo de controle de acesso quando afetam visibilidade operacional.",
+      "pergunta": "Um servidor de relatórios replica dados do ambiente de controle para consumidores corporativos e segue sob administração ampla de TI; nas manutenções dele some a visibilidade histórica no supervisório. Qual ativo deve entrar primeiro no escopo de controle de acesso do IACS?",
+      "resposta": "o servidor de informação conectado ao IACS",
+      "explicacao": "Mesmo sem atuar diretamente no processo, o servidor conectado integra o escopo de acesso do IACS e, neste caso, está associado à perda de visibilidade operacional.",
+      "resposta_padrao": "Os controladores de processo.",
+      "por_que_nao": "O sintoma acompanha a intervenção no servidor conectado; ele também é superfície de acesso relevante para disponibilidade e visibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS."
+        },
+        {
+          "bloco": "F",
+          "trecho": "perda de visibilidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

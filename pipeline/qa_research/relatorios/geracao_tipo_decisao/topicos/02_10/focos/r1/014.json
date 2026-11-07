@@ -1,0 +1,113 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecer saturação do elemento final de controle como causa limitante e priorizar recuperação de margem operacional.",
+      "pergunta": "A interface água-óleo perde estabilidade enquanto a válvula de descarga de água permanece acima de 98%; pressão e instrumentos estão normais, e não há linha paralela disponível. Qual ação operacional deve vir antes de qualquer retuning da malha?",
+      "resposta": "reduzir a vazão de alimentação do separador",
+      "explicacao": "Com a válvula no limite, a malha perdeu margem para rejeitar perturbações. Retuning não devolve autoridade ao elemento final; é preciso aliviar a carga para recuperar controle.",
+      "resposta_padrao": "Retunar a malha de nível.",
+      "por_que_nao": "Sem margem no atuador, mudar parâmetros não restaura a capacidade de corrigir perturbações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações, podendo não conseguir estabilizar o nível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode surgir porque o elemento final de controle perdeu margem operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar anti-windup quando a ação integral em controle por bandas satura e retarda a recuperação.",
+      "pergunta": "No controle por Dead Band Assimétrico, uma golfada leva o atuador a 100%; quando a carga volta ao normal, a interface ainda segue na mesma direção por longo tempo e cruza a faixa oposta. Que recurso de implementação deve ser incluído?",
+      "resposta": "anti-windup na ação integral",
+      "explicacao": "Sem anti-windup, a integral continua acumulando durante a saturação e empurra a malha na direção errada quando o atuador sai do limite.",
+      "resposta_padrao": "Aumentar o ganho integral.",
+      "por_que_nao": "Isso acelera o acúmulo da integral saturada e tende a piorar o overshoot na recuperação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem distorcer a resposta integral, retardar recuperação e mascarar riscos em transientes."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Também foi testado um Dead Band Assimétrico"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher controle por bandas para a interface quando a estabilidade da descarga ao hidrociclone é mais crítica que manter o nível centrado.",
+      "pergunta": "No arranjo separador-hidrociclone, pequenas oscilações lentas da interface são toleráveis, mas a corrente a jusante perde desempenho quando a descarga oscila. Qual filosofia de controle da interface deve ser adotada?",
+      "resposta": "controle por bandas",
+      "explicacao": "Nesse acoplamento, vale priorizar descarga mais estável ao hidrociclone. A interface não precisa ficar rigidamente centrada se a oscilação lenta não prejudica o tratamento.",
+      "resposta_padrao": "PID mantendo a interface no setpoint.",
+      "por_que_nao": "Aqui o objetivo principal não é fixar o nível, e sim reduzir a oscilação de descarga a jusante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Corrigir a associação de trip de baixo nível para o manipulador que efetivamente controla a interface no arranjo com hidrociclone.",
+      "pergunta": "No esquema em que o underflow do hidrociclone controla a interface e o overflow mantém o DPR, um teste mostra que o baixo nível de interface aciona o overflow enquanto o inventário continua caindo. Que correção de lógica deve ser feita?",
+      "resposta": "reassociar o trip de baixo nível à malha de underflow",
+      "explicacao": "Nesse arranjo, o inventário do separador responde ao underflow. Atuar no overflow altera o split/DPR, mas não corrige a queda da interface.",
+      "resposta_padrao": "Manter o trip no overflow para preservar o DPR.",
+      "por_que_nao": "O overflow pertence à malha de split; a interface é manipulada pela vazão de underflow.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também ocorreram falhas de implementação, como associação incorreta de trip por nível baixo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "manipula a vazão de underflow do hidrociclone para controlar a interface no separador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR)"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

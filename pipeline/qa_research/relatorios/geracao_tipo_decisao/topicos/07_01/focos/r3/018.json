@@ -1,0 +1,61 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 3,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da camada de visualização correta para diagnosticar dinâmica rápida quando o dashboard usa coleta periódica.",
+      "pergunta": "A PV no dashboard parece estável por pontos de 1 minuto, mas o faceplate mostra oscilações rápidas e a válvula acompanha. Para decidir ajuste na malha, qual visualização deve prevalecer?",
+      "resposta": "Tendência em tempo real do DCS",
+      "explicacao": "Coleta periódica por historian pode suavizar ou ocultar dinâmica rápida. Para decidir sobre a malha, a observação precisa vir da camada de controle com atualização efetiva do sinal.",
+      "resposta_padrao": "A tendência do dashboard/historian.",
+      "por_que_nao": "Com amostragem periódica, ela pode mascarar hunting e levar a uma decisão errada sobre a necessidade de ajuste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards, a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo de registro necessário para correlacionar eventos de campo não integrados ao PLC com sinais da automação.",
+      "pergunta": "Parte das válvulas de bloqueio só tem indicação visual em campo; no DCS aparecem apenas pressões e vazões. Quando um desvio precisa ser correlacionado com manobras locais, que arranjo de registro deve ser adotado?",
+      "resposta": "Carimbo de hora sincronizado ao DCS nas observações de campo",
+      "explicacao": "Com observabilidade distribuída entre automação e campo, a correlação entre causa e efeito depende da forma de registro. Sem tempo comum, a sequência real dos eventos fica ambígua.",
+      "resposta_padrao": "Relato por rádio com anotação livre no turno.",
+      "por_que_nao": "Sem horário sincronizado com a automação, o registro não permite alinhar a manobra local aos desvios vistos no DCS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito e pode retardar a identificação de desvios, dependendo da disciplina operacional e da forma de registro."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Disponibilidade observada de item em standby usa tempo apto à operação, não horas efetivamente operadas.",
+      "pergunta": "Uma bomba de reserva ficou o mês alinhada, testada e pronta para partir, mas só rodou 20 minutos em teste. Para apurar sua disponibilidade observada, que tempo entra no numerador?",
+      "resposta": "Tempo apto à operação.",
+      "explicacao": "Disponibilidade observada mede prontidão para cumprir a função. Em item standby, o período disponível conta mesmo sem demanda; horas rodadas medem utilização, não disponibilidade.",
+      "resposta_padrao": "Horas efetivamente operadas.",
+      "por_que_nao": "Esse tempo representa uso do equipamento e subestima a prontidão de quem permaneceu capaz de operar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O evento de falha em indicadores de confiabilidade se encerra no retorno à função, e não no fim do reparo.",
+      "pergunta": "O reparo mecânico terminou às 14h, mas a bomba só voltou a entregar vazão às 18h após alinhamento e teste. Na base de confiabilidade, em que marco você encerra o evento de falha?",
+      "resposta": "Retorno à função.",
+      "explicacao": "O indicador precisa registrar separadamente falha, reparo e recuperação funcional. Enquanto a função requerida não foi restabelecida, a falha ainda está aberta para confiabilidade e disponibilidade.",
+      "resposta_padrao": "Conclusão do reparo mecânico.",
+      "por_que_nao": "Fim de reparo não garante serviço recuperado; o evento só termina quando a função volta de fato.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em falhas crônicas sem parada total, LPO é o indicador mais adequado para priorização pela perda acumulada de produção.",
+      "pergunta": "Oscilações curtas de vazão e resets automáticos não param o processo, mas se repetem diariamente e somam perda relevante de produção. Para priorizar a manutenção desse problema crônico, qual indicador você acompanha?",
+      "resposta": "LPO.",
+      "explicacao": "Pequenas perturbações sucessivas podem acumular perda de produção e manter vulnerabilidades sem parada total. MTBF pode quase não se alterar, enquanto LPO captura o impacto operacional recorrente.",
+      "resposta_padrao": "MTBF.",
+      "por_que_nao": "MTBF foca falhas contadas sobre tempo de operação e pode não refletir perdas recorrentes sem interrupção total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "LPO, sigla para Lost Production Opportunity, e MTBF, sigla para Mean Time Between Failures, aparecem como medidas associadas ao comportamento de recorrência e à confiabilidade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pequenas perturbações sucessivas podem acumular perda de produção e manter vulnerabilidades operacionais mesmo sem parada total da planta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

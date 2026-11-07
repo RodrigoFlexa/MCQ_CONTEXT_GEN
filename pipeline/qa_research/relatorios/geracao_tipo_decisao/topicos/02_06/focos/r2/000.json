@@ -1,0 +1,79 @@
+{
+  "item": "02_06",
+  "foco": 0,
+  "rodada": 2,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Isolamento automático do inventário a montante quando o trip das bombas não elimina a alimentação do cenário de gás.",
+      "pergunta": "Detector de gás atua na área de bombeio; as bombas param, mas a pressão no trecho de entrada da área não cai e ainda há inventário a montante capaz de sustentar o vazamento. Que ação automática deve ser acrescentada ao shutdown?",
+      "resposta": "Fechamento automático da válvula de isolamento a montante.",
+      "explicacao": "Com gás detectado, a lógica deve remover ou isolar as fontes que ainda alimentam o cenário. Se o inventário a montante segue admitido, o trip das bombas não completa a mitigação.",
+      "resposta_padrao": "Trip das bombas da área.",
+      "por_que_nao": "Parar bombas não isola o inventário pressurizado que continua capaz de alimentar o vazamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing, leitura de equipamentos fora do Controlador Lógico Programável (CLP), interface com detecção de vazamentos e resposta a emergências."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tecnicamente, a lógica de causa e efeito deve ser coerente com o inventário de equipamentos capazes de alimentar o cenário perigoso."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de leitura independente fora do CLP para decidir manobras quando a indicação remota não representa o transiente real.",
+      "pergunta": "Na repartida, a tendência de pressão no CLP fica congelada, enquanto ruído, vibração e retorno de fluxo mudam após a manobra. Para decidir a próxima etapa, qual referência de medição deve prevalecer?",
+      "resposta": "Leitura independente fora do CLP.",
+      "explicacao": "Em condição anormal, a operação pode recorrer a instrumentos fora do CLP. Com indicação remota congelada, a decisão não deve se apoiar num sinal que não acompanha o transiente.",
+      "resposta_padrao": "A tendência do CLP, por ser a referência principal.",
+      "por_que_nao": "Sinal congelado não representa a resposta do sistema durante a transição e pode simular uma falsa estabilização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing, leitura de equipamentos fora do Controlador Lógico Programável (CLP), interface com detecção de vazamentos e resposta a emergências."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na rotina operacional, o operador de área e o operador de sala de controle acompanham parâmetros como pressão, temperatura, nível, ruído, vibração, vazões e condições de poços em teste, além de interagir com manutenção no tratamento de falhas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de estabilização baseado na faixa esperada do arranjo, fluido e carga vigentes, não em números históricos de outra configuração.",
+      "pergunta": "Pressão e temperatura voltaram a números parecidos com os de uma condição anterior, mas houve mudança de arranjo, fluido e carga. Que referência técnica deve definir se a próxima manobra pode prosseguir?",
+      "resposta": "Faixa esperada do arranjo, fluido e carga atuais.",
+      "explicacao": "Estabilização não é repetir valores antigos; é operar sem forte dependência do histórico da manobra e dentro da faixa esperada para a configuração vigente.",
+      "resposta_padrao": "Os valores históricos da condição anterior.",
+      "por_que_nao": "Números de outra configuração podem coincidir por acaso e não demonstram estabilidade para o arranjo, fluido e carga atuais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Assim, estabilização é a etapa em que o sistema deixa de responder fortemente ao histórico da manobra e passa a operar dentro da faixa esperada para aquele arranjo, fluido e carga."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

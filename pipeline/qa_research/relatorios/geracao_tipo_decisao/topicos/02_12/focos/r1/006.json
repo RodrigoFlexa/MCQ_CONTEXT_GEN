@@ -1,0 +1,109 @@
+{
+  "item": "02_12",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definir a arquitetura de proteção anti-surge em compressores multisseção com condições diferentes por seção.",
+      "pergunta": "Duas seções compartilham uma única malha anti-surge baseada na vazão total. A primeira fica estável, mas a segunda entra na faixa crítica quando variam as condições da primeira. Que arranjo de proteção deve substituir essa lógica?",
+      "resposta": "Linhas anti-surge dedicadas por seção.",
+      "explicacao": "Cada seção opera com sucção e descarga próprias; a segunda recebe a descarga da primeira e sua sucção flutua. Uma única linha para o trem inteiro representa mal a aproximação ao surge dessa seção.",
+      "resposta_padrao": "Aumentar a margem de uma única linha anti-surge para todo o trem.",
+      "por_que_nao": "A linha comum não acompanha as condições próprias de cada seção, especialmente a sucção flutuante da segunda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em compressores multisseção, essa dependência é ainda mais forte porque cada estágio enxerga suas próprias condições de sucção e descarga."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segunda seção pode ter sucção inerentemente flutuante por receber a descarga da primeira"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O essencial é que a variável medida represente adequadamente a aproximação ao surge sob as condições reais"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Corrigir a linha anti-surge da segunda seção com a pressão de sucção real quando a vazão é inferida por diferencial de pressão.",
+      "pergunta": "Na segunda seção, a abertura do reciclo cresce quando a pressão intermediária cai, embora o ΔP inferido de vazão e a rotação quase não mudem. Qual variável deve corrigir a linha anti-surge?",
+      "resposta": "Pressão de sucção da própria segunda seção.",
+      "explicacao": "Com menor pressão de entrada, o mesmo ΔP pode corresponder a maior vazão volumétrica aspirada. Assumir sucção fixa desloca erroneamente a linha de controle da segunda seção.",
+      "resposta_padrao": "Usar apenas o ΔP inferido de vazão.",
+      "por_que_nao": "Na segunda seção, o mesmo diferencial de pressão não representa a mesma condição de escoamento quando a pressão de entrada varia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A segunda seção pode ter sucção inerentemente flutuante por receber a descarga da primeira, de modo que uma estratégia que suponha sucção fixa tende a representar mal sua linha de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para um mesmo diferencial de pressão usado como variável inferida de vazão, redução da pressão de entrada da seção pode significar maior vazão volumétrica aspirada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Incluir o peso molecular do gás na compensação do mapa anti-surge quando a composição varia.",
+      "pergunta": "A malha anti-surge foi ajustada com um gás e passou a operar com correntes alternando entre mais leves e mais pesadas, sem mudança relevante de rotação. Que grandeza deve entrar na compensação do mapa?",
+      "resposta": "Peso molecular do gás.",
+      "explicacao": "Alterações no peso molecular mudam densidade, vazão volumétrica equivalente e resposta dinâmica. Sem essa compensação, a margem calculada ao surge deixa de representar a fronteira real.",
+      "resposta_padrao": "Corrigir só pela pressão de sucção.",
+      "por_que_nao": "Mesmo com a mesma pressão, mudar o peso molecular desloca a posição efetiva da fronteira de proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Variações bruscas de suprimento e alterações no peso molecular do gás mudam a densidade, a vazão volumétrica equivalente e a resposta dinâmica do conjunto, dificultando a avaliação da margem ao surge."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Assim, rotação, pressão intermediária e composição do gás alteram a posição efetiva da fronteira de proteção."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definir a função de proteção que deve permanecer independente quando controle e intertravamento compartilham equipamento programável.",
+      "pergunta": "No redesenho da automação, controle e intertravamento ficarão no mesmo equipamento programável certificado. Qual proteção deve continuar em equipamento dedicado?",
+      "resposta": "Detecção de sobrevelocidade.",
+      "explicacao": "Mesmo com controle e intertravamento no mesmo equipamento certificado, a sobrevelocidade permanece em hardware dedicado. O anti-surge faz parte do subsistema de controle, não dessa exceção arquitetural.",
+      "resposta_padrao": "Manter o anti-surge em equipamento dedicado.",
+      "por_que_nao": "O anti-surge integra o subsistema de controle; nas arquiteturas citadas, quem permanece dedicado é a sobrevelocidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Assim, rotação, pressão intermediária e composição do gás alteram a posição efetiva da fronteira de proteção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O subsistema de controle reúne capacidade e anti-surge; o intertravamento executa parada automática diante de risco e inclui detecção de sobrevelocidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mantendo a detecção de sobrevelocidade em equipamento dedicado."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

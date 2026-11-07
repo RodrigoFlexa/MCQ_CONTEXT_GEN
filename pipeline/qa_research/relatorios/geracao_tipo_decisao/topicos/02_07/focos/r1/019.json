@@ -1,0 +1,87 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do controle por bandas para conciliar amortecimento de transientes e menor movimentação de válvula na malha de nível.",
+      "pergunta": "Oscilações frequentes de alimentação fazem a válvula de saída caçar, embora o nível permaneça seguro e a jusante peça estabilidade. Que estratégia de malha de nível adotar?",
+      "resposta": "Controle por Bandas.",
+      "explicacao": "Dentro da faixa normal, essa lógica reduz movimentação desnecessária da válvula; se o nível sair da banda, aplica ação rápida para recuperar o inventário sem perder estabilidade.",
+      "resposta_padrao": "Retunar um PI mais lento.",
+      "por_que_nao": "Um PI mais lento reduz a caça, mas sacrifica a recuperação do inventário quando o nível ultrapassa a faixa permitida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de testar aumento de atraso da malha quando a preocupação é robustez a lentidão instrumental ou do atuador.",
+      "pergunta": "O controlador suportou degraus e oscilações em bancada, mas no campo perde estabilidade quando transmissores e atuador ficam mais lentos. Antes de liberar a malha, que perturbação de robustez deve entrar no teste?",
+      "resposta": "Aumento do atraso da malha.",
+      "explicacao": "Se a perda de desempenho surge com lentidão adicional, o mecanismo crítico é a defasagem da malha. Ensaios só com degraus podem aprovar um controle que fica instável por atraso.",
+      "resposta_padrao": "Aplicar degraus maiores na vazão de entrada.",
+      "por_que_nao": "Aumentar a amplitude do degrau testa carga, não a sensibilidade da estabilidade ao atraso adicional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Impacto da não linearidade altura-volume na sintonia da malha de nível e necessidade de modelagem real do inventário.",
+      "pergunta": "Perto dos extremos de nível, a mesma variação em centímetros passa a produzir mudanças muito diferentes de inventário, e a sintonia obtida na faixa média falha só nessas regiões. O que revisar primeiro no modelo do vaso?",
+      "resposta": "Relação real altura-volume do vaso.",
+      "explicacao": "A falha localizada indica mudança do ganho do processo com a geometria do vaso. Antes de retunar a malha toda, é preciso substituir a aproximação linear pela curva real de inventário.",
+      "resposta_padrao": "Reduzir o ganho do controlador em toda a faixa.",
+      "por_que_nao": "O problema não é agressividade uniforme da sintonia, mas a não linearidade entre nível e volume armazenado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode-se assumir relação linear entre altura e volume"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o controle de nível, pressão e interface é central para a estabilidade da planta."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

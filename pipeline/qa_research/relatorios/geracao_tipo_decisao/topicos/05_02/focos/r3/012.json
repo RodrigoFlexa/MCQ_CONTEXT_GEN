@@ -1,0 +1,65 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Isolamento dos geradores principais como pré-condição para back feeding seguro na recomposição parcial.",
+      "pergunta": "O gerador de emergência está pronto para back feeding do painel essencial para recuperar instrumentos. Um gerador principal segue fora de sincronismo, porém com disjuntor ainda fechado ao barramento desenergizado. Qual ação elétrica específica deve anteceder a realimentação?",
+      "resposta": "Manter abertos os disjuntores dos geradores principais.",
+      "explicacao": "No back feeding, os geradores principais precisam estar isolados. Isso evita paralelismo indevido e retroalimentação de trechos não previstos durante a recomposição parcial.",
+      "resposta_padrao": "Fechar imediatamente o back feeding pelo painel essencial.",
+      "por_que_nao": "Sem isolar os geradores principais, a realimentação pode energizar caminhos indevidos e criar paralelismo não previsto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "evitar paralelismo indevido, retroalimentação de partes não previstas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar a continuidade da alimentação de comando dos geradores quando a perda de controle é o gatilho do blackout.",
+      "pergunta": "A geração caiu sem falta no barramento de potência; os motores primários permaneceram estáveis, mas os geradores perderam permanência no barramento e controlabilidade. Na correção de arquitetura, qual subsistema elétrico deve ganhar prioridade de continuidade?",
+      "resposta": "Alimentação de comando dos painéis de controle dos geradores.",
+      "explicacao": "A perda da energia de comando pode derrubar a geração mesmo com a máquina motriz disponível. A prevenção precisa priorizar a continuidade desse subsistema, não só do barramento de potência.",
+      "resposta_padrao": "Barramento principal de potência.",
+      "por_que_nao": "Neste cenário, o colapso começou pela perda da energia de controle; sem comando, o gerador não permanece conectado nem controlável.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "06_05",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de recomposição de canais de F&G pela criticidade funcional definida por análise de risco.",
+      "pergunta": "Entre dois canais fora de serviço, um está há 20 dias indisponível em área secundária ainda com votação preservada; o outro falhou hoje e deixou uma zona sem confirmação automática do cenário crítico definido na análise de risco. Qual reparo priorizar?",
+      "resposta": "O canal da zona crítica que restaura a confirmação automática.",
+      "explicacao": "A prioridade deve seguir a criticidade derivada da análise de risco e a função perdida por zona; uma falha que elimina confirmação automática degrada mais a barreira do que uma indisponibilidade longa com votação preservada.",
+      "resposta_padrao": "O canal que está indisponível há mais tempo.",
+      "por_que_nao": "Tempo de pendência não define criticidade; o decisivo é a perda da função de segurança na zona afetada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua identificação deve derivar das análises de risco da instalação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a disponibilidade relevante deve ser analisada por zona e por função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ausência de um mínimo de detectores para cumprir a matriz de causa e efeito"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Autorização de inibições ou intervenções com base no mínimo por fire zone e função, não na saúde global do sistema.",
+      "pergunta": "Painel indica 95% dos canais saudáveis, mas liberar outra intervenção deixará uma zona 2ooN com só um detector útil. Qual variável técnica deve travar essa liberação?",
+      "resposta": "O mínimo de canais úteis da zona para a função.",
+      "explicacao": "Saúde global do sistema não preserva cobertura. A liberação depende de a zona manter detectores suficientes para cumprir a votação e a matriz de causa e efeito daquela função.",
+      "resposta_padrao": "O percentual global de canais saudáveis do sistema.",
+      "por_que_nao": "Cobertura relevante não é o total instalado; ela precisa ser mantida por zona e por função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cobertura não é preservada apenas pelo número total de detectores instalados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a disponibilidade relevante deve ser analisada por zona e por função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ausência de um mínimo de detectores para cumprir a matriz de causa e efeito"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da perda de função automática quando a zona cai abaixo do mínimo exigido para votação.",
+      "pergunta": "Durante uma parada corretiva, resta um único detector ativo e reportando ao supervisório numa zona cujo fechamento automático exige votação confirmada. Até recompor o segundo canal, qual função deve ser tratada como indisponível?",
+      "resposta": "O fechamento automático da zona.",
+      "explicacao": "Com apenas um canal ativo, a zona pode alarmar, mas não cumpre a confirmação exigida para gerar a atuação automática prevista. O fechamento automático fica indisponível até recompor o mínimo.",
+      "resposta_padrao": "Só a redundância está perdida; a função principal permanece.",
+      "por_que_nao": "Área parcialmente instrumentada pode não satisfazer confirmação, votação ou disparo automático requerido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma área pode permanecer parcialmente instrumentada e, ainda assim, não satisfazer confirmação de evento, lógica de votação ou disparo automático requerido"
+        },
+        {
+          "bloco": "F",
+          "trecho": "preservar cobertura significa manter capacidade suficiente para detectar o cenário perigoso e permitir a atuação lógica prevista"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Limiares, votação e respostas devem estar definidos na matriz de causa e efeito da unidade"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

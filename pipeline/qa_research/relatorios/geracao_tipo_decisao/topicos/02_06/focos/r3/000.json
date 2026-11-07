@@ -1,0 +1,61 @@
+{
+  "item": "02_06",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre override de permissivo e forcing de variável quando as proteções devem permanecer ativas.",
+      "pergunta": "Um transmissor falhou e bloqueia a partida por permissivo baixo. Manômetro local e chave independente confirmam condição normal, e as outras proteções dessa variável devem continuar ativas. Que recurso aplicar?",
+      "resposta": "Override seletivo do permissivo de partida.",
+      "explicacao": "Como a variável ainda deve proteger outras lógicas, a solução correta é liberar apenas o permissivo afetado. Forçar o transmissor propagaria uma condição falsa para trips e intertravamentos associados.",
+      "resposta_padrao": "Forçar o valor do transmissor no CLP.",
+      "por_que_nao": "Isso mascara a variável para outras lógicas e pode neutralizar proteções que precisam permanecer válidas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na rotina operacional, o operador de área e o operador de sala de controle acompanham parâmetros como pressão, temperatura, nível, ruído, vibração, vazões"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Completação do shutdown por gás com desligamento da bomba de stripping quando há circulação residual.",
+      "pergunta": "Mesmo após o trip das bombas principais por gás na área de bombeio, o nível do slop segue caindo e o retorno secundário permanece aquecido. Que equipamento a lógica ainda deve desligar?",
+      "resposta": "Bomba de stripping.",
+      "explicacao": "Os sinais mostram circulação residual depois do trip principal. A filosofia de shutdown por gás precisa retirar também fontes secundárias capazes de manter movimentação de hidrocarboneto na área.",
+      "resposta_padrao": "As bombas principais já bastam.",
+      "por_que_nao": "Os indícios mostram que o circuito de stripping continua movimentando hidrocarboneto na área.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing, leitura de equipamentos fora do Controlador Lógico Programável (CLP), interface com detecção de vazamentos e resposta a emergências."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

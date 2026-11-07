@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 15,
+  "rodada": 4,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição do ponto de aplicação do load shedding em pacote com interdependência por automação e proteções.",
+      "pergunta": "Os registros mostram que retirar só um auxiliar de um compressor não essencial leva, segundos depois, ao trip lógico do pacote e a uma tentativa automática de rearme, com nova queda de frequência. Que ponto de aplicação do shedding deve ser usado nesse equipamento?",
+      "resposta": "No disjuntor de alimentação do pacote.",
+      "explicacao": "Quando a automação do pacote torna o descarte parcial ineficaz, o shedding deve atuar no grupo; abrir o incomer remove a carga de imediato e evita trip e rearme tardios.",
+      "resposta_padrao": "No auxiliar individual de menor potência.",
+      "por_que_nao": "A retirada parcial conflita com a automação e as proteções do pacote, piorando o transitório em vez de estabilizá-lo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da separação de barramentos como forma de load shedding quando o descarte por feeders é lento demais para o transitório.",
+      "pergunta": "A oscilografia mostra que o primeiro estágio abre feeders em sequência, mas a subfrequência dos motores essenciais surge antes do último trip; as cargas menos prioritárias estão concentradas na outra seção do barramento. Qual arranjo deve substituir esse estágio?",
+      "resposta": "Abrir a interligação e separar a seção não essencial.",
+      "explicacao": "Se o descarte individual é lento e as cargas rejeitáveis já estão segregadas, a separação de barramentos remove o bloco necessário mais rápido e preserva a seção essencial.",
+      "resposta_padrao": "Tripar mais feeders individuais no primeiro estágio.",
+      "por_que_nao": "Mesmo ampliado, o descarte sequencial continua lento para o transitório observado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores que permaneceram conectados e aumenta a chance de preservar alimentação para funções essenciais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se o esquema atuar tarde, com prioridades inadequadas ou baseado em análise de carga desatualizada, sua eficácia diminui."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do impacto do desligamento no processo como critério de seleção de cargas para load shedding.",
+      "pergunta": "Dois consumidores têm criticidade semelhante e correntes de retomada baixas. Quando um deles é rejeitado, vários controladores perdem uma utilidade comum e o processo desarma; quando o outro sai, a planta segue estável. Na seleção do estágio, o que deve prevalecer?",
+      "resposta": "Impacto do desligamento no processo.",
+      "explicacao": "Com efeito elétrico parecido, a escolha deve preservar a carga cuja perda desorganiza o processo, mesmo que outra tenha potência em regime semelhante.",
+      "resposta_padrao": "Potência ativa em regime da carga.",
+      "por_que_nao": "Se o efeito na estabilidade elétrica é parecido, o critério decisivo passa a ser a consequência operacional da perda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores que permaneceram conectados e aumenta a chance de preservar alimentação para funções essenciais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

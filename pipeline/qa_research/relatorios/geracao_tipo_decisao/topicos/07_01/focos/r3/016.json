@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Com telemetria e diagnóstico ativos, perda de atuação remota aponta para o enlace de escrita/comando do controlador ao equipamento de campo.",
+      "pergunta": "O comando do PLC muda de estado; o dispositivo em rede continua enviando diagnóstico e posição atualizados, está em remoto e o comando local funciona, mas a atuação remota não ocorre. Qual elemento técnico deve ser corrigido primeiro?",
+      "resposta": "Enlace de comando do PLC para o dispositivo",
+      "explicacao": "Posição e diagnóstico atualizados mostram equipamento energizado e caminho de leitura preservado. Como a perda ficou restrita à atuação remota, o alvo correto é o enlace de comando do controlador ao dispositivo.",
+      "resposta_padrao": "Trocar ou reparar o atuador de campo.",
+      "por_que_nao": "O equipamento continua reportando posição e diagnóstico, o que afasta falha primária do elemento final e concentra o problema no caminho de comando remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em termos técnicos gerais, a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a manobra remota ocorre e o processo responde, mas a mudança não aparece na tela, a intervenção deve focar o retorno de estado do equipamento ao controlador.",
+      "pergunta": "A válvula executa o fechamento remoto e a variável de processo confirma a manobra, mas a tela mantém o último estado e não registra a transição. Que ponto técnico deve ser restaurado?",
+      "resposta": "Retorno de estado da válvula ao controlador",
+      "explicacao": "A manobra ocorreu e produziu efeito no processo, então comando e elemento final responderam. O sintoma restante é perda da informação de estado no caminho de retorno ao controlador.",
+      "resposta_padrao": "Ajustar o posicionador da válvula.",
+      "por_que_nao": "A válvula efetivamente se moveu e alterou o processo; o problema está na informação de estado, não na atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em termos técnicos gerais, a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

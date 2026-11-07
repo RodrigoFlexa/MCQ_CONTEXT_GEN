@@ -1,0 +1,117 @@
+{
+  "item": "05_01",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Usar a temperatura do meio de rejeito como variável antecipativa para acionar limitação de carga quando a perda de margem térmica é ambiental, não hidráulica.",
+      "pergunta": "A margem térmica some sempre no pico da tarde de verão, sem mudança de vazão, ΔP ou limpeza do circuito. Qual variável deve disparar o alívio de carga?",
+      "resposta": "Temperatura da água do mar na entrada do trocador",
+      "explicacao": "Com hidráulica e limpeza estáveis, o limitante passa a ser a menor diferença térmica disponível no rejeito. A temperatura do mar antecipa a perda de capacidade antes do aquecimento dos consumidores.",
+      "resposta_padrao": "Temperatura de retorno do circuito fechado.",
+      "por_que_nao": "Ela reage depois que a capacidade já caiu; não antecipa a redução de ΔT disponível no trocador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vazão disponível, temperatura de suprimento, temperatura do fluido de rejeito ou da fonte quente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a água do mar entra mais quente, a diferença de temperatura disponível no trocador diminui"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "variações rápidas de carga ou de temperatura do meio refrigerante podem deslocar a planta para nova condição antes de a medição refletir completamente o efeito"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar a temperatura de ida como variável comum a restaurar quando a perda de aquecimento é generalizada e a hidráulica do circuito permanece normal.",
+      "pergunta": "Todos os consumidores aquecidos perdem temperatura ao mesmo tempo; recirculação, ΔP de filtros e alinhamento dos ramais permanecem normais. Antes de rebalancear o circuito, qual variável comum deve ser restaurada?",
+      "resposta": "Temperatura de ida do circuito de aquecimento",
+      "explicacao": "Sem sinais hidráulicos e com desvio generalizado, o limitante comum é a utilidade chegando mais fria. A capacidade do sistema também depende da temperatura de suprimento.",
+      "resposta_padrao": "Aumentar a vazão de recirculação.",
+      "por_que_nao": "Mais vazão não recompõe a força motriz térmica se todo o circuito recebe utilidade abaixo da temperatura necessária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vazão disponível, temperatura de suprimento, temperatura do fluido de rejeito ou da fonte quente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Indicadores técnicos usuais incluem temperaturas de ida e retorno do circuito fechado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar a vazão do processo como variável de escalonamento de sintonia em aquecedores com medição na saída e dinâmica mais difícil em alta vazão.",
+      "pergunta": "Oscilações longas surgem só nos períodos de maior produção; a medição fica na saída do trocador, e pressão e composição variam pouco. Se houver sintonia por faixa, qual variável deve selecionar a faixa?",
+      "resposta": "Vazão do óleo através do trocador",
+      "explicacao": "A dinâmica piora com vazões elevadas, enquanto a temperatura de saída chega atrasada pela medição a jusante. Usar a vazão antecipa a mudança de comportamento da planta.",
+      "resposta_padrao": "Temperatura de saída do óleo aquecido.",
+      "por_que_nao": "Ela já incorpora tempo morto e só acusa o problema depois que a malha entrou em oscilação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tempo morto associado à medição de temperatura na saída do trocador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comportamento não linear do permutador em vazões elevadas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma malha pode se comportar de forma diferente ao longo da campanha operacional"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tomar a vazão de circulação, e não a pressão do header, como variável decisiva para confirmar capacidade térmica quando há acionamento frequente da bomba reserva.",
+      "pergunta": "Pressão do header segue quase constante, a bomba reserva entra repetidamente e não há aumento relevante de ΔP em filtros ou trocadores. Para decidir se uma única bomba ainda atende a capacidade térmica, qual variável do circuito deve prevalecer sobre a pressão?",
+      "resposta": "Vazão de circulação do circuito fechado",
+      "explicacao": "A capacidade térmica depende do calor transportado pelo circuito. Pressão estável não garante recirculação suficiente nem boa divisão de vazão entre os ramais.",
+      "resposta_padrao": "Pressão do header de ida.",
+      "por_que_nao": "Ela pode permanecer aceitável mesmo com recirculação insuficiente para remover calor dos consumidores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a vazão cai, também cai a capacidade de transportar calor."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a divisão de vazão entre ramais depende da resistência hidráulica de cada percurso"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "vazão de circulação, pressão diferencial em filtros e trocadores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "partidas frequentes de bombas de contingência"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

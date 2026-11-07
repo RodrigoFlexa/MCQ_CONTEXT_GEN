@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Direcionamento da resposta inicial para a infraestrutura de energia quando sinais físicos locais acompanham perda simultânea de sistemas na mesma alimentação.",
+      "pergunta": "Fumaça na UPS, atuação de proteções e perda simultânea de DCS, ESD e F&G ocorreram sem mudança de lógica, setpoints ou comandos. Que frente técnica deve ser atacada primeiro?",
+      "resposta": "a cadeia de alimentação ininterrupta compartilhada",
+      "explicacao": "Os sinais físicos locais somados à perda simultânea de cargas na mesma alimentação caracterizam falha de infraestrutura de energia; sem alteração não autorizada de lógica ou setpoints, não é a linha principal de comprometimento do controle.",
+      "resposta_padrao": "o comprometimento cibernético do controle",
+      "por_que_nao": "Nesse cenário, fumaça, arco/proteções e perda simultânea em cargas da mesma UPS apontam primeiro para falha elétrica de suporte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de manutenção da UPS compartilhada sobre correção de vulnerabilidade com baixa exposição real quando só uma pendência cabe na janela.",
+      "pergunta": "A próxima parada comporta só uma pendência: manutenção vencida da UPS comum a DCS, ESD e F&G, e patch já disponível para um servidor sem exposição externa nem eventos anômalos. Qual intervenção deve ocupar a janela?",
+      "resposta": "a manutenção da UPS compartilhada",
+      "explicacao": "A UPS é modo de falha comum de barreiras distintas e sua falta de manutenção pode derrubar controle, shutdown e mitigação juntos. Sem exposição real nem anomalias, o patch do servidor não domina a prioridade dessa janela.",
+      "resposta_padrao": "o patch do servidor",
+      "por_que_nao": "Tratamento de vulnerabilidade em OT depende da exposição real; já a UPS vencida pode causar perda simultânea de funções críticas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A falta de manutenção em UPS pode levar à perda simultânea de energia para sistemas de controle industrial, de shutdown de emergência e de mitigação de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Preservação da UPS como último suporte das funções críticas quando geração principal e emergência falham.",
+      "pergunta": "Perdida a geração principal, sem partida do gerador de emergência e sem fonte disponível no bypass, surgiu proposta de desligar a UPS de DCS, ESD e F&G por alarme interno ainda sem fumaça nem proteção atuada. Qual decisão técnica tomar?",
+      "resposta": "manter a UPS sustentando as funções críticas",
+      "explicacao": "Nessa contingência, a UPS é o meio restante para alimentar as funções críticas. Retirá-la de serviço por alarme sem evidência física de falha elimina o último suporte disponível durante a emergência elétrica.",
+      "resposta_padrao": "desligar a UPS para inspeção imediata",
+      "por_que_nao": "Com geração principal perdida e sem partida do gerador de emergência, a UPS remanescente sustenta as funções críticas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se a geração principal for perdida e o gerador de emergência não partir, ela é o meio que resta para manter alimentadas as funções críticas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda da geração principal, somada à falha de partida do gerador de emergência e à indisponibilidade da UPS, pode deixar sem energia as funções de segurança justamente durante a emergência."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

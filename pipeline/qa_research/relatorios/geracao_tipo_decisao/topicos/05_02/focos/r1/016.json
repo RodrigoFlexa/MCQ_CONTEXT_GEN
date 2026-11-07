@@ -1,0 +1,105 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação real de estações redundantes entre UPS e barramentos independentes.",
+      "pergunta": "Duas estações redundantes de parada de emergência ficaram ligadas ao UPS/barramento A após modificações; o UPS/barramento B alimenta apenas auxiliares, embora ambos suportem a carga total. Que rearranjo técnico devolve a redundância funcional?",
+      "resposta": "Transferir uma das estações para o UPS/barramento B.",
+      "explicacao": "Com os dois canais no mesmo ramo, permanece um ponto único de falha. A redundância prevista só se materializa quando as estações redundantes são segregadas entre os dois ramos.",
+      "resposta_padrao": "Fechar permanentemente o TIE entre A e B para os dois UPS alimentarem juntos.",
+      "por_que_nao": "A interligação não cria independência entre canais concentrados no mesmo ramo e ainda amplia a propagação de falhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso da alimentação cruzada por TIE no sistema 24 Vcc quando um conjunto falha e o outro suporta toda a carga.",
+      "pergunta": "Um conjunto retificador/carregador e baterias de 24 Vcc falhou; o outro segue saudável e foi dimensionado para toda a demanda do quadro. Sem fonte provisória, que manobra deve manter os serviços essenciais energizados?",
+      "resposta": "Fechar o disjuntor TIE para alimentação cruzada.",
+      "explicacao": "O arranjo prevê que o conjunto remanescente assuma integralmente o quadro pela interligação em contingência. Isso preserva a alimentação essencial sem remover cargas que ainda podem ser mantidas.",
+      "resposta_padrao": "Desligar imediatamente cargas menos prioritárias do 24 Vcc.",
+      "por_que_nao": "Aqui o conjunto remanescente já tem capacidade total; shed desnecessário reduz a continuidade das funções essenciais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir integralmente a demanda do quadro, com possibilidade de alimentação cruzada por disjuntor TIE em caso de falha de um conjunto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "dois caminhos capazes de assumir a carga reduzem a probabilidade de perda total por falha simples."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação da distribuição de cargas entre ramos redundantes como parte do monitoramento de sistemas essenciais.",
+      "pergunta": "Nos testes periódicos, tensão e autonomia dos UPS aparecem normais, mas ao isolar o ramo A caem duas estações supostamente redundantes. Qual verificação específica deve entrar na rotina após modificações?",
+      "resposta": "Verificação da distribuição de cargas entre ramos redundantes.",
+      "explicacao": "Presença de tensão e autonomia não revelam concentração indevida de cargas. A falha observada indica perda de independência funcional por alocação incorreta entre os ramos.",
+      "resposta_padrao": "Repetir apenas o teste de autonomia das baterias.",
+      "por_que_nao": "Autonomia aprovada não detecta que ambas as estações foram ligadas ao mesmo ramo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correção da lógica de reboot e trip quando a recomposição falha apesar de a alimentação essencial estar disponível.",
+      "pergunta": "No black start, as baterias sustentam o controle; quando o 120 Vca retorna, as estações essenciais entram em laço de reinício e a recomposição para. Inversor, retificador e bypass estão disponíveis. Que ajuste atacar primeiro?",
+      "resposta": "Corrigir a lógica de reboot e trip das estações.",
+      "explicacao": "Se a alimentação foi mantida e os equipamentos de potência estão disponíveis, o bloqueio da recomposição está na coerência das lógicas de reinício e disparo das estações essenciais.",
+      "resposta_padrao": "Aumentar a autonomia das baterias do UPS.",
+      "por_que_nao": "O problema aparece na restauração da alimentação, não por insuficiência de retaguarda durante a falta de fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

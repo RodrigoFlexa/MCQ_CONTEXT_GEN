@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 4,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Validação funcional da redundância de alimentação exige teste por perda simulada de cada ramo, não apenas checagens elétricas estáticas.",
+      "pergunta": "Duas fontes redundantes do rack remoto mostram tensão nominal após troca do módulo de ORing, e as I/Os seguem ativas. Que verificação técnica deve ser feita antes da liberação para comprovar redundância real da alimentação?",
+      "resposta": "Teste de sustentação do rack isolando uma fonte por vez",
+      "explicacao": "Tensão e LEDs saudáveis não provam caminho alternativo efetivo. É preciso confirmar que o rack permanece funcional quando cada ramo de alimentação é perdido.",
+      "resposta_padrao": "Conferir tensão de saída e LEDs das duas fontes.",
+      "por_que_nao": "Isso não valida o caminho alternativo nem demonstra preservação da função do rack com falha de um ramo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Intervenção planejada que indisponibiliza o único canal remanescente de um par redundante deve ser precedida pelo restabelecimento da redundância.",
+      "pergunta": "O controlador reserva está indisponível, e a correção no controlador em serviço exige reinicialização. Que ação técnica deve preceder essa intervenção?",
+      "resposta": "Restabelecer a redundância do par de controladores",
+      "explicacao": "Com apenas um canal restante, a reinicialização elimina o último caminho de controle. A condição degradada deve ser tratada antes de introduzir nova indisponibilidade.",
+      "resposta_padrao": "Executar a reinicialização com monitoramento reforçado da operação.",
+      "por_que_nao": "Monitoramento não substitui o canal redundante; o reboot retiraria do ar o único caminho ainda ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sintoma restrito a uma única estação de operação deve ser atacado na camada de supervisão local, não no controlador ou no campo.",
+      "pergunta": "Só uma estação de operação deixou de atualizar telas e alarmes; outra estação exibe as mesmas tags em tempo real e aceita comandos. Qual elemento deve receber a primeira intervenção?",
+      "resposta": "Estação de operação afetada",
+      "explicacao": "Como outra estação mantém visibilidade e comando das mesmas variáveis, o sintoma está confinado à camada de supervisão local, não ao controlador, rede de controle ou campo.",
+      "resposta_padrao": "Rede de controle do processo.",
+      "por_que_nao": "Se a rede ou o controlador estivessem falhando, o problema apareceria também na outra estação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

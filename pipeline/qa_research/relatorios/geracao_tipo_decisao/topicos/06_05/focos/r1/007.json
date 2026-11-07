@@ -1,0 +1,115 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Adequação da votação 1oo2 quando a cobertura real e a dispersão localizada tornam improvável a coincidência entre dois detectores de gás.",
+      "pergunta": "Liberações de teste junto a um selo pressurizado atingem ora um, ora outro detector de gás de ponto, nunca os dois antes da dissipação. A lógica atual exige coincidência para fechar a válvula de shutdown. Que votação deve comandar esse fechamento?",
+      "resposta": "votação 1oo2 no fechamento da SDV",
+      "explicacao": "Com dois detectores e pluma localizada, exigir dois sinais reduz a sensibilidade prática; um vazamento real pode não materializar coincidência antes da dissipação. Para isolar a fonte a tempo, o fechamento deve sair com um único canal.",
+      "resposta_padrao": "votação 2oo2 para evitar atuações indevidas.",
+      "por_que_nao": "Com cobertura espacial limitada, 2oo2 pode falhar num evento real por falta de coincidência materializável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode reduzir a sensibilidade prática se a cobertura espacial for limitada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Exigir menos confirmação tende a acelerar a resposta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o cenário exige redução rápida da massa liberada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Adequação da votação 2oo3 para liberar dilúvio quando há sobreposição de cobertura e risco relevante de disparo indevido por um canal.",
+      "pergunta": "Três detectores de chama têm sobreposição no mesmo skid. Reflexos esporádicos já acionaram um canal isolado, a consequência automática é abrir dilúvio, e o cenário credível é fogo de poça. Qual votação deve liberar essa ação?",
+      "resposta": "votação 2oo3 para abrir o dilúvio",
+      "explicacao": "Com três campos de visão sobrepostos e histórico de disparo isolado, dois sinais equilibram robustez contra atuação indevida e confirmação suficiente para o evento real, especialmente quando o cenário não exige a resposta mais rápida possível.",
+      "resposta_padrao": "votação 1oo3 para responder mais cedo.",
+      "por_que_nao": "Aqui a sobreposição real permite exigir coincidência e reduzir disparos indesejados de uma ação automática relevante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Exigir coincidência de mais sinais tende a aumentar a robustez contra atuações indevidas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Associação de detecção confirmada de gás a isolamento automático da fonte quando o cenário exige reduzir rapidamente a massa liberada.",
+      "pergunta": "Alarme alto de gás é confirmado a jusante de uma válvula de shutdown; a linha de montante permanece pressurizada e o painel só alarma. Que comando automático deve a matriz associar a esse evento?",
+      "resposta": "fechamento da válvula de shutdown a montante",
+      "explicacao": "Neste cenário, só alarmar mantém a fonte alimentando a liberação. A ação correta é isolar automaticamente o processo para reduzir rapidamente a massa liberada pela linha ainda pressurizada.",
+      "resposta_padrao": "somente alarme geral ao pessoal.",
+      "por_que_nao": "Alarme não reduz o inventário liberado nem interrompe a fonte de gás que continua alimentando a nuvem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acionamento de válvulas para desligar fontes de gás"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "limitar a resposta ao alarme pode ser insuficiente"
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Influência da definição de zona lógica sobre quais detectores podem votar e necessidade de reagrupar canais após mudança de layout.",
+      "pergunta": "Mudança de layout fez dois detectores por caminho aberto cruzarem o mesmo corredor. Ambos veem a mesma nuvem, mas a coincidência não libera isolamento porque cada canal pertence a uma zona diferente. Qual ajuste lógico específico corrige isso sem baixar a exigência de confirmação?",
+      "resposta": "reagrupar ambos na mesma zona lógica",
+      "explicacao": "Se a coincidência é avaliada por zona, canais separados não materializam a combinação exigida apesar da cobertura física. O ajuste correto é alinhar a zona lógica ao corredor realmente coberto pelos dois detectores.",
+      "resposta_padrao": "mudar para 1oo1 em cada zona.",
+      "por_que_nao": "Isso contorna mal a partição lógica errada e aumenta a suscetibilidade a atuações indevidas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a barreira perde aderência ao cenário para o qual foi concebida"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

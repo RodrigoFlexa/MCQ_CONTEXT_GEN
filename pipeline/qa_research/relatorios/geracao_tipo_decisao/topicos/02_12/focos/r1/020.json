@@ -1,0 +1,91 @@
+{
+  "item": "02_12",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escalonamento da proteção para trip quando o surge persiste apesar do reciclo máximo.",
+      "pergunta": "Vazão oscila, há indícios de reversão interna e a válvula de reciclo já está totalmente aberta após perda brusca de alimentação. Qual ação de proteção tomar?",
+      "resposta": "Trip do compressor.",
+      "explicacao": "Com surge caracterizado por vazão muito baixa e reversão de fluxo, a máquina entra em regime instável e pode sofrer dano permanente. Se o reciclo já saturou, a proteção deve evoluir para trip.",
+      "resposta_padrao": "Manter a máquina operando em reciclo total até a alimentação voltar.",
+      "por_que_nao": "Com surge persistente e reciclo esgotado, manter operação prolonga a instabilidade danosa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "regime operacional instável associado a vazão de gás muito baixa, com reversão de fluxo no interior do compressor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode sofrer dano permanente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "incluindo trip quando previsto na lógica de segurança"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Permissivo de partida vinculado à disponibilidade do sistema anti-surge em compressor centrífugo.",
+      "pergunta": "Com a demanda de compressão alta, mas a válvula de reciclo sem prova funcional após manutenção, qual condição deve impedir a partida do centrífugo?",
+      "resposta": "Indisponibilidade do sistema anti-surge.",
+      "explicacao": "O centrífugo tem faixa limitada de vazão estável e sofre com perturbações bruscas de vazão e composição. Por isso, a partida depende de permissivo que confirme proteção anti-surge disponível.",
+      "resposta_padrao": "Partir com supervisão do operador e apenas o controle de capacidade.",
+      "por_que_nao": "Controle de capacidade e ação manual não substituem a proteção dedicada contra surge nos transientes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "opera com faixa limitada de vazão estável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "é usual que compressores centrífugos sejam instalados com controle regulatório que inclua prevenção de surge"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com permissivos, intertravamentos e margens definidos no projeto e no procedimento da unidade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Intertravamento por alto-alto nível em vaso depurador para evitar carryover líquido ao compressor.",
+      "pergunta": "Falha de drenagem eleva rapidamente o nível no vaso depurador após o resfriador, enquanto a vazão ainda parece estável. Que intertravamento deve atuar?",
+      "resposta": "Trip por alto-alto nível no vaso depurador.",
+      "explicacao": "Os depuradores existem para remover condensados formados após o resfriamento. Se o nível sobe, há risco de arraste líquido e deterioração do compressor; reciclo não elimina esse mecanismo de dano.",
+      "resposta_padrao": "Abrir mais o reciclo anti-surge e manter o compressor rodando.",
+      "por_que_nao": "Reciclo preserva vazão, mas não impede que condensado siga para o compressor.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "os vasos depuradores removem condensados formados após esse resfriamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para evitar deterioração dos compressores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com reciclo e ações de proteção definidas para a máquina"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

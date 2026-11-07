@@ -1,0 +1,101 @@
+{
+  "item": "01_01",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Apuração de MTTR e disponibilidade observada depende dos marcos temporais de falha e retorno operacional.",
+      "pergunta": "Os eventos de indisponibilidade são encerrados só com horas de manutenção, e o painel não consegue apurar MTTR nem disponibilidade observada. Qual registro deve passar a ser obrigatório em cada falha?",
+      "resposta": "Horário de início da falha e de retorno ao estado operacional",
+      "explicacao": "Esses dois marcos temporais definem a indisponibilidade observada e permitem calcular MTTR e disponibilidade; apenas a duração da manutenção mistura reparo com esperas e não mostra quando o item voltou a operar.",
+      "resposta_padrao": "Duração total da intervenção de manutenção.",
+      "por_que_nao": "Sem o instante da falha e o retorno operacional, não se calcula a disponibilidade observada e o MTTR fica contaminado por esperas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de KPI de confiabilidade deve usar criticidade funcional, não frequência isolada.",
+      "pergunta": "Um ativo falha pouco, mas cada parada interrompe a exportação; outro falha mais, porém a redundância sustenta a produção. No painel de priorização, qual critério deve comandar o ranking?",
+      "resposta": "Criticidade funcional do item no sistema",
+      "explicacao": "A relevância do indicador depende do efeito funcional da indisponibilidade. Frequência isolada pode esconder o verdadeiro limitante quando um item raro bloqueia produção, segurança de processo ou exportação.",
+      "resposta_padrao": "MTBF mais baixo do equipamento.",
+      "por_que_nao": "Falhar mais vezes não torna o item mais crítico se sua perda não derruba a função do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seu significado depende da criticidade funcional do item no sistema."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um elemento com baixa taxa de falha pode ser mais relevante que outro mais problemático se sua indisponibilidade bloquear produção, segurança de processo ou exportação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Coleta de falhas para ação corretiva requer codificação padronizada que torne causas distinguíveis entre áreas.",
+      "pergunta": "Operação, manutenção e confiabilidade registram a mesma ocorrência com rótulos diferentes, e as recorrências não podem ser agrupadas por causa útil à correção. Que arranjo de coleta deve ser implantado?",
+      "resposta": "Codificação padronizada de mecanismos de falha",
+      "explicacao": "A coleta precisa ser planejada para tornar as causas distinguíveis e comparáveis entre áreas e ao longo do tempo; texto livre ou rótulos soltos não sustentam priorização consistente.",
+      "resposta_padrao": "Exigir descrições narrativas mais detalhadas.",
+      "por_que_nao": "Mais detalhe sem padronização não garante agrupamento consistente nem comparação histórica entre ocorrências.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dados de falhas, mecanismos de falha e manutenção precisam circular entre áreas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis e úteis à priorização de ações corretivas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Revisão local de disponibilidade deve privilegiar dados próprios padronizados sobre bancos setoriais.",
+      "pergunta": "Já existe histórico padronizado da planta, mas as metas de disponibilidade continuam sendo revistas principalmente com banco setorial. Para representar o desempenho local, qual base deve prevalecer?",
+      "resposta": "Dados característicos da própria instalação",
+      "explicacao": "Bancos setoriais ajudam a comparar e padronizar, mas a representação local precisa refletir arquitetura, acessibilidade, manutenção e contexto operacional reais da instalação.",
+      "resposta_padrao": "Banco setorial de confiabilidade.",
+      "por_que_nao": "Ele apoia benchmarking, porém não substitui dados locais quando o objetivo é representar condições reais da instalação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

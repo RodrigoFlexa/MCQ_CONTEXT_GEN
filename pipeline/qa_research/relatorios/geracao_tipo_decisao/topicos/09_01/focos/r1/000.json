@@ -1,0 +1,109 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sequenciamento logístico por consequência operacional versus FIFO sob restrição de embarque.",
+      "pergunta": "Janela de mar abre para apenas uma viagem hoje; há rancho para mais três dias, material de rotina e um sobressalente cuja falta mantém um sistema indisponível e amplia a perda de produção. Qual critério de sequenciamento deve comandar o embarque?",
+      "resposta": "Prioridade por consequência operacional da falta",
+      "explicacao": "Com restrição de viagem, a escolha deve seguir a consequência da espera. O item cuja falta mantém indisponibilidade e perda operacional deve furar a fila, pois FIFO ignora custos de atraso desiguais.",
+      "resposta_padrao": "Atender por ordem de chegada.",
+      "por_que_nao": "FIFO é inadequado quando o custo da espera não é uniforme entre as demandas e uma delas sustenta perda operacional relevante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a política de prioridade altera o resultado porque muda quais demandas serão atendidas primeiro quando há restrição de embarcações, janelas operacionais ou capacidade logística."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de penalidade por atraso diferenciada no dimensionamento e na priorização logística.",
+      "pergunta": "Dois planos de atendimento têm a mesma tonelagem e as mesmas janelas, mas em um deles atrasar poucos itens interrompe manutenção crítica. Na função de custo do dimensionamento logístico, qual termo deve variar entre as demandas?",
+      "resposta": "Penalidade por atraso por demanda",
+      "explicacao": "Se o atraso de poucos itens tem consequência muito maior, o modelo precisa refletir custo de espera diferente entre demandas; isso altera a priorização e pode mudar o dimensionamento e a utilização da frota.",
+      "resposta_padrao": "Aplicar a mesma penalidade de atraso a todas as cargas.",
+      "por_que_nao": "Penalidade uniforme esconde diferenças de consequência que, tecnicamente, mudam a prioridade e o resultado do dimensionamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No mesmo contexto modelado, a priorização de tarefas foi associada a redução de custo frente ao FIFO, e penalidades elevadas por atraso reforçaram o valor de critérios de prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O resultado depende da demanda, das penalidades, das capacidades e das janelas adotadas;"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição de estoque local para item de baixo consumo e alta consequência da falta.",
+      "pergunta": "Baixo consumo anual, prazo de reposição longo e transporte sujeito a janelas; quando esse item falta, a restauração de função fica bloqueada. Que arranjo de suprimento deve ser adotado para esse material?",
+      "resposta": "Estoque local estratégico",
+      "explicacao": "Baixa frequência de consumo não basta para compra sob demanda quando a reposição é lenta e a falta bloqueia restauração de função; nesse caso o item exige estoque local para evitar ruptura crítica.",
+      "resposta_padrao": "Comprar somente sob demanda, já que o consumo é baixo.",
+      "por_que_nao": "Baixa demanda não elimina a necessidade de estoque quando a ruptura compromete continuidade operacional e o reabastecimento é difícil.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "itens de baixa demanda podem continuar exigindo estoque local se a ruptura tiver consequência alta para segurança ou produção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de consolidação de demanda para itens regulares com baixa atratividade de fornecimento.",
+      "pergunta": "Consumíveis de uso recorrente são comprados em pequenos lotes separados por três ativos; fornecedores recusam ou encarecem o atendimento por falta de escala, sem urgência operacional imediata. Que arranjo de suprimento é mais adequado?",
+      "resposta": "Consolidação da demanda entre ativos",
+      "explicacao": "Para demanda regular em pequenos lotes, o problema é escala econômica e atratividade do fornecedor; agregar volumes entre ativos eleva previsibilidade e viabiliza atendimento mais eficiente.",
+      "resposta_padrao": "Manter pedidos separados por instalação.",
+      "por_que_nao": "Isso preserva a baixa escala do fornecimento e não corrige a causa do desinteresse ou do sobrepreço do fornecedor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O resultado depende da demanda, das penalidades, das capacidades e das janelas adotadas;"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Para demanda regular, uma alternativa sugerida é elevar a atratividade do fornecimento pela composição com outros materiais ou pela agregação de demanda entre empresas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "selecionar a estratégia exige observar pelo menos quatro variáveis: frequência de consumo, impacto da falta, prazo de reposição e possibilidade de consolidação da demanda."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

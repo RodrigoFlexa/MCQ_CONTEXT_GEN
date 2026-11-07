@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de teste funcional por isolamento de ramo para comprovar segregação real entre UPS redundantes.",
+      "pergunta": "Tensão, autonomia e alarmes dos dois UPS estão normais, mas ao isolar o barramento A caem canais redundantes ao mesmo tempo. Que ensaio periódico deve ser adotado para expor esse defeito antes da contingência?",
+      "resposta": "Teste funcional de isolamento de cada ramo redundante.",
+      "explicacao": "Medições elétricas podem aprovar as fontes e ainda ocultar concentração de canais redundantes no mesmo ramo. Isolar cada ramo comprova se a independência funcional prevista realmente existe.",
+      "resposta_padrao": "Repetir apenas medições de tensão, autonomia e alarmes dos UPS.",
+      "por_que_nao": "Essas medições confirmam capacidade e estado da fonte, mas não revelam falta de segregação entre ramos redundantes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do circuito de comando dos geradores como carga que deve permanecer em UPS pela consequência da perda.",
+      "pergunta": "No enxugamento de cargas do UPS, um circuito pequeno virou candidato à retirada por baixo consumo, mas sua perda impede a partida e o fechamento da geração de contingência após blackout. Que carga deve permanecer ininterrupta?",
+      "resposta": "Circuito de comando dos geradores de contingência.",
+      "explicacao": "A triagem de cargas essenciais deve seguir a consequência da perda. Sem esse circuito, a geração de contingência pode não partir nem se conectar, travando a recomposição.",
+      "resposta_padrao": "Retirar esse circuito por consumir pouco e preservar só cargas maiores.",
+      "por_que_nao": "Baixa potência não reduz criticidade; sem comando dos geradores a recomposição pode falhar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Cargas associadas a comando de geradores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do inversor como foco de intervenção quando o UPS mantém o barramento CC mas perde a saída CA.",
+      "pergunta": "Com a entrada CA perdida e sem fonte no bypass, o barramento CC do UPS permanece estável e o banco mantém a tensão prevista, mas a saída 120 Vca cai. Que elemento deve ser tratado primeiro?",
+      "resposta": "Saúde do inversor do UPS.",
+      "explicacao": "Com barramento CC e baterias sustentando a tensão, a fonte DC está disponível. A perda da saída 120 Vca aponta para falha na conversão DC-CA do UPS.",
+      "resposta_padrao": "Trocar ou condenar o banco de baterias.",
+      "por_que_nao": "Se o barramento CC permanece estável, o problema está após as baterias, no estágio inversor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "saúde do inversor e do retificador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "rodada": 4,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representação do tempo de berço como incerteza determinante do ciclo logístico quando o gargalo está no porto.",
+      "pergunta": "Com chegadas regulares ao terminal, mas liberações de atracação muito variáveis, enquanto navegação e descarga seguem estáveis, que variável deve entrar explicitamente no modelo antes de redimensionar a frota?",
+      "resposta": "Tempo de berço.",
+      "explicacao": "Se a variabilidade nasce na atracação/carregamento, o ciclo não pode ser modelado só por navegação e atendimento offshore; o modelo precisa representar porto e seus tempos de berço.",
+      "resposta_padrao": "Tempo de navegação.",
+      "por_que_nao": "A viagem está estável; o desvio do ciclo vem da disponibilidade de atracação no porto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar porto, unidades marítimas, navios-tanque de reabastecimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representação do tempo de transferência de carga quando a variabilidade do atendimento está na própria descarga.",
+      "pergunta": "A mesma rota mantém trânsito e atracação estáveis, mas a duração da descarga oscila com linha disponível e vazão de recebimento. No simulador, qual componente não deve ficar fixo?",
+      "resposta": "Tempo de transferência de carga.",
+      "explicacao": "Quando a incerteza está na própria operação de descarregar, usar um serviço fixo distorce o atendimento; o modelo deve variar o tempo de transferência.",
+      "resposta_padrao": "Espera por fatores exógenos.",
+      "por_que_nao": "Aqui o atraso nasce dentro da transferência, não de fila ou conflito externo à descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "limites dos equipamentos de transferência"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do custo total com penalidades quando poucos atrasos têm impacto econômico desproporcional.",
+      "pergunta": "Duas políticas mantêm zero stockout, atrasos totais parecidos e percentual on-time semelhante, mas uma concentra falhas nas janelas contratadas de intervenção e gera standby. Qual indicador deve decidir entre elas?",
+      "resposta": "Custo total com penalidades.",
+      "explicacao": "Com stockout controlado e pontualidade agregada semelhante, poucos atrasos podem dominar o resultado econômico; a comparação correta precisa incorporar as penalidades.",
+      "resposta_padrao": "Atrasos totais.",
+      "por_que_nao": "O mesmo atraso acumulado pode ter impactos muito diferentes quando a perda recai sobre janelas com custo contratual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos, utilização da frota, consumo associado à operação e custo total com penalidades."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses indicadores precisam ser lidos em conjunto."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do consumo associado à operação na escolha entre políticas com mesma disponibilidade e menor frota contratada.",
+      "pergunta": "Menos embarcações contratadas mantiveram o nível de serviço, mas à custa de giros mais rápidos e maior queima de bunker. Na escolha da política, qual variável deve ser controlada diretamente?",
+      "resposta": "Consumo associado à operação.",
+      "explicacao": "Reduzir frota contratada não garante menor gasto energético; o desempenho deve capturar o consumo efetivo gerado pela forma de operar.",
+      "resposta_padrao": "Utilização da frota.",
+      "por_que_nao": "Maior utilização ou frota menor podem coexistir com consumo total mais alto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos, utilização da frota, consumo associado à operação e custo total com penalidades."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ferramenta capaz de manter baixo stockout de diesel com menor consumo pela frota total utilizada"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

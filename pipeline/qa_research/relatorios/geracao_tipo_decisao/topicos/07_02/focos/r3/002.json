@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 3,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Posicionamento da barreira de contenção na fronteira do domínio elétrico quando a propagação nasce dentro da OT.",
+      "pergunta": "Tráfego anômalo de um relé digital alcançou HMI e controle porque o sistema elétrico compartilha rede com outros domínios, embora os poucos fluxos elétrico-controle sejam conhecidos. Onde deve ficar a barreira de contenção prioritária?",
+      "resposta": "na fronteira do domínio elétrico com os demais domínios OT",
+      "explicacao": "Como o problema nasce no sistema elétrico e a conectividade compartilhada ampliou o alcance, a barreira deve conter esse domínio e liberar só os fluxos necessários, em defesa em profundidade.",
+      "resposta_padrao": "Na saída da OT para a rede corporativa.",
+      "por_que_nao": "O evento já se propaga internamente entre domínios críticos; o perímetro externo não interrompe esse caminho lateral.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Isolamento da interface de telecomunicações em domínio próprio quando a vulnerabilidade permanece e a telemetria deve continuar.",
+      "pergunta": "A interface de telecomunicações para terra ficou com vulnerabilidade explorável; a correção só entrará na próxima janela e hoje ela divide segmento com controladores, mas a telemetria não pode parar. Qual arranjo técnico é o mais adequado agora?",
+      "resposta": "segmentação da interface de telecomunicações em domínio próprio",
+      "explicacao": "Telecomunicações consomem dados quando eles deixam o controle; mantê-las no mesmo segmento dos controladores preserva o caminho de propagação da interface vulnerável para a camada de controle.",
+      "resposta_padrao": "Manter o segmento e restringir apenas os endereços de origem externos.",
+      "por_que_nao": "Filtrar só a origem externa não elimina o caminho interno direto da interface comprometida até os controladores.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Separar domínios não remove a vulnerabilidade de origem, mas dificulta que um problema em uma interface alcance todos os ativos conectados."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

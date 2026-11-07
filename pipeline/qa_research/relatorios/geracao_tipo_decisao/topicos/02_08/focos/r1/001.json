@@ -1,0 +1,109 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Avaliação de surge em shutdown de compressão deve ser feita com simulação dinâmica representando os controles do transiente.",
+      "pergunta": "Na parada de emergência de um trem de compressão, o ponto estacionário calculado fica fora de surge, mas a válvula anti-surge tem atraso e o blowdown de sucção entra por lógica sequenciada. Que técnica deve ser usada para definir a proteção adequada?",
+      "resposta": "Simulação dinâmica da parada com os controles representados.",
+      "explicacao": "O risco de surge no shutdown depende do transiente, da atuação dos controles e da sequência dos eventos; a verificação estacionária não captura esses efeitos.",
+      "resposta_padrao": "Verificação estática da margem de surge no ponto mínimo.",
+      "por_que_nao": "A margem em regime não representa atraso de controle nem a evolução da sucção durante o shutdown.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Máxima temperatura e máxima vazão de alívio podem vir de cenários distintos, exigindo casos dinâmicos governantes separados.",
+      "pergunta": "A partida produz descarga mais quente e a ESD produz descarga mais volumosa no mesmo header. Para fechar hidráulica e integridade com segurança, qual arranjo de análise deve ser adotado?",
+      "resposta": "Cenários dinâmicos governantes separados para temperatura e vazão.",
+      "explicacao": "A máxima temperatura e a máxima vazão de alívio podem ocorrer em cenários operacionais distintos; um único pior caso pode não governar ambas as verificações.",
+      "resposta_padrao": "Usar só o cenário de maior vazão para todas as verificações.",
+      "por_que_nao": "O caso hidráulico governante pode não ser o térmico; a abordagem dinâmica foi aplicada justamente para distinguir esses máximos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelos dinâmicos de alívio com equipamentos interligados devem representar explicitamente volumes comunicantes.",
+      "pergunta": "Dois vasos ligados por linha normalmente aberta descarregam para o mesmo header, e o modelo simplificado concentrou ambos num único volume, elevando o pico previsto. Qual ajuste de modelagem é o mais importante antes de decidir por revamp?",
+      "resposta": "Representação explícita dos volumes comunicantes.",
+      "explicacao": "Quando há interação entre equipamentos e volumes, a distribuição temporal do inventário altera o pico de alívio; um volume equivalente pode distorcer simultaneidade e amortecimento.",
+      "resposta_padrao": "Somar os inventários num volume equivalente conservador.",
+      "por_que_nao": "A simplificação pode criar um pico artificial, porque o transiente depende dos volumes comunicantes e do acoplamento entre equipamentos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Estudo de PSV em bloqueio de válvula deve incluir o sequenciamento temporal real do fechamento e das atuações de controle.",
+      "pergunta": "Uma PSV aparece instável no caso de bloqueio porque o cálculo assume fechamento instantâneo da válvula, embora em campo exista tempo de curso e atuação de controle a montante. O que deve entrar no modelo para decidir a solução correta?",
+      "resposta": "Sequenciamento temporal do fechamento e da atuação de controle.",
+      "explicacao": "O comportamento da PSV em bloqueio depende do transiente, da atuação de controles e da sequência dos eventos; assumir bloqueio instantâneo pode alterar a resposta prevista.",
+      "resposta_padrao": "A carga de alívio estacionária do bloqueio total.",
+      "por_que_nao": "Ela ignora tempo de curso e interação de controle, que podem evitar ou produzir a instabilidade observada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

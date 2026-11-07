@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 4,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de realimentação contínua de posição quando a operação remota exige acompanhar posições intermediárias da válvula.",
+      "pergunta": "A válvula já modula pelo posicionador, mas o sistema recebe apenas fim de curso aberto/fechado e a operação remota precisa acompanhar posições intermediárias. O que deve ser implantado?",
+      "resposta": "Transmissor de posição contínua da válvula",
+      "explicacao": "Fins de curso só confirmam extremos. Quando a operação remota depende de posição intermediária, a coerência entre campo e supervisão exige indicação contínua de posição.",
+      "resposta_padrao": "Fazer apenas loop check dos fins de curso existentes.",
+      "por_que_nao": "O loop check só comprova os estados discretos disponíveis; não cria a variável contínua necessária para posições intermediárias.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha; um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador; ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada, com pendência de indicador de posição."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre erro de medição e parâmetro crítico de intertravamento após alteração de configuração.",
+      "pergunta": "Depois de carregar uma configuração, a lógica registra baixa pressão e para a bomba na mesma faixa indicada por manômetro, transmissor e histórico anterior sem trip. Que ajuste específico fazer?",
+      "resposta": "Restaurar o setpoint do intertravamento de baixa pressão",
+      "explicacao": "Com a medição coerente em referências independentes, o desvio está no parâmetro crítico que decide o trip. A correção é no limite lógico configurado.",
+      "resposta_padrao": "Recalibrar o transmissor de pressão.",
+      "por_que_nao": "A leitura já está confirmada por referência independente; recalibração não corrige setpoint de intertravamento alterado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças sem fechamento adequado degradam a confiabilidade informacional da planta"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura lógica da sequência automática deve executar a manobra requerida, não depender de pré-alinhamento manual.",
+      "pergunta": "A bomba só entra automaticamente se o operador abrir antes a válvula motorizada pela IHM; fora da sequência, a válvula responde e informa posição normalmente. Que intervenção técnica fazer?",
+      "resposta": "Inserir o comando da válvula na sequência automática de partida",
+      "explicacao": "Se comando e retorno funcionam fora da sequência, a falha está na arquitetura lógica: a manobra necessária não foi incorporada ao passo automático correspondente.",
+      "resposta_padrao": "Adicionar apenas a confirmação de válvula aberta no permissivo da bomba.",
+      "por_que_nao": "A confirmação só valida uma condição; não executa a manobra automática que hoje ainda depende do operador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras e alinhamento entre documentação, prática de campo e lógica implantada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permaneceram pendências antes da operação envolvendo conversão de válvulas para comando automático"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

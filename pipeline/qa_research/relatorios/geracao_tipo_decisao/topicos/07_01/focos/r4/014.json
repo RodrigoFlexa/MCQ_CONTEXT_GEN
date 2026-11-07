@@ -1,0 +1,69 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 4,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Falha de sequência exposta em teste integrado deve ser corrigida com permissivo por confirmação de estado, não com temporização fixa.",
+      "pergunta": "No teste em circuito fechado com N2, a válvula da etapa seguinte abre com o sinal de \"purga concluída\" ainda ausente; entradas e atuador já responderam corretamente em testes isolados. Que ajuste técnico deve ser feito na automação?",
+      "resposta": "Permissivo de purga concluída na transição de etapa",
+      "explicacao": "O teste integrado expôs falha de sequência. A próxima etapa deve depender do retorno real de conclusão da purga, coordenado pela lógica do controlador, e não apenas de um atraso fixo.",
+      "resposta_padrao": "Aumentar o temporizador antes da abertura da válvula.",
+      "por_que_nao": "Atraso fixo não garante a condição real de purga concluída; a sequência precisa de confirmação de estado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compõem a camada que recebe informações do processo e coordena ações de controle"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "testar antecipadamente a lógica de regeneração"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "falhas de sequência"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando campo e controlador estão coerentes, erro de visualização/registro deve ser corrigido na configuração da supervisão.",
+      "pergunta": "Indicador local, transmissor e PV do controlador coincidem; a malha permanece estável, mas HMI e relatório exibem a mesma temperatura multiplicada por dez após atualização de telas. Que correção técnica aplicar?",
+      "resposta": "Escala da tag na supervisão",
+      "explicacao": "Com medição de campo e controlador coerentes, o erro está na camada supervisória. Em arquitetura heterogênea, configuração incorreta pode distorcer visualização e registro sem afetar o controle.",
+      "resposta_padrao": "Recalibrar o transmissor de temperatura.",
+      "por_que_nao": "A medição usada pelo controlador já está correta; o desvio nasce na configuração da supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa arquitetura tende a reunir hardware e software heterogêneos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "erro de configuração"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

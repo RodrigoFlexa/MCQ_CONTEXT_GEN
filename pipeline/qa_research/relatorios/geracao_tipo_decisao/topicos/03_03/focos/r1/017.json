@@ -1,0 +1,91 @@
+{
+  "item": "03_03",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de modulação na válvula de pressão do tanque exige restabelecer o controle de posição, não operar em abre/fecha.",
+      "pergunta": "No HMI, a válvula de pressão do tanque só vai a 0% ou 100%; em transferências lentas, a pressão oscila e o vent alivia em rajadas. Que função deve ser restabelecida?",
+      "resposta": "Controle de posição modulante da válvula de pressão do tanque.",
+      "explicacao": "O projeto previa controle de posição; operar só aberta ou fechada elimina a modulação, amplia oscilações de pressão e aumenta emissões e risco para a integridade.",
+      "resposta_padrao": "Deixar a válvula totalmente aberta para aliviar sempre.",
+      "por_que_nao": "Abrir direto remove o controle pretendido, eleva a perda de vapores e não mantém a pressão na faixa operacional.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "válvula do tanque configurada como totalmente aberta ou fechada, embora documento de projeto previsse controle de posição"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No comissionamento, a coerência entre diagrama de tubulação e instrumentação, lógica de controle, atuadores de campo e indicação na interface humana-máquina é crítica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Falhas de ventilação e de controle de pressão podem afetar simultaneamente integridade mecânica, segurança de processo e emissões."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ao descarregar o vent para um header com contrapressão, deve-se rever o ajuste do dispositivo de vent/alívio para essa nova condição.",
+      "pergunta": "Depois de ligar o vent do tanque a um header comum, surgem picos de pressão no enchimento sem mudar a taxa de carga. Qual ajuste técnico deve ser revisto?",
+      "resposta": "Set point do dispositivo de vent/alívio para a contrapressão a jusante.",
+      "explicacao": "A abertura efetiva muda quando o tanque passa a aliviar contra contrapressão. O ajuste precisa considerar esse arranjo para evitar sobrepressão e deformação.",
+      "resposta_padrao": "Aumentar o set point para evitar abertura frequente.",
+      "por_que_nao": "Subir o valor sem considerar a contrapressão altera a pressão efetiva de atuação e pode agravar a sobrepressão.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a escolha e o ajuste precisam ser compatíveis com os cenários de enchimento, descarga, expansão térmica de líquido confinado, interação com gás inerte e contrapressão a jusante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Falhas de ventilação e de controle de pressão podem afetar simultaneamente integridade mecânica, segurança de processo e emissões."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pressão excessiva por isolamento incorreto ou reinstalação inadequada, sem atuação do alarme de pressão ou sem resposta da equipe a ele, pode deformar a estrutura."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Divergência entre pressão local e sala de controle após manutenção exige recomissionar a malha de medição e alarme de pressão antes de operar.",
+      "pergunta": "O manômetro local sobe durante a inertização, mas a sala de controle fica estável e nenhum alarme entra após manutenção. Antes de retomar a operação, o que restabelecer?",
+      "resposta": "Malha de medição e alarme de pressão do tanque.",
+      "explicacao": "Pressão excessiva sem atuação de alarme pode deformar a estrutura. A divergência local versus HMI indica comissionamento incompleto da instrumentação ou da lógica de alarme.",
+      "resposta_padrao": "Reduzir a vazão de gás inerte.",
+      "por_que_nao": "Isso só diminui a taxa de pressurização e mantém a operação sem proteção confiável de pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão excessiva por isolamento incorreto ou reinstalação inadequada, sem atuação do alarme de pressão ou sem resposta da equipe a ele, pode deformar a estrutura."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Casos investigados mostraram comissionamento incompleto de instrumentos de pressão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No comissionamento, a coerência entre diagrama de tubulação e instrumentação, lógica de controle, atuadores de campo e indicação na interface humana-máquina é crítica."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 3,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definir o ponto de supervisão elétrica que antecipa perda de geração por falha de alimentação de controle, não por falha do barramento de potência.",
+      "pergunta": "Os retificadores 24 Vcc seguem sem alarme e as máquinas motrizes permanecem normais, mas os geradores abrem quando some o comando. Que ponto elétrico deve receber supervisão prioritária para evitar nova perda súbita de geração?",
+      "resposta": "Tensão 24 Vcc nos painéis de controle dos geradores",
+      "explicacao": "A perda no ponto de uso derruba a geração mesmo com fonte e máquina motriz aparentemente íntegras. Supervisionar só retificadores pode não detectar falha em quadro, TIE ou rota final.",
+      "resposta_padrao": "Saída dos retificadores/carregadores do sistema 24 Vcc.",
+      "por_que_nao": "Fonte saudável não garante alimentação no painel; uma falha a jusante ou ponto comum ainda desenergiza o comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher a técnica de verificação adequada para revelar perda de segregação elétrica causada por modificações acumuladas.",
+      "pergunta": "O desenho indica canais redundantes em fontes distintas, mas uma falha única ainda remove duas funções que deveriam sobreviver. Antes da próxima partida crítica, que verificação técnica específica deve ser feita?",
+      "resposta": "Rastreamento em campo das rotas reais de alimentação",
+      "explicacao": "Redundância nominal pode ter sido perdida no implantado. O rastreamento físico revela dependências comuns de UPS, quadro CC ou distribuição que o desenho não mostra.",
+      "resposta_padrao": "Revisar apenas o unifilar e a lista de cargas.",
+      "por_que_nao": "A documentação pode não refletir a configuração implantada nem modificações que criaram um modo comum.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "efeito das modificações acumuladas ao longo da vida da unidade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto"
+        }
+      ],
+      "k": 2,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar o ensaio que valida a recomposição quando a lógica pode falhar apenas em estados degradados de UPS, bateria ou controle.",
+      "pergunta": "A recomposição funciona com alimentação normal, mas nunca foi exercitada com perda parcial de UPS ou bateria de controle. Antes de liberar o automatismo, que teste precisa ser incluído?",
+      "resposta": "Teste funcional de recomposição em modo degradado",
+      "explicacao": "Permissivos e lógicas que parecem corretos no modo normal podem bloquear o fechamento durante reboot sem UPS ou bateria disponível. Só o ensaio degradado reproduz esse risco.",
+      "resposta_padrao": "Teste de recomposição apenas com o sistema totalmente energizado.",
+      "por_que_nao": "Essa condição não reproduz a perda parcial de UPS, bateria ou controle que pode impedir a retomada após blackout.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "com perda parcial de UPS, bateria ou controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    }
+  ]
+}

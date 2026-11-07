@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir o elemento final de segurança do elemento final de controle ao implementar um desligamento.",
+      "pergunta": "A lógica de alta-alta pressão precisa isolar rapidamente uma linha que já tem uma válvula modulante controlando pressão e uma válvula dedicada de segurança abre-fecha. Em qual elemento o desligamento deve atuar?",
+      "resposta": "Na ESDV da linha.",
+      "explicacao": "A função de isolamento de emergência pertence à ESDV, em lógica abre-fecha; a válvula modulante permanece como elemento final do controle de processo.",
+      "resposta_padrao": "Na válvula de controle, fechando-a totalmente.",
+      "por_que_nao": "Fechamento por comando de controle não substitui o elemento dedicado de segurança e isolamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Portanto, válvula de controle modulante e ESDV podem coexistir no mesmo sistema, mas não devem ser tratadas como a mesma função operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Classificar a função realmente disponível da válvula no comissionamento quando há descompasso entre IHM, projeto e campo.",
+      "pergunta": "Na partida, uma válvula descrita em projeto como controle de posição aceita comando remoto, mas em campo só vai a totalmente aberta ou fechada e o retorno de posição segue indisponível. Como liberar essa função?",
+      "resposta": "Liberar apenas como válvula abre-fecha remota.",
+      "explicacao": "Sinal na IHM e intenção de projeto não comprovam modulação disponível; a função liberada deve seguir a resposta real observável do atuador e a ausência de indicação de posição.",
+      "resposta_padrao": "Liberar como válvula de controle automática.",
+      "por_que_nao": "Receber comando remoto e constar no projeto não demonstra capacidade real de modulação nem acompanhamento de posição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na malha de controle, o elemento final executa fisicamente a ação escolhida pelo controlador para reduzir o desvio da variável de processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No mesmo contexto, uma válvula prevista para operação remota foi colocada em serviço apenas como totalmente aberta ou fechada, embora documentação de projeto indicasse controle de posição, e o indicador de posição ainda permanecia pendente."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Localizar a intervenção nos internos quando sinal, suprimento, atuador e posicionamento respondem, mas a vazão não.",
+      "pergunta": "Com a linha sem by-pass aberto, o comando cai para 0%, o posicionador acompanha, a pressão do atuador responde e a haste chega ao fim de curso, mas a vazão medida quase não cai. Em que parte atuar primeiro?",
+      "resposta": "Nos internos da válvula.",
+      "explicacao": "Caminho do sinal, suprimento, atuador e posicionamento já responderam ao comando; resta a parte que efetivamente restringe a passagem do fluido.",
+      "resposta_padrao": "No posicionador.",
+      "por_que_nao": "O posicionador já acompanha o comando e a haste fecha; a falha está na restrição física do escoamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O conjunto de válvula de controle normalmente reúne corpo, internos, atuador e acessórios."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

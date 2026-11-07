@@ -1,0 +1,123 @@
+{
+  "item": "08_05",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de banco operacional temporalmente associado para estimativa de disponibilidade de alívio sem probabilidade conjunta explícita.",
+      "pergunta": "Para estimar a disponibilidade de alívio, a campanha é suspensa sempre que há previsão severa e a base não traz probabilidade conjunta explícita. Que arranjo de dados deve entrar nos casos dinâmicos?",
+      "resposta": "Dados operacionais com agentes associados no tempo.",
+      "explicacao": "Para disponibilidade de alívio, devem entrar estados plausíveis da campanha, não combinações cartesianas raras. Sem probabilidade conjunta explícita, a associação temporal entre agentes melhora a representatividade dos casos dinâmicos.",
+      "resposta_padrao": "Combinar máximos independentes de vento, onda e corrente para ser conservador.",
+      "por_que_nao": "Isso cria combinações raras e pouco relevantes para a operação e distorce a indisponibilidade estimada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "nem sempre é descrito por bases com probabilidade conjunta explícita."
+        },
+        {
+          "bloco": "F",
+          "trecho": "inclusive combinações raras e pouco relevantes para a operação pretendida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "associados no tempo, calibrados e filtrados para o objetivo técnico específico."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uso de dados representativos de condições operacionais, sob a premissa de que tempestades extremas seriam evitadas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre banco operacional e ambiente extremo na avaliação de integridade de longo prazo.",
+      "pergunta": "O único histórico disponível para verificar fadiga e extensão de vida exclui tempestades porque foi montado para campanhas de alívio. Qual recorte ambiental deve entrar nessa avaliação?",
+      "resposta": "Ambiente extremo com cauda da distribuição.",
+      "explicacao": "Integridade de longo prazo exige ambiente extremo e sua cauda, não um banco montado para rotina operacional. Reaproveitar o recorte de alívio tende a subestimar demandas ambientais raras.",
+      "resposta_padrao": "Manter o banco operacional, por ser o histórico mais aderente à rotina.",
+      "por_que_nao": "Esse recorte serve à disponibilidade cotidiana e pode subestimar demandas de integridade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esses dados alimentam critérios de projeto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "esse recorte muda o domínio de aplicação do banco de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "interessa também a cauda extrema da distribuição"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um conjunto adequado para rotina operacional pode subestimar demandas de integridade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do período de onda quando swell e mar local coexistem com direções distintas.",
+      "pergunta": "Swell e mar local chegam de direções distintas; a altura significativa permanece estável, mas a resposta em movimentos varia muito entre rodadas. Qual variável meteoceanográfica deve receber refinamento prioritário no modelo?",
+      "resposta": "Período de onda.",
+      "explicacao": "Na coexistência de swell e mar local com direções distintas, a representação do período fica mais sensível e aumenta a incerteza da resposta em movimentos.",
+      "resposta_padrao": "Altura significativa de onda.",
+      "por_que_nao": "Nessa condição, a sensibilidade dominante do modelo recai no período, não apenas na energia total do mar.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "coexistem swell e mar local com direções distintas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a modelagem do período de onda tende a ser mais sensível"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta operacional pode ficar mais incerta"
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Preferência por base menor, calibrada e temporalmente associada, sobre histórico maior sem aderência técnica.",
+      "pergunta": "Há duas bases para definir cenários usuais: 15 anos extensos, porém vento, onda e corrente sem associação temporal; e 3 anos medidos simultaneamente, calibrados e filtrados para a operação. Qual base usar?",
+      "resposta": "A base simultânea, calibrada e filtrada para a operação.",
+      "explicacao": "A aderência técnica depende de medição, associação temporal, calibração e filtro voltados ao objetivo. Mais anos de dados mal combinados podem piorar a seleção de cenários usuais.",
+      "resposta_padrao": "A série mais longa, porque reduz a incerteza estatística.",
+      "por_que_nao": "Mais volume não compensa agentes mal associados nem dados sem aderência ao objetivo técnico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A qualidade do resultado depende não só do volume de dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "como os agentes foram medidos, associados no tempo, calibrados e filtrados para o objetivo técnico específico."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

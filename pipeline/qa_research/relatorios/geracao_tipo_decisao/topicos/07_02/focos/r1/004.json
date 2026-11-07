@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de privilégio somente-observação para diagnóstico remoto sem mudança aprovada.",
+      "pergunta": "Fornecedor precisa revisar tendências, alarmes e eventos de uma parada espúria; não há mudança aprovada de lógica, setpoint nem firmware. Que privilégio específico deve ser liberado para o acesso remoto temporário?",
+      "resposta": "acesso temporário somente de observação",
+      "explicacao": "A atividade descrita é apenas análise de dados já registrados. Pelo menor privilégio, basta leitura temporária; acesso de engenharia adicionaria capacidade indevida de alterar configuração, lógica, setpoints ou firmware.",
+      "resposta_padrao": "Liberar acesso de engenharia ao sistema afetado para agilizar o diagnóstico.",
+      "por_que_nao": "Diagnóstico sem intervenção não exige configuração; privilégio de engenharia amplia desnecessariamente o risco operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de funções entre implementação e validação de alteração em IACS.",
+      "pergunta": "Uma alteração de lógica foi preparada por quem também fará a carga no controlador; a prova funcional ainda falta. Que arranjo de acesso deve existir para a etapa de validação?",
+      "resposta": "perfil distinto para validação independente",
+      "explicacao": "A segregação de funções exige separar implementação e validação. Isso reduz erro não detectado durante manutenção e impede que o mesmo privilégio de engenharia cubra toda a cadeia de mudança.",
+      "resposta_padrao": "Manter o mesmo engenheiro com acesso completo para implementar e validar mais rápido.",
+      "por_que_nao": "A mesma pessoa não deve, por padrão, implementar e validar a própria mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em ambientes offshore, essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Limitação temporal de contas de fornecedor conforme o princípio do menor privilégio.",
+      "pergunta": "Contas de fornecedor para manutenção em estação de engenharia permanecem habilitadas o ano todo, embora o suporte ocorra apenas em janelas agendadas. Que ajuste específico aplicar a essas permissões?",
+      "resposta": "acesso temporário sob demanda",
+      "explicacao": "Como a atividade é episódica, o privilégio deve existir só pelo tempo necessário. Manter acesso permanente conserva exposição desnecessária mesmo sem uso ativo.",
+      "resposta_padrao": "Apenas trocar a senha periodicamente e manter as contas ativas.",
+      "por_que_nao": "A rotação de senha não corrige o excesso de permanência; o problema é o acesso disponível fora da janela necessária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do perfil de operação quando a atividade exige atuação no processo sem engenharia.",
+      "pergunta": "A equipe de turno precisa reconhecer alarmes e ajustar setpoints autorizados, enquanto alterações de lógica estão bloqueadas por mudança pendente. Qual perfil de acesso deve permanecer habilitado?",
+      "resposta": "acesso de operação",
+      "explicacao": "A necessidade é atuar no processo dentro da operação normal. O perfil de operação atende alarmes e setpoints sem conceder capacidade de mudar configuração, lógica ou firmware.",
+      "resposta_padrao": "Deixar acesso de engenharia para não limitar a resposta da sala de controle.",
+      "por_que_nao": "Engenharia excede a tarefa descrita e permitiria alterações de configuração, lógica e firmware.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

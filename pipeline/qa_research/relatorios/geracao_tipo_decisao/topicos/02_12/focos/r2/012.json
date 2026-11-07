@@ -1,0 +1,61 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar o retuning da malha de capacidade quando o anti-surge atua corretamente, mas é provocado pela demanda.",
+      "pergunta": "Mudanças rápidas no setpoint de pressão fazem o reciclo abrir em quase todo degrau; a posição real da válvula acompanha o comando e o compressor se estabiliza quando a demanda para de oscilar. Qual malha deve ser retunada primeiro?",
+      "resposta": "Malha de controle de capacidade.",
+      "explicacao": "A proteção está cumprindo seu papel e o elemento final responde. A atuação recorrente nasce da interação criada pela malha de capacidade, cujo ajuste não pode ser tratado separadamente do anti-surge.",
+      "resposta_padrao": "Malha anti-surge.",
+      "por_que_nao": "Porque, neste cenário, a proteção e a válvula respondem corretamente; retuná-la primeiro ataca o efeito, não a origem da instabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo, enquanto a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de controle de repartição de carga para transições seguras entre compressores centrífugos paralelos.",
+      "pergunta": "Dois trens descarregam no mesmo cabeçalho. Na entrada do trem reserva, a pressão comum permanece estável, mas o trem já em serviço se aproxima do limite de potência antes que o outro absorva carga. Que função de controle deve coordenar essa transição?",
+      "resposta": "Controle de repartição de carga entre trens paralelos.",
+      "explicacao": "Manter a pressão comum não garante balanceamento entre máquinas. Em transições de trens paralelos, é preciso repartir carga ativamente para evitar sobrecarga localizada e preservar a estabilidade.",
+      "resposta_padrao": "Controle de pressão do cabeçalho comum.",
+      "por_que_nao": "Porque a pressão do cabeçalho pode permanecer correta enquanto um único trem concentra carga excessiva durante a transferência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia: o sistema de controle precisa repartir carga, evitar sobrecarga localizada e manter partidas, paradas e transferências de trem com segurança e confiabilidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a pressão passa a ser a variável proxy da necessidade do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

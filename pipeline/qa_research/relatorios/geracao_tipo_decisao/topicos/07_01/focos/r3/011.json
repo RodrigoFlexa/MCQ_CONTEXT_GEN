@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 11,
+  "rodada": 3,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Localização da falha na conversão eletropneumática quando o comando elétrico chega, mas o sinal pneumático não varia.",
+      "pergunta": "O sinal do controlador varia no borne do transdutor, o ar de suprimento está normal, mas a pressão pneumática enviada ao posicionador permanece fixa e a haste não reage. Em que componente atuar primeiro?",
+      "resposta": "No transdutor I/P",
+      "explicacao": "O comando elétrico chega ao conjunto e há ar disponível; a falha está na conversão eletropneumática, não no posicionamento nem no atuador.",
+      "resposta_padrao": "Ajustar o posicionador.",
+      "por_que_nao": "Sem variação pneumática a partir do comando elétrico recebido, o posicionador não tem sinal para posicionar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Entre os acessórios citados estão posicionador, transdutor, regulador de pressão de suprimento, operador manual, snubber e chave fim de curso."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificação de falha nos internos quando a válvula atinge fechado mecanicamente, mas continua passando fluido.",
+      "pergunta": "Com comando em 0%, retorno de posição no batente fechado e pressão do atuador coerente, a diferença de pressão entre montante e jusante se anula lentamente através da válvula. Onde intervir?",
+      "resposta": "Nos internos de fechamento da válvula",
+      "explicacao": "O conjunto já fechou pelo atuador e pelo posicionamento. Persistindo passagem através da válvula, a falha remanescente está nos internos.",
+      "resposta_padrao": "Recalibrar o posicionador.",
+      "por_que_nao": "O posicionamento já levou a válvula ao fechado; recalibração não elimina passagem interna.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O conjunto de válvula de controle normalmente reúne corpo, internos, atuador e acessórios."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Separação entre a função de controle contínuo e a função de isolamento de emergência no arranjo do elemento final.",
+      "pergunta": "Na revisão de uma modificação, querem retirar o elemento dedicado de isolamento e usar a válvula de controle de pressão também para o fechamento por trip. Que arranjo deve ser mantido?",
+      "resposta": "ESDV dedicada em lógica abre-fecha",
+      "explicacao": "A válvula modulante executa controle contínuo. O isolamento de emergência é função de segurança distinta e deve permanecer em elemento próprio.",
+      "resposta_padrao": "Usar a própria válvula modulante de pressão para o trip.",
+      "por_que_nao": "Ela atende à malha de controle; isolamento de emergência não deve ser tratado como a mesma função operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Portanto, válvula de controle modulante e ESDV podem coexistir no mesmo sistema, mas não devem ser tratadas como a mesma função operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

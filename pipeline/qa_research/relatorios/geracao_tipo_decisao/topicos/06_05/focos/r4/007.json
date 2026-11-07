@@ -1,0 +1,91 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 4,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de zonas lógicas de F&G conforme volumes de risco independentes, evitando confirmação cruzada entre espaços sem cenário comum.",
+      "pergunta": "Dois detectores de gás, um em cada sala com ventilação independente, hoje participam da mesma lógica 2oo2 de isolamento. Eventos locais já levaram cada sala separadamente a alto alarme, sem indicação na outra. Que arranjo lógico específico deve ser adotado?",
+      "resposta": "Zonas lógicas independentes por sala.",
+      "explicacao": "A votação deve usar detectores do mesmo volume de risco. Manter salas independentes na mesma zona cria confirmação entre eventos sem cenário comum e desalinha a lógica ao arranjo físico real.",
+      "resposta_padrao": "Manter a lógica 2oo2 comum porque o isolamento é o mesmo.",
+      "por_que_nao": "Ação comum não autoriza confirmação cruzada entre salas independentes; a votação deve seguir o volume de risco real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "arranjo físico incompatível"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de canal único apenas à função cuja atuação indevida é mais tolerável, considerando tempo disponível e consequência da ação.",
+      "pergunta": "Leituras altas isoladas por névoa salgada já ocorreram em um dos três detectores sobrepostos de um invólucro. Ensaios mostram coincidência de dois canais antes do tempo necessário para a atuação segura. Entre aviso ao pessoal e parada automática, qual função você mantém em canal único?",
+      "resposta": "Alarme ao pessoal em 1oo3.",
+      "explicacao": "Canal único antecipa o aviso, onde atuações espúrias são mais toleráveis. A parada automática pode esperar a confirmação por dois canais sem perder a janela segura demonstrada nos ensaios.",
+      "resposta_padrao": "Parada automática do equipamento em 1oo3.",
+      "por_que_nao": "No trip, a atuação isolada tem consequência maior; os testes mostram que a confirmação ainda cabe no tempo disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Exigir menos confirmação tende a acelerar a resposta, porém pode elevar a suscetibilidade a disparos indesejados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a detecção de gás pode iniciar uma sequência escalonada de respostas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Combinação por OR de votações locais quando uma ação comum deve responder a cenários independentes em baias distintas.",
+      "pergunta": "Um cabeçote comum alimenta duas baias independentes, cada uma com um par de detectores que confirma apenas as liberações da própria baia. A SDV de montante hoje fecha por 2oo4 global. Que arranjo lógico deve comandá-la?",
+      "resposta": "OR entre os 2oo2 locais das baias.",
+      "explicacao": "A confirmação deve ocorrer dentro de cada volume de risco. Exigir sinais da baia não afetada cria uma combinação não materializável e atrasa o isolamento da fonte comum.",
+      "resposta_padrao": "Manter 2oo4 global para reduzir fechamentos indevidos.",
+      "por_que_nao": "Uma liberação local não alcança o outro par no tempo útil; o 2oo4 perde sensibilidade prática para um evento real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foram citadas ações corretivas automáticas como fechamento de válvulas de shutdown"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

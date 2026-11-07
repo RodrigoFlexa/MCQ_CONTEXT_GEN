@@ -1,0 +1,119 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratamento inicial de alerta de vulnerabilidade em OT: confirmar componente afetado e exposição real antes da remediação.",
+      "pergunta": "Sai um alerta de vulnerabilidade na pilha Treck TCP/IP; o controlador de bombas não tem rota externa aberta, o inventário não informa a pilha usada e não há indício de exploração. Qual ação técnica deve ser tomada primeiro nesse ativo?",
+      "resposta": "Verificação da presença da pilha Treck e da exposição do ativo.",
+      "explicacao": "O alerta alcança muitos dispositivos, mas não confirma comprometimento em todos. Em OT, a resposta correta começa verificando se o ativo realmente usa o componente afetado e qual sua exposição.",
+      "resposta_padrao": "Aplicar imediatamente a última atualização disponível ao controlador.",
+      "por_que_nao": "Sem confirmar a presença do componente vulnerável, a mudança pode ser desnecessária e ainda introduzir indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há alerta de que múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar sistemas de controle industrial do setor de energia e muitos dispositivos conectados, inclusive pela internet, quando essa pilha estiver presente."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Medida compensatória preferível em sistema legado vulnerável quando patch imediato é inseguro.",
+      "pergunta": "Controlador legado de compressão confirmado com componente vulnerável seguirá operando e precisa manter suas comunicações de processo; o patch ainda não foi qualificado e hoje ele é acessível diretamente da rede corporativa. Qual intervenção técnica deve vir antes do patch?",
+      "resposta": "Isolamento adicional por firewall, removendo o acesso direto da rede corporativa.",
+      "explicacao": "Sem qualificação segura do patch, a medida preferível é reduzir exposição. Como o ativo precisa continuar comunicando com o processo, o correto é acrescentar barreira de rede e eliminar o acesso direto corporativo.",
+      "resposta_padrao": "Instalar já o firmware mais recente liberado pelo fornecedor.",
+      "por_que_nao": "Em sistema legado de controle, atualização sem validação pode causar indisponibilidade ou comportamento não previsto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em Sistemas de Automação e Controle Industrial (IACS), vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis até que exista remediação compatível."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "evitar acessibilidade direta pela internet, posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de contenção por consequência operacional da função do ativo no IACS.",
+      "pergunta": "Dois ativos têm a mesma vulnerabilidade confirmada e igual conectividade; o historiador atende dashboards corporativos, e o outro é um controlador que abre válvulas para regular vazão. A janela atual permite isolar só um deles. Qual deve ser tratado primeiro?",
+      "resposta": "O controlador que atua nas válvulas de vazão.",
+      "explicacao": "Com mesma exposição técnica, a prioridade vem da função. Um ativo que atua em válvulas e vazão pode alterar o processo ou retirar funções de serviço se explorado.",
+      "resposta_padrao": "O historiador, por atender dashboards corporativos e concentrar mais dados.",
+      "por_que_nao": "Neste cenário, a consequência operacional de comprometer o controle de válvulas e vazão é mais crítica para o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta só repete os atributos; peça a ação técnica específica"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão de sistemas de informação e negócios conectados à infraestrutura do IACS no escopo de contenção.",
+      "pergunta": "O servidor de relatórios de produção tem uma interface na rede corporativa e outra na infraestrutura de rede do controle. Surgiu falha explorável no seu serviço de comunicação. Qual enlace deve ser isolado primeiro?",
+      "resposta": "A interface ligada à infraestrutura de rede do IACS.",
+      "explicacao": "Mesmo sem controlar o processo, um sistema de informação ligado à infraestrutura do IACS integra seu escopo. Isolar primeiro essa interface corta o caminho técnico entre o servidor vulnerável e o ambiente de controle.",
+      "resposta_padrao": "A interface com a rede corporativa.",
+      "por_que_nao": "O risco relevante para o ambiente de controle está na conexão do sistema de negócios com a infraestrutura do IACS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No contexto offshore, o escopo de IACS abrange sistemas básicos de controle de processo, funções de camada independente de proteção, sistemas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

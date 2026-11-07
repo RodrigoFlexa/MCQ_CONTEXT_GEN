@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dependência do fornecedor para remediar vulnerabilidade em firmware proprietário sem versão estável liberada.",
+      "pergunta": "Saiu um alerta de vulnerabilidade para o firmware proprietário de um relé digital crítico. O fornecedor só liberou um hotfix ainda sem versão estável aplicável para essa família. Qual ação técnica tomar agora para reduzir a exposição?",
+      "resposta": "Mitigação compensatória do fornecedor.",
+      "explicacao": "Sem versão estável aplicável, alterar firmware proprietário eleva o risco de perda de funcionalidade, suporte ou certificação. A redução imediata da exposição deve seguir a estratégia de remediação indicada pelo fornecedor.",
+      "resposta_padrao": "Instalar o hotfix imediatamente.",
+      "por_que_nao": "Hotfix não estável em firmware proprietário pode introduzir indisponibilidade e ainda comprometer suporte ou certificação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em dispositivos embarcados e componentes de IACS, a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o operador normalmente não controla o ciclo de desenvolvimento do software embarcado, nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de menor privilégio e validade temporal ao acesso de terceiros para diagnóstico de ativo vulnerável.",
+      "pergunta": "O fornecedor precisa apenas coletar logs e confirmar versões de um controlador embarcado vulnerável, sem alterar lógica nem parâmetros. Que privilégio de acesso deve ser concedido?",
+      "resposta": "Acesso individual temporário de observação.",
+      "explicacao": "A tarefa é somente diagnóstica. Conceder observação, com identidade individual e duração limitada, atende à necessidade sem expor configuração, lógica ou firmware a mudança desnecessária.",
+      "resposta_padrao": "Acesso de engenharia para agilizar o suporte.",
+      "por_que_nao": "Esse privilégio permite alterar configuração, lógica e firmware, o que excede a necessidade descrita e amplia o risco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Segundo, a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Como regra técnica de seleção, convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão e revisão periódica dos acessos ativos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério técnico de seleção de fornecedor quando a remediação futura não pode impor indisponibilidade indevida em serviço crítico.",
+      "pergunta": "Na compra de um controlador embarcado para serviço crítico, dois fornecedores empatam em desempenho, preço e prazo. O processo não tolera parada longa para correções futuras. Qual capacidade do fornecedor deve decidir a escolha?",
+      "resposta": "Suporte para correção sem indisponibilidade indevida.",
+      "explicacao": "Quando a remediação depende do fornecedor, a capacidade de corrigir sem derrubar serviço crítico reduz o tempo de exposição e preserva a continuidade operacional.",
+      "resposta_padrao": "Menor preço total.",
+      "por_que_nao": "Preço não reduz o tempo de exposição do ativo vulnerável nem assegura correção compatível com a disponibilidade exigida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Primeiro, o fornecedor passa a influenciar o tempo de exposição do ativo vulnerável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Também importam capacidade de notificação, clareza sobre ativos afetados, orientação de mitigação, qualidade do suporte e possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de confirmação de aplicabilidade por ativo e versão antes de isolar ou corrigir dispositivos embarcados.",
+      "pergunta": "Um boletim do fornecedor cita \"algumas versões afetadas\" em vários módulos semelhantes instalados, e a parada completa traria perda relevante de disponibilidade. Antes de isolar ou atualizar, qual informação técnica deve comandar a decisão?",
+      "resposta": "Identificação dos ativos e versões afetados.",
+      "explicacao": "Sem aplicabilidade clara, a resposta pode atingir módulos não impactados e criar indisponibilidade desnecessária. A decisão deve partir da definição precisa de quais ativos e versões estão vulneráveis.",
+      "resposta_padrao": "Atualizar ou isolar todos os módulos semelhantes.",
+      "por_que_nao": "Sem confirmar a aplicabilidade, a ação cega amplia a indisponibilidade e pode intervir em ativos não afetados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em dispositivos embarcados e componentes de IACS, a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Também importam capacidade de notificação, clareza sobre ativos afetados, orientação de mitigação, qualidade do suporte e possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

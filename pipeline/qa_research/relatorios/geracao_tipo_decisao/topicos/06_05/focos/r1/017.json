@@ -1,0 +1,79 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de comunicação de um canal deve ser tratada como indisponibilidade funcional da votação/ação automática da zona, mesmo com detector saudável em campo.",
+      "pergunta": "Um detector de gás inflamável mantém autoteste local normal, mas o canal está em falha de comunicação com o controlador; a zona depende de 2oo2 para fechar válvulas automaticamente. Como esse canal deve ser tratado na disponibilidade da proteção?",
+      "resposta": "Indisponível para a votação automática da zona.",
+      "explicacao": "Sem comunicação, o voto não alcança a lógica. Hardware saudável em campo não preserva a função automática nem a cobertura requerida por zona.",
+      "resposta_padrao": "Manter o detector como disponível, já que ele segue energizado e se autodiagnostica normalmente.",
+      "por_que_nao": "A proteção depende do caminho do sinal até a lógica; sem ele, a zona pode perder a confirmação 2oo2.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "perda de comunicação, mapeamento incorreto de sinais, falhas de configuração ou inconsistências entre telas e lógica podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma área pode permanecer parcialmente instrumentada e, ainda assim, não satisfazer confirmação de evento, lógica de votação ou disparo automático requerido."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Validação de lógica alterada que depende de sequência entre campo e supervisório exige correlação temporal dos registros ao longo da cadeia, não só leitura da HMI.",
+      "pergunta": "Lógica alterada exige confirmação local seguida de indicação ao operador; na HMI, os dois eventos aparecem no mesmo minuto. Que verificação específica usar para confirmar se a sequência configurada ocorreu?",
+      "resposta": "Correlação dos timestamps entre campo, controlador e supervisório.",
+      "explicacao": "A execução correta depende da ordem temporal do evento ao longo da cadeia. A HMI sozinha pode ocultar atraso, polling ou inconsistência de implementação.",
+      "resposta_padrao": "Basta validar pela tela de alarmes do supervisório.",
+      "por_que_nao": "A interface pode registrar o evento sem resolução ou mapeamento suficientes; a verificação precisa reconciliar toda a cadeia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre campo, controlador e supervisório, e a rastreabilidade temporal dos eventos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O intervalo registrado entre disparo local e indicação de CO2 disparado também mostra que a sequência temporal é relevante para verificar se a lógica configurada foi realmente executada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inconsistência entre atuação real e ausência de indicação/registro ao operador requer correção de mapeamento entre controlador e supervisório antes da liberação.",
+      "pergunta": "No teste de descarga, a indicação local ocorre e a saída muda no controlador, mas a atuação não aparece na tela nem no histórico do operador. Que correção técnica deve preceder a liberação?",
+      "resposta": "Correção do mapeamento do evento entre controlador e supervisório.",
+      "explicacao": "Campo e lógica atuaram, mas a integridade funcional inclui interface do operador e rastreabilidade do evento. Sem isso, a resposta de segurança permanece degradada.",
+      "resposta_padrao": "Liberar o sistema, porque o disparo físico e a saída do controlador funcionaram.",
+      "por_que_nao": "Inconsistências entre telas e lógica podem comprometer a resposta mesmo com hardware e saída em campo preservados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mapeamento incorreto de sinais, falhas de configuração ou inconsistências entre telas e lógica podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

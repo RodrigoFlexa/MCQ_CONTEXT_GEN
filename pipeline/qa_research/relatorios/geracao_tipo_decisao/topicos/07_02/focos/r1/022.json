@@ -1,0 +1,113 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Implantação inicial de analytics com latência e equipe sem domínio da distinção entre sugestão e comando deve ficar em modo consultivo.",
+      "pergunta": "Sugestões de setpoint vindas da nuvem aparecem na mesma tela do supervisório, com latência ocasional, e os operadores ainda não distinguem bem sugestão analítica de comando. Na entrada em serviço, qual arranjo técnico deve ser adotado?",
+      "resposta": "modo consultivo sem escrita no controle",
+      "explicacao": "Como a aplicação influencia ajustes frequentes e há latência, ela deve permanecer como apoio à decisão até a equipe dominar limites, uso e interpretação operacional da saída analítica.",
+      "resposta_padrao": "Integrar escrita automática de setpoints para reagir mais rápido.",
+      "por_que_nao": "Nesse cenário, a proximidade com o controle somada à latência e à confusão entre sugestão e comando torna inadequada a ação automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diferenciar recomendação analítica de comando de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Antes de usar recomendação analítica em enlace instável, a coerência temporal do dado deve ser confirmada.",
+      "pergunta": "Uma recomendação analítica chega com valor plausível, mas houve perda intermitente de conectividade e o relógio do servidor remoto ficou deslocado. Antes de aplicar o ajuste, qual aspecto técnico precisa ser confirmado?",
+      "resposta": "o sincronismo temporal do dado",
+      "explicacao": "Valor plausível não basta quando há conectividade instável. A utilidade operacional da recomendação depende da coerência temporal e do sincronismo com o processo real.",
+      "resposta_padrao": "Basta conferir se o valor combina com a tendência atual do processo.",
+      "por_que_nao": "Sem sincronismo temporal, a recomendação pode refletir outro instante e outro contexto operacional, mesmo parecendo coerente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interpretar qualidade de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "qualidade de sincronismo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Alertas digitais devem ser avaliados com o contexto de modo operacional antes de qualquer intervenção.",
+      "pergunta": "Durante a partida, o analytics marca anomalia em um equipamento que está na sequência prevista de recirculação e aquecimento. Qual informação técnica deve governar a decisão de intervir ou não no campo?",
+      "resposta": "o modo operacional do equipamento",
+      "explicacao": "Sem contexto de modo operacional, desvios esperados de partida podem parecer falhas. A decisão correta depende de relacionar o alerta à condição operacional vigente.",
+      "resposta_padrao": "O tamanho instantâneo do desvio mostrado na tela.",
+      "por_que_nao": "Desvio isolado não distingue comportamento normal de startup de uma anomalia real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "assegurar que as pessoas entendam o significado operacional dos dados e dos alertas produzidos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evitar ações precipitadas diante de alarmes, tendências ou acessos digitais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Liberação de acesso remoto com credenciais válidas deve ser condicionada à permissão aplicável do perfil solicitado.",
+      "pergunta": "A ordem aprovada existe e a janela foi aberta, mas um fornecedor com credenciais válidas pede acesso à estação de engenharia em perfil mais amplo que o usual. Antes de habilitar a sessão, qual elemento deve ser confirmado?",
+      "resposta": "a permissão aplicável da sessão",
+      "explicacao": "Em acesso digital, autenticar o usuário não basta. A liberação correta depende de o perfil pedido estar autorizado para aquela sessão específica.",
+      "resposta_padrao": "A identidade do fornecedor e a validade das credenciais.",
+      "por_que_nao": "Autenticação não prova que o nível de privilégio solicitado esteja autorizado para aquele acesso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reconhecer permissões e procedimentos aplicáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evitar ações precipitadas diante de alarmes, tendências ou acessos digitais."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

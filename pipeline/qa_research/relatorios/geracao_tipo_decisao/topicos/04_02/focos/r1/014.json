@@ -1,0 +1,109 @@
+{
+  "item": "04_02",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ampliação de instrumentação e comunicação em sistema subsea existente por integração distribuída compatível, sem reconstrução total do controle.",
+      "pergunta": "O manifold precisa receber novos sensores e retorno de diagnóstico; a parada disponível não comporta troca da malha principal, e a arquitetura instalada aceita funções suplementares. Que arranjo de ampliação adotar?",
+      "resposta": "Módulo distribuído de potência e controle integrado.",
+      "explicacao": "Quando se quer acrescentar monitoramento e comunicação em sistema existente, a solução indicada é integrar potência e controle distribuídos, desde que a arquitetura seja funcionalmente compatível, evitando reconstrução completa.",
+      "resposta_padrao": "Lançar um novo umbilical dedicado.",
+      "por_que_nao": "Isso é desproporcional quando a arquitetura existente aceita expansão funcional para instrumentação e comunicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sistemas distribuídos de potência e controle podem ser integrados a instalações subsea já existentes para ampliar instrumentação e comunicação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desde que a compatibilidade funcional da arquitetura seja atendida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de expansão é relevante quando se busca adicionar monitoramento sem reconstruir todo o sistema de controle"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de arquitetura eletro-hidráulica descentralizada quando o objetivo dominante é reduzir inventário de fluido e linhas, mantendo atuação hidráulica.",
+      "pergunta": "Várias válvulas serão acrescentadas a um sistema já hidráulico; a filosofia fail-safe e a força de atuação devem ser mantidas, mas o objetivo dominante é reduzir fluido distribuído e linhas de controle. Que arquitetura escolher?",
+      "resposta": "Arquitetura eletro-hidráulica descentralizada.",
+      "explicacao": "Ela preserva a potência hidráulica no atuador e reduz o volume total de fluido e o número de linhas distribuídas, atendendo melhor ao retrofit descrito do que uma arquitetura centralizada.",
+      "resposta_padrao": "Controle multiplexado.",
+      "por_que_nao": "Multiplexação reduz linhas de comando dedicadas, mas não ataca o inventário de fluido hidráulico distribuído.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para reduzir inventário de fluido distribuído e número de linhas, pode ser vantajosa a descentralização eletro-hidráulica."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cada atuador recebe sua própria unidade de suprimento, reduzindo número de linhas e volume total de fluido hidráulico distribuído pelo sistema"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de monitoramento por coerência entre comando, pressão e posição para detectar perda funcional do controle subsea.",
+      "pergunta": "Comandos de abertura chegam ao equipamento, a pressão de controle responde, mas a vazão não acompanha e não há vazamento externo relevante. Na ampliação da instrumentação, que monitoramento deve ser priorizado?",
+      "resposta": "Validação cruzada comando-pressão-posição do atuador.",
+      "explicacao": "A perda de funcionalidade do controle pode parar produção ou injeção sem grande liberação; por isso é necessário verificar se o comando emitido, a pressão aplicada e a posição obtida permanecem coerentes.",
+      "resposta_padrao": "Monitorar apenas a pressão de controle.",
+      "por_que_nao": "Pressão presente não confirma movimento nem condição funcional da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a perda de funcionalidade do controle pode interromper produção ou injeção mesmo quando a falha não se apresenta como grande evento ambiental"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ação necessária no circuito eletro-hidráulico para obter fail-safe close: despressurização do atuador para atuação da mola.",
+      "pergunta": "Perdido o comando de uma válvula com filosofia fail safe close, o solenóide já não energiza, mas o atuador segue pressurizado. Que ação no circuito deve ser tomada para levá-la ao estado seguro?",
+      "resposta": "Despressurizar o atuador hidráulico para atuação da mola.",
+      "explicacao": "Nessa filosofia, o fechamento seguro ocorre quando a pressão de controle é aliviada; a mola então move a válvula para fechado, podendo exigir o descarte do pequeno volume de fluido do atuador.",
+      "resposta_padrao": "Cortar apenas o sinal elétrico de comando.",
+      "por_que_nao": "Sem aliviar a pressão hidráulica, a mola não consegue fechar a válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção da solução deve considerar pelo menos: função a ser comandada, necessidade de fail-safe"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda intencional ou não da pressão de controle permite a atuação da mola e leva a válvula ao estado seguro fechado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "esse fechamento envolve descarte de pequeno volume de fluido hidráulico à base de água para despressurização rápida do atuador"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

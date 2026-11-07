@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em PLC legado já isolado e com somente conectividade indispensável, a contenção adicional adequada é supervisão reforçada.",
+      "pergunta": "PLC legado de proteção já está em célula isolada por firewall, com só comando, alarme e sincronismo indispensáveis. A correção da pilha TCP/IP não foi homologada e reiniciar agora derruba a função. Que medida de contenção acrescentar?",
+      "resposta": "supervisão reforçada do tráfego e dos estados do PLC",
+      "explicacao": "Com atualização inviável e conectividade já reduzida ao mínimo, o foco passa a detectar desvios cedo sem retirar a função. O bloco foco indica esse caminho para sistemas embarcados ou legados.",
+      "resposta_padrao": "desconectar o PLC da rede até sair a correção",
+      "por_que_nao": "Isso cortaria fluxos já definidos como indispensáveis e pode causar perda de controle ou indisponibilidade de salvaguardas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        },
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "capacidade de comparar comportamento atual com referência histórica"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em gateway necessário localmente e ligado a OT e corporativo, a contenção prioritária incide no enlace com a rede de negócios.",
+      "pergunta": "Um gateway com duas interfaces coleta sinais para a supervisão local e publica indicadores ao corporativo. Surgiu exploração remota no sistema do gateway; a coleta local precisa continuar e a publicação pode parar. Qual enlace isolar primeiro?",
+      "resposta": "a interface do gateway com a rede corporativa",
+      "explicacao": "A ação reduz a exposição sem retirar a função local necessária. O bloco foco manda isolar a rede de controle da rede de negócios e preservar funções essenciais de controle.",
+      "resposta_padrao": "retirar o gateway inteiro de operação",
+      "por_que_nao": "Isso interrompe a coleta necessária à supervisão local, embora o caminho dispensável e mais exposto seja o corporativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        },
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando há correção disponível e compatível, a escolha adequada é a versão estável mais recente, não um hotfix provisório.",
+      "pergunta": "Entre duas correções homologadas para a mesma falha — hotfix provisório na versão atual e release estável mais recente já corrigida — a janela permite uma única parada. Qual aplicar?",
+      "resposta": "a versão estável mais recente corrigida e compatível",
+      "explicacao": "No cenário descrito, compatibilidade e disponibilidade já foram satisfeitas. O bloco foco recomenda atualizar para a versão estável mais recente quando houver correção disponível.",
+      "resposta_padrao": "o hotfix provisório, por alterar menos",
+      "por_que_nao": "Aqui o hotfix só posterga a remediação definitiva; a versão estável corrigida já é compatível e cabe na janela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "atualizar para versão estável mais recente quando houver correção disponível"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

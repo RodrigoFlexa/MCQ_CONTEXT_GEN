@@ -1,0 +1,117 @@
+{
+  "item": "02_08",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de simulação dinâmica para decidir revamp do flare quando a carga depende de defasagens e sequenciamento.",
+      "pergunta": "A análise estática passou a pedir revamp do header de flare após novas fontes de alívio; o ESD, os volumes comunicantes e as malhas fazem os picos chegarem defasados. Qual técnica deve definir a necessidade real de revamp?",
+      "resposta": "simulação dinâmica do sistema de alívio",
+      "explicacao": "A dinâmica captura a sequência real do evento, incluindo defasagens, amortecimento e atuação de controles, evitando impor simultaneidade conservadora que pode superestimar a carga no sistema receptor.",
+      "resposta_padrao": "Executar o revamp indicado pela análise estática.",
+      "por_que_nao": "Nesse cenário, as novas fontes não aliviam simultaneamente para a tocha, então o pico no receptor pode ser menor que o estático.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a avaliação estática indicou necessidade de revamp após adição de novas fontes de alívio, enquanto a avaliação dinâmica considerou que essas fontes não aliviavam simultaneamente para a tocha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo com duas PSVs de ajustes distintos para cobrir cenários de alta e baixa carga sem instabilidade no caso menor.",
+      "pergunta": "Dois cenários de sobrepressão atingem o mesmo vaso: um exige alta vazão, outro bem menor; a PSV única do caso maior limita a pressão, mas no evento menor a abertura prevista fica instável. Que arranjo de proteção adotar?",
+      "resposta": "duas PSVs com pressões de ajuste diferentes",
+      "explicacao": "Uma PSV única pode cobrir a sobrepressão máxima e ainda ser inadequada no caso menor; escalonar os ajustes permite que só a primeira atue na baixa carga.",
+      "resposta_padrao": "Manter uma única PSV dimensionada pelo caso de maior vazão.",
+      "por_que_nao": "Ela pode proteger contra sobrepressão e, mesmo assim, comportar-se mal dinamicamente na condição de menor carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A abordagem estática e a abordagem dinâmica podem levar a conclusões diferentes sobre a carga de alívio e sobre o sistema receptor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma única PSV escolhida para o caso dimensionante pode proteger contra sobrepressão, mas continuar inadequada do ponto de vista dinâmico para a condição de menor carga."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representação da pressão de reassentamento na avaliação dinâmica de PSVs em cenários de menor carga.",
+      "pergunta": "Na simulação de um arranjo com duas PSVs, ambas parecem estáveis usando abertura instantânea na pressão de ajuste; o caso crítico é o evento de menor vazão, com fechamento e reabertura próximos. Que parâmetro da válvula precisa ser representado explicitamente?",
+      "resposta": "pressão de reassentamento da PSV",
+      "explicacao": "A diferença entre abertura e reassentamento define a estabilidade do ciclo abrir-fechar; simplificá-la pode mascarar o comportamento real da válvula instalada.",
+      "resposta_padrao": "Modelar só a pressão de abertura da PSV.",
+      "por_que_nao": "A pressão de abertura sozinha não define o fechamento nem a estabilidade da válvula no transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula; simplificações de simulação não definem o funcionamento real da PSV."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa simplificação é útil para o modelo, mas não representa automaticamente o comportamento real da válvula instalada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contrapressão do sistema receptor como variável decisiva em arranjos com múltiplas PSVs.",
+      "pergunta": "Para que a PSV de menor ajuste atue sozinha no cenário de baixa carga, a descarga segue para um header compartilhado com pressão variável. Qual variável do sistema receptor deve governar a viabilidade desse arranjo?",
+      "resposta": "contrapressão do sistema receptor",
+      "explicacao": "Com duas PSVs, a pressão no header afeta qual válvula abre, como a vazão se reparte e se a atuação permanece estável.",
+      "resposta_padrao": "Verificar apenas a capacidade combinada das duas PSVs.",
+      "por_que_nao": "Capacidade suficiente não garante seletividade nem estabilidade quando o sistema receptor impõe contrapressão variável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses resultados permanecem dependentes das hipóteses adotadas para simultaneidade e dinâmica do processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em qualquer arranjo com mais de um dispositivo, passam a ser relevantes a repartição de vazão, a estabilidade de abertura, a contrapressão do sistema receptor e a manutenção da cobertura do caso governante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sua aplicação depende do arranjo hidráulico, da filosofia de proteção e da interação entre as válvulas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

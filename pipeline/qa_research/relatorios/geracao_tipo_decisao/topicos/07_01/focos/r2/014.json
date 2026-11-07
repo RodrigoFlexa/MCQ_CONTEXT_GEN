@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Localizar a falha na aquisição quando o instrumento mede corretamente em campo e o controlador não recebe a variação.",
+      "pergunta": "Transmissor e indicador local acompanham o processo, mas a PV no controlador fica fixa e a malha não corrige o desvio. Em que ponto técnico intervir primeiro?",
+      "resposta": "Canal de entrada do controlador",
+      "explicacao": "Se o transmissor mede corretamente em campo e a PV no controlador permanece congelada, a perda está na aquisição/comunicação que leva a variável ao controlador.",
+      "resposta_padrao": "Recalibrar ou substituir o transmissor.",
+      "por_que_nao": "A indicação local coerente mostra que a medição de campo existe; o controlador é que não está recebendo a atualização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sensores e transmissores fornecem variáveis medidas, como pressão, nível, temperatura, vazão, posição e velocidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de comando da HMI para o controlador de problema de sintonia ou de elemento final.",
+      "pergunta": "Setpoint alterado na HMI aparece na própria tela, mas o controlador mantém o valor antigo e a malha segue estável. Qual intervenção é mais adequada?",
+      "resposta": "Enlace de escrita entre supervisão e controlador",
+      "explicacao": "A HMI é a interface para atuar sobre o sistema; se o controlador mantém o setpoint antigo, o comando não está sendo escrito na camada de controle.",
+      "resposta_padrao": "Ressintonizar o controlador.",
+      "por_que_nao": "A sintonia não faz o controlador receber um setpoint que nunca chegou da supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando existe HMI (Interface Homem-Máquina), o operador passa a compartilhar a condução do processo com o sistema automatizado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Separar erro de associação de alarme na supervisão de erro na lógica de causa e efeito.",
+      "pergunta": "No teste de causa e efeito, a lógica derruba o equipamento certo, mas a tela alarma outro tag e não destaca a causa real. Que ajuste técnico aplicar?",
+      "resposta": "Associação do alarme na supervisão",
+      "explicacao": "A atuação correta prova a lógica e o elemento final. O desvio restante é a vinculação do evento ao alarme exibido ao operador.",
+      "resposta_padrao": "Revisar a lógica do intertravamento.",
+      "por_que_nao": "A lógica já executou a ação correta; o erro está na apresentação do evento ao operador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados e instabilidade inicial de controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher a variável correta do historian quando a distorção temporal não decorre de relógios dessincronizados.",
+      "pergunta": "A HMI e a faceplate mostram um transiente rápido de vazão, mas no historian o mesmo evento vira degraus largos; os relógios estão sincronizados. O que ajustar?",
+      "resposta": "Período de coleta do historian",
+      "explicacao": "Com relógios alinhados, a deformação do transiente no histórico decorre de coleta periódica insuficiente para capturar a dinâmica observada ao vivo.",
+      "resposta_padrao": "Sincronizar novamente os relógios dos sistemas.",
+      "por_que_nao": "A coerência temporal já existe; falta resolução de aquisição para representar o evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

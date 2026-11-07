@@ -1,0 +1,87 @@
+{
+  "item": "02_02",
+  "foco": 53,
+  "rodada": 2,
+  "contexto": {
+    "A1": 52,
+    "F": 53,
+    "A2": 54
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ruído elétrico na leitura on-line exige correção de aterramento/blindagem antes de alterar a química.",
+      "pergunta": "A leitura on-line de pH passa a serrilhar sempre que inversores próximos entram em carga; amostras manuais seguem estáveis e a dosagem já foi reduzida sem efeito. Que intervenção técnica fazer no circuito de medição?",
+      "resposta": "Revisar aterramento e blindagem elétrica do circuito do sensor.",
+      "explicacao": "A coincidência com a carga dos inversores e a estabilidade das amostras manuais apontam ruído elétrico no sistema de medição, não mudança química. Corrigir aterramento/blindagem ataca a causa da perturbação.",
+      "resposta_padrao": "Limpar e recalibrar o sensor de pH.",
+      "por_que_nao": "Se o desvio aparece junto ao acionamento elétrico e o laboratório confirma pH estável, a causa dominante é interferência elétrica; recalibração não elimina o serrilhado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta, interferências químicas, falhas de aterramento, ruído elétrico e atraso entre injeção e medição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A automação pode reduzir variabilidade humana, mas não elimina necessidade de validação periódica, manutenção do sensor e reconciliação com análises laboratoriais."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em presença de atraso e segregação de fases, a dosagem deve migrar para feedforward pela vazão de água livre.",
+      "pergunta": "Num trecho longo com água livre intermitente, o residual do inibidor só reage muito depois de cada ajuste e a malha fechada entra em caça. Qual arranjo de controle aplicar para a dosagem de curto prazo?",
+      "resposta": "Controle feedforward pela vazão de água livre.",
+      "explicacao": "Com atraso grande entre injeção e medição e água livre segregada, o feedback pelo residual reage tarde e mede mal a fase de atuação. A variável de processo da fase aquosa dá comando mais representativo.",
+      "resposta_padrao": "Retunar a malha fechada pelo residual medido.",
+      "por_que_nao": "O problema principal é o tempo morto somado à segregação de fases; retune não corrige sinal pouco representativo nem evita a caça.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas automatizados, foram sugeridos controles de pH, inibidor de corrosão, dispersante, hipoclorito e descargas com base em variáveis de processo, além de monitoramento on-line de corrosão e depósitos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta, interferências químicas, falhas de aterramento, ruído elétrico e atraso entre injeção e medição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, seleção de indicador e lógica de controle devem considerar tempo de mistura, regime de escoamento, possibilidade de água livre, criticidade do ativo e consequência de falso positivo ou falso negativo para ajuste de dosagem."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "No controle de oxidante, a taxa de corrosão on-line deve limitar a alta quando o residual isolado desloca o problema.",
+      "pergunta": "Residual de hipoclorito ficou dentro do alvo, mas cada aumento automático coincide com salto na corrosão on-line e maior indicação de depósito. Qual variável deve impor o bloqueio de alta da dosagem?",
+      "resposta": "Bloqueio de alta pela taxa de corrosão on-line.",
+      "explicacao": "Residual isolado pode parecer adequado enquanto o excesso de oxidante degrada inibidores de corrosão e dispersantes. Como o dano ao ativo já aparece em tempo real, a corrosão deve limitar novas elevações de dose.",
+      "resposta_padrao": "O residual de hipoclorito medido.",
+      "por_que_nao": "Aqui o residual sozinho mascara o efeito colateral; aumentar dose por esse único sinal pode piorar corrosão e deposição mesmo com aparente controle microbiológico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas automatizados, foram sugeridos controles de pH, inibidor de corrosão, dispersante, hipoclorito e descargas com base em variáveis de processo, além de monitoramento on-line de corrosão e depósitos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No controle microbiológico com oxidantes, o excesso pode degradar inibidores de corrosão e dispersantes, reduzindo a proteção global mesmo que o residual oxidante pareça adequado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O efeito prático é que a dosagem deve ser ajustada por um painel de indicadores coerentes, e não por um único sinal isolado."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Local de integração principal quando controladores de fornecedores distintos expõem modelos de dados heterogêneos.",
+      "pergunta": "Controladores de fabricantes diferentes precisam alimentar histórico único e software analítico, mas cada um expõe dados em modelo próprio. Onde concentrar a integração principal?",
+      "resposta": "na camada supervisória",
+      "explicacao": "Com modelos de dados heterogêneos, a padronização próxima à fonte fica limitada; a integração tende a migrar para a supervisão, que já interliga consumidores diversos.",
+      "resposta_padrao": "Nos próprios controladores, junto à fonte.",
+      "por_que_nao": "Nesse cenário, a diferença de modelos limita a padronização na origem e torna mais adequado integrar na camada supervisória.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integração frequentemente migra para a camada supervisória."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do SCADA como agregador de alarmes, histórico e interface operacional quando os controladores permanecem independentes.",
+      "pergunta": "Alarmes estão espalhados em IHMs locais e o histórico vem separado de três PLCs independentes. Sem alterar as lógicas, que sistema deve unificar alarmes, histórico e interface do operador?",
+      "resposta": "o SCADA",
+      "explicacao": "Quando múltiplos controladores seguem autônomos, o SCADA é a camada agregadora típica para alarmes, histórico e interface operacional comum.",
+      "resposta_padrao": "O historiador.",
+      "por_que_nao": "O historiador armazena dados, mas não assume a agregação operacional de alarmes e interface comum requerida nesse arranjo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificação da fronteira arquitetural quando telecomunicações consomem dados diretamente da camada de controle.",
+      "pergunta": "Diagnósticos de um controlador passarão direto para telemetria satelital, sem supervisão intermediária. Em qual conexão aplicar o tratamento de fronteira IT/OT?",
+      "resposta": "na interface direta entre o controlador e as telecomunicações",
+      "explicacao": "A fronteira aparece no primeiro ponto em que os dados deixam o controle e passam a ser consumidos por telecomunicações, não apenas quando chegam ao ambiente corporativo.",
+      "resposta_padrao": "Na chegada ao sistema corporativo em terra.",
+      "por_que_nao": "A saída da camada de controle já ocorre no enlace com telecomunicações; adiar o tratamento para terra deixa exposta a interconexão crítica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

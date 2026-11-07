@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 23,
+  "rodada": 2,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Retorno ao serviço exige restaurar a configuração aprovada da lógica após uma compensação temporária já saneada.",
+      "pergunta": "Um atraso extra foi inserido provisoriamente no permissivo para atravessar falhas intermitentes. O sensor foi reparado, o teste funcional passou e a próxima operação será normal. Que ajuste técnico deve ser feito antes da liberação?",
+      "resposta": "Restaurar o atraso original aprovado do permissivo.",
+      "explicacao": "Com o desvio eliminado, a função deve voltar à configuração pretendida. Manter o atraso provisório deixa a lógica fora do arranjo validado e pode transferir risco para outra etapa operacional.",
+      "resposta_padrao": "Manter o atraso maior, já que o teste funcional passou sem disparos espúrios.",
+      "por_que_nao": "Passar no teste não basta; após eliminar o desvio, a função protegida deve retornar à configuração pretendida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "voltou à configuração pretendida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o desvio foi eliminado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças mal avaliadas podem transferir risco para outra etapa da operação, especialmente em partidas e paradas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Alteração de lógica necessária para operar, mas fora da cobertura documental, requer análise de engenharia e aprovação antes do retorno.",
+      "pergunta": "Durante a correção de um trip espúrio, a lógica recebeu um filtro temporário que reduziu os disparos. A proteção voltou a atuar, mas o novo arranjo não aparece na matriz nem no procedimento vigente. Qual ação técnica deve anteceder qualquer liberação com esse arranjo?",
+      "resposta": "Análise de engenharia com aprovação por profissional habilitado.",
+      "explicacao": "Se o arranjo necessário para operar está em desacordo com a documentação técnica existente ou fora de sua cobertura, o retorno não pode se apoiar só no teste bem-sucedido.",
+      "resposta_padrao": "Liberar e revisar a documentação depois, já que o trip respondeu no teste.",
+      "por_que_nao": "Quando a ação necessária fica fora da cobertura documental, a avaliação de engenharia aprovada deve vir antes da liberação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a ação necessária estiver em desacordo com a documentação técnica existente, ou fora de sua cobertura, é necessária análise de engenharia e aprovação por profissional habilitado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "esse retorno não é apenas energizar o equipamento ou retirar uma inibição"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Postergações acumuladas em elementos da mesma barreira, sem redundância independente, deslocam a decisão para retirada de operação.",
+      "pergunta": "Sensor, solver e válvula final do mesmo trip tiveram postergações sucessivas; não há redundância independente e a compensação proposta é só ronda operacional reforçada. Qual ação técnica é a mais consistente?",
+      "resposta": "Retirada de operação do sistema afetado.",
+      "explicacao": "A criticidade cresce com atrasos acumulados na mesma barreira. Sem redundância independente, vigilância apenas aumenta observação e não recompõe a função de proteção.",
+      "resposta_padrao": "Contingenciar com monitoramento reforçado até a próxima janela.",
+      "por_que_nao": "Sem cobertura independente e com degradação cumulativa da barreira, monitoramento não restaura proteção suficiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A criticidade cresce quando a postergação se acumula em elementos que compõem a mesma barreira."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "existe redundância independente"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a retirada de operação do sistema ou da unidade afetada pode ser tecnicamente mais consistente"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

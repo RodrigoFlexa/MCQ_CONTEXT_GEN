@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contenção temporária de controladores vulneráveis por segmentação, mantendo supervisão e telemetria necessárias.",
+      "pergunta": "Controladores de vazão só serão corrigidos na próxima parada. O SCADA local e a telemetria devem continuar, e eles hoje dividem segmento com estações de engenharia e historiador. Qual intervenção técnica deve ser feita agora?",
+      "resposta": "segmentação dos controladores em domínio próprio",
+      "explicacao": "Como a correção não é imediata, a contenção vem da segmentação: ela não elimina a vulnerabilidade, mas dificulta que a exploração na interface alcance outros ativos, preservando os fluxos necessários.",
+      "resposta_padrao": "Desconectá-los totalmente da rede.",
+      "por_que_nao": "Isso corta também supervisão e telemetria requeridas; o cenário pede conter propagação mantendo apenas a conectividade necessária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando sistemas industriais expostos em rede têm vulnerabilidades exploráveis, um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Separar domínios não remove a vulnerabilidade de origem, mas dificulta que um problema em uma interface alcance todos os ativos conectados."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle da necessidade operacional dos fluxos interdomínio na revisão de uma arquitetura segmentada.",
+      "pergunta": "Com SCADA local, broker MQTT em nuvem e analytics já integrados, novas ligações entre domínios foram sendo abertas sem impacto aparente na operação. Na revisão da segmentação, qual variável técnica deve ser controlada primeiro?",
+      "resposta": "a necessidade operacional de cada fluxo interdomínio",
+      "explicacao": "A revisão da arquitetura segmentada deve confirmar se cada fluxo continua necessário e compatível com a criticidade. Fluxos supérfluos ampliam caminhos de propagação mesmo quando a rede aparenta operar normalmente.",
+      "resposta_padrao": "A utilização de banda dos enlaces.",
+      "por_que_nao": "Capacidade de rede não decide se uma conexão deve existir; aqui o ponto crítico é contenção entre domínios, não desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A monitoração da arquitetura deve confirmar se o escopo dos sistemas conectados permanece coerente, se os fluxos entre domínios continuam necessários e se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de defesa em profundidade dentro da OT quando domínios críticos compartilham uma rede plana.",
+      "pergunta": "A fronteira com IT já tem firewall, mas DCS, funções independentes de proteção e sistema elétrico seguem na mesma rede OT plana. Com uma nova aplicação analítica externa, qual arranjo adicional deve ser adotado?",
+      "resposta": "barreiras internas sucessivas entre os domínios OT críticos",
+      "explicacao": "Uma barreira só na borda não contém falhas, erros de configuração ou ações maliciosas entre sistemas OT com funções e consequências diferentes. O cenário pede defesa em profundidade dentro da arquitetura industrial.",
+      "resposta_padrao": "Endurecer apenas o firewall da fronteira IT/OT.",
+      "por_que_nao": "Isso protege a borda, mas não a propagação lateral entre controle, proteção e sistema elétrico já conectados internamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

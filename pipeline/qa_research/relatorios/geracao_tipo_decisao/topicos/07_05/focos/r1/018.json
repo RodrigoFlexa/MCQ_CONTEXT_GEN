@@ -1,0 +1,117 @@
+{
+  "item": "07_05",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acuracidade operacional do inventário como variável de segurança para sobressalentes críticos.",
+      "pergunta": "O sistema indica um kit de solenóide disponível, mas a manutenção não o encontra no endereço informado e a válvula crítica permanece fora de função. Antes de rever quantidade estocada, qual controle do almoxarifado deve virar a variável crítica?",
+      "resposta": "Acuracidade operacional do inventário dos itens críticos.",
+      "explicacao": "Sem correspondência entre cadastro, localização e peça fisicamente recuperável, a disponibilidade registrada não vira disponibilidade real. Em item crítico, isso oculta a condição da barreira e prolonga a indisponibilidade.",
+      "resposta_padrao": "Aumentar o estoque mínimo do kit.",
+      "por_que_nao": "Se o item não é localizado, o problema é disponibilidade real mascarada por cadastro e transações, não quantidade nominal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cadastro impreciso e controle frágil ocultam a condição real da barreira técnica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Metas de acuracidade, nível de serviço e reposição devem corresponder à criticidade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o sistema informa que o item existe, mas a equipe não consegue encontrá-lo a bordo, a disponibilidade registrada não se converte em disponibilidade real para a manutenção."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição de reposição de sobressalentes críticos considerando criticidade e tempo total de suprimento.",
+      "pergunta": "Para kits de reparo de bomba de incêndio com consumo raro e reposição demorada, que critério de reposição deve ser ajustado no almoxarifado para evitar degradação prolongada da função?",
+      "resposta": "Ponto de reposição por criticidade e lead time total.",
+      "explicacao": "Para itens críticos, baixo consumo não basta. O critério de reposição deve refletir consequência da falha e o tempo total até disponibilizar a peça.",
+      "resposta_padrao": "Reposição baseada apenas no consumo histórico.",
+      "por_que_nao": "Itens críticos de baixa movimentação podem faltar por todo o período de suprimento, mantendo a função degradada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Metas de acuracidade, nível de serviço e reposição devem corresponder à criticidade e ao tempo de suprimento dos itens"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em ambiente remoto, esse lead time pode superar o tempo físico do reparo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a seleção do que manter a bordo precisa considerar consequência da falha, tempo de reposição"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de status de reparáveis no estoque conforme retorno testado e fisicamente disponível.",
+      "pergunta": "Um módulo eletrônico retirado de um conversor foi enviado para reparo, mas segue contabilizado como disponível até voltar de terra. Que arranjo de controle deve ser aplicado a esse reparável?",
+      "resposta": "Status de reparável disponível só após teste e retorno físico.",
+      "explicacao": "Reparável só compõe disponibilidade quando voltou, foi testado e está rastreável. Contá-lo em reparo como disponível mascara a capacidade real de atendimento.",
+      "resposta_padrao": "Mantê-lo como disponível enquanto o reparo estiver em andamento.",
+      "por_que_nao": "Item em reparo não está fisicamente recuperável no local informado nem pronto para restauração imediata da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência de sistema íntegro de controle das peças disponíveis."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "garantir um ciclo funcional de retirar, substituir, reparar, testar e retornar ao estoque"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o registro precisa corresponder ao item fisicamente existente e recuperável no local informado."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Disciplina de transações em tempo real para integridade do estoque de itens críticos.",
+      "pergunta": "Retiradas urgentes de peças de proteção são feitas e a baixa no sistema fica para o fim do turno; depois surgem saldos positivos sem peça física. Que intervenção de controle deve ser implantada?",
+      "resposta": "Registro em tempo real das transações de retirada e devolução.",
+      "explicacao": "O desempenho depende de monitoramento contínuo da integridade das informações. Lançamento tardio permite saldo fictício e oculta indisponibilidade de peças de sistemas críticos.",
+      "resposta_padrao": "Fazer inventário físico com maior frequência.",
+      "por_que_nao": "Inventário corrige desvios depois; não impede que a manutenção opere com saldo irreal no momento da necessidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "monitoramento contínuo da integridade das informações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas no registro de transações"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "erro de cadastro, localização imprecisa ou controle frágil de transações pode aumentar o tempo de busca e prejudicar o atendimento da manutenção."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

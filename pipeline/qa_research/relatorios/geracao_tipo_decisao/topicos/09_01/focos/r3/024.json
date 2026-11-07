@@ -1,0 +1,103 @@
+{
+  "item": "09_01",
+  "foco": 24,
+  "rodada": 3,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de requisições urgentes pela consequência econômica do atraso, e não pela fila de chegada.",
+      "pergunta": "Duas requisições já marcadas como urgentes disputam a única vaga no próximo PSV: uma mantém produção restringida; a outra apenas antecipa material de campanha. Qual variável deve definir qual segue primeiro?",
+      "resposta": "Custo atribuído ao atraso.",
+      "explicacao": "Com a mesma etiqueta de urgência, a decisão deve ser guiada pela consequência do atraso; a demanda cujo atraso custa mais recebe prioridade.",
+      "resposta_padrao": "Ordem de chegada das requisições.",
+      "por_que_nao": "FIFO ignora que atrasos diferentes têm impactos econômicos distintos e pode priorizar a carga errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A escolha entre políticas logísticas depende do perfil da demanda e do custo atribuído ao atraso."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em outro cenário modelado, a priorização de tarefas foi associada a redução de custo em relação ao FIFO."
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta só repete os atributos; peça a ação técnica específica"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de preservar folga operacional na frota quando a maximização de utilização passa a prejudicar o atendimento crítico.",
+      "pergunta": "A ocupação média dos PSVs subiu, mas chamados emergenciais de alto impacto passaram a esperar a viagem seguinte. Na programação da frota, o que deve ser aumentado deliberadamente?",
+      "resposta": "Folga operacional de capacidade.",
+      "explicacao": "Alta utilização reduz a capacidade de contingência; se emergências críticas esperam a próxima viagem, a programação precisa preservar mais folga.",
+      "resposta_padrao": "Utilização média da frota.",
+      "por_que_nao": "Maximizá-la nesse cenário reduz a folga disponível e aumenta o risco de deixar demanda crítica sem suporte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um ganho de utilização pode não compensar o risco de deixar uma demanda crítica sem suporte."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Assim, reduzir atraso ou ruptura de suprimento pode exigir mais capacidade disponível, enquanto elevar a utilização média da frota pode reduzir folga operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação da priorização por criticidade à logística reversa quando o atraso do backload afeta reparo e ocupação a bordo.",
+      "pergunta": "Com o convés restante, cabe ou um equipamento retirado para reparo em terra, já segregado há dias, ou consumíveis com cobertura para dez dias. Que carga deve embarcar nesta viagem?",
+      "resposta": "O backload do equipamento reparável.",
+      "explicacao": "O atraso prolonga permanência a bordo, aumenta manuseios e posterga o reparo; os consumíveis ainda têm cobertura suficiente.",
+      "resposta_padrao": "Os consumíveis de ida já separados no cais.",
+      "por_que_nao": "Nesse cenário, atrasá-los custa menos do que prolongar o backload que ocupa área a bordo e retarda o reparo.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Quando o backload é mal planejado, pode haver permanência desnecessária de materiais a bordo, aumento de manuseios e atraso no envio de itens para manutenção, reparo, reciclagem ou destinação final."
+        },
+        {
+          "bloco": "F",
+          "trecho": "políticas orientadas por criticidade podem direcionar capacidade escassa para evitar atrasos mais caros"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Adoção de arranjo híbrido quando coexistem fluxos previsíveis de rotina e demanda irregular que não tolera espera pela malha consolidada.",
+      "pergunta": "Rancho e químicos usuais seguem padrão semanal estável, mas o diesel de uma instalação satélite surge sem previsibilidade e não pode esperar consolidação. Que arranjo operacional adotar?",
+      "resposta": "Programação fixa para a rotina e embarcação dedicada sob demanda para o diesel.",
+      "explicacao": "A rotina previsível se beneficia da consolidação da malha fixa, enquanto o diesel irregular sem rota exige atendimento sob chamada.",
+      "resposta_padrao": "Colocar todas as cargas na mesma programação fixa.",
+      "por_que_nao": "A rota fixa atende bem o recorrente, mas não responde adequadamente ao diesel irregular sem rota fixa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há arranjos com viagens previamente definidas para grupos de unidades e outros com embarcações dedicadas a demandas sob chamada, como atendimento de diesel sem rota fixa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em termos funcionais, programação fixa favorece regularidade e consolidação; atendimento sob demanda favorece resposta a urgências"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

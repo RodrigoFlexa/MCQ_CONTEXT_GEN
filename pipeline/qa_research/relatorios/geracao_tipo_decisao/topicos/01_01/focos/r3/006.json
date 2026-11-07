@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Intervenção prioritária na lógica compartilhada quando a redundância é anulada por causa comum de intertravamento.",
+      "pergunta": "Dois trens saudáveis perdem a função ao mesmo tempo quando um único sinal de baixa pressão oscila; após o rearme, ambos retomam sem intervenção mecânica. Para tornar a redundância efetiva, onde aplicar a modificação?",
+      "resposta": "Na lógica de intertravamento compartilhada desse sinal",
+      "explicacao": "A perda simultânea com retorno por rearme indica causa comum na lógica. Redundância de máquinas não preserva a função quando o mesmo disparo derruba ambos os caminhos.",
+      "resposta_padrao": "Trocar o transmissor que oscila.",
+      "por_que_nao": "Mesmo com sensor novo, um único sinal ainda derruba os dois caminhos se a lógica compartilhada permanecer igual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representação de acesso de reparo comum como dependência que limita a disponibilidade de trens redundantes.",
+      "pergunta": "Na revisão RAM, duas bombas foram tratadas como 1oo2 independentes. No histórico, qualquer reparo maior exige a mesma rota de içamento e o mesmo espaço de remoção. Que dependência o modelo deve incorporar?",
+      "resposta": "Acesso de reparo compartilhado em série",
+      "explicacao": "Se os dois caminhos dependem do mesmo acesso físico para reparo, o paralelo simples superestima a recuperação. A dependência comum precisa entrar explicitamente no arranjo.",
+      "resposta_padrao": "Manter as bombas como paralelo 1oo2 independente.",
+      "por_que_nao": "A mesma rota de içamento e o mesmo espaço de remoção criam dependência comum de manutenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelagem de reserva fria pela falha sob demanda, e não apenas por horas operadas.",
+      "pergunta": "Reserva fria quase não acumula horas em serviço, mas as perdas aparecem no instante em que ela é chamada para assumir a função. Na atualização do modelo de disponibilidade, qual parâmetro precisa ganhar peso explícito?",
+      "resposta": "Probabilidade de falha sob demanda da reserva fria",
+      "explicacao": "Em reserva fria, baixa exposição a desgaste não elimina falhas em espera, partida e transferência. Ignorar a falha sob demanda superestima a disponibilidade do standby.",
+      "resposta_padrao": "Usar só o MTBF em operação da reserva fria.",
+      "por_que_nao": "Neste cenário, a perda nasce na chamada do reserva, não nas poucas horas em carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

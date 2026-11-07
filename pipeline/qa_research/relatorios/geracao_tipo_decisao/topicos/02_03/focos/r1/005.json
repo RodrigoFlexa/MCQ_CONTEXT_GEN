@@ -1,0 +1,101 @@
+{
+  "item": "02_03",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Turndown efetivo do hidrociclone e decisão de retirar liners em baixa vazão.",
+      "pergunta": "Produção caiu e não há recirculação disponível; com todos os liners em paralelo, o óleo no underflow piora em baixa vazão prolongada. Que arranjo operacional deve ser adotado?",
+      "resposta": "Retirar liners de serviço para manter vazão por liner na faixa validada.",
+      "explicacao": "Muito abaixo da faixa selecionada, a vazão altera velocidade tangencial, tempo de residência, split e escoamento interno. Operar menos liners em paralelo recoloca cada um na faixa validada.",
+      "resposta_padrao": "Manter todos os liners em serviço e apenas aceitar menor vazão por liner.",
+      "por_que_nao": "Baixa vazão por liner pode degradar a separação mesmo sem falha mecânica, pelo turndown efetivo limitado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A operação fora da faixa validada pode comprometer o campo centrífugo e aumentar óleo residual na água."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Na prática, o turndown efetivo do hidrociclone tende a ser limitado porque mudanças de vazão alteram simultaneamente velocidade tangencial, tempo de residência, split e distribuição interna do escoamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Por isso, operar muito abaixo ou muito acima da condição para a qual a geometria foi selecionada pode degradar a separação, mesmo sem mudança de hardware."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de usar curva específica do liner quando a geometria de overflow muda.",
+      "pergunta": "Trocou-se o liner por sobressalente do mesmo porte nominal, mas com geometria de overflow diferente; o valor antigo de DPR mantinha bom desempenho antes. Qual referência de ajuste deve prevalecer na retomada?",
+      "resposta": "Curva validada de DPR/split do liner instalado.",
+      "explicacao": "DPR e split dependem da geometria do overflow, das vazões e das pressões de saída. Trocar o liner invalida copiar um setpoint universal do anterior.",
+      "resposta_padrao": "Reaplicar o mesmo setpoint de DPR que funcionava no liner anterior.",
+      "por_que_nao": "O mesmo valor numérico pode sair da faixa validada quando a geometria do overflow muda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Geometria do overflow, vazões e pressões nas saídas influenciam esses parâmetros de forma acoplada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O ajuste deve seguir a curva e os limites do equipamento, evitando atribuir um valor universal de DPR ou split a qualquer liner."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Padronização da convenção de cálculo do split antes de comparar ou ajustar o controle.",
+      "pergunta": "O DCS indica split 2% e o relatório do fornecedor 2% para o mesmo hidrociclone, mas o rejeito medido em campo é incompatível com equivalência direta. Antes de mexer na válvula, o que deve ser padronizado?",
+      "resposta": "A convenção de cálculo do split.",
+      "explicacao": "O split não tem significado único sem declarar a razão usada. Ajustar o equipamento por igualdade numérica entre fontes com convenções diferentes pode deslocar o rejeito real.",
+      "resposta_padrao": "Ajustar a válvula até repetir no campo o split numérico do relatório.",
+      "por_que_nao": "Dois valores iguais de split podem representar divisões de vazão diferentes se a base de cálculo não for a mesma.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O split caracteriza a divisão da vazão entre a corrente rejeitada, rica em óleo, e a corrente tratada; sua convenção precisa ser declarada, pois pode ser expresso como vazão de rejeito dividida pela alimentação ou por outra razão definida no sistema."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Influência da contrapressão no underflow sobre o escoamento interno e o split.",
+      "pergunta": "Subiu a pressão no coletor de água tratada após alinhar outra linha; a queda de pressão do hidrociclone segue próxima da normal, mas o óleo na água aumentou. Qual variável corrigir primeiro?",
+      "resposta": "Contrapressão no underflow.",
+      "explicacao": "A pressão traseira da descarga de água participa do padrão interno de escoamento e da divisão entre overflow e underflow. Se ela mudou, aumentar só a alimentação não recompõe o split.",
+      "resposta_padrao": "Aumentar a pressão de alimentação para recuperar a separação.",
+      "por_que_nao": "Com a contrapressão alterada, o escoamento interno pode continuar desfavorável mesmo com diferencial global semelhante.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A descarga de água também sofre influência da pressão traseira: ela participa da definição do padrão interno de escoamento e ajuda a forçar a corrente rica em óleo a sair pelo overflow, enquanto a água tratada segue pelo underflow."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Geometria do overflow, vazões e pressões nas saídas influenciam esses parâmetros de forma acoplada."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

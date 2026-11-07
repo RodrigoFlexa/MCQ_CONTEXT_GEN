@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 7,
+  "rodada": 3,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de blowdown faseado quando a simultaneidade no header comum governa baixa temperatura e pico no flare.",
+      "pergunta": "A mínima de metal no header comum só é violada quando dois blowdowns iniciam no mesmo segundo; individualmente, cada segmento atende o tempo requerido, e o pico no flare fica aceitável se um deles atrasar alguns segundos. Que ajuste aplicar na lógica de emergência?",
+      "resposta": "Blowdown faseado entre os segmentos.",
+      "explicacao": "A coincidência das aberturas governa o problema. Escalonar o blowdown reduz o pico instantâneo no header e no flare, mitigando a condição térmica sem remover a função quando o cenário admite pequeno atraso.",
+      "resposta_padrao": "Trocar o material do header comum por aço mais tenaz.",
+      "por_que_nao": "Isso não reduz a simultaneidade das descargas nem o pico no flare, que são a origem do caso crítico.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Quando o sistema não consegue receber simultaneamente o fluxo de todos os sistemas protegidos, pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa solução tende a reduzir o pico de vazão no flare"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A análise considera simultaneidade, faseamento das descargas, contrapressão, formação de líquido e temperaturas mínimas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A severidade desses efeitos depende do fluido, da pressão inicial, da umidade, da composição e da dinâmica real da despressurização."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da composição de pior caso, rica em pesados, para simular blowdown sujeito a condensação transitória.",
+      "pergunta": "A mesma BDV cumpre o tempo requerido, a linha está seca, o modelo já trata duas fases, e a perda de carga transitória piora apenas quando o inventário entra mais rico em C3+ e com ponto de orvalho mais alto. Na revisão do caso, qual composição deve governar a simulação?",
+      "resposta": "A composição mais rica em pesados do inventário.",
+      "explicacao": "A condição rica em pesados é a mais propensa a condensar durante a expansão, alterando perda de carga, temperatura e distribuição de fases; a composição média pode esconder o caso mais severo.",
+      "resposta_padrao": "A composição média normalmente processada no segmento.",
+      "por_que_nao": "A média dilui justamente a condição que mais favorece condensação e subestima o blowdown crítico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dependendo da composição, do teor de água e da trajetória do blowdown, podem ocorrer condensação de frações mais pesadas, névoa e formação de sólidos ou gelo por contaminantes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A severidade desses efeitos depende do fluido, da pressão inicial, da umidade, da composição e da dinâmica real da despressurização."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão do efeito Joule-Thomson na previsão da temperatura mínima a jusante em blowdown monofásico.",
+      "pergunta": "Temperatura medida a jusante cai mais do que o cálculo simplificado prevê em blowdown curto, com linha isolada termicamente e gás seco que permanece monofásico. Antes de redimensionar a válvula, que efeito deve entrar no modelo?",
+      "resposta": "Efeito Joule-Thomson na modelagem do blowdown.",
+      "explicacao": "Com gás seco, monofásico e pouca troca térmica externa, a subprevisão da queda de temperatura vem do comportamento real do gás na expansão; o efeito Joule-Thomson deve entrar no modelo.",
+      "resposta_padrao": "Modelar formação de líquido como causa principal da queda térmica.",
+      "por_que_nao": "O cenário informa gás seco e monofásico; a discrepância remanescente vem do comportamento real do gás na expansão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o resfriamento pode resultar da expansão do gás"
+        },
+        {
+          "bloco": "F",
+          "trecho": "conforme o fluido e o caminho termodinâmico, também pode ser influenciado por efeito Joule-Thomson"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

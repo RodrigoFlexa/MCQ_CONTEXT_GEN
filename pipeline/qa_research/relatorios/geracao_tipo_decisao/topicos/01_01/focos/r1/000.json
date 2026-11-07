@@ -1,0 +1,105 @@
+{
+  "item": "01_01",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Normalização de KPI energético por unidade produzida para comparar desempenho com carga variável.",
+      "pergunta": "O consumo elétrico absoluto cresce toda vez que a carga aumenta, e a equipe precisa saber se a eficiência piorou de fato. Qual KPI deve entrar na comparação entre períodos?",
+      "resposta": "Consumo específico de energia por unidade produzida",
+      "explicacao": "Com carga variável, o valor absoluto mistura desempenho e throughput; normalizar pela produção torna a comparação temporal mais coerente com a eficiência intrínseca.",
+      "resposta_padrao": "Consumo total de energia",
+      "por_que_nao": "Esse valor pode subir apenas por maior volume processado, sem piora real do desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento do indicador muda com regime transiente, mudanças de carga"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sem uma base de referência adequada, uma variação no valor absoluto pode refletir apenas mudança de carga, de volume processado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "indicadores intensivos de energia, materiais e impacto ambiental por unidade produzida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Separação de regime transiente do estacionário na interpretação operacional de KPI.",
+      "pergunta": "Quando o KPI cai logo após cada mudança de carga e retorna ao patamar anterior poucos minutos depois, qual recorte técnico deve ser aplicado antes de abrir perda crônica de desempenho?",
+      "resposta": "Segregação do regime transiente",
+      "explicacao": "Quedas associadas a mudanças de carga podem ser apenas efeito transitório; separar o transiente evita classificar como perda estrutural um comportamento normal de acomodação.",
+      "resposta_padrao": "Média do período completo",
+      "por_que_nao": "Misturar transiente e regime estabilizado distorce o diagnóstico e pode transformar sintoma passageiro em falsa degradação crônica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento do indicador muda com regime transiente, mudanças de carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "interpretar uma variação transitória como perda estrutural de desempenho"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Desagregação de KPI por etapa para localizar variáveis perturbadas e apoiar diagnóstico.",
+      "pergunta": "Um indicador único piorou enquanto separação, utilidades e malhas de controle tiveram alterações no mesmo turno. Para localizar a origem do desvio, que arranjo de monitoramento deve ser adotado?",
+      "resposta": "Desagregação do KPI por etapa do processo",
+      "explicacao": "Como várias etapas interagem, um KPI agregado resume o efeito global, mas não aponta a variável perturbada; desagregar por etapa apoia o diagnóstico de causas prováveis.",
+      "resposta_padrao": "Um KPI consolidado da planta",
+      "por_que_nao": "O consolidado mostra a perda global, mas não separa onde o desvio nasceu nem qual seção o propagou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "detectar desvios, identificar variáveis perturbadas e apoiar o diagnóstico de causas prováveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os KPIs podem ser aplicados a equipamentos, a etapas específicas do processo ou à instalação como um todo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de KPI baseado em tempo para captar duração de operação fora de especificação.",
+      "pergunta": "Qualidade média mensal do óleo segue conforme, mas houve dez excursões de um minuto e uma de duas horas fora de especificação. Para enxergar a permanência real da anormalidade, qual KPI usar?",
+      "resposta": "Percentual de tempo fora de especificação",
+      "explicacao": "Para detectar períodos anormais, a duração importa. Um KPI baseado em tempo evidencia permanência off-spec, enquanto métricas agregadas ou simples contagens podem mascarar o problema.",
+      "resposta_padrao": "Número de excursões fora de especificação",
+      "por_que_nao": "Contagem de eventos trata uma excursão de um minuto como outra de duas horas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter produtos dentro de especificação, detectar períodos de operação anormal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o mesmo processo pode ser acompanhado por indicadores diferentes quando a finalidade muda entre operação em tempo real, acompanhamento gerencial ou análise de melhoria"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

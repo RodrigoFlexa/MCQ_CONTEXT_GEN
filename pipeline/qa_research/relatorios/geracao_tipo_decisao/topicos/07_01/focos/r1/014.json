@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificação do ponto comum de falha em arquitetura distribuída quando múltiplos sinais de um mesmo módulo degradam simultaneamente.",
+      "pergunta": "Pressão, temperatura e posição de válvula do mesmo módulo entram juntas em má qualidade; outras áreas seguem normais e a alimentação de campo está presente. Qual ponto técnico deve ser atacado primeiro?",
+      "resposta": "Remota de I/O comum do módulo",
+      "explicacao": "Perda simultânea de variáveis diferentes e feedback de atuador no mesmo trecho indica dependência comum de aquisição/comunicação, mais provável que falhas independentes de instrumentos.",
+      "resposta_padrao": "Trocar ou recalibrar os instrumentos que perderam sinal.",
+      "por_que_nao": "A simultaneidade em grandezas diversas e um atuador do mesmo módulo aponta falha comum da arquitetura, não deriva individual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em ambientes industriais, essa arquitetura tende a reunir hardware e software heterogêneos, muitas vezes distribuídos pela instalação e conectados entre si."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre falha de supervisão e falha de medição/controle quando a malha continua atuando normalmente.",
+      "pergunta": "Tendência e HMI ficam com valor fixo, mas a indicação local do transmissor varia e a válvula da mesma malha continua modulando coerentemente. Onde intervir para recuperar a informação confiável ao operador?",
+      "resposta": "Enlace entre controlador e supervisão",
+      "explicacao": "Sensor, controlador e atuador ainda fecham a malha; o problema está na camada usada para visualização e histórico, não na medição de campo.",
+      "resposta_padrao": "Recalibrar o transmissor da variável.",
+      "por_que_nao": "Se o transmissor estivesse congelado, a malha não continuaria modulando coerentemente com as mudanças observadas localmente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correção da ação direta/reversa do controlador quando a saída reforça o desvio em vez de corrigi-lo.",
+      "pergunta": "Com a válvula já confirmada abrindo mais quando a saída aumenta, o loop entra em automático e, ao subir a variável medida acima do setpoint, a saída do controlador também sobe. Que ajuste aplicar?",
+      "resposta": "Inverter a ação do controlador",
+      "explicacao": "A saída aumenta na mesma direção do desvio, reforçando-o. Isso caracteriza sentido de ação incompatível entre erro e correção, não problema de sintonia.",
+      "resposta_padrao": "Retunar o PID para reduzir a instabilidade.",
+      "por_que_nao": "Ganho e tempos não corrigem realimentação com sinal invertido; o controlador seguirá agravando o erro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados e instabilidade inicial de controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de sincronização temporal entre camadas para que tendências e inferências operacionais sejam fisicamente coerentes.",
+      "pergunta": "As tendências mostram a vazão reagindo antes da abertura da válvula e antes da pressão cair; em campo, a sequência real observada é a oposta. Qual ajuste técnico restabelece análises confiáveis?",
+      "resposta": "Sincronização temporal entre controlador, supervisão e historian",
+      "explicacao": "Valores plausíveis com ordem causal impossível entre sinais de camadas diferentes indicam carimbos de tempo incoerentes, comprometendo tendências e comparações.",
+      "resposta_padrao": "Aumentar a frequência de coleta do historian.",
+      "por_que_nao": "Mais resolução não corrige inversões causais geradas por relógios ou timestamps desalinhados.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados, checagem de normalidade e validação das medições, a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

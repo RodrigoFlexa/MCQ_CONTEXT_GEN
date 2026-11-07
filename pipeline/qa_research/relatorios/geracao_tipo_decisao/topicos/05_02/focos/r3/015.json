@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definir o critério dominante para bloquear religamento automático de carga não essencial após shedding: corrente de retomada, não kW em regime.",
+      "pergunta": "A frequência se recompõe após a perda de um gerador, mas volta a cair quando cargas não essenciais retornam automaticamente. Dois consumidores têm criticidade semelhante e potência em regime parecida; um retorna por partida direta e outro por inversor. Na revisão da lógica de retorno, qual parâmetro deve decidir qual religamento bloquear?",
+      "resposta": "Corrente de retomada no religamento",
+      "explicacao": "Com demanda em regime semelhante, o fator decisivo para a nova queda é o surto de corrente na retomada automática; esse parâmetro deve comandar qual carga terá o religamento bloqueado.",
+      "resposta_padrao": "A potência ativa em regime da carga.",
+      "por_que_nao": "A recaída é transitória e decorre do pico de corrente na retomada, não do kW estabilizado após a partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher descarte por grupo quando a perda parcial de auxiliares conflita com a automação do pacote e induz nova perturbação.",
+      "pergunta": "No ensaio, abrir um feeder auxiliar de um pacote não essencial é seguido por trip automático do pacote inteiro e nova oscilação de frequência; quando os feeders auxiliares desse pacote saem juntos, o restante fica estável. Para esse pacote, qual forma de implementação do shedding adotar?",
+      "resposta": "Descarte por grupo de consumidores",
+      "explicacao": "A perda parcial do pacote aciona sua lógica e reintroduz perturbação; rejeitar os auxiliares como bloco coordena o shedding com a automação e evita cascata operacional.",
+      "resposta_padrao": "Descarte de consumidores individuais, para maximizar a seletividade.",
+      "por_que_nao": "A seletividade por feeder deixa o pacote parcialmente energizado e conflita com a automação observada no ensaio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar fora dos primeiros estágios de shedding os consumidores necessários à manutenção de posição em embarcação com posicionamento dinâmico.",
+      "pergunta": "Durante perda de um gerador em embarcação com posicionamento dinâmico, o PMS precisa aliviar carga sem degradar a capacidade de manter posição. Ao montar os primeiros estágios, que consumidores devem ficar fora do shedding?",
+      "resposta": "Propulsores e controles do posicionamento dinâmico",
+      "explicacao": "Nesse arranjo, a disponibilidade elétrica sustenta propulsores e controles que mantêm posição; por isso, eles têm prioridade de preservação acima de grandes consumidores de processo.",
+      "resposta_padrao": "Os maiores consumidores do processo.",
+      "por_que_nao": "Nessa condição, perder propulsores ou seus controles compromete a manutenção de posição, não apenas a produção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em embarcações com posicionamento dinâmico, a disponibilidade elétrica se relaciona diretamente à capacidade de manter propulsores e controles"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

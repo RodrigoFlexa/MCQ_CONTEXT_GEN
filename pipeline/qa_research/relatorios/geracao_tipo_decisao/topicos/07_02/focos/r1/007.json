@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de perfil somente leitura e privilégio mínimo para acesso consultivo a ativos com capacidade de escrita.",
+      "pergunta": "O fornecedor precisa coletar diagnósticos no sistema de monitoramento de máquinas por duas horas; a mesma estação também permite alterar parâmetros de proteção. Qual arranjo de acesso deve ser liberado?",
+      "resposta": "perfil somente leitura de privilégio mínimo",
+      "explicacao": "Como a necessidade é apenas consultiva, o acesso deve corresponder à função e remover capacidade de escrita em parâmetros críticos disponíveis na estação.",
+      "resposta_padrao": "Liberar o perfil de engenharia do fornecedor durante a janela de atendimento.",
+      "por_que_nao": "Esse perfil permite alterar parâmetros críticos sem necessidade para uma atividade apenas consultiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva do que ativos apenas consultivos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "perfil compatível com a função, privilégio mínimo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de validade temporal para limitar automaticamente o acesso de terceiros à janela autorizada.",
+      "pergunta": "Uma credencial de terceiro é habilitada a cada campanha e já houve casos de ela permanecer ativa após o serviço. Qual controle deve ser aplicado na própria autorização?",
+      "resposta": "validade temporal com expiração automática",
+      "explicacao": "A expiração automática encerra a autorização na própria janela aprovada e evita exposição residual quando o desligamento manual do acesso é esquecido.",
+      "resposta_padrao": "Desabilitar manualmente a conta ao fim da atividade.",
+      "por_que_nao": "A etapa manual pode falhar e deixar o acesso disponível além da janela autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de registro de sessão para verificar aderência do terceiro ao escopo autorizado.",
+      "pergunta": "Logs de login mostram que o fornecedor entrou no horário aprovado, mas é preciso verificar se só executou o diagnóstico autorizado e não alterou lógica ou permissivos. Que controle faltou?",
+      "resposta": "registro de sessão",
+      "explicacao": "Para confirmar aderência ao escopo, é preciso evidência do que foi executado na sessão; login e logout não mostram comandos nem alterações.",
+      "resposta_padrao": "Conferir apenas os logs de autenticação.",
+      "por_que_nao": "Eles mostram entrada e saída, não as ações realizadas nem se o escopo foi respeitado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se houve aderência ao escopo previsto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Exigência de identidade individual verificável para atividades de terceiros com potencial de alterar lógica.",
+      "pergunta": "Dois técnicos do fornecedor vão se revezar na mesma estação de engenharia para alterar lógica durante uma parada curta, e a prática local é usar uma conta única da empresa contratada. Qual exigência de acesso é indispensável?",
+      "resposta": "identidade individual verificável",
+      "explicacao": "Como a atividade pode alterar lógica, a governança precisa permitir atribuição inequívoca de autoria; conta compartilhada impede rastreabilidade efetiva.",
+      "resposta_padrao": "Usar uma conta genérica do fornecedor e trocar a senha ao fim da parada.",
+      "por_que_nao": "Conta compartilhada não permite saber quem executou cada alteração em lógica ou parâmetros críticos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "identidade individual verificável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

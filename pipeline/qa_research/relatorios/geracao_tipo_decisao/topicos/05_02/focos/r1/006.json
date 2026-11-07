@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de sincronização antes de interligar barramentos energizados por bus tie.",
+      "pergunta": "Duas seções de barramento, cada uma alimentada por gerador próprio, precisam ser interligadas para recomposição de carga. Tensão e frequência estão próximas, mas ambos os lados seguem energizados. Qual ação técnica deve anteceder o fechamento do bus tie?",
+      "resposta": "Sincronização elétrica dos barramentos antes do fechamento do bus tie",
+      "explicacao": "Com ambos os barramentos energizados, a interligação sem sincronização pode produzir transitórios severos e perda ampla de cargas; a condição elétrica deve ser rigorosamente controlada.",
+      "resposta_padrao": "Fechar o bus tie e deixar o compartilhamento de carga se estabilizar.",
+      "por_que_nao": "Sem sincronização prévia, a manobra pode gerar transitórios severos e desligar muitas cargas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Decisão de manter o bus tie aberto quando a interligação altera curto-circuito e compromete a seletividade.",
+      "pergunta": "Com o bus tie fechado, uma falta em um alimentador passou a acionar proteção a montante antes do disjuntor do próprio circuito; as cargas críticas podem permanecer divididas entre as seções. Qual arranjo operacional adotar até rever a coordenação?",
+      "resposta": "Operar o barramento seccionado com o bus tie aberto",
+      "explicacao": "O tie fechado cria caminhos adicionais de corrente de falta e altera níveis de curto-circuito, sensibilidades e tempos de atuação; sem coordenação revista, a seletividade fica comprometida.",
+      "resposta_padrao": "Manter o bus tie fechado para aumentar redundância.",
+      "por_que_nao": "A redundância não compensa a perda de seletividade quando o tie fechado mudou a base de coordenação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A função da proteção é eliminar a parte defeituosa com a menor perda possível de continuidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seletividade entre a retaguarda do transformador e os relés dos alimentadores secundários em barramento interligado.",
+      "pergunta": "No secundário interligado por bus tie, uma falta em alimentador derruba o disjuntor primário do transformador antes do próprio alimentador, embora o circuito tenha relé dedicado. Qual coordenação de proteção corrigir primeiro?",
+      "resposta": "Coordenação da retaguarda de fase e terra do primário com os alimentadores secundários",
+      "explicacao": "Nessa arquitetura, a retaguarda do primário deve aguardar a proteção do alimentador secundário; se estiver descoordenada, uma falta a jusante pode desligar indevidamente barramento e transformador.",
+      "resposta_padrao": "Aumentar apenas o atraso do disjuntor primário do transformador.",
+      "por_que_nao": "O problema envolve coordenação das funções de fase e terra com os relés dos alimentadores, não um atraso isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário, para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

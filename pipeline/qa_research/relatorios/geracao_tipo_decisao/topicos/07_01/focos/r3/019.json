@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 3,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de override no caminho de controle para manter o sinal original disponível à supervisão",
+      "pergunta": "Analisador intermitente alimenta um controlador de razão; a leitura original ainda precisa permanecer visível e com alarmes, e a malha não pode ir para manual. Que intervenção temporária deve ser aplicada?",
+      "resposta": "Override na entrada do controlador",
+      "explicacao": "O override limita a substituição ao caminho de controle. Forçar o sinal original ampliaria o efeito para supervisão e alarmes, alterando a leitura do estado real.",
+      "resposta_padrao": "Forçar o sinal analógico do analisador.",
+      "por_que_nao": "Isso mascara a leitura original e pode atingir alarmes e supervisão que ainda precisam refletir o campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de registrar o estado de intervenções temporárias para reconstruir o comportamento real da automação",
+      "pergunta": "As tendências de processo ficaram plausíveis durante horas, mas uma proteção esteve temporariamente desativada. Para que o histórico permita interpretar corretamente o período, que indicação também deve ser registrada?",
+      "resposta": "Status da intervenção temporária na lógica",
+      "explicacao": "Valores de processo podem parecer normais mesmo com parte da lógica retirada. Registrar o estado da intervenção preserva a interpretação correta de permissivos, intertravamentos e alarmes.",
+      "resposta_padrao": "Historizar apenas PV, SP e saída do controlador.",
+      "por_que_nao": "Essas tendências não mostram que a lógica estava parcialmente retirada e podem sugerir operação automática normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

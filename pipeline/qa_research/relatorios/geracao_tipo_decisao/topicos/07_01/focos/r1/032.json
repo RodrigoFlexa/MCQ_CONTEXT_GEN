@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 32,
+  "rodada": 1,
+  "contexto": {
+    "A1": 31,
+    "F": 32,
+    "A2": 33
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Antes da partida, a atuação do sistema de segurança precisa ser provada por cenário de intertravamento, não por testes locais isolados.",
+      "pergunta": "Instrumentos calibrados e atuadores com curso local confirmado ainda não provaram que uma alta temperatura simulada derruba aquecedor e aplica os permissivos previstos. Qual ensaio deve ser executado antes da liberação?",
+      "resposta": "Teste funcional ponta a ponta dos cenários de intertravamento.",
+      "explicacao": "Calibração e curso local não demonstram a resposta integrada de segurança. O comissionamento deve comprovar, por cenário, que entradas, lógica e saídas executam a atuação prevista.",
+      "resposta_padrao": "Fazer apenas loop check e teste local de cada atuador.",
+      "por_que_nao": "Isso não confirma a atuação integrada dos intertravamentos nem a execução da lógica de segurança prevista.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Comissionamento inclui verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada, e não apenas energizar o sistema."
+        },
+        {
+          "bloco": "F",
+          "trecho": "isso inclui testes da matriz de causa e efeito e dos cenários de atuação dos intertravamentos para confirmar a atuação do sistema de segurança."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Anúncios sem ação requerida do operador devem ser configurados como eventos, não como alarmes, para evitar pseudo-alarmes.",
+      "pergunta": "Durante a pré-partida, mudanças de estado sem ação requerida entram como alarme e abafam a mensagem que realmente exige intervenção. Que ajuste de configuração deve ser aplicado a esses anúncios?",
+      "resposta": "Reclassificação desses anúncios como eventos.",
+      "explicacao": "Sem ação esperada do operador, o anúncio deve ser evento. Mantê-lo como alarme cria pseudo-alarmes e compete com mensagens realmente acionáveis.",
+      "resposta_padrao": "Reduzir apenas a prioridade desses alarmes.",
+      "por_que_nao": "Mesmo com menor prioridade, anúncios sem ação útil continuam ocupando atenção e poluindo a lista de alarmes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Comissionamento inclui verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Alarme é um aviso que requer ação do operador em tempo restrito; evento é uma mudança de estado registrada para análise, sem demanda de ação imediata."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "informações que deveriam apenas ser registradas passam a competir por atenção com alarmes realmente acionáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Após intervenção em componente de área classificada, a condição Ex alterada precisa ser restaurada antes do retorno ao serviço.",
+      "pergunta": "Prensa-cabo de uma caixa de ligação em área classificada foi removido e reinstalado; sinais e comando já funcionam normalmente. Antes de liberar o circuito, qual ação técnica específica falta concluir?",
+      "resposta": "Restauração correta do prensa-cabo Ex.",
+      "explicacao": "A função elétrica pode voltar ao normal sem que a proteção contra ignição tenha sido preservada. A condição Ex depende da instalação e da restauração correta após a intervenção.",
+      "resposta_padrao": "Liberar após teste funcional do circuito.",
+      "por_que_nao": "Teste funcional não verifica a manutenção da condição Ex real do arranjo instalado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Comissionamento inclui verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada, e não apenas energizar o sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "intervenção em prensa-cabo, invólucro, vedação, entrada de cabos, borne, solenóide, ligação elétrica, aterramento, ajuste interno ou substituição de componente pode alterar aquecimento, centelhamento, estanqueidade, segregação elétrica ou outras condições relevantes para a proteção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Também importa a restauração correta após abertura, reparo ou substituição"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

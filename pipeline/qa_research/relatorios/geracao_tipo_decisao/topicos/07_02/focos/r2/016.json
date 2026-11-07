@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contenção em sistema legado vulnerável quando atualização e redução adicional de conectividade não são viáveis sem perder função operacional.",
+      "pergunta": "O PLC legado de um compressor crítico usa pilha TCP/IP vulnerável. Não há patch homologado; as conexões ativas já são só as indispensáveis e cortá-las retiraria comando e alarme. Que medida de contenção acrescentar até a remediação?",
+      "resposta": "supervisão reforçada de tráfego e estados do PLC",
+      "explicacao": "Sem patch homologado e sem margem para isolar ou reduzir conexões, a contenção mais adequada em sistema legado é reforçar a supervisão preservando controle e alarmes.",
+      "resposta_padrao": "Aplicar a atualização disponível imediatamente.",
+      "por_que_nao": "Sem compatibilidade validada pelo fornecedor, a atualização pode comprometer a disponibilidade do controle em serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do ponto de aplicação da contenção por exposição potencial do ativo, não apenas por criticidade funcional.",
+      "pergunta": "Há janela para tratar só um ativo agora: um controlador muito crítico já isolado atrás do firewall OT e um analisador remoto menos crítico ainda com serviço publicado na internet. Ambos têm a mesma vulnerabilidade. Onde conter primeiro?",
+      "resposta": "no analisador remoto publicado na internet",
+      "explicacao": "Com a mesma vulnerabilidade, a contenção inicial deve ir ao ativo com maior exposição potencial. Acessibilidade direta pela internet aumenta o caminho provável de exploração remota.",
+      "resposta_padrao": "No controlador mais crítico ao processo.",
+      "por_que_nao": "Neste cenário, a urgência técnica é definida pela exposição imediata ao ataque remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar a exposição potencial dos dispositivos afetados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redução host-level da superfície de ataque em controlador crítico quando a correção existe, mas ainda não é compatível para aplicação imediata.",
+      "pergunta": "Saiu correção para a biblioteca vulnerável, mas o fornecedor ainda não homologou o firmware do controlador; reinício não cabe na campanha atual. Há serviços IP auxiliares habilitados e sem uso operacional. Que ajuste aplicar agora?",
+      "resposta": "desabilitação dos serviços IP auxiliares não essenciais",
+      "explicacao": "Sem homologação e sem janela segura, não se força a atualização. O ajuste mais adequado é reduzir a superfície de ataque removendo conectividade e serviços desnecessários no próprio controlador.",
+      "resposta_padrao": "Instalar a correção disponível.",
+      "por_que_nao": "A existência da correção não basta sem compatibilidade validada e condição operacional para atualizar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A contenção em OT busca limitar propagação e reduzir exposição sem introduzir risco operacional maior que o evento original."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

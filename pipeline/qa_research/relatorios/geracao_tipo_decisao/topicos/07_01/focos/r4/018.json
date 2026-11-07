@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 4,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o estado da planta depende de observações fora da automação, a correlação útil com o DCS exige registro de campo na mesma base de tempo.",
+      "pergunta": "Uma válvula de bloqueio sem indicação no sistema é manobrada em campo e, minutos depois, surge queda de pressão no DCS; entre turnos ninguém consegue reconstruir a ordem dos eventos. Que arranjo técnico de registro deve passar a ser usado nas observações de campo?",
+      "resposta": "Carimbo de hora sincronizado ao DCS nas observações de campo",
+      "explicacao": "Com parte do estado fora da automação, a correlação causa-efeito depende de observações complementares na mesma base de tempo do DCS.",
+      "resposta_padrao": "Anotar a manobra no livro de turno com o horário aproximado.",
+      "por_que_nao": "Horário não sincronizado não permite alinhar a manobra local com as tendências do DCS para reconstruir causa e efeito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito e pode retardar a identificação de desvios, dependendo da disciplina operacional e da forma de registro."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sem redundância nem variável correlata, a utilizabilidade do dado supervisório depende primeiro da atualização efetiva da tag, não da plausibilidade do valor.",
+      "pergunta": "A concentração exibida num dashboard segue plausível e com status GOOD, mas o horário do último ponto não muda há 15 minutos; não há redundância nem variável correlata disponível. Antes de ajustar a dosagem, que parâmetro do dado precisa ser verificado?",
+      "resposta": "Tempo desde a última atualização da tag",
+      "explicacao": "Sem redundância nem variável correlata, não há outra validação disponível. Se a tag não renova, valor plausível e status GOOD podem ser apenas retenção do último dado.",
+      "resposta_padrao": "Usar o valor mostrado, já que ele continua plausível e com status GOOD.",
+      "por_que_nao": "No cenário, plausibilidade e status não provam atualidade; dado congelado pode manter ambos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sinais de indisponibilidade da camada que transporta ou processa o dado devem prevalecer sobre a própria tela ao julgar uma tendência supervisória.",
+      "pergunta": "A tendência do dashboard continua desenhando pontos e o valor parece coerente, porém o serviço que coleta essas tags para a visualização entrou em indisponibilidade. Sem acesso imediato à faceplate do controlador, qual indicação técnica deve governar o uso dessa tendência no diagnóstico?",
+      "resposta": "Alarme de indisponibilidade do coletor da visualização",
+      "explicacao": "Para diagnóstico de arquitetura, também contam sinais de indisponibilidade da camada que transporta ou processa o dado. Tendência renovando na tela pode vir de cache ou reciclo da aplicação.",
+      "resposta_padrao": "Confiar na própria tendência, porque ela ainda está desenhando pontos coerentes.",
+      "por_que_nao": "Com o coletor indisponível, a renovação da tela pode não corresponder a novas amostras do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 4,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição do elo físico-funcional que deve entrar no escopo de integridade digital quando a indisponibilidade pode nascer do suporte comum às barreiras.",
+      "pergunta": "Plano de integridade digital revisará só um item adicional neste ciclo. Servidores e rede já têm controles maduros, mas controle, shutdown e mitigação ainda compartilham o mesmo suporte elétrico contínuo. Qual elo deve entrar no escopo?",
+      "resposta": "a UPS compartilhada com o bypass associado",
+      "explicacao": "A disponibilidade efetiva também depende da cadeia de suporte físico. Quando barreiras distintas compartilham a mesma UPS, ela vira ponto crítico de falha comum e deve entrar no escopo.",
+      "resposta_padrao": "o software de controle",
+      "por_que_nao": "O software pode estar íntegro e ainda assim perder disponibilidade por falha comum no suporte elétrico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela depende também da cadeia de suporte físico e funcional, incluindo alimentação elétrica, Uninterruptible Power Supply (UPS), bancos de baterias e modos de bypass."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de intervenção em parada curta quando uma vulnerabilidade compensada concorre com degradação comprovada da UPS comum a funções críticas.",
+      "pergunta": "Um scanner confirmou CVE no historiador da DMZ, protegido por regras restritivas e sem eventos. Na mesma campanha, a UPS comum a controle, shutdown e mitigação reprovou autoteste de transferência. Qual intervenção entra primeiro na parada curta?",
+      "resposta": "a correção da UPS compartilhada",
+      "explicacao": "A UPS degradada é modo de falha comum para barreiras críticas e já mostra perda de confiabilidade. A CVE está com exposição reduzida, e patch em OT exige validação de compatibilidade.",
+      "resposta_padrao": "o patch do historiador da DMZ",
+      "por_que_nao": "Neste cenário, a vulnerabilidade está compensada; a UPS pode retirar simultaneamente funções críticas se falhar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A falta de manutenção em UPS pode levar à perda simultânea de energia para sistemas de controle industrial, de shutdown de emergência e de mitigação de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis até que exista remediação compatível."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

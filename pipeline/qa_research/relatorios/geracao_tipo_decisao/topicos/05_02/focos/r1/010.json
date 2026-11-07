@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Posição normal do TIE entre dois sistemas redundantes de 24 Vcc quando cada lado suporta sozinho toda a carga.",
+      "pergunta": "Os dois sistemas de 24 Vcc têm retificador, bateria e capacidade individual para toda a carga do quadro; existe um disjuntor TIE entre eles. Sem falha ativa nem transferência necessária, como esse TIE deve operar?",
+      "resposta": "Normalmente aberto.",
+      "explicacao": "Como cada lado já supre integralmente a demanda, o TIE aberto preserva a segregação real e evita que falha ou intervenção em um lado afete o outro.",
+      "resposta_padrao": "Normalmente fechado para os dois lados se apoiarem continuamente.",
+      "por_que_nao": "Cada lado já atende toda a carga; o TIE fechado reduz a independência e pode propagar uma única falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação da alimentação dos painéis de controle dos geradores para evitar perda de geração por falha no 24 Vcc de serviços gerais.",
+      "pergunta": "A perda do 24 Vcc de serviços gerais desenergiza os painéis de controle dos geradores em operação, enquanto máquina motriz e circuito de potência permanecem disponíveis. Que alimentação deve ser adotada para esses painéis?",
+      "resposta": "Quadro de 24 Vcc segregado para os painéis de controle dos geradores.",
+      "explicacao": "O evento mostra que a indisponibilidade é de comando, não de potência mecânica. Separar esses painéis do 24 Vcc de serviços gerais remove o gatilho do blackout.",
+      "resposta_padrao": "Adicionar outro retificador e banco de baterias ao mesmo quadro de 24 Vcc.",
+      "por_que_nao": "A redundância nominal aumenta, mas o mesmo quadro de serviços gerais continua sendo ponto único de falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle de geradores em operação levou à perda da geração principal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Rearranjo de alimentação quando dois trens redundantes terminam dependentes da mesma UPS, apesar de existir UPS reserva independente.",
+      "pergunta": "Dois trens redundantes de controle aparecem separados no unifilar, mas a inspeção de campo mostra ambos alimentados pela mesma UPS; a UPS B existe e está ociosa. Que rearranjo de alimentação deve ser feito?",
+      "resposta": "Migrar um dos trens para a UPS B independente.",
+      "explicacao": "A separação no desenho é apenas nominal se ambos descem da mesma UPS. Distribuir os trens entre UPS independentes restaura a segregação das rotas de alimentação.",
+      "resposta_padrao": "Trocar a UPS A por outra maior e manter os dois trens nela.",
+      "por_que_nao": "Maior capacidade não remove a dependência comum; a falha de uma única UPS continua derrubando os dois trens.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

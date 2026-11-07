@@ -1,0 +1,117 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 2,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação entre privilégios administrativos internos e acesso de engenharia de fornecedor em intervenção de firmware.",
+      "pergunta": "Fornecedor vai atualizar o firmware de um controlador e pede credencial de administrador do domínio OT para instalar seu utilitário na estação de engenharia e criar conta de serviço. Qual arranjo de acesso aplicar?",
+      "resposta": "administração interna e fornecedor com acesso de engenharia temporário",
+      "explicacao": "A atividade exige alteração de firmware/configuração, típica de engenharia. Privilégio administrativo do domínio excede a tarefa, amplia capacidade de criar contas, desabilitar proteções e apagar rastros.",
+      "resposta_padrao": "Conceder administrador temporário ao fornecedor para evitar atraso na atualização.",
+      "por_que_nao": "Atualização de firmware não requer administração do domínio; esse privilégio extrapola a necessidade e aumenta o impacto potencial do terceiro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha entre privilégio de operação e de engenharia quando a intervenção se limita a atuar no processo.",
+      "pergunta": "Durante a investigação de uma oscilação, o especialista só precisa colocar a malha em manual por alguns minutos e variar o setpoint dentro da faixa autorizada; parâmetros, lógica e firmware não serão alterados. Que acesso liberar?",
+      "resposta": "acesso de operação temporário",
+      "explicacao": "A tarefa é atuar no processo sem mudar parâmetros, configuração, lógica ou firmware. Engenharia seria privilégio acima do necessário para uma intervenção operacional limitada.",
+      "resposta_padrao": "Liberar acesso de engenharia para ele ajustar a malha.",
+      "por_que_nao": "O cenário descreve apenas atuação operacional no processo; engenharia abriria possibilidade desnecessária de alterar configuração e lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de quando a recomposição de uma estação de engenharia exige privilégio administrativo, não de engenharia.",
+      "pergunta": "A estação de engenharia recebeu disco novo; faltam ingresso no domínio OT, certificados e agente de proteção, mas o projeto de controle já foi restaurado. Que privilégio deve ser usado para concluir a recomposição?",
+      "resposta": "acesso administrativo temporário",
+      "explicacao": "As pendências são de sistema e segurança da estação: domínio, certificados e proteção. Como a lógica já foi restaurada, o privilégio decisivo é administrativo, não de engenharia.",
+      "resposta_padrao": "Usar acesso de engenharia, já que a estação é de engenharia.",
+      "por_que_nao": "As ações restantes envolvem administração do sistema e das proteções, não alteração de lógica, configuração de controle ou firmware.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio a contas de serviço de aplicações com separação de administração do host.",
+      "pergunta": "Um agente de monitoramento remoto só envia tags e alarmes do historiador, mas o instalador pede que a mesma conta de serviço fique com privilégio administrativo permanente para futuras atualizações. Qual arranjo de credenciais adotar?",
+      "resposta": "conta de serviço só de observação e administração temporária separada",
+      "explicacao": "O agente apenas lê dados; administração do host para atualização é outro privilégio e não deve ficar permanente na mesma credencial. Se necessário, a elevação administrativa deve ser separada e temporária.",
+      "resposta_padrao": "Manter uma única conta administrativa permanente do agente para simplificar o suporte.",
+      "por_que_nao": "Coleta de dados requer observação; administração permanente mistura funções e amplia indevidamente a capacidade da aplicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "conceder a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acesso de observação tem potencial de exposição de informações"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

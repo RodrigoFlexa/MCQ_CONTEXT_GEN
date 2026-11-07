@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 12,
+  "rodada": 4,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Liberação remota de válvula modulante requer retorno contínuo de posição na supervisão, não só fins de curso.",
+      "pergunta": "No DCS, a válvula aceita comando analógico; em campo, o posicionador segura 30%, 50% e 70%, mas a tela só recebe fim de curso. O que ainda precisa entrar em serviço para liberar a função modulante remota?",
+      "resposta": "Realimentação contínua de posição para a IHM",
+      "explicacao": "A capacidade de modulação já foi comprovada no campo. Para a função remota estar realmente disponível, falta a indicação contínua de posição; fins de curso só confirmam os extremos.",
+      "resposta_padrao": "Instalar um posicionador de válvula.",
+      "por_que_nao": "O posicionamento intermediário já existe e se mantém no campo; a pendência é levar essa posição continuamente para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para operação remota foi colocada em serviço apenas como totalmente aberta ou fechada, embora documentação de projeto indicasse controle de posição, e o indicador de posição ainda permanecia pendente."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre modo de atuação pretendido, capacidade de modulação ou de abre-fecha, indicação de posição e resposta observável do atuador em campo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Entre os acessórios citados estão posicionador, transdutor, regulador de pressão de suprimento, operador manual, snubber e chave fim de curso."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Disponibilidade da função de controle exige teste integrado dinâmico; verificações estáticas e sinais na IHM não bastam.",
+      "pergunta": "I/O, comunicação, calibração e curso da válvula já passaram; antes da partida, ainda falta uma prova capaz de expor sequência errada, permissivos mal associados e sentido invertido. Que teste executar?",
+      "resposta": "Teste funcional integrado em automático sob condição representativa",
+      "explicacao": "Falhas de configuração, sequência e sentido de atuação podem passar em checagens estáticas. Os blocos associam sua revelação a testes integrados, em regime representativo e controlado, antes da operação.",
+      "resposta_padrao": "Repetir o loop check estático de entradas e saídas.",
+      "por_que_nao": "Loop check confirma trajetos de sinal, mas não comprova o comportamento integrado da lógica, do controlador e do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de descompasso mostra que a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O princípio técnico transferível é que testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados e instabilidade inicial de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No comissionamento, a arquitetura de automação precisa ser verificada como sistema integrado, não apenas como coleção de equipamentos energizados."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 2,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Liberação de acesso remoto em IACS exige validar o estado de segurança do dispositivo de origem, mesmo com VPN já implantada.",
+      "pergunta": "VPN com MFA já está ativa. Na última intervenção surgiu um serviço inesperado na estação de engenharia, e o fornecedor quer retornar com o mesmo notebook usado também em outras plantas. Que pré-condição técnica deve ser exigida antes de liberar a sessão?",
+      "resposta": "comprovação do estado de segurança do notebook de origem",
+      "explicacao": "A VPN protege o canal, mas não elimina comprometimento prévio do endpoint. Um notebook reutilizado entre instalações pode levar malware, configuração indevida ou versões incompatíveis para a sessão remota.",
+      "resposta_padrao": "Trocar a senha da VPN e liberar o acesso normalmente.",
+      "por_que_nao": "Reforçar credenciais do canal não corrige risco já presente no equipamento que vai se conectar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O risco é maior quando o dispositivo é reutilizado entre múltiplos contratos ou instalações"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "verificar a condição do dispositivo usado na conexão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a intervenção remota é apenas diagnóstica, o escopo de permissões deve ser restringido ao mínimo compatível, sobretudo em condição operacional sensível.",
+      "pergunta": "Com alimentação contingenciada após falha parcial de UPS, a intervenção remota foi autorizada apenas para extrair tendências e comparar parâmetros, sem qualquer ajuste. Que escopo de acesso remoto deve ser liberado?",
+      "resposta": "permissões somente leitura",
+      "explicacao": "Com barreiras operacionais reduzidas, a sessão fica mais sensível. Como a tarefa é diagnóstica, o escopo compatível é somente leitura, evitando capacidade desnecessária de alterar configuração, lógica ou setpoints.",
+      "resposta_padrao": "O perfil completo de engenharia do fornecedor.",
+      "por_que_nao": "Credenciais de engenharia ampliam impacto operacional sem necessidade, justamente quando reinicializações e indisponibilidade ficaram mais críticas.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "qualquer atividade remota ou de manutenção sobre ativos digitais torna-se mais sensível, porque perda de energia, reinicialização ou indisponibilidade pode coincidir com redução de barreiras operacionais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "escopo compatível com a tarefa executada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sessões remotas em IACS devem ser encerradas ao término da necessidade operacional para não prolongar exposição desnecessária.",
+      "pergunta": "O fornecedor concluiu a atividade e quer deixar a VPN autenticada em stand-by até o turno seguinte, caso o defeito retorne. Que ação técnica deve ser tomada ao final do trabalho?",
+      "resposta": "encerramento da sessão remota ao fim da atividade",
+      "explicacao": "Manter a sessão aberta prolonga a exposição do ambiente a um endpoint externo e às permissões já concedidas, mesmo sem intervenção ativa. O acesso deve durar apenas a necessidade operacional.",
+      "resposta_padrao": "Manter a conexão aberta para retomada mais rápida.",
+      "por_que_nao": "A sessão remota deve ser delimitada pela necessidade operacional e encerrada quando a atividade termina.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "atividade delimitada por necessidade operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

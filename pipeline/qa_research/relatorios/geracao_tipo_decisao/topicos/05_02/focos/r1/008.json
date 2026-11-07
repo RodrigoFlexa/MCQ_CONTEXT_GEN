@@ -1,0 +1,85 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo operacional da geração antes da partida de grande motor em barramento pouco rígido.",
+      "pergunta": "Barramento seccionado: um compressor grande partirá numa metade alimentada por um único gerador, enquanto a outra tem geração disponível. O histórico mostra afundamento de tensão local apesar de potência total suficiente. Que arranjo operacional adotar antes da partida?",
+      "resposta": "Operar os geradores participantes em paralelo sob PMS.",
+      "explicacao": "A limitação é a rigidez do barramento local e a resposta desacoplada das fontes. Com os geradores participantes em paralelo sob PMS, o compartilhamento de carga e a resposta transitória ficam mais previsíveis.",
+      "resposta_padrao": "Manter os barramentos seccionados e partir só com a geração da própria metade.",
+      "por_que_nao": "Potência instalada total não elimina a fraqueza do barramento local nem garante compartilhamento dinâmico adequado durante a partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a partida de grande consumidor precisa considerar a rigidez do barramento, a reserva dinâmica das fontes, o compartilhamento de carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando todos os geradores participantes operam em paralelo sob controle do PMS, a resposta coordenada tende a ser mais previsível"
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta só repete os atributos; peça a ação técnica específica"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do viés de controle do PMS quando a limitação dominante na partida é frequência sob droop.",
+      "pergunta": "Com geradores em droop, a partida de um motor grande derruba a frequência e gera alarmes, mas a tensão em vazio já opera perto do limite superior. Qual ajuste temporário o PMS deve aplicar antes do fechamento do disjuntor?",
+      "resposta": "Viés temporário de frequência pelo PMS.",
+      "explicacao": "Sob droop, a partida pode desviar a frequência. Como a tensão já está perto do limite, elevá-la consumiria margem e aumentaria o risco de sobretensão ao fim da aceleração.",
+      "resposta_padrao": "Elevar a tensão de referência do barramento antes da partida.",
+      "por_que_nao": "Neste cenário, a restrição dominante é a frequência e a margem de tensão já está comprometida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "causando afundamento de tensão e possível desvio de frequência quando a geração opera em droop"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o PMS, pode elevar previamente tensão e ou frequência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "os limites de sobretensão ao final da aceleração"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ajuste do perfil de compensação do PMS para evitar sobretensão no final da aceleração de grande motor.",
+      "pergunta": "No fim da aceleração de um grande motor, o PMS ainda mantém os vieses usados para sustentar a partida e o barramento começa a subir além do normal. Que ação de controle deve entrar nessa fase?",
+      "resposta": "Retirada gradual do viés temporário do PMS.",
+      "explicacao": "Perto do fim da aceleração, o esforço transitório cai. Manter o reforço passa a elevar desnecessariamente a tensão; a filosofia descrita prevê reduzir esses ajustes nessa fase.",
+      "resposta_padrao": "Manter o viés até o motor atingir regime totalmente estável.",
+      "por_que_nao": "A corrente e a demanda reativa já estão caindo, e o reforço remanescente tende a empurrar a tensão para cima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "depois reduzir esses ajustes quando a aceleração se aproxima do fim"
+        },
+        {
+          "bloco": "F",
+          "trecho": "os limites de sobretensão ao final da aceleração"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

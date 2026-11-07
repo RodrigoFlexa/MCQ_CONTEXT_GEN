@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de simulação dinâmica quando temperatura máxima e vazão máxima de alívio vêm de transientes distintos.",
+      "pergunta": "Na mesma linha de flare, um transiente curto gera a maior temperatura do gás; outro, o maior pico de vazão. O estudo atual combina os dois picos em um único caso. Que análise deve substituir esse critério?",
+      "resposta": "Simulação dinâmica dos cenários operacionais distintos.",
+      "explicacao": "Os máximos de temperatura e vazão podem ocorrer em cenários e instantes diferentes; a análise dinâmica captura a evolução temporal e evita um caso combinado não representativo.",
+      "resposta_padrao": "Manter um único caso envelope com a maior temperatura e a maior vazão combinadas.",
+      "por_que_nao": "Aqui os máximos vêm de transientes diferentes; combiná-los cria um caso artificial e pode errar o governante real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Estudo dinâmico do comportamento da PSV em bloqueio de válvula com atuação de malhas e tempo de curso.",
+      "pergunta": "Durante bloqueio de uma válvula, o cálculo estacionário indica chatter da PSV; em campo, a manobra leva dezenas de segundos e existe controlador montante atuando. Antes de trocar mola ou orifício, que técnica deve definir a intervenção?",
+      "resposta": "Simulação dinâmica do bloqueio com curso real e controle representados.",
+      "explicacao": "No bloqueio, a abertura e a estabilidade da PSV dependem do transiente, do tempo de manobra e da atuação das malhas; o cálculo estacionário pode induzir uma troca indevida.",
+      "resposta_padrao": "Redimensionar a PSV pelo resultado estacionário de bloqueio.",
+      "por_que_nao": "Neste caso, a abertura e a estabilidade dependem do tempo de manobra e da malha montante, que o estacionário não representa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Avaliação dinâmica do risco de surge na parada de compressores quando anti-surge e blowdown têm atuação transiente.",
+      "pergunta": "Na parada automática de um compressor, o ponto em regime permanente fica longe da linha de surge, mas o alarme de surge aparece antes da abertura total da anti-surge e do blowdown de sucção. Qual análise deve orientar o ajuste da proteção?",
+      "resposta": "Simulação dinâmica da parada com anti-surge e blowdown representados.",
+      "explicacao": "O risco de surge surge do transiente de parada e da sequência entre anti-surge e blowdown; olhar apenas o ponto estacionário não captura o mecanismo crítico.",
+      "resposta_padrao": "Ajustar a margem anti-surge usando apenas o ponto estacionário anterior ao trip.",
+      "por_que_nao": "O evento crítico ocorre durante a parada e depende do atraso relativo entre anti-surge e blowdown, não do ponto fixo no mapa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 3,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de redundância deve ser tratada antes de qualquer intervenção que exponha o único canal remanescente.",
+      "pergunta": "Um dos controladores redundantes está falho e o outro sustenta o processo. Antes de intervir no único nó ativo, que ação técnica vem primeiro?",
+      "resposta": "Restabelecer a redundância do par de controladores",
+      "explicacao": "Sem caminho alternativo efetivo, intervir no canal remanescente deixa a função exposta a perda total por uma segunda falha; a degradação não deve permanecer sem tratamento.",
+      "resposta_padrao": "Prosseguir com a intervenção usando apenas monitoramento reforçado.",
+      "por_que_nao": "Monitoramento não substitui o caminho alternativo; uma segunda falha elimina o serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta só repete os atributos; peça a ação técnica específica"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Energização e calibração local não comprovam integração funcional; a liberação depende de confirmar comunicação com o controlador.",
+      "pergunta": "Analisador recém-calibrado indica corretamente no display local e está energizado, mas a lógica automática depende dele e ainda não foi verificado no controlador. Que ação técnica deve preceder a liberação?",
+      "resposta": "Teste de comunicação entre o analisador e o controlador",
+      "explicacao": "Bom funcionamento local não garante que a automação receba o dado e integre a função; a liberação exige comprovar a comunicação com o controlador.",
+      "resposta_padrao": "Liberar com base na calibração e no display local.",
+      "por_que_nao": "Energização e teste local não bastam para comprovar integração funcional.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na avaliação da confiabilidade de um dado aparentemente normal, a coerência com variáveis correlatas deve orientar a decisão operacional.",
+      "pergunta": "Pressão exibida parece plausível e atualizada, mas variáveis acopladas se movem de forma incompatível. Antes de atuar na malha, que referência técnica deve ser checada?",
+      "resposta": "Coerência entre variáveis relacionadas",
+      "explicacao": "Para diagnóstico de arquitetura, o valor instantâneo não basta; a consistência física com variáveis correlatas ajuda a distinguir dado confiável de indicação apenas aparentemente normal.",
+      "resposta_padrao": "Confiar na pressão por estar plausível e atualizando.",
+      "por_que_nao": "Valor instantâneo e atualização, isoladamente, não garantem consistência do dado.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "não basta olhar o valor instantâneo do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

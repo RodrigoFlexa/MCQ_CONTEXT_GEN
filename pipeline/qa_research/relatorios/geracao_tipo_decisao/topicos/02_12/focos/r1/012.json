@@ -1,0 +1,121 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da variável de pressão da malha de capacidade conforme a prioridade operacional do sistema de compressão.",
+      "pergunta": "Com o header de exportação amortecido por volume a jusante, mas oscilações nos separadores derrubando a vazão de entrada e aproximando o compressor do surge, qual variável a malha de capacidade deve priorizar nesse modo?",
+      "resposta": "Pressão de sucção.",
+      "explicacao": "Quando a necessidade crítica é estabilizar a coleta e proteger a montante, a sucção representa melhor a demanda do processo; controlar a descarga pode mascarar a queda de vazão até perto do surge.",
+      "resposta_padrao": "Controlar a pressão de descarga.",
+      "por_que_nao": "Com folga a jusante e risco na coleta a montante, a descarga deixa de ser a melhor proxy da necessidade do processo.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "o controle de capacidade frequentemente se expressa como controle de pressão em pontos-chave da sucção ou da descarga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se precisa estabilizar a coleta de gás de separadores ou proteger a etapa a montante, a pressão de sucção pode ganhar prioridade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de realimentação de posição em válvula anti-surge para identificar limitações do elemento final em transientes.",
+      "pergunta": "A válvula anti-surge recebe comando de abertura alto nas quedas bruscas de carga, mas a recirculação sobe tarde e o sistema só enxerga o sinal de comando do posicionador. Que recurso instrumental deve ser priorizado?",
+      "resposta": "Realimentação de posição da válvula anti-surge.",
+      "explicacao": "Comparar comando e posição real revela atraso, histerese, stiction ou falha de atuação; em transientes rápidos, o limitante pode estar no elemento final, não no algoritmo.",
+      "resposta_padrao": "Retunar o controlador anti-surge.",
+      "por_que_nao": "Se a válvula não acompanha o comando, a sintonia pode estar correta e ainda assim a resposta física continuar lenta.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "realimentação de posição ao sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "detectar degradação, atraso, histerese ou falha de atuação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de controle de repartição de carga em compressores centrífugos paralelos durante partidas, paradas e transferências.",
+      "pergunta": "Durante a partida de um segundo trem centrífugo em paralelo, a pressão do header permanece no setpoint, mas o trem em serviço encosta no surge antes de a carga se dividir. Que arranjo de controle deve assumir a transição?",
+      "resposta": "Controle de repartição de carga entre trens paralelos.",
+      "explicacao": "Manter só a pressão comum não impede concentração momentânea de carga. A repartição coordena a transferência, evita sobrecarga localizada e reduz a aproximação do surge no trem que já estava operando.",
+      "resposta_padrao": "Usar apenas o mesmo setpoint de pressão de descarga para os dois trens.",
+      "por_que_nao": "O header pode ficar estável enquanto um trem assume carga demais e o outro demora a entrar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema de controle precisa repartir carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "manter partidas, paradas e transferências de trem com segurança e confiabilidade"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de teste automático de curso parcial para assegurar prontidão operacional de válvula crítica de anti-surge.",
+      "pergunta": "Meses de operação mantêm a válvula anti-surge quase sem curso; nos eventos rápidos, a abertura inicial fica lenta, embora os testes em parada sejam satisfatórios. Que funcionalidade incorporar para verificar prontidão em serviço?",
+      "resposta": "Teste automático de curso parcial.",
+      "explicacao": "A válvula crítica pode degradar ou grudar sem demandar curso pleno na rotina. O curso parcial automatizado confirma mobilidade e resposta sem indisponibilizar o trem.",
+      "resposta_padrao": "Programar só teste de abertura total na próxima parada.",
+      "por_que_nao": "Isso não confirma mobilidade durante a campanha nem detecta stiction acumulado quando a válvula quase não se move.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Para válvulas críticas de anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando disponível, teste automático de curso parcial"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

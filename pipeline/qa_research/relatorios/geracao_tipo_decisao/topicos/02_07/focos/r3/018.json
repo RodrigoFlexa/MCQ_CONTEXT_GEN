@@ -1,0 +1,65 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 3,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de controle por bandas quando o separador deve amortecer oscilações frequentes sem perder resposta rápida fora dos limites.",
+      "pergunta": "As chegadas líquidas serrilhadas não tiram o nível da faixa normal, mas a válvula de saída se move sem parar e repassa instabilidade ao tratamento seguinte. Ao mesmo tempo, o inventário precisa ser recuperado rapidamente se sair dos limites. Que lógica de controle de nível adotar?",
+      "resposta": "Controle por bandas.",
+      "explicacao": "Essa lógica mantém a saída próxima da vazão média estimada enquanto o nível fica na banda e só comuta para ação rápida quando o inventário cruza os limites.",
+      "resposta_padrao": "Um PI contínuo mais agressivo na saída líquida.",
+      "por_que_nao": "Ele tende a seguir as oscilações da alimentação e não separa a operação amortecida da correção rápida fora da faixa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também amortecem flutuações de vazão e atenuam oscilações vindas dos poços"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Requalificação da robustez da malha de nível com foco em latência adicional de instrumentação.",
+      "pergunta": "A troca do transmissor por medição com mais filtragem e comunicação lenta eliminou ruído, mas a malha de nível ficou instável em campo apesar de responder bem a degraus. Na requalificação da robustez, que perturbação deve ser aplicada?",
+      "resposta": "Aumento do atraso da malha.",
+      "explicacao": "Quando a instrumentação acrescenta latência, a condição representativa a reproduzir é o atraso adicional da própria malha, citado como perturbação de robustez relevante.",
+      "resposta_padrao": "Aplicar apenas novos degraus na vazão de entrada.",
+      "por_que_nao": "Isso varia a amplitude da perturbação, mas não reproduz o mecanismo que mudou com a filtragem e a comunicação mais lentas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

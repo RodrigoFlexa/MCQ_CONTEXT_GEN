@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência ativa entre geradores locais após interligação de barramentos.",
+      "pergunta": "Com dois geradores locais em paralelo em modo droop, o barramento mantém tensão e frequência, mas um assume quase todo o kW após fechar o tie. Sem limitação de reativos, que ajuste técnico fazer primeiro para repartir a carga?",
+      "resposta": "Ajuste do droop dos governadores",
+      "explicacao": "Como o problema dominante é repartir carga ativa entre geradores locais já em paralelo, a ação correta recai no droop do governador, não na excitação nem em compensação reativa.",
+      "resposta_padrao": "Ajustar a excitação do gerador mais carregado.",
+      "por_que_nao": "Excitação redistribui potência reativa e tensão; o desequilíbrio descrito é de kW entre máquinas em paralelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando a necessidade principal é repartir carga entre geradores locais, os ajustes coordenados de reguladores, excitação e droop são o núcleo da solução."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Configuração operacional do barramento quando o paralelo eleva a corrente de curto além da capacidade do switchgear.",
+      "pergunta": "Após a interligação temporária dos secundários, o curto-circuito calculado excede a capacidade de interrupção dos disjuntores, embora cada seção suporte sozinha suas cargas críticas. Que arranjo operacional manter até reestudar o sistema?",
+      "resposta": "Barramento seccionado com bus tie aberto",
+      "explicacao": "O paralelo cria caminhos adicionais de corrente de falta, eleva o nível de curto-circuito e muda a base de coordenação; se as seções são autossuficientes, a condição segura é manter o tie aberto.",
+      "resposta_padrao": "Manter o bus tie fechado para preservar a redundância.",
+      "por_que_nao": "Com as fontes em paralelo, a contribuição de curto aumenta e pode ultrapassar o dever dos disjuntores, invalidando a base de proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto de atuação do desligamento para proteção de barramento referenciada ao lado primário do transformador.",
+      "pergunta": "No barramento alimentado por transformador sem disjuntor secundário, a proteção de barramento é por diferencial de terra referenciada ao lado primário. Diante da atuação dessa proteção, que abertura deve ser comandada?",
+      "resposta": "Abertura da fonte primária",
+      "explicacao": "Nessa arquitetura, a zona protegida do barramento é isolada pela fonte a montante; sem disjuntor secundário, abrir alimentadores não elimina a alimentação do defeito.",
+      "resposta_padrao": "Abrir o disjuntor do alimentador suspeito.",
+      "por_que_nao": "Falta coberta pela proteção de barramento não está na zona do alimentador; a arquitetura exige abertura da fonte primária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a distribuição costuma ser organizada por barramentos que concentram fontes e cargas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a proteção de barramento pode usar transformadores de corrente nas buchas primárias ou proteção diferencial de terra, exigindo abertura da fonte primária."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

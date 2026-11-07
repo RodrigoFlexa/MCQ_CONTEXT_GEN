@@ -1,0 +1,79 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "rodada": 4,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Registro do intervalo real de indisponibilidade para alimentar RAM e indicadores observados.",
+      "pergunta": "Ordens de manutenção são abertas horas após o trip e fechadas antes da estabilização do processo. Para atualizar o RAM com a indisponibilidade real, qual marcação temporal deve passar a ser registrada?",
+      "resposta": "intervalo entre início da falha e retorno ao estado operacional",
+      "explicacao": "Esse intervalo representa a indisponibilidade observada e alimenta disponibilidade e MTTR com base operacional, sem distorção por marcos administrativos da ordem de serviço.",
+      "resposta_padrao": "Abertura e fechamento da ordem de serviço.",
+      "por_que_nao": "Esses marcos são administrativos e podem não coincidir com a perda de função nem com o retorno operacional real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Separação do RAM por modos operacionais quando as perdas se concentram em regimes transitórios.",
+      "pergunta": "As perdas anuais aparecem quase só nas retomadas pós-parada, enquanto em carga estável o sistema roda bem; o RAM atual usa uma taxa única de falha contínua. Que ajuste de modelagem deve ser adotado?",
+      "resposta": "modelo RAM separado por modos operacionais",
+      "explicacao": "As falhas estão concentradas em um regime específico; separar retomada e operação estável permite comparar modos e refinar a previsão de disponibilidade e confiabilidade.",
+      "resposta_padrao": "Aumentar a taxa média de falha do modelo atual.",
+      "por_que_nao": "Uma média única mistura regimes com comportamentos distintos e esconde o contribuinte dominante das perdas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "comparar modos operacionais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "aderência entre lógica do modelo, regime operacional e qualidade dos dados usados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Revisão dos tempos de reparo no RAM quando muda a recuperabilidade do item no contexto instalado.",
+      "pergunta": "O mesmo item manteve histórico de falha parecido, mas o retorno à operação passou a depender de isolamento extenso, abertura de acessos e janela de içamento. Antes de recalcular a disponibilidade no RAM, qual parâmetro deve ser revisto?",
+      "resposta": "tempos de reparo característicos da instalação",
+      "explicacao": "A perda adicional vem da mantenabilidade no contexto instalado; acessibilidade e estratégia de manutenção alteram o tempo de recuperação mesmo sem mudar a frequência de falha.",
+      "resposta_padrao": "Frequência de falha do equipamento.",
+      "por_que_nao": "O problema observado está na recuperação após a falha, não na ocorrência das falhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Integração funcional exige comprovar comunicação campo-PLC antes da operação, não só calibração, energização ou presença física.",
+      "pergunta": "Instrumentos do circuito de regeneração foram calibrados, energizados e exibem leitura local, mas o PLC ainda não recebe estados nem variáveis desses equipamentos. Antes da partida, qual verificação técnica deve ser executada?",
+      "resposta": "Confirmação da comunicação entre equipamentos de campo e PLC",
+      "explicacao": "Calibração, energização e presença física não demonstram integração funcional. Para a arquitetura operar integrada, o PLC precisa receber os dados dos equipamentos de campo.",
+      "resposta_padrao": "Liberar a partida com base na calibração e na energização dos instrumentos.",
+      "por_que_nao": "Essas evidências não asseguram que os sinais cheguem ao PLC nem que o circuito opere de forma integrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em cobertura parcial da automação, variáveis não integradas ao PLC exigem observação local complementar para manter visibilidade operacional.",
+      "pergunta": "Dois transmissores do skid só têm indicação no painel local e não entram no PLC. Durante a partida, qual arranjo técnico deve ser usado para acompanhar essas variáveis?",
+      "resposta": "Leitura local complementar pelo operador",
+      "explicacao": "Quando a automação cobre apenas parte do processo, a HMI não mostra todas as condições. A visibilidade dessas variáveis depende de observação fora do PLC.",
+      "resposta_padrao": "Conduzir a partida apenas pela HMI disponível.",
+      "por_que_nao": "Com cobertura parcial da automação, a supervisão não representa integralmente o estado físico do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "parte da visibilidade do processo depende de observação complementar do operador"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda simultânea de vários sinais de um mesmo módulo remoto com rack apagado direciona a intervenção inicial para a alimentação local, não para a rede.",
+      "pergunta": "Vários sinais de um mesmo rack remoto congelam de uma vez; o switch central segue sem alarme de porta e os LEDs do rack apagam. Qual ponto técnico deve ser tratado primeiro?",
+      "resposta": "Fonte de alimentação do rack remoto",
+      "explicacao": "Em módulos remotos, o sintoma depende de alimentação, comunicação e lógica local. Com perda ampla e rack apagado, a primeira intervenção deve atacar a alimentação local.",
+      "resposta_padrao": "Rede de comunicação do rack remoto.",
+      "por_que_nao": "Falha de rede pode congelar dados, mas não explica o rack apagado; aqui o indício principal é perda de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Com medição e estado ainda atualizados, perda de atuação remota deve ser localizada no caminho de comando, especialmente na interface de saída.",
+      "pergunta": "No controlador, o bit de abrir comuta; valor de processo e estado da válvula seguem atualizados, mas a saída correspondente do rack não energiza. Qual elemento deve ser atacado primeiro?",
+      "resposta": "Cartão de saída digital do comando",
+      "explicacao": "A visibilidade de medição e estado permanece, então não é perda de supervisão nem de medição. Com o comando gerado e sem energização no rack, a falha está na interface de saída.",
+      "resposta_padrao": "Rede entre supervisão e controlador.",
+      "por_que_nao": "Os dados continuam chegando e o comando é criado; o problema está no caminho de atuação, não na visibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

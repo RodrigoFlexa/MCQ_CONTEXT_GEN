@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Padronização da unidade de engenharia como pré-condição para comparação entre ativos e analytics.",
+      "pergunta": "Temperaturas de mancais de trens equivalentes aparecem em escalas incompatíveis entre pacotes de integração; sensores foram verificados em campo, e identificação, timestamp e modo operacional já estão reconciliados. Antes de ajustar limiares do analytics, o que deve ser padronizado?",
+      "resposta": "a unidade de engenharia do sinal",
+      "explicacao": "Os blocos ligam a robustez do analytics à coerência semântica dos dados; sem unidade confiável, a comparação entre trens continua enganosa mesmo com tempo, identificação e modo já reconciliados.",
+      "resposta_padrao": "Ajustar limiares do analytics separadamente para cada trem.",
+      "por_que_nao": "Limiar diferente mascara incoerência semântica; sem unidade confiável, a comparação permanece enganosa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratamento de qualidade para valores retidos por perda de conectividade antes do consumo por analytics.",
+      "pergunta": "Valores de vibração ficam exatamente constantes nas quedas curtas do enlace, e o índice de saúde passa a indicar falsa estabilidade. Que tratamento técnico deve entrar no fluxo antes do analytics?",
+      "resposta": "marcar como má qualidade o valor retido",
+      "explicacao": "Valor congelado por perda de conectividade não representa o processo e precisa ser qualificado como dado ruim; sem esse tratamento, o analytics produz diagnóstico frágil e estabilidade falsa.",
+      "resposta_padrao": "Manter o último valor válido até a comunicação voltar.",
+      "por_que_nao": "Valor retido sem qualificação de qualidade transforma perda de conectividade em falsa estabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "interpretar qualidade de dados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Degradação para modo recomendação quando aplicação externa influencia ajustes frequentes sem conectividade confiável.",
+      "pergunta": "Um otimizador externo recalcula ajuste de vazão a cada poucos segundos; o enlace até ele sofre jitter e interrupções breves, e não haverá execução local. Qual arranjo de uso é o mais adequado?",
+      "resposta": "modo somente recomendação ao operador",
+      "explicacao": "Sem execução local, uma aplicação que reajusta frequentemente não deve atuar como comando de controle por enlace sujeito a jitter e quedas; nessa condição, ela deve permanecer apenas como apoio à decisão.",
+      "resposta_padrao": "Deixar o otimizador escrever automaticamente o último ajuste calculado.",
+      "por_que_nao": "A função influencia ajustes frequentes e não deve depender de enlace com jitter e indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "diferenciar recomendação analítica de comando de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

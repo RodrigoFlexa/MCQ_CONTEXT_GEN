@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "rodada": 3,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de levar estados das funções críticas ao analytics antes de usá-lo para apoiar decisão em condição anormal.",
+      "pergunta": "Para um painel de analytics em edge emitir recomendação automática durante condição anormal, ele já usa tendências de processo e condição de equipamento. Qual informação técnica precisa entrar nesse painel antes de autorizar esse uso?",
+      "resposta": "os estados das funções críticas de controle e proteção",
+      "explicacao": "Analytics ampliam observação e prognóstico, mas não substituem monitoramento de segurança nem sustentam resposta adequada sem considerar os estados reais das funções críticas.",
+      "resposta_padrao": "Mais sensores e mais histórico no modelo analítico.",
+      "por_que_nao": "Melhora predição, mas não torna o painel apto a apoiar condição anormal sem os estados reais de controle e proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics em dispositivos, edge computing e modelos digitais podem ampliar observação e previsão de falhas, porém não substituem monitoramento de segurança nem garantem resposta adequada sem integração com funções críticas e decisão operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa interação importa porque indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da supervisão operacional sobre ferramentas analíticas quando o respaldo de energia só comporta uma carga adicional.",
+      "pergunta": "Na autonomia remanescente do respaldo cabe energizar só uma carga adicional: a estação HMI principal da sala de controle ou o historiador analítico. PLCs e proteções locais seguem ativos. Qual carga deve ser priorizada?",
+      "resposta": "a estação HMI principal da sala de controle",
+      "explicacao": "Com controle e proteção locais preservados, a limitação passa a ser a supervisão para responder ao evento. Historiador e analytics não substituem a visão operacional em tempo real.",
+      "resposta_padrao": "O historiador analítico, para preservar os dados do incidente.",
+      "por_que_nao": "Ele ajuda análise posterior, mas não devolve a supervisão necessária para conduzir a resposta operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "F",
+          "trecho": "analytics em dispositivos, edge computing e modelos digitais podem ampliar observação e previsão de falhas, porém não substituem monitoramento de segurança nem garantem resposta adequada sem integração com funções críticas e decisão operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da cadeia de energia de suporte na triagem de perda de supervisão coincidente com transferência para respaldo.",
+      "pergunta": "Perda de comunicação e alarmes de rede apareceram na transferência para energia de respaldo, enquanto malhas locais continuam controlando. Antes de segmentar a rede suspeita, qual subsistema deve ser tratado primeiro?",
+      "resposta": "a UPS da supervisão",
+      "explicacao": "A degradação da alimentação de suporte pode provocar perda de comunicação e derrubar a supervisão. Verificar primeiro a dependência de energia evita tratar a consequência como causa.",
+      "resposta_padrao": "O segmento de rede que disparou os alarmes.",
+      "por_que_nao": "Os sinais começaram na comutação de energia; isolar a rede antes de checar o respaldo pode agravar a perda de supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

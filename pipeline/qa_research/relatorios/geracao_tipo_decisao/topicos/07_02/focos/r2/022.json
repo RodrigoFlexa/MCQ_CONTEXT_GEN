@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da camada de normalização de dados quando a interpretação humana depende de consistência semântica.",
+      "pergunta": "Controladores de fornecedores diferentes entregam tags e unidades incompatíveis, e o supervisório já concentra os dados usados por analytics e HMI. Para padronizar o significado operacional antes de treinar os turnos, onde aplicar a normalização?",
+      "resposta": "na camada SCADA",
+      "explicacao": "Sem padronização suficiente no controle, a normalização viável fica no SCADA, que já está próximo da fonte e sustenta interpretação consistente dos dados e alertas pelos operadores.",
+      "resposta_padrao": "Padronizar em cada controlador.",
+      "por_que_nao": "Aqui a própria camada de controle é heterogênea; o SCADA é o ponto viável para normalização semântica comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "assegurar que as pessoas entendam o significado operacional dos dados e dos alertas produzidos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição do privilégio de acesso remoto compatível com a tarefa executada.",
+      "pergunta": "Janela aprovada, credencial válida e tarefa restrita à coleta de diagnóstico online em PLC, sem download nem alteração lógica. Qual perfil técnico deve ser liberado para a sessão remota?",
+      "resposta": "perfil somente leitura",
+      "explicacao": "Se a atividade é apenas diagnóstico, a permissão aplicável é leitura. Conceder escrita ou engenharia amplia capacidades além da condição real de uso.",
+      "resposta_padrao": "Liberar perfil de engenharia completo.",
+      "por_que_nao": "A tarefa não envolve mudança; perfil mais amplo contraria o reconhecimento da permissão aplicável ao acesso digital.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reconhecer permissões e procedimentos aplicáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "só funcionam de forma confiável quando operadores, mantenedores e engenheiros sabem reconhecer limites da automação, condições de uso e sinais de comportamento anormal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratamento de recomendações analíticas quando há perda de conectividade e risco de ação humana indevida.",
+      "pergunta": "A conexão com o servidor analítico cai, mas a última recomendação continua destacada na tela local durante um distúrbio de processo. Que comportamento técnico a interface deve adotar nesse caso?",
+      "resposta": "invalidar a recomendação por timeout de comunicação",
+      "explicacao": "Com perda de conectividade, a recomendação deixa de ter confiabilidade temporal. Ela deve expirar para não ser tomada como orientação ainda válida ou equivalente a comando.",
+      "resposta_padrao": "Manter a última recomendação destacada até a reconexão.",
+      "por_que_nao": "Sem comunicação, o dado pode estar obsoleto; mantê-lo ativo favorece ação fora das condições de uso da automação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "só funcionam de forma confiável quando operadores, mantenedores e engenheiros sabem reconhecer limites da automação, condições de uso e sinais de comportamento anormal."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação da unidade de engenharia como condição para usar dados digitais em decisão operacional.",
+      "pergunta": "Após troca do gateway, uma variável de temperatura reaparece com o mesmo número em SCADA, historiador e analytics, mas sem unidade indicada na HMI. Antes de reduzir carga, o que precisa ser confirmado?",
+      "resposta": "a unidade de engenharia do sinal",
+      "explicacao": "Sem unidade confiável, o valor pode estar em escala ou referência diferente. Agir pelo número ou pela tendência antes disso produz comparação enganosa.",
+      "resposta_padrao": "Agir pela tendência de alta observada.",
+      "por_que_nao": "Tendência sem unidade confiável pode refletir conversão ou escala errada, não uma mudança física válida do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "É capacitar a interpretar qualidade de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

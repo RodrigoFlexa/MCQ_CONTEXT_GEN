@@ -1,0 +1,87 @@
+{
+  "item": "02_12",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ajuste inicial do anti-surge pela curva do sistema local, não por transplante entre máquinas idênticas.",
+      "pergunta": "No comissionamento de um compressor do mesmo modelo de outro trem, a sucção nominal é igual, mas este descarrega em cabeçalho mais restritivo. Que referência de instalação deve orientar o ajuste inicial da proteção contra surge?",
+      "resposta": "Curva do sistema desse cabeçalho.",
+      "explicacao": "A fronteira de surge resulta da interação entre a curva do compressor e a do sistema; maior pressão de entrega desloca a operação para a região crítica e invalida copiar ajustes de outra aplicação.",
+      "resposta_padrao": "Replicar a linha anti-surge do trem gêmeo.",
+      "por_que_nao": "Máquinas idênticas podem ter fronteiras de proteção diferentes quando a curva do sistema muda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A condição de surge não é um valor fixo que possa ser transplantado de uma máquina para outra."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ela depende da interação entre a curva do compressor e a curva do sistema."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a planta impõe alta relação de compressão, com pressão de entrega elevada e pressão de sucção mantida, a máquina tende a operar mais próxima da região crítica de baixa vazão relativa."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de proteção anti-surge dedicada por seção em compressores multisseção com sucção intermediária flutuante.",
+      "pergunta": "A vazão total do trem fica acima do mínimo previsto e a primeira seção segue estável, mas a segunda oscila e abre reciclo sempre que a pressão intermediária cai. Que arranjo de proteção deve ser implementado?",
+      "resposta": "Anti-surge dedicado por seção.",
+      "explicacao": "Cada seção vê condições próprias de sucção e descarga. A segunda recebe uma sucção variável da primeira, então a margem ao surge dela não é representada pela vazão total do trem.",
+      "resposta_padrao": "Uma única malha pelo fluxo total do trem.",
+      "por_que_nao": "A vazão total não representa a segunda seção quando a sucção intermediária flutua.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em compressores multisseção, essa dependência é ainda mais forte porque cada estágio enxerga suas próprias condições de sucção e descarga."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segunda seção pode ter sucção inerentemente flutuante por receber a descarga da primeira, de modo que uma estratégia que suponha sucção fixa tende a representar mal sua linha de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O essencial é que a variável medida represente adequadamente a aproximação ao surge sob as condições reais de sucção, descarga, composição e rotação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compensação online do mapa anti-surge pela densidade do gás quando a composição varia mais rápido que a cromatografia.",
+      "pergunta": "Trocas rápidas entre gás leve e pesado mantêm quase a mesma rotação e o mesmo ΔP do elemento de vazão, mas a válvula anti-surge passa a caçar; o cromatógrafo não acompanha o transiente. Qual propriedade deve alimentar a compensação online do mapa?",
+      "resposta": "Densidade do gás na sucção.",
+      "explicacao": "A mudança de composição desloca a vazão volumétrica equivalente e a resposta dinâmica. Com cromatografia atrasada, a densidade representa melhor o efeito instantâneo do gás sobre a proximidade ao surge.",
+      "resposta_padrao": "Peso molecular de projeto.",
+      "por_que_nao": "Valor fixo não acompanha as variações instantâneas de composição que alteram a fronteira efetiva de proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Variações bruscas de suprimento e alterações no peso molecular do gás mudam a densidade, a vazão volumétrica equivalente e a resposta dinâmica do conjunto, dificultando a avaliação da margem ao surge."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O essencial é que a variável medida represente adequadamente a aproximação ao surge sob as condições reais de sucção, descarga, composição e rotação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

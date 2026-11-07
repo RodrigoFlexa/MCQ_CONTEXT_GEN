@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aceitação de válvula remota modulante exige prova de posicionamento em campo, não só telas da IHM.",
+      "pergunta": "A válvula prevista para controlar posição aparece disponível na IHM, mas em campo só houve prova de aberto/fechado e o indicador de posição ainda não foi validado. Que teste técnico deve ser feito antes de aceitar a função remota?",
+      "resposta": "Teste de posicionamento multiponto com verificação local do curso",
+      "explicacao": "Sinal na IHM não comprova função integral. Para uma válvula prevista para controle de posição, é preciso demonstrar modulação coerente com a resposta observável do atuador em campo.",
+      "resposta_padrao": "Basta validar os sinais e comandos exibidos na IHM.",
+      "por_que_nao": "A presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a coerência entre modo de atuação pretendido, capacidade de modulação ou de abre-fecha, indicação de posição e resposta observável do atuador em campo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Erros de sequência, sentido de atuação e associação de alarmes exigem teste funcional integrado em regime representativo.",
+      "pergunta": "Os pontos respondem individualmente, mas a sequência automática ainda não foi rodada; em testes isolados não se comprovou sentido de atuação nem a correspondência dos alarmes. Qual verificação deve ser priorizada no comissionamento?",
+      "resposta": "Teste funcional integrado da sequência automática em regime representativo",
+      "explicacao": "Testes estáticos de I/O não expõem interação entre lógica, comunicação e comportamento do processo. O teste integrado evidencia sequência incorreta, atuação invertida e alarmes associados ao ponto errado.",
+      "resposta_padrao": "Repetir apenas o teste estático ponto a ponto dos I/Os.",
+      "por_que_nao": "Falhas de sequência, sentido incorreto de atuação e alarmes mal associados aparecem em testes integrados, não em inspeções estáticas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sentido incorreto de atuação, falhas de sequência, alarmes mal associados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura distribuída energizada só é liberada após prova ponta a ponta da comunicação entre campo e PLC.",
+      "pergunta": "Valores aparecem saudáveis na supervisão, porém nenhum instrumento distante foi estimulado desde a energização e não houve retorno real ao controlador. Antes da partida, que verificação específica falta?",
+      "resposta": "Teste ponta a ponta entre campo e PLC com mudança real de estado",
+      "explicacao": "Telas sem falha e valores estáveis não provam troca efetiva de sinais. Em arquitetura distribuída, é preciso exercitar ida e volta entre campo e controlador.",
+      "resposta_padrao": "Aceitar a ausência de alarmes de comunicação e os valores visíveis na supervisão.",
+      "por_que_nao": "A arquitetura energizada não basta; é necessária confirmação da comunicação entre equipamentos de campo e PLC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura de automação precisa ser verificada como sistema integrado, não apenas como coleção de equipamentos energizados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da entrada de gás natural"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir pressão de carga da pressão de suprimento ao verificar a força efetiva disponível no atuador com posicionador.",
+      "pergunta": "A haste não vence o diferencial de processo, embora o sinal do controlador varie e a alimentação do posicionador esteja normal. Qual variável deve ser verificada no atuador para confirmar se a força pneumática efetiva é suficiente?",
+      "resposta": "Pressão de carga do atuador",
+      "explicacao": "É a pressão realmente aplicada ao diafragma ou pistão. Com posicionador, a alimentação disponível na entrada pode estar normal e, ainda assim, a carga entregue ao atuador ser insuficiente.",
+      "resposta_padrao": "Pressão de suprimento do ar de instrumento.",
+      "por_que_nao": "Com posicionador, suprimento e carga não são equivalentes; a força no obturador depende da pressão efetivamente entregue ao atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em atuadores pneumáticos, a pressão de carga é a pressão efetivamente aplicada ao diafragma ou pistão para deslocá-lo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificar o posicionador como elemento prioritário de intervenção quando sinal e suprimento estão corretos, mas a pressão no atuador não segue o comando.",
+      "pergunta": "Com comando coerente do controlador, suprimento estável e mecanismo livre, a pressão no atuador não acompanha as mudanças do sinal e a posição da válvula fica errática. Em qual elemento a intervenção deve se concentrar?",
+      "resposta": "Posicionador",
+      "explicacao": "Se sinal, suprimento e mecânica estão adequados, o componente que modula a pressão enviada ao atuador e pode introduzir erro de posicionamento é o posicionador.",
+      "resposta_padrao": "Atuador pneumático.",
+      "por_que_nao": "O atuador converte a pressão recebida em força; quem ajusta essa pressão para atingir a posição comandada é o posicionador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na prática, o posicionador pode melhorar a capacidade de vencer forças de processo e não linearidades, mas também pode introduzir erro de posicionamento ou participar de fenômenos de instabilidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher a instalação de posicionador quando a válvula sem posicionador não consegue modular adequadamente sob forças de processo variáveis.",
+      "pergunta": "Sem posicionador, a válvula faz o curso completo em bancada, mas em serviço pequenas correções do controlador não vencem as forças de processo ao longo do curso. Qual arranjo técnico deve ser adotado na válvula?",
+      "resposta": "Instalar posicionador",
+      "explicacao": "O posicionador ajusta a pressão no atuador conforme o comando e melhora a capacidade de vencer forças de processo e não linearidades que a ação direta do sinal não supera bem.",
+      "resposta_padrao": "Aumentar o ganho do controlador.",
+      "por_que_nao": "Mais ganho altera o esforço do controlador, mas não a capacidade do elemento final de transformar pequenas variações do sinal em força útil no atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador, folgas mecânicas, atrito, limitação de ar ou problemas no próprio atuador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na prática, o posicionador pode melhorar a capacidade de vencer forças de processo e não linearidades"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O efeito observado depende da interação entre atrito mecânico, força disponível no atuador, pressão de suprimento, presença de posicionador e forças de processo atuando sobre o obturador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar o restabelecimento da pressão de suprimento quando a limitação é de ar disponível ao posicionador, antes de recalibração.",
+      "pergunta": "O curso útil cai nas maiores demandas: o controlador vai ao máximo, o posicionador tenta aumentar a saída, mas a pressão na sua alimentação despenca. Qual ajuste técnico deve ser priorizado antes de recalibrar a válvula?",
+      "resposta": "Restabelecer a pressão de suprimento do posicionador",
+      "explicacao": "Sem pressão adequada na porta de alimentação, o posicionador não consegue gerar a carga necessária no atuador. Recalibração não corrige falta de ar disponível.",
+      "resposta_padrao": "Recalibrar o posicionador.",
+      "por_que_nao": "Calibração não recompõe a pressão disponível na alimentação; sem suprimento suficiente, a pressão de carga continuará limitada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O efeito observado depende da interação entre atrito mecânico, força disponível no atuador, pressão de suprimento, presença de posicionador e forças de processo atuando sobre o obturador."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "item": "02_10",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle por bandas com ação corretiva acelerada apenas ao ultrapassar os limites.",
+      "pergunta": "A interface pode oscilar sem impacto dentro da faixa definida, mas, ao cruzar o limite alto, o underflow demora a se estabilizar e o TOG piora por minutos, sem saturação do atuador. Que comportamento a malha deve aplicar nesse cruzamento?",
+      "resposta": "Correção mais rápida de retorno à banda.",
+      "explicacao": "No controle por bandas, a variação interna é aceitável; o ganho operacional vem de reduzir o tempo fora da região permitida, estabilizando vazão e split que alimentam os hidrociclones.",
+      "resposta_padrao": "Fechar a sintonia para recentrar continuamente a interface no meio da faixa.",
+      "por_que_nao": "O problema está na recuperação lenta fora da banda; recentrar o tempo todo aumenta perturbações desnecessárias na descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interface pode variar dentro de uma faixa permitida e, ao ultrapassar os limites, uma ação mais rápida a reconduz à região aceitável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A sensibilidade do hidrociclone a jusante pode ser o fator limitante da banda de interface.",
+      "pergunta": "Pequenas excursões da interface já elevam o TOG após os hidrociclones, embora a faixa testada ainda não alcance a camada leitosa nem as tomadas do vaso. Ao definir a banda admissível, qual limitante operacional deve comandar essa decisão?",
+      "resposta": "Sensibilidade do hidrociclone a jusante.",
+      "explicacao": "Se a qualidade downstream se altera antes de surgirem restrições geométricas ou de emulsão na faixa usada, a banda deve ser definida pelo equipamento mais sensível ao split e à vazão.",
+      "resposta_padrao": "A maior excursão permitida pela geometria útil do separador.",
+      "por_que_nao": "Nessa faixa, o primeiro efeito indesejado já aparece no tratamento a jusante; usar só a geometria prolonga variações de split e de qualidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa filosofia depende de a faixa admissível ser compatível com a geometria do separador, com a espessura da camada de emulsão e com a sensibilidade do equipamento a jusante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

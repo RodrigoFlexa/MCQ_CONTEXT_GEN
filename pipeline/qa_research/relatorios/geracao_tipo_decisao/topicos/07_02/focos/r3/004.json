@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 3,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escopo de controle de acesso em IACS inclui sistemas elétricos de controle quando deles pode partir o impacto operacional.",
+      "pergunta": "Grandes consumidores passaram a sofrer alívio de carga indevido após suporte autorizado no sistema de gestão elétrica; o DCS apenas recebeu estados e alarmes. Na revisão urgente de acessos, qual sistema deve entrar no mesmo rigor aplicado ao controle de processo?",
+      "resposta": "o sistema elétrico de controle e aquisição de dados",
+      "explicacao": "F inclui sistemas elétricos de controle e aquisição de dados no escopo de acesso do IACS. Como o efeito operacional nasceu ali, endurecer só o DCS não atua na origem do alívio de carga indevido.",
+      "resposta_padrao": "o DCS",
+      "por_que_nao": "O DCS só recebeu informação; o acesso capaz de provocar o alívio de carga está no sistema elétrico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão, funções instrumentadas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação conectados à infraestrutura de rede do IACS."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sistemas de monitoramento de movimento conectados ao ambiente operacional entram no escopo de controle de acesso do IACS.",
+      "pergunta": "Permissivos de operação usam dados do monitoramento de movimento conectado à rede operacional; o fornecedor quer mantê-lo fora da revisão de acessos por não ser \"de processo\". Que sistema deve ser incluído?",
+      "resposta": "o sistema de monitoramento de movimento",
+      "explicacao": "Quando conectado ao ambiente operacional, o monitoramento de movimento integra o escopo de acesso do IACS. Como seus dados entram em permissivos, deixá-lo fora da revisão mantém uma via com efeito direto na operação.",
+      "resposta_padrao": "apenas o supervisório",
+      "por_que_nao": "O supervisório não é a única via crítica; o sistema de movimento conectado influencia permissivos operacionais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em instalações offshore, esse conjunto pode incluir ainda sistemas marítimos, de perfuração e de monitoramento de movimento, quando conectados ao ambiente operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Alteração de firmware em ativo de automação requer privilégio de engenharia, não privilégio administrativo genérico.",
+      "pergunta": "A janela aprovada prevê carregar firmware homologado em um controlador redundante a partir de uma estação Windows com elevação local; não haverá criação de contas nem alteração de políticas do servidor. Qual privilégio do IACS precisa ser habilitado?",
+      "resposta": "acesso de engenharia",
+      "explicacao": "Em IACS, alterar firmware é função de engenharia. Aprovar privilégio administrativo ampliaria o poder sobre contas e proteções sem necessidade técnica para executar a carga homologada.",
+      "resposta_padrao": "acesso administrativo",
+      "por_que_nao": "Administrativo trata contas e proteções do sistema; a tarefa requerida é alteração de firmware no ativo de automação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controladores fazem parte do escopo de acesso mesmo quando a via de mudança não depende de conta de usuário.",
+      "pergunta": "Controladores aceitam carga de lógica pela rede de programação e não possuem autenticação local; a equipe propôs reforçar apenas senhas de HMI e servidor. Qual ativo ainda precisa entrar no controle de acesso para fechar a via de alteração?",
+      "resposta": "os controladores",
+      "explicacao": "Em IACS, controle de acesso também alcança controladores. Se eles recebem carga de lógica pela rede de programação, proteger apenas HMI e servidor deixa aberta a via direta de modificação.",
+      "resposta_padrao": "as contas das IHMs",
+      "por_que_nao": "Mesmo com HMI protegida, a via capaz de receber download de lógica continua sendo o controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da versão aplicável e qualificada, em vez da versão mais nova, para remediação em OT.",
+      "pergunta": "Há um hotfix qualificado para a linha de software instalada e também uma versão major mais nova do mesmo produto. A major ainda não foi testada com os módulos remotos, e a parada disponível comporta só uma intervenção. Qual versão aplicar?",
+      "resposta": "o hotfix qualificado para a linha instalada",
+      "explicacao": "A correção em OT deve considerar versão aplicável, qualificação e testes. A major mais nova, sem validação no arranjo real, pode introduzir indisponibilidade ou comportamento não previsto.",
+      "resposta_padrao": "A versão major mais recente disponível.",
+      "por_que_nao": "Mais nova não significa compatível; sem validação no sistema instalado, aumenta o risco operacional da mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de plano de retorno validado antes de aplicar patch em ativo OT crítico.",
+      "pergunta": "Testes de bancada foram concluídos e o fornecedor qualificou o patch, mas o reinício do controlador pode exigir restauração em minutos se a volta falhar. O que precisa estar tecnicamente pronto antes da atualização?",
+      "resposta": "plano de retorno validado para a versão anterior",
+      "explicacao": "Mesmo com qualificação e testes, a mudança pode introduzir indisponibilidade. Em controle crítico, a atualização deve entrar na janela já com retorno preparado e validado.",
+      "resposta_padrao": "Backup da lógica e dos parâmetros.",
+      "por_que_nao": "Backup preserva conteúdo, mas não substitui um retorno validado de versão e comunicação dentro da janela operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redução de exposição por desabilitação do acesso remoto quando o patch imediato não é viável ou seguro.",
+      "pergunta": "O túnel do fornecedor fica habilitado 24/7, embora o suporte remoto ocorra só em intervenções programadas. O patch da estação de engenharia ainda não pode ser aplicado com segurança. Qual ajuste técnico é mais adequado até existir remediação compatível?",
+      "resposta": "desabilitar o túnel remoto fora das janelas de suporte",
+      "explicacao": "Se o patch imediato não é viável ou seguro, a medida compensatória preferível é reduzir a exposição. Acesso usado só pontualmente não deve permanecer alcançável continuamente.",
+      "resposta_padrao": "Trocar senhas e reforçar a autenticação do túnel.",
+      "por_que_nao": "Melhora credenciais, mas mantém o caminho de manutenção exposto o tempo todo, sem a redução de exposição requerida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "e isolamento adicional podem ser preferíveis até que exista remediação compatível."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de tratamento por exposição real ao vetor, ponderada com o risco operacional da mudança.",
+      "pergunta": "Dois ativos usam o mesmo componente vulnerável. O historiador troca dados com a rede corporativa; o controlador só aceita console local, e reiniciá-lo tira uma malha crítica de serviço. A janela só permite tratar um agora. Qual priorizar?",
+      "resposta": "o historiador com exposição efetiva à rede corporativa",
+      "explicacao": "A priorização deve começar pela exposição real. Aqui o controlador tem superfície menor e maior risco operacional da mudança, enquanto o historiador tem caminho efetivo de rede para exploração.",
+      "resposta_padrao": "O controlador da malha crítica, por ser mais importante ao processo.",
+      "por_que_nao": "Sem exposição de rede relevante e com alto impacto de reboot, ele não é o melhor primeiro alvo nesta janela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

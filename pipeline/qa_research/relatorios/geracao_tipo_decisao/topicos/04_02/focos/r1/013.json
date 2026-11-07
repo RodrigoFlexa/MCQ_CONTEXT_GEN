@@ -1,0 +1,83 @@
+{
+  "item": "04_02",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para escolher atuação totalmente elétrica quando atraso hidráulico, precisão e eliminação do risco do umbilical dominam a decisão.",
+      "pergunta": "Uma válvula submarina de modulação fina passou a responder com atraso e histerese em grande profundidade e longo step-out; além disso, quer-se eliminar a dependência de fluido de controle nessa função. Que arranjo de atuação deve substituir o atual?",
+      "resposta": "Atuação all electric.",
+      "explicacao": "A atuação elétrica elimina volumes compressíveis e perdas das linhas hidráulicas longas, melhora tempo de resposta e precisão e remove o umbilical hidráulico naquela função.",
+      "resposta_padrao": "Arquitetura eletro-hidráulica descentralizada.",
+      "por_que_nao": "Ela reduz linhas e inventário de fluido, mas preserva a potência hidráulica e sua dependência nessa função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Os benefícios atribuídos incluem menor tempo de resposta, maior precisão de controle e maior disponibilidade de dados de condição do equipamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "eliminando a necessidade de umbilical hidráulico naquela função."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para eliminar o risco específico associado ao umbilical hidráulico naquela função, a atuação all electric pode ser atrativa."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Implementação do fail-safe em válvula subsea com atuação totalmente elétrica.",
+      "pergunta": "Sem hidráulica nessa função, a válvula deve ir sozinha para posição segura mesmo com perda total de energia local. Que recurso do acionamento precisa ser especificado?",
+      "resposta": "Pacote de mola fail safe integrado ao atuador elétrico linear.",
+      "explicacao": "Na perda total de energia, motor e lógica não produzem movimento. O retorno à posição segura, na solução elétrica, vem do pacote de mola fail safe integrado.",
+      "resposta_padrao": "Lógica de fechamento no módulo de controle.",
+      "por_que_nao": "Sem energia local, a lógica não aciona o motor; o retorno seguro precisa ser garantido mecanicamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o movimento da válvula é produzido por atuador elétrico, inclusive em configuração linear com pacote de mola fail safe integrado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "eliminando a necessidade de umbilical hidráulico naquela função."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de controle multiplexado quando o gargalo é a quantidade de linhas de comando para muitas válvulas.",
+      "pergunta": "Ao acrescentar várias válvulas num arranjo submarino, a restrição passa a ser o número de condutores de comando do umbilical; potência e hidráulica locais já são suficientes. Qual arranjo de controle reduz linhas dedicadas?",
+      "resposta": "Controle multiplexado com seleção da função no módulo submarino.",
+      "explicacao": "Com muitas válvulas e limitação nos condutores de comando, o multiplexado reduz linhas dedicadas ao transferir a seleção da função para o módulo submarino.",
+      "resposta_padrao": "Uma linha dedicada para cada válvula.",
+      "por_que_nao": "Esse arranjo aumenta o número de linhas com cada função nova; o multiplexado foi justamente adotado para evitar isso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A escolha entre elétrica pura, eletro-hidráulica centralizada e eletro-hidráulica descentralizada depende da função requerida, da filosofia fail-safe, da integração com a infraestrutura já instalada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas porque a seleção da função ocorre no módulo submarino."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

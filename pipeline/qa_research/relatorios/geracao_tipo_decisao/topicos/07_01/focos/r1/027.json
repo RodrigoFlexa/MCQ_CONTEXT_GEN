@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 1,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A forma de atuação do elemento final precisa ser coerente com a função de controle contínuo da malha.",
+      "pergunta": "A saída do controlador varia entre 35% e 65%, mas a haste da válvula só vai a totalmente aberta ou totalmente fechada; ar e posicionador estão íntegros. Que intervenção de configuração deve ser feita antes de recolocar a malha em automático?",
+      "resposta": "Configurar a válvula para atuação modulatória.",
+      "explicacao": "O problema não está na sintonia nem no ar de instrumento, mas na forma de atuação implementada no elemento final, incompatível com controle contínuo.",
+      "resposta_padrao": "Retunar o PID da malha.",
+      "por_que_nao": "Sintonia não transforma um elemento final abre/fecha em atuação contínua.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Classificação entre alarme e evento é configuração crítica e deve refletir a necessidade de ação operacional.",
+      "pergunta": "Durante partidas, uma condição que exige ação imediata do operador aparece só no histórico, sem anúncio sonoro nem destaque; sensor e setpoints estão corretos. Que ajuste de configuração resolve isso?",
+      "resposta": "Reclassificar a ocorrência de evento para alarme.",
+      "explicacao": "Se a condição demanda resposta do operador, registrá-la apenas como evento não cumpre a função operacional de alarmar.",
+      "resposta_padrao": "Aumentar a prioridade do evento.",
+      "por_que_nao": "Prioridade maior não cria anunciação de alarme nem a resposta operacional exigida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O status local/remoto do atuador deve participar da lógica para impedir comandos remotos incoerentes com o campo.",
+      "pergunta": "Depois de manutenção no atuador, a tela aceita comando e os permissivos de processo estão liberados, mas a chave de campo pode ficar em local sem indicação ao sistema. Qual arranjo de configuração evita comando remoto ineficaz?",
+      "resposta": "Intertravar o comando remoto pelo status local/remoto do atuador.",
+      "explicacao": "Sem o status local/remoto na lógica, a interface pode oferecer um comando que o campo não executará, quebrando a coerência operacional.",
+      "resposta_padrao": "Controlar a seleção local/remoto apenas por procedimento de campo.",
+      "por_que_nao": "Sem status na lógica, o sistema continua oferecendo comando remoto sem refletir o modo real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando isso ocorre, perde-se coerência entre projeto, implementação, operação e manutenção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras e alinhamento entre documentação, prática de campo e lógica implantada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sequências remotas que dependem de confirmação de estado exigem retorno de posição do campo ao sistema supervisor.",
+      "pergunta": "O operador envia abertura pela IHM, mas a sequência de isolamento depende da confirmação de posição final e essa confirmação não aparece no supervisório após a modificação. Qual intervenção técnica libera o retorno ao serviço remoto?",
+      "resposta": "Restabelecer o retorno de posição da válvula ao sistema supervisor.",
+      "explicacao": "A sequência depende de informação real de campo. Sem feedback de posição, a IHM não representa o estado físico necessário para operar remotamente.",
+      "resposta_padrao": "Liberar a sequência usando apenas o tempo de curso da válvula.",
+      "por_que_nao": "Tempo de curso presume posição, mas a sequência exige informação real de campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador; ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correção para que sinais de campo chegassem à IHM e para que comandos da IHM fossem executados pelos atuadores"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "procedimentos de partida, parada e isolamento de sistemas, porque essas operações dependem de sequências corretas, condições habilitadoras e alinhamento entre documentação, prática de campo e lógica implantada."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

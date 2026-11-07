@@ -1,0 +1,65 @@
+{
+  "item": "02_06",
+  "foco": 2,
+  "rodada": 4,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de completude do shutdown por gás após rerroteios e mudanças temporárias: coerência da lógica com o inventário real de fontes que alimentam a área.",
+      "pergunta": "A matriz de causa e efeito foi revisada e o teste funcional passou, mas a área recebeu um rerroteio temporário e um skid conectado às mesmas linhas. Que verificação técnica ainda decide se o shutdown por gás está completo?",
+      "resposta": "Confronto da lógica com o inventário de equipamentos que podem alimentar a área.",
+      "explicacao": "Causa e efeito e teste mostram o que foi implementado; a completude depende de cobrir todas as fontes reais de hidrocarboneto introduzidas pelo arranjo atual.",
+      "resposta_padrao": "Usar o P&ID atualizado do trecho rerroteado.",
+      "por_que_nao": "O desenho mostra conexões, mas não prova que a lógica de shutdown alcance todas as fontes capazes de alimentar o cenário perigoso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A eficácia dessa filosofia depende de a lógica implementada cobrir de fato todas as fontes relevantes de hidrocarboneto na área."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a lógica de causa e efeito deve ser coerente com o inventário de equipamentos capazes de alimentar o cenário perigoso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "reavaliação de mudanças temporárias"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Fonte motriz que continua movimentando hidrocarboneto também deve ser isolada automaticamente no shutdown por gás.",
+      "pergunta": "Gás alto-alto já desarma as bombas da área, mas o stripping continua por edutor porque o fluido motriz permanece aberto. Que atuação automática falta na lógica?",
+      "resposta": "Fechamento automático do fluido motriz do edutor.",
+      "explicacao": "O edutor permanece como fonte de energia e mantém a movimentação de hidrocarboneto. Parar só as bombas deixa o shutdown incompleto e reduz a mitigação automática.",
+      "resposta_padrao": "Parar somente as bombas da área.",
+      "por_que_nao": "Com o fluido motriz aberto, o edutor continua arrastando hidrocarboneto e mantém o cenário alimentado após o alarme de gás.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A análise precisa abranger bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

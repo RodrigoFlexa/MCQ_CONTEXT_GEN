@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Patch em controlador OT vulnerável exige validação prévia de compatibilidade antes da instalação.",
+      "pergunta": "Saiu patch para um controlador legado de pressão com componente vulnerável confirmado. O equipamento troca dados por protocolo proprietário com remotas e o fornecedor ainda não liberou matriz de compatibilidade da versão. Antes de qualquer instalação, qual ação técnica é obrigatória?",
+      "resposta": "validação prévia de compatibilidade entre firmware, comunicação e funções de processo",
+      "explicacao": "Em controlador de processo, o impacto da vulnerabilidade depende da função atingida; sem validar compatibilidade, o patch pode introduzir indisponibilidade ou comportamento não previsto no controle.",
+      "resposta_padrao": "Aplicar imediatamente a versão mais recente do patch.",
+      "por_que_nao": "Sem validação prévia, a atualização pode quebrar comunicação ou alterar o comportamento do controle, aumentando o risco operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O escopo de varredura de vulnerabilidade em IACS inclui sistemas de informação e negócios conectados à infraestrutura do IACS.",
+      "pergunta": "Na varredura de impacto de uma falha em componente de comunicação da rede do controle, a equipe listou o sistema básico de controle de processo, o SIS e sistemas elétricos, mas deixou de fora servidores de relatórios ligados à mesma infraestrutura. Que elemento deve ser incluído no escopo?",
+      "resposta": "sistemas de informação e negócios conectados pela infraestrutura de rede do IACS",
+      "explicacao": "O escopo de IACS não se limita ao processo e à segurança; sistemas de informação e negócios conectados pela mesma infraestrutura também entram na avaliação de impacto e tratamento.",
+      "resposta_padrao": "Somente os sistemas diretamente responsáveis pelo processo e pela segurança.",
+      "por_que_nao": "O escopo citado inclui também sistemas de informação e negócios conectados pela infraestrutura de rede do IACS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "F",
+          "trecho": "No contexto offshore, o escopo de IACS abrange sistemas básicos de controle de processo, funções de camada independente de proteção, sistemas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando patch e mudança de topologia não são viáveis de imediato, hardening local por desativação de serviços desnecessários reduz a superfície de ataque.",
+      "pergunta": "Patch só poderá ser qualificado na próxima parada, e a topologia de rede não pode ser alterada hoje; porém o controlador vulnerável mantém servidor web e diagnóstico sem uso operacional. Qual intervenção técnica no próprio ativo reduz a superfície de ataque agora?",
+      "resposta": "desativação dos serviços desnecessários",
+      "explicacao": "Com patch e segmentação indisponíveis no momento, hardening local reduz caminhos de exploração; remover serviços sem função operacional corta vetores de ataque sem mexer na função de controle necessária.",
+      "resposta_padrao": "Instalar antivírus no controlador.",
+      "por_que_nao": "Isso não remove os serviços expostos e pode nem ser suportado; o hardening citado atua eliminando serviços desnecessários.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "hardening funciona porque remove serviços desnecessários, restringe rotas de acesso, reduz a chance de varredura externa"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

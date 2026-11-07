@@ -1,0 +1,87 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 2,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de PI na malha contínua de nível com válvula rápida para remover desvio permanente do inventário.",
+      "pergunta": "Com válvula de saída rápida, o nível do separador responde sem oscilação excessiva, mas após uma mudança sustentada na alimentação o inventário se estabiliza acima do alvo e só volta com intervenção manual. Sem lógica por bandas, que estrutura de controle aplicar na malha?",
+      "resposta": "Controlador PI.",
+      "explicacao": "Com válvula rápida e sem comutação por bandas, o desvio permanente do inventário pede ação integral; o bloco focal registra PI como eficiente quando bem ajustado.",
+      "resposta_padrao": "Controlador PID.",
+      "por_que_nao": "Com válvula rápida e necessidade de eliminar desvio permanente, a ação derivativa não é a alavanca decisiva; o bloco focal destaca PI devidamente ajustado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "No controle por bandas, manter a saída próxima da média estimada de entrada enquanto o nível permanece na faixa.",
+      "pergunta": "Dentro da faixa normal, o nível permanece entre limites e a alimentação oscila rapidamente; a jusante pede vazão mais estável e a válvula de saída está ciclando demais. Na lógica por bandas, qual referência deve comandar a saída enquanto o nível não cruza a banda?",
+      "resposta": "Vazão de saída próxima ao valor médio estimado da entrada.",
+      "explicacao": "Na faixa permitida, o controle por bandas não persegue cada oscilação do nível; ele mantém a saída próxima da vazão média estimada de entrada para usar o vaso como amortecedor e reduzir caça da válvula.",
+      "resposta_padrao": "Seguir continuamente a vazão instantânea de entrada.",
+      "por_que_nao": "Dentro da banda, a lógica descrita mantém a saída próxima do valor médio estimado para evitar movimentação desnecessária da válvula e desacoplar oscilações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na qualificação de robustez, reproduzir golfadas a montante quando o processo sofre chegadas intermitentes de líquido.",
+      "pergunta": "Chegam pacotes intermitentes de líquido da produção: longos trechos de alimentação moderada são seguidos por picos curtos que elevam nível e pressão de uma vez. A malha já passou em testes com degraus simples. Que perturbação específica deve entrar na qualificação de robustez?",
+      "resposta": "Golfadas a montante.",
+      "explicacao": "O distúrbio descrito é intermitente e pulsante, não um degrau único. O bloco focal inclui explicitamente golfadas a montante na avaliação de robustez para testar esse regime de transiente.",
+      "resposta_padrao": "Degraus de vazão de entrada.",
+      "por_que_nao": "Degraus não reproduzem a alternância de pacotes e vazios típica das golfadas, explicitamente citadas no ensaio de robustez do bloco focal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "amortecem flutuações de vazão e atenuam oscilações vindas dos poços"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

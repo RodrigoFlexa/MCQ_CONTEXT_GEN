@@ -1,0 +1,91 @@
+{
+  "item": "07_03",
+  "foco": 23,
+  "rodada": 2,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a indisponibilidade é dominada por logística de reposição, a ação eficaz para disponibilidade atua no MTTR via sobressalente local.",
+      "pergunta": "Cada falha do cartucho do selo mecânico tira o trem por quase um dia, embora a troca leve menos de 1 hora quando a peça está disponível; o atraso recorrente é a chegada do reposição de terra. Que ação técnica deve entrar no plano para elevar a disponibilidade?",
+      "resposta": "Cartucho sobressalente a bordo.",
+      "explicacao": "A perda vem da recuperação lenta por logística, não da frequência de falhas. Manter o sobressalente crítico local reduz o tempo indisponível e melhora a disponibilidade sem alterar o mecanismo físico de falha.",
+      "resposta_padrao": "Reduzir o intervalo da preventiva do selo.",
+      "por_que_nao": "Isso atuaria na frequência de falhas; neste caso, o limitante observado é o MTTR alongado pela espera da peça.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um sistema pode apresentar intervalos médios longos entre falhas e ainda assim perder muita produção se a recuperação for lenta;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A distância da costa e a dependência de apoio em terra podem prolongar o tempo total indisponível por logística e mobilização, mesmo sem alterar o tempo de reparo ativo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "melhorias em sobressalentes, acessibilidade, recursos de apoio e organização do atendimento podem elevar a disponibilidade sem necessariamente alterar o mecanismo físico de falha do componente."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para medir desempenho da manutenção na recuperação, deve-se isolar o MTTR do reparo ativo das esperas externas ao reparo.",
+      "pergunta": "No KPI do contrato, o reparo do atuador leva cerca de 30 minutos, mas a retomada varia por espera de processo e janela operacional. Para medir a eficácia da equipe de manutenção na recuperação, qual variável principal deve ser controlada?",
+      "resposta": "MTTR do reparo ativo.",
+      "explicacao": "Esperas de processo e de janela operacional não medem a execução do reparo. O indicador da equipe deve isolar a parcela ativa da recuperação; o tempo total é útil para disponibilidade, não para desempenho direto da manutenção.",
+      "resposta_padrao": "Tempo total indisponível até o retorno.",
+      "por_que_nao": "Esse total incorpora esperas fora da execução do reparo e mascara a real capacidade de restaurar a função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O intervalo completo entre falha e retorno também pode incluir esperas que precisam ser discriminadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "MTBF resume o comportamento de falha observado, enquanto MTTR resume a capacidade de restaurar a função após a falha."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A base do MTTR deve explicitar quais atividades de reparo inclui."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Funções em standby que falham quando solicitadas devem ser acompanhadas por taxa de falha baseada em demanda, não por MTBF em tempo corrido.",
+      "pergunta": "Uma válvula de bloqueio de emergência passa meses em standby e só apresenta falha quando é solicitada nos testes funcionais. Na revisão do plano, qual base de taxa de falha deve orientar o acompanhamento principal?",
+      "resposta": "Taxa de falha baseada em demanda.",
+      "explicacao": "A função relevante é responder quando solicitada. Para item em standby, uma métrica baseada em tempo corrido não representa corretamente o comportamento de falha observado nas demandas.",
+      "resposta_padrao": "Taxa de falha baseada em tempo.",
+      "por_que_nao": "Tempo transcorrido sem solicitação não é a base compatível para uma função cuja falha aparece na demanda.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "distinguir taxas de falha baseadas em tempo das baseadas em demanda"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso evita combinar em um mesmo número equipamentos, regimes ou funções que falham por mecanismos diferentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "MTBF, do inglês Mean Time Between Failures, expressa o tempo médio entre falhas observadas durante um período de acompanhamento."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

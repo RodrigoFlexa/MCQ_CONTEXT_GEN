@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 1,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Monitoramento da arquitetura segmentada exige reconciliar os ativos realmente conectados com o escopo previsto.",
+      "pergunta": "Tráfego, CPU e regras entre VLANs seguem estáveis, mas a última parada adicionou dispositivos de rede e uma estação portátil sem cadastro técnico. Para decidir se a segmentação ainda reflete a operação real, o que deve ser regularizado primeiro?",
+      "resposta": "o inventário dos sistemas conectados",
+      "explicacao": "Sem reconciliar os ativos realmente conectados, estabilidade de tráfego e de regras não prova que a arquitetura implantada continua igual à planejada.",
+      "resposta_padrao": "Revisar apenas as regras de firewall.",
+      "por_que_nao": "Regras podem permanecer corretas mesmo com ativos fora do escopo previsto da arquitetura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação deve verificar gestão de ativos, competências, configuração e eficácia dos controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Fluxos interdomínios devem ser mantidos apenas enquanto permanecerem necessários à operação real.",
+      "pergunta": "Um túnel temporário criado no comissionamento continua atravessando a zona intermediária; há tráfego periódico, mas a operação não depende mais dele. Qual ação técnica específica tomar na arquitetura?",
+      "resposta": "desativar o túnel interdomínios temporário",
+      "explicacao": "Monitorar a arquitetura inclui confirmar se o fluxo entre domínios ainda é necessário; manter um caminho sem função preserva um vetor de propagação.",
+      "resposta_padrao": "Manter o túnel e só reforçar autenticação.",
+      "por_que_nao": "Autenticação mais forte não elimina um fluxo que já deixou de ser necessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "reduzir caminhos de propagação entre domínios com funções e consequências diferentes"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de supervisão por afundamentos de tensão pede continuidade elétrica do SCADA; segmentação lógica não substitui energia de respaldo.",
+      "pergunta": "Quedas curtas de tensão fazem a supervisão reiniciar e perder comunicação por segundos; enlaces de rede e regras de segmentação permanecem íntegros. Para manter visibilidade operacional, qual arranjo deve ser priorizado?",
+      "resposta": "o backup de energia ininterrupta do SCADA",
+      "explicacao": "A continuidade da supervisão depende de alimentação confiável; segmentação lógica e enlaces íntegros não evitam reinício dos servidores por perda elétrica.",
+      "resposta_padrao": "Criar rotas de rede mais abertas entre os domínios.",
+      "por_que_nao": "Mais conectividade não sustenta servidores sem alimentação e ainda amplia a exposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas SCADA dependem de energia confiável e ininterrupta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escopo de acesso remoto em IACS deve ser limitado ao ativo realmente necessário, evitando alcance excessivo sobre o domínio operacional.",
+      "pergunta": "Para atualizar um único PLC, o fornecedor recebeu acesso remoto à VLAN inteira de automação, que também contém estações de engenharia e servidores. Qual escopo técnico de acesso deve permanecer liberado?",
+      "resposta": "acesso restrito ao PLC-alvo",
+      "explicacao": "A necessidade é atuar em um único PLC; liberar a VLAN inteira torna o acesso excessivo e amplia a capacidade de alterar lógica, setpoints ou visibilidade.",
+      "resposta_padrao": "Manter acesso à VLAN inteira para facilitar diagnóstico.",
+      "por_que_nao": "Em IACS, acesso legítimo porém excessivo pode causar o mesmo efeito operacional de um ataque externo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

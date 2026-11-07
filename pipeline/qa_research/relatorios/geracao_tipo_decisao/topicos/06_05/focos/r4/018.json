@@ -1,0 +1,65 @@
+{
+  "item": "06_05",
+  "foco": 18,
+  "rodada": 4,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Classificação de disponibilidade deve considerar a cadeia completa de sinal; detecção local sem lógica/registro não preserva a função da zona.",
+      "pergunta": "Detector de gás responde ao bump test em campo, mas o controlador não muda de estado nem registra o evento. Na gestão de indisponibilidades, que status técnico esse canal deve receber?",
+      "resposta": "Indisponível para a função de F&G da zona.",
+      "explicacao": "Sem comunicação e processamento até o controlador, o hardware em campo não mantém confirmação, votação nem atuação automática; a disponibilidade relevante é por zona e função.",
+      "resposta_padrao": "Canal disponível, já que o sensor detecta localmente.",
+      "por_que_nao": "A proteção depende da cadeia completa entre campo, lógica e registro; detecção local isolada não preserva a função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso mostra que a disponibilidade relevante deve ser analisada por zona e por função."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do canal a retirar de serviço deve priorizar a preservação da votação e da atuação automática requeridas para a zona.",
+      "pergunta": "Numa mesma zona, dois detectores de gás da mesma tecnologia estão saudáveis: um participa da votação que fecha a fonte de inventário e outro apenas gera alarme. Só um pode sair para calibração agora. Qual deve ser retirado?",
+      "resposta": "O detector que só gera alarme.",
+      "explicacao": "Retirar o canal da votação pode manter instrumentação parcial, mas sem confirmação ou disparo automático exigido pela função de segurança da zona.",
+      "resposta_padrao": "O detector com calibração mais vencida.",
+      "por_que_nao": "A prioridade de calibração não deve eliminar o canal necessário para a lógica automática requerida na zona.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma área pode permanecer parcialmente instrumentada e, ainda assim, não satisfazer confirmação de evento, lógica de votação ou disparo automático requerido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "preservar cobertura significa manter capacidade suficiente para detectar o cenário perigoso e permitir a atuação lógica prevista"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Limiares, votação e respostas devem estar definidos na matriz de causa e efeito"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

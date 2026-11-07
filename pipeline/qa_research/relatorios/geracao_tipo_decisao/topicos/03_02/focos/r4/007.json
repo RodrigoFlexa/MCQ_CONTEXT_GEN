@@ -1,0 +1,83 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 4,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restrição operacional do estimador de mar ao envelope ambiental efetivamente validado.",
+      "pergunta": "A rotina de mar por movimentos foi validada na própria embarcação só em estados moderados, mas querem usá-la para disparar alarmes automáticos durante tempestade. Sem nova validação, que providência técnica deve ser aplicada?",
+      "resposta": "Bloqueio do uso fora do envelope ambiental validado.",
+      "explicacao": "Acerto em mar ameno não comprova precisão em condições extremas; a aplicação deve ficar limitada ao envelope em que houve validação compatível.",
+      "resposta_padrao": "Manter o uso com limites de alarme mais conservadores.",
+      "por_que_nao": "Margem conservadora não corrige erro desconhecido do modelo quando ele opera fora do envelope validado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desempenho em mar ameno não demonstra a mesma precisão em condições extremas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de RAOs dependentes do heading na estimação por movimentos quando o casco gira durante a janela.",
+      "pergunta": "Com o casco girando ao tempo, a direção estimada oscila e a rotina usa um único conjunto de RAOs obtido no heading inicial. A duração da janela não pode ser reduzida. Sem trocar sensores, que ajuste técnico aplicar no modelo?",
+      "resposta": "Interpolação de RAOs pelo heading instantâneo.",
+      "explicacao": "A resposta hidrodinâmica muda com o aproamento; manter RAOs fixos enquanto o casco gira degrada a recuperação direcional.",
+      "resposta_padrao": "Aplicar apenas suavização na saída direcional.",
+      "por_que_nao": "Filtrar mascara a oscilação, mas não corrige o erro hidrodinâmico gerado por usar RAOs incompatíveis com o heading.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "simplificações que ignorem a variação de heading podem introduzir erros importantes"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restrição do uso do estimador quando a variação de heading em operação excede a coberta pela validação.",
+      "pergunta": "Os registros mais severos da validação foram obtidos com o casco quase sem girar, e agora a rotina será usada onde o turret weathervaneia amplamente. Sem nova campanha de dados, que restrição técnica deve ser imposta?",
+      "resposta": "Bloqueio quando a variação de heading sair da faixa validada.",
+      "explicacao": "Severidade ambiental sozinha não basta; mudanças de aproamento alteram a resposta hidrodinâmica e precisam estar representadas nas condições validadas.",
+      "resposta_padrao": "Liberar o uso porque o mar severo já foi coberto na validação.",
+      "por_que_nao": "Cobrir só a severidade não garante validade quando a operação introduz variação angular que muda a resposta do casco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Resultados do modelo devem ser interpretados com essas limitações, sem adotar um intervalo de tempo ou variação angular de um ensaio como regra universal."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o comportamento passa a ser sensível à direcionalidade relativa entre vento, onda e correnteza."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

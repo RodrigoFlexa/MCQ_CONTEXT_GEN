@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Padronização da identificação de equipamentos como pré-condição para analytics comparativo confiável entre sistemas distintos.",
+      "pergunta": "Relatórios comparativos entre trens mostram desvios conflitantes; unidade e tempo dos sinais estão corretos, mas a mesma bomba aparece com nomes diferentes em sistemas distintos. O que deve ser normalizado antes de comparar desempenho ou alimentar analytics?",
+      "resposta": "a identificação consistente do equipamento",
+      "explicacao": "Mesmo com unidades e timestamps corretos, registros do mesmo ativo ficam semanticamente incoerentes se a identificação varia entre sistemas. Isso distorce comparação, agregação e treinamento de modelos.",
+      "resposta_padrao": "Treinar um modelo separado para cada sistema.",
+      "por_que_nao": "Modelos separados contornam o sintoma, mas mantêm a incoerência semântica que torna a comparação enganosa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão do modo operacional no tratamento de dados antes de ajustar limiares de alarmes analíticos.",
+      "pergunta": "Alertas de anomalia disparam em toda partida e parada de bomba, embora na operação estabilizada não haja desvio; unidade e timestamp dos sinais estão corretos. Que informação técnica deve entrar no tratamento do dado antes de mexer nos limiares?",
+      "resposta": "o modo operacional do equipamento",
+      "explicacao": "Partida, parada e regime estável produzem padrões normais diferentes. Sem o contexto de modo operacional, o modelo continuará confundindo transientes esperados com anomalia.",
+      "resposta_padrao": "Reajustar os limiares do alerta.",
+      "por_que_nao": "Sem separar os dados por modo operacional, o novo limiar tende a mascarar falhas reais ou a manter o alarme espúrio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da execução local na borda para aplicações que influenciam ajustes frequentes sob conectividade externa instável.",
+      "pergunta": "Uma aplicação recalcula setpoint de carga a cada poucos segundos; os dados sobem por MQTT e o enlace externo tem jitter e quedas breves. Que arranjo de execução deve ser adotado para influenciar o ajuste com segurança?",
+      "resposta": "execução local na borda",
+      "explicacao": "Como a aplicação atua em ajustes frequentes, ela não deve depender do enlace externo. Executá-la localmente, próxima ao controle, reduz exposição a latência, jitter e perda de conectividade.",
+      "resposta_padrao": "Execução na nuvem corporativa.",
+      "por_que_nao": "Nuvem serve bem para apoio à decisão, mas é inadequada quando o ajuste frequente exige baixa latência e comportamento previsível na perda do enlace.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restabelecimento do sincronismo temporal entre fontes antes de usar correlação multissistema para ajuste operacional.",
+      "pergunta": "Tendências de vibração e pressão parecem coerentes isoladamente, mas o pico de uma sempre chega segundos depois da outra após falha do sincronismo. Antes de usar essa correlação para ajustes operacionais, o que deve ser restabelecido?",
+      "resposta": "o sincronismo temporal entre as fontes",
+      "explicacao": "Quando sinais de sistemas distintos são correlacionados para orientar ajuste operacional, a coerência temporal é indispensável. Sem sincronismo, relações de causa e efeito ficam deslocadas e enganosas.",
+      "resposta_padrao": "Aumentar a taxa de amostragem.",
+      "por_que_nao": "Mais pontos por segundo não corrigem carimbos de tempo desalinhados; o problema é sincronismo entre fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "qualidade de sincronismo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

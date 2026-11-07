@@ -1,0 +1,109 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de classificação dos eventos que contam como falha e retorno à função na apuração de MTBF.",
+      "pergunta": "No historiador, um motor gera muitas mensagens de modo, permissivo e reset, mas só algumas interrompem a função requerida. Para contar falhas no MTBF, que tipo de mensagem deve abrir e encerrar cada evento?",
+      "resposta": "Mensagens de perda e recuperação da função.",
+      "explicacao": "O indicador deve usar marcos de início da falha e retorno à função. Mudanças de estado sem perda funcional não devem entrar na contagem.",
+      "resposta_padrao": "Usar qualquer alarme ou mudança de estado registrada no período.",
+      "por_que_nao": "Mudanças irrelevantes de estado não representam falha nem recuperação funcional e inflacionam o número de eventos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição do intervalo que compõe MTTR, separado do tempo total indisponível.",
+      "pergunta": "Uma válvula crítica ficou parada três dias por espera de acesso e material; o reparo em campo durou quatro horas. Para comparar mantenabilidade no MTTR, qual intervalo deve ser lançado?",
+      "resposta": "Somente o intervalo de reparo.",
+      "explicacao": "No MTTR entram os intervalos de reparo definidos no indicador. Esperas logísticas e administrativas pertencem à indisponibilidade total, não ao tempo de reparo.",
+      "resposta_padrao": "Registrar o tempo total indisponível desde a falha até o retorno.",
+      "por_que_nao": "Esse tempo mistura execução do reparo com esperas externas e distorce a comparação de mantenabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o tempo total indisponível pode incluir esperas logísticas e administrativas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de populações tecnicamente compatíveis antes de comparar indicadores de confiabilidade.",
+      "pergunta": "Bombas de dois fabricantes iguais em capacidade operam parte em carga contínua e parte só em partidas ocasionais. Para comparar confiabilidade, que arranjo de apuração você adota?",
+      "resposta": "Subpopulações separadas por regime e função.",
+      "explicacao": "A comparação exige populações tecnicamente compatíveis. Misturar regimes ou funções diferentes combina mecanismos de falha distintos no mesmo indicador.",
+      "resposta_padrao": "Consolidar todas as bombas em um único MTBF para aumentar a amostra.",
+      "por_que_nao": "A base fica não homogênea e o número resultante deixa de ser comparável entre fabricantes ou períodos.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso evita combinar em um mesmo número equipamentos, regimes ou funções que falham por mecanismos diferentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da base de confiabilidade para itens cuja falha se manifesta na atuação, não em operação contínua.",
+      "pergunta": "Válvulas de bloqueio de emergência passam meses em espera e a falha aparece nos testes funcionais ou na atuação real. Para avaliar sua confiabilidade, qual base de falha deve ser usada?",
+      "resposta": "Taxa de falha baseada em demanda.",
+      "explicacao": "Para itens em standby, a exposição relevante é a quantidade de demandas. Usar horas corridas como base mascara o comportamento real de falha.",
+      "resposta_padrao": "Usar MTBF por tempo de calendário.",
+      "por_que_nao": "Esse item não falha como equipamento em serviço contínuo; a referência correta é a demanda de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "distinguir taxas de falha baseadas em tempo das baseadas em demanda e categorizar modos de falha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

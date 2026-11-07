@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de linha de base condicionada à carga para usar KPI operacional como detector de desvio real.",
+      "pergunta": "O teor de água no óleo tratado mantém patamares estáveis, porém diferentes, quando a planta opera a 70%, 85% e 100% de carga, sem mudança de alimentação. Para o painel sinalizar desvio real, que referência técnica deve ser aplicada ao KPI?",
+      "resposta": "linha de base por faixa de carga",
+      "explicacao": "Mudanças de carga alteram legitimamente o comportamento do indicador; uma única referência mistura regimes normais distintos e produz diagnóstico errado.",
+      "resposta_padrao": "Um limite fixo único para o KPI.",
+      "por_que_nao": "Aqui o valor normal do indicador muda entre cargas estáveis; limite único gera falso desvio ou perde sensibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento do indicador muda com regime transiente, mudanças de carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o uso operacional correto combina KPI com contexto do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sem uma base de referência adequada, uma variação no valor absoluto pode refletir apenas mudança de carga"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de bloqueio por estado transiente no monitoramento para evitar alarmes espúrios sem perder sensibilidade em regime estável.",
+      "pergunta": "Partidas e degraus programados de vazão têm duração variável, e o KPI só sai da faixa enquanto o processo não estabiliza. Para evitar alarmes espúrios sem perder sensibilidade em regime estável, que arranjo aplicar ao monitoramento?",
+      "resposta": "bloqueio do alarme do KPI por estado transiente",
+      "explicacao": "Como a excursão é própria do regime transiente e sua duração varia, o bloqueio por estado evita falso alarme sem relaxar o critério do regime estável.",
+      "resposta_padrao": "Aumentar permanentemente o limite de alarme do KPI.",
+      "por_que_nao": "Alargar o limite mascara desvios reais em operação estabilizada; o problema ocorre só durante o transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento do indicador muda com regime transiente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "interpretar uma variação transitória como perda estrutural de desempenho"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a definição da métrica permaneça coerente com a decisão que ela deve sustentar"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na intervenção operacional imediata, o ajuste deve ser guiado pela variável de processo perturbada, não pelo KPI agregado.",
+      "pergunta": "O KPI composto de tratamento de óleo entrou em alarme, e a equipe quer reajustar uma malha local pelo próprio valor desse indicador. Para a intervenção imediata no processo, que elemento deve comandar o ajuste?",
+      "resposta": "a variável de processo perturbada",
+      "explicacao": "O KPI resume o efeito do desvio sobre o desempenho; para atuar na malha, a referência correta é a variável de processo afetada.",
+      "resposta_padrao": "O próprio KPI composto do painel.",
+      "por_que_nao": "Ele ajuda a detectar e diagnosticar, mas não substitui a variável usada no controle do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O indicador não substitui a variável de processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "identificar variáveis perturbadas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a definição da métrica permaneça coerente com a decisão que ela deve sustentar"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

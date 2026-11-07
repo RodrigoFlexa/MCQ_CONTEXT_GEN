@@ -1,0 +1,109 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de alimentação em 24 Vcc por bateria para cargas de shutdown que precisam atuar antes da entrada da geração de emergência.",
+      "pergunta": "Uma solenoide 24 Vcc de shutdown deve atuar na perda total de CA e não pode esperar a entrada do gerador de emergência. Que alimentação deve ser adotada para essa carga?",
+      "resposta": "24 Vcc por bateria",
+      "explicacao": "A carga precisa atuar no instante da perda de CA e manter independência durante o vazio até a emergência assumir. Para esse caso, a consequência da perda domina a seleção da alimentação.",
+      "resposta_padrao": "Alimentação pela geração de emergência.",
+      "por_que_nao": "Há intervalo sem energia até a entrada da emergência; a atuação na perda de CA ficaria descoberta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação da segregação funcional das cargas redundantes como condição real de redundância em UPS e barramentos essenciais.",
+      "pergunta": "Duas estações redundantes de controle continuam energizadas, mas ambas foram ligadas ao mesmo UPS depois de modificações. Que verificação deve ser tratada como decisiva no monitoramento?",
+      "resposta": "Segregação das cargas entre ramos redundantes",
+      "explicacao": "A redundância só existe se as cargas redundantes estiverem de fato distribuídas entre caminhos independentes. Tensão presente em ambos os UPS não evita perda simultânea por falha simples.",
+      "resposta_padrao": "Presença de tensão na saída de cada UPS.",
+      "por_que_nao": "Os dois UPS podem estar saudáveis e ainda assim as estações perderem independência funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Monitoramento da disponibilidade do bypass como condição de continuidade quando o inversor do UPS sai de serviço.",
+      "pergunta": "O UPS entrega tensão normal e as baterias passam no teste, porém a carga essencial cai quando o inversor é retirado de serviço com CA disponível a montante. Que condição deve entrar no monitoramento de rotina?",
+      "resposta": "Disponibilidade do bypass",
+      "explicacao": "Com fonte a montante presente, a continuidade na indisponibilidade do inversor depende da transferência pelo bypass. Autonomia de bateria não cobre essa contingência específica.",
+      "resposta_padrao": "Condição das baterias.",
+      "por_que_nao": "A queda ocorre com CA disponível a montante; o ponto crítico é a transferência pelo bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Revisão da coerência entre reboot e trip para garantir recomposição após blackout ou black start.",
+      "pergunta": "No black start, CLPs e supervisório religam, mas a recomposição não prossegue porque permissivos ficam bloqueados depois de microinterrupções e retornos sucessivos. O que deve ser revisto como ponto decisivo?",
+      "resposta": "Coerência das lógicas de reboot e de trip",
+      "explicacao": "A recomposição pode falhar mesmo com alimentação disponível se o comportamento após power cycle mantiver bloqueios incompatíveis entre reinício e trip, especialmente após mudanças acumuladas.",
+      "resposta_padrao": "Aumentar o tempo de retaguarda das baterias.",
+      "por_que_nao": "Os equipamentos já religam; o bloqueio vem da lógica pós-retorno, não da falta de autonomia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

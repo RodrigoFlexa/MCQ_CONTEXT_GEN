@@ -1,0 +1,97 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Base temporal do MTBF usual em item reparável com operação intermitente.",
+      "pergunta": "Gerador de pico falhou duas vezes em oito meses, mas operou só nas pontas de carga; fora disso ficou em espera. As falhas ocorreram já em carga. Para estimar o MTBF usual, que base de tempo entra no numerador?",
+      "resposta": "Tempo de operação acumulado.",
+      "explicacao": "No MTBF usual de item reparável contam-se apenas as horas efetivas de operação; incluir espera ou calendário distorce a confiabilidade quando o uso é intermitente.",
+      "resposta_padrao": "Usar o tempo corrido dos oito meses.",
+      "por_que_nao": "Tempo corrido inclui espera sem operação e não é a base usual do MTBF para item reparável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso da indisponibilidade total, e não do MTTR, quando a decisão mira disponibilidade observada.",
+      "pergunta": "Válvulas com MTTR parecido derrubam a disponibilidade em graus muito diferentes por esperas de acesso e sobressalente. Na revisão do ranking de bad actors orientada à disponibilidade observada, que duração deve substituir o MTTR?",
+      "resposta": "Tempo total indisponível.",
+      "explicacao": "Quando a decisão mira disponibilidade observada, importa toda a perda de função até o retorno ao serviço, inclusive esperas logísticas e administrativas; o MTTR isola só a execução do reparo.",
+      "resposta_padrao": "Manter o MTTR de reparo.",
+      "por_que_nao": "MTTR exclui as esperas que, neste caso, são justamente a maior parcela da indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador, enquanto o tempo total indisponível pode incluir esperas logísticas e administrativas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Padronização funcional de eventos para comparar confiabilidade entre pacotes com alarmística diferente.",
+      "pergunta": "Pacotes de compressão equivalentes usam lógicas de alarme diferentes: um gera trip, outro shutdown, e ambos registram várias mudanças de modo sem perda de serviço. Para comparar confiabilidade entre eles, que arranjo de registro você implanta?",
+      "resposta": "Classificação funcional padronizada de perda e recuperação da função.",
+      "explicacao": "Códigos nativos variam por fabricante e incluem mudanças de estado sem efeito funcional. A comparação só fica consistente quando os eventos são mapeados para perda e recuperação da função.",
+      "resposta_padrao": "Contar diretamente trip, shutdown e fault de cada pacote.",
+      "por_que_nao": "Alarmes nativos não são equivalentes entre pacotes e podem contar eventos sem perda funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de base de exposição por demanda em itens que permanecem em standby.",
+      "pergunta": "Válvulas de atuação de emergência passam meses sem se mover, e as falhas aparecem apenas no teste funcional ou na demanda real. Para acompanhar a confiabilidade desse conjunto, qual variável de exposição você controla?",
+      "resposta": "Número de demandas.",
+      "explicacao": "Como a falha se manifesta na atuação após longo standby, a exposição relevante não é o tempo corrido, mas quantas vezes o item foi demandado.",
+      "resposta_padrao": "Horas ou meses em espera.",
+      "por_que_nao": "Em itens que falham na atuação, horas em espera não representam corretamente a exposição à falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "distinguir taxas de falha baseadas em tempo das baseadas em demanda"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de disponibilidade funcional de geradores no PMS deve incluir a alimentação de controle, não só a condição mecânica.",
+      "pergunta": "Máquina motriz e excitação seguem normais, mas o gerador abre ao perder 24 Vcc de comando. Ao marcar esse equipamento como apto a sustentar o barramento, que condição adicional precisa entrar no critério de disponibilidade?",
+      "resposta": "Disponibilidade da alimentação de comando e supervisão do gerador",
+      "explicacao": "Sem energia de controle, o gerador pode estar mecanicamente saudável e ainda assim não permanecer conectado nem controlável, iniciando blackout sem falha no barramento de potência.",
+      "resposta_padrao": "Condição mecânica da máquina motriz.",
+      "por_que_nao": "Saúde mecânica não evita abertura por perda de comando; o gerador fica indisponível mesmo girando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na correção de um modo comum, a primeira segregação deve recair sobre a carga de controle que dispara a perda de geração.",
+      "pergunta": "Falha única no 24 Vcc de serviços gerais derruba a geração principal; a perda do comando de válvulas aparece só depois, quando a energia principal já caiu. Se puder retirar apenas uma carga desse modo comum, qual deve ser priorizada?",
+      "resposta": "Painéis de controle dos geradores principais",
+      "explicacao": "A sequência começa com a desenergização dos controles dos geradores. Preservar essa carga corta o gatilho inicial do blackout; o problema nas válvulas vem depois da perda principal.",
+      "resposta_padrao": "Cartão-relé do CLP das válvulas.",
+      "por_que_nao": "Isso reduz uma consequência do evento, mas não elimina o elo que primeiro derruba a geração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções que deveriam sobreviver ao evento inicial."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Continuidade do comando remoto de válvulas depende da alimentação ininterrupta do elemento de saída do CLP, não só da supervisão.",
+      "pergunta": "Uma UPS falha e, quando a energia principal some, o supervisório volta após o reboot, mas as válvulas continuam sem responder ao comando remoto. Que elemento da cadeia de comando precisa permanecer energizado para manter a atuação remota?",
+      "resposta": "Cartão-relé do CLP",
+      "explicacao": "Foi a perda de energia do cartão-relé que inviabilizou o comando das válvulas. Sem a saída física do CLP, a supervisão sozinha não atua.",
+      "resposta_padrao": "Estação de supervisão.",
+      "por_que_nao": "Mesmo com supervisão ativa, sem o cartão-relé energizado não há saída para acionar as válvulas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a UPS tinha a função de manter alimentação ininterrupta a cargas vitais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

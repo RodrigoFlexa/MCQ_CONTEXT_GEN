@@ -1,0 +1,83 @@
+{
+  "item": "02_06",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão de bomba de stripping como fonte relevante na lógica de shutdown por gás da área.",
+      "pergunta": "Gás alto-alto na casa de bombas aciona sirene e para as bombas de carga, mas a bomba de stripping segue energizada no mesmo cabeçalho. Que ajuste deve entrar no shutdown?",
+      "resposta": "Trip automático da bomba de stripping da área.",
+      "explicacao": "A lógica de gás deve abranger todas as fontes capazes de manter vazamento ou movimentação de hidrocarbonetos. Se a bomba de stripping permanece energizada, o shutdown da área fica incompleto.",
+      "resposta_padrao": "Parar automaticamente apenas as bombas de carga.",
+      "por_que_nao": "Isso só serviria se elas fossem as únicas fontes; a bomba de stripping ainda pode alimentar o cenário perigoso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A análise precisa abranger bombas de carga, bombas de stripping"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do ponto de isolamento automático quando o hidrocarboneto continua admitido após o trip da bomba.",
+      "pergunta": "Detector de gás leva a área a shutdown, a bomba local já para, mas a sucção inundada continua admitindo hidrocarboneto da linha a montante. Em que ponto a lógica deve atuar?",
+      "resposta": "Na válvula de isolamento automático da sucção a montante.",
+      "explicacao": "Se o inventário continua admitido, parar a bomba não remove a fonte. A ação correta é isolar automaticamente o fluxo no ponto que ainda alimenta o cenário.",
+      "resposta_padrao": "Manter apenas o trip da bomba local.",
+      "por_que_nao": "Parar a bomba basta só quando isso elimina a fonte; aqui o hidrocarboneto segue entrando pela linha admitida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratamento de mudança temporária para não transformar a resposta ao gás em salvaguarda manual parcial.",
+      "pergunta": "Bomba temporária de transferência foi instalada e o plano local prevê só parada manual se houver gás. Antes de colocá-la em serviço, qual arranjo é o mais adequado?",
+      "resposta": "Trip automático da bomba temporária no shutdown por gás.",
+      "explicacao": "Mudança temporária precisa ser reavaliada, e a salvaguarda não deve depender de presença humana contínua. A nova bomba deve entrar na lógica automática para manter a cobertura das fontes relevantes.",
+      "resposta_padrao": "Operar com resposta manual ao alarme e reforçar a ronda.",
+      "por_que_nao": "A salvaguarda ficaria parcial e dependente de pessoas em área de risco, deixando uma fonte relevante fora da lógica automática.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "se depender de presença humana contínua em área de risco por longos períodos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "reavaliação de mudanças temporárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A eficácia dessa filosofia depende de a lógica implementada cobrir de fato todas as fontes relevantes de hidrocarboneto na área."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

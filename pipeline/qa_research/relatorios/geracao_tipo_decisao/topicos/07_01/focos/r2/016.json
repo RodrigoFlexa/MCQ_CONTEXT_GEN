@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de sinalização específica da perda de redundância para não operar com resiliência degradada sem percepção.",
+      "pergunta": "No teste de comutação da rede redundante, o processo seguiu estável e atualizado, mas a sala de controle não recebeu nenhuma indicação de que um dos canais ficou indisponível. Que recurso técnico deve ser implantado ou corrigido?",
+      "resposta": "Alarme de perda de redundância do canal",
+      "explicacao": "O failover preservou a função, mas a degradação ficou invisível. Sem indicação da perda do caminho alternativo, o sistema segue operando com resiliência reduzida até uma segunda falha.",
+      "resposta_padrao": "Manter o arranjo atual, já que a comutação ocorreu sem impacto operacional.",
+      "por_que_nao": "Se a perda de redundância não é detectável, a função permanece exposta à eliminação total do serviço na próxima falha.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A comunicação entre equipamentos de campo e controlador é uma condição prática para que a arquitetura funcione como sistema integrado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dependência da função de módulos remotos/especializados da lógica local, além de alimentação e comunicação.",
+      "pergunta": "Com alimentação e link de rede saudáveis, um módulo remoto com lógica própria, recém-trocado por sobressalente de estoque, aparece online no controlador, mas sua sequência local não executa. O que deve ser aplicado antes da liberação?",
+      "resposta": "Carga da lógica local do módulo",
+      "explicacao": "Estar energizado e visível ao controlador não comprova a restauração da função interna. Com comunicação e alimentação íntegras, a camada restante a recompor é a lógica local.",
+      "resposta_padrao": "Revisar o switch ou a rede do painel.",
+      "por_que_nao": "O sintoma preserva alimentação e comunicação; atacar a rede ignora que esses módulos também dependem da lógica local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

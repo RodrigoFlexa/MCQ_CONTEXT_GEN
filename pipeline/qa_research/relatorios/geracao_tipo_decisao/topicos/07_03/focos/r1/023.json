@@ -1,0 +1,113 @@
+{
+  "item": "07_03",
+  "foco": 23,
+  "rodada": 1,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar MTTR quando a indisponibilidade decorre da lentidão de restabelecimento, não da frequência de falhas.",
+      "pergunta": "Falhas do compressor principal são raras no ano, mas cada restabelecimento da função leva mais de 10 horas. Qual indicador deve ser atacado primeiro na revisão do plano?",
+      "resposta": "MTTR",
+      "explicacao": "Os intervalos entre falhas já são longos; a perda vem da lentidão para restaurar a função. O indicador que resume essa dimensão é o MTTR.",
+      "resposta_padrao": "MTBF.",
+      "por_que_nao": "A frequência de falhas não é o principal limitante; o cenário mostra indisponibilidade dominada pela recuperação lenta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "MTBF resume o comportamento de falha observado, enquanto MTTR resume a capacidade de restaurar a função após a falha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um sistema pode apresentar intervalos médios longos entre falhas e ainda assim perder muita produção se a recuperação for lenta;"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregar históricos por regime funcional e base de falha antes de comparar MTBF ou redefinir periodicidades.",
+      "pergunta": "Bombas do mesmo modelo operam metade em serviço contínuo e metade em standby com partidas por demanda. Antes de redefinir periodicidades pelo histórico, que arranjo dos dados é o correto?",
+      "resposta": "Segregação por regime funcional e base de falha.",
+      "explicacao": "Misturar funções e regimes diferentes distorce o indicador; falhas baseadas em tempo e em demanda precisam ser tratadas separadamente antes de comparar desempenho ou ajustar tarefas.",
+      "resposta_padrao": "Usar o MTBF global de todas as bombas.",
+      "por_que_nao": "O conjunto não é homogêneo; combinar regimes e bases de falha diferentes produz um número comparativamente enganoso.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "distinguir taxas de falha baseadas em tempo das baseadas em demanda"
+        },
+        {
+          "bloco": "F",
+          "trecho": "MTBF, do inglês Mean Time Between Failures, expressa o tempo médio entre falhas observadas durante um período de acompanhamento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Usar o tempo total até retorno ao serviço na indisponibilidade quando a disponibilidade é o objetivo.",
+      "pergunta": "O reparo ativo de uma válvula leva 40 minutos, mas a malha só volta a operar horas depois por permissões, teste funcional e liberação do processo. Para calcular disponibilidade, qual base temporal usar?",
+      "resposta": "Tempo total entre falha e retorno ao serviço.",
+      "explicacao": "A disponibilidade depende do período indisponível efetivo, não apenas da intervenção manual. Esperas e etapas de retorno precisam entrar na base temporal escolhida.",
+      "resposta_padrao": "Somente o tempo de reparo ativo.",
+      "por_que_nao": "Essa base submede a indisponibilidade do cenário, onde grande parte do atraso está fora da execução direta do reparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O intervalo completo entre falha e retorno também pode incluir esperas que precisam ser discriminadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade pode ser construída a partir da relação entre tempos entre falhas e tempos de reparo ou retorno."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A base do MTTR deve explicitar quais atividades de reparo inclui."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dar prevalência ao histórico específico do ativo sobre benchmark setorial na revisão do plano.",
+      "pergunta": "Quatro anos de histórico próprio mostram falhas compatíveis com o regime real do equipamento, mas a referência setorial traz taxa mais alta para uma população ampla. Na revisão do plano, qual base deve prevalecer?",
+      "resposta": "Histórico específico do ativo.",
+      "explicacao": "A referência setorial serve como apoio de comparação, mas não substitui o histórico do próprio item quando ele representa o regime observado.",
+      "resposta_padrao": "A referência setorial externa.",
+      "por_que_nao": "Ela ajuda em estimativas e comparações, mas não deve substituir dados locais tecnicamente representativos.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "referências setoriais como OREDA podem apoiar estimativas e comparações, mas seu uso como base de referência não transforma seus valores em requisito obrigatório nem substitui o histórico específico do ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "MTBF, do inglês Mean Time Between Failures, expressa o tempo médio entre falhas observadas durante um período de acompanhamento."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "item": "02_08",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratamento dos dados de monitoramento para comparar header e knock-out drum com o modelo quando há alternância de regimes.",
+      "pergunta": "As pressões e temperaturas do header oscilam em ciclos, com trechos quase constantes entre picos de líquido. Antes de ajustar o modelo para decidir sobre capacidade, que recorte dos dados deve ser usado?",
+      "resposta": "Períodos estáveis por regime de escoamento.",
+      "explicacao": "O ajuste deve usar janelas estáveis compatíveis com o regime observado. Médias sobre ciclos misturam estados diferentes e mascaram estabilidade, picos e a comparação correta com a simulação.",
+      "resposta_padrao": "Média global de toda a campanha de dados.",
+      "por_que_nao": "Misturar trechos de regimes distintos esconde o estado permanente e distorce a calibração do comportamento transitório ou multifásico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento útil combina pressões, temperaturas e identificação de períodos estáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar desempenho apenas por uma visão estática pode ser insuficiente quando o fenômeno dominante é transitório ou multifásico"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o sistema alterna trechos dominados por gás e bolsões líquidos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação de capacidade de header e knock-out drum com base na simultaneidade temporal real das fontes de alívio.",
+      "pergunta": "Várias fontes descarregam para o mesmo flare, mas abrem em tempos diferentes e os volumes a montante se despressurizam rapidamente. Para revalidar a capacidade do header e do knock-out drum, qual grandeza deve substituir a simples soma das vazões máximas nominais?",
+      "resposta": "Perfil temporal de simultaneidade das fontes de alívio.",
+      "explicacao": "O pico real depende de quando as fontes aliviam juntas e de como suas vazões evoluem no tempo. Isso governa carga, contrapressão e coleta de líquido.",
+      "resposta_padrao": "Soma das vazões máximas de todas as fontes.",
+      "por_que_nao": "Essa soma ignora abertura escalonada e decaimento transiente das descargas, podendo errar o pico efetivo do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "simultaneidade de fontes, variação temporal das vazões"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem alterar pico de carga, contrapressão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar desempenho apenas por uma visão estática pode ser insuficiente"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Capacidade do knock-out drum quando há acúmulo prévio de líquido em linhas que descarregam em golfadas.",
+      "pergunta": "Condensado se acumula em ramais inclinados de baixa vazão e chega ao vaso em golfadas durante alívios curtos. Na checagem do knock-out drum, qual parâmetro passa a ser decisivo além da vazão instantânea de gás?",
+      "resposta": "Inventário líquido mobilizável a montante.",
+      "explicacao": "Quando há acúmulo e liberação intermitente, o líquido já retido nas linhas pode dominar a carga ao KOD e a quantidade efetivamente coletada.",
+      "resposta_padrao": "Fração líquida da corrente no instante do alívio.",
+      "por_que_nao": "Ela não representa o líquido previamente acumulado nas linhas, que pode chegar em slug e governar a demanda do vaso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inventário líquido"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quantidade de líquido efetivamente coletada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o líquido acumulado altera a hidráulica, aumenta carga intermitente sobre equipamentos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representação da compressibilidade do gás na análise de contrapressão de headers durante blowdown transitório.",
+      "pergunta": "No blowdown de um grande volume gasoso, a verificação estática indicou contrapressão aceitável, mas campo mostra pico curto bem maior no header. Ao refazer o modelo, qual característica do fluido precisa ser representada explicitamente?",
+      "resposta": "Compressibilidade do gás.",
+      "explicacao": "Na despressurização, densidade e vazão variam com o tempo. A compressibilidade altera o pico de carga e a contrapressão, podendo divergir da avaliação estática.",
+      "resposta_padrao": "Densidade média constante do gás.",
+      "por_que_nao": "Essa hipótese perde a variação transiente de massa e volume que governa o pico observado no header.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compressibilidade do gás podem alterar pico de carga, contrapressão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "resultados podem diferir de avaliações estáticas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o ciclo depende de gravidade, expansão do gás, contrapressão no topo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

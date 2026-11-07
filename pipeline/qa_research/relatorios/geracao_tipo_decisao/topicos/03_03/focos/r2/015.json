@@ -1,0 +1,65 @@
+{
+  "item": "03_03",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de modulação da válvula do tanque exige corrigir a atuação da válvula, não retunar a malha.",
+      "pergunta": "Na tendência, a saída do controlador varia entre 35% e 60%, mas a válvula do tanque só indica 0% ou 100% e a pressão oscila em ciclos. Que correção aplicar?",
+      "resposta": "Restaurar a atuação modulante da válvula do tanque.",
+      "explicacao": "A malha já pede posições intermediárias. Se a válvula só atua em fim de curso, a pressão alterna entre alívio insuficiente e excessivo; a correção é recuperar a modulação prevista.",
+      "resposta_padrao": "Retunar o controlador de pressão.",
+      "por_que_nao": "A saída do controlador já está modulando; sem posição intermediária na válvula, ajuste de PID não elimina a atuação abre/fecha.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a coerência entre diagrama de tubulação e instrumentação, lógica de controle, atuadores de campo e indicação na interface humana-máquina é crítica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "válvula do tanque configurada como totalmente aberta ou fechada, embora documento de projeto previsse controle de posição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A pressão do tanque muda quando a vazão de líquido que entra ou sai não é acompanhada pela vazão correspondente de gás que sai ou entra."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Com ventilação já disponível e no limite, a variável imediata para conter sobrepressão no carregamento é a taxa de entrada de líquido.",
+      "pergunta": "Com a rota de ventilação disponível e a válvula de vent já em abertura máxima, o tanque fica estável em baixa taxa, mas a pressão sobe quando o carregamento acelera e o óleo entra mais quente. Qual ajuste operacional fazer primeiro?",
+      "resposta": "Reduzir a vazão de carregamento.",
+      "explicacao": "No carregamento, o gás e os vapores precisam sair na mesma proporção do volume líquido que entra. Com maior liberação de vapores e vent já no limite, a ação imediata é reduzir a taxa.",
+      "resposta_padrao": "Aumentar a reposição de gás inerte.",
+      "por_que_nao": "Isso é adequado na descarga; no carregamento acrescenta gás ao espaço de vapor e agrava a sobrepressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A pressão do tanque muda quando a vazão de líquido que entra ou sai não é acompanhada pela vazão correspondente de gás que sai ou entra."
+        },
+        {
+          "bloco": "F",
+          "trecho": "No carregamento, se a atmosfera do tanque não for ventilada adequadamente, a pressão tende a subir porque o espaço de vapor é comprimido e pode haver liberação adicional de vapores do líquido."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "durante o carregamento, a atmosfera inertizada excedente precisa ser descarregada para que a pressão interna não se eleve indevidamente"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

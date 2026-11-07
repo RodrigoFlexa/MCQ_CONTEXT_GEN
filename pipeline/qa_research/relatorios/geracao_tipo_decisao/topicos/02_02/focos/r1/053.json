@@ -1,0 +1,101 @@
+{
+  "item": "02_02",
+  "foco": 53,
+  "rodada": 1,
+  "contexto": {
+    "A1": 52,
+    "F": 53,
+    "A2": 54
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do ponto de medição do químico após mistura, evitando leitura em zona não representativa.",
+      "pergunta": "O residual do dispersante parece adequado no sensor montado logo após a lança de injeção, mas amostras em outros ramais divergem e o depósito volta. Para a malha enxergar a condição realmente aplicada, para onde mover a medição?",
+      "resposta": "Para jusante do misturador, após mistura completa do químico.",
+      "explicacao": "Perto da injeção, a leitura pode refletir jato não misturado e má distribuição. A jusante da mistura, o sensor representa melhor a condição efetivamente imposta ao sistema.",
+      "resposta_padrao": "Manter o sensor junto ao ponto de injeção, onde a concentração é mais sensível.",
+      "por_que_nao": "Nesse ponto a leitura pode captar transientes e não a condição média após mistura, mascarando má distribuição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um sensor a jusante de misturador ou de ponto de injeção tende a captar melhor a condição realmente imposta ao equipamento após mistura do químico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pontos mal representativos podem ocultar transientes, zonas mortas ou má distribuição"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão do atraso entre injeção e medição na lógica de controle automático de dosagem.",
+      "pergunta": "Leitura on-line de hipoclorito entrou em oscilação cíclica depois que o analisador foi realocado mais longe, e o laboratório confirma resposta tardia após cada ajuste. Qual elemento da lógica deve ser tratado antes de retunar o controlador?",
+      "resposta": "Tempo morto entre injeção e medição.",
+      "explicacao": "Com atraso relevante, a malha reage a uma condição antiga. Retunar sem tratar o tempo morto tende a manter ou ampliar a oscilação.",
+      "resposta_padrao": "Aumentar o ganho do controlador para reagir mais rápido.",
+      "por_que_nao": "Quando o problema dominante é atraso de transporte e mistura, mais ganho piora a instabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta, interferências químicas, falhas de aterramento, ruído elétrico e atraso entre injeção e medição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "seleção de indicador e lógica de controle devem considerar tempo de mistura"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de erro metrológico do sensor on-line antes de alterar a receita química.",
+      "pergunta": "Amostras simultâneas passaram a divergir da leitura on-line, e o sensor de residual responde cada vez mais devagar a degraus de dosagem. Antes de mudar formulação ou setpoint, qual intervenção técnica fazer no instrumento?",
+      "resposta": "Limpeza e recalibração do sensor.",
+      "explicacao": "Divergência com amostras e resposta lenta indicam sujidade, incrustação ou deriva do sensor. O problema metrológico deve ser corrigido antes de alterar a dosagem química.",
+      "resposta_padrao": "Aumentar a dosagem do químico para recuperar o residual indicado.",
+      "por_que_nao": "Se a leitura está distorcida por fouling ou deriva, elevar a dose corrige o número e não a condição real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A automação pode reduzir variabilidade humana, mas não elimina necessidade de validação periódica, manutenção do sensor e reconciliação com análises laboratoriais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de medição on-line do efeito real de corrosão para ajustar dosagem, além de variáveis indiretas de processo.",
+      "pergunta": "A dosagem automática de inibidor de corrosão segue vazão e teor de água, mas continuam surgindo pites e sinais de sulfeto sem mudança dessas variáveis. Qual medição deve passar a governar o ajuste do tratamento?",
+      "resposta": "Monitoramento on-line de corrosão.",
+      "explicacao": "Vazão e teor de água são proxies e podem não refletir mistura, partição ou falha local de proteção. O ajuste deve incorporar a resposta real do ativo à corrosão.",
+      "resposta_padrao": "Elevar o fator de dose proporcional à vazão.",
+      "por_que_nao": "Aumentar dose por variável indireta não resolve falhas de distribuição ou interação com depósitos e microbiologia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "foram sugeridos controles de pH, inibidor de corrosão, dispersante, hipoclorito e descargas com base em variáveis de processo, além de monitoramento on-line de corrosão e depósitos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a dosagem deve ser ajustada por um painel de indicadores coerentes, e não por um único sinal isolado"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

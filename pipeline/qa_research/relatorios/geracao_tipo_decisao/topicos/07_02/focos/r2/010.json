@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de terceiros exige restringir as permissões da sessão ao escopo exato da tarefa.",
+      "pergunta": "A conta preparada abre escrita em vários controladores, embora o terceiro vá apenas ler diagnósticos de um inversor. Com VPN e endpoint já validados, o que deve ser ajustado antes da conexão?",
+      "resposta": "as permissões da sessão, restritas ao ativo e à tarefa",
+      "explicacao": "Mesmo com VPN e endpoint conformes, o risco continua ligado às permissões disponíveis; uma sessão autorizada pode alcançar funções operacionais ou de configuração. O escopo do acesso deve coincidir com a necessidade da tarefa.",
+      "resposta_padrao": "Manter a conta ampla e acompanhar a intervenção pelo operador local.",
+      "por_que_nao": "A supervisão não elimina o alcance técnico de funções de escrita e de outros ativos fora do escopo necessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para rastrear intervenção remota de terceiros, é necessário registro de sessão que vincule usuário, momento e ativo acessado.",
+      "pergunta": "O concentrador VPN registrou o túnel e o sistema de controle gravou a alteração, mas depois do suporte remoto não se sabe qual terceiro atuou nem em qual ativo. Que monitoramento deve ser exigido nas próximas intervenções?",
+      "resposta": "registro de sessão rastreável por usuário, horário e ativo",
+      "explicacao": "Logs de túnel e de processo podem não ligar a atuação ao terceiro e ao ativo operado. O registro de sessão é o que permite reconstruir quem acessou, quando e onde houve intervenção.",
+      "resposta_padrao": "Confiar nos logs já existentes de VPN e do sistema de controle.",
+      "por_que_nao": "Esses registros podem mostrar conexão e evento, mas não rastrear suficientemente quem atuou e em qual ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A liberação de acesso remoto deve considerar também a segurança do equipamento de destino da sessão, não só do canal e do notebook remoto.",
+      "pergunta": "O acesso remoto do fornecedor entrará por VPN aprovada e o notebook remoto foi validado. A sessão terminará em uma estação de engenharia fora da rotina de atualização e recentemente usada com mídias removíveis. Qual condição deve bloquear a liberação até ser tratada?",
+      "resposta": "o estado de segurança da estação de engenharia de destino",
+      "explicacao": "O canal seguro não corrige comprometimento no ponto de destino. Se a estação de engenharia usada na sessão estiver desatualizada ou contaminada, a conexão continua arriscada apesar da VPN e do notebook remoto válidos.",
+      "resposta_padrao": "Liberar, já que a VPN e o notebook remoto passaram na validação.",
+      "por_que_nao": "A proteção do canal não elimina risco de comprometimento já existente no equipamento de destino.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

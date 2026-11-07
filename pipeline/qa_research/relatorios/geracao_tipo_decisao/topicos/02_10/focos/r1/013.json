@@ -1,0 +1,91 @@
+{
+  "item": "02_10",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de Dead Band Assimétrico quando a queda da interface é mais crítica que sua elevação para a qualidade da água.",
+      "pergunta": "Pequenas quedas da interface já elevam rapidamente a contaminação da água de injeção; elevações equivalentes não geram degradação comparável. Mantido o controle por bandas, que modificação de filosofia deve ser adotada?",
+      "resposta": "Dead Band Assimétrico com reação mais rápida à queda da interface.",
+      "explicacao": "Quando a pior consequência vem da diminuição da interface, a banda deve ser assimétrica para reagir mais rápido nesse sentido e preservar melhor a qualidade da água.",
+      "resposta_padrao": "Aplicar bandas simétricas com a mesma rapidez nos dois sentidos.",
+      "por_que_nao": "Neste cenário, a perda dominante ocorre na queda da interface; resposta simétrica trata como equivalentes efeitos que não são.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também foi testado um Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com a finalidade de preservar mais eficientemente a qualidade da água de injeção."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de que a perda de margem do atuador final deve ser corrigida antes de novo retuning da malha.",
+      "pergunta": "A interface oscila após perturbações mesmo com novo tuning; a válvula de descarga permanece por longos períodos entre 95% e 100% aberta. Antes de alterar novamente a lógica, o que deve ser restabelecido?",
+      "resposta": "Margem de atuação da válvula de descarga.",
+      "explicacao": "Próxima do limite de capacidade, a válvula tira autoridade da malha para corrigir perturbações. A instabilidade pode vir da falta de margem do atuador, não do ajuste do controlador.",
+      "resposta_padrao": "Retunar o controlador para uma ação mais agressiva.",
+      "por_que_nao": "Sem margem no elemento final, maior agressividade não cria capacidade adicional de correção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma filosofia clássica é o controlador PID (proporcional, integral e derivativo) tentando manter a interface próxima de um setpoint."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pode surgir porque o elemento final de controle perdeu margem operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de simulação dinâmica fenomenológica para comparar filosofias de controle no acoplamento separador-hidrociclone sob transientes.",
+      "pergunta": "Vai-se substituir a filosofia de controle do conjunto separador-hidrociclone, com oscilações de carga e golfadas previstas; espuma, arraste pelo gás e emulsificantes não dominam. Que técnica deve comparar as alternativas antes da aplicação?",
+      "resposta": "Simulação dinâmica fenomenológica do sistema separador-hidrociclone.",
+      "explicacao": "Essa técnica permite estudar o acoplamento, comparar filosofias e antecipar a resposta a oscilações de carga e golfadas antes da aplicação, sem a limitação principal citada para fenômenos dominantes excluídos no cenário.",
+      "resposta_padrao": "Fazer apenas testes operacionais diretos com ajustes progressivos.",
+      "por_que_nao": "Sem o modelo, fica mais difícil isolar o acoplamento e prever o efeito dos transientes antes da mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em estudos e simulações do sistema separador-hidrociclone"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

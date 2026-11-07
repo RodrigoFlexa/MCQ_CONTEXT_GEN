@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 31,
+  "rodada": 1,
+  "contexto": {
+    "A1": 30,
+    "F": 31,
+    "A2": 32
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reclassificação de mudanças de estado sem ação imediata de alarme para evento.",
+      "pergunta": "Durante a partida automática, confirmações de abertura/fechamento de válvulas e mudanças de permissivo soam buzina e exigem reconhecimento, embora a sequência avance sem intervenção. Qual ajuste de configuração deve ser feito nesses pontos?",
+      "resposta": "Reclassificação para evento sem anunciação nem reconhecimento",
+      "explicacao": "Mudanças de estado sem ação imediata são eventos. Mantê-las como alarmes gera pseudo-alarmes e sobrecarga cognitiva, competindo com avisos realmente acionáveis.",
+      "resposta_padrao": "Baixar a prioridade para alarme baixo.",
+      "por_que_nao": "Continuará disputando atenção do operador e exigindo reconhecimento sem resposta útil.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Alarme é um aviso que requer ação do operador em tempo restrito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evento é uma mudança de estado registrada para análise, sem demanda de ação imediata"
+        },
+        {
+          "bloco": "F",
+          "trecho": "informações que deveriam apenas ser registradas passam a competir por atenção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Preservação de informação diagnóstica como evento registrado, sem anunciá-la como alarme.",
+      "pergunta": "Uma mensagem de mudança de modo é valiosa para reconstruir ocorrências, mas aparece com buzina e reconhecimento obrigatório, encobrindo desvios realmente acionáveis. Que arranjo de configuração deve substituí-la?",
+      "resposta": "Evento registrado no histórico, sem anúncio de alarme",
+      "explicacao": "Se a informação é útil para diagnóstico, ela deve permanecer registrada. O erro está em anunciá-la como alarme quando não há ação imediata esperada do operador.",
+      "resposta_padrao": "Excluir a mensagem do sistema.",
+      "por_que_nao": "Isso elimina dado útil para registro, diagnóstico e análise posterior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "eventos devem permanecer disponíveis para registro, diagnóstico e análise sem anunciar indevidamente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A racionalização de alarmes deve avaliar causa, consequência, prioridade e resposta esperada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratamento de anúncio duplicado sem ação adicional como evento, não como segundo alarme.",
+      "pergunta": "Na mesma condição de alta pressão, o sistema já anuncia o alarme acionável e ainda gera outro anúncio reconhecível do mesmo estado, sem nova ação do operador. O que deve ser feito com esse segundo anúncio?",
+      "resposta": "Converter o anúncio duplicado em evento",
+      "explicacao": "Dois anúncios da mesma condição, sem resposta adicional, não aumentam a proteção. O duplicado vira pseudo-alarme e atrapalha reconhecer o aviso que realmente demanda ação.",
+      "resposta_padrao": "Manter os dois alarmes para reforçar a visibilidade.",
+      "por_que_nao": "Alarmes duplicados para a mesma resposta esperada só aumentam a carga cognitiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a configuração de alarmes precisa associar cada anúncio a uma ação esperada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "passam a competir por atenção com alarmes realmente acionáveis"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

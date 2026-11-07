@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 2,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição do ponto de fronteira adicional em arquitetura híbrida com controlador de borda, SCADA local e publicação para nuvem.",
+      "pergunta": "Controladores de borda seguem alimentando o SCADA local em tempo real e passarão a publicar dados para um broker MQTT em nuvem. Para que o novo caminho não contorne o tratamento arquitetural da OT, em que ponto você deve estabelecer a fronteira adicional?",
+      "resposta": "na interface máquina-nuvem do controlador de borda",
+      "explicacao": "Em arquitetura híbrida, a nova saída para nuvem cria uma interface própria a partir da OT. A fronteira precisa ser tratada onde os dados deixam o controlador de borda, não apenas no destino em nuvem.",
+      "resposta_padrao": "No broker MQTT em nuvem.",
+      "por_que_nao": "Controlar só no destino deixa o tráfego sair da OT sem tratamento no ponto em que a nova fronteira realmente surge.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Enquadramento arquitetural de sistema offshore conectado à infraestrutura industrial, mesmo sem atuar diretamente no controle de processo.",
+      "pergunta": "O sistema de monitoramento de movimento de helicóptero foi ligado à mesma infraestrutura usada por controle e supervisão. Ao desenhar zonas e conduítes, sob qual arquitetura você deve tratá-lo?",
+      "resposta": "no escopo arquitetural do IACS",
+      "explicacao": "Nas operações offshore, esse tipo de sistema pode integrar o escopo do IACS. Se usa a mesma infraestrutura industrial, deve receber tratamento arquitetural dentro desse escopo.",
+      "resposta_padrao": "Como um sistema de telecomunicações ou IT à parte.",
+      "por_que_nao": "Nesse cenário, ele está dentro da infraestrutura industrial e o escopo offshore do IACS pode se estender a esse sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Arquitetura IT/OT é a organização dos sistemas, redes e interfaces que conectam tecnologia da informação (IT) e tecnologia operacional (OT) em uma instalação industrial."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em operações offshore, esse escopo pode se estender a sistemas marítimos, de perfuração e de monitoramento de movimento de helicóptero."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Posicionamento funcional de HMI, gestão de alarmes e historiador quando também atendem consumidores corporativos.",
+      "pergunta": "Telas de operação, gestão de alarmes e historiador de uma ampliação também alimentarão relatórios corporativos. Para posicionar a solução sem subordinar essas funções a prioridades administrativas, em que camada ela deve ficar?",
+      "resposta": "na camada supervisória OT",
+      "explicacao": "Essas funções pertencem tipicamente à camada supervisória. Mesmo com consumo corporativo posterior, seu posicionamento deve seguir as prioridades da OT, não as da IT administrativa.",
+      "resposta_padrao": "No ambiente IT corporativo.",
+      "por_que_nao": "Quando a aplicação executa HMI, alarmes e histórico operacional, ela se enquadra na camada supervisória e herda objetivos de segurança e disponibilidade do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        },
+        {
+          "bloco": "F",
+          "trecho": "OT prioriza controle determinístico, segurança operacional e disponibilidade do processo; IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escalonamento para resposta operacional guiado pelo alcance do incidente a funções de processo.",
+      "pergunta": "Abertura indevida de válvula acompanhada de pressão ascendente aparece junto com login suspeito no supervisório. Para sair da triagem cibernética usual e entrar na resposta operacional, qual aspecto técnico do incidente deve mandar?",
+      "resposta": "a atuação direta sobre válvulas, vazão e pressão",
+      "explicacao": "O gatilho é o alcance do incidente a funções que manipulam o processo. Quando há atuação sobre válvulas, vazão e pressão, a consequência operacional prevalece sobre a origem do evento.",
+      "resposta_padrao": "A origem do login suspeito no supervisório.",
+      "por_que_nao": "A origem não define a gravidade operacional quando o incidente já alcança funções que alteram o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de correção em OT crítica quando já existe patch validado e condição operacional compatível.",
+      "pergunta": "Correção validada pelo fornecedor para falha crítica na pilha TCP/IP já está disponível, o nó redundante sustenta o processo e a janela foi aprovada. Qual ação técnica deve substituir o isolamento como medida principal?",
+      "resposta": "atualizar para a versão estável mais recente homologada",
+      "explicacao": "Com correção disponível e condição operacional compatível, a medida mais eficaz deixa de ser só contenção; deve-se remover a vulnerabilidade pela atualização estável homologada.",
+      "resposta_padrao": "Manter apenas o isolamento e adiar a atualização.",
+      "por_que_nao": "Quando há correção validada e janela segura, adiar mantém uma vulnerabilidade explorável sem necessidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "obter patches e estratégias de remediação com fornecedores e atualizar para versão estável mais recente quando houver correção disponível."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota, mas sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da cadeia de alimentação ininterrupta como ativo crítico de disponibilidade digital por modo de falha comum.",
+      "pergunta": "No backlog de integridade digital, uma HMI redundante está desatualizada, e a UPS compartilhada por controle, shutdown e mitigação está sem manutenção preventiva. O que deve entrar primeiro na intervenção?",
+      "resposta": "a cadeia de alimentação ininterrupta compartilhada",
+      "explicacao": "A UPS compartilhada é modo de falha comum. Sua indisponibilidade pode retirar energia simultaneamente de controle, shutdown e mitigação, superando a criticidade de uma HMI redundante desatualizada.",
+      "resposta_padrao": "A HMI redundante com software antigo.",
+      "por_que_nao": "A HMI redundante não é falha comum; a UPS compartilhada pode indisponibilizar várias barreiras ao mesmo tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência, reduzindo sua confiabilidade e efetividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A disponibilidade efetiva de um IACS não depende apenas do software de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

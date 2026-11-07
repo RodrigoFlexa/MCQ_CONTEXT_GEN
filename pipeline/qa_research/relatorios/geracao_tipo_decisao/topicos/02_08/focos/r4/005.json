@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "rodada": 4,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de modelar o esvaziamento progressivo do inventário finito no blowdown.",
+      "pergunta": "Isolado por ESD, um vaso despressuriza sem reposição de fluido; o cálculo com fonte mantida na condição inicial superestima a carga ao flare. Que representação do volume deve substituir essa hipótese?",
+      "resposta": "Esvaziamento progressivo do inventário confinado.",
+      "explicacao": "No blowdown de inventário finito, pressão, temperatura, composição e vazão mudam com o tempo; tratar o volume como fonte constante distorce a carga liberada e o tempo de despressurização.",
+      "resposta_padrao": "Modelar o vaso como fonte a pressão inicial constante.",
+      "por_que_nao": "Essa hipótese só serve para alimentação praticamente infinita; num volume isolado, o inventário se esvazia ao longo do evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "esvaziamento progressivo do inventário"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização das propriedades termodinâmicas reais do fluido da campanha no modelo dinâmico de blowdown.",
+      "pergunta": "Com o mesmo arranjo mecânico, um segmento passa a despressurizar mais devagar e a atingir metal mais frio em campanhas de composição variável; abertura da BDV e contrapressão medida seguem aderentes. No modelo, que conjunto de dados deve ser atualizado antes de mexer na válvula?",
+      "resposta": "Propriedades termodinâmicas do fluido da campanha.",
+      "explicacao": "Mesmo com mesma lógica e hardware, mudanças de composição alteram expansão, resfriamento e eventual mudança de fase; usar dados fixos de projeto pode errar tempo e temperatura do blowdown.",
+      "resposta_padrao": "Manter as propriedades de projeto originais do fluido.",
+      "por_que_nao": "O desempenho do blowdown depende das propriedades do fluido ao longo do evento; campanha diferente pode mudar o resultado sem exigir redimensionamento imediato.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD ou propriedades do fluido estiverem incorretas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do perfil temporal de contrapressão do flare na modelagem do blowdown, em vez de valor fixo.",
+      "pergunta": "Os demais segmentos já foram simulados e a pressão no header cresce e depois cai durante o evento, mas o cálculo da BDV ainda usa um único valor de jusante e erra o tempo até a pressão final. Que condição aplicar na descarga da válvula?",
+      "resposta": "Perfil temporal de contrapressão do flare.",
+      "explicacao": "A vazão pela BDV e o tempo até a pressão final dependem da condição do receptor durante o evento; um valor único de jusante não reproduz a resposta real.",
+      "resposta_padrao": "Usar uma contrapressão fixa de projeto na descarga da BDV.",
+      "por_que_nao": "Valor único não representa a evolução do sistema receptor durante o blowdown e pode distorcer a taxa real de despressurização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contrapressão variável no flare"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela contrapressão no sistema de flare"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

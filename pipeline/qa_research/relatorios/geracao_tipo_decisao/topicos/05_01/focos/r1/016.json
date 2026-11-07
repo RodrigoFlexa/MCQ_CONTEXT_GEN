@@ -1,0 +1,113 @@
+{
+  "item": "05_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar o alívio da principal carga térmica quando a limitação de capacidade vem do aquecimento da fonte fria, não da hidráulica.",
+      "pergunta": "Água do mar mais quente, vazão de circulação no patamar nominal, ΔP em filtros e trocadores estável, e os compressores são a principal carga térmica. Qual intervenção técnica deve vir primeiro para recuperar margem?",
+      "resposta": "Descarregar os compressores principais.",
+      "explicacao": "Com a fonte fria mais quente, a capacidade cai pela menor diferença de temperatura. Mantidas vazão e perdas de carga, a recuperação imediata de margem vem da redução da principal carga térmica.",
+      "resposta_padrao": "Aumentar a vazão de circulação de água de resfriamento.",
+      "por_que_nao": "Neste cenário o gargalo é a menor diferença térmica com a água do mar, não falta de circulação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a água do mar entra mais quente, a diferença de temperatura disponível no trocador diminui e a mesma área de troca passa a rejeitar menos calor."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em unidades marítimas específicas, compressores podem representar a principal carga térmica do sistema de água de resfriamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "aumento de temperatura em compressores"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Desagressivar a malha de aquecimento quando tempo morto, inércia térmica e alta vazão tornam o controle oscilatório.",
+      "pergunta": "A temperatura do óleo aquecido ultrapassa o setpoint e retorna em ciclos longos; a medição está na saída do trocador e a vazão do processo subiu. Que ajuste de sintonia deve ser feito primeiro?",
+      "resposta": "Reduzir o ganho proporcional da malha.",
+      "explicacao": "Tempo morto na medição, inércia térmica e não linearidade em alta vazão tornam o controle agressivo propenso a sobre-elevação. Reduzir o ganho diminui a correção excessiva antes de a medição responder.",
+      "resposta_padrao": "Aumentar o ganho proporcional para reagir mais cedo.",
+      "por_que_nao": "Com tempo morto, mais agressividade faz a válvula corrigir antes do efeito aparecer e amplia a oscilação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No aquecimento de óleo, a resposta dinâmica pode ser dificultada por tempo morto associado à medição de temperatura na saída do trocador, elevada inércia térmica e comportamento não linear do permutador em vazões elevadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em malhas de aquecimento, a presença de tempo morto e inércia térmica torna comum a resposta lenta e a propensão a sobre-elevação ou oscilações se o controle for agressivo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar a desobstrução dos filtros do circuito quando a perda térmica decorre de queda de vazão por restrição hidráulica.",
+      "pergunta": "ΔP nos filtros aumenta, a vazão de circulação cai e a temperatura de retorno sobe, enquanto o trocador mantém ΔP estável. Qual intervenção deve ser priorizada?",
+      "resposta": "Limpeza dos filtros do circuito.",
+      "explicacao": "O aumento de ΔP nos filtros com queda de vazão aponta restrição hidráulica a montante dos consumidores. Com ΔP do trocador estável, o primeiro gargalo a remover é o filtro carregado.",
+      "resposta_padrao": "Limpeza do trocador principal.",
+      "por_que_nao": "Sem aumento de ΔP no trocador, a perda de capacidade decorre da vazão estrangulada pelos filtros.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a vazão cai, também cai a capacidade de transportar calor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Filtros carregados, queda de vazão, aumento de diferença de temperatura de retorno"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Filtros instalados no circuito ajudam a limitar transporte de partículas para bombas e trocadores, reduzindo perda de desempenho e risco de obstrução."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Usar a aproximação térmica para decidir se a limitação está no trocador principal, e não na distribuição hidráulica.",
+      "pergunta": "Consumidores críticos aquecem sem mudança de vazão de circulação nem de ΔP nos ramais. Para decidir se o limite está na troca principal, qual variável do trocador deve ser acompanhada?",
+      "resposta": "A aproximação térmica do trocador.",
+      "explicacao": "A aproximação térmica mostra diretamente a folga de troca no trocador. Mantidas vazão e distribuição, sua piora distingue limitação da troca principal de simples redistribuição de carga no circuito.",
+      "resposta_padrao": "O ΔT ida-retorno do circuito.",
+      "por_que_nao": "Esse ΔT mistura mudanças de carga e de distribuição; não isola o desempenho do trocador.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Indicadores técnicos usuais incluem temperaturas de ida e retorno do circuito fechado, aproximação térmica no trocador, vazão de circulação, pressão diferencial em filtros e trocadores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento do sistema deve buscar evidências de perda de capacidade térmica e de instabilidade hidráulica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a água do mar entra mais quente, a diferença de temperatura disponível no trocador diminui"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

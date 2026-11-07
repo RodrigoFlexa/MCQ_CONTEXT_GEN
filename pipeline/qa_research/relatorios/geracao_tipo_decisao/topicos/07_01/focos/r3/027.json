@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 3,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Alteração de arranjo que cria nova condição habilitadora deve ser refletida no permissivo da sequência automática.",
+      "pergunta": "A sequência automática parte a bomba mesmo sem confirmação da válvula motorizada de sucção recém-adicionada em aberta; comandos e fins de curso da válvula funcionam. Que ajuste deve ser feito na lógica antes de liberar a partida automática?",
+      "resposta": "Confirmação de válvula aberta no permissivo de partida da bomba",
+      "explicacao": "A modificação criou uma condição habilitadora nova. Sem essa confirmação no permissivo, a sequência pode partir com alinhamento incorreto mesmo com comando e retorno da válvula íntegros.",
+      "resposta_padrao": "Fazer apenas o loop check da nova válvula.",
+      "por_que_nao": "O loop check comprova comando e retorno, mas não corrige a ausência da condição habilitadora na lógica de partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Um novo trip físico só fica coerente com a operação automática quando também entra na lógica de intertravamento com retenção/rearme.",
+      "pergunta": "Foi instalado um botão adicional de parada de emergência na bomba. Ele desenergiza o motor no teste de campo, mas a sequência permite nova partida automática sem reconhecimento da atuação. Que configuração deve ser implantada?",
+      "resposta": "Integrar o trip externo ao intertravamento de partida com rearme",
+      "explicacao": "Corte local de energia não garante bloqueio lógico nem retenção da causa. O trip precisa participar do intertravamento para impedir religamento automático até rearme.",
+      "resposta_padrao": "Levar o contato apenas para indicação na IHM.",
+      "por_que_nao": "Indicação melhora a visibilidade, mas não bloqueia a nova partida nem exige reconhecimento da atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "instalação de trip de emergência de bombas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

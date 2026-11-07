@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prevenção de blackout por segregação da alimentação 24 Vcc de comando dos geradores principais.",
+      "pergunta": "Os geradores perdem comando e saem do barramento quando some o 24 Vcc de serviços gerais, embora máquina motriz e excitação permaneçam normais. Que alimentação deve ser segregada para evitar repetir o blackout?",
+      "resposta": "24 Vcc segregado dos painéis de controle dos geradores principais",
+      "explicacao": "Perda de energia de controle pode derrubar a geração mesmo com o gerador mecanicamente disponível; a alimentação de comando dos geradores não pode depender do 24 Vcc geral.",
+      "resposta_padrao": "Aumentar a reserva girante da geração.",
+      "por_que_nao": "Reserva girante cobre perda de potência ativa, não perda de comando, supervisão ou atuação dos geradores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restauração da redundância funcional de supervisão por segregação de UPS entre canais.",
+      "pergunta": "Na perda de uma UPS, a supervisão redundante desaparece inteira, embora as duas estações master e os dois canais lógicos aprovem teste funcional. Que rearranjo elétrico específico corrige essa vulnerabilidade?",
+      "resposta": "Alimentar cada estação master por uma UPS distinta",
+      "explicacao": "Redundância só resiste a falha única se os canais tiverem segregação elétrica real; duas masters no mesmo conjunto UPS preservam a causa comum.",
+      "resposta_padrao": "Instalar uma terceira estação master.",
+      "por_que_nao": "Mais estações no mesmo caminho de alimentação não eliminam a falha comum da UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Destravamento da recomposição pós-blackout por tratamento do trip lógico do VMS durante reboot.",
+      "pergunta": "No blackout total, o gerador de emergência parte e estabiliza, mas o disjuntor abre logo após fechar somente enquanto o controle reinicia; em teste local de gerador e disjuntor, tudo fica normal. Que ação de lógica destrava a recomposição?",
+      "resposta": "Bloqueio temporário do trip do VMS ao disjuntor no reboot",
+      "explicacao": "A falha ocorre por trip lógico persistente durante a reinicialização, condição que pode ficar escondida em reinícios usuais com bateria; sem esse bloqueio, o sistema impede a própria energização.",
+      "resposta_padrao": "Reajustar as proteções do disjuntor do gerador de emergência.",
+      "por_que_nao": "Abertura comandada pelo VMS não é atuação das proteções elétricas do disjuntor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

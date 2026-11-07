@@ -1,0 +1,99 @@
+{
+  "item": "09_01",
+  "foco": 8,
+  "rodada": 4,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Hipóteses de roteirização que restringem uma instalação a um único PSV não devem ser tratadas como regra operacional.",
+      "pergunta": "O otimizador bloqueia qualquer pedido extra para uma instalação já vinculada a outro PSV. Um sobressalente crítico cabe no PSV que passará antes, e as duas manobras ocorreriam em janelas seguras distintas. Que ajuste técnico fazer no modelo?",
+      "resposta": "Remover a restrição de embarcação única por instalação.",
+      "explicacao": "A hipótese de uma embarcação por instalação pertence ao sistema modelado, não à operação real. Se as duas aproximações são seguras, liberar essa restrição evita espera ou viagem expressa desnecessária.",
+      "resposta_padrao": "Classificar o sobressalente como entrega expressa.",
+      "por_que_nao": "Entrega expressa é inadequada aqui porque o bloqueio vem da hipótese de embarcação única, e não da falta de meio seguro de atendimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada plataforma ser atendida por uma única embarcação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não devem ser universalizadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a solução precisa ser compatível com restrições físicas e operacionais da interface marítima, como necessidade de posicionamento seguro e coexistência com outras atividades do campo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O aumento da circulação de embarcações de apoio amplia a preocupação com esse tipo de evento porque cresce o número potencial de interações próximas no campo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A obrigatoriedade de partidas diárias em modelos de roteirização deve ser relaxada quando aumenta exposição sem ganho de atendimento.",
+      "pergunta": "Partidas diárias do roteirizador estão criando espera ao largo e uma aproximação extra sem melhorar o atendimento; a capacidade do PSV cobre todos os pedidos nas janelas seguras disponíveis. Qual ajuste técnico aplicar ao modelo?",
+      "resposta": "Retirar a obrigatoriedade de partidas diárias.",
+      "explicacao": "Partidas diárias são característica de um caso específico. Se a demanda já cabe nas janelas seguras com menos saídas, mantê-las só eleva circulação, espera e interações próximas.",
+      "resposta_padrao": "Manter as saídas diárias e absorver a espera no campo.",
+      "por_que_nao": "Absorver a espera preserva uma hipótese do modelo, mas aumenta exposição na interface marítima sem benefício operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "partidas diárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não devem ser universalizadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a solução precisa ser compatível com restrições físicas e operacionais da interface marítima, como necessidade de posicionamento seguro e coexistência com outras atividades do campo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O aumento da circulação de embarcações de apoio amplia a preocupação com esse tipo de evento porque cresce o número potencial de interações próximas no campo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Permanência do PSV em viagem por até três dias é hipótese de modelo e não deve comandar a programação real.",
+      "pergunta": "Após a última entrega do dia, a próxima janela segura só abre em 36 horas e há nova carga pronta na base. O plano mantém o PSV fora apenas porque o algoritmo admite até três dias sem retorno. Que ação técnica tomar?",
+      "resposta": "Retorno antecipado ao porto.",
+      "explicacao": "Manter o PSV fora só para cumprir a hipótese do modelo prolonga a duração da operação e posterga o próximo ciclo útil. Com longa espera e nova carga pronta, o retorno é a decisão adequada.",
+      "resposta_padrao": "Esperar ao largo até a próxima janela.",
+      "por_que_nao": "Os três dias em viagem são hipótese de um sistema específico; aqui a espera apenas amplia exposição e atrasa o reabastecimento seguinte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permanência do PSV em viagem por até três dias sem retorno ao porto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não devem ser universalizadas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a exposição ao risco é associada à duração da operação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "06_07",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização das condições iniciais das barreiras no modelo sequencial quando a atividade começa em estado diferente do planejado.",
+      "pergunta": "Na partida, uma das contenções já está indisponível por serviço paralelo. Ao reaproveitar o modelo sequencial do programa, que informação técnica deve ser corrigida primeiro?",
+      "resposta": "Condições iniciais das barreiras.",
+      "explicacao": "O estado de partida mudou. Na checagem sequencial, o modelo precisa refletir as condições iniciais reais das barreiras para que as transições seguintes sejam avaliadas corretamente.",
+      "resposta_padrao": "Alterar apenas a etapa em que essa contenção aparecia como retirada.",
+      "por_que_nao": "A indisponibilidade já existe na condição de partida e afeta toda a sequência, não só um passo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um protótipo verificador pode armazenar condições iniciais e impactos de operações sobre barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "avaliar o grau de segurança ao longo de uma sequência de tarefas, em vez de tratar o sistema como estático"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ajuste do crédito de barreiras humanas no modelo quantitativo quando fatores humanos degradam o desempenho esperado.",
+      "pergunta": "Duas confirmações manuais foram creditadas como barreiras na sequência, mas a execução real terá a mesma dupla no fim do turno, com rádio intermitente. Qual variável do modelo deve ser rebaixada antes da liberação?",
+      "resposta": "Confiabilidade da barreira humana.",
+      "explicacao": "Fadiga e comunicação deficiente degradam o desempenho humano. Se o modelo mantiver o crédito original dessas confirmações, o grau de segurança calculado não representará a execução real.",
+      "resposta_padrao": "Manter o mesmo crédito das confirmações e compensar com DDS reforçado.",
+      "por_que_nao": "DDS não recupera a confiabilidade de uma barreira humana degradada por fadiga e comunicação falha.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Esses fatores importam porque alteram a confiabilidade do desempenho humano e podem degradar barreiras de prevenção e mitigação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade do número calculado depende da validade dos dados de entrada, das premissas do modelo e da coerência entre a condição real e a condição analisada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Refazimento das premissas do modelo quando mudanças temporárias rompem a coerência entre condição analisada e condição real.",
+      "pergunta": "O roteiro de etapas não mudou, mas o trabalho saiu com alinhamento temporário diferente do considerado no planejamento. Antes de usar o grau de segurança já calculado, o que deve ser refeito no modelo?",
+      "resposta": "Premissas do modelo coerentes com a condição real.",
+      "explicacao": "Mudança de alinhamento altera a base de aplicação do cálculo. Sem refazer as premissas para a condição real, o número obtido no planejamento deixa de sustentar a decisão.",
+      "resposta_padrao": "Manter o valor calculado e apenas registrar a mudança temporária na PT.",
+      "por_que_nao": "Quando a condição real deixa de coincidir com a analisada, o resultado anterior perde validade analítica.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "quando método, dados de entrada, premissas, limitações ou configuração da instalação mudam, o resultado analítico anterior pode deixar de sustentar decisões seguras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade do número calculado depende da validade dos dados de entrada, das premissas do modelo e da coerência entre a condição real e a condição analisada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "item": "06_05",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compatibilização entre lógica de votação e arranjo real de detectores antes de endurecer a confirmação automática.",
+      "pergunta": "Querem migrar uma zona de gás de 1ooN para 2ooN para reduzir disparos espúrios. Os detectores existentes já estão junto às fontes prováveis e quase não têm sobreposição; mover qualquer um abriria nova lacuna. Qual intervenção técnica deve preceder a mudança de lógica?",
+      "resposta": "Adicionar detectores fixos para sobreposição de cobertura na zona.",
+      "explicacao": "A lógica só é executável se quantidade e locação reais suportarem a confirmação exigida. Sem sobreposição e detectores mínimos, partes da zona ficam sem possibilidade de confirmação automática e a matriz pode não cumprir sua função.",
+      "resposta_padrao": "Reprogramar a zona para 2ooN com os detectores existentes.",
+      "por_que_nao": "Sem quantidade e locação compatíveis, a votação exigida não se confirma em toda a zona e ações automáticas podem deixar de ocorrer.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a lógica escolhida precisa ser compatível com a quantidade e a locação reais dos detectores"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a ausência de detectores mínimos numa fire zone impedia o cumprimento da matriz de causa e efeito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando faltam detectores mínimos em uma zona de fogo e gás, determinadas ações lógicas podem deixar de ocorrer automaticamente."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Recurso de supervisão necessário para reconstruir cronologicamente alarmes, inibições e ações automáticas do F&G.",
+      "pergunta": "Dois desligamentos automáticos seguidos geraram versões conflitantes sobre a ordem entre alarme de gás, inibição e comando de shutdown. Qual recurso técnico do supervisório deve ser implantado para fechar esse diagnóstico com rastreabilidade?",
+      "resposta": "Sequência de eventos rastreável com carimbo temporal no supervisório.",
+      "explicacao": "Quando o registro não permite reconstruir a cronologia das ações, fica comprometido o diagnóstico do evento. É preciso registrar a sequência de alarmes, inibições e comandos de forma rastreável para reconstituir a resposta automática.",
+      "resposta_padrao": "Ampliar a retenção de tendências e usar os estados finais dos alarmes.",
+      "por_que_nao": "Tendências e estados finais não preservam a ordem rastreável de alarmes, inibições e comandos necessária para reconstruir o evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando os registros supervisórios são pouco práticos ou incompletos, o diagnóstico do evento e a reconstrução da resposta ficam prejudicados."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os registros do supervisório permitam reconstruir eventos e ações"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "registros pouco práticos dificultam entender o que ocorreu durante um incidente."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

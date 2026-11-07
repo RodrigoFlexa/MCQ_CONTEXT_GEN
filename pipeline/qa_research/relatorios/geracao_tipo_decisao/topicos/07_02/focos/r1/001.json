@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do SCADA como camada agregadora quando vários controladores de campo precisam convergir para alarmes, histórico e operação.",
+      "pergunta": "Controladores de campo distintos precisam alimentar alarmes comuns, histórico e uma única interface de operação. Qual sistema deve concentrar essa agregação?",
+      "resposta": "o SCADA",
+      "explicacao": "Com múltiplos controladores de campo, o SCADA tende a concentrar alarmes, histórico e interface operacional na camada supervisória.",
+      "resposta_padrao": "Integrar tudo diretamente nos próprios controladores.",
+      "por_que_nao": "Isso espalha a agregação na camada de controle; nesse cenário, essa função tende a ficar no SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição do ponto de interconexão prioritário para tratamento arquitetural quando dados deixam o controle para vários consumidores.",
+      "pergunta": "Historiador, telecomunicações e painel corporativo passam a consumir dados dos mesmos controladores por um ponto comum. Qual interconexão deve receber o tratamento arquitetural específico?",
+      "resposta": "a interface entre a camada de controle e a camada supervisória",
+      "explicacao": "A fronteira aparece quando os dados saem do controle para consumo externo ou supervisório; esse ponto concentra trocas e merece tratamento arquitetural específico.",
+      "resposta_padrao": "O perímetro da rede corporativa.",
+      "por_que_nao": "O ponto crítico nasce antes, na saída do controle para os consumidores; proteger só o perímetro ignora a principal concentração de trocas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da comunicação máquina-nuvem como fronteira adicional em arquiteturas híbridas com edge e SCADA local.",
+      "pergunta": "Num arranjo híbrido, um controlador de borda alimenta o SCADA local em tempo real e publica dados em nuvem. Qual enlace deve entrar como nova fronteira de segmentação?",
+      "resposta": "o enlace do controlador de borda ao broker MQTT em nuvem",
+      "explicacao": "A comunicação máquina-nuvem amplia as fronteiras; nesse arranjo, o link do edge para o broker adiciona um novo ponto de interconexão além do fluxo local.",
+      "resposta_padrao": "Apenas o enlace entre o SCADA local e a rede interna.",
+      "por_que_nao": "O novo cruzamento de fronteira está na publicação do controlador de borda para a nuvem, não no fluxo local de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição da finalidade operacional do tráfego como variável arquitetural central antes de abrir nova interface entre domínios.",
+      "pergunta": "Uma nova interface vai ligar RTU, telemetria e software analítico. Antes de liberar o fluxo, qual variável arquitetural deve ser definida de forma explícita?",
+      "resposta": "a finalidade operacional do tráfego autorizado",
+      "explicacao": "Cada nova interface exige definir claramente qual tráfego cruza a fronteira e com qual finalidade operacional, antes da liberação técnica.",
+      "resposta_padrao": "As portas e protocolos a liberar.",
+      "por_que_nao": "Portas e protocolos derivam da necessidade; primeiro deve ficar explícito qual tráfego é necessário e para que operação ele existe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em artificial lift, também aparecem integrações entre controle local, unidade terminal remota (RTU), telemetria, SCADA e software analítico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

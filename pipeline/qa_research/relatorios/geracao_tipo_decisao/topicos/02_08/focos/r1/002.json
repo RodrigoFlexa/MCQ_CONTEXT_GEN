@@ -1,0 +1,87 @@
+{
+  "item": "02_08",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de PSVs por simulação dinâmica quando transiente, controles e volumes comunicantes afetam o caso de menor carga.",
+      "pergunta": "Há um cenário de alívio alto e outro baixo, com volumes comunicantes, malhas atuando durante o transiente e dúvida sobre o comportamento da PSV no caso menor. Que abordagem deve ser usada para definir a seleção das PSVs?",
+      "resposta": "Simulação dinâmica do sistema de alívio.",
+      "explicacao": "A condição menor pode ser inadequada dinamicamente mesmo com proteção estática atendida. Como a resposta depende do transiente, dos controles e do acoplamento entre equipamentos, a seleção precisa de representação dinâmica.",
+      "resposta_padrao": "Análise estática do caso dimensionante.",
+      "por_que_nao": "Ela não representa o transiente nem a atuação dos controles que podem tornar inadequado o caso de menor carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "continuar inadequada do ponto de vista dinâmico para a condição de menor carga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aceitação de arranjo com duas PSVs condicionada à manutenção da cobertura do caso governante.",
+      "pergunta": "Uma PSV adicional de menor ajuste resolveu o caso de baixa vazão. No cenário de maior alívio, porém, a pressão ainda sobe até o limite enquanto as duas descarregam para o mesmo header. Qual requisito técnico deve prevalecer na decisão sobre manter a configuração?",
+      "resposta": "Cobertura do caso governante.",
+      "explicacao": "Eliminar a instabilidade do caso menor não basta; o arranjo com mais de um dispositivo deve continuar protegendo o evento de maior carga no sistema receptor.",
+      "resposta_padrao": "Manter o arranjo porque o caso pequeno ficou estável.",
+      "por_que_nao": "A modificação só é aceitável se continuar protegendo o cenário governante de maior carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a manutenção da cobertura do caso governante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em qualquer arranjo com mais de um dispositivo, passam a ser relevantes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a contrapressão do sistema receptor"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicabilidade de duas PSVs com ajustes distintos depende do arranjo hidráulico local, não da simples repetição de outro caso.",
+      "pergunta": "A mesma dupla de PSVs com ajustes distintos funcionou em outro serviço. Aqui a filosofia de proteção e as cargas são iguais, mas as linhas até o header comum são diferentes. Qual característica local deve decidir a adoção dessa solução?",
+      "resposta": "Arranjo hidráulico do sistema.",
+      "explicacao": "A solução com duas PSVs é contextual. Mudanças nas linhas alteram interação entre válvulas, repartição de vazão e contrapressão, podendo invalidar a cópia direta do arranjo.",
+      "resposta_padrao": "Repetir a mesma configuração do outro serviço.",
+      "por_que_nao": "A solução não é universal; mudanças hidráulicas alteram interação entre válvulas e desempenho do alívio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sua aplicação depende do arranjo hidráulico, da filosofia de proteção e da interação entre as válvulas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o resultado de um caso não deve ser convertido automaticamente em regra universal para qualquer sistema de alívio"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

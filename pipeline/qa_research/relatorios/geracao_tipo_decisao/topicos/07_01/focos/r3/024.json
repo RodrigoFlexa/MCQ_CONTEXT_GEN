@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 24,
+  "rodada": 3,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da recuperação de testes atrasados quando a postergação se concentra na mesma barreira de proteção.",
+      "pergunta": "Na reprogramação antes da partida, há quatro testes periódicos vencidos: dois pertencem à mesma barreira de shutdown do trem de compressão e dois a barreiras independentes. Só cabem duas execuções agora. Qual par deve ser recuperado primeiro?",
+      "resposta": "Os dois testes da mesma barreira.",
+      "explicacao": "Antes da partida, atrasos não devem ser tratados isoladamente; a concentração de postergações na mesma barreira eleva a criticidade mais do que atrasos equivalentes em barreiras separadas.",
+      "resposta_padrao": "Os dois testes com maior tempo de vencimento.",
+      "por_que_nao": "Tempo de atraso isolado não capta a degradação combinada quando a postergação recai sobre a mesma barreira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Partidas, paradas, isolamento de sistemas, comissionamento, regeneração, indisponibilidade simultânea de equipes ou de equipamentos críticos e execução de serviços concorrentes tendem a aumentar a dependência de sequências corretas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes e compensações não devem ser avaliados como eventos isolados"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A criticidade cresce quando a postergação se acumula em elementos que compõem a mesma barreira."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição de FAT integrado para reduzir incompatibilidades futuras entre pacote, utilidades e intertravamentos.",
+      "pergunta": "O skid anterior saiu da fábrica com permissivos aprovados em bancada, mas a bordo exigiu jumpers para casar geração elétrica, ar de instrumento e F&G. Na próxima compra, que arranjo de teste deve ser exigido ainda na fábrica?",
+      "resposta": "FAT integrado das interfaces de utilidades e intertravamentos.",
+      "explicacao": "A recorrência mostra falha de integração; a ação correta é especificar teste de fabricação que exercite causas, lógica e efeitos com as interfaces previstas, antes da chegada ao campo.",
+      "resposta_padrao": "Manter apenas os testes locais do pacote pelo fornecedor.",
+      "por_que_nao": "Teste local não verifica o encadeamento com utilidades e funções automáticas que só aparecem na integração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A engenharia de manutenção contribui desde o projeto, na análise de riscos, especificação e acompanhamento de testes de fabricação e condicionamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, uma falha em elemento aparentemente periférico pode degradar permissivos ou reduzir a capacidade de resposta de várias barreiras."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da restauração de elemento compartilhado que degrada múltiplas barreiras sobre desvio local já compensado.",
+      "pergunta": "Regeneração em andamento, equipe única. Uma UPS comum indisponível retirou remota do ESD, parte da detecção de gás e retornos de SDVs; ao mesmo tempo há um transmissor de processo com viés conhecido e compensado. Qual intervenção vem primeiro?",
+      "resposta": "Restabelecer a UPS comum.",
+      "explicacao": "Na regeneração, a perda de um elemento compartilhado reduz simultaneamente a resposta de várias barreiras; o transmissor já compensado tem efeito localizado e menor prioridade técnica.",
+      "resposta_padrao": "Corrigir primeiro o transmissor com desvio no processo.",
+      "por_que_nao": "O desvio é local e compensado; a UPS comum degrada ao mesmo tempo automação, ESD e detecção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "regeneração, indisponibilidade simultânea de equipes ou de equipamentos críticos e execução de serviços concorrentes tendem a aumentar a dependência de sequências corretas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma falha em elemento aparentemente periférico pode degradar permissivos ou reduzir a capacidade de resposta de várias barreiras."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em FPSOs, esse efeito é intensificado pela integração entre utilidades, geração elétrica, automação, combate a incêndio, processamento de óleo e gás e suporte à habitabilidade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

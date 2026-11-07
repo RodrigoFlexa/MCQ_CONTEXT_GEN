@@ -1,0 +1,91 @@
+{
+  "item": "05_01",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a pressão é mantida por controle, a decisão de lineup das bombas deve seguir a vazão real disponível e os sinais de demanda acima da capacidade.",
+      "pergunta": "Com a bomba de circulação em serviço já no limite de rotação, o header ainda mantém pressão pelo controle, mas a vazão de recirculação cai, o retorno aquece e a bomba reserva passa a entrar e sair repetidamente; ΔP de filtros e trocadores estável. Que arranjo operacional deve ser adotado?",
+      "resposta": "Operar a bomba reserva de circulação em paralelo contínuo.",
+      "explicacao": "A limitação é vazão disponível, não pressão nem fouling. A ciclagem da reserva indica demanda térmica acima da capacidade real com uma bomba só.",
+      "resposta_padrao": "Elevar o setpoint de pressão do header.",
+      "por_que_nao": "A pressão pode permanecer normal enquanto a vazão insuficiente reduz o transporte de calor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a vazão cai, também cai a capacidade de transportar calor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "partidas frequentes de bombas de contingência são sinais de que a disponibilidade real do sistema pode estar abaixo da demanda operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Indicadores técnicos usuais incluem temperaturas de ida e retorno do circuito fechado, aproximação térmica no trocador, vazão de circulação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança de dinâmica do aquecimento entre envelopes operacionais pede técnica de controle adaptada ao regime, não uma única sintonia fixa.",
+      "pergunta": "Sem mudança mecânica no aquecedor ou na válvula, a malha de temperatura fica estável em baixa carga e passa a sobre-elevar ou oscilar em outros envelopes da campanha, com sensor na saída do trocador. Que técnica de controle deve ser adotada?",
+      "resposta": "Sintonia por faixa operacional.",
+      "explicacao": "Tempo morto na saída, inércia térmica e não linearidade em vazões altas fazem a mesma malha exigir parâmetros diferentes ao longo da campanha.",
+      "resposta_padrao": "Uma única sintonia fixa mais conservadora.",
+      "por_que_nao": "Ela tende a ficar lenta em baixa carga e ainda inadequada nos regimes em que a dinâmica muda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tempo morto associado à medição de temperatura na saída do trocador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "elevada inércia térmica e comportamento não linear do permutador em vazões elevadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma malha pode se comportar de forma diferente ao longo da campanha operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a presença de tempo morto e inércia térmica torna comum a resposta lenta e a propensão a sobre-elevação ou oscilações se o controle for agressivo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em resfriamento com perturbação rápida no meio refrigerante, a variável antecipatória deve vir da fonte da perda de ΔT no trocador.",
+      "pergunta": "Rajadas elevam rapidamente a temperatura da água do mar na entrada do trocador; minutos depois os consumidores críticos aquecem, e a água de ida do circuito ainda demora a refletir todo o efeito. Para aliviar carga de forma antecipatória, qual variável deve disparar a ação?",
+      "resposta": "Temperatura da água do mar na entrada do trocador.",
+      "explicacao": "A perda de ΔT disponível nasce no meio de rejeito. Em malhas de resfriamento, essa perturbação pode deslocar a planta antes do feedback do circuito fechado.",
+      "resposta_padrao": "Temperatura de ida do circuito fechado.",
+      "por_que_nao": "Ela só se altera depois da queda de desempenho do trocador e da inércia térmica do circuito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a água do mar entra mais quente, a diferença de temperatura disponível no trocador diminui"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em malhas de resfriamento, variações rápidas de carga ou de temperatura do meio refrigerante podem deslocar a planta para nova condição antes de a medição refletir completamente o efeito."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

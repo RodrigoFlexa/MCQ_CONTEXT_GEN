@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 2,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de segmentação deve seguir a criticidade funcional do domínio, não fornecedor ou protocolo.",
+      "pergunta": "Controle de processo, funções independentes de proteção e sistema elétrico usam combinações sobrepostas de fornecedores e protocolos. Ao redesenhar os segmentos, qual critério técnico deve prevalecer no agrupamento dos ativos?",
+      "resposta": "a criticidade funcional do domínio",
+      "explicacao": "A segmentação existe para conter propagação entre funções com consequências diferentes. Agrupar por fornecedor ou protocolo mantém juntos domínios cuja falha ou ação maliciosa pode ampliar impactos.",
+      "resposta_padrao": "Agrupar por fornecedor e protocolo para simplificar integração e suporte.",
+      "por_que_nao": "Esse critério não separa os ativos pelas consequências de comprometimento nem pela necessidade de contenção entre funções.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Antes de acesso local temporário, deve-se remover conectividade lateral além do necessário entre domínios críticos.",
+      "pergunta": "Uma estação de engenharia vai se conectar localmente só ao DCS, mas a malha atual permite alcançar também funções independentes de proteção e sistema elétrico. Que conectividade deve ser retirada antes da liberação?",
+      "resposta": "o roteamento lateral direto aos demais domínios críticos",
+      "explicacao": "Se domínios críticos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa iniciada no domínio acessado pode alcançar os outros.",
+      "resposta_padrao": "Manter a topologia e apenas reduzir a duração da sessão.",
+      "por_que_nao": "Sessão curta não elimina os caminhos de propagação já disponíveis entre domínios de criticidade distinta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A priorização do endurecimento entre fluxos deve considerar as interdependências funcionais quando exposição e salvaguardas são equivalentes.",
+      "pergunta": "Dois fluxos interdomínio precisam permanecer: um entre controle de processo e sistema elétrico, outro entre historiador e analytics. Ambos têm baixo tráfego, mesma exposição e salvaguardas equivalentes. Na priorização do endurecimento, qual variável técnica deve pesar mais?",
+      "resposta": "as interdependências entre as funções",
+      "explicacao": "Com exposição e salvaguardas equivalentes, a gravidade depende de como as funções se afetam na arquitetura e de quanto um domínio pode ampliar consequências no outro.",
+      "resposta_padrao": "O volume de tráfego de cada enlace.",
+      "por_que_nao": "Volume de tráfego não representa, por si só, o potencial de propagação entre funções acopladas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a gravidade real, porém, depende da arquitetura implantada, das interdependências entre funções e das salvaguardas existentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

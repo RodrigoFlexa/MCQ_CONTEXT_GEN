@@ -1,0 +1,91 @@
+{
+  "item": "05_01",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do ΔT ida-retorno como indicador de consumo de margem térmica com hidráulica estável.",
+      "pergunta": "Vários consumidores do circuito fechado operam mais quentes ao mesmo tempo; vazão e ΔP em filtros/trocadores seguem estáveis. Para acompanhar o consumo da margem térmica, qual relação de temperaturas deve ser priorizada?",
+      "resposta": "ΔT entre retorno e ida do circuito fechado.",
+      "explicacao": "Com vazão e perdas de carga estáveis, o aumento do ΔT do loop mostra maior calor sendo devolvido ao circuito e perda de margem térmica, sem apontar para restrição hidráulica.",
+      "resposta_padrao": "Temperatura de ida do circuito.",
+      "por_que_nao": "A ida pode permanecer quase estável enquanto o circuito devolve mais calor; o ΔT mostra melhor a carga térmica agregada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "temperaturas de ida e retorno do circuito fechado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "queda de vazão, aumento de diferença de temperatura de retorno"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se a vazão cai, também cai a capacidade de transportar calor."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso das partidas frequentes da bomba de contingência como gatilho operacional de perda de margem do sistema térmico.",
+      "pergunta": "A principal permanece em serviço, mas a bomba de contingência parte repetidamente nas horas de maior carga e os consumidores críticos aquecem. Que evento deve acionar a resposta operacional antes de um trip aberto?",
+      "resposta": "Partidas frequentes da bomba de contingência.",
+      "explicacao": "Esse comportamento indica que a disponibilidade real do sistema já caiu abaixo da demanda operacional, mesmo sem desarme sustentado da bomba principal.",
+      "resposta_padrao": "Desarme da bomba principal.",
+      "por_que_nao": "Esperar o trip ignora um sinal anterior de degradação que já compromete a margem de resfriamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "status de bombas principal e de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "partidas frequentes de bombas de contingência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sinais de que a disponibilidade real do sistema pode estar abaixo da demanda operacional"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Retuning conservador da malha de aquecimento quando tempo morto e inércia térmica geram sobre-elevação.",
+      "pergunta": "O óleo aquecido reage com atraso; a válvula de heating medium vai ao máximo e, quando a temperatura sobe, ocorre sobre-elevação e correção para o lado oposto. Que ajuste de sintonia fazer primeiro?",
+      "resposta": "Reduzir o ganho proporcional.",
+      "explicacao": "Tempo morto e inércia térmica tornam a malha sensível a controle agressivo; menor ganho reduz a movimentação excessiva da válvula antes de a medição responder.",
+      "resposta_padrao": "Aumentar o ganho para responder mais rápido.",
+      "por_que_nao": "Nessa dinâmica, mais agressividade amplia a sobre-elevação e a oscilação em vez de estabilizar a temperatura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tempo morto e inércia térmica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "propensão a sobre-elevação ou oscilações se o controle for agressivo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "tempo morto associado à medição de temperatura na saída do trocador"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

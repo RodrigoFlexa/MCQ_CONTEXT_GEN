@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 3,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre privilégio de operação e de engenharia para ajuste de parâmetros de alarme.",
+      "pergunta": "Alarme de diagnóstico estável inunda a tela por banda mal ajustada; a malha segue controlada e não haverá mudança de setpoint ou modo. Que privilégio liberar para corrigir o alarme?",
+      "resposta": "acesso de engenharia temporário",
+      "explicacao": "Ajustar banda ou limite de alarme é mudança de configuração. Privilégio de operação atua no processo; o de engenharia cobre alteração de configuração e deve durar só a atividade.",
+      "resposta_padrao": "acesso de operação temporário",
+      "por_que_nao": "Corrigir parâmetro de alarme altera configuração do sistema, não apenas a atuação no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pelo menor tempo compatível com a atividade"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Fracionamento temporal de privilégios administrativos e de engenharia numa mesma janela.",
+      "pergunta": "A janela inclui instalar um hotfix no sistema operacional da estação de engenharia e, depois, carregar firmware no controlador. Que arranjo de privilégios deve substituir uma conta única aberta o turno todo?",
+      "resposta": "elevações temporárias separadas: administrativa e de engenharia",
+      "explicacao": "O hotfix exige administração; a carga de firmware exige engenharia. Manter ambos simultaneamente amplia a superfície de erro e abuso além do necessário para cada etapa.",
+      "resposta_padrao": "uma conta única com privilégios administrativos e de engenharia durante toda a janela",
+      "por_que_nao": "Combinar privilégios altos por conveniência mantém capacidade excessiva e exposição prolongada além do necessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pelo menor tempo compatível com a atividade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Exigência de conta nominativa rastreável quando privilégio administrativo é usado em ativo suspeito de comprometimento.",
+      "pergunta": "Conta local compartilhada já existe na estação suspeita de comprometimento, mas será preciso desativar um serviço e reinstalar agentes de proteção. Que arranjo de acesso adotar nessa intervenção?",
+      "resposta": "elevação administrativa temporária em conta nominativa",
+      "explicacao": "A tarefa é administrativa e, em host suspeito, precisa preservar rastreabilidade. Conta compartilhada com privilégio alto dificulta atribuição e pode encobrir ações sobre proteções e registros.",
+      "resposta_padrao": "usar a conta local compartilhada de administrador",
+      "por_que_nao": "Acesso administrativo pode desabilitar proteções e apagar rastros; sem identificação individual, perde-se a rastreabilidade exigida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em ICS, a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

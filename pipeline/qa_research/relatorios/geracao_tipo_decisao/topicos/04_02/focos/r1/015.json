@@ -1,0 +1,101 @@
+{
+  "item": "04_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Direcionamento da intervenção para a etapa hidráulica quando o comando já foi processado e convertido em acionamento elétrico.",
+      "pergunta": "O comando é confirmado no módulo submarino, a saída elétrica da função comuta, mas a pressão no cilindro não sobe e a válvula não se move. Em que elemento a intervenção deve se concentrar?",
+      "resposta": "Unidade hidráulica associada ao atuador.",
+      "explicacao": "Se o comando foi recebido e a saída elétrica comutou, a etapa eletrônica já ocorreu. Sem pressurização do cilindro, a falha decisiva está na unidade hidráulica que gera a força do movimento.",
+      "resposta_padrao": "No módulo de controle submarino.",
+      "por_que_nao": "O módulo já processou o comando e gerou o sinal elétrico; o que faltou foi a conversão hidráulica em força.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esse módulo processa a informação recebida e a converte em sinais elétricos que acionam a unidade hidráulica associada ao atuador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A unidade hidráulica pressuriza o cilindro, e o deslocamento do cilindro abre ou fecha a válvula gaveta."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ação de fechamento seguro em válvula eletro-hidráulica com filosofia fail safe close quando não se pode depender do comando de fechamento.",
+      "pergunta": "Falha intermitente de comando impede confiar no sinal de fechamento, mas a válvula é fail safe close e precisa ir ao estado seguro agora. Qual ação no circuito do atuador deve ser tomada?",
+      "resposta": "Despressurizar a linha de controle do atuador.",
+      "explicacao": "Nessa filosofia, a perda de pressão de controle libera a mola e leva a válvula ao fechado seguro, sem depender do sucesso do comando elétrico de fechamento.",
+      "resposta_padrao": "Reenviar o comando de fechamento pela estação mestra.",
+      "por_que_nao": "Se a comunicação é incerta, o fechamento seguro não deve depender dela; o fail-safe atua pela perda de pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola"
+        },
+        {
+          "bloco": "F",
+          "trecho": "leva a válvula ao estado seguro fechado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo necessário para acelerar o fechamento fail-safe quando há pressão residual no atuador.",
+      "pergunta": "O trip remove o suprimento de controle, mas a válvula fail safe close demora a assentar porque o atuador mantém pressão residual. Que arranjo deve ser aplicado para acelerar o fechamento?",
+      "resposta": "Descarte rápido do fluido hidráulico do atuador.",
+      "explicacao": "Com pressão remanescente, a mola demora a vencer o atuador. O fechamento rápido exige despressurização acelerada por descarte do pequeno volume de fluido de controle.",
+      "resposta_padrao": "Usar uma mola mais rígida no atuador.",
+      "por_que_nao": "O problema descrito é a despressurização lenta do atuador; aumentar a mola não substitui o alívio rápido previsto na arquitetura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esse fechamento envolve descarte de pequeno volume de fluido hidráulico à base de água para despressurização rápida do atuador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a perda intencional ou não da pressão de controle permite a atuação da mola"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Direcionamento da correção para a seleção local da função em controle multiplexado quando a válvula errada é acionada.",
+      "pergunta": "O módulo acusa recebimento do comando correto, mas a válvula movimentada é outra; o suprimento hidráulico e os atuadores testam normais. Onde a correção deve ser feita?",
+      "resposta": "Na seleção local da função no módulo submarino.",
+      "explicacao": "Com hidráulica e atuadores normais, o desvio não é de força. Em multiplexado, qual função será executada é definido localmente pela eletrônica e solenóides do módulo.",
+      "resposta_padrao": "No suprimento hidráulico comum.",
+      "por_que_nao": "A hidráulica fornece força ao movimento, mas não escolhe qual válvula deve atuar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino por meio da eletrônica submarina e de válvulas solenóides"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a eletrônica decide qual função deve ser executada, enquanto a hidráulica fornece a força necessária ao movimento do atuador."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

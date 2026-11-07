@@ -1,0 +1,65 @@
+{
+  "item": "07_03",
+  "foco": 26,
+  "rodada": 3,
+  "contexto": {
+    "A1": 25,
+    "F": 26,
+    "A2": 27
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Composição do indicador de disponibilidade para liberação de sistema de automação com elementos de relevância funcional desigual.",
+      "pergunta": "No retorno da automação da geração, quase todos os I/Os passaram, mas o processador que libera permissivos essenciais ainda teve microindisponibilidades na redundância. Que composição do indicador deve sustentar a liberação?",
+      "resposta": "Disponibilidade agregada ponderada pela relevância funcional",
+      "explicacao": "Na liberação de sistema indispensável, o retorno deve refletir a função requerida; média uniforme por ponto pode esconder indisponibilidade do processador de permissivos, mais relevante para produção e segurança.",
+      "resposta_padrao": "Média simples de disponibilidade por I/O.",
+      "por_que_nao": "Porque tratar todos os elementos uniformemente pode mascarar a indisponibilidade de itens funcionalmente mais relevantes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos têm relevâncias diferentes para automação, produção e segurança, a disponibilidade agregada precisa considerar essa diferença de importância."
+        },
+        {
+          "bloco": "F",
+          "trecho": "tratar todos os elementos de forma uniforme pode mascarar a indisponibilidade de itens funcionalmente mais relevantes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "esse retorno não é apenas reiniciar um equipamento: envolve restabelecer sua função requerida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo de dados necessário para consolidar indisponibilidade quando falha e retorno são codificados de forma heterogênea entre tecnologias.",
+      "pergunta": "Num teste de switchover, a mesma perda sai como texto no CLP, código no switch e bit na remota; relógios e TAGs já batem, mas o tempo indisponível diverge. Que arranjo deve entrar na base antes dos indicadores?",
+      "resposta": "Padronização aberta e genérica das mensagens de diagnóstico",
+      "explicacao": "Com tempos e TAGs consistentes, a divergência remanescente vem da semântica desigual das mensagens; sem taxonomia comum, falha e retorno não se consolidam de modo comparável.",
+      "resposta_padrao": "Correlação por timestamp com relógios sincronizados.",
+      "por_que_nao": "Porque o problema restante não é temporal, e sim a heterogeneidade semântica entre fabricantes, redes e tecnologias.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento também depende de dados diagnósticos comparáveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Mensagens heterogêneas entre fabricantes, redes e tecnologias dificultam consolidar eventos de falha e retorno em uma base uniforme."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a padronização aberta e genérica das mensagens de diagnóstico favorece interpretação comum entre diferentes especialidades e aumenta a comparabilidade do acompanhamento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

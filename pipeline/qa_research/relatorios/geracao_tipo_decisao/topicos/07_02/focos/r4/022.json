@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contenção imediata de sessão remota que foge ao escopo autorizado por comportamento anormal de acesso.",
+      "pergunta": "Durante sessão remota liberada só para coleta de logs, a estação de engenharia passa a abrir telas de download lógico e arquivos de projeto. Qual ação técnica imediata tomar na conexão?",
+      "resposta": "Encerrar a sessão remota",
+      "explicacao": "O comportamento saiu das permissões e do procedimento aplicáveis; em acesso digital, isso caracteriza sinal de comportamento anormal e exige contenção imediata da conectividade.",
+      "resposta_padrao": "Manter a sessão observada enquanto o fornecedor explica a ação.",
+      "por_que_nao": "O desvio já ocorreu fora do escopo autorizado; continuar conectado mantém possibilidade de alteração indevida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reconhecer permissões e procedimentos aplicáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconhecer limites da automação, condições de uso e sinais de comportamento anormal."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação da escrita de aplicação analítica com latência variável para evitar que recomendação vire comando de controle.",
+      "pergunta": "Recomendações de um otimizador em nuvem chegam com atraso variável, e já houve cópia equivocada para o campo de setpoint no supervisório. O fornecedor quer habilitar escrita automática. Que arranjo técnico adotar?",
+      "resposta": "Bloquear a escrita do otimizador no controle",
+      "explicacao": "A aplicação é de apoio à decisão e tolera latência; ao escrever no controle, vira atuação operacional. Como a equipe ainda precisa distinguir recomendação de comando, o caminho de escrita deve permanecer segregado.",
+      "resposta_padrao": "Habilitar escrita automática para eliminar erro de digitação do operador.",
+      "por_que_nao": "Isso transforma recomendação sujeita a atraso em comando operacional, contrariando a separação entre apoio analítico e controle.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "diferenciar recomendação analítica de comando de controle"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de identificar univocamente o equipamento na integração digital antes de automatizar ações de manutenção.",
+      "pergunta": "Alertas de condição passaram a abrir ordens no compressor gêmeo após integrar broker MQTT, embora os valores pareçam plausíveis em todas as telas. Antes de automatizar o despacho, qual arranjo técnico aplicar?",
+      "resposta": "Vinculação dos sinais a identificador único de equipamento",
+      "explicacao": "Analytics e ordens automáticas dependem da coerência semântica; com identificação inconsistente do equipamento, valores plausíveis podem acionar manutenção no ativo errado e distorcer o significado operacional do alerta.",
+      "resposta_padrao": "Reajustar os limiares dos alertas para reduzir falsos positivos.",
+      "por_que_nao": "O problema está na identidade do ativo associada ao dado, não na sensibilidade do alerta.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "entendam o significado operacional dos dados e dos alertas produzidos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

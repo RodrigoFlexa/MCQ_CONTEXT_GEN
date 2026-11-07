@@ -1,0 +1,113 @@
+{
+  "item": "02_07",
+  "foco": 3,
+  "rodada": 1,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar separação bifásica quando o alívio necessário é remover gás livre e o líquido óleo-água seguirá para tratamento posterior.",
+      "pergunta": "Bolsões de gás desestabilizam bombas e controle na linha que alimenta o tratamento posterior, mas esse sistema foi projetado para receber líquido óleo-água e não há vantagem em retirar água livre nesse ponto. Que estágio de separação deve entrar no recebimento?",
+      "resposta": "Separação bifásica.",
+      "explicacao": "O problema a jusante é a fase gasosa livre. A separação bifásica remove o gás e deixa o líquido óleo-água seguir para o tratamento posterior, sem adicionar uma etapa de retirada de água que não traz benefício nesse ponto.",
+      "resposta_padrao": "Separação trifásica local.",
+      "por_que_nao": "A trifásica só vale quando também é útil separar água livre; aqui o ganho necessário é retirar gás.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em um arranjo com separação bifásica, remove-se apenas a fase gasosa, enquanto o líquido óleo-água é enviado para tratamento posterior."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a retirada inicial de gás reduz a parcela gasosa livre que seguiria a jusante"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Entre as consequências de separação inadequada podem ocorrer gás com líquido carregado, necessidade de retratamento e instabilidade operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicar tratamento eletrostático como estágio adicional quando, após a trifásica, permanece água dispersa ou emulsionada no óleo.",
+      "pergunta": "O óleo sai do separador trifásico sem problema de gás livre nem grande volume de água no fundo, mas segue fora de especificação por água remanescente. Qual etapa adicional deve ser aplicada?",
+      "resposta": "Tratamento eletrostático.",
+      "explicacao": "Depois da retirada de gás e água livre, o retratamento precisa atuar na fração difícil de separar. O estágio eletrostático reduz a água dispersa ou emulsionada que a trifásica não elimina sozinha.",
+      "resposta_padrao": "Aumentar a drenagem ou a residência no separador trifásico.",
+      "por_que_nao": "Esses ajustes atuam principalmente sobre água livre; o desvio descrito está na água remanescente do óleo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em um arranjo com separação trifásica, separam-se gás, óleo e água livre, mas a água emulsionada no óleo pode permanecer."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando isso ocorre, um estágio adicional de tratamento eletrostático pode ser aplicado para reduzir a água remanescente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o retratamento concentra-se na fração mais difícil de separar, como a água dispersa ou emulsionada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher arranjo sem separação local quando a instalação apenas transfere a mistura multifásica para outra instalação responsável pelo tratamento.",
+      "pergunta": "A coleta local apenas envia a mistura multifásica por uma linha já concebida para esse serviço, e a planta receptora faz toda a separação e o tratamento; ali não há consumo de gás nem rota para água separada. Qual arquitetura usar no recebimento?",
+      "resposta": "Arranjo sem separação local.",
+      "explicacao": "Se a corrente só precisa atravessar o ponto de coleta e a instalação seguinte responde pela separação completa, criar estágios locais gera fases sem destino e complexidade desnecessária.",
+      "resposta_padrao": "Separação bifásica antes do envio.",
+      "por_que_nao": "Remover só o gás cria uma corrente local sem uso ou tratamento, enquanto o escoamento multifásico já está previsto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em um arranjo sem separação local, o fluido produzido apenas passa pela unidade e segue para outra instalação responsável por separar e tratar todo ou parte do volume recebido."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A complexidade da planta depende do tipo de fluido produzido, da viabilidade técnico-econômica do campo e de quanto da separação será feita localmente ou transferida para outra instalação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Fechar balanços de massa em separação por estágios sob golfadas incluindo a variação de inventário do vaso.",
+      "pergunta": "Chegadas em golfadas fazem o nível do separador oscilar e o balanço instantâneo entre entrada e saídas acusar perdas alternadas. Para decidir se há arraste real entre fases, que ajuste técnico deve entrar no fechamento de massa?",
+      "resposta": "Variação de inventário do vaso.",
+      "explicacao": "As golfadas mudam temporariamente o conteúdo interno e a carga dos estágios seguintes. Sem esse termo, diferenças instantâneas podem ser só efeito transiente.",
+      "resposta_padrao": "Usar apenas a diferença entre vazões de entrada e saída.",
+      "por_que_nao": "Em regime transiente, entrada menos saída não fecha o balanço sem considerar o acúmulo interno.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em termos de função física, cada estágio pode aliviar a carga do estágio seguinte"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "balanços de massa entre alimentação, correntes de saída e variação de inventário nos vasos ajudam a identificar arraste entre fases, acúmulo indevido e gargalos de processamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a alimentação é intermitente ou em golfadas, a interpretação desses balanços precisa considerar o regime transiente"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "02_06",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de simulação transiente para definir partida de bombeio quando gás livre, inventário e coluna hidrostática tornam a resposta dependente do tempo.",
+      "pergunta": "Na partida do módulo de bombeio, a descarga sobe em segundos, a sucção cai e há gás livre com grande coluna hidrostática na linha. Que técnica deve orientar a sequência de partida?",
+      "resposta": "Simulação transiente da partida do sistema de bombeio.",
+      "explicacao": "Nessa condição, pressão e vazão dependem do tempo, do inventário, do gás livre, da coluna hidrostática e da curva do equipamento; análise estacionária não representa adequadamente a manobra.",
+      "resposta_padrao": "Análise em regime permanente com a curva da bomba.",
+      "por_que_nao": "Ela não captura a redistribuição temporal de massa e quantidade de movimento durante a partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em partidas de conjuntos de bombeio centrífugo submerso ou módulos de bombeio, o ganho de pressão na bomba pode alterar rapidamente as condições do sistema e tornar a resposta fortemente dependente do tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas multifásicos e de bombeio, a resposta também depende de inércia do fluido, compressibilidade, inventário nas linhas, presença de gás livre, coluna hidrostática e curva do equipamento."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do cenário de repartida transiente quando o religamento ocorre com pressões e inventário remanescentes da manobra anterior.",
+      "pergunta": "A bomba tripou e ficou parada por segundos; a descarga segue alta, a sucção não voltou ao patamar anterior e o religamento será imediato. Para prever essa retomada, qual cenário de modelagem usar?",
+      "resposta": "Repartida transiente com condições remanescentes.",
+      "explicacao": "O sistema ainda carrega pressões e inventário da manobra anterior; a retomada depende do histórico, então modelar como partida a frio distorce a resposta esperada.",
+      "resposta_padrao": "Partida a frio com condições iniciais nominais.",
+      "por_que_nao": "As variáveis ainda não se redistribuíram; o histórico da parada governa a retomada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A utilidade prática da simulação transiente está em explorar cenários de partida, repartida e parada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "estabilização é a etapa em que o sistema deixa de responder fortemente ao histórico da manobra"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Momento correto para avaliar desempenho ou retunar controle após manobra: somente depois da estabilização operacional.",
+      "pergunta": "Pressão, vazão e nível ainda derivam após a manobra, embora todos os equipamentos estejam liberados. Antes de julgar desempenho ou ajustar setpoints, o que deve ser aguardado?",
+      "resposta": "Estabilização operacional.",
+      "explicacao": "Enquanto as variáveis ainda refletem o histórico da transição e a propagação de perturbações, as leituras não representam o comportamento de regime do arranjo em operação.",
+      "resposta_padrao": "Usar as leituras imediatamente após liberar os equipamentos.",
+      "por_que_nao": "Nesse intervalo, o sistema ainda responde ao histórico da manobra, não ao regime estável.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "estabilização é a etapa em que o sistema deixa de responder fortemente ao histórico da manobra e passa a operar dentro da faixa esperada para aquele arranjo, fluido e carga."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Durante partidas e paradas, as variáveis de processo podem entrar em regime transiente, no qual pressão, vazão, nível, temperatura e fração de fases variam com o tempo e com a propagação de perturbações ao longo do sistema."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de simulação transiente específica do poço e do sistema para abertura de poço de gás, sem transferir diretamente resultados de outro caso.",
+      "pergunta": "A sequência de abertura de um poço de gás foi validada em outro produtor da mesma malha. O poço que será aberto agora ficou mais tempo fechado e descarrega por outro trecho de linha. Que base técnica usar para liberar a manobra?",
+      "resposta": "Simulação transiente específica deste poço e sistema.",
+      "explicacao": "Antes da abertura, o comportamento transitório de pressão, vazão e instabilidade depende do poço e do sistema específicos; resultados de outro produtor não são diretamente transferíveis.",
+      "resposta_padrao": "Reaproveitar a simulação validada do outro poço.",
+      "por_que_nao": "Mudanças no poço e no trecho de escoamento alteram inventário e propagação de perturbações, mudando a resposta transitória.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em poços de gás, simulações transientes podem antecipar comportamento de pressão, vazão e risco de instabilidades antes da abertura."
+        },
+        {
+          "bloco": "F",
+          "trecho": "desde que sua aplicação seja avaliada para o sistema e para o poço específicos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

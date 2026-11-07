@@ -1,0 +1,83 @@
+{
+  "item": "02_01",
+  "foco": 24,
+  "rodada": 1,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Conversão de volume e densidade em custódia deve usar o estado termodinâmico medido no próprio ponto de medição.",
+      "pergunta": "A linha de exportação perde vários graus entre o tanque e o skid, e a pressão no manifold oscila com a bomba. Para converter a transferência com rastreabilidade, que medições devem alimentar a correção do volume?",
+      "resposta": "Medição local de pressão e temperatura no medidor.",
+      "explicacao": "Volume e densidade variam com o estado termodinâmico; a correção rastreável deve usar as condições do fluido no ponto medido.",
+      "resposta_padrao": "Usar a temperatura média do tanque e a pressão da bomba.",
+      "por_que_nao": "As conversões dependem do estado do fluido onde ele é medido, não de condições remotas do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão e temperatura do escoamento são variáveis relevantes para as conversões de volume e densidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a conversão para condições de referência depende de medir o estado do fluido."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança de composição do gás exige atualização da composição no algoritmo de cálculo do volume compensado.",
+      "pergunta": "A pressão e a temperatura no medidor de gás ficaram estáveis, mas a alimentação passou a alternar entre correntes com composições distintas. Para manter o volume convertido válido para custódia, que ajuste deve entrar no algoritmo?",
+      "resposta": "Atualização da composição molar do gás no algoritmo.",
+      "explicacao": "Em gás natural, densidade e volume compensado dependem também da composição; manter composição antiga fixa desrepresenta a custódia.",
+      "resposta_padrao": "Manter o fator de compressibilidade da última composição válida.",
+      "por_que_nao": "Com a composição mudando, um fator fixo deixa de representar a densidade real do gás.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No caso de fluidos compressíveis, a compressibilidade e a composição influenciam o cálculo do volume compensado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para gás natural, a necessidade de algoritmo de cálculo decorre justamente da dependência da densidade em relação à pressão, temperatura e composição."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudanças operacionais que alteram a composição do fluido entregue"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em offloading de óleo, trecho com interface e água arrastada deve ser segregado da apuração líquida.",
+      "pergunta": "Na troca de tanque durante o offloading, a amostra em linha mostra aumento temporário de água e a densidade oscila, enquanto o medidor segue totalizando. Que ação metrológica deve ser aplicada ao registro desse intervalo?",
+      "resposta": "Segregar o trecho de interface água-óleo.",
+      "explicacao": "Troca de tanque com água arrastada e interface faz a vazão deixar de representar, sozinha, a transferência líquida de óleo.",
+      "resposta_padrao": "Contabilizar todo o volume indicado pelo medidor.",
+      "por_que_nao": "Nesse intervalo, a vazão medida inclui água e interface, não apenas óleo líquido transferido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em offloading de óleo, a estabilidade também importa:"
+        },
+        {
+          "bloco": "F",
+          "trecho": "água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

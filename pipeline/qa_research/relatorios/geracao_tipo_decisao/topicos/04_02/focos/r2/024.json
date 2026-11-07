@@ -1,0 +1,101 @@
+{
+  "item": "04_02",
+  "foco": 24,
+  "rodada": 2,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Detectabilidade do modo de falha deve prevalecer na priorização de monitoramento quando o impacto de processo isolado favoreceria outro componente.",
+      "pergunta": "Dois elementos de isolamento têm taxas de falha parecidas. O do header principal protege maior vazão e é testado remotamente com indicação confiável; o do ramo menor só revela o estado real quando é demandado. Na fila de monitoramento reforçado, qual variável técnica deve comandar a ordem?",
+      "resposta": "Detectabilidade do modo de falha.",
+      "explicacao": "Com taxas semelhantes, a falha oculta pesa mais que a vazão isolada, porque a barreira pode estar indisponível sem evidência até ser exigida.",
+      "resposta_padrao": "O volume ou a vazão protegidos pelo header principal devem comandar a prioridade.",
+      "por_que_nao": "Neste cenário, o diferencial crítico é a falha oculta sem confirmação direta, e o bloco destaca detectabilidade e teste na priorização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a priorização de contingências deve considerar modo de falha, detectabilidade, possibilidade de teste"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A análise de risco e confiabilidade serve para orientar monitoramento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Baixa testabilidade associada a acessibilidade subsea difícil e dependência de ROV deve orientar a prova funcional extraordinária.",
+      "pergunta": "Só há uma campanha extra de prova funcional. A válvula de exportação no topside protege maior vazão e já faz stroke parcial semanal; a válvula submarina de um ramo só é verificada com ROV e passa longos períodos sem prova direta. Qual componente testar nessa campanha?",
+      "resposta": "Válvula submarina de isolamento do ramo.",
+      "explicacao": "A incerteza sobre a condição da barreira é maior onde a prova funcional é rara, o acesso é submarino e a confirmação depende de ROV.",
+      "resposta_padrao": "A válvula de exportação no topside, por proteger a maior vazão.",
+      "por_que_nao": "Ela já possui alta cobertura de teste e acesso simples; aqui devem prevalecer testabilidade, acessibilidade subsea e necessidade de ROV.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de teste, acessibilidade subsea, tempo de resposta do sistema de controle, necessidade de ROV"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A análise de risco e confiabilidade serve para orientar monitoramento, sobressalentes, testes funcionais e preparação de resposta"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O componente comum que afeta múltiplas barreiras deve receber prioridade de sobressalente sobre o item que derruba apenas um ramo.",
+      "pergunta": "Um atuador travado tira de serviço o poço de maior produção. Já o módulo de controle comum, se falhar, remove comando e indicação de três válvulas de isolamento. Com espaço para apenas um sobressalente crítico a bordo, qual deve ser priorizado?",
+      "resposta": "Módulo de controle comum às três válvulas.",
+      "explicacao": "O módulo comum introduz falha de causa compartilhada sobre várias barreiras e compromete simultaneamente atuação e diagnóstico remoto.",
+      "resposta_padrao": "O atuador do poço de maior produção.",
+      "por_que_nao": "Perda de produção de um único ramo não supera o efeito do componente comum sobre várias barreiras de isolamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "efeito do componente sobre as demais barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A análise de risco e confiabilidade serve para orientar monitoramento, sobressalentes, testes funcionais e preparação de resposta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na preparação para perda de contenção, o modo de falha que impede isolamento deve prevalecer sobre o mais frequente que apenas reduz disponibilidade.",
+      "pergunta": "Na revisão de resposta a vazamento externo, uma válvula de isolamento tem histórico maior de travar fechada, mas o modo menos frequente que a deixa aberta impede segregar o ramo quando a barreira é requerida. Qual modo de falha deve orientar a preparação de contingência?",
+      "resposta": "Falha aberta da válvula de isolamento do ramo.",
+      "explicacao": "Para perda de contenção, a capacidade de isolar o inventário exposto é mais decisiva que a indisponibilidade por fechamento indevido.",
+      "resposta_padrao": "Falha fechada, por ocorrer mais e derrubar produção.",
+      "por_que_nao": "Frequência isolada não basta; nesta contingência, o modo que elimina o isolamento seletivo domina a resposta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a priorização de contingências deve considerar modo de falha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "selecionar arranjos que limitem inventário exposto, permitam isolamento seletivo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

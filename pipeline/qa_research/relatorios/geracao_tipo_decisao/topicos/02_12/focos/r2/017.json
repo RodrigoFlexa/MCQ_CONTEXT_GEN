@@ -1,0 +1,81 @@
+{
+  "item": "02_12",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em arquitetura com controle de capacidade por rotação, o setpoint do reciclo deve ser programado em função da rotação.",
+      "pergunta": "A rotação foi elevada para recuperar a pressão de sucção; desde então, as válvulas de reciclo passaram a abrir cedo apenas nas rotações mais altas, sem mudança de composição nem falha do elemento final. Qual ajuste deve ser implantado na proteção?",
+      "resposta": "Setpoint do reciclo em função da rotação",
+      "explicacao": "Nessa arquitetura, a rotação atende a pressão de sucção e o reciclo por estágio acompanha setpoint variável com a rotação; mantê-lo fixo desloca a atuação nas diferentes velocidades.",
+      "resposta_padrao": "Deslocar a linha anti-surge para mais margem em toda a faixa.",
+      "por_que_nao": "O desvio aparece com a mudança de rotação; aumentar margem geral não corrige o erro de programação do setpoint variável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rotação da máquina controla a pressão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na proteção anti-surge, a variável crítica é a vazão através do compressor, não a vazão líquida ao processo.",
+      "pergunta": "Com a linha de exportação quase fechada e o reciclo aberto, o medidor para o processo cai a quase zero por alguns minutos. Para manter a máquina protegida nesse intervalo, qual vazão a malha deve sustentar?",
+      "resposta": "Vazão interna através do compressor",
+      "explicacao": "Perto do surge, a proteção não precisa sustentar a entrega ao processo; ela precisa garantir fluxo suficiente atravessando a máquina, e o reciclo mantém esse fluxo mesmo com demanda externa quase nula.",
+      "resposta_padrao": "Vazão líquida enviada ao processo.",
+      "por_que_nao": "Ela pode cair fortemente sem risco imediato se a recirculação mantiver vazão suficiente através do compressor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter vazão suficiente através do compressor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "aumentar a vazão interna atravessando a máquina, mesmo quando a demanda externa cai"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em compressão multietapas, mudanças no resfriamento intermediário devem ser corrigidas no condicionamento entre estágios antes de retunar a proteção.",
+      "pergunta": "Fechar o bypass do resfriador interstágio reduziu a temperatura entre estágios; a segunda seção passou a abrir reciclo, a primeira segue estável e o vaso intermediário drena sem alto nível. O que deve ser restabelecido antes de mexer na linha anti-surge?",
+      "resposta": "Restabelecer a temperatura intermediária de projeto",
+      "explicacao": "Ao alterar o resfriamento entre estágios, mudam a densidade, a temperatura e a formação de condensado vistas pela segunda seção; a condição intermediária deve voltar ao projeto antes de retunar a proteção.",
+      "resposta_padrao": "Aumentar a margem anti-surge da segunda seção.",
+      "por_que_nao": "Isso mascara um desvio criado no condicionamento intermediário e não corrige a mudança de estado que passou a chegar ao estágio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "proteção depende também do comportamento conjunto de vasos, compressores e trocadores entre estágios"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Resfriamento e separação intermediária alteram densidade, temperatura e formação de condensado"
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta só repete os atributos; peça a ação técnica específica"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 3,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do ponto de aplicação do hardening conforme a função operacional do ativo vulnerável.",
+      "pergunta": "A mesma vulnerabilidade foi confirmada em um servidor de relatórios do IACS e em um controlador que comanda válvulas de processo; a parada curta só permite uma contenção imediata. Onde aplicá-la primeiro?",
+      "resposta": "no controlador que comanda as válvulas de processo",
+      "explicacao": "Com janela curta, o hardening deve ser seletivo. A relevância da vulnerabilidade depende da função; no controlador, a exploração pode alterar o processo ou retirar função de serviço.",
+      "resposta_padrao": "No servidor de relatórios, por ter mais conectividade e usuários.",
+      "por_que_nao": "Aqui pesa mais a função do sistema atingido; o controlador tem impacto direto sobre o comportamento do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Remoção de serviço de rede sem papel operacional como medida de hardening quando atualização não é viável.",
+      "pergunta": "Serviço web embarcado de um painel, já atrás do firewall da rede de controle, apareceu em boletim de vulnerabilidade; o painel só usa o protocolo industrial já em serviço e o fornecedor não libera atualização nesta campanha. Que ação técnica aplicar agora?",
+      "resposta": "desabilitação do serviço web embarcado",
+      "explicacao": "Se o serviço não tem papel operacional e o patch não cabe na janela, removê-lo reduz o caminho de exploração sem alterar a função do ativo.",
+      "resposta_padrao": "Aplicar imediatamente o patch do fabricante.",
+      "por_que_nao": "Nesta campanha a atualização não está liberada; aqui o hardening eficaz é retirar o serviço desnecessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "janelas curtas de manutenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "equipamentos embarcados sem suporte pleno a atualizações frequentes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Encerramento do acesso remoto ao término da intervenção para retirar exposição não mais necessária.",
+      "pergunta": "A calibração remota terminou, os registros da sessão foram coletados e o fornecedor pede deixar o túnel ativo até amanhã para evitar nova autenticação por satélite. Qual ação tomar?",
+      "resposta": "encerramento do acesso remoto ao fim da atividade",
+      "explicacao": "A atividade já terminou. Manter a sessão aberta preserva um caminho de exploração sem necessidade operacional; o acesso remoto deve ser delimitado e encerrado ao término.",
+      "resposta_padrao": "Manter a VPN conectada até o próximo dia para agilizar eventual retorno.",
+      "por_que_nao": "Isso prolonga a exposição da rede além da janela necessária para a intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "minimizar exposição de rede"
+        },
+        {
+          "bloco": "F",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

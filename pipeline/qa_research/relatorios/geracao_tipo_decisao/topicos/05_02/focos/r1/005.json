@@ -1,0 +1,111 @@
+{
+  "item": "05_02",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar controle coordenado dos geradores, e não compensação rápida, quando o problema dominante é compartilhamento de carga local.",
+      "pergunta": "Dois geradores locais em paralelo mantêm a tensão do barramento estável, mas um assume quase toda a potência ativa e o outro fica carregado em reativos. Sem cabos longos nem flicker, que núcleo de controle deve ser ajustado primeiro?",
+      "resposta": "Ajuste coordenado de reguladores, excitação e droops dos geradores.",
+      "explicacao": "Quando o problema dominante é repartir carga entre geradores locais, a solução está nos ajustes coordenados das malhas dos próprios geradores; compensadores rápidos são mais úteis para sustentar tensão sob variações rápidas de reativos.",
+      "resposta_padrao": "Instalar um STATCOM no barramento.",
+      "por_que_nao": "STATCOM trata suporte dinâmico de tensão e reativos, mas não corrige a causa do compartilhamento inadequado entre geradores locais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a necessidade principal é repartir carga entre geradores locais, os ajustes coordenados de reguladores, excitação e droop são o núcleo da solução."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando o desafio dominante é sustentar tensão diante de cabos longos ou variações rápidas de reativos, dispositivos de compensação rápida podem ser mais relevantes."
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "decisão não pode comparar dois itens pelos atributos e perguntar qual priorizar: a resposta só repete os atributos; peça a ação técnica específica"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Retirar ou reduzir a compensação temporária de reativos ao fim da aceleração de grande motor para evitar sobretensão.",
+      "pergunta": "A tensão do barramento sobe logo após um grande motor completar a aceleração; durante a partida havia compensação temporária de reativos para sustentar a tensão. Qual ação técnica tomar nesse momento?",
+      "resposta": "Retirar ou reduzir a compensação temporária de reativos.",
+      "explicacao": "Na partida, o motor exige reativos elevados, mas perto da velocidade nominal essa demanda cai. Se a compensação temporária permanecer, passa a injetar reativos em excesso e empurra a tensão para sobretensão.",
+      "resposta_padrao": "Manter a compensação até a carga estabilizar totalmente.",
+      "por_que_nao": "Após a aceleração, a demanda reativa do motor diminui; manter o reforço causa excesso de reativos e elevação de tensão.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Próximo à velocidade nominal do motor, a demanda reativa cai."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Por isso, a compensação temporária deve ser retirada ou reduzida ao fim da aceleração."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando o desafio dominante é sustentar tensão diante de cabos longos ou variações rápidas de reativos, dispositivos de compensação rápida podem ser mais relevantes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar VSC-HVDC quando o lado remoto é uma rede passiva que precisa de sustentação própria de tensão e frequência.",
+      "pergunta": "Na energização a partir de terra de uma rede receptora sem geração local em serviço, o enlace em corrente contínua precisa sustentar tensão e frequência no lado remoto. Qual tecnologia de conversão escolher?",
+      "resposta": "VSC-HVDC.",
+      "explicacao": "Rede passiva no lado remoto exige conversor capaz de controlar potência ativa e reativa e formar tensão e frequência. O VSC faz isso; o LCC depende de uma rede já estabelecida e de suporte externo de reativos.",
+      "resposta_padrao": "LCC-HVDC.",
+      "por_que_nao": "LCC depende da rede para estabilidade de tensão e frequência e ainda requer suprimento externo de reativos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "VSC-HVDC, podem controlar potência ativa e reativa e sustentar tensão e frequência em rede passiva"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a tecnologia LCC-HVDC, line commutated converter, foi descrita como dependente da rede para estabilidade de tensão e frequência e de suprimento externo de reativos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definir a tensão de operação em HVAC longo como compromisso entre perdas, reativos do cabo e perfil de carga.",
+      "pergunta": "Em HVAC com cabo longo e carga muito variável, as sobretensões aparecem nas horas leves e o fluxo reativo do cabo domina o balanço. Ao rever o arranjo, qual variável elétrica deve ser definida em compromisso com perdas, reativos do cabo e perfil de carga?",
+      "resposta": "Tensão de operação do sistema HVAC.",
+      "explicacao": "Em cabos CA longos, a potência reativa cresce com o quadrado da tensão. Portanto, a tensão de operação não deve ser simplesmente maximizada por perdas; ela precisa equilibrar perdas, reativos do cabo e perfil de carga.",
+      "resposta_padrao": "Usar a maior tensão possível para reduzir corrente e perdas.",
+      "por_que_nao": "Em cabo longo, elevar a tensão aumenta fortemente os reativos do próprio cabo e pode piorar desvios de tensão e sobretensão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em HVAC offshore, a tensão de operação deve ser escolhida em balanço com perdas, reativos do cabo e perfil de carga."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a potência reativa associada ao cabo cresce com o comprimento e com o quadrado da tensão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "podendo aumentar desvios de tensão, perdas e risco de sobretensão"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

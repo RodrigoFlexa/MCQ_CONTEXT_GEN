@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 19,
+  "rodada": 4,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Manter margem de potência da UPS crítica separando cargas analíticas não essenciais do suprimento dos controladores.",
+      "pergunta": "Travamentos dos controladores passaram a coincidir com afundamentos curtos depois que servidores analíticos foram ligados à mesma UPS; baterias, barramento CC e inversor testam normais, e há UPS auxiliar disponível. Que intervenção imediata fazer no arranjo de alimentação?",
+      "resposta": "migrar os servidores analíticos para a UPS auxiliar",
+      "explicacao": "A dupla conversão só sustenta a continuidade frente a afundamentos com potência adequada. Como os estágios principais estão normais e o problema surgiu com carga adicional, a UPS crítica precisa recuperar margem.",
+      "resposta_padrao": "Trocar o banco de baterias da UPS.",
+      "por_que_nao": "Os sintomas apareceram após acréscimo de carga, com banco e demais estágios aprovados; aqui falta margem de potência, não autonomia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte, desde que potência, componentes e manutenção estejam adequados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas digitais críticos, degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo é mais valioso quando preserva sistemas existentes e adiciona capacidade sem exigir substituição integral da automação instalada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restabelecer a operação on-line de dupla conversão quando a carga está acoplada demais às perturbações da entrada.",
+      "pergunta": "A UPS foi colocada para alimentar a carga pela derivação estática sempre que a rede fica dentro da faixa; desde então, transferências rápidas da fonte e afundamentos rasos congelam estações e derrubam comunicações. Qual ajuste de operação deve ser aplicado?",
+      "resposta": "retorno ao modo on-line de dupla conversão",
+      "explicacao": "O isolamento das perturbações ocorre quando a carga depende do barramento interno condicionado e da etapa de saída. Pela derivação estática, a entrada volta a se acoplar diretamente à carga.",
+      "resposta_padrao": "Aumentar a autonomia do banco de baterias.",
+      "por_que_nao": "Aqui o defeito é a perda do condicionamento contínuo da dupla conversão; mais autonomia não bloqueia afundamentos repassados pela derivação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a carga passa a depender de um barramento interno condicionado e da etapa eletrônica de saída."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas digitais críticos, degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

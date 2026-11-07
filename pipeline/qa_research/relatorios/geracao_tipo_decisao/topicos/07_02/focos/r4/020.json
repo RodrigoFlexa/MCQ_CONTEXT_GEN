@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 4,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do arranjo online quando balanços e alocação precisam ser atualizados com dados correntes em execução programada.",
+      "pergunta": "Uma plataforma unificada já atende estudos semanais, mas balanços e alocação precisam refletir medições correntes a cada hora; exportações manuais chegam defasadas. Sem trocar a automação, que arranjo técnico complementar adotar?",
+      "resposta": "execução programada online com dados correntes de SCADA e controle",
+      "explicacao": "Para atualização horária a partir de medições correntes, o modelo deve operar em modo online, recebendo dados de monitoramento, SCADA e controle em execução programada, complementando a automação existente.",
+      "resposta_padrao": "Expandir apenas a plataforma unificada offline.",
+      "por_que_nao": "Ela alinha modelos entre disciplinas, mas não atualiza automaticamente balanços e alocação com dados correntes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo é mais valioso quando preserva sistemas existentes e adiciona capacidade sem exigir substituição integral da automação instalada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de incluir contexto de modo operacional nos sinais usados por analytics e modelos preditivos.",
+      "pergunta": "Alertas do preditivo sobem em quase todas as partidas programadas de compressores, mas desaparecem em regime estabilizado; vibração e temperatura seguem perfis transitórios esperados. Que informação deve acompanhar os sinais antes do processamento?",
+      "resposta": "contexto de modo operacional",
+      "explicacao": "Os transientes de partida são legítimos, mas pertencem a outro regime. Sem contexto de modo operacional, o preditivo mistura estados distintos e gera alarmes espúrios mesmo com sinais fisicamente normais.",
+      "resposta_padrao": "Filtrar todos os transientes de partida.",
+      "por_que_nao": "Isso remove comportamento legítimo e não informa ao modelo em que regime cada dado foi gerado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações analíticas e modelos os transformam em informação operacional útil."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correção prioritária da identificação do ativo quando a coerência temporal e de qualidade está preservada, mas os históricos foram associados ao equipamento errado.",
+      "pergunta": "Dois compressores idênticos passaram a alternar o mesmo histórico nos painéis após reorganização do cadastro; unidades, qualidade e carimbos seguem válidos, mas a comparação entre ativos ficou incoerente. Que elemento do dado corrigir primeiro?",
+      "resposta": "identificação consistente do equipamento",
+      "explicacao": "Com unidades, qualidade e tempo válidos, a alternância do mesmo histórico entre compressores indica falha de identidade do ativo. Sem identificação consistente, comparações e modelos preditivos ficam semanticamente incoerentes.",
+      "resposta_padrao": "Normalização dos nomes das tags no SCADA.",
+      "por_que_nao": "Melhora a interface, mas não corrige a associação errada do histórico ao ativo físico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações analíticas e modelos os transformam em informação operacional útil."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir dinâmica real de artefato de coleta periódica, verificando a atualização do dado antes de agir na malha.",
+      "pergunta": "A pressão no dashboard muda em degraus de cinco em cinco minutos, enquanto a malha e o manômetro local mostram variações rápidas. Antes de retunar o controle, que elemento técnico deve ser verificado?",
+      "resposta": "intervalo de coleta do historian",
+      "explicacao": "Coleta periódica pode falsear a percepção da dinâmica. Antes de ajustar a malha, é preciso confirmar se a visualização representa o processo com atualização compatível.",
+      "resposta_padrao": "Ajustar a sintonia PID.",
+      "por_que_nao": "O comportamento visto pode ser efeito da amostragem do historian, não instabilidade real da malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Usar a validade do dado, e não sua aparência numérica, para julgar se uma medição ainda é confiável.",
+      "pergunta": "Mesmo com valor numericamente crível na tela, o carimbo de hora do nível não avança e a remota sinaliza falha de comunicação. Para decidir se a medição ainda é utilizável, que indicação deve prevalecer?",
+      "resposta": "bit de qualidade do dado",
+      "explicacao": "Um valor plausível pode ser apenas o último valor retido. Sem atualização e com falha de comunicação, a validade do dado é a referência correta.",
+      "resposta_padrao": "Considerar o último valor mostrado como válido.",
+      "por_que_nao": "Número congelado pode parecer normal e ainda assim não representar o processo atual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não basta olhar o valor instantâneo do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicar diagnóstico por camadas para separar perda de visibilidade de perda de medição ou de comando.",
+      "pergunta": "O PV na tela da malha continua variando e a válvula responde, mas dashboard e histórico param de atualizar. Em qual camada iniciar o diagnóstico?",
+      "resposta": "camada de supervisão/historian",
+      "explicacao": "Com medição e comando ainda ativos, o sintoma principal é perda de visibilidade. O diagnóstico deve começar na camada onde o problema se manifesta.",
+      "resposta_padrao": "Começar pelo transmissor de campo.",
+      "por_que_nao": "Há evidência de que a função de medir e comandar permanece operante; atacar campo aumenta a chance de errar a causa.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher a referência operacional correta quando um forcing compromete a representatividade da automação.",
+      "pergunta": "Uma chave de nível está em forcing para manter permissivo, e o tanque possui visor local não integrado ao PLC. Durante o enchimento, qual referência deve orientar o acompanhamento do estado real?",
+      "resposta": "o visor local de nível",
+      "explicacao": "O forcing retira a lógica normal de supervisão, então o estado lógico deixa de representar o processo. A observação complementar passa a ser a referência confiável.",
+      "resposta_padrao": "O bit mostrado no PLC.",
+      "por_que_nao": "O forcing pode mascarar a condição real e alterar a interpretação do estado da planta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade do isolamento e bloqueio da UPS com falha física antes de ações de recuperação digital.",
+      "pergunta": "DCS, ESD e F&G saíram juntos; a UPS apresentou fumaça na seção inversora e atuação de proteção, enquanto o último snapshot de lógica não mostra mudança. Antes de qualquer reboot ou restauração de software, qual intervenção técnica vem primeiro?",
+      "resposta": "Isolar e bloquear as fontes da UPS compartilhada.",
+      "explicacao": "Fumaça, arco e proteção atuada na UPS indicam falha elétrica na alimentação compartilhada; a primeira decisão é eliminar e bloquear a fonte defeituosa antes de qualquer reboot, restauração de software ou nova energização.",
+      "resposta_padrao": "Reiniciar controladores e servidores para recuperar os sistemas.",
+      "por_que_nao": "Sem eliminar a falha elétrica da UPS, a reenergização é insegura e não trata o modo de falha comum que derrubou as barreiras.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode se manifestar com fumaça e arco elétrico na seção inversora; nesse caso, a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério decisivo para justificar restauração de lógica por comprometimento do controle em perdas simultâneas com indícios na UPS.",
+      "pergunta": "Antes de mandar restaurar backup de lógica após a perda simultânea de DCS, ESD e F&G com proteção da UPS atuada, qual variável técnica precisa estar alterada para sustentar hipótese de comprometimento do controle?",
+      "resposta": "Alterações não autorizadas de lógica, setpoints ou comandos.",
+      "explicacao": "Perda simultânea com indícios na UPS não basta para atribuir o evento ao controle; a hipótese cibernética do controle só se sustenta com alteração não autorizada de lógica, setpoints ou comandos.",
+      "resposta_padrao": "O próprio fato de os três sistemas terem caído juntos.",
+      "por_que_nao": "Queda simultânea também decorre de falha comum na alimentação ininterrupta e, sozinha, não caracteriza comprometimento do controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

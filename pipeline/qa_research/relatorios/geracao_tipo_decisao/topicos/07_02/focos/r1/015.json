@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar a cadeia de alimentação ininterrupta como ponto de intervenção quando perdas simultâneas vêm acompanhadas de sinais físicos locais de falha elétrica.",
+      "pergunta": "Perda simultânea de controle, shutdown de emergência e mitigação veio com fumaça, arco elétrico e atuação de proteção na UPS, sem mudança de lógica ou setpoint. Sobre qual subsistema a intervenção imediata deve se concentrar?",
+      "resposta": "a cadeia de alimentação ininterrupta",
+      "explicacao": "Os sinais físicos locais e a perda comum de energia apontam para falha de infraestrutura elétrica como causa comum; a intervenção imediata deve focar a UPS e sua alimentação associada, não a lógica de controle.",
+      "resposta_padrao": "A intervenção deve se concentrar na rede de controle industrial.",
+      "por_que_nao": "Sem alteração de lógica, setpoints ou comandos, e com fumaça, arco e proteção atuada na UPS, o cenário aponta para falha de energia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia; alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Primeira contenção para dispositivo remoto vulnerável sem correção homologada: reduzir a exposição removendo o acesso direto pela internet.",
+      "pergunta": "Vulnerabilidade crítica atinge a pilha TCP/IP de um dispositivo remoto; o fornecedor ainda não homologou correção e a função precisa permanecer disponível. Que arranjo de contenção deve ser aplicado primeiro?",
+      "resposta": "remoção do acesso direto à internet",
+      "explicacao": "Sem correção homologada e sem poder retirar a função de serviço, a medida mais adequada é reduzir a exposição de rede imediatamente; o dispositivo deve deixar de ser acessível diretamente da internet.",
+      "resposta_padrao": "Desconectar o dispositivo da rede.",
+      "por_que_nao": "A função precisa permanecer disponível, e a contenção em OT deve reduzir exposição sem criar indisponibilidade maior que o evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "minimizar a exposição de rede dos sistemas de controle, evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na contenção em OT, a variável dominante é a disponibilidade das funções essenciais de controle e proteção.",
+      "pergunta": "Malware suspeito aparece no segmento OT que também carrega sinais necessários a intertravamentos e shutdown de emergência. Antes de bloquear amplamente o tráfego, qual variável técnica deve governar a contenção?",
+      "resposta": "a disponibilidade das funções essenciais de controle e proteção",
+      "explicacao": "Na OT, conter sem preservar controle e proteção pode agravar o evento. A ação correta é a que reduz propagação e exposição sem retirar as funções essenciais necessárias ao estado seguro.",
+      "resposta_padrao": "A eliminação imediata de todo o tráfego suspeito.",
+      "por_que_nao": "Bloqueio amplo pode ser adequado em TI, mas aqui pode retirar controle ou salvaguardas e criar risco operacional maior que o incidente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A contenção em OT busca limitar propagação e reduzir exposição sem introduzir risco operacional maior que o evento original."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

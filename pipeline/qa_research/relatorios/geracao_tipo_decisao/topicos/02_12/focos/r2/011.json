@@ -1,0 +1,73 @@
+{
+  "item": "02_12",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura de controle de capacidade com comutação da malha mestra de pressão conforme o destino do gás.",
+      "pergunta": "Nas passagens entre exportação e reinjeção após a remoção de CO2, a descarga cumpre o alvo, mas a coleta dos separadores desestabiliza e o reciclo entra nas trocas. Que arranjo de controle de capacidade deve ser adotado?",
+      "resposta": "Seleção automática da malha mestra de pressão por modo operacional.",
+      "explicacao": "Os modos mudam encaminhamento, restrições a jusante e prioridade do processo. Um único controle fixo não representa todas as condições; a comutação da malha de pressão dá a flexibilidade necessária e reduz conflito com a proteção.",
+      "resposta_padrao": "Basta reajustar o setpoint da pressão de descarga.",
+      "por_que_nao": "Mudar só o alvo mantém a variável errada sob controle quando o modo passa a exigir outra prioridade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada destino impõe uma exigência diferente de pressão, continuidade de fornecimento e flexibilidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa relação não é universal e depende do arranjo, da malha selecionada e do modo operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em plantas com remoção de CO2 e reinjeção, a necessidade de operar em modos diferentes aumenta a exigência de flexibilidade do controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade funcional do anti-surge sobre a malha de capacidade durante transientes de mudança de destino.",
+      "pergunta": "Na comutação rápida para uma rota com maior contrapressão, o controlador de pressão ainda carrega o trem, a vazão cai abruptamente e a válvula de reciclo começa a abrir repetidamente. Qual lógica deve prevalecer naquele instante?",
+      "resposta": "Override do anti-surge sobre o controle de capacidade.",
+      "explicacao": "Mudanças de rota propagam pressões e vazões em cascata. Como as duas malhas atuam sobre a mesma máquina, a prioridade imediata é evitar a queda de vazão para a região de surge, não perseguir a pressão pedida.",
+      "resposta_padrao": "Manter a malha de pressão comandando para recuperar o cabeçalho.",
+      "por_que_nao": "Nesse transiente, seguir a demanda de pressão pode consumir a margem remanescente e agravar a instabilidade aerodinâmica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o mesmo sistema de compressão pode atender destinos distintos do gás"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a primeira tenta atender a demanda do processo, enquanto a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema, alterando pressões e vazões em cascata"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

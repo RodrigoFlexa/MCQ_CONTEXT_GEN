@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 20,
+  "rodada": 4,
+  "contexto": {
+    "A1": 18,
+    "A2": 19,
+    "F": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definir o ponto de medição da qualidade de energia no barramento local onde a impedância e o arranjo real moldam a distorção.",
+      "pergunta": "CLPs e remotas de uma seção reinicializam quando entram retificadores locais; no quadro principal a tensão RMS permanece normal. Em que ponto deve ficar o analisador de qualidade para orientar a correção do sistema?",
+      "resposta": "No barramento da seção que alimenta retificadores e controles.",
+      "explicacao": "A distorção que afeta os controles nasce da corrente harmônica atravessando a impedância da seção real onde estão as cargas. Medir só no quadro principal pode não revelar o problema local.",
+      "resposta_padrao": "Nos terminais do gerador principal.",
+      "por_que_nao": "A forma de onda relevante para os controles é moldada pela impedância e pelos elementos conectados na seção afetada, podendo não aparecer no ponto de geração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando essa corrente percorre a impedância do sistema, surgem componentes harmônicas de tensão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O comportamento observado depende da configuração efetivamente instalada da distribuição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em consequência, a análise precisa representar o arranjo real do sistema, e não apenas um diagrama nominal."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolher o arranjo de seccionamento do barramento para reduzir distorção harmônica por meio da impedância equivalente da rede.",
+      "pergunta": "Com a mesma carga de conversores, os resets somem quando duas seções ficam interligadas e voltam com o tie aberto. As proteções já estão ajustadas para os dois modos. Que arranjo operacional deve ser mantido até a correção definitiva?",
+      "resposta": "Operar com o bus tie fechado.",
+      "explicacao": "Com a mesma carga não linear, a topologia altera a impedância equivalente do barramento. Interligar as seções torna a rede mais rígida e reduz a distorção local; as proteções já cobrem esse modo.",
+      "resposta_padrao": "Manter o barramento seccionado, com o tie aberto.",
+      "por_que_nao": "Neste caso o seccionamento aumenta a impedância vista pelas cargas não lineares e piora a tensão harmônica, enquanto a seletividade já foi tratada para o modo interligado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando essa corrente percorre a impedância do sistema, surgem componentes harmônicas de tensão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O comportamento observado depende da configuração efetivamente instalada da distribuição, da participação de cargas não lineares"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em consequência, a análise precisa representar o arranjo real do sistema, e não apenas um diagrama nominal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ajustar a compensação capacitiva quando a interação com cargas não lineares degrada a forma de onda.",
+      "pergunta": "Sempre que o controlador de fator de potência conecta o último estágio capacitivo da barra dos retificadores, acionamentos entram em alarme, embora a corrente total caia. Que ajuste imediato fazer no controle?",
+      "resposta": "Bloquear o último estágio do banco de capacitores.",
+      "explicacao": "O estágio capacitivo altera a resposta harmônica da barra com retificadores; mesmo com menor corrente RMS, a forma de onda piora. Bloqueá-lo remove o elemento reativo que está agravando o problema.",
+      "resposta_padrao": "Manter a compensação capacitiva automática atuando.",
+      "por_que_nao": "Aqui o estágio capacitivo participa do mecanismo que piora a distorção na presença de retificadores; insistir nele preserva fator de potência aparente às custas da forma de onda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cargas não lineares, como retificadores e conversores, tendem a absorver corrente não senoidal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O comportamento observado depende da configuração efetivamente instalada da distribuição, da participação de cargas não lineares e da presença de elementos reativos, como capacitores, indutores e reatores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, estudos de harmônicos e monitoramento de qualidade de energia ajudam a entender o conteúdo harmônico do sistema"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

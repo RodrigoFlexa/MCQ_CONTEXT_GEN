@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Liberação de acesso remoto de terceiro deve ser condicionada à integridade do dispositivo cliente, não apenas ao canal seguro.",
+      "pergunta": "Fornecedor precisa acessar remotamente uma estação de engenharia por VPN, mas o notebook foi reutilizado em outras instalações e não há tempo para qualificá-lo. Qual recurso técnico deve substituir esse equipamento na sessão?",
+      "resposta": "notebook de manutenção dedicado e previamente verificado",
+      "explicacao": "VPN protege o tráfego, mas não corrige comprometimento do equipamento de origem. Sem tempo para qualificar um notebook reutilizado em outras instalações, o recurso adequado é um equipamento dedicado e previamente verificado.",
+      "resposta_padrao": "Manter o mesmo notebook e confiar na VPN com autenticação forte.",
+      "por_que_nao": "O canal seguro não elimina o risco de um equipamento reutilizado, desatualizado ou comprometido introduzir problema no ambiente operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O risco é maior quando o dispositivo é reutilizado entre múltiplos contratos ou instalações, ou quando sua atualização e integridade não são verificadas antes do uso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atividades de manutenção ou acesso de terceiros em ativos digitais devem ser postergadas quando a alimentação ininterrupta dos sistemas críticos está degradada.",
+      "pergunta": "Alarmes persistentes na alimentação ininterrupta que sustenta DCS, ESD e F&G indicam risco de reinicialização. Uma contratada chegou para atualizar uma estação de engenharia. Qual decisão técnica tomar sobre a intervenção agora?",
+      "resposta": "adiar a intervenção até restabelecer a alimentação ininterrupta",
+      "explicacao": "Com alimentação ininterrupta degradada, controle, shutdown e mitigação podem ser afetados ao mesmo tempo. Nessa condição, qualquer manutenção em ativo digital fica mais sensível e deve esperar o restabelecimento da barreira elétrica.",
+      "resposta_padrao": "Prosseguir, já que a atividade será só na estação de engenharia e a janela já foi aprovada.",
+      "por_que_nao": "Com a alimentação ininterrupta degradada, a intervenção pode coincidir com perda simultânea de controle, shutdown e mitigação de emergência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas em sistemas de alimentação ininterrupta podem afetar simultaneamente sistemas de controle, shutdown de emergência e mitigação de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa condição, qualquer atividade remota ou de manutenção sobre ativos digitais torna-se mais sensível"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mídia removível de terceiros deve ingressar no ambiente operacional por quarentena e validação prévia de integridade.",
+      "pergunta": "A única forma de levar um pacote de diagnóstico a um ativo isolado é por mídia removível; o pendrive veio de outro contrato e sem comprovação de integridade. Que arranjo técnico aplicar antes da conexão?",
+      "resposta": "estação de quarentena para varredura e validação da mídia",
+      "explicacao": "Mídias removíveis reutilizadas podem levar software não autorizado, versões incompatíveis, malware ou alterações não rastreadas. A quarentena com varredura e validação verifica a integridade antes do contato com o ativo operacional.",
+      "resposta_padrao": "Autorizar a mídia porque o técnico está identificado e a atividade foi aprovada.",
+      "por_que_nao": "Identidade e aprovação não verificam conteúdo, compatibilidade nem malware de uma mídia reutilizada entre contratos ou instalações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua atualização e integridade não são verificadas antes do uso."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Intervenções em ativos que podem alterar parâmetros críticos exigem ponto restaurável para retorno seguro ao estado normal.",
+      "pergunta": "Antes de usar ferramenta temporária em um PLC para alterar parâmetros críticos, não existe meio testado de voltar à configuração anterior se houver incompatibilidade. Qual artefato técnico deve ser gerado primeiro?",
+      "resposta": "backup restaurável da configuração vigente do PLC",
+      "explicacao": "Se a atividade pode alterar parâmetros críticos, a decisão precisa garantir retorno seguro ao estado normal. O artefato técnico que viabiliza essa reversão é um backup restaurável da configuração vigente.",
+      "resposta_padrao": "Basta aprovar a atividade e registrar a sessão do terceiro.",
+      "por_que_nao": "Governança de acesso não cria meio de reversão; sem backup restaurável, falta retorno seguro ao estado normal após alteração crítica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de retorno seguro ao estado normal após a atividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

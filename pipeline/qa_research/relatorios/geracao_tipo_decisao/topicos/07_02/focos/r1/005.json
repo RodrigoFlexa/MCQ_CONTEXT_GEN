@@ -1,0 +1,117 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do nível mínimo de privilégio para diagnóstico sem intervenção no processo.",
+      "pergunta": "O fornecedor precisa ler alarmes, tendências e diagnósticos de um controlador intermitente; a atividade não inclui mudança de lógica, setpoint, configuração ou firmware. Que acesso deve ser liberado?",
+      "resposta": "acesso temporário de observação somente leitura",
+      "explicacao": "Como não haverá atuação nem alteração, o privilégio adequado é apenas leitura e por tempo limitado, evitando exposição desnecessária a funções de engenharia.",
+      "resposta_padrao": "Liberar acesso de engenharia ao fornecedor para ele investigar melhor.",
+      "por_que_nao": "Diagnóstico sem mudança não justifica privilégio capaz de alterar configuração, lógica ou firmware.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo; acesso de engenharia pode alterar configuração, lógica e firmware;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Restrição do escopo do acesso de engenharia de terceiros ao ativo efetivamente afetado.",
+      "pergunta": "Patch corretivo será aplicado por fornecedor em um único controlador vulnerável; IHMs, historiador e demais controladores compartilham a rede. Qual escopo de acesso conceder ao terceiro?",
+      "resposta": "acesso de engenharia restrito ao controlador afetado",
+      "explicacao": "A dependência do fornecedor não elimina o menor privilégio: o alcance do acesso deve ficar limitado ao ativo que receberá a correção.",
+      "resposta_padrao": "Dar acesso de engenharia ao segmento OT inteiro para evitar idas e vindas.",
+      "por_que_nao": "O terceiro só precisa atuar no ativo afetado, e ampliar o alcance aumenta a superfície de erro e abuso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "isso reduz a superfície de erro e de abuso porque limita quais ativos podem ser vistos, configurados ou modificados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Concessão de privilégio administrativo com temporalidade e rastreabilidade quando ele é realmente necessário.",
+      "pergunta": "Para instalar um driver no servidor de engenharia durante janela curta, a equipe quer usar a conta local compartilhada já conhecida. Que arranjo de acesso aplicar?",
+      "resposta": "elevação administrativa temporária em conta nominativa",
+      "explicacao": "A tarefa exige privilégio alto, mas só durante a atividade e com autoria rastreável; conta compartilhada amplia exposição e perde responsabilização.",
+      "resposta_padrao": "Usar a conta administrativa compartilhada já existente.",
+      "por_que_nao": "Privilégio administrativo exige rastreabilidade e validação de necessidade; conta compartilhada elimina autoria e prolonga exposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pelo menor tempo compatível com a atividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de funções em mudanças de lógica ou configuração executadas com suporte remoto.",
+      "pergunta": "Correção remota de lógica eliminou um falso trip, e o mesmo especialista quer aprovar, aplicar e executar o teste final. Que arranjo deve ser imposto?",
+      "resposta": "aprovador e validador independentes do implementador",
+      "explicacao": "Mudança de lógica requer separação entre aprovar, implementar e validar, reduzindo erros não detectados em manutenção e suporte remoto.",
+      "resposta_padrao": "Deixar o próprio especialista aprovar, aplicar e validar a correção.",
+      "por_que_nao": "A mesma pessoa não deve, por padrão, acumular aprovação, implementação e validação da mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

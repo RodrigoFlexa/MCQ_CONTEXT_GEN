@@ -1,0 +1,87 @@
+{
+  "item": "09_01",
+  "foco": 8,
+  "rodada": 3,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de pedido no roteirizador por penalização de atraso, sem converter indevidamente o atendimento em expresso.",
+      "pergunta": "Um sobressalente pode seguir no PSV já roteirizado, mas o otimizador o empurra para a última escala para economizar milhas; abrir uma viagem dedicada seria excessivo. Que ajuste técnico fazer no modelo?",
+      "resposta": "Aumentar a penalização por atraso desse pedido.",
+      "explicacao": "Quando o atendimento continua na malha normal, o ajuste correto é priorizar o pedido no objetivo do modelo. Entrega expressa seria outro tratamento, mais extremo.",
+      "resposta_padrao": "Classificar o pedido como entrega expressa.",
+      "por_que_nao": "Aqui não se busca criar um atendimento excepcional, e sim antecipar a alocação e a sequência dentro da rota existente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "penalizações por atraso e entregas expressas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O valor técnico desse tipo de modelagem está em organizar decisões de frota e atendimento."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sincronização da frequência de partidas com janelas reais de atendimento, rejeitando a universalização de partidas diárias.",
+      "pergunta": "A programação automática libera partidas diárias, mas a instalação só admite aproximação em janelas alternadas por coexistência com outras atividades; as saídas diárias geram espera no campo. Que arranjo técnico aplicar ao cronograma?",
+      "resposta": "Partidas não diárias sincronizadas às janelas seguras.",
+      "explicacao": "Partidas diárias podem ser apenas hipótese de modelo. O cronograma real deve seguir as janelas de aproximação compatíveis com posicionamento seguro e coexistência operacional.",
+      "resposta_padrao": "Manter partidas diárias e deixar o PSV aguardar a janela.",
+      "por_que_nao": "A espera prolonga a exposição da embarcação na interface marítima, e a premissa de partidas diárias não deve ser universalizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "partidas diárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não devem ser universalizadas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a solução precisa ser compatível com restrições físicas e operacionais da interface marítima, como necessidade de posicionamento seguro e coexistência com outras atividades do campo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a exposição ao risco é associada à duração da operação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Preferência por consolidar a entrega em uma única aproximação quando o ganho de custo exigiria múltiplas interações próximas.",
+      "pergunta": "As mesmas cargas cabem em uma única aproximação hoje ou em duas aproximações separadas, com menor milhagem total. Qual arranjo técnico escolher?",
+      "resposta": "Uma única aproximação de entrega.",
+      "explicacao": "Consolidar a entrega reduz interações próximas na área. Menor custo de navegação, isoladamente, não comprova melhor executabilidade na interface marítima.",
+      "resposta_padrao": "Fazer duas aproximações separadas para reduzir milhagem.",
+      "por_que_nao": "Duplicar aproximações aumenta o número potencial de interações próximas, mesmo quando a rota parece mais barata.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma rota eficiente em custo não é, por si só, prova de executabilidade operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cresce o número potencial de interações próximas no campo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

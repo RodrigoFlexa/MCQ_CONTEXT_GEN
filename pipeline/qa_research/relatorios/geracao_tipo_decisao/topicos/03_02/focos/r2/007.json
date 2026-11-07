@@ -1,0 +1,79 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reutilização de estimador por movimentos entre embarcações exige recalibrar a resposta hidrodinâmica da embarcação alvo",
+      "pergunta": "Uma embarcação irmã tem estimador de mar por movimentos já ajustado e a instrumentação é idêntica. Antes de copiar a rotina para apoiar a operação, qual elemento do modelo deve ser recalibrado na embarcação receptora?",
+      "resposta": "Os RAOs calibrados da embarcação receptora.",
+      "explicacao": "A estimação depende da resposta hidrodinâmica representada no modelo; mesmo com instrumentação igual, o uso operacional exige RAOs compatíveis com a embarcação real.",
+      "resposta_padrao": "Reaproveitar os mesmos RAOs da embarcação irmã, já que a classe e a instrumentação coincidem.",
+      "por_que_nao": "A resposta hidrodinâmica que alimenta a estimação é específica da embarcação e precisa ser representada no modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Estimativas de condições de mar a partir dos movimentos do FPSO dependem da resposta hidrodinâmica representada nos modelos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental; desempenho em mar ameno não demonstra a mesma precisão em condições extremas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o aproamento varia dentro da janela e a rotina usa um único conjunto de RAOs, a estimação deve ser segmentada por heading",
+      "pergunta": "Durante uma janela de cálculo, o casco muda 18° de aproamento e a rotina usa um único conjunto de RAOs para inferir a direção de mar. Sem trocar sensores nem reidentificar o modelo, que ajuste aplicar?",
+      "resposta": "Janelas de estimação com heading quase constante.",
+      "explicacao": "Mudanças de aproamento alteram a resposta hidrodinâmica efetiva; misturar muitos headings numa janela com um único conjunto de RAOs degrada a recuperação direcional.",
+      "resposta_padrao": "Aumentar a janela temporal para suavizar o ruído.",
+      "por_que_nao": "Janela mais longa mistura respostas de headings diferentes e pode piorar a inferência direcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "simplificações que ignorem a variação de heading podem introduzir erros importantes na análise de fadiga de risers flexíveis e na definição dos casos de carregamento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de coerência do estimador com sinais clipados deve ser tratada primeiro como limitação de faixa dinâmica da instrumentação",
+      "pergunta": "Em mar forte, séries de heave e roll passam a sair com topos achatados e o estimador perde coerência direcional, embora o modelo hidrodinâmico já esteja validado. O que deve ser corrigido primeiro?",
+      "resposta": "A faixa dinâmica dos sensores de movimento.",
+      "explicacao": "Topos achatados indicam saturação da medição. Como a recuperação direcional também depende dos sensores, é preciso restaurar a faixa útil antes de mexer no modelo.",
+      "resposta_padrao": "Retunar o modelo hidrodinâmico para compensar o erro.",
+      "por_que_nao": "Sem corrigir a saturação dos sinais, qualquer ajuste de modelo continuará usando dados distorcidos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Estimativas de condições de mar a partir dos movimentos do FPSO dependem da resposta hidrodinâmica representada nos modelos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

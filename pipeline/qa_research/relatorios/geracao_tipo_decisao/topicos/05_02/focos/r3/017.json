@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 3,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção dos circuitos de comando do gerador como carga essencial pela consequência da perda, não pela potência.",
+      "pergunta": "No blackout, o motor do gerador de emergência parte e estabiliza, mas o disjuntor não fecha porque os circuitos de comando desenergizam com a perda da CA normal. Que carga deve migrar para alimentação essencial?",
+      "resposta": "Circuitos de comando do gerador",
+      "explicacao": "A partida mecânica já ocorreu; o que impede assumir o barramento é a perda do comando elétrico. Pela consequência operacional, esse circuito deve ter continuidade assegurada.",
+      "resposta_padrao": "Motor de partida do gerador.",
+      "por_que_nao": "Ele já cumpriu sua função; a indisponibilidade veio da perda do comando para fechamento e controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização do CLP em alimentação ininterrupta quando a lógica e os intertravamentos não podem reiniciar, mesmo que a supervisão tolere reboot.",
+      "pergunta": "Os operadores aceitam perder telas por alguns segundos na transferência entre fontes, mas permissivos e intertravamentos não podem zerar. Na priorização do UPS, qual equipamento deve vir antes da supervisão?",
+      "resposta": "CLP",
+      "explicacao": "A função decisiva é manter a lógica de controle e shutdown em execução contínua. A supervisão pode reiniciar; o CLP não deve perder estados críticos.",
+      "resposta_padrao": "Estação de supervisão.",
+      "por_que_nao": "Visibilidade operacional sem a lógica ativa não preserva permissivos, intertravamentos nem a recomposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da geração de emergência quando a carga essencial admite interrupção breve, mas precisa de suprimento prolongado após blackout.",
+      "pergunta": "Um novo sistema de mitigação foi ligado ao UPS e reduziu a autonomia do barramento essencial. Ele tolera alguns segundos sem energia na transferência, mas precisa operar por longo período após blackout. Para onde essa carga deve migrar?",
+      "resposta": "Geração de emergência",
+      "explicacao": "Como a interrupção breve é aceitável, o requisito dominante deixa de ser ride-through e passa a ser sustentação prolongada. Nessa condição, a geração de emergência é a fonte mais adequada.",
+      "resposta_padrao": "Manter no UPS por ser carga de segurança.",
+      "por_que_nao": "UPS e baterias atendem continuidade imediata, mas não são a solução principal quando a necessidade é permanência longa após a perda da CA normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tempo de retaguarda pode variar de minutos a algumas horas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

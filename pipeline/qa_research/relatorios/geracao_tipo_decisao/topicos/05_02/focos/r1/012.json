@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redundância real de supervisão depende de segregar as estações master entre UPS distintas.",
+      "pergunta": "Falha única da UPS A derruba simultaneamente as duas estações master da supervisão, embora existam dois canais previstos. Qual rearranjo elétrico específico deve ser feito para recuperar a redundância real?",
+      "resposta": "Cada estação master em uma UPS diferente.",
+      "explicacao": "Com ambas as estações na mesma UPS, uma falha única remove os dois canais. Separá-las por UPS restitui independência e mantém supervisão disponível no estado degradado.",
+      "resposta_padrao": "Concentrar as duas estações na UPS mais robusta.",
+      "por_que_nao": "Maior robustez não elimina a falha de causa comum de uma única UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A lógica de recomposição deve impedir que um trip externo mantenha aberto o disjuntor do gerador de emergência durante reboot.",
+      "pergunta": "Durante blackout total, o gerador de emergência parte, mas o disjuntor abre toda vez que o sistema de controle reinicia; um sinal de trip externo permanece ativo nesse período. Que alteração de lógica deve ser aplicada para permitir a recomposição?",
+      "resposta": "Bloqueio temporário do trip externo ao disjuntor durante o reboot.",
+      "explicacao": "Se o trip permanece ativo durante o reboot, qualquer fechamento do disjuntor é desfeito. O bloqueio temporário evita que a própria lógica impeça a energização de emergência.",
+      "resposta_padrao": "Fechar o disjuntor localmente em manual até o controle estabilizar.",
+      "por_que_nao": "O trip externo continua atuando e o disjuntor não permanece fechado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sequências de recomposição precisam ser validadas em reboot degradado, sem o apoio de bateria que mascara falhas lógicas.",
+      "pergunta": "Os testes usuais de retomada passam, mas o bloqueio só aparece quando o sistema de controle reinicia sem apoio das baterias. Na validação da sequência, qual ensaio específico deve entrar?",
+      "resposta": "Reboot do sistema de controle sem alimentação de bateria.",
+      "explicacao": "O problema ficava mascarado nos reinícios apoiados por bateria. Ensaiar o reboot sem esse suporte reproduz o estado anormal em que permissivos e scripts podem travar a recomposição.",
+      "resposta_padrao": "Repetir somente a sequência com alimentação normalizada das baterias.",
+      "por_que_nao": "Esse teste não expõe a condição anormal que escondia o bloqueio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria"
+        },
+        {
+          "bloco": "F",
+          "trecho": "scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Separar apenas as fontes não basta; os caminhos de comando também precisam ser independentes para evitar falha comum.",
+      "pergunta": "Dois canais redundantes já têm fontes distintas, mas ambos chegam ao mesmo circuito de trip/fechamento do disjuntor crítico. Que arranjo deve ser adotado para eliminar essa causa comum?",
+      "resposta": "Caminhos de comando independentes até o disjuntor.",
+      "explicacao": "Fonte separada não basta se ambos os canais convergem para o mesmo comando final. A causa comum só desaparece quando o percurso de trip/fechamento também é independente.",
+      "resposta_padrao": "Melhorar apenas a confiabilidade da alimentação do circuito comum.",
+      "por_que_nao": "A falha lógica ou elétrica do comando comum continua capaz de derrubar os dois canais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

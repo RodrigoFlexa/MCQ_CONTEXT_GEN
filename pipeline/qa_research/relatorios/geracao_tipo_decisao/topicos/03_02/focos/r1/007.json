@@ -1,0 +1,79 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de representar a variação de aproamento ao estimar estado de mar por movimentos em casco com turret.",
+      "pergunta": "Heading oscila continuamente em casco com turret, e o estado de mar será inferido pelos movimentos para apoiar decisão de posicionamento. Antes de aceitar a saída do estimador, que variável precisa entrar explicitamente no modelo hidrodinâmico?",
+      "resposta": "variação de aproamento",
+      "explicacao": "Mudanças de aproamento alteram a resposta hidrodinâmica; em sistemas com turret, ignorá-las introduz erro relevante na recuperação direcional e nos casos de carregamento.",
+      "resposta_padrao": "A calibração dos sensores de movimento.",
+      "por_que_nao": "Sensores bem calibrados não eliminam o erro causado por mudanças de heading na resposta modelada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "simplificações que ignorem a variação de heading podem introduzir erros importantes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Base correta de validação de modelos que estimam condições de mar a partir dos movimentos.",
+      "pergunta": "O modelo de estimação por movimentos acertou bem um período de mar brando, e querem usá-lo como base para operação em tempestade. Qual base de validação deve ser escolhida antes dessa aplicação?",
+      "resposta": "dados da própria embarcação em envelope ambiental compatível",
+      "explicacao": "A validação deve usar dados compatíveis com a embarcação e com o envelope ambiental; acerto em mar ameno não comprova precisão sob condição extrema.",
+      "resposta_padrao": "O histórico já obtido em mar ameno.",
+      "por_que_nao": "Desempenho em mar ameno não demonstra a mesma precisão em condições extremas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desempenho em mar ameno não demonstra a mesma precisão em condições extremas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Limitação da recuperação direcional quando os RAOs entram em faixa de baixa sensibilidade e o heading varia.",
+      "pergunta": "Durante mar severo, os RAOs do estimador ficam quase invariantes com a rotação do campo de ondas, e o heading segue variando. Se a rotina alimenta alarmes operacionais, qual saída do algoritmo deve ser bloqueada?",
+      "resposta": "direção do mar inferida pelos movimentos",
+      "explicacao": "Baixa sensibilidade angular dos RAOs, somada à variação de aproamento, degrada a recuperação da informação direcional; por isso essa saída não deve acionar alarmes.",
+      "resposta_padrao": "Nenhuma; com sensores saudáveis, o algoritmo pode seguir integralmente.",
+      "por_que_nao": "Sensores saudáveis não resolvem a perda de informação direcional quando a resposta tem baixa sensibilidade angular.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

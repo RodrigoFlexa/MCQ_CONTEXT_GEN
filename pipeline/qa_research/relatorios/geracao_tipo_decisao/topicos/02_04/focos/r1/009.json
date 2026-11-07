@@ -1,0 +1,109 @@
+{
+  "item": "02_04",
+  "foco": 9,
+  "rodada": 1,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Recalibração da função de dano à formação quando a evolução da impedância muda de regime com o volume poroso injetado.",
+      "pergunta": "A curva de impedância, antes quase linear com o volume poroso injetado, ficou acentuadamente curvada depois de mudar a água tratada, enquanto a vazão foi mantida por manobras de bomba. Que ajuste técnico fazer antes de rever o bombeio?",
+      "resposta": "Recalibrar a função de dano à formação.",
+      "explicacao": "A mudança de regime indica alteração do mecanismo dominante ou da formulação aplicável. Sem recalibrar a função de dano, a previsão do declínio pode ficar errada mesmo com vazão e pressão aparentemente sob controle.",
+      "resposta_padrao": "Aumentar a pressão de injeção para sustentar a vazão.",
+      "por_que_nao": "A ação operacional pode mascarar a mudança de mecanismo; aqui o problema é a representação do dano no modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em algumas formulações ou faixas de vazão, a evolução da impedância com o volume poroso injetado pode assumir comportamento linear; em outras, quadrático."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a função de dano à formação escolhida pode alterar significativamente o resultado previsto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar apenas vazão e pressão sem recalibrar o modelo pode mascarar mudança de mecanismo dominante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da variável derivada correta para monitorar mudança de mecanismo de perda de injetividade.",
+      "pergunta": "Com pressão e vazão estabilizadas por controle automático, a equipe quer perceber se o mecanismo de perda de injetividade mudou após alteração na filtração. Qual relação deve ser acompanhada continuamente?",
+      "resposta": "Impedância em função do volume poroso injetado.",
+      "explicacao": "Pressão e vazão podem parecer normais por ação do controle. A relação impedância-volume poroso revela se a evolução segue comportamento linear ou quadrático e expõe mudança de mecanismo.",
+      "resposta_padrao": "Acompanhar só vazão e pressão de injeção.",
+      "por_que_nao": "Essas variáveis isoladas podem permanecer aceitáveis e ainda assim esconder a transição entre mecanismos dominantes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em algumas formulações ou faixas de vazão, a evolução da impedância com o volume poroso injetado pode assumir comportamento linear; em outras, quadrático."
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar apenas vazão e pressão sem recalibrar o modelo pode mascarar mudança de mecanismo dominante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da geometria de modelagem adequada para prever dano por partículas no entorno imediato do poço injetor.",
+      "pergunta": "Perto do injetor, o interesse é prever o dano por partículas no entorno imediato do poço, não o comportamento médio da malha de injeção. Que arranjo de modelagem usar?",
+      "resposta": "Formulação axi-simétrica de fluxo radial.",
+      "explicacao": "Quando o fenômeno a prever está concentrado junto ao injetor, a geometria relevante é radial ao redor do poço. Um modelo médio da malha não representa corretamente essa escala local.",
+      "resposta_padrao": "Aplicar um balanço global da malha com Darcy simples.",
+      "por_que_nao": "Esse arranjo perde a geometria local do entorno do injetor, justamente a escala onde o dano está sendo previsto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há formulações axi-simétricas para fluxo radial perto do injetor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "nas quais a resposta depende das hipóteses geométricas e de escala adotadas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do coeficiente de filtração como parâmetro para representar maior retenção de partículas no meio poroso.",
+      "pergunta": "Partículas novas surgiram por corrosão na coluna após a planta, e o modelo precisa representar maior retenção no meio poroso sem mudar geometria nem taxa inicial de referência. Qual parâmetro ajustar?",
+      "resposta": "Coeficiente de filtração.",
+      "explicacao": "Esse parâmetro representa a tendência do sistema fluido-reservatório de reter partículas. Se aparecem novos sólidos ao longo do caminho, é ele que deve refletir o aumento de retenção previsto.",
+      "resposta_padrao": "Reduzir a permeabilidade do reservatório no modelo.",
+      "por_que_nao": "Permeabilidade descreve a rocha; aqui o que mudou foi a retenção de partículas geradas no trajeto da água.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o coeficiente de filtração representa a tendência do sistema fluido-reservatório de reter partículas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto maior esse coeficiente, maior tende a ser a quantidade de material retido no meio poroso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A água pode se degradar ao longo do caminho até a formação, por exemplo por corrosão na coluna, gerando novas partículas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

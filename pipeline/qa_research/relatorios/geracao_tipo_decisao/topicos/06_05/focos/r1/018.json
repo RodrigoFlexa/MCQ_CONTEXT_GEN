@@ -1,0 +1,65 @@
+{
+  "item": "06_05",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sequenciar testes e inibições na mesma fire zone para manter o mínimo de canais ativos exigido pela lógica.",
+      "pergunta": "Três detectores da mesma fire zone precisam de teste no mesmo turno. A matriz tolera um canal fora, mas perde confirmação de evento com dois simultâneos. Qual arranjo de intervenção deve ser adotado?",
+      "resposta": "Testar e reintegrar um detector por vez.",
+      "explicacao": "Inibições sucessivas na mesma zona podem reduzir significativamente a cobertura. O arranjo sequencial preserva o mínimo ativo necessário para confirmação, votação e atuação automática previstas.",
+      "resposta_padrao": "Inibir os três detectores e executar os testes em paralelo.",
+      "por_que_nao": "A simultaneidade derruba o mínimo de detectores da zona para cumprir a matriz de causa e efeito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissividade para sucessivas inibições na mesma fire zone sem gestão de risco adequada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ausência de um mínimo de detectores para cumprir a matriz de causa e efeito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "preservar cobertura significa manter capacidade suficiente para detectar o cenário perigoso e permitir a atuação lógica prevista"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a retirada de um canal elimina o voto automático da zona, a intervenção deve ser adiada se não houver canal provisório integrado.",
+      "pergunta": "O único canal restante que completa o voto de fechamento automático na zona precisa ser retirado para bancada, e não há canal provisório integrado disponível. A proposta é manter ronda com portátil. Qual decisão técnica tomar?",
+      "resposta": "Adiar a retirada desse canal.",
+      "explicacao": "Ronda portátil não recompõe confirmação, votação nem disparo automático. Sem canal integrado substituto, retirar o último canal necessário remove a função de segurança da zona.",
+      "resposta_padrao": "Prosseguir com a retirada e compensar com rondas usando detector portátil.",
+      "por_que_nao": "A compensação local detecta presença, mas não preserva o caminho lógico nem a atuação automática requerida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma área pode permanecer parcialmente instrumentada e, ainda assim, não satisfazer confirmação de evento, lógica de votação ou disparo automático requerido"
+        },
+        {
+          "bloco": "F",
+          "trecho": "preservar cobertura significa manter capacidade suficiente para detectar o cenário perigoso e permitir a atuação lógica prevista mesmo durante indisponibilidades temporárias, intervenções ou inibições controladas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

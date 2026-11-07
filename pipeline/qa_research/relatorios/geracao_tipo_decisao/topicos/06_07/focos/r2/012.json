@@ -1,0 +1,101 @@
+{
+  "item": "06_07",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de análise de risco sequencial quando a segurança depende da evolução das barreiras ao longo das tarefas.",
+      "pergunta": "A ordem entre despressurização, abertura e recomposição ainda pode mudar, e cada passo altera as barreiras disponíveis para o seguinte. Que análise deve orientar a escolha da sequência?",
+      "resposta": "Análise de risco sequencial baseada no estado das barreiras.",
+      "explicacao": "Quando cada etapa remove ou recompõe proteção para a seguinte, a decisão depende da evolução do grau de segurança ao longo da sequência, não de avaliações estáticas isoladas.",
+      "resposta_padrao": "APR estática, etapa por etapa.",
+      "por_que_nao": "Ela não representa a mudança das barreiras entre tarefas nem o grau de segurança nas transições.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar o grau de segurança ao longo de uma sequência de tarefas, em vez de tratar o sistema como estático."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de abordagem é mais útil na fase de planejamento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Parametrização do verificador com os impactos de cada operação sobre as barreiras para checagem sequencial.",
+      "pergunta": "O programa começa e termina com as mesmas proteções disponíveis, mas há retirada e recomposição intermediárias. Para a checagem não mascarar a exposição no meio da tarefa, que informação precisa entrar no verificador?",
+      "resposta": "Impactos de cada operação sobre as barreiras.",
+      "explicacao": "Se início e fim parecem equivalentes, a exposição intermediária só aparece quando o modelo registra como cada operação degrada ou recompõe as barreiras.",
+      "resposta_padrao": "Só a condição inicial e a final das barreiras.",
+      "por_que_nao": "Isso perde as degradações e recomposições intermediárias que definem o grau de segurança sequencial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um protótipo verificador pode armazenar condições iniciais e impactos de operações sobre barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "apoiando a checagem sequencial."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de reavaliar a análise da sequência quando a condição real deixa de coincidir com a analisada.",
+      "pergunta": "Uma proteção prevista no plano aparece indisponível na partida do serviço, e um arranjo temporário altera a execução. Antes de usar o grau calculado no planejamento, qual ação técnica deve ser tomada?",
+      "resposta": "Reavaliar a análise de risco da sequência na condição real.",
+      "explicacao": "Com barreira indisponível e arranjo temporário, dados, premissas e configuração mudam; o valor calculado no planejamento deixa de representar a situação real.",
+      "resposta_padrao": "Manter o cálculo do planejamento e compensar em campo.",
+      "por_que_nao": "O número só sustenta decisão com dados, premissas e configuração coerentes com a condição real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a utilidade do número calculado depende da validade dos dados de entrada, das premissas do modelo e da coerência entre a condição real e a condição analisada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "alterações temporárias feitas durante o trabalho e novos cenários identificados podem exigir reavaliação das premissas de risco."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tratamento de barreiras humanas sem independência efetiva como dependentes na modelagem da sequência.",
+      "pergunta": "Duas checagens humanas sucessivas foram planejadas como barreiras distintas, mas a mesma pessoa fará ambas na sequência real. Como essas barreiras devem entrar no modelo do programa?",
+      "resposta": "Como barreiras dependentes.",
+      "explicacao": "Se a mesma pessoa executa ambas, a confiabilidade fica correlacionada; tratá-las como independentes superestima o grau de segurança da sequência.",
+      "resposta_padrao": "Como duas barreiras independentes, desde que haja checklist.",
+      "por_que_nao": "O modelo precisa representar relações entre barreiras; mesma execução elimina a independência efetiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar as relações entre barreiras"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "alteram a confiabilidade do desempenho humano e podem degradar barreiras de prevenção e mitigação"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

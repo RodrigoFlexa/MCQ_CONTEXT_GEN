@@ -1,0 +1,61 @@
+{
+  "item": "03_03",
+  "foco": 5,
+  "rodada": 4,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Supervisão de rota contingencial exige feedback da posição real das válvulas para confirmar o alinhamento, não só sinais hidráulicos.",
+      "pergunta": "Pressão de descarga e corrente da bomba seguem normais, mas o tanque previsto não ganha nível e outro começa a responder durante uma rota contingencial. Sem acesso local imediato, que informação precisa entrar na HMI antes de novas manobras?",
+      "resposta": "Feedback da posição real das válvulas críticas do alinhamento.",
+      "explicacao": "Pode haver bombeio para caminho errado com pressão e corrente normais. Para recuperar a supervisão do alinhamento, o operador precisa ver a posição efetivamente atingida pelas válvulas críticas.",
+      "resposta_padrao": "Medição de vazão da linha de transferência.",
+      "por_que_nao": "Pode haver vazão para o caminho errado; ela não confirma o estado real das válvulas que definem a rota.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se, além disso, informações relevantes da bomba ou da posição de válvulas não chegam adequadamente à interface do operador, a supervisão do alinhamento e da eficiência real da transferência fica parcial."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a coerência entre campo, lógica de comando, documentação do sistema e informação disponível ao operador influencia diretamente a capacidade de manter controle sobre níveis, rotas e pressões."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em rerroteamento de transferência, o limite operacional de pressão deve ser baseado no trecho mecanicamente limitante da rota alinhada.",
+      "pergunta": "Uma transferência passou a usar um ramal temporário de classe de pressão diferente antes de retornar ao header principal, e a pressão estimada segue abaixo da do header original. Para definir o limite operacional da manobra, que trecho deve governar?",
+      "resposta": "O trecho de menor resistência mecânica da rota alinhada.",
+      "explicacao": "O rerroteamento muda quais segmentos ficam efetivamente pressurizados. Por isso, o limite da manobra passa a ser o elo mecanicamente mais fraco da rota conectada, não o header original.",
+      "resposta_padrao": "O header principal, por ser a linha originalmente prevista.",
+      "por_que_nao": "Depois do novo alinhamento, não é só o header que enxerga pressão; o trecho mais fraco da rota passa a limitar a operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O alinhamento de válvulas define quais trechos do sistema ficam conectados e, portanto, qual pressão a bomba e a tubulação passam a enxergar."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o efeito depende da curva da bomba, do tempo nessa condição, da existência de recirculação mínima, das proteções instaladas e da resistência mecânica do sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uso de rotas contingenciais, mudanças de função do tanque e soluções provisórias de interligação afetam o comportamento hidráulico"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

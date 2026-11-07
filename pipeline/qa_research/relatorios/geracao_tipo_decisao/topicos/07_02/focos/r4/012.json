@@ -1,0 +1,89 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 4,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de priorização de contenção imediata em alerta amplo depende da presença do componente afetado e da exposição real do ativo.",
+      "pergunta": "Sai um alerta amplo sobre a pilha Treck; não há indício de exploração a bordo e a parada permite conter só parte dos ativos. Que critério técnico deve definir quais recebem isolamento imediato?",
+      "resposta": "presença confirmada da pilha Treck com exposição de rede relevante",
+      "explicacao": "O alerta setorial não basta para conter tudo indistintamente. A decisão imediata deve focar ativos que realmente usam a pilha afetada e tenham exposição de rede capaz de permitir exploração.",
+      "resposta_padrao": "Isolar todos os ativos OT citados no alerta.",
+      "por_que_nao": "O alerta não confirma comprometimento nem presença da pilha em todos os ativos; a contenção deve seguir componente afetado e exposição real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "F",
+          "trecho": "inclusive pela internet, quando essa pilha estiver presente."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da versão de remediação em sistema legado OT deve seguir a revisão aplicável e qualificada, não necessariamente a mais recente.",
+      "pergunta": "Há correção para um controlador legado vulnerável, mas a revisão mais nova do firmware não foi qualificada para o protocolo e as remotas instaladas; uma revisão anterior foi testada. Qual versão deve ser aplicada?",
+      "resposta": "a revisão qualificada aplicável ao hardware e à comunicação instalados",
+      "explicacao": "Em controle industrial, a correção deve seguir a revisão aplicável e qualificada para aquele hardware, protocolo e função. A mais nova, sem validação, pode introduzir indisponibilidade ou comportamento inesperado.",
+      "resposta_padrao": "Aplicar a versão mais recente disponível.",
+      "por_que_nao": "Em OT, a revisão mais nova sem qualificação pode romper comunicação ou função de processo; vale a versão aplicável já validada.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo;"
+        }
+      ],
+      "k": 2,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da primeira intervenção em vulnerabilidades confirmadas deve considerar a função do ativo no processo.",
+      "pergunta": "O mesmo CVE foi confirmado em um servidor de relatórios muito consultado e em um controlador que abre válvulas; ambos são acessíveis pelo mesmo domínio de rede. Para definir a primeira intervenção, que referência técnica deve prevalecer?",
+      "resposta": "a função do sistema no processo",
+      "explicacao": "Com a mesma vulnerabilidade e conectividade comparável, o que diferencia a prioridade é a função. No controlador que atua em válvulas, a exploração pode alterar o processo ou retirar funções de serviço.",
+      "resposta_padrao": "Usar o volume de acessos ao ativo como critério principal.",
+      "por_que_nao": "No IACS, o efeito relevante da exploração depende da função do sistema atingido, não do número de usuários ou consultas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

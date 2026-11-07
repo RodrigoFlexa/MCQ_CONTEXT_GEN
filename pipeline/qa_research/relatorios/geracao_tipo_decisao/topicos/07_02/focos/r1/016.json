@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da atualização corrigida em OT crítico: preferir a versão estável mais recente compatível.",
+      "pergunta": "Para uma IHM vulnerável, o fornecedor liberou um hotfix provisório e também uma versão estável mais recente já corrigida e compatível com o ambiente em produção. Na janela aprovada, qual atualização aplicar?",
+      "resposta": "A versão estável mais recente corrigida e compatível",
+      "explicacao": "Quando houver correção disponível, a orientação é atualizar para a versão estável mais recente; em ambiente crítico, a escolha precisa respeitar compatibilidade do fornecedor e disponibilidade.",
+      "resposta_padrao": "Aplicar o hotfix provisório por ser a correção mais imediata.",
+      "por_que_nao": "Hotfix não estável aumenta o risco de indisponibilidade; neste cenário, o critério técnico favorece a correção estável compatível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter patches e estratégias de remediação com fornecedores e atualizar para versão estável mais recente quando houver correção disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contenção dirigida em OT: isolar o nó suspeito sem retirar funções essenciais de controle e proteção.",
+      "pergunta": "A estação de engenharia começou a originar conexões não previstas para vários nós; controladores, IHM e proteções seguem estáveis, e a operação atual não depende dessa estação. Que ação de contenção aplicar?",
+      "resposta": "Isolamento da estação de engenharia da rede de controle",
+      "explicacao": "A contenção deve limitar propagação sem introduzir risco maior. Como a estação não é necessária naquele momento, isolá-la reduz exposição preservando controle e salvaguardas.",
+      "resposta_padrao": "Desconectar todo o segmento OT para impedir qualquer propagação.",
+      "por_que_nao": "Isso pode retirar funções essenciais e criar risco operacional maior que o evento original.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A contenção em OT busca limitar propagação e reduzir exposição sem introduzir risco operacional maior que o evento original."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em qualquer caso, contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redução imediata de exposição em vulnerabilidade remota: remover acesso remoto quando não há necessidade operacional.",
+      "pergunta": "Suporte remoto de fornecedor continua habilitado para um equipamento da rede de controle. Surge alerta de exploração remota da pilha TCP/IP, ainda sem correção disponível, e não há intervenção remota em curso. Qual ação técnica tomar agora?",
+      "resposta": "Desabilitação temporária do acesso remoto ao equipamento afetado",
+      "explicacao": "Sem correção imediata, a contenção deve reduzir caminhos prováveis de exploração. Acesso remoto seguro só se justifica quando necessário; mantê-lo habilitado amplia exposição evitável.",
+      "resposta_padrao": "Manter o acesso, já que ele está protegido por VPN.",
+      "por_que_nao": "Mesmo seguro, o acesso remoto desnecessário contraria a minimização de exposição durante a contenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também se recomenda minimizar a exposição de rede dos sistemas de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "além de empregar métodos seguros quando o acesso remoto for necessário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

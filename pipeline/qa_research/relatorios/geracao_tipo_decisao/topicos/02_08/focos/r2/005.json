@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "rodada": 2,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Interação dinâmica entre segmentos que compartilham header comum deve ser modelada conjuntamente no blowdown.",
+      "pergunta": "Dois segmentos ligados ao mesmo header atendem isoladamente ao tempo-alvo, mas quando ambos entram em ESD a queda de pressão ganha cauda longa e a contrapressão oscila no flare. Antes de alterar as BDVs, que arranjo de modelagem deve ser usado?",
+      "resposta": "Modelo dinâmico integrado dos segmentos pelo header comum.",
+      "explicacao": "Cálculos isolados não capturam a competição transitória no coletor nem a contrapressão variável. O desempenho depende da interação entre os segmentos durante a descarga simultânea.",
+      "resposta_padrao": "Dimensionar cada BDV pelo pior caso isolado.",
+      "por_que_nao": "Isso ignora a interação transitória via header comum e a contrapressão variável ao longo do evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interação entre segmentos e contrapressão variável no flare"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o método pode mudar o resultado quando a transitoriedade do processo é relevante"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela contrapressão no sistema de flare"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O inventário inicial efetivamente bloqueado governa o tempo de blowdown e deve incluir volumes que permanecem comunicando no cenário.",
+      "pergunta": "Durante a parada de emergência, a taxa inicial de queda de pressão coincide com o cálculo, mas o tempo até a pressão final cresce quando a recirculação e um vaso adjacente fazem parte do mesmo volume bloqueado nesse modo. Qual premissa do modelo corrigir primeiro?",
+      "resposta": "Inventário inicial efetivamente confinado, incluindo volumes comunicantes.",
+      "explicacao": "Se a taxa inicial está correta, a capacidade da BDV pode estar adequada. O erro passa a ser a massa total a remover, subestimada no inventário inicial do segmento.",
+      "resposta_padrao": "Aumentar a área da BDV.",
+      "por_que_nao": "Maior área não corrige a subestimação da massa confinada; o desvio está no inventário considerado no modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esvaziamento progressivo do inventário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "premissas de inventário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tempo real não depende apenas do tamanho da válvula."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A composição termodinâmica do inventário no cenário operacional específico deve alimentar o modelo de blowdown.",
+      "pergunta": "Na campanha com gás mais pesado, o blowdown passa a resfriar mais e não atinge a pressão-alvo no tempo previsto, sem mudança de lógica, traçado ou abertura da BDV. Que dado do modelo atualizar antes de rever a válvula?",
+      "resposta": "Composição termodinâmica real do inventário.",
+      "explicacao": "As propriedades do fluido e o comportamento de expansão variam com a composição. Usar composição média ou desatualizada distorce resfriamento, vazão e tempo de despressurização.",
+      "resposta_padrao": "Manter a composição média de projeto.",
+      "por_que_nao": "Ela pode não representar o cenário operacional vigente e erra as propriedades que governam o blowdown.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "propriedades do fluido estiverem incorretas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

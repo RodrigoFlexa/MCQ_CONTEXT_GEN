@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade de recomposição da alimentação de comando do gerador quando a máquina motriz permanece disponível.",
+      "pergunta": "O motor primário segue estável, mas o gerador perde permanência no barramento e deixa de responder a comando. Qual alimentação deve ser recomposta antes de qualquer ressincronismo?",
+      "resposta": "24 Vcc de comando do gerador",
+      "explicacao": "A perda de energia de controle pode derrubar a geração sem falha mecânica. Sem o 24 Vcc de comando, o gerador não permanece conectado nem recupera controlabilidade.",
+      "resposta_padrao": "Ressincronizar o gerador ao barramento.",
+      "por_que_nao": "Sem a alimentação de comando, o gerador até gira, mas não fica conectado nem controlável.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura redundante continuar válida no estado degradado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de segregação do caminho final de comando para preservar redundância até o disjuntor.",
+      "pergunta": "Dois canais redundantes já têm controladores e UPS separados, mas os comandos de abrir e fechar de um disjuntor crítico convergem no mesmo relé intermediário antes da bobina. Que alteração de arquitetura elimina essa causa comum?",
+      "resposta": "Caminhos de comando independentes até a bobina do disjuntor",
+      "explicacao": "Separar apenas controladores e UPS não remove o ponto único se ambos atuam pelo mesmo relé. A independência precisa chegar à bobina do disjuntor.",
+      "resposta_padrao": "Trocar o relé intermediário por outro mais confiável.",
+      "por_que_nao": "Um único relé continua sendo ponto comum de falha para os dois canais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura redundante continuar válida no estado degradado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Validação da recomposição em inicialização a frio sem bateria para revelar bloqueios ocultos de lógica.",
+      "pergunta": "No comissionamento, a retomada sempre é aprovada com o controle sustentado por bateria. No blackout total real, o gerador de emergência fecha e volta a abrir durante a inicialização do controle. Que condição de ensaio deve ser reproduzida?",
+      "resposta": "Inicialização do controle sem alimentação de bateria",
+      "explicacao": "O defeito ficava mascarado nos reinícios usuais com bateria. Só a inicialização a frio sem esse suporte expõe o trip indevido durante o reboot.",
+      "resposta_padrao": "Repetir a partida com UPS e baterias disponíveis.",
+      "por_que_nao": "Esse ensaio não reproduz o estado anormal em que a lógica mantém o trip durante o reboot.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

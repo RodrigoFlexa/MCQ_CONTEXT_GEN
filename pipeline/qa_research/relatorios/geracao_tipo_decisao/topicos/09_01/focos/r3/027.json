@@ -1,0 +1,83 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "rodada": 3,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelagem explícita do reabastecimento intermediário ao comparar composições de frota com autonomias diferentes.",
+      "pergunta": "Duas composições de frota atendem a mesma demanda no otimizador; a mais barata usa embarcações menores e só completa o giro com parada para abastecimento no caminho. Antes de adotá-la, que premissa logística deve entrar explicitamente no modelo?",
+      "resposta": "Necessidade de reabastecimento intermediário",
+      "explicacao": "Custos e desempenho podem mudar com a composição da frota e com o reabastecimento intermediário; sem essa premissa, o ciclo e o custo ficam subestimados.",
+      "resposta_padrao": "Comparar apenas diária e consumo previsto da frota.",
+      "por_que_nao": "Isso ignora a parada adicional e seus tempos, custos e dependências operacionais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Custos também podem mudar com a composição da frota, com o uso de cargas múltiplas e com a necessidade de reabastecimento intermediário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prevalência dos limites dos equipamentos de transferência sobre a simples capacidade de tancagem na consolidação de granéis.",
+      "pergunta": "Dois granéis cabem na tancagem e a rota consolidada reduziria custo, mas no recebimento há uma única linha disponível e a janela não comporta as duas descargas. Qual restrição deve prevalecer antes de confirmar a viagem?",
+      "resposta": "Limites dos equipamentos de transferência",
+      "explicacao": "A consolidação só é executável se a interface de descarga permitir concluir a operação na janela disponível; volume de tanque não basta quando o gargalo está na transferência.",
+      "resposta_padrao": "Capacidade dos tanques.",
+      "por_que_nao": "Ter volume para transportar não garante descarregar com a taxa, a interface e o tempo disponíveis.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A capacidade logística de um PSV depende de área útil, resistência do convés, estabilidade, capacidade dos tanques, acessibilidade e limites dos equipamentos de transferência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em cenários específicos modelados, observou-se viabilidade de cargas múltiplas com potencial de maior eficiência de custo e nível de serviço equivalente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representação da espera por fatores exógenos gerada por SIMOPS no simulador de programação e dimensionamento de frota.",
+      "pergunta": "As viagens e os carregamentos são estáveis, mas os atendimentos derrapam quando a embarcação chega durante offloading, voo e mergulho. No simulador usado para redimensionar a frota, que componente de tempo não pode ficar fixo?",
+      "resposta": "Espera por fatores exógenos",
+      "explicacao": "Aqui o atraso nasce da competição com outras operações simultâneas; o modelo precisa representar essa espera, não apenas navegação, berço ou transferência.",
+      "resposta_padrao": "Tempo de navegação.",
+      "por_que_nao": "O trânsito pode ser estável e ainda assim o atendimento falhar por aguardas impostas pelas SIMOPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando SIMOPS são mal coordenadas, aumentam as esperas, as reprogramações e a variabilidade do tempo de atendimento."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

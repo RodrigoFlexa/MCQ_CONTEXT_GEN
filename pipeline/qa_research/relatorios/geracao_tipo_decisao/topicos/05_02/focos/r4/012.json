@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 4,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Validação da recomposição por ensaio de reinicialização a frio do controle em estado degradado.",
+      "pergunta": "Partida do gerador de emergência e testes integrados usuais passam, mas a recomposição falha quando a recuperação começa com um canal de UPS indisponível e o controle desligado. Qual ensaio técnico deve entrar na validação?",
+      "resposta": "Reinicialização a frio do controle em modo degradado.",
+      "explicacao": "A falha fica oculta nos testes com suporte normal. É preciso reproduzir o reboot sem apoio habitual, no estado degradado, para expor intertravamentos e bloqueios de retomada.",
+      "resposta_padrao": "Repetir o teste integrado na arquitetura nominal.",
+      "por_que_nao": "Com todas as alimentações usuais disponíveis, o ensaio não reproduz a condição anormal que revela o bloqueio na recomposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de segregação do permissivo lógico de fechamento para preservar redundância real na recomposição.",
+      "pergunta": "Duas cadeias de controle têm UPS e controladores separados, mas ambas dependem do mesmo permissivo de fechamento vindo de um sistema que reinicia a frio no blackout. O que deve ser segregado para existir redundância real na recomposição?",
+      "resposta": "O permissivo lógico de fechamento do disjuntor.",
+      "explicacao": "Com fontes e controladores já separados, a dependência comum remanescente é lógica. Enquanto o permissivo continuar único, a perda desse caminho derruba a resiliência da recomposição.",
+      "resposta_padrao": "Alimentar o sistema comum por uma UPS mais confiável.",
+      "por_que_nao": "Isso melhora a disponibilidade da fonte, mas mantém o mesmo ponto único lógico para os dois canais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

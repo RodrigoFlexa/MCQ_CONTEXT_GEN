@@ -1,0 +1,113 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Disponibilidade observada deve ser calculada por uptime/tempo total quando os tempos reais estão disponíveis.",
+      "pergunta": "Com partidas, paradas e retorno de serviço registrados no historiador, e atrasos de acesso variando muito entre falhas, qual forma de cálculo deve entrar no KPI mensal de disponibilidade?",
+      "resposta": "uptime dividido pelo tempo total observado",
+      "explicacao": "Com tempos reais disponíveis, a disponibilidade deve refletir a alternância observada entre operação e indisponibilidade. MTBF e MTTR servem apenas como aproximação quando esses tempos não estão diretamente disponíveis.",
+      "resposta_padrao": "Usar MTBF/(MTBF+MTTR).",
+      "por_que_nao": "Essa forma é aproximação para quando uptime e downtime não estão diretamente disponíveis e pode não refletir o mês observado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em estado estacionário, pode ser representada pela razão entre uptime e tempo total observado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para prontidão de um sistema reparável quando demandado, o KPI correto é disponibilidade, não confiabilidade.",
+      "pergunta": "Para um gerador de emergência reparável, a gerência quer um KPI que mostre se ele estará apto quando solicitado após falhas e reparos ao longo do mês. Qual indicador usar?",
+      "resposta": "disponibilidade",
+      "explicacao": "O objetivo é saber se o sistema estará apto quando necessário. Confiabilidade mede continuidade ao longo de um intervalo partindo operacional; disponibilidade incorpora a alternância entre operação e restauração.",
+      "resposta_padrao": "Confiabilidade.",
+      "por_que_nao": "Confiabilidade trata da capacidade de continuar prestando o serviço ao longo de um intervalo, não da aptidão quando requerido após reparos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "disponibilidade expressa a probabilidade de o sistema estar operacional em um dado instante;"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O ganho de disponibilidade de reserva fria só pode ser creditado se o modelo incluir falhas de partida e comutação.",
+      "pergunta": "Há um equipamento ativo e outro em reserva fria; nas trocas, o reserva já falhou ao partir e ao assumir carga. Ao modelar a disponibilidade, que elemento incluir explicitamente?",
+      "resposta": "falha de partida/comutação da reserva fria",
+      "explicacao": "Reserva fria não equivale a redundância perfeita. O benefício só existe se o item em espera conseguir partir e assumir a função quando solicitado.",
+      "resposta_padrao": "Modelar os dois equipamentos como paralelo puro.",
+      "por_que_nao": "Reserva fria não elimina falhas em espera nem falhas de partida ou de comutação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a disponibilidade combina frequência de interrupções e duração de recuperação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redundância não deve receber crédito integral de disponibilidade quando há utilidade compartilhada sujeita a falha de causa comum.",
+      "pergunta": "Dois trens duplicados param juntos quando a mesma utilidade comum falha. No KPI de disponibilidade do sistema, qual arranjo deve ser tratado como limitante antes de creditar redundância?",
+      "resposta": "falha de causa comum da utilidade compartilhada",
+      "explicacao": "Se a função depende de um subsistema comum, a duplicação dos trens não preserva o serviço quando esse recurso falha. O ganho real de disponibilidade fica menor que o paralelo ideal.",
+      "resposta_padrao": "Tratar os dois trens como redundância integral.",
+      "por_que_nao": "Recursos compartilhados, restrições de utilidades e falhas de causa comum podem indisponibilizar ambos os trens ao mesmo tempo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A fração de tempo disponível depende de quais indisponibilidades são incluídas no indicador."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

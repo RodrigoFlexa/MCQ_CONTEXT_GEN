@@ -1,0 +1,105 @@
+{
+  "item": "04_01",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Incluir a temperatura operacional da linha na estimativa da rigidez à flexão para recalcular a resposta do riser.",
+      "pergunta": "Curvatura no topo cresce quando a linha passa da condição fria para a quente, com o mesmo metocean e a mesma posição do casco. No recálculo antes do pull-in final, qual variável operacional deve entrar na estimativa da rigidez à flexão?",
+      "resposta": "Temperatura da linha",
+      "explicacao": "Os blocos ligam diretamente a temperatura à rigidez à flexão; com ambiente e movimento equivalentes, essa variável é a que muda a resposta calculada do riser.",
+      "resposta_padrao": "Pressão interna da linha.",
+      "por_que_nao": "Neste cenário o desvio acompanha a condição térmica, e os blocos relacionam a rigidez à flexão à temperatura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a temperatura é relevante porque entra na estimativa da rigidez à flexão da tubulação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a temperatura é usada na estimativa de rigidez à flexão para cálculos mais realistas da resposta do riser"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Revisar o peso submerso efetivo quando a flutuabilidade distribuída altera a geometria de equilíbrio durante o pull-in.",
+      "pergunta": "Com módulos de flutuabilidade distribuída já instalados, o ângulo de chegada ao ponto de conexão saiu do previsto, sem mudança de mar nem do trajeto de pull-in. Antes de aumentar a tração, que parâmetro do modelo deve ser corrigido?",
+      "resposta": "Peso submerso efetivo da linha",
+      "explicacao": "A flutuabilidade distribuída muda o carregamento gravitacional efetivo na água e, por isso, altera a forma de equilíbrio e o ângulo de chegada.",
+      "resposta_padrao": "Tração do guincho.",
+      "por_que_nao": "Aumentar a tração sem corrigir o balanço peso-flutuabilidade atua sobre uma geometria de equilíbrio modelada de forma errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O peso submerso da linha também influencia sua forma de equilíbrio"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se houver flutuabilidade distribuída, esse balanço se altera novamente"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Selecionar stress-joint como solução de topo de linha rígida para transição progressiva de rigidez na conexão ao casco.",
+      "pergunta": "Na conexão de uma linha rígida ao casco, é preciso aliviar a concentração de curvatura no topo sem adicionar a liberdade rotacional típica de conexões de perfuração. Qual solução de topo especificar?",
+      "resposta": "Stress-joint",
+      "explicacao": "Para linha rígida, o stress-joint faz a transição progressiva de rigidez na conexão. A flex-joint tem outra função principal e outra aplicação usual.",
+      "resposta_padrao": "Flex-joint.",
+      "por_que_nao": "Ela acrescenta liberdade rotacional controlada e não é o acessório usual para essa conexão de riser ao casco.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Para linha rígida, o stress-joint fornece transição progressiva de rigidez."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A flex-joint, que acrescenta liberdade rotacional controlada na ligação com a unidade, não é acessório usual de risers conectados a FPSO"
+        },
+        {
+          "bloco": "F",
+          "trecho": "elementos de acomodação de rotação e de transição de rigidez no hang-off"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Usar a posição de hang-off como parâmetro decisivo na escolha entre pontos de conexão de um SCR.",
+      "pergunta": "Entre dois pontos de conexão viáveis para o mesmo SCR, ambos atendem à tração estática e ao encaixe do conector, mas o movimento local do casco difere entre eles. Qual parâmetro estrutural deve decidir a escolha?",
+      "resposta": "Posição de hang-off",
+      "explicacao": "Nos SCRs, a posição de hang-off integra a configuração estrutural e altera a resposta quando combinada com o movimento relativo entre casco e linha.",
+      "resposta_padrao": "O ponto mais acessível ao sistema de pull-in.",
+      "por_que_nao": "Acessibilidade não representa a solicitação dinâmica em operação, que varia com a localização do hang-off.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em modelos de FPSO com SCR, a posição de hang-off faz parte da configuração estrutural analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteram o movimento relativo entre casco e linha e modificam a solicitação dinâmica no topo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

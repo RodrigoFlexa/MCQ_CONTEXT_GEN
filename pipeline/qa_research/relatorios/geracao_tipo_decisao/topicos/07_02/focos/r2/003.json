@@ -1,0 +1,117 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 2,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Eficácia da segmentação exige eliminar ativos que funcionem como ponte direta entre domínios.",
+      "pergunta": "Uma estação de engenharia mantém uma interface na rede de automação e outra na corporativa para transferir arquivos; o firewall entre os domínios segue inalterado. Qual intervenção técnica específica deve ser feita?",
+      "resposta": "remover a segunda interface de rede da estação de engenharia",
+      "explicacao": "A estação com duas redes contorna a barreira planejada; a monitoração da arquitetura precisa verificar a operação real e a eficácia do controle, não só as regras do firewall.",
+      "resposta_padrao": "Endurecer a estação e manter as duas interfaces ativas.",
+      "por_que_nao": "Com duas interfaces, a estação continua criando um caminho direto entre os domínios fora da barreira planejada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "verificar se a separação planejada continua compatível com a operação real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "configuração e eficácia dos controles"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O escopo do sistema conectado deve permanecer coerente, separando histórico de funções de engenharia.",
+      "pergunta": "O historiador passou a hospedar também ferramentas de engenharia para intervenções remotas, sem abrir novas portas na rede. Qual função deve ser retirada desse servidor?",
+      "resposta": "a função de engenharia remota",
+      "explicacao": "Misturar histórico e engenharia torna incoerente o escopo do sistema conectado e concentra impacto operacional de um acesso excessivo no mesmo ativo.",
+      "resposta_padrao": "Nenhuma; basta aplicar hardening adicional no historiador.",
+      "por_que_nao": "Hardening reduz exposição, mas não desfaz a concentração de funções nem o excesso de escopo do ativo conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Barreiras e conduítes devem ser reconfigurados quando uma função mais crítica passa a compartilhar o mesmo caminho de rede.",
+      "pergunta": "Telemetria de baixa criticidade e manutenção remota do sistema elétrico de controle passaram a usar o mesmo conduíte entre domínios; o fluxo continua necessário. Qual arranjo arquitetural deve ser priorizado?",
+      "resposta": "zona própria com conduíte dedicado para o sistema elétrico de controle",
+      "explicacao": "O caminho deixou de atender só telemetria e passou a suportar função elétrica mais crítica; a barreira precisa ser compatível com essa criticidade e suas interdependências.",
+      "resposta_padrao": "Apenas restringir mais regras no firewall existente.",
+      "por_que_nao": "A inadequação está no compartilhamento do mesmo conduíte por funções de criticidade distinta, não só no detalhe das regras.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas elétricos de controle e aquisição de dados"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A disponibilidade elétrica do caminho autorizado de supervisão deve ser tratada no ponto de interligação, sem substituir a segmentação lógica.",
+      "pergunta": "Com afundamentos curtos, o switch de interligação autorizado entre supervisão e controle desliga; sugeriram um cabo direto entre os dois domínios para contingência. Qual solução específica aplicar nesse ponto?",
+      "resposta": "alimentação ininterrupta do switch de interligação",
+      "explicacao": "A falha é de disponibilidade elétrica do caminho autorizado; o cabo direto contorna a segmentação lógica e não corrige a perda de energia do equipamento intermediário.",
+      "resposta_padrao": "Passar um cabo direto entre supervisão e controle.",
+      "por_que_nao": "Isso elimina a barreira planejada e troca o problema elétrico por exposição indevida entre domínios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade elétrica interage com essa arquitetura"
+        },
+        {
+          "bloco": "F",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

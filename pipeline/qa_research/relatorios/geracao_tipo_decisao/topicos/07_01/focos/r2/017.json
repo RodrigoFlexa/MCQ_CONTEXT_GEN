@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para julgar confiabilidade de dado supervisório após perturbação de comunicação, a variável decisiva é a validade/quality da tag, não a plausibilidade do valor.",
+      "pergunta": "O timestamp do dashboard continua avançando e a pressão exibida parece plausível, mas houve perda breve de comunicação no trajeto do dado. Para decidir se a medição ainda pode sustentar ação operacional, que informação técnica deve ser verificada primeiro?",
+      "resposta": "Status de qualidade da tag",
+      "explicacao": "Valor plausível e timestamp atualizado não excluem dado inválido; a validade da tag revela degradação no transporte ou processamento apesar da aparência normal.",
+      "resposta_padrao": "A tendência da própria pressão.",
+      "por_que_nao": "Uma curva coerente pode refletir tratamento ou retenção do último valor; sem quality, a supervisão pode mascarar indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na perda de atuação com cálculo interno normal e elemento final responsivo a sinal externo, a primeira intervenção correta é na interface de saída do controlador.",
+      "pergunta": "O controlador muda a variável interna do AO quando o setpoint é alterado, mas a corrente no borne do cartão de saída permanece fixa; o I/P movimenta a válvula quando recebe sinal externo. Qual elemento deve receber a primeira intervenção?",
+      "resposta": "Canal de saída analógica do controlador",
+      "explicacao": "A lógica calcula nova saída e o elemento final responde a sinal externo; a falha está entre a variável interna e o borne, na interface de saída.",
+      "resposta_padrao": "Posicionador da válvula.",
+      "por_que_nao": "Se o I/P leva a válvula ao curso com sinal externo, o problema não está no conjunto a jusante do cartão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o sinal do transmissor chega corretamente ao borne, mas não muda no controlador, a decisão correta é intervir na interface de entrada analógica.",
+      "pergunta": "Com estímulo aplicado, o transmissor varia 4–20 mA e a corrente também varia no borne do cartão de entrada, mas o valor no controlador fica fixo; os demais sinais do mesmo rack atualizam normalmente. Qual elemento deve receber a primeira intervenção?",
+      "resposta": "Canal de entrada analógica do controlador",
+      "explicacao": "O sinal já chega ao cartão e o rack segue comunicando; o congelamento ocorre na interface que converte a corrente recebida em valor para o controlador.",
+      "resposta_padrao": "Transmissor de campo.",
+      "por_que_nao": "A corrente medida no borne acompanha o estímulo, então a cadeia até a entrada do controlador está íntegra.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 4,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do ponto exato de redução de exposição em ativo OT que precisa manter a função local quando o patch ainda não é seguro.",
+      "pergunta": "A segunda placa de rede de um servidor de monitoramento só envia relatórios à rede corporativa; a rede interna mantém telas locais e integração com o supervisório. O componente vulnerável está confirmado, não há patch qualificado e não há janela para reboot. Que intervenção imediata aplicar?",
+      "resposta": "desligar a segunda interface de rede para a corporativa",
+      "explicacao": "Sem remediação compatível, a medida compensatória deve cortar o caminho externo dispensável. A função operacional continua pela rede interna, então a segunda interface é o ponto correto para reduzir a exposição.",
+      "resposta_padrao": "Desconectar o servidor inteiro da rede.",
+      "por_que_nao": "Isso retiraria funções locais ainda necessárias; neste cenário, só o enlace externo é dispensável e concentra a exposição evitável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "indica necessidade de avaliar exposição caso a caso"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A liberação de patch com reboot em OT depende do restabelecimento da cadeia de alimentação ininterrupta compartilhada quando ela está degradada.",
+      "pergunta": "Há patch qualificado para um servidor de operação, mas a UPS comum aos sistemas de controle e proteção está em bypass manual após manutenção corretiva. Como a correção exige reboot, o que deve ser restabelecido antes da intervenção?",
+      "resposta": "o retorno da UPS compartilhada ao modo normal",
+      "explicacao": "A mudança já introduz indisponibilidade temporária; com a UPS degradada, o reboot fica apoiado numa cadeia de suporte fragilizada. Antes do patch, a alimentação ininterrupta comum precisa voltar ao modo normal.",
+      "resposta_padrao": "O backup do servidor e o plano de retorno já permitem aplicar o patch.",
+      "por_que_nao": "Sem UPS confiável, uma perturbação elétrica durante o reboot pode ampliar a perda para controle e proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "da consequência de uma indisponibilidade introduzida pela mudança"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A disponibilidade efetiva de um IACS não depende apenas do software de controle. Ela depende também da cadeia de suporte físico e funcional, incluindo alimentação elétrica, Uninterruptible Power Supply (UPS)"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correções para componente vulnerável não devem ser reaproveitadas entre produtos distintos sem versão aplicável e qualificada para cada um.",
+      "pergunta": "Dois equipamentos de fornecedores diferentes usam a mesma pilha de comunicação vulnerável. Um fornecedor publicou firmware corretivo; o outro, com produto descontinuado, não homologou essa imagem. Para o equipamento sem homologação, qual critério técnico deve barrar o reaproveitamento da correção do outro?",
+      "resposta": "a homologação da versão para o produto específico",
+      "explicacao": "Compartilhar o componente vulnerável não garante integração idêntica do firmware. A correção precisa ser aplicável e qualificada para aquele produto; fora disso, pode causar indisponibilidade ou comportamento imprevisto.",
+      "resposta_padrao": "Se a pilha vulnerável é a mesma, a imagem corretiva serve nos dois.",
+      "por_que_nao": "A compatibilidade é do produto completo, não apenas do componente comum, e a correção não pode ser generalizada entre produtos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa ação não deve ser generalizada para outros produtos fora desse contexto."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

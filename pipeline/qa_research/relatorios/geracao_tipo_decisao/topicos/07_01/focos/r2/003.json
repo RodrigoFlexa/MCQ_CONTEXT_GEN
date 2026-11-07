@@ -1,0 +1,105 @@
+{
+  "item": "07_01",
+  "foco": 3,
+  "rodada": 2,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o sinal padronizado do transdutor submersível está correto e a pressão convertida está errada, a correção é na escala do indicador digital.",
+      "pergunta": "A corrente do transdutor de pressão submersível confere com a referência aplicada, mas o valor em engenharia ficou 12% alto logo após a troca do indicador digital. Que ajuste técnico deve ser feito?",
+      "resposta": "Escala do indicador digital",
+      "explicacao": "Se a corrente acompanha a referência, o sinal padronizado está íntegro. O erro surgiu no equipamento que converte esse sinal em pressão, portanto a correção é na escala do indicador.",
+      "resposta_padrao": "Recalibrar o transdutor submersível.",
+      "por_que_nao": "O sinal de instrumentação já está correto; o desvio aparece apenas na conversão final para pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em transdutores de pressão imersíveis, o valor final também depende do arranjo completo de alimentação, cabo e indicador digital que converte o sinal em pressão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Erro sistemático constante em toda a faixa, sem histerese, pede ajuste de zero do transmissor e não de span nem aceitação por incerteza.",
+      "pergunta": "Na bancada, um transmissor de pressão repete +0,3 bar em 0, 50 e 100% da faixa, com subida e descida coincidentes, e o certificado informa incerteza expandida aceitável. Qual ajuste aplicar?",
+      "resposta": "Ajuste de zero do transmissor",
+      "explicacao": "O desvio é persistente e igual ao longo da faixa, sem histerese. Incerteza expandida apenas informa a faixa associada ao resultado; não corrige esse offset.",
+      "resposta_padrao": "Fazer ajuste de span do transmissor.",
+      "por_que_nao": "Deslocamento igual em todos os pontos caracteriza erro sistemático de zero, não erro de ganho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O transmissor converte o sinal primário gerado pelo sensor em um sinal de instrumentação padrão, tornando-o utilizável por indicação, registro ou controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Erro sistemático desloca a indicação de forma persistente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A incerteza expandida não corrige esses efeitos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Se o RTD entrega resistência coerente e o 4–20 mA já sai errado localmente, a intervenção correta é no transmissor de temperatura.",
+      "pergunta": "O RTD apresenta resistência coerente com a temperatura em dois pontos de teste, mas o 4–20 mA já sai errado nos bornes do cabeçote. Em qual componente atuar primeiro?",
+      "resposta": "Transmissor de temperatura",
+      "explicacao": "O sensor já fornece a variação de resistência esperada. Como o erro aparece antes de sair o sinal padrão, o ponto falho é o transmissor.",
+      "resposta_padrao": "Trocar o RTD.",
+      "por_que_nao": "A resposta primária do sensor está correta; a falha está na conversão para o sinal de instrumentação padrão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sensor é o elemento que responde à variável de processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em temperatura, essa resposta pode aparecer como tensão termoelétrica ou variação de resistência, como nos Detectores de Temperatura por Resistência (RTD, Resistance Temperature Detector)."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O transmissor converte o sinal primário gerado pelo sensor em um sinal de instrumentação padrão, tornando-o utilizável por indicação, registro ou controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para isolar erro de cálculo em medição por placa de orifício com transmissores coerentes, a simulação deve ser aplicada nas entradas do computador de vazão.",
+      "pergunta": "Pressão diferencial, pressão estática e temperatura conferem com referências locais, mas a vazão calculada ficou incompatível após atualização de software. Para separar cálculo de instrumentação, onde aplicar a simulação?",
+      "resposta": "Entradas do computador de vazão",
+      "explicacao": "Na placa de orifício, a vazão é calculada no computador a partir de pressão diferencial, pressão estática e temperatura. Simular num transmissor não isola a computação nem a integração das três entradas.",
+      "resposta_padrao": "No transmissor de pressão diferencial.",
+      "por_que_nao": "A medição não depende de um único instrumento isolado; o cálculo usa as três variáveis no computador de vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em medição de vazão com placa de orifício, a medição não depende de um único instrumento isolado:"
+        },
+        {
+          "bloco": "F",
+          "trecho": "transmissores de pressão estática, pressão diferencial e temperatura fornecem sinais a um computador de vazão, que calcula a vazão segundo o procedimento configurado no sistema."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

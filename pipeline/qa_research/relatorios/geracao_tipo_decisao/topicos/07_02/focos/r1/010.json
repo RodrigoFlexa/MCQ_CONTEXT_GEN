@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação da condição de segurança do endpoint de terceiro como pré-condição para acesso remoto.",
+      "pergunta": "O escopo do acesso já foi limitado ao ativo correto, porém o fornecedor quer conectar via VPN usando notebook próprio sem evidência recente de atualização ou integridade. Qual ponto técnico deve ser verificado antes de liberar a sessão?",
+      "resposta": "o estado de segurança do dispositivo remoto",
+      "explicacao": "Canal seguro não elimina o risco do equipamento conectado; um endpoint comprometido ou desatualizado pode abrir sessão válida e ainda introduzir ameaça no ambiente operacional.",
+      "resposta_padrao": "Basta exigir VPN e credencial temporária.",
+      "por_que_nao": "A proteção do canal não corrige comprometimento prévio do equipamento conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Delimitação do perfil de acesso remoto de terceiros ao ativo e à tarefa efetivamente executada.",
+      "pergunta": "Canal VPN e notebook do terceiro já foram validados, mas a tarefa é só ler diagnósticos de um único ativo e a contratada pede acesso amplo ao domínio de controle. Que arranjo de acesso aplicar?",
+      "resposta": "perfil temporário restrito ao ativo e à tarefa",
+      "explicacao": "A sessão deve ser limitada pela necessidade operacional e pelo escopo da tarefa; acesso amplo expõe funções de configuração e operação sem relação com o diagnóstico solicitado.",
+      "resposta_padrao": "Conceder acesso de engenharia amplo durante a janela autorizada.",
+      "por_que_nao": "Mesmo autorizada, a sessão pode alcançar funções com impacto operacional, de configuração ou de diagnóstico além da tarefa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Encerramento do acesso remoto de terceiro imediatamente após o término da atividade necessária.",
+      "pergunta": "Correção concluída, logs coletados e processo estabilizado, mas o fornecedor quer manter a conta remota habilitada até o dia seguinte por conveniência. Qual ação tomar com esse acesso?",
+      "resposta": "encerrar o acesso remoto ao fim da atividade",
+      "explicacao": "O acesso remoto de terceiros deve durar apenas a atividade necessária; após correção e coleta concluídas, mantê-lo habilitado só amplia a exposição.",
+      "resposta_padrao": "Manter o acesso ativo durante a observação pós-serviço.",
+      "por_que_nao": "Sem necessidade operacional em curso, a liberação contínua prolonga exposição desnecessária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Manutenção de registro de sessão suficiente para rastrear intervenção remota de terceiros.",
+      "pergunta": "O chamado e a aprovação da mudança existem, mas horas após um ajuste remoto surgiu comportamento inesperado. Qual registro técnico ainda precisa existir para reconstruir a intervenção?",
+      "resposta": "registro de sessão rastreável da intervenção remota",
+      "explicacao": "O registro de sessão permite reconstituir usuário, momento e ativo atuado, apoiando investigação, responsabilização e contenção quando a intervenção introduz falha ou alteração indevida.",
+      "resposta_padrao": "Guardar apenas o chamado de manutenção e o relatório final.",
+      "por_que_nao": "Isso não permite reconstruir quem acessou, quando ocorreu a sessão e em qual ativo houve atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

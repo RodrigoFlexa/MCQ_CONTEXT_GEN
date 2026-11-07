@@ -1,0 +1,79 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 4,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Associação correta do trip de baixo nível ao underflow no sistema separador-hidrociclone.",
+      "pergunta": "No teste de baixo nível da interface, o evento abre o overflow, o DPR cai e o inventário continua baixando, enquanto o underflow não muda. Que correção de lógica deve ser feita?",
+      "resposta": "Associar o trip de baixo nível ao underflow do hidrociclone.",
+      "explicacao": "Em arranjo acoplado, o overflow serve ao DPR e ao split; baixo nível deve atuar no caminho que controla a interface. Se o evento mexe no overflow, a associação lógica está errada.",
+      "resposta_padrao": "Retunar a malha de interface para reagir mais rápido.",
+      "por_que_nao": "A atuação indevida vem da associação lógica errada do evento; sintonia não corrige o caminho de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também ocorreram falhas de implementação, como associação incorreta de trip por nível baixo, ausência inicial de anti-windup no Dead Band Assimétrico e bugs de lógica."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma arquitetura descrita para esse tipo de sistema manipula a vazão de underflow do hidrociclone para controlar a interface no separador, enquanto outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de incluir espuma no modelo dinâmico quando ela domina a resposta do separador.",
+      "pergunta": "Camada espumosa persistente, nível aparente serrilhado e perda de aderência entre simulação e campo só nas campanhas com antiespumante. Antes de escolher nova filosofia de interface por simulação, que ajuste técnico específico o modelo deve receber?",
+      "resposta": "Incluir formação de espuma no modelo dinâmico.",
+      "explicacao": "Os desvios aparecem justamente quando a espuma domina o inventário aparente. Sem essa física, o modelo não reproduz holdup nem resposta de nível e pode levar à escolha errada de filosofia.",
+      "resposta_padrao": "Retunar o controlador com base no modelo atual.",
+      "por_que_nao": "Sem representar a espuma, o modelo erra a física dominante e qualquer retuning será qualificado sobre premissas inválidas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sua utilidade, porém, depende das hipóteses adotadas; por exemplo, simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de incluir arraste de líquido pelo gás no modelo quando os desvios se concentram na via gás.",
+      "pergunta": "As divergências entre planta e simulação aparecem nos transientes em que sobe o dreno do eliminador de névoa e o gás de saída chega molhado à compressão, enquanto interface e água produzida seguem próximas do previsto. Que ajuste técnico específico deve entrar no modelo antes de requalificar a filosofia?",
+      "resposta": "Incluir arraste de líquido pelo gás no modelo dinâmico.",
+      "explicacao": "A divergência surge na via gás, indicada por gás molhado e aumento de dreno do eliminador. Um modelo sem arraste pelo gás subestima esses transientes e falseia a comparação entre filosofias.",
+      "resposta_padrao": "Apertar a banda de controle da interface.",
+      "por_que_nao": "Os sinais críticos estão na corrente de gás; sem modelar o arraste, a banda ataca o efeito, não o fenômeno dominante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Modelos dinâmicos fenomenológicos são úteis nesse contexto porque ajudam a entender o acoplamento entre separador e hidrociclone, comparar filosofias de controle e estudar efeitos de oscilações de carga e golfadas antes da aplicação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sua utilidade, porém, depende das hipóteses adotadas; por exemplo, simplificações que desconsideram espuma, arraste pelo gás ou influência de agentes emulsificantes limitam a validade quando esses fenômenos dominam."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

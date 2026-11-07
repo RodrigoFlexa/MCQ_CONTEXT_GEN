@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir falha no caminho de escrita da supervisão para o controlador de problema de modo do controlador.",
+      "pergunta": "O setpoint digitado na HMI muda na própria tela, mas volta ao valor antigo após atualização; o controlador está em remoto e aceita a mesma alteração feita diretamente nele. Qual ponto técnico deve ser corrigido?",
+      "resposta": "Enlace de escrita entre supervisão e controlador",
+      "explicacao": "A supervisão deve permitir ajuste do controlador. Se a alteração direta no controlador funciona e a vinda da HMI não, a falha está no caminho de escrita entre essas camadas.",
+      "resposta_padrao": "Colocar o controlador em remoto.",
+      "por_que_nao": "Ele já está em remoto e aceita ajuste direto; o defeito remanescente é a escrita pela supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir perda do caminho de comando controlador→atuador de problema no posicionador ou no ajuste da malha.",
+      "pergunta": "A posição da válvula não muda, embora a saída do controlador acompanhe o erro; no campo, o sinal de comando ao atuador permanece constante. Onde intervir primeiro?",
+      "resposta": "Enlace de comando entre controlador e atuador",
+      "explicacao": "O controlador está gerando a ação correta, mas ela não chega ao elemento final. A perda está na interface que leva o comando da camada de controle ao atuador.",
+      "resposta_padrao": "Ajustar o posicionador.",
+      "por_que_nao": "Se o sinal de comando ao atuador não varia, o problema está antes do posicionador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir falha no caminho de medição até o controlador de falha apenas de supervisão.",
+      "pergunta": "O transmissor local acompanha o processo, porém controlador e HMI mostram a PV congelada e a malha não corrige o desvio. Qual interface técnica deve ser atacada primeiro?",
+      "resposta": "Enlace de medição entre transmissor e controlador",
+      "explicacao": "A medição precisa alimentar o controlador para haver controle e também a supervisão. Se ambos recebem PV fixa enquanto o transmissor varia, a falha está no caminho até o controlador.",
+      "resposta_padrao": "Enlace entre controlador e supervisão.",
+      "por_que_nao": "A perda alcança o próprio controle; agir só na supervisão não restabelece a PV da malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sensores e transmissores fornecem variáveis medidas, como pressão, nível, temperatura, vazão, posição e velocidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O encadeamento básico começa com a medição das variáveis de processo por sensores e transmissores."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

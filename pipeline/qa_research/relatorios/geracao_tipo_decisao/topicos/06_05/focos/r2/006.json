@@ -1,0 +1,83 @@
+{
+  "item": "06_05",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mitigação automática por dilúvio quando o isolamento da fonte não elimina o risco térmico residual.",
+      "pergunta": "Com a fonte já isolada por detecção de gás, resta risco de escalada térmica sobre equipamentos vizinhos; não há resfriamento fixo e o combate manual é pouco confiável. Que ação automática deve ser adicionada à matriz desse módulo?",
+      "resposta": "Abertura automática do dilúvio do módulo.",
+      "explicacao": "O isolamento reduz inventário, mas não controla o incêndio nem a radiação sobre vizinhos. Sem resfriamento fixo e com combate manual frágil, falta a barreira automática de mitigação.",
+      "resposta_padrao": "Parada automática dos equipamentos do módulo.",
+      "por_que_nao": "A parada ajuda a prevenção operacional, mas não resfria nem controla um incêndio já estabelecido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a consequência pode ser dupla: perda de prevenção e perda de mitigação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "combinações perigosas entre ausência de detecção de chama, baixa confiabilidade do sistema de combate e ausência de dilúvio em módulos específicos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A votação deve considerar apenas detectores pertencentes à zona protegida pela ação automática.",
+      "pergunta": "Na borda entre dois módulos, a lógica usa um detector do corredor ventilado junto com um do processo para liberar ação no módulo de processo, gerando coincidências sem fonte nesse módulo. Que arranjo lógico corrige isso?",
+      "resposta": "Segregar a votação por zona protegida.",
+      "explicacao": "A votação precisa definir quais detectores participam da decisão em cada zona. Misturar canais de áreas diferentes desalinha a atuação automática com o cenário real protegido.",
+      "resposta_padrao": "Elevar a coincidência para 2oo3.",
+      "por_que_nao": "Mais confirmação não corrige a associação errada entre zonas e ainda pode reduzir a sensibilidade prática.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "quais detectores, em que zona e sob quais condições participam da decisão lógica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a barreira perde aderência ao cenário para o qual foi concebida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a geometria real permite apenas um sinal válido por foco crítico, a ação automática deve usar 1ooN.",
+      "pergunta": "Três detectores de chama pertencem à mesma zona, mas o estudo de visada mostra que cada foco crítico do skid é visto por apenas um canal. O dilúvio local hoje exige 2oo3. Que lógica deve comandá-lo?",
+      "resposta": "Votação 1ooN para o dilúvio local.",
+      "explicacao": "Se cada subcenário crítico só pode gerar um sinal válido, exigir coincidência torna a mitigação inexequível na geometria real do skid.",
+      "resposta_padrao": "Manter 2oo3 para evitar disparo indevido.",
+      "por_que_nao": "A robustez contra falso alarme não compensa uma lógica que a cobertura real não consegue materializar.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "pode reduzir a sensibilidade prática se a cobertura espacial for limitada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a barreira perde aderência ao cenário para o qual foi concebida"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

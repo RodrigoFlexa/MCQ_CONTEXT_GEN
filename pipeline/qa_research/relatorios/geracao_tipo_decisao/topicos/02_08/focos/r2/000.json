@@ -1,0 +1,91 @@
+{
+  "item": "02_08",
+  "foco": 0,
+  "rodada": 2,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de modelar a defasagem temporal das descargas para decidir revamp do sistema de flare.",
+      "pergunta": "Novas fontes passaram a descarregar no mesmo header, e a soma estática pede revamp. Há intertravamentos e tempos de abertura diferentes, de modo que os picos não coincidem. O que deve ser modelado explicitamente antes dessa decisão?",
+      "resposta": "Defasagem temporal entre as descargas.",
+      "explicacao": "A diferença entre estático e dinâmico decorre da evolução temporal do evento. Se as fontes não aliviam simultaneamente, somá-las como coincidentes pode superestimar a carga no sistema receptor.",
+      "resposta_padrao": "Somar todas as novas vazões como simultâneas.",
+      "por_que_nao": "A hipótese de simultaneidade pode ser conservadora demais quando intertravamentos e sequenciamento defasam os picos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas fontes não aliviavam simultaneamente para a tocha"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dependentes das hipóteses adotadas para simultaneidade"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do perfil temporal de radiação térmica, e não do pico estático de descarga, para revisar a altura requerida da tocha.",
+      "pergunta": "A análise estática elevou a altura da tocha, mas a simulação do ESD mostra pico curto de queima e menor exposição térmica nos receptores. Qual base técnica deve governar a revisão da altura?",
+      "resposta": "Perfil temporal de radiação térmica.",
+      "explicacao": "No caso de flare, a abordagem dinâmica pode reduzir a altura requerida porque avalia a radiação com a evolução temporal da descarga, não apenas por um pico conservador de simultaneidade.",
+      "resposta_padrao": "Pico estático de vazão ao flare.",
+      "por_que_nao": "A altura é definida pelo critério de radiação; a avaliação estática pode superestimar a exposição térmica ao supor simultaneidade ou regime estabelecido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a avaliação dinâmica reduziu a altura requerida de flare"
+        },
+        {
+          "bloco": "F",
+          "trecho": "em função do critério de radiação térmica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "avaliações sem essa evolução temporal explícita podem embutir hipóteses mais conservadoras de simultaneidade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dependência do resultado dinâmico das condições iniciais do processo no cenário analisado.",
+      "pergunta": "O modelo dinâmico mostrou header aceitável em carga nominal, mas o mesmo ESD também pode ocorrer na partida, com inventários e pressões diferentes. Antes de usar o resultado anterior, que elemento do cenário deve ser redefinido no modelo?",
+      "resposta": "Condições iniciais do processo.",
+      "explicacao": "A utilidade da abordagem dinâmica depende das condições iniciais. Mudar inventário, pressão e estado operacional altera a evolução temporal e pode mudar a carga de alívio e o comportamento do receptor.",
+      "resposta_padrao": "Manter a condição nominal usada no caso base.",
+      "por_que_nao": "O resultado dinâmico não é automaticamente transferível entre modos operacionais com condições iniciais diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses resultados permanecem dependentes das hipóteses adotadas para simultaneidade e dinâmica do processo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o resultado de um caso não deve ser convertido automaticamente em regra universal"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

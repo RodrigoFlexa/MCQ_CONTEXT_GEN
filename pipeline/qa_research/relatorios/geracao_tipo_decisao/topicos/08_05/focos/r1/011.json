@@ -1,0 +1,87 @@
+{
+  "item": "08_05",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Desgaste das amarras perto do turret, com atrito elevado e mar de alta frequência, é mitigado priorizando o yaw de alta frequência.",
+      "pergunta": "Mar de alta frequência elevou oscilações rápidas; o aproamento médio segue controlado, mas cresce o desgaste das amarras junto ao turret. Qual resposta dinâmica deve orientar a mitigação?",
+      "resposta": "Yaw de alta frequência",
+      "explicacao": "Com atrito elevado entre turret e embarcação, esse yaw é transferido às amarras, sobretudo nos fairleads, aumentando desgaste; controlar só o aproamento médio não ataca o mecanismo.",
+      "resposta_padrao": "Tração média das linhas de ancoragem.",
+      "por_que_nao": "O desgaste descrito vem da transferência do yaw às amarras; tensão média estável não elimina esse acoplamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "thrusters mantêm a unidade orientada em relação ao ambiente predominante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "movimentos de yaw induzidos por ondas de alta frequência podem ser transferidos ao sistema de ancoragem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "especialmente na região dos fairleads, aumentando desgaste"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sob perda de controle de thrusters, o parâmetro operacional decisivo para evitar enrolamento e interação com risers é o desvio de aproamento.",
+      "pergunta": "Um thruster saiu de serviço; o offset ainda cabe no watch circle, mas o vento começou a tirar a embarcação do aproamento e o turret passou a enrolar. Qual variável deve comandar a decisão operacional imediata?",
+      "resposta": "Desvio de aproamento",
+      "explicacao": "Na perda de controle dos thrusters, o vento desvia o heading e provoca enrolamento do turret e das amarras; o risco pode crescer antes de o offset sair do limite.",
+      "resposta_padrao": "Offset da embarcação.",
+      "por_que_nao": "O mecanismo crítico é a mudança de heading, que altera carregamentos e geometria antes de extrapolar o watch circle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em situação de perda de controle dos thrusters, o vento pode desviar o aproamento, causando enrolamento do turret e das linhas de ancoragem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudança de heading altera a distribuição de carregamentos ambientais e geométricos no conjunto casco-turret-ancoragem"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Suspeita de interação amarra-riser por movimento global exige verificação local do riser alimentada por históricos temporais globais.",
+      "pergunta": "Houve desvio de aproamento com suspeita de toque entre amarra e riser; a análise global já mostrou históricos de tração e curvatura. Que verificação usar para decidir sobre dano nas camadas do riser?",
+      "resposta": "Modelo local do riser alimentado pelos históricos globais",
+      "explicacao": "As tensões nas camadas do riser são obtidas quando os históricos temporais de tração e curvatura do modelo global entram no modelo local; picos globais isolados não bastam.",
+      "resposta_padrao": "Comparar só os máximos globais com os limites do riser.",
+      "por_que_nao": "O dano local depende da resposta temporal importada para o modelo local, não apenas dos valores máximos da análise global.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as amarras podem tocar os risers submarinos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "históricos temporais de tração e curvatura do riser obtidos no modelo global são importados para um modelo local"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "que calcula tensões nas camadas do riser"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

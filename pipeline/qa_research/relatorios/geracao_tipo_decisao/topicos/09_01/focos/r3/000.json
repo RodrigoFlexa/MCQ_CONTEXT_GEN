@@ -1,0 +1,61 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Parametrização da função de custo com penalidade de atraso diferenciada para refletir criticidade distinta das demandas.",
+      "pergunta": "O simulador continua escolhendo o plano de menor frete, embora o atraso de um item mantenha produção reduzida e o atraso dos demais só consuma estoque. Sem alterar frota, janelas ou capacidades, que ajuste técnico deve ser feito no modelo para o sequenciamento passar a refletir essa diferença?",
+      "resposta": "Penalidade de atraso diferenciada por demanda.",
+      "explicacao": "No foco, o efeito da priorização depende das penalidades e da função de custo. Se a espera tem consequências diferentes, o modelo precisa distinguir economicamente cada demanda.",
+      "resposta_padrao": "Marcar o item crítico como urgente e manter a mesma função de custo.",
+      "por_que_nao": "Com penalidade igual para todos, a etiqueta de urgência não altera o trade-off econômico entre atrasar a demanda crítica e economizar transporte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "penalidades elevadas por atraso reforçaram o valor de critérios de prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de redimensionar a frota quando a política de prioridade muda ou quando mudam as premissas operacionais.",
+      "pergunta": "Um estudo com atendimento por criticidade reduziu a necessidade de embarcações numa campanha, mas a próxima terá outras janelas, capacidades de carga e mistura de pedidos. Antes de cortar uma embarcação do contrato, o que deve ser refeito no planejamento?",
+      "resposta": "Dimensionamento da frota.",
+      "explicacao": "A priorização pode alterar tamanho e utilização da frota, mas esse efeito depende das premissas do cenário. Não há redução garantida quando mudam demanda, capacidades e janelas.",
+      "resposta_padrao": "Replicar a frota menor observada no estudo anterior.",
+      "por_que_nao": "O ganho visto em um cenário modelado não se transfere automaticamente para outra campanha com premissas diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Priorizar demandas críticas pode mudar o dimensionamento e a utilização da frota em relação ao atendimento por ordem de chegada, FIFO."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O resultado depende da demanda, das penalidades, das capacidades e das janelas adotadas; não implica menor frota em todo cenário."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

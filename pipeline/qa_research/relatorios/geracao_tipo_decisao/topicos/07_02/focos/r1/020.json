@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de arquitetura híbrida para integrar nuvem e consumo local em tempo real preservando a automação existente.",
+      "pergunta": "Com automação instalada estável, precisa-se enviar dados para analytics em nuvem e manter consumo local em tempo real, sem troca completa da automação. Qual arranjo técnico deve ser adotado?",
+      "resposta": "arquitetura híbrida",
+      "explicacao": "A arquitetura híbrida permite transferir dados à nuvem por MQTT enquanto o SCADA local os consome em tempo real, acrescentando capacidade sem exigir substituição integral da automação.",
+      "resposta_padrao": "Substituição integral por uma nova plataforma única.",
+      "por_que_nao": "Aqui o valor está em preservar os sistemas existentes e adicionar capacidade; trocar toda a automação não é a solução mais adequada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também aparecem arquiteturas híbridas, nas quais controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo é mais valioso quando preserva sistemas existentes e adiciona capacidade sem exigir substituição integral da automação instalada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Posicionamento de aplicação que influencia ajustes frequentes na borda quando a conectividade externa é instável.",
+      "pergunta": "Uma aplicação recalcula ajustes operacionais a cada poucos segundos; o enlace externo tem latência variável e quedas breves. Onde ela deve executar para não depender desse enlace?",
+      "resposta": "na borda, próxima ao controle",
+      "explicacao": "Aplicações que influenciam ajustes frequentes toleram menos latência e indisponibilidade; executá-las próximo ao controle reduz o efeito de atraso e perda de conectividade externa.",
+      "resposta_padrao": "Na nuvem.",
+      "por_que_nao": "Latência variável e quedas breves tornam inadequado hospedar remotamente uma função que participa de ajustes operacionais frequentes.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Também aparecem arquiteturas híbridas, nas quais controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade do sincronismo temporal, e não da banda, em aplicações multissinais próximas ao controle.",
+      "pergunta": "Cálculos de ajuste usam sinais de várias origens com carimbos de tempo desalinhados; a rede não está saturada, mas o resultado oscila sem refletir o processo. Que variável da infraestrutura deve ser controlada prioritariamente?",
+      "resposta": "qualidade de sincronismo",
+      "explicacao": "Perto do controle, o alinhamento temporal entre sinais é decisivo; sem sincronismo confiável, correlações e balanços ficam incoerentes mesmo com banda suficiente.",
+      "resposta_padrao": "Largura de banda.",
+      "por_que_nao": "O defeito descrito é temporal, não de capacidade de tráfego; mais banda não corrige carimbos de tempo inconsistentes.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão de contexto de modo operacional nos dados para evitar diagnósticos frágeis e alarmes espúrios em analytics.",
+      "pergunta": "O preditivo passou a tratar partidas, paradas e regime permanente como equivalentes; os alarmes espúrios aumentaram. Que informação deve acompanhar cada sinal antes do processamento?",
+      "resposta": "contexto de modo operacional",
+      "explicacao": "Sem contexto de modo operacional, sinais válidos de estados distintos viram comparações enganosas, gerando diagnósticos frágeis e alarmes espúrios.",
+      "resposta_padrao": "Maior taxa de amostragem.",
+      "por_que_nao": "A falha é semântica-operacional; aumentar a frequência não separa dados de partida, parada e regime permanente.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O mecanismo físico é simples: sensores e controladores convertem estados do processo em dados; protocolos e brokers distribuem esses dados; aplicações analíticas e modelos os transformam em informação operacional útil."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

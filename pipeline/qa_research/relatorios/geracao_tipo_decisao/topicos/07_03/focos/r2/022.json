@@ -1,0 +1,91 @@
+{
+  "item": "07_03",
+  "foco": 22,
+  "rodada": 2,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Confiabilidade depende de classificar eventos pelo instante de perda e recuperação da função, não por qualquer mudança de estado.",
+      "pergunta": "O historiador registra centenas de mudanças de estado; após alteração de lógica, o MTBF caiu sem aumento de intervenções corretivas. Para recalcular o indicador, que critério de evento deve ser adotado?",
+      "resposta": "Classificação por perda e recuperação da função.",
+      "explicacao": "MTBF e MTTR precisam ser construídos com eventos que marquem perda funcional e retorno da função. Mudanças irrelevantes de estado distorcem a base e tornam a comparação inconsistente.",
+      "resposta_padrao": "Usar toda mudança de estado registrada como evento de falha.",
+      "por_que_nao": "Estados sem perda funcional inflacionam ocorrências e não representam início nem fim da falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando esperas dominam o impacto operacional, a métrica de decisão deve ser a indisponibilidade total, não o MTTR de reparo.",
+      "pergunta": "Paradas de uma bomba crítica acumulam dias por espera de içamento e material, embora o reparo em si dure poucas horas. Para priorizar a melhoria que mais reduz indisponibilidade, qual variável deve conduzir a análise?",
+      "resposta": "Tempo total indisponível.",
+      "explicacao": "Aqui a perda operacional vem das esperas, não do reparo técnico. O MTTR pode excluir essas parcelas; a indisponibilidade total é que representa o impacto real no serviço.",
+      "resposta_padrao": "MTTR.",
+      "por_que_nao": "O MTTR de reparo pode deixar fora esperas logísticas e administrativas que, neste caso, dominam a perda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "MTBF e MTTR resumem comportamento observado, mas podem esconder dispersão, mudanças de regime e diferenças entre fabricantes, configurações ou condições ambientais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador, enquanto o tempo total indisponível pode incluir esperas logísticas e administrativas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Um sistema pode apresentar intervalos médios longos entre falhas e ainda assim perder muita produção se a recuperação for lenta;"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Falhas com mecanismos e exposições distintos devem ser separadas por modo antes de calcular indicadores para revisão do plano.",
+      "pergunta": "Falhas de partida em testes mensais e desligamentos após alguns minutos de operação real estão sendo somados numa única taxa para revisar o plano do gerador de emergência. Que tratamento aplicar antes?",
+      "resposta": "Categorização por modo de falha.",
+      "explicacao": "Falha ao partir e falha durante a sustentação da operação têm mecanismos e bases de exposição diferentes. Uma taxa única mistura comportamentos distintos e induz tarefas inadequadas.",
+      "resposta_padrao": "Calcular uma taxa única de falha do conjunto.",
+      "por_que_nao": "Somar modos diferentes mistura mecanismos e pode combinar indevidamente bases de tempo e de demanda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Bancos de dados de confiabilidade evoluíram justamente para tratar subpopulações não homogêneas, distinguir taxas de falha baseadas em tempo das baseadas em demanda e categorizar modos de falha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso evita combinar em um mesmo número equipamentos, regimes ou funções que falham por mecanismos diferentes."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

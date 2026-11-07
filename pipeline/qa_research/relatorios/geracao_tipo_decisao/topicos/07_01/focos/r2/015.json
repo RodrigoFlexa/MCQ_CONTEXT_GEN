@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Com a malha em automático, a intervenção do operador pela HMI deve ocorrer no controlador, não no atuador.",
+      "pergunta": "A pressão ficou abaixo da meta, a válvula está respondendo e a malha permanece em automático. Pela HMI, que ajuste técnico fazer para elevar a variável sem disputar o comando com a lógica ativa?",
+      "resposta": "Ajustar o setpoint do controlador.",
+      "explicacao": "Com a malha em automático, a automação continua executando a lógica configurada; pela HMI o operador deve atuar no controlador, não no elemento final.",
+      "resposta_padrao": "Abrir manualmente a válvula pela saída da malha.",
+      "por_que_nao": "Com o controlador em automático, a saída é recalculada continuamente e o comando direto no atuador é sobreposto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a automação executa a lógica configurada e o operador acompanha condições, desempenho e desvios visíveis na supervisão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sinal simulado ou sem representatividade física deve ser invalidado para não alimentar supervisão, tendências e análises como se fosse real.",
+      "pergunta": "Durante teste, um transmissor fica em valor simulado plausível e o historian continua gerando tendências e indicadores. Que tratamento técnico aplicar a esse sinal para não contaminar análises e apoio à decisão?",
+      "resposta": "Marcar o tag com qualidade inválida.",
+      "explicacao": "A mesma base de sinais alimenta visualização, desempenho e apoio à decisão; se o dado não representa o estado físico, deve ser invalidado para evitar inferências erradas.",
+      "resposta_padrao": "Manter o valor registrado e apenas anotar o teste no livro de turno.",
+      "por_que_nao": "Sem invalidar a qualidade, camadas superiores continuam tratando o sinal simulado como medição real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Indisponibilidade da HMI não exige retirar uma malha estável do automático quando a camada de controle permanece íntegra.",
+      "pergunta": "A estação de operação travou, mas controladores, sinais de campo e atuadores seguem normais e o processo está estável. Em que modo manter a malha para preservar o controle fechado?",
+      "resposta": "Em automático no controlador.",
+      "explicacao": "A HMI é a interface de acompanhamento; com a camada de controle íntegra, a lógica configurada continua executando o controle. Passar a manual remove a realimentação sem necessidade.",
+      "resposta_padrao": "Colocar a malha em manual e comandar o atuador localmente.",
+      "por_que_nao": "Com controle e campo saudáveis, o manual elimina a ação automática que já estabiliza o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando existe HMI (Interface Homem-Máquina), o operador passa a compartilhar a condução do processo com o sistema automatizado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a automação executa a lógica configurada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Impacto do atraso de atuação da BDV na previsão do tempo de despressurização.",
+      "pergunta": "Nos testes integrados, a queda de pressão só começa segundos após o comando de ESD, e a vazão fica compatível com o calculado depois que a BDV abre. Qual premissa deve entrar no modelo antes de aumentar a válvula?",
+      "resposta": "Atraso de atuação da BDV na lógica de ESD.",
+      "explicacao": "Se a vazão após a abertura está coerente, o erro dominante é o tempo morto entre comando e abertura efetiva, que alonga a despressurização sem exigir mais área.",
+      "resposta_padrao": "Aumentar a área efetiva da BDV.",
+      "por_que_nao": "Se o tempo total é governado pela demora de abertura, mais área não corrige o atraso inicial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "atraso de atuação de BDV"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tempo real não depende apenas do tamanho da válvula."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele também é afetado pelo atraso de atuação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de blowdown faseado para compatibilizar despressurização com a capacidade do flare.",
+      "pergunta": "No caso integrado de ESD, cada segmento atende isoladamente ao tempo-alvo, mas o header excede a capacidade quando todas as BDVs abrem juntas; os segmentos não expostos toleram atraso. Que configuração aplicar?",
+      "resposta": "Sequenciamento escalonado das BDVs na lógica de ESD.",
+      "explicacao": "Quando o sistema receptor não admite o fluxo simultâneo, escalonar as aberturas reduz o pico ao flare, aceitando maior permanência de inventário nos segmentos retardados.",
+      "resposta_padrao": "Abrir todas as BDVs simultaneamente.",
+      "por_que_nao": "Neste cenário, a abertura simultânea leva o sistema receptor além da capacidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a qualidade do resultado depende da coerência entre cenário, modelo, fronteiras do sistema e objetivo da decisão de segurança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o sistema não consegue receber simultaneamente o fluxo de todos os sistemas protegidos, pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa solução tende a reduzir o pico de vazão no flare"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de modelar mudança de fase em blowdown para definir área de BDV.",
+      "pergunta": "Durante o blowdown, o modelo de gás único superestima a queda de pressão e o KO drum recebe líquido logo após a abertura, sem aumento relevante de contrapressão. Qual aspecto do inventário deve ser incluído antes de definir a área da BDV?",
+      "resposta": "Mudança de fase do inventário durante o blowdown.",
+      "explicacao": "A presença de líquido indica comportamento bifásico ao longo do evento; tratá-lo como gás único distorce vazão, resfriamento e a área requerida da válvula.",
+      "resposta_padrao": "Ajustar apenas o fator de compressibilidade do gás.",
+      "por_que_nao": "Corrigir só Z mantém o modelo monofásico, inadequado quando o inventário passa a formar líquido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudança de fase"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição das fronteiras de análise em sobrepressão rápida por ruptura de tubos.",
+      "pergunta": "Ruptura de tubos pode pressurizar rapidamente o lado de baixa pressão de um trocador. A PSV desse lado está calibrada e certificada, mas descarrega para header comum. Qual escopo de análise usar antes de concluir que há proteção suficiente?",
+      "resposta": "Avaliação integrada do caminho de alívio até o sistema receptor.",
+      "explicacao": "Numa pressurização rápida, a proteção depende do dispositivo, da descarga e do receptor em conjunto; a condição da PSV sozinha não demonstra suficiência.",
+      "resposta_padrao": "Confirmar apenas a calibração e a capacidade nominal da PSV.",
+      "por_que_nao": "Calibração preserva desempenho do dispositivo existente, mas não cobre cenário omitido nem limitações do header receptor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "selecionar o método de análise é parte da engenharia do problema"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Transientes rápidos exigem avaliação compatível com sua escala de tempo;"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Dispositivos de alívio, linhas e sistema receptor precisam ser avaliados conjuntamente."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

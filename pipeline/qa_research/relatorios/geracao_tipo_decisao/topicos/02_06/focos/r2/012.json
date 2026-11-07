@@ -1,0 +1,87 @@
+{
+  "item": "02_06",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a estabilidade aparente está aceitável, a próxima manobra pode ser limitada pela força cortante estrutural.",
+      "pergunta": "GM, trim e calados seguem aceitáveis, mas o computador mostra força cortante próxima do limite em uma seção após descarga e lastro. Para definir a próxima transferência, qual variável deve comandar a manobra?",
+      "resposta": "A força cortante na seção crítica.",
+      "explicacao": "O sistema de estabilidade também acompanha a resposta estrutural global; se a força cortante é a grandeza crítica, ela deve limitar a movimentação mesmo com estabilidade aparentemente confortável.",
+      "resposta_padrao": "Controlar GM e banda, já que a estabilidade está boa.",
+      "por_que_nao": "GM aceitável não impede exceder limite estrutural global quando a força cortante da seção já está crítica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "exibindo estabilidade, momento fletor e força cortante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Procedimentos incorretos de loading ou discharge podem colocar em risco a estabilidade e também exceder limites estruturais globais da embarcação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "evitar excedimento de força cortante, momento fletor"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Conteúdos de tanques de utilidades também entram na condição de estabilidade e devem ser atualizados manualmente quando a instrumentação falha.",
+      "pergunta": "O nível de um tanque de combustível travou no sistema, houve consumo e transferência interna desde a última leitura, e a tela segue com o valor antigo. Que dado lançar antes de nova correção de lastro?",
+      "resposta": "O inventário atual do tanque de combustível.",
+      "explicacao": "Combustível compõe a massa embarcada usada pelo computador. Com medição travada, manter o valor antigo distorce distribuição de massa, estabilidade, momento fletor e força cortante.",
+      "resposta_padrao": "Atualizar só carga e lastro; combustível não decide essa correção.",
+      "por_que_nao": "O sistema consolida também combustível, e massa omitida ou desatualizada altera a condição calculada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse sistema consolida conteúdos de tanques do casco, como lastro, óleo cru, combustível e água"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças não capturadas por instrumentação precisam ser inseridas manualmente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dados desatualizados podem distorcer o cálculo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Desvio entre volume medido e calado previsto após recebimento de fluido mais pesado deve ser corrigido pela densidade usada no computador.",
+      "pergunta": "Os soundings batem com o volume transferido, mas o calado ficou acima do previsto após receber mistura com água livre acima do habitual; o computador mantém o SG anterior. Que ajuste fazer antes da próxima etapa?",
+      "resposta": "Atualizar a densidade do conteúdo do tanque recebido.",
+      "explicacao": "Se o volume medido confere e a massa real aumentou, o erro está no SG usado pelo cálculo. Diferenças de densidade distorcem a condição representada pelo computador.",
+      "resposta_padrao": "Corrigir o volume do tanque pelo sounding.",
+      "por_que_nao": "Com sounding coerente, alterar volume mascararia o desvio de massa causado pela densidade incorreta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Pequenos desvios de inventário entre tanques, diferenças de densidade, transferências simultâneas ou dados desatualizados podem distorcer o cálculo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "para que o resultado represente a condição real."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

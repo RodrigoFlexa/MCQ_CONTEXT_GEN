@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicações que influenciam ajustes frequentes devem validar a idade do dado recebido, não apenas o sincronismo dos relógios.",
+      "pergunta": "O broker retorna de microquedas entregando medições em lote; os relógios estão sincronizados e a aplicação recalcula bias de vazão a cada poucos segundos. Que critério técnico deve barrar o uso automático dessas amostras?",
+      "resposta": "idade máxima admissível do dado",
+      "explicacao": "Rajadas após perda de conectividade podem trazer amostras com timestamp coerente, mas velhas para atuar. Perto do controle, a aceitação deve depender da idade real da amostra no instante de uso.",
+      "resposta_padrao": "Resincronizar os relógios das fontes.",
+      "por_que_nao": "Com relógios alinhados, a amostra ainda pode chegar tarde; aqui o risco é dado envelhecido, não deriva temporal entre fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a conectividade falha, aplicações externas que ajustam o processo devem perder autoridade para o controle local.",
+      "pergunta": "O otimizador externo aplica bias de carga a cada 10 s; o enlace cai por minutos, enquanto as malhas básicas e a supervisão local permanecem estáveis. Qual arranjo de atuação deve prevalecer até a conectividade voltar confiável?",
+      "resposta": "fallback automático para controle local",
+      "explicacao": "Se a função interfere em ajustes frequentes, o comportamento na perda de conectividade é decisivo. A automação local deve reassumir para evitar ação dependente de um elo indisponível ou intermitente.",
+      "resposta_padrao": "Manter o último bias do otimizador até o link voltar.",
+      "por_que_nao": "Segurar um ajuste externo durante perda de enlace conserva um comando potencialmente obsoleto, apesar de o controle local continuar íntegro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "preserva sistemas existentes e adiciona capacidade sem exigir substituição integral da automação instalada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A coerência temporal entre fontes deve ser restaurada antes de usar correlação entre variáveis em ajustes automáticos.",
+      "pergunta": "Depois do reinício de um gateway, o pico de vibração e a elevação de torque do mesmo trem passam a trocar de ordem entre tendências em partidas repetidas. Antes de liberar ajuste automático com esses sinais, o que deve ser corrigido?",
+      "resposta": "sincronismo temporal entre as fontes",
+      "explicacao": "Quando variáveis fisicamente correlatas trocam a ordem temporal do evento, a correlação fica inválida para atuar. Em aplicações próximas do controle, a qualidade de sincronismo é condição de uso.",
+      "resposta_padrao": "Aumentar o filtro dos sinais.",
+      "por_que_nao": "Filtragem reduz ruído e amplitude aparente, mas não recompõe a sequência temporal necessária para correlacionar causa e efeito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}
