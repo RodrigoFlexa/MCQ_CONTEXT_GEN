@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar desvio de processo sem falha de campo ao comprometimento do ativo que executa a malha e atua sobre a válvula.",
+      "pergunta": "Vazão saiu em degrau, a válvula acompanhou a nova saída e os dois transmissores concordaram. Sem intervenção do operador nem falha pneumática, o registro mostrou mudança de setpoint no nó que executa a malha. Qual causa primária?",
+      "resposta": "Comprometimento do controlador da malha de vazão",
+      "explicacao": "O ativo atingido é quem calcula a malha e comanda a válvula. Em [F], exploração em sistemas que controlam vazão e válvulas pode alterar o processo; instrumentos e atuador íntegros afastam causa de campo.",
+      "resposta_padrao": "Falha do transmissor de vazão.",
+      "por_que_nao": "Os transmissores redundantes concordaram e a válvula seguiu novo comando; o desvio veio do nó que gera a saída da malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir redução de risco por isolamento adicional da hipótese de correção da vulnerabilidade em ativo legado sem patch.",
+      "pergunta": "Mesmo sem trocar firmware, um legado deixou de responder ao serviço vulnerável a partir da rede corporativa; esse serviço continuou ativo só pela rota de manutenção com salto controlado. Qual causa primária reduziu o risco?",
+      "resposta": "Isolamento adicional da rede do ativo legado",
+      "explicacao": "A fraqueza permaneceu, mas a exposição caiu. Os blocos ligam tratamento em legados à avaliação da exposição real e admitem isolamento adicional como medida compensatória quando patch imediato não é viável ou seguro.",
+      "resposta_padrao": "Aplicação do patch de segurança.",
+      "por_que_nao": "O firmware não mudou; a redução veio da retirada do alcance pela rede corporativa, não da eliminação da vulnerabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "medidas centrais incluem minimizar exposição de rede, evitar acessibilidade direta pela internet, posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer a infraestrutura de rede do IACS como causa comum quando sistemas de processo, elétricos e marítimos perdem conectividade juntos, com controles locais preservados.",
+      "pergunta": "Monitoramento do helideck, aquisição elétrica e historiador de processo, de fornecedores distintos, ficaram indisponíveis no mesmo minuto; os controladores locais seguiram automáticos e a rede administrativa ficou normal. Qual causa primária comum explica o grupo afetado?",
+      "resposta": "Falha na infraestrutura de rede do IACS compartilhada",
+      "explicacao": "Os ativos citados podem pertencer ao escopo do IACS e compartilhar sua infraestrutura de rede, inclusive sistemas elétricos e, em algumas instalações, monitoramento de movimento de helicópteros. Controles locais preservados afastam falha nos controladores.",
+      "resposta_padrao": "Falha do servidor SCADA.",
+      "por_que_nao": "O conjunto afetado inclui sistemas além do SCADA e de fornecedores distintos; o elo comum descrito é a infraestrutura de rede do IACS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo de IACS abrange sistemas básicos de controle de processo, funções de camada independente de proteção, sistemas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em algumas instalações offshore, esse escopo pode incluir também sistemas marítimos, de perfuração e de monitoramento de movimento de helicópteros."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

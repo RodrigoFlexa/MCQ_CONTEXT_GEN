@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 3,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de endpoint mal configurado como ponte entre rede corporativa e rede de controle durante VPN.",
+      "pergunta": "Durante suporte por VPN, apareceram pacotes da sub-rede corporativa dentro da rede de controle; ao desligar o Wi‑Fi do notebook do fornecedor, o tráfego cessou, sem alteração no concentrador nem novo login. Qual é a causa primária?",
+      "resposta": "Ponteamento entre interfaces no notebook do fornecedor.",
+      "explicacao": "A sessão VPN era válida, mas o endpoint estava mal configurado. O desvio some ao isolar a segunda interface, indicando bridge/compartilhamento local e não falha do canal ou do concentrador.",
+      "resposta_padrao": "Malware no notebook do fornecedor.",
+      "por_que_nao": "O tráfego cessou ao desabilitar a interface sem fio e refletia a rede corporativa, sinal típico de bridge local, não de ação maliciosa autônoma.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida e ainda assim introduzir risco ao ambiente operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "é tecnicamente importante verificar a condição do dispositivo usado na conexão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir privilégio de escrita de falha de delimitação do alcance por ativo no acesso remoto.",
+      "pergunta": "Na assistência remota liberada para um único skid, a conta tinha só leitura, mas a sessão alcançou por TCP diagnósticos de outros PLCs do mesmo segmento; nenhum comando de escrita apareceu. Qual a causa primária?",
+      "resposta": "ACL remota sem amarração ao controlador-alvo.",
+      "explicacao": "Como não houve escrita nem função de engenharia, o problema decisivo não foi o privilégio do usuário, mas a sessão ter alcance de rede além do ativo necessário para a tarefa.",
+      "resposta_padrao": "Permissões excessivas no perfil de acesso remoto.",
+      "por_que_nao": "Os registros mostram papel somente leitura; o indevido foi a alcançabilidade a outros controladores fora do escopo autorizado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação. Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de software residente de acesso remoto introduzido por dispositivo de manutenção.",
+      "pergunta": "Encerrado o suporte, não havia túnel VPN nem nova autenticação, porém a estação de engenharia passou a escutar permanentemente em nova porta remota e criou um serviço de inicialização automática após cada reboot. Qual a causa primária?",
+      "resposta": "Instalação de ferramenta de acesso remoto não autorizada.",
+      "explicacao": "A persistência após reinício, sem sessão ativa, descarta túnel deixado aberto. O indício é de software residente introduzido durante a intervenção por dispositivo de manutenção.",
+      "resposta_padrao": "Sessão remota não encerrada ao fim da atividade.",
+      "por_que_nao": "Sem túnel ativo e com reaparecimento após reboot, a exposição passou a depender de serviço instalado localmente.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado porque podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida e ainda assim introduzir risco ao ambiente operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "é tecnicamente importante verificar a condição do dispositivo usado na conexão, encerrar o acesso ao fim da atividade e manter registro de sessão suficiente para rastrear a intervenção."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "06_05",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite técnico da medida compensatória com detector portátil frente à lógica automática do F&G.",
+      "pergunta": "Com um cabeçote fixo inibido, a ronda mediu 20% LEL no portátil ao lado da bomba e informou a sala de controle; nenhum isolamento ou shutdown automático ocorreu. Qual causa primária?",
+      "resposta": "detector portátil não integrado à matriz de causa e efeito",
+      "explicacao": "Houve indicação local de gás, mas o portátil não participa da votação nem dos intertravamentos automáticos. Sem entrada válida do sistema fixo, a lógica não envia os comandos previstos.",
+      "resposta_padrao": "Falha do ESD ou da lógica automática.",
+      "por_que_nao": "Sem sinal de detector fixo na cadeia automática, o ESD pode estar íntegro; o portátil não recompõe a lógica nem os intertravamentos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "integrado à lógica de causa e efeito"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Detector portátil complementa a percepção local, porém não substitui automaticamente a função do sistema fixo nem recompõe, por si só, a lógica de votação e os intertravamentos da matriz de causa e efeito."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre quantidade mínima de detectores na zona e executabilidade da causa e efeito.",
+      "pergunta": "Na semana em que dois detectores da mesma zona ficaram fora de serviço, um terceiro entrou em alarme e apareceu no supervisório, mas o shutdown automático previsto para aquela zona não ocorreu; em teste, os elementos finais respondem normalmente. Qual causa primária?",
+      "resposta": "zona abaixo do mínimo de detectores exigido pela lógica",
+      "explicacao": "O detector alarmou e os elementos finais respondem, mas a lógica da zona não alcança a condição de disparo automático quando faltam detectores mínimos para executar a causa e efeito.",
+      "resposta_padrao": "Falha dos elementos finais do shutdown.",
+      "por_que_nao": "Os testes mostram que os elementos finais atuam; o bloqueio está no pré-requisito lógico da zona, não no atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando faltam detectores mínimos em uma zona de fogo e gás, determinadas ações lógicas podem deixar de ocorrer automaticamente."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a ausência de detectores mínimos numa fire zone impedia o cumprimento da matriz de causa e efeito"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito de inibições sucessivas na cobertura efetiva e no tempo de detecção da zona.",
+      "pergunta": "Vazamentos pequenos no lado leste só passam a alarmar quando alcançam a passarela central; bump tests dos detectores ativos estão normais e não houve mudança de layout ou ventilação, mas os cabeçotes daquele lado vêm sendo inibidos em sequências de manutenção. Qual causa primária?",
+      "resposta": "inibição sucessiva dos detectores do lado leste na mesma zona",
+      "explicacao": "Os detectores remanescentes estão funcionais, mas a pluma só é percebida quando migra para a área ainda coberta. O problema é perda de cobertura espacial por inibições acumuladas.",
+      "resposta_padrao": "Baixa sensibilidade do detector que permaneceu ativo.",
+      "por_que_nao": "Os bump tests normais e a detecção tardia apenas após a migração da pluma indicam lacuna de cobertura, não perda de sensibilidade do sensor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando há inibições sucessivas sem gestão de risco adequada, a cobertura da área pode cair de forma relevante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sucessivas inibições numa mesma zona podem reduzir significativamente a cobertura."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Permissivo de isolamento dos geradores principais como condição para back feeding seguro na recomposição parcial.",
+      "pergunta": "Blackout: o gerador de emergência estabiliza tensão e frequência, a carga prevista cabe na fonte, mas o disjuntor de back feeding segue bloqueado com um disjuntor de gerador principal ainda fechado. Qual a causa primária?",
+      "resposta": "Disjuntor do gerador principal não aberto para o back feeding",
+      "explicacao": "A realimentação parcial exige geradores principais inoperantes e disjuntores abertos ou em teste; com um deles ainda fechado, o permissivo bloqueia o fechamento para evitar paralelismo indevido e retroalimentação.",
+      "resposta_padrao": "Gerador de emergência subdimensionado para recompor o painel.",
+      "por_que_nao": "Tensão, frequência e carga prevista estão compatíveis; o bloqueio vem do permissivo de isolamento das fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A prevenção e a análise de blackouts exigem mais do que verificar potência instalada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essa realimentação só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "ela depende de permissivos, isolamento adequado das fontes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Uso da separação automática de barramentos como mecanismo de load shedding para preservar ao menos uma seção.",
+      "pergunta": "Fechado o tie, a perda de um gerador derruba as duas seções juntas. Em testes separados, cada gerador sustenta a sua seção, e a abertura manual imediata do tie salva um lado. Qual a causa primária?",
+      "resposta": "Ausência de separação automática de barramentos no load shedding",
+      "explicacao": "Quando uma fonte se perde com os barramentos interligados, a demanda combinada derruba a frequência. O esquema poderia preservar uma seção pela separação rápida do barramento, mecanismo previsto para rejeição seletiva.",
+      "resposta_padrao": "Gerador remanescente subdimensionado para a carga.",
+      "por_que_nao": "Ele sustenta a própria seção quando isolada; o colapso ocorre por manter as duas seções acopladas no transitório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses recursos ajudam a entender se a configuração instalada mantém margem suficiente diante de partidas de motores, rejeição de cargas, separação de barramentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se a demanda excede a potência ativa que a geração remanescente consegue sustentar no transitório, a frequência tende a cair"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da manutenção de posição dinâmica da alimentação elétrica dos controles, mesmo com propulsores disponíveis.",
+      "pergunta": "Na perda da rede principal, os thrusters seguem alimentados, mas o modo de posicionamento dinâmico cai para manual e surge deriva; em instalação ancorada, o mesmo evento não muda a posição. Qual a causa primária?",
+      "resposta": "Perda da alimentação elétrica dos controles do posicionamento dinâmico",
+      "explicacao": "A manutenção de posição em sistemas dinâmicos depende de propulsores e controles. Se os thrusters continuam disponíveis, o elo elétrico perdido que explica a deriva é o dos controles do DP.",
+      "resposta_padrao": "Falha dos thrusters.",
+      "por_que_nao": "Os propulsores permaneceram alimentados; quem caiu foi o sistema de controle necessário para manter posição automaticamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a disponibilidade elétrica se relaciona diretamente à capacidade de manter propulsores e controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "por isso, perda de geração pode afetar não só o processo, mas também a manutenção de posição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já sistemas ancorados ou autoeleváveis foram caracterizados como não vulneráveis ao blackout para manutenção de posição por não dependerem de thrusters"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

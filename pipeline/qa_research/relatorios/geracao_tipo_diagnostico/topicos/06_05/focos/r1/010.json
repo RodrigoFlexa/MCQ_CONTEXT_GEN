@@ -1,0 +1,117 @@
+{
+  "item": "06_05",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade entre votação 2ooN e quantidade mínima de detectores instalada na zona.",
+      "pergunta": "No teste de causa e efeito, a zona exige 2ooN para isolar processo; todos os detectores instalados entram em alarme quando excitados, as saídas e o ESD atuam quando forçados, mas o voto nunca se torna atingível na configuração instalada. Qual a causa primária?",
+      "resposta": "ausência de detectores mínimos na fire zone",
+      "explicacao": "Se loops, lógica forçada e elementos finais respondem, mas o 2ooN é inalcançável no as-built, a causa é falta de detectores mínimos naquela zona, tornando a matriz inexequível em operação real.",
+      "resposta_padrao": "Falha da lógica 2ooN.",
+      "por_que_nao": "A lógica executa quando forçada; o que falta é número mínimo de detectores para satisfazê-la.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica escolhida precisa ser compatível com a quantidade e a locação reais dos detectores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a ausência de detectores mínimos numa fire zone impedia o cumprimento da matriz de causa e efeito"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando faltam detectores mínimos em uma zona de fogo e gás, determinadas ações lógicas podem deixar de ocorrer automaticamente."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto de inibições sucessivas na disponibilidade e cobertura efetiva de uma zona.",
+      "pergunta": "Uma mesma zona passa semanas sempre com algum detector inibido, mas o tag muda conforme a manutenção; cada instrumento isoladamente volta aprovado em teste. Sem falha permanente declarada, a cobertura efetiva cai. Qual a causa primária?",
+      "resposta": "indisponibilidade acumulada por inibições sucessivas na mesma zona",
+      "explicacao": "Os detectores individualmente estão aptos; a perda contínua de cobertura decorre da alternância de inibições na mesma zona, reduzindo a disponibilidade global da barreira mesmo sem um único instrumento permanentemente falho.",
+      "resposta_padrao": "Detector descalibrado.",
+      "por_que_nao": "O tag indisponível muda e cada detector retorna aprovado; a perda é da zona por inibições sequenciais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve incluir gestão de inibições, testes e manutenções dos elementos críticos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sucessivas inibições numa mesma zona podem reduzir significativamente a cobertura"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando há inibições sucessivas sem gestão de risco adequada, a cobertura da área pode cair de forma relevante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de eventos e ações do supervisório para diagnóstico pós-incidente.",
+      "pergunta": "O F&G alarmou, comandou ações e houve reconhecimentos do operador, mas depois restou apenas uma listagem extensa de pontos sem sequência útil entre alarme, comando e resposta. Qual a causa primária dessa dificuldade de reconstrução?",
+      "resposta": "configuração inadequada dos registros do supervisório",
+      "explicacao": "A atuação ocorreu, mas sem registros práticos e correlacionados de eventos e ações não se recompõe a cronologia do incidente. O problema está na rastreabilidade configurada no supervisório, não na detecção em si.",
+      "resposta_padrao": "Perda de comunicação com o ESD.",
+      "por_que_nao": "Os comandos ocorreram; faltou registro útil da sequência de eventos e ações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os registros do supervisório permitam reconstruir eventos e ações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "registros pouco práticos dificultam entender o que ocorreu durante um incidente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando os registros supervisórios são pouco práticos ou incompletos, o diagnóstico do evento e a reconstrução da resposta ficam prejudicados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Aderência da lógica automática do F&G à filosofia de segurança, sem confirmação manual indevida.",
+      "pergunta": "Dois detectores independentes entram em alarme alto de gás; entradas, saídas e ESD provam atuação quando forçados, mas na sequência real nada automático ocorre até o operador confirmar no supervisório. Qual a causa primária?",
+      "resposta": "lógica condicionada à confirmação manual do operador",
+      "explicacao": "Como a cadeia I/O e o ESD respondem em prova, o bloqueio não é de interface. A lógica foi configurada para depender de confirmação manual, incompatibilizando a resposta automática esperada.",
+      "resposta_padrao": "Falha de interface entre F&G e ESD.",
+      "por_que_nao": "A interface atua em prova; a lógica é que segura a ação até confirmação do operador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção da lógica deve começar pela aderência do F&G à Filosofia de Segurança do operador."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "foi adotada dupla verificação com confirmação local e posterior confirmação do operador em supervisório antes da descarga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a solução é dependente do sistema e do risco."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "item": "07_03",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de histórico agregado para identificar falha crônica em perturbações pequenas e repetitivas.",
+      "pergunta": "Vários distúrbios curtos reduzem a produção ao longo do mês, quase nunca param o processo e, vistos separadamente, parecem pequenos; ainda assim o LPO acumulado cresce e o mesmo mecanismo reaparece. Qual causa primária está passando despercebida?",
+      "resposta": "falha crônica mascarada pela análise isolada dos eventos",
+      "explicacao": "O bloco foco indica que falhas crônicas e eventos repetitivos exigem histórico agregado; sem isso, perturbações pequenas parecem independentes, embora somem perda de produção e revelem mecanismo repetitivo persistente.",
+      "resposta_padrao": "Os eventos são irrelevantes por não causarem parada total.",
+      "por_que_nao": "Pequenas perturbações sucessivas podem acumular perda de produção e manter vulnerabilidades mesmo sem parada total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas crônicas e eventos repetitivos exigem leitura do histórico agregado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pequenas perturbações sucessivas podem acumular perda de produção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre ação recomendada e ação efetivamente encerrada ao analisar recorrência de falhas.",
+      "pergunta": "A mesma causa raiz retorna meses depois, com recomendações antigas lançadas no sistema, porém ainda abertas ou fechadas sem evidência técnica. O que explica a recorrência?",
+      "resposta": "não encerramento efetivo das ações corretivas anteriores",
+      "explicacao": "Se o mecanismo repetitivo já foi identificado e as ações anteriores não foram realmente concluídas, o defeito eliminável permanece ativo e o evento reaparece.",
+      "resposta_padrao": "Surgiu uma nova causa raiz no processo.",
+      "por_que_nao": "A repetição da mesma causa raiz, junto de ações sem encerramento efetivo, aponta para pendência do tratamento anterior, não para novo mecanismo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a reavaliação de eventos passados ajuda a verificar se recomendações anteriores foram adequadas e se foram realmente encerradas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "favorece a identificação de mecanismos repetitivos"
+        }
+      ],
+      "k": 2,
+      "regua": [
+        "a resposta começa por sim, não ou um juízo de adequação; comece pelo elemento decisivo"
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência de LPO e MTBF da classificação correta de perda e recuperação de função nos registros de evento.",
+      "pergunta": "MTBF calculado quase não muda, mas o LPO cresce por muitas perdas funcionais curtas e repetidas; nos registros, só trips totais contam como falha. Qual é a causa desse descompasso?",
+      "resposta": "classificação de eventos sem registrar perda e recuperação da função",
+      "explicacao": "LPO e MTBF são usados na recorrência, mas o MTBF depende do número de falhas registradas. Se perdas funcionais curtas não entram como falha com retorno de função, a recorrência fica subcontada.",
+      "resposta_padrao": "O MTBF está bom e o problema é apenas operacional.",
+      "por_que_nao": "Sem registrar cada perda e recuperação da função, o MTBF fica artificialmente melhor, mesmo com LPO crescente por recorrência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "LPO, sigla para Lost Production Opportunity, e MTBF, sigla para Mean Time Between Failures, aparecem como medidas associadas ao comportamento de recorrência"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "divide-se o tempo de operação acumulado pelo número de falhas no período"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

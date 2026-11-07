@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 4,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de intervenção remota exige registro de sessão associado ao ativo alcançado, além do log de autenticação.",
+      "pergunta": "Uma alteração indevida surgiu numa janela com dois suportes remotos autorizados. O concentrador mostra usuário, IP e horário, mas ambos passaram pelo mesmo jump host e só há tráfego agregado; não se consegue ligar a mudança ao controlador afetado. Qual a causa primária dessa perda de rastreabilidade?",
+      "resposta": "Registro de sessão sem amarração ao ativo acessado.",
+      "explicacao": "Os logs de autenticação já mostram quem e quando. O elemento faltante é o registro da sessão associado ao ativo alcançado, necessário para atribuir a atuação remota ao controlador afetado.",
+      "resposta_padrao": "Falta de log do concentrador VPN.",
+      "por_que_nao": "O concentrador já registra usuário, IP e horário; o que falta é rastrear em qual ativo houve atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação. Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Também é tecnicamente importante verificar a condição do dispositivo usado na conexão, encerrar o acesso ao fim da atividade e manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O estado de atualização do endpoint remoto pode ser a causa do problema mesmo com VPN, usuário e concentrador corretos.",
+      "pergunta": "Com a mesma conta e a mesma VPN, só um notebook do fornecedor tenta abrir a sessão usando protocolos legados; ao trocá-lo por outro equipamento do mesmo técnico, os eventos cessam sem qualquer mudança no concentrador. Qual a causa primária?",
+      "resposta": "Notebook do fornecedor desatualizado.",
+      "explicacao": "Como conta, VPN e concentrador permanecem os mesmos, o problema acompanha um único endpoint. O uso de protocolos legados indica dispositivo em estado desatualizado, algo que o canal seguro não corrige.",
+      "resposta_padrao": "Falha no concentrador VPN.",
+      "por_que_nao": "O concentrador não mudou e a mesma conta funciona com outro notebook; a diferença está no endpoint usado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida e ainda assim introduzir risco ao ambiente operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

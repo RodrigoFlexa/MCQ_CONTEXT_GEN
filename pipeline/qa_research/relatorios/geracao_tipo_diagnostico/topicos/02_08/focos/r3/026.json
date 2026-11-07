@@ -1,0 +1,57 @@
+{
+  "item": "02_08",
+  "foco": 26,
+  "rodada": 3,
+  "contexto": {
+    "A1": 25,
+    "F": 26,
+    "A2": 27
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ponto de detecção da pressão em arranjo comum pode deslocar a atuação automática do tanque para o header.",
+      "pergunta": "Carregando dois tanques por linhas independentes, o tanque A já atingira alta pressão local sem fechamento automático em campanhas de um único tanque; nesta campanha, o fechamento só ocorreu quando a pressão do header comum também subiu e o tanque B foi fechado junto. Qual a causa primária?",
+      "resposta": "pressostato do intertravamento no header comum",
+      "explicacao": "A atuação só quando o coletor comum pressuriza, inclusive fechando ambos os tanques, indica que o fechamento automático está referenciado ao header compartilhado, não à pressão individual do tanque que desviou.",
+      "resposta_padrao": "Capacidade insuficiente da recuperação de vapores.",
+      "por_que_nao": "Se fosse limitação global de recuperação, a atuação deveria acompanhar a alta do tanque A também em carregamento isolado; depender da alta do header comum aponta erro no ponto de detecção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "fechamento de linhas de carregamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "conforme o ponto onde alta ou baixa pressão é detectada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na cadeia detecção-decisão-ação, a falha do elemento final pode manter a causa de sobrepressão mesmo com lógica atuando.",
+      "pergunta": "No registrador de sequência, entrou alta-alta pressão no tanque, a lógica emitiu o comando de corte do gás inerte e a saída do CLP mudou, mas a vazão de gás inerte só cessou quando o bloqueio manual a montante foi fechado. Qual a causa primária?",
+      "resposta": "válvula automática de corte do gás inerte indisponível",
+      "explicacao": "Detecção e decisão lógica ocorreram. Como o suprimento só parou com o bloqueio manual a montante, a falha está no elemento final que deveria interromper automaticamente o gás inerte.",
+      "resposta_padrao": "Intertravamento de alta pressão indisponível.",
+      "por_que_nao": "O desvio foi detectado e o CLP gerou o comando; a perda da barreira ocorreu na ação final, não na lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "fechamento de suprimento de gás inerte"
+        },
+        {
+          "bloco": "F",
+          "trecho": "encadeamento entre detecção, decisão lógica e ação final."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito do peso das penalidades de atraso na sensibilidade do dimensionamento e da fila de atendimento.",
+      "pergunta": "No simulador, trocar FIFO por prioridade crítica quase não muda a frota escolhida. Mesmo nos cenários congestionados, pedidos ligados à perda de produção seguem atrasados e o custo total continua dominado pelo afretamento. Qual causa do modelo explica essa insensibilidade?",
+      "resposta": "Penalidades por atraso subponderadas na função de custo.",
+      "explicacao": "Se demandas críticas continuam esperando sob restrição, mas o ótimo quase não reage, o atraso recebeu peso baixo demais frente ao afretamento para alterar frota ou sequência.",
+      "resposta_padrao": "A frota já é suficiente para a demanda.",
+      "por_que_nao": "Há atraso recorrente nos cenários congestionados; com capacidade suficiente, a troca de fila não deixaria pedidos críticos esperando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "penalidades elevadas por atraso reforçaram o valor de critérios de prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses resultados dependem das premissas da simulação, da função de custo e dos custos de penalidade adotados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a política de prioridade altera o resultado porque muda quais demandas serão atendidas primeiro quando há restrição de embarcações, janelas operacionais ou capacidade logística."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de priorizar item raro que restaura função pela consequência operacional, e não pela recorrência da demanda.",
+      "pergunta": "Um sobressalente já disponível na base, que restaura função, perdeu duas saídas com convés saturado; no mesmo período, cargas recorrentes de menor impacto seguiram embarcando. Qual causa primária do sequenciamento explica esse padrão?",
+      "resposta": "Critério de prioridade baseado na recorrência da demanda.",
+      "explicacao": "Frequência sozinha não basta. Item de baixo consumo pode exigir prioridade quando sua falta impede restaurar função; aqui, a vaga foi repetidamente dada a cargas recorrentes menos consequentes.",
+      "resposta_padrao": "Falta de capacidade de transporte.",
+      "por_que_nao": "A limitação existia, mas não explica por que cargas de menor impacto ocuparam as vagas antes do item que restabelece função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "selecionar a estratégia exige observar pelo menos quatro variáveis: frequência de consumo, impacto da falta, prazo de reposição e possibilidade de consolidação da demanda."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

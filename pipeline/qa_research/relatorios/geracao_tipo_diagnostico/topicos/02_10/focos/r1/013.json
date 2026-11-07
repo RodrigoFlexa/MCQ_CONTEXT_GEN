@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando o hidrociclone responde melhor a vazão estável, manter a interface rigidamente no setpoint pode ser a causa da pior qualidade da água.",
+      "pergunta": "Na malha da interface óleo-água, a posição real da válvula acompanha o comando, o nível fica colado ao setpoint e a vazão ao hidrociclone pulsa; com descarga quase constante, a água melhora mesmo deixando a interface variar dentro da faixa. Qual a causa primária?",
+      "resposta": "Controle PID da interface em vez de controle por bandas",
+      "explicacao": "O PID prioriza centrar a interface. Quando o equipamento a jusante responde melhor a vazão estável, essa filosofia pode piorar a qualidade; o controle por bandas desloca o objetivo para estabilizar a descarga.",
+      "resposta_padrao": "Válvula de descarga com stiction.",
+      "por_que_nao": "A posição real acompanha o comando, e a melhora aparece quando a descarga fica mais estável, não quando se corrige atrito do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma filosofia clássica é o controlador PID (proporcional, integral e derivativo) tentando manter a interface próxima de um setpoint."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa abordagem desloca o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a corrente a jusante, como o hidrociclone, responde melhor a vazão mais estável do que a interface rigidamente centrada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quedas da interface podem exigir resposta mais rápida que elevações equivalentes para proteger a qualidade da água de injeção.",
+      "pergunta": "As maiores perdas de qualidade da água de injeção acontecem quando a interface desce rapidamente; excursões equivalentes para cima quase não afetam o resultado, e a malha corrige subida e descida com a mesma agressividade. Qual a causa primária?",
+      "resposta": "Controle simétrico sem Dead Band Assimétrico",
+      "explicacao": "O Dead Band Assimétrico acelera a reação à diminuição do nível da interface para preservar melhor a qualidade da água de injeção. Se as duas direções recebem a mesma resposta, a queda fica insuficientemente combatida.",
+      "resposta_padrao": "Setpoint médio da interface muito baixo.",
+      "por_que_nao": "O sinal decisivo é a diferença entre descida e subida de mesma ordem; isso aponta para falta de assimetria na resposta, não para valor médio inadequado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também foi testado um Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com a finalidade de preservar mais eficientemente a qualidade da água de injeção."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Assinatura operacional do controle por bandas: interface livre dentro da faixa e ação mais rápida apenas fora dela.",
+      "pergunta": "A interface não fica centrada: varia dentro de uma faixa sem correção contínua, mas quando cruza o limite a válvula passa temporariamente a uma resposta mais rápida e depois volta ao ritmo anterior. Qual a causa desse padrão?",
+      "resposta": "Controle por bandas da interface",
+      "explicacao": "Nessa filosofia, a interface pode variar dentro de uma faixa permitida e, ao sair dela, entram parâmetros mais rápidos para trazê-la aos limites. Isso difere de um PID tentando recentrar continuamente o nível.",
+      "resposta_padrao": "PID mal sintonizado.",
+      "por_que_nao": "A mudança deliberada para uma dinâmica mais rápida só fora da faixa caracteriza lógica por bandas, não simples erro de sintonia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle por bandas, no qual a interface pode variar dentro de uma faixa permitida; se sair dessa faixa, um conjunto de parâmetros mais rápido atua para trazê-la de volta aos limites."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma filosofia clássica é o controlador PID (proporcional, integral e derivativo) tentando manter a interface próxima de um setpoint."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

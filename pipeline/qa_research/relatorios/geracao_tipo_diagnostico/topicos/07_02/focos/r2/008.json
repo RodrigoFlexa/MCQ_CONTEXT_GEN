@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 8,
+  "rodada": 2,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de validade temporal no acesso de terceiros quando há nova autenticação legítima após o fim do contrato.",
+      "pergunta": "Seis meses após o encerramento do contrato, a conta nominal do fornecedor ainda inicia nova sessão pela VPN com segundo fator válido; não existe sessão anterior ativa, e o perfil permaneceu igual ao do último serviço. Qual causa primária permitiu esse acesso?",
+      "resposta": "Ausência de validade temporal na conta do terceiro.",
+      "explicacao": "Nova autenticação meses após o contrato, pelo caminho normal e com segundo fator, aponta para conta ainda ativa além do prazo, não para sessão residual.",
+      "resposta_padrao": "Sessão remota não encerrada.",
+      "por_que_nao": "Houve nova autenticação pela VPN com segundo fator, incompatível com sessão residual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar instabilidade de comunicação introduzida por dispositivo temporário à incompatibilidade entre ferramenta de diagnóstico e firmware do controlador.",
+      "pergunta": "Ao conectar um notebook de diagnóstico de terceiro, a comunicação de um controlador legado com módulos remotos oscila e normaliza ao desconectar; a lógica não muda, e a estação residente no mesmo segmento segue estável. Qual causa primária?",
+      "resposta": "Versão incompatível da ferramenta com o firmware do controlador.",
+      "explicacao": "Dispositivos temporários podem introduzir versões incompatíveis. Como o segmento segue estável com a estação residente e não há mudança lógica, a causa é a incompatibilidade da ferramenta temporária com o controlador.",
+      "resposta_padrao": "Falha na rede industrial.",
+      "por_que_nao": "O distúrbio só aparece com aquele notebook e desaparece ao removê-lo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado, versões incompatíveis"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir sessão remota esquecida de software residente remanescente após suporte de terceiro.",
+      "pergunta": "Encerrada a intervenção, não há sessão interativa aberta nem túnel VPN ativo, mas a estação OT continua iniciando conexões periódicas ao fornecedor como serviço do sistema; o comportamento começou após a instalação local da ferramenta usada no suporte. Qual causa primária?",
+      "resposta": "Agente temporário de suporte remoto deixado instalado e ativo.",
+      "explicacao": "Conexões recorrentes sem sessão interativa nem túnel VPN mostram software residente remanescente da atividade. Isso aponta para componente deixado instalado, não para sessão esquecida.",
+      "resposta_padrao": "Sessão remota não encerrada.",
+      "por_que_nao": "Sem sessão interativa ou túnel ativo, a persistência vem de serviço residente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de retorno seguro ao estado normal após a atividade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar exposição direta de ativo OT à internet quando o tráfego remoto não passa pelo concentrador VPN.",
+      "pergunta": "Pacotes SYN vindos da internet chegam diretamente à porta de acesso remoto de uma estação OT, enquanto o concentrador VPN não registra tentativa correspondente e as credenciais não foram usadas. Qual causa primária expôs o ativo?",
+      "resposta": "Serviço de acesso remoto publicado diretamente na internet.",
+      "explicacao": "Se o tráfego chega ao host sem passagem pelo concentrador, a causa é publicação direta do serviço remoto. Isso é diferente de uso indevido de credenciais ou problema no túnel VPN.",
+      "resposta_padrao": "Ataque externo de força bruta.",
+      "por_que_nao": "O ataque é consequência; o sinal decisivo é a alcançabilidade fora da VPN.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "recomenda-se evitar acessibilidade direta a partir da internet"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o acesso remoto for necessário, recomenda-se usar método seguro, como Rede Privada Virtual (VPN)."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

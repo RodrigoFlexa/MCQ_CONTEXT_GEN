@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de intervenção remota exige identidade individual até o ativo de destino, sem conta compartilhada.",
+      "pergunta": "Dois fornecedores acessam o mesmo host intermediário com contas VPN próprias e horários sobrepostos. A mudança de um parâmetro em um PLC ficou registrada apenas pela conta local \"Engenharia\", usada por ambos na estação remota. Qual causa primária explica a falta de atribuição individual?",
+      "resposta": "Uso de conta local compartilhada na estação remota.",
+      "explicacao": "As identidades individuais ficam visíveis no VPN, mas a autoria se perde no salto final quando ambos usam a mesma conta local. Sem identidade individual no destino, a intervenção não é rastreável por pessoa.",
+      "resposta_padrao": "Logs do VPN insuficientes.",
+      "por_que_nao": "O VPN já mostra quem acessou e quando; a ambiguidade nasce depois, no uso da mesma conta local por pessoas diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O escopo do acesso remoto depende também do ponto de aterrissagem no ambiente OT, não só da conta usada.",
+      "pergunta": "Para diagnosticar um único skid, o mesmo fornecedor usa a mesma conta remota em dois destinos: no terminal dedicado só vê o ativo-alvo; pela estação central de engenharia, passa a navegar e abrir conexão com outros controladores do segmento sem trocar perfil. Qual causa primária explica essa diferença?",
+      "resposta": "Uso da estação central de engenharia como destino do acesso remoto.",
+      "explicacao": "Como a mesma conta fica limitada no terminal dedicado e ampla na estação central, a diferença não vem do perfil. O ponto de aterrissagem expõe ferramentas e rotas com alcance além da tarefa.",
+      "resposta_padrao": "Privilégio excessivo da conta do fornecedor.",
+      "por_que_nao": "A mesma conta permanece restrita quando a sessão termina no terminal dedicado; a expansão de alcance aparece só ao pousar na estação de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "hardening funciona porque remove serviços desnecessários, restringe rotas de acesso"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Delimitação temporal do acesso remoto de terceiro depende de credencial habilitada sob demanda, não apenas de encerrar sessões.",
+      "pergunta": "Dias depois do suporte concluído, sem sessão pendente, o fornecedor ainda consegue iniciar novo acesso com autenticação própria e MFA válidos, embora não haja atividade autorizada. Qual causa primária explica essa exposição remanescente?",
+      "resposta": "Conta remota do fornecedor mantida habilitada fora da necessidade operacional.",
+      "explicacao": "A sessão anterior foi encerrada, mas o fornecedor inicia outra autenticação normal dias depois. O problema remanescente é a credencial continuar ativa fora da janela aprovada, contrariando o acesso por necessidade operacional.",
+      "resposta_padrao": "Sessão remota anterior não foi encerrada.",
+      "por_que_nao": "Houve nova autenticação válida com MFA dias depois; isso caracteriza acesso novo por credencial ativa, não persistência de sessão antiga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

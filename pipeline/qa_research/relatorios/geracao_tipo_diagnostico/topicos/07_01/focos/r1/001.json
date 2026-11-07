@@ -1,0 +1,105 @@
+{
+  "item": "07_01",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar dupla extração de raiz quadrada quando a calibração do transmissor está correta, mas o cálculo de vazão no sistema não.",
+      "pergunta": "Numa malha de vazão por DP, o transmissor já está configurado com extração de raiz. Ao simular 25%, 50% e 75% de vazão, o valor no sistema vai para cerca de 50%, 71% e 87%, mas coincide em 0 e 100%. Qual é a causa primária?",
+      "resposta": "Extração de raiz quadrada duplicada no cálculo da vazão.",
+      "explicacao": "Como o transmissor já lineariza a vazão, aplicar raiz novamente no sistema preserva 0 e 100% e distorce os pontos intermediários, assinatura típica de cálculo duplicado na cadeia.",
+      "resposta_padrao": "Transmissor de DP descalibrado.",
+      "por_que_nao": "Descalibração produziria erro linear; o desvio não linear com coincidência nos extremos aponta dupla extração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a confiabilidade do valor disponível ao operador depende da cadeia completa: sensor, transmissor, alimentação, cabeamento, conversão, configuração, lógica de cálculo, indicação local e sistema supervisório."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a verificação em malha confirma se o sinal chega corretamente ao sistema e se escalas, unidades, parametrizações e vínculos funcionais estão coerentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir erro de totalização por base de tempo incorreta de erro do medidor de vazão instantânea.",
+      "pergunta": "Com a vazão instantânea em 120 m³/h e conferindo com a referência, o totalizador acrescenta cerca de 120 m³ a cada minuto. Qual causa primária explica esse quadro?",
+      "resposta": "Base de tempo do totalizador em minutos, não em horas.",
+      "explicacao": "Se o valor instantâneo está correto e só o acumulado cresce 60 vezes mais rápido, o erro nasce na integração temporal do sistema, não na medição instantânea.",
+      "resposta_padrao": "Medidor de vazão descalibrado.",
+      "por_que_nao": "A indicação instantânea confere com a referência; o fator 60 aparece apenas no acumulado, típico de base de tempo errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a confiabilidade do valor disponível ao operador depende da cadeia completa: sensor, transmissor, alimentação, cabeamento, conversão, configuração, lógica de cálculo, indicação local e sistema supervisório."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a verificação em malha confirma se o sinal chega corretamente ao sistema e se escalas, unidades, parametrizações e vínculos funcionais estão coerentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma medição degradada pode afetar controle de separação, consumo de utilidades, estimativa de produção, diagnóstico de desempenho e tomada de decisão em contingência."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer canal excluído ou mal vinculado em lógica 2oo3 apesar de loops individuais corretos.",
+      "pergunta": "Nos canais A, B e C de alta pressão, cada transmissor indica corretamente no sistema e aciona seu alarme individual. No teste 2oo3, A+B não tripa, B+C não tripa, mas A+C tripa. Qual é a causa primária?",
+      "resposta": "Canal B fora da lógica de votação 2oo3.",
+      "explicacao": "Os três sinais chegam ao sistema, mas B não contribui para formar dois votos. Isso ocorre quando o canal B está desvinculado ou errado no bloco de votação.",
+      "resposta_padrao": "Transmissor B descalibrado.",
+      "por_que_nao": "B indica corretamente e gera alarme individual; a falha aparece apenas na composição dos votos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a verificação em malha confirma se o sinal chega corretamente ao sistema e se escalas, unidades, parametrizações e vínculos funcionais estão coerentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a distinção entre calibrar, verificar laço e testar funcionalmente evita falsa confiança em instrumentos aparentemente operantes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar cruzamento de canais de entrada analógica a partir da inversão dinâmica entre tags no supervisório.",
+      "pergunta": "Depois da troca de um cartão de entrada, TI-1 e TI-2 continuam coerentes nos indicadores locais, mas no supervisório a tendência de TI-1 passa a reproduzir exatamente TI-2 e vice-versa. Qual causa primária explica o quadro?",
+      "resposta": "Canais de entrada analógica cruzados entre TI-1 e TI-2.",
+      "explicacao": "Como os indicadores locais permanecem corretos e a inversão surgiu após intervenção no cartão, o defeito está no mapeamento das entradas até o sistema, não nos transmissores.",
+      "resposta_padrao": "Um dos transmissores foi instalado no ponto errado.",
+      "por_que_nao": "Os instrumentos continuam coerentes no campo; a troca apareceu apenas nos tags após a intervenção no sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a confiabilidade do valor disponível ao operador depende da cadeia completa: sensor, transmissor, alimentação, cabeamento, conversão, configuração, lógica de cálculo, indicação local e sistema supervisório."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a verificação em malha confirma se o sinal chega corretamente ao sistema e se escalas, unidades, parametrizações e vínculos funcionais estão coerentes."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

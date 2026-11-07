@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 4,
+  "rodada": 3,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A permanência de elevação simultânea de tensão e frequência após a aceleração indica falha na lógica do PMS que retira o boost pós-partida quando a demanda reativa do motor cai.",
+      "pergunta": "Durante a partida assistida de um grande motor, o PMS eleva tensão e frequência antes do fechamento. Quando o motor chega perto da rotação nominal, o kVAr do alimentador cai e nenhum compensador fica conectado, mas tensão e frequência seguem altas por alguns segundos. Qual a causa primária?",
+      "resposta": "Falha na retirada das correções pós-fechamento do PMS",
+      "explicacao": "O bloco focal diz que o PMS pode pré-elevar tensão e frequência e depois reduzir as correções ao detectar queda de potência reativa. Se ambas permanecem altas sem compensador conectado, o boost do PMS não foi retirado.",
+      "resposta_padrao": "Compensação temporária de reativos mantida em serviço.",
+      "por_que_nao": "Isso explicaria sobretensão, mas não a frequência elevada ao mesmo tempo nem a ausência de compensador ainda conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o Sistema de Gerenciamento de Potência, PMS, pode elevar previamente tensão e/ou frequência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ao detectar queda da potência reativa, reduz essas correções."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em alimentação por cabo HVAC, a escolha de tensão de operação alta demais pode piorar corrente total, perdas e sobretensão pela dependência quadrática dos reativos do cabo com a tensão.",
+      "pergunta": "No mesmo enlace em corrente alternada e com carga semelhante no terminal remoto, operar em tensão mais alta aumentou a corrente total do cabo, as perdas e a sobretensão na ponta. Qual a causa primária?",
+      "resposta": "Tensão de operação excessiva para o step-out HVAC",
+      "explicacao": "Nos cabos CA, a potência reativa associada ao cabo cresce com o quadrado da tensão. Assim, elevar a tensão de operação pode aumentar corrente de carregamento, perdas e risco de sobretensão no terminal remoto.",
+      "resposta_padrao": "Carga leve demais no terminal remoto.",
+      "por_que_nao": "A carga permaneceu semelhante; o agravamento acompanhou a tensão mais alta, sinal típico do aumento do carregamento capacitivo do cabo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em cabos submarinos em corrente alternada, a potência reativa associada ao cabo cresce com o comprimento e com o quadrado da tensão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podendo aumentar desvios de tensão, perdas e risco de sobretensão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em HVAC offshore, a tensão de operação deve ser escolhida em balanço com perdas, reativos do cabo e perfil de carga."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A partida assistida pelo PMS depende de parâmetros de droop coerentes com os ajustes reais dos geradores; divergência entre eles distorce as correções dinâmicas aplicadas.",
+      "pergunta": "Depois de retunagem dos governadores, a mesma partida assistida passou a afundar mais a frequência e a recuperar mais lentamente, embora reserva girante, topologia e estado do bus tie não tenham mudado. Qual a causa primária?",
+      "resposta": "Droop real dos geradores divergente do considerado pelo PMS",
+      "explicacao": "O PMS aplica correções rápidas com base também nos ajustes de droop. Se os governadores foram retunados e o PMS continua assumindo a resposta anterior, a assistência deixa de combinar com a dinâmica real das máquinas.",
+      "resposta_padrao": "Reserva girante insuficiente.",
+      "por_que_nao": "A folga de geração e a configuração da rede permaneceram as mesmas; o desvio apareceu após a retunagem dos governadores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "os ajustes coordenados de reguladores, excitação e droop são o núcleo da solução."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

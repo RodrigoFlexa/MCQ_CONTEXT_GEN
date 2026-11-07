@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar revisão legada sem correção homologada como motivo técnico para conter por isolamento e supervisão reforçada.",
+      "pergunta": "Há janela de manutenção, mas o pacote corretivo do fornecedor nem reconhece os controladores instalados; ele só se aplica à família sucessora, e a orientação oficial para os existentes é segmentar e reforçar a supervisão. Qual a causa primária?",
+      "resposta": "Ausência de correção homologada para a revisão legada instalada",
+      "explicacao": "A limitação decisiva não é janela nem prioridade operacional: a revisão instalada não tem correção suportada. Para legados, a contenção passa a depender de isolamento, supervisão reforçada e restrição de conectividade.",
+      "resposta_padrao": "Falta de janela para atualizar.",
+      "por_que_nao": "A janela existe; o limitante técnico é que o pacote não se aplica à revisão instalada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter patches e estratégias de remediação com fornecedores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar instabilidade pós-remediação ao uso de hotfix não estável em vez da versão estável corrigida recomendada.",
+      "pergunta": "Reinicializações intermitentes surgem apenas nos nós que receberam um hotfix emergencial para uma vulnerabilidade; os pares ainda vulneráveis seguem estáveis, e dias depois o fornecedor substitui esse pacote por outra manutenção recomendada. Qual a causa primária dos resets?",
+      "resposta": "Hotfix não estável aplicado nos nós atualizados",
+      "explicacao": "O defeito acompanha somente os nós alterados. Se os ainda vulneráveis permanecem estáveis e o fornecedor troca o pacote por manutenção recomendada, a causa primária é a remediação em ramo não estável.",
+      "resposta_padrao": "Exploração ativa da vulnerabilidade.",
+      "por_que_nao": "Os nós ainda vulneráveis não reiniciam; o sintoma apareceu apenas após a aplicação do hotfix.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "atualizar para versão estável mais recente quando houver correção disponível"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar contenção que bloqueia dependência entre controle e proteção elétrica, degradando permissivos sem falha local dos equipamentos.",
+      "pergunta": "Com a planta estável, uma ACL emergencial foi inserida entre duas zonas OT para conter sondagens. Logo depois, partidas passaram a ser negadas por perda de permissivo do sistema elétrico, embora relés e controladores continuassem operando localmente. Qual a causa primária?",
+      "resposta": "ACL de contenção bloqueando o conduíte dos permissivos elétricos",
+      "explicacao": "O novo sintoma começa com a ACL e afeta a dependência entre proteção elétrica e controle. Como relés e controladores seguem operando localmente, a falha está no caminho de comunicação bloqueado.",
+      "resposta_padrao": "Falha nos relés de proteção.",
+      "por_que_nao": "Os relés continuam atuando localmente; perdeu-se o caminho dos permissivos entre os sistemas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma ação tecnicamente correta do ponto de vista de segurança da informação pode ser inadequada se provocar perda de controle do processo ou indisponibilidade de salvaguardas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

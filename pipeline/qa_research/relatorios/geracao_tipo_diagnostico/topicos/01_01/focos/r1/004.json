@@ -1,0 +1,83 @@
+{
+  "item": "01_01",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar queda de disponibilidade operacional causada por parcelas logísticas e administrativas do downtime, não por mais falhas.",
+      "pergunta": "Dois trens tiveram o mesmo número de falhas e o mesmo tempo de intervenção ativa. No que fechou com menor disponibilidade, o downtime acumulado cresceu entre diagnóstico e liberação para partida, com espera por acesso e sobressalente. Qual causa primária explica a diferença?",
+      "resposta": "Maior downtime logístico e administrativo",
+      "explicacao": "Na disponibilidade operacional, espera por acesso, sobressalente, diagnóstico e liberação compõe a indisponibilidade total. Com mesma frequência de falhas e mesmo reparo ativo, a diferença vem dessas parcelas.",
+      "resposta_padrao": "O trem menos disponível é menos confiável.",
+      "por_que_nao": "Menor confiabilidade implicaria mais interrupções; aqui o número de falhas e o reparo ativo são iguais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o desempenho global não depende só de quantas falhas ocorrem, mas também de quão rápido e sob quais condições o sistema retorna à operação aceitável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo, isto é, a intervenção propriamente dita, a tempos logísticos e administrativos, como diagnóstico, mobilização de pessoal, espera por sobressalentes, acesso, liberação do equipamento e retorno seguro à operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Por isso, dois equipamentos com a mesma frequência de falha e o mesmo tempo de reparo ativo podem apresentar disponibilidades operacionais muito diferentes se seus tempos logísticos e administrativos forem distintos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir perda de confiabilidade por MTBF menor de baixa disponibilidade quando as recuperações são rápidas.",
+      "pergunta": "Paradas de segundos a poucos minutos ficaram frequentes, com retorno rápido após rearme; nos instantes de verificação o sistema quase sempre está operando. O que causou a piora do desempenho ao longo da campanha?",
+      "resposta": "Redução do tempo médio entre falhas (MTBF)",
+      "explicacao": "Interrupções mais frequentes reduzem o MTBF. Como o retorno é rápido e o sistema permanece operando na maioria dos instantes observados, o problema é a continuidade do serviço ao longo do intervalo.",
+      "resposta_padrao": "O problema é aumento do MTTR.",
+      "por_que_nao": "Os retornos são rápidos; o que piorou foi a frequência das interrupções, não sua duração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade expressa a probabilidade de o sistema estar operacional em um dado instante; confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo, sob condições definidas e assumindo operação no início do período;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma forma de referência relaciona disponibilidade a MTBF (Mean Time Between Failures, tempo médio entre falhas) e MTTR (Mean Time To Repair, tempo médio para reparo): aumentar o MTBF tende a elevar a disponibilidade, enquanto aumentar o MTTR tende a reduzi-la."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer indisponibilidade recorrente causada por filosofia fail-safe de proteção, e não por dano intrínseco do equipamento.",
+      "pergunta": "O equipamento é encontrado íntegro após cada parada automática; as perdas ocorrem quando um sinal de proteção sai do limite, e o retorno só é permitido após confirmação de condição segura. Qual causa explica a indisponibilidade recorrente?",
+      "resposta": "Atuação da lógica de proteção em falha segura",
+      "explicacao": "Os desligamentos retiram deliberadamente o equipamento de serviço para evitar dano maior. A continuidade cai mesmo sem dano físico, porque a proteção prioriza condição segura antes do retorno.",
+      "resposta_padrao": "Há falha mecânica recorrente no equipamento.",
+      "por_que_nao": "Ele é retirado preventivamente de serviço pela proteção e encontrado sem dano após os eventos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Segurança e integridade interagem com esses atributos, porque um sistema pode ser projetado para falhar de modo seguro mesmo que isso reduza sua continuidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "decisões de proteção podem retirar equipamentos de serviço para evitar danos maiores."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

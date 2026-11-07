@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 3,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha local da camada de visualização de perda de comunicação ou de processo pela limitação do sintoma a uma única estação.",
+      "pergunta": "Somente a janela de supervisão de uma estação fica congelada; o trend do historian aberto nessa mesma estação e as demais estações seguem atualizando. Qual a causa primária?",
+      "resposta": "Aplicação da IHM dessa estação travada",
+      "explicacao": "Como a própria estação continua recebendo dados por outro aplicativo e as demais estações atualizam, o problema fica restrito à camada de visualização dessa IHM.",
+      "resposta_padrao": "Falha de comunicação com o processo.",
+      "por_que_nao": "Se fosse comunicação ou controlador, outras estações e o trend do historian na mesma estação também perderiam atualização.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer perda oculta da redundância de comunicação quando a função cai na retirada de um canal e havia indício prévio de caminho alternativo inoperante.",
+      "pergunta": "Durante o teste de redundância da rede, a retirada do canal A derruba a comunicação de uma remota; dias antes, o diagnóstico dessa remota já mostrava o canal B sem tráfego, embora o serviço permanecesse normal. Qual a causa primária?",
+      "resposta": "Canal B redundante dessa remota já indisponível",
+      "explicacao": "A queda ao retirar o canal A só ocorre se o caminho alternativo não estiver efetivo. O indício prévio de B sem tráfego mostra redundância perdida antes do teste.",
+      "resposta_padrao": "Falha do canal A durante o teste.",
+      "por_que_nao": "Com redundância efetiva, a retirada planejada do canal A preservaria a função; o sinal anterior já apontava ausência do caminho alternativo.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falso estado saudável em dashboard quando a checagem de normalidade ignora a qualidade das medições.",
+      "pergunta": "Na tela de disponibilidade, um compressor permanece verde por 40 minutos com sucção, descarga e vibração inalteradas; outras tags da página seguem atualizando, mas no controlador essas três medições ficaram em qualidade ruim no início do intervalo. Qual a causa primária do verde persistente?",
+      "resposta": "Lógica de disponibilidade sem validar a qualidade das tags",
+      "explicacao": "O estado verde persiste porque a checagem usa apenas faixa de valor. Com qualidade ruim nas medições, números estáticos não representam condição confiável do equipamento.",
+      "resposta_padrao": "O compressor permaneceu estável no período.",
+      "por_que_nao": "As três medições perderam validade no controlador; valor em faixa, sem qualidade confiável, não sustenta esse diagnóstico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

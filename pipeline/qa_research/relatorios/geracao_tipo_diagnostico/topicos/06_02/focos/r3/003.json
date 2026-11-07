@@ -1,0 +1,91 @@
+{
+  "item": "06_02",
+  "foco": 3,
+  "rodada": 3,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O tempo de atuação exigido de uma barreira depende do transiente do cenário, não apenas do tempo histórico de fechamento.",
+      "pergunta": "Uma válvula de shutdown fecha totalmente em 18 s, igual aos testes históricos. Depois do aumento de vazão de alimentação, o vaso passa de alarme alto a trip de alto-alto em 12 s no mesmo cenário. Qual causa primária explica a perda de proteção?",
+      "resposta": "Tempo de fechamento da válvula incompatível com o novo transiente.",
+      "explicacao": "A válvula permanece íntegra e fecha no tempo habitual, mas o cenário passou a evoluir mais rápido do que a barreira consegue acompanhar.",
+      "resposta_padrao": "Falha mecânica da válvula de shutdown.",
+      "por_que_nao": "O curso continua completo e o tempo de fechamento não se degradou; mudou o tempo disponível do cenário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ela precisa atuar do modo, no tempo e na condição previstos no cenário analisado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "regime transiente, utilidades disponíveis, lógica de intertravamento e resposta humana esperada alteram a capacidade da barreira de cumprir sua função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma dessas premissas muda sem reavaliação, a barreira pode permanecer instalada, mas deixar de ser funcional para aquele cenário."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Setpoint de atuação também é premissa funcional da barreira e pode se tornar tardio após mudança de geometria ou condição do processo.",
+      "pergunta": "O transmissor de nível foi calibrado, e o shutdown atua exatamente no valor configurado. Depois da instalação de internos que reduziram o espaço livre do vaso, ocorre derrame antes do elemento final concluir o fechamento. Qual é a causa primária?",
+      "resposta": "Setpoint de shutdown não revalidado para o novo volume útil.",
+      "explicacao": "A medição e a lógica estão corretas, mas o ponto de disparo ficou tardio para a nova geometria e o tempo remanescente até o derrame.",
+      "resposta_padrao": "Transmissor de nível descalibrado.",
+      "por_que_nao": "A leitura foi conferida e a atuação ocorre no valor ajustado; o problema é a configuração frente ao novo cenário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ela precisa atuar do modo, no tempo e na condição previstos no cenário analisado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma dessas premissas muda sem reavaliação, a barreira pode permanecer instalada, mas deixar de ser funcional para aquele cenário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma barreira parcialmente instalada, mal configurada ou não comissionada pode aparentar presença física sem entregar proteção efetiva."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Indicação saudável e comando emitido não comprovam funcionalidade quando a barreira retorna de manutenção com recomposição física incompleta.",
+      "pergunta": "Na volta de uma parada, o comando automático de deluge é emitido, a bomba parte e o header pressuriza, mas só um módulo não descarrega água. Esse módulo teve spool e bicos removidos na manutenção anterior. Qual a causa primária?",
+      "resposta": "Ramal de deluge parcialmente reinstalado.",
+      "explicacao": "A capacidade geral de bombeamento existe; a indisponibilidade localizada no módulo que sofreu desmontagem indica recomposição física incompleta da barreira.",
+      "resposta_padrao": "Falha da bomba de incêndio.",
+      "por_que_nao": "A bomba partiu, o header pressurizou e os demais módulos descarregaram normalmente.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Em FPSOs, a verificação deve ser particularmente cuidadosa em fases de partida, retorno após parada, mudanças temporárias e marcos de comissionamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma barreira parcialmente instalada, mal configurada ou não comissionada pode aparentar presença física sem entregar proteção efetiva."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma barreira degradada pode estar disponível no cadastro, porém incapaz de entregar o desempenho requerido no momento da demanda."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

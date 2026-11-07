@@ -1,0 +1,113 @@
+{
+  "item": "02_10",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Critério operacional: controle rígido da interface pode desestabilizar a alimentação aos hidrociclones mesmo com interface próxima do setpoint.",
+      "pergunta": "Com o mesmo instrumento e atuador, trocar o controle contínuo da interface por banda reduziu a dispersão do TOG e estabilizou a vazão aos hidrociclones, sem mudar pressão, temperatura ou carga média. Qual causa explicava a instabilidade anterior?",
+      "resposta": "Controle rígido da interface em setpoint único",
+      "explicacao": "Quando a qualidade da água depende da regularidade da alimentação, manter a interface rigidamente em um valor força correções contínuas que perturbam vazão e split; o controle por bandas reduz essa variabilidade.",
+      "resposta_padrao": "Sintonia agressiva da malha de interface.",
+      "por_que_nao": "A melhora veio da mudança da filosofia de controle, sem alterar processo, instrumento ou atuador; o problema era o objetivo de manter a interface rígida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a malha da interface água-óleo não deve ser analisada isoladamente."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção da variável manipulada da interface quando a camada de emulsão se torna espessa.",
+      "pergunta": "A camada de emulsão engrossou progressivamente. Mesmo com a interface na banda e o DPR estável, a descarga de água ficou errática; ao passar a atuação para o overflow, a estabilidade voltou. O que causava o problema?",
+      "resposta": "Uso do underflow para controlar a interface com emulsão espessa",
+      "explicacao": "Com emulsão muito espessa, a variável manipulada mais adequada pode mudar; nesse caso, controlar a interface pelo overflow tende a ser mais favorável que pelo underflow.",
+      "resposta_padrao": "Banda de interface larga demais.",
+      "por_que_nao": "A estabilidade reaparece ao trocar a variável manipulada, sinal de inadequação do underflow nesse cenário, não apenas da largura da faixa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de emulsão se torna muito espessa, a variável manipulada mais adequada pode mudar, havendo indicação de que uma estratégia de controle de overflow pode ser mais favorável nesse cenário específico."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma arquitetura descrita para esse tipo de sistema manipula a vazão de underflow do hidrociclone para controlar a interface no separador, enquanto outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Tolerância a oscilações de interface depende da dinâmica relativa entre separador e hidrociclone.",
+      "pergunta": "A interface oscila visivelmente dentro da banda e a descarga aos hidrociclones não é perfeita, mas o TOG de descarte quase não varia; quando essas oscilações ficam mais rápidas, a qualidade passa a oscilar. Qual causa explica a tolerância inicial?",
+      "resposta": "Variações de óleo na água mais lentas que a constante de tempo do hidrociclone",
+      "explicacao": "A tolerância da oscilação da interface depende da dinâmica do sistema acoplado: se a concentração de óleo na água varia lentamente frente à resposta do hidrociclone, o desempenho a jusante pouco muda.",
+      "resposta_padrao": "A banda de interface estava bem ajustada.",
+      "por_que_nao": "A perda de tolerância quando a oscilação acelera mostra que o fator decisivo é a dinâmica relativa, não apenas a largura da banda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado e não constitui regra geral para qualquer separador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto da resolução do atuador na regularidade da descarga para hidrociclones.",
+      "pergunta": "Mantida a mesma banda de interface, a troca da válvula modulante por um choke com poucos degraus passou a produzir serrilhado na descarga de água e maior dispersão do TOG, sem mudar o inventário médio. Qual a causa primária?",
+      "resposta": "Baixa resolução do atuador descontínuo",
+      "explicacao": "Chokes descontínuos reduzem continuidade e resolução da ação de controle; quando a qualidade depende da regularidade da descarga, essa quantização aumenta a incerteza e a variabilidade a jusante.",
+      "resposta_padrao": "Sintonia ruim da malha.",
+      "por_que_nao": "O padrão surgiu com a substituição do elemento final e persiste sem alterar a banda; a limitação dominante é a ação em degraus.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a qualidade da água tratada depende fortemente da regularidade da alimentação aos hidrociclones"
+        },
+        {
+          "bloco": "F",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o uso de chokes descontínuos e ejetores. Essa substituição tende a reduzir a continuidade e a resolução da ação de controle, o que pode aumentar a incerteza operacional."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "02_02",
+  "foco": 53,
+  "rodada": 1,
+  "contexto": {
+    "A1": 52,
+    "F": 53,
+    "A2": 54
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de oscilação de dosagem causada por tempo morto entre injeção e medição.",
+      "pergunta": "O residual de hipoclorito sob controle automático entra em ciclo: cada correção de dose só aparece no sensor vários minutos depois e passa do setpoint, embora o sensor responda prontamente ao padrão local; vazão estável e bancada confirma a média. Qual a causa primária?",
+      "resposta": "Atraso excessivo entre a injeção e a medição do residual",
+      "explicacao": "O laço reage a um valor antigo; o tempo de transporte e mistura gera sobrecorreção e oscilação. Resposta pronta ao padrão, média confirmada por bancada e vazão estável afastam problema do sensor ou demanda química variável.",
+      "resposta_padrao": "Variação da demanda de hipoclorito no processo.",
+      "por_que_nao": "Mudança real de demanda não apareceria repetidamente com o mesmo atraso após cada ação do controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta, interferências químicas, falhas de aterramento, ruído elétrico e atraso entre injeção e medição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seleção de indicador e lógica de controle devem considerar tempo de mistura, regime de escoamento, possibilidade de água livre"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de incrustação ou sujidade do sensor por divergência com laboratório e aumento do tempo de resposta.",
+      "pergunta": "Sem mudança de vazão, lote nem ponto de injeção, o analisador de residual de inibidor indica queda lenta por semanas; laboratório e monitor de corrosão seguem estáveis, e o sinal responde cada vez mais devagar ao padrão. Qual a causa primária?",
+      "resposta": "Incrustação no sensor do analisador on-line",
+      "explicacao": "Leitura que deriva para baixo, sem reflexo em laboratório nem em corrosão, somada à resposta cada vez mais lenta ao padrão, caracteriza perda de confiabilidade por sujidade ou incrustação do sensor.",
+      "resposta_padrao": "Maior consumo do inibidor no processo.",
+      "por_que_nao": "Consumo real apareceria também nas análises laboratoriais e tenderia a alterar os indicadores de corrosão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a dosagem deve ser ajustada por um painel de indicadores coerentes, e não por um único sinal isolado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de ruído elétrico por falha de aterramento em medições on-line usadas no ajuste químico.",
+      "pergunta": "Picos instantâneos de residual oxidante surgem só na partida de grandes motores e em mudanças de carga elétrica; amostras manuais, corrosão e demais variáveis do processo não acompanham. Qual causa explica melhor esses picos?",
+      "resposta": "Falha de aterramento com ruído elétrico no sinal do sensor",
+      "explicacao": "A coincidência com eventos elétricos, sem confirmação por amostra manual nem por outros indicadores, aponta interferência elétrica no sinal, não mudança real de concentração do químico.",
+      "resposta_padrao": "Oscilação real de dosagem da bomba química.",
+      "por_que_nao": "A bomba não explicaria picos sincronizados com manobras elétricas ausentes nas confirmações independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas de aterramento, ruído elétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A automação pode reduzir variabilidade humana, mas não elimina necessidade de validação periódica, manutenção do sensor e reconciliação com análises laboratoriais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de ponto de medição não representativo quando há água livre e segregação de fases.",
+      "pergunta": "Corrosão localizada aumenta no fundo de uma linha com água livre intermitente, sem mudança de formulação do inibidor, embora o controle mantenha residual alto em derivação tomada no topo; amostras drenadas da fase aquosa mostram residual baixo. Qual a causa primária?",
+      "resposta": "Ponto de medição em derivação superior não representativa por segregação de fases",
+      "explicacao": "O sensor enxerga uma fração do escoamento diferente da que molha a região corroída. Com água livre e segregação, residual alto no topo não representa a fase aquosa do fundo.",
+      "resposta_padrao": "Subdosagem global de inibidor.",
+      "por_que_nao": "A dose total não explica residual alto na derivação superior e baixo na água do fundo, junto da corrosão localizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pontos mal representativos podem ocultar transientes, zonas mortas ou má distribuição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seleção de indicador e lógica de controle devem considerar tempo de mistura, regime de escoamento, possibilidade de água livre"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

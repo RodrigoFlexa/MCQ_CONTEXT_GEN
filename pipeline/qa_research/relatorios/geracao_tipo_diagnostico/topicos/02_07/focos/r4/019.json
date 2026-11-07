@@ -1,0 +1,83 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 4,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Assinatura de erro estacionário após degrau quando a malha de nível perde a ação integral do PI.",
+      "pergunta": "A cada degrau permanente na alimentação, o nível se acomoda em novo patamar com erro constante; a válvula segue o comando sem atraso, não satura, e a indicação confere com o visor local. Qual a causa primária?",
+      "resposta": "ação integral desabilitada na malha de nível",
+      "explicacao": "Sem ação integral, a malha precisa manter erro para gerar a abertura de válvula que fecha o novo balanço. O PI citado no bloco elimina esse offset quando está efetivamente ativo e ajustado.",
+      "resposta_padrao": "Ganho proporcional baixo demais no controlador.",
+      "por_que_nao": "No PI, ganho baixo torna a correção lenta, mas não mantém erro estacionário após acomodação se a integral estiver ativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da largura da banda na frequência de comutação do controle por bandas sob perturbações normais.",
+      "pergunta": "Pequenas oscilações normais de alimentação fazem o nível cruzar repetidamente os limites; a saída líquida alterna entre valor médio e correções rápidas, embora a estimativa da vazão média esteja coerente e a medição seja estável. Qual a causa primária?",
+      "resposta": "banda de nível configurada estreita demais",
+      "explicacao": "No controle por bandas, cruzar o limite dispara ação rápida. Se perturbações normais já atravessam a faixa com frequência, os limites estão próximos demais para o regime operacional.",
+      "resposta_padrao": "Estimativa errada da vazão média de entrada.",
+      "por_que_nao": "Estimativa errada tende a produzir deriva entre limites; aqui o sintoma decisivo é a comutação frequente provocada por pequenas variações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da falha de comutação para ação rápida no controle por bandas quando o nível excede os limites.",
+      "pergunta": "Com o nível acima do limite superior mostrado no controlador, confirmado por visor local e medição independente, a vazão de saída continua no valor médio calculado; em manual, a válvula responde normalmente. Qual a causa primária?",
+      "resposta": "falha na lógica de comutação para ação rápida",
+      "explicacao": "Acima da banda, o controle deveria deixar a manutenção da vazão média e entrar em ação rápida. Como o nível é confirmado e a válvula atua em manual, a falha está na comutação lógica.",
+      "resposta_padrao": "Falha do transmissor de nível.",
+      "por_que_nao": "O excesso de nível foi confirmado no próprio controlador, por visor local e por medição independente; o problema não é falta de percepção do nível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

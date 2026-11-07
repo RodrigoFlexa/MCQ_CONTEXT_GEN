@@ -1,0 +1,61 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 3,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Independência a montante é requisito para redundância real de fontes em automação.",
+      "pergunta": "Duas fontes de uma estação de controle aparecem saudáveis; retirar a fonte A isoladamente não afeta nada, mas abrir um único disjuntor a montante desliga toda a estação, inclusive com a fonte B instalada. Qual causa primária explica esse comportamento?",
+      "resposta": "As duas fontes derivadas do mesmo alimentador a montante.",
+      "explicacao": "A redundância falha porque ambas dependem do mesmo ponto a montante; a queda por um único disjuntor mostra ausência de caminho elétrico alternativo efetivo.",
+      "resposta_padrao": "Fonte B defeituosa.",
+      "por_que_nao": "Se B estivesse defeituosa, a retirada da fonte A sozinha já derrubaria a estação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "No failover, continuidade de PV com perda de atuação localiza a falha no caminho de saída do canal reserva.",
+      "pergunta": "Com o controlador reserva assumido, PVs e alarmes seguem atualizando e o valor de saída calculado muda, mas as válvulas ficam no último valor; ao devolver o controle ao primário, a modulação volta sem intervenção de campo. Que causa primária esse padrão indica?",
+      "resposta": "Caminho alternativo de saída do controlador reserva inexistente.",
+      "explicacao": "Medição e visibilidade permanecem íntegras; a perda aparece só no comando aos elementos finais após a comutação, isolando a camada de saída do canal reserva.",
+      "resposta_padrao": "Falha das válvulas ou dos posicionadores.",
+      "por_que_nao": "O campo volta a responder assim que o primário reassume, sem ajuste mecânico ou pneumático.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

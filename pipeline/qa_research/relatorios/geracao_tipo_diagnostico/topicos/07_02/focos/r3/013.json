@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 3,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade entre patch de segurança e driver/protocolo legado de comunicação em OT.",
+      "pergunta": "Só as leituras trazidas por driver proprietário de controladores legados sumiram após uma correção de segurança no servidor de coleta; OPC UA, rede e tendências locais seguiram normais, e a imagem anterior restaurou tudo. Qual a causa primária?",
+      "resposta": "Incompatibilidade do patch com o driver de comunicação legado.",
+      "explicacao": "A perda ficou restrita ao caminho que depende do driver proprietário; rede e outras integrações seguiram normais. O retorno com a imagem anterior indica incompatibilidade da atualização com a camada de comunicação legada.",
+      "resposta_padrao": "Falha de rede industrial.",
+      "por_que_nao": "Se fosse rede, OPC UA e tendências locais tenderiam a degradar também, e o rollback local não normalizaria sozinho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite da homologação de remediação: validação em um produto OT não autoriza aplicação em outro produto distinto.",
+      "pergunta": "Uma linha de remediação aprovada para um supervisório foi repetida em outro produto OT apenas porque ambos usam a mesma versão de sistema operacional; depois disso, só o segundo perdeu o serviço do fabricante. Qual a causa primária?",
+      "resposta": "Remediação generalizada sem qualificação para o segundo produto.",
+      "explicacao": "Mesma base de sistema operacional não torna equivalentes produtos OT distintos. O efeito aparecer só no segundo indica que a remediação validada num contexto foi aplicada fora do seu escopo de qualificação.",
+      "resposta_padrao": "Defeito genérico do sistema operacional após o patch.",
+      "por_que_nao": "O primeiro produto, com a mesma base, permaneceu estável; o problema é a compatibilidade específica do segundo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa ação não deve ser generalizada para outros produtos fora desse contexto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência de revisão suportada pelo fabricante para aplicar hotfix sem indisponibilidade em OT legado.",
+      "pergunta": "O hotfix do boletim funciona em bancada com hardware idêntico, mas na estação legada o serviço do fornecedor não sobe após o reinício; a revisão exata instalada nela não consta na matriz suportada do pacote. Qual a causa primária?",
+      "resposta": "Hotfix aplicado fora da revisão suportada do sistema.",
+      "explicacao": "O pacote operar em hardware idêntico descarta defeito genérico de instalação. O sinal decisivo é a revisão da estação não estar coberta pelo suporte do fabricante nem pela versão aplicável do hotfix.",
+      "resposta_padrao": "Erro de instalação do hotfix.",
+      "por_que_nao": "A instalação funciona nas revisões homologadas; a falha aparece de forma reproduzível justamente na revisão não suportada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

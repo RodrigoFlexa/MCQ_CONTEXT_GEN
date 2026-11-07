@@ -1,0 +1,79 @@
+{
+  "item": "04_02",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar atraso e perda de repetibilidade na atuação à compressibilidade do volume hidráulico distribuído em linhas longas.",
+      "pergunta": "O comando chega sem atraso ao sistema submarino, mas a válvula demora mais para cumprir o curso e perde repetibilidade quanto maior a distância; carga mecânica e lógica de controle não mudaram. Qual a causa primária?",
+      "resposta": "volumes compressíveis nas linhas hidráulicas extensas",
+      "explicacao": "A piora com a distância, sem mudança de carga nem de lógica, aponta para a dinâmica do fluido distribuído. Em arquitetura hidráulica centralizada, compressibilidade e perdas em linhas longas degradam resposta e precisão.",
+      "resposta_padrao": "pressão hidráulica de suprimento baixa",
+      "por_que_nao": "A alimentação geral pode permanecer normal; o efeito crescer com a distância indica o volume distribuído e suas perdas, não falta global de pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o acionamento elétrico reduz volumes compressíveis, perdas por linhas hidráulicas extensas e dependência de fluido de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "criticidade da resposta temporal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falha isolada na alimentação hidráulica local de um atuador em arquitetura eletro-hidráulica descentralizada.",
+      "pergunta": "Só uma válvula deixa de se mover: o comando é recebido, as demais funções do conjunto respondem, e a pressão da alimentação local desse atuador cai durante a tentativa. Qual a causa primária?",
+      "resposta": "falha na unidade local de suprimento hidráulico do atuador",
+      "explicacao": "Na arquitetura descentralizada, cada atuador tem suprimento próprio. Comando disponível, outras funções normais e queda apenas da pressão local deslocam a causa para a alimentação hidráulica daquele atuador.",
+      "resposta_padrao": "falha do módulo de controle submarino",
+      "por_que_nao": "Uma falha no módulo comum tenderia a afetar várias funções compartilhadas; aqui o defeito aparece só onde a pressão local colapsa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "há também arquiteturas descentralizadas eletro-hidráulicas, nas quais cada atuador recebe sua própria unidade de suprimento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar atuação totalmente elétrica com retorno fail-safe por mola a partir da ausência de dependência hidráulica na função.",
+      "pergunta": "Sem variação de pressão hidráulica associada à função, a válvula atende ao comando por corrente no acionamento e, na perda de energia, volta sozinha à posição segura. Qual elemento técnico explica esse comportamento?",
+      "resposta": "atuador elétrico linear com mola fail-safe integrada",
+      "explicacao": "O movimento não depende de circuito hidráulico dessa função. A atuação por corrente e o retorno automático ao estado seguro na perda de energia caracterizam atuador elétrico com pacote de mola fail-safe.",
+      "resposta_padrao": "transmissor de pressão hidráulica defeituoso",
+      "por_que_nao": "A ausência de correlação com pressão não é defeito de leitura: a própria função é acionada eletricamente e retorna por mola no fail-safe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o movimento da válvula é produzido por atuador elétrico, inclusive em configuração linear com pacote de mola fail safe integrado, eliminando a necessidade de umbilical hidráulico naquela função"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para eliminar o risco específico associado ao umbilical hidráulico naquela função, a atuação all electric pode ser atrativa"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 3,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha do retificador/carregador de degradação de baterias pelo sentido da corrente da bateria com CA normal.",
+      "pergunta": "Com a entrada CA normal, a tensão do barramento 24 Vcc segue na faixa, mas o banco passa horas fornecendo corrente de descarga e a autonomia some num afundamento curto, sem aumento recente de carga. Qual é a causa primária?",
+      "resposta": "Retificador/carregador do 24 Vcc indisponível",
+      "explicacao": "Com CA disponível e carga inalterada, a bateria não deveria sustentar o barramento continuamente. Descarga prolongada em regime normal indica perda do retificador/carregador, mascarada pela tensão ainda mantida pela própria bateria.",
+      "resposta_padrao": "Banco de baterias degradado.",
+      "por_que_nao": "Bateria degradada reduz autonomia, mas não explica descarga contínua com alimentação CA disponível e sem aumento de carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "condição de baterias, saúde do inversor e do retificador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "dois conjuntos independentes de retificador/carregador e banco de baterias"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir indisponibilidade do inversor de problema de bateria pelo comportamento da saída do UPS em regime normal.",
+      "pergunta": "Na saída do UPS, tensão e frequência acompanham exatamente a rede de bypass; o indicador de operação em bypass permanece ativo e cada afundamento a montante chega às cargas, embora a bateria esteja carregada. Qual é a causa primária?",
+      "resposta": "Inversor do UPS indisponível",
+      "explicacao": "Se a carga permanece no bypass e os afundamentos passam diretamente para a saída, o caminho condicionado pelo inversor não está assumindo a alimentação. Bateria carregada não corrige isso sem inversor disponível.",
+      "resposta_padrao": "Banco de baterias degradado.",
+      "por_que_nao": "Bateria ruim afeta autonomia na perda da rede, mas não faz a saída seguir continuamente a rede de bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda de retaguarda por modificações acumuladas que elevaram a carga do UPS além da autonomia prevista.",
+      "pergunta": "Depois de integrar novos rádios e switches ao mesmo UPS, a operação normal segue sem alarmes; no teste de perda de CA, a corrente de descarga aumenta e a autonomia cai muito, embora as baterias tenham passado em ensaio de capacidade. Qual é a causa primária?",
+      "resposta": "Carga adicional no UPS sem revisão da autonomia",
+      "explicacao": "Com baterias aprovadas, a perda de retaguarda após a modificação aponta para aumento da carga conectada e da corrente de descarga. O problema está na configuração instalada ter superado a autonomia prevista.",
+      "resposta_padrao": "Degradação do banco de baterias.",
+      "por_que_nao": "O ensaio de capacidade aprovado desloca o diagnóstico para a carga acrescentada após a modificação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "efeitos de modificações acumuladas ao longo da vida operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tempo de retaguarda pode variar de minutos a algumas horas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

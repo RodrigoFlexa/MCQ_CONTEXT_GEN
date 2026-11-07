@@ -1,0 +1,117 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de normalização semântica entre controladores distintos como causa de analytics incoerente entre ativos.",
+      "pergunta": "Tags do novo skid chegam ao historiador e conferem com a HMI local, mas o analytics só perde coerência nas comparações entre equipamentos de fornecedores diferentes. Qual é a causa primária?",
+      "resposta": "Ausência de normalização semântica entre os modelos de dados dos controladores.",
+      "explicacao": "Os sinais existem e estão corretos localmente; a incoerência aparece apenas ao comparar famílias de controladores diferentes, indicando heterogeneidade sem camada comum de significado.",
+      "resposta_padrao": "Defeito de calibração nos instrumentos do novo skid.",
+      "por_que_nao": "Se fosse calibração, a incoerência apareceria também na HMI local; aqui ela surge só na comparação entre fornecedores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de contexto de modo operacional como causa de alarmes analíticos falsos em transientes.",
+      "pergunta": "Alarmes analíticos de desvio aparecem só em partidas e paradas; em regime estável, o mesmo modelo acompanha bem o processo, com instrumentos e comunicação normais. Qual causa explica esse padrão?",
+      "resposta": "Ausência de contexto de modo operacional nos dados do modelo.",
+      "explicacao": "Sem informar ao modelo se o processo está em partida, parada ou regime, ele avalia transientes com referência inadequada e gera desvio espúrio.",
+      "resposta_padrao": "Ruído ou deriva dos instrumentos.",
+      "por_que_nao": "Falhas instrumentais tenderiam a degradar também o desempenho em regime estável; aqui o erro acompanha apenas a mudança de modo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando isso funciona bem, o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falta de sincronismo temporal entre fontes digitais como causa de balanços instantâneos inconsistentes.",
+      "pergunta": "Balanços minuto a minuto passaram a alternar déficit e excesso após unir dados do DCS e da medição, mas os totais horários continuam fechando. Qual é a causa primária?",
+      "resposta": "Desalinhamento temporal entre as fontes de dados.",
+      "explicacao": "Fechamento em janelas longas com erro apenas instantâneo indica que os valores estão corretos, porém comparados com timestamps diferentes.",
+      "resposta_padrao": "Descalibração do medidor de vazão.",
+      "por_que_nao": "Com descalibração, o desvio persistiria também nos totais horários; aqui a distorção aparece só na comparação instantânea.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar acoplamento inadequado de aplicação remota ao controle frequente como causa de caça induzida por comunicação.",
+      "pergunta": "Sempre que a comunicação externa degrada, o processo passa a caçar sob trims enviados por uma aplicação remota a cada poucos segundos; bloqueando esses ajustes, as malhas locais estabilizam sem retunagem. Qual a causa primária?",
+      "resposta": "Acoplamento de ajustes frequentes ao caminho remoto.",
+      "explicacao": "Funções que atuam perto do controle não toleram a mesma latência e perda de conectividade que aplicações de apoio à decisão.",
+      "resposta_padrao": "Sintonia inadequada das malhas locais.",
+      "por_que_nao": "A instabilidade some ao retirar apenas os trims remotos, sem alterar a sintonia dos controladores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também aparecem arquiteturas híbridas, nas quais controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

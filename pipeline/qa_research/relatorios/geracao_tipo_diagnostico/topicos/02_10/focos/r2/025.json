@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 25,
+  "rodada": 2,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Atuação automática do PIC versus resposta do elemento final e validade da medição do PT.",
+      "pergunta": "A pressão acompanha o manômetro local e sai da faixa normal, mas a saída do PIC permanece fixa; quando o operador muda essa saída, a pressão responde. Qual é a causa primária?",
+      "resposta": "PIC em modo manual",
+      "explicacao": "A medição é válida e o elemento final responde quando comandado; falta a atuação automática do controlador sobre a pressão medida.",
+      "resposta_padrao": "Válvula de controle de pressão travada.",
+      "por_que_nao": "A pressão varia quando a saída é alterada manualmente, mostrando que o elemento final ainda tem efeito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controlador e indicador de pressão, PIC, compara a pressão medida com a condição normal ou necessária para acionar medidas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre patamar de controle do PIC e limiar de atuação da proteção ESD.",
+      "pergunta": "A operação segue no patamar usual, mas sempre que pequenos transientes levam a pressão ao mesmo valor, abaixo do ajuste da PSV, o vaso isola sem descarga pelo alívio; PT e manômetro concordam. O que explica a parada recorrente?",
+      "resposta": "Setpoint da alta pressão da ESD abaixo do especificado",
+      "explicacao": "Como a operação normal não mudou, a medição é confirmada e não há alívio pela PSV, o isolamento repetitivo no mesmo limiar aponta para ajuste baixo do trip de alta pressão.",
+      "resposta_padrao": "Setpoint do PIC alterado indevidamente.",
+      "por_que_nao": "Isso mudaria o patamar estável de operação; aqui a malha segue normal e o isolamento ocorre num limiar repetitivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A válvula de desligamento de emergência, ESDV, é apresentada como elemento de isolamento de parte da planta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pressões de ajuste das proteções"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito de obstrução na linha de impulso do PT sobre a dinâmica da malha de pressão.",
+      "pergunta": "O manômetro local mostra oscilações rápidas, mas a tendência do PT aparece amortecida e atrasada; o PIC corrige fora de fase e a pressão entra em oscilação sustentada. Qual causa primária explica isso?",
+      "resposta": "Obstrução parcial na linha de impulso do PT",
+      "explicacao": "Atraso e amortecimento apenas no sinal enviado ao controle indicam restrição no caminho de medição; o PIC atua sobre uma pressão defasada e passa a oscilar.",
+      "resposta_padrao": "PIC mal sintonizado.",
+      "por_que_nao": "A diferença dinâmica entre manômetro local e PT revela atraso de medição, não apenas problema de sintonia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "degradação de casco, internos, conexões ou pontos de instrumentação pode alterar resposta do processo e confiabilidade da medição."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

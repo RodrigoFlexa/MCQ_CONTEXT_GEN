@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir degradação do banco de baterias de falha do inversor em UPS on-line de dupla conversão.",
+      "pergunta": "Durante a transferência entre fontes, por cerca de 2 s, IHMs e servidores reinicializam; com alimentação presente, a saída da UPS fica normal, o retificador está sem alarme e a carga não mudou. Qual a causa primária?",
+      "resposta": "Degradação do banco de baterias da UPS",
+      "explicacao": "Na dupla conversão, a carga já é suprida pela etapa de saída com a fonte presente. Se a falha só aparece quando a entrada some por segundos, a sustentação do barramento está faltando no banco de baterias.",
+      "resposta_padrao": "Falha na seção inversora da UPS.",
+      "por_que_nao": "Numa UPS on-line, o inversor alimenta a carga também com a fonte presente; se só falha na interrupção curta, o discriminante principal não é o inversor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa etapa carrega o banco de baterias e alimenta internamente o caminho de conversão que supre a carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a gestão do estado de saúde de bancos de baterias foi associada à disponibilidade do backup de energia"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar propagação de afundamentos rápidos à degradação de capacitores do barramento interno da UPS.",
+      "pergunta": "Afundamentos de poucos ciclos na entrada agora aparecem como quedas breves na saída e derrubam comunicações; numa falta de alguns minutos, a autonomia segue normal e a carga não mudou. Qual a causa primária?",
+      "resposta": "Degradação dos capacitores do barramento DC da UPS",
+      "explicacao": "A dupla conversão deve reduzir o acoplamento de perturbações instantâneas. Se a autonomia em falta sustentada continua normal, baterias não explicam a propagação seletiva de afundamentos rápidos; isso aponta para perda de filtragem no barramento interno.",
+      "resposta_padrao": "Banco de baterias degradado.",
+      "por_que_nao": "A autonomia permanece adequada em interrupção sustentada; a anomalia aparece em afundamentos muito rápidos, típico de perda de desacoplamento instantâneo, não de capacidade das baterias.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "isso tende a reduzir o acoplamento direto entre perturbações instantâneas da entrada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a carga passa a depender de um barramento interno condicionado e da etapa eletrônica de saída"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar insuficiência de potência da UPS por sintomas associados a degrau de carga e sobrecarga.",
+      "pergunta": "Ao religar simultaneamente servidores, estações e switches após manutenção, a UPS entra em sobrecarga e alguns controladores reinicializam; a alimentação de entrada permaneceu estável e o teste das baterias foi aprovado. Qual a causa primária?",
+      "resposta": "Potência nominal insuficiente da UPS",
+      "explicacao": "O problema surge no degrau de carga e com alarme de sobrecarga, enquanto fonte e baterias estão normais. Como o benefício da UPS depende de potência adequada, a causa é insuficiência de potência para o pico demandado.",
+      "resposta_padrao": "Instabilidade da alimentação de entrada.",
+      "por_que_nao": "O gatilho é a partida simultânea com alarme de sobrecarga; o bloco condiciona a continuidade da UPS à potência adequada, não apenas à qualidade da fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "desde que potência, componentes e manutenção estejam adequados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

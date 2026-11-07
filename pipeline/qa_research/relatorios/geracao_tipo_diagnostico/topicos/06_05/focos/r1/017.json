@@ -1,0 +1,87 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar falha do detector de perda do caminho de sinal entre campo e controlador.",
+      "pergunta": "Durante o bump test, o detector entra em alarme local e a corrente sobe corretamente no marshalling; ao injetar sinal na entrada do cartão, o controlador responde, mas com o detector ligado o valor fica congelado. Qual causa primária?",
+      "resposta": "Circuito aberto entre marshalling e entrada analógica do controlador",
+      "explicacao": "O detector percebe o gás e o cartão responde à injeção direta. Logo, a falha está no trecho final do caminho do sinal entre o marshalling e a entrada do controlador.",
+      "resposta_padrao": "Detector descalibrado.",
+      "por_que_nao": "O cabeçote entra em alarme e o sinal elétrico chega ao marshalling; a perda ocorre depois disso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar falha de rastreabilidade quando a função existe em tempo real, mas o ponto não é registrado nos eventos.",
+      "pergunta": "No teste integrado, o alarme desse ponto aparece ao vivo na tela e a ação automática ocorre, mas ele nunca gera entrada na sequência de eventos; outros pontos do mesmo controlador registram normalmente. Qual causa primária?",
+      "resposta": "Ponto sem configuração de registro de evento no supervisório",
+      "explicacao": "Como a indicação em tempo real e a atuação automática estão preservadas, a cadeia de detecção e comando funciona. O defeito ficou restrito à rastreabilidade desse ponto no supervisório.",
+      "resposta_padrao": "Perda intermitente de comunicação com o controlador.",
+      "por_que_nao": "A tela mostra o alarme ao vivo e a lógica atua; a falha está no registro, não na comunicação do comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas de configuração ou inconsistências entre telas e lógica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a rastreabilidade temporal dos eventos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Usar incoerência temporal entre camadas para diagnosticar dessicronização de relógios, e não erro de sequência lógica.",
+      "pergunta": "A filmagem mostra a confirmação local antes da descarga; no controlador a ordem também está correta, mas o supervisório carimba “disparado” segundos antes da confirmação. Que causa primária explica essa inversão aparente?",
+      "resposta": "Relógios do controlador e do supervisório dessincronizados",
+      "explicacao": "Se a ordem física em campo e a sequência no controlador estão corretas, mas o supervisório as inverte, o problema está no carimbo temporal entre camadas, não na execução da lógica.",
+      "resposta_padrao": "Lógica de disparo implementada fora da sequência prevista.",
+      "por_que_nao": "A sequência real e a do controlador coincidem; a inversão aparece apenas nos horários registrados em camadas diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O intervalo registrado entre disparo local e indicação de CO2 disparado também mostra que a sequência temporal é relevante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a rastreabilidade temporal dos eventos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre campo, controlador e supervisório"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

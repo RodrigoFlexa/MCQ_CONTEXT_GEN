@@ -1,0 +1,101 @@
+{
+  "item": "05_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Não linearidade do permutador em alta vazão altera o ganho aparente da malha de aquecimento.",
+      "pergunta": "Na mesma malha de aquecimento, o mesmo incremento de abertura da válvula eleva bem a temperatura em vazão média, mas quase não a altera e passa a gerar oscilação quando a vazão do óleo sobe; utilidade e instrumentos seguem normais. Qual é a causa primária?",
+      "resposta": "Comportamento não linear do permutador em vazões elevadas.",
+      "explicacao": "O mesmo movimento de válvula perde efeito em alta vazão, sinal típico de mudança do ganho do processo por não linearidade do permutador; por isso a mesma sintonia deixa de servir.",
+      "resposta_padrao": "Sintonia agressiva do controlador.",
+      "por_que_nao": "A agressividade explica a oscilação, mas não por que ela aparece apenas quando a vazão do óleo aumenta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "comportamento não linear do permutador em vazões elevadas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma malha pode se comportar de forma diferente ao longo da campanha operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Tempo morto de medição na saída do trocador domina a dinâmica da malha de aquecimento.",
+      "pergunta": "A temperatura controlada reage vários minutos após cada movimento da válvula, e qualquer ganho maior termina em sobre-elevação; a vazão do meio quente está estável e não há evidência de válvula presa. Qual causa primária explica esse padrão?",
+      "resposta": "Tempo morto da medição de temperatura na saída do trocador.",
+      "explicacao": "O atraso sistemático entre comando e leitura, somado à sobre-elevação com sintonia mais agressiva, corresponde ao tempo morto associado ao ponto de medição na saída do trocador.",
+      "resposta_padrao": "Histerese da válvula de controle.",
+      "por_que_nao": "Histerese gera resposta irregular ao mesmo comando; aqui o traço dominante é atraso repetitivo seguido de sobre-elevação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tempo morto associado à medição de temperatura na saída do trocador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a presença de tempo morto e inércia térmica torna comum a resposta lenta e a propensão a sobre-elevação ou oscilações se o controle for agressivo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança de composição do fluido processado altera a dinâmica térmica da mesma malha.",
+      "pergunta": "Com um alinhamento de produção, a temperatura de saída acompanha o setpoint com pequenas correções; com outro, exige mais abertura e passa a oscilar, embora utilidade, instrumento e válvula permaneçam iguais. Ao retornar o alinhamento, o comportamento volta ao padrão anterior. Qual é a causa primária?",
+      "resposta": "Mudança na composição do fluido produzido.",
+      "explicacao": "Como o comportamento muda com o fluido processado e retorna ao padrão quando o alinhamento anterior volta, a perturbação vem da composição do processo, não da utilidade ou da instrumentação.",
+      "resposta_padrao": "Sintonia inadequada da malha.",
+      "por_que_nao": "A sintonia não muda com o alinhamento; o comportamento muda junto com o fluido que entra no trocador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "variações de vazão, pressão e composição dos fluidos produzidos propagam distúrbios"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma malha pode se comportar de forma diferente ao longo da campanha operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em certos regimes, o trem de compressão domina a carga térmica do circuito de resfriamento.",
+      "pergunta": "Quando a carga do trem de compressão aumenta, a temperatura de retorno do circuito sobe e os primeiros alarmes térmicos aparecem nos resfriadores do compressor; a aproximação térmica dos trocadores, a vazão do circuito e a temperatura de suprimento permanecem normais. Qual causa primária deve ser apontada?",
+      "resposta": "Trem de compressão como principal carga térmica do circuito.",
+      "explicacao": "Com suprimento, vazão e aproximação térmica normais, o desvio ligado ao carregamento do trem indica que ele é o principal consumidor térmico naquele regime, levando o circuito ao limite.",
+      "resposta_padrao": "Entupimento do trocador do compressor.",
+      "por_que_nao": "Com entupimento, a aproximação térmica do trocador se deterioraria; aqui ela permanece normal enquanto a carga do trem aumenta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compressores podem representar a principal carga térmica do sistema de água de resfriamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa hierarquia depende do arranjo da planta e do regime operacional."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

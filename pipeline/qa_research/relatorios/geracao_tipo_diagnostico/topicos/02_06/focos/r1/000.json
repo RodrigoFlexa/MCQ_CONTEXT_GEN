@@ -1,0 +1,113 @@
+{
+  "item": "02_06",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Cobertura da lógica de shutdown por gás versus fontes remanescentes de hidrocarboneto na área.",
+      "pergunta": "Mesmo com alarme alto de gás e shutdown da área, as bombas de carga param, porém a linha de stripping segue com pressão e ruído de bombeio; a concentração de gás só cai após parada manual. Qual a causa primária?",
+      "resposta": "bomba de stripping fora da lógica de shutdown por gás",
+      "explicacao": "A queda de gás só após parar o stripping mostra que uma fonte de hidrocarboneto permaneceu energizada. O bloco liga explicitamente shutdown incompleto à omissão de bombas de stripping na causa e efeito.",
+      "resposta_padrao": "Falha no isolamento automático da área.",
+      "por_que_nao": "Se fosse apenas isolamento ineficaz, a concentração não cairia justamente quando a bomba de stripping é parada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interface com detecção de vazamentos e resposta a emergências."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A análise precisa abranger bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Nessa condição, o shutdown da área ficou incompleto."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compressibilidade e inventário da linha de gás como causa de atraso de propagação na partida.",
+      "pergunta": "Na abertura de um poço de gás, a pressão a montante responde de imediato, a jusante só minutos depois, e a vazão cresce antes de se acomodar; válvulas e intertravamentos não mudaram, e manômetros locais confirmam a tendência. Qual a causa primária?",
+      "resposta": "redistribuição transitória do inventário compressível de gás",
+      "explicacao": "Em gás, massa e quantidade de movimento não se redistribuem instantaneamente. A defasagem entre pontos, confirmada por manômetros locais, caracteriza transiente de line pack e não atraso de medição.",
+      "resposta_padrao": "Transmissor com atraso ou defeito.",
+      "por_que_nao": "A mesma defasagem em manômetros locais e em dois pontos da linha aponta fenômeno hidráulico, não erro de instrumentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o comportamento intermediário até que as variáveis atinjam condição estável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pressão, vazão, nível, temperatura e fração de fases variam com o tempo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em escoamento compressível de gás, isso ocorre porque massa e quantidade de movimento não se redistribuem instantaneamente."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Presença de gás livre na sucção como causa de instabilidade transitória em bomba centrífuga na partida.",
+      "pergunta": "Na partida de uma bomba centrífuga, a pressão de sucção fica estável, mas diferencial de pressão, corrente e ruído oscilam em ciclos curtos; o nível a montante permanece normal. Qual a causa primária?",
+      "resposta": "gás livre na sucção da bomba",
+      "explicacao": "Em sistemas de bombeio, a resposta transitória depende da presença de gás livre. Sucção estável com colapso cíclico de diferencial de pressão e corrente afasta baixa NPSH típica de cavitação.",
+      "resposta_padrao": "Cavitação na bomba.",
+      "por_que_nao": "Cavitação exigiria indício de baixa NPSH ou queda de sucção, ausente no cenário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o comportamento intermediário até que as variáveis atinjam condição estável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em sistemas multifásicos e de bombeio, a resposta também depende de inércia do fluido, compressibilidade, inventário nas linhas, presença de gás livre, coluna hidrostática e curva do equipamento."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em partidas de conjuntos de bombeio centrífugo submerso ou módulos de bombeio, o ganho de pressão na bomba pode alterar rapidamente as condições do sistema e tornar a resposta fortemente dependente do tempo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Forcing de sinal no CLP como causa de divergência entre leitura de campo e proteção durante manobra.",
+      "pergunta": "Durante a repartida, a pressão mostrada na tela fica exatamente fixa, enquanto o manômetro local acompanha a manobra e o intertravamento associado não atua; quando a intervenção é removida, a indicação no sistema salta para o valor real. Qual a causa primária?",
+      "resposta": "forcing do sinal de pressão no CLP",
+      "explicacao": "Leitura congelada no sistema, intertravamento inerte e retorno instantâneo ao valor real ao remover a intervenção caracterizam variável mantida artificialmente no CLP, não defeito espontâneo de campo.",
+      "resposta_padrao": "Transmissor de pressão emperrado.",
+      "por_que_nao": "Transmissor emperrado não explicaria a recuperação imediata da indicação ao retirar a intervenção no sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing"
+        },
+        {
+          "bloco": "F",
+          "trecho": "leitura de equipamentos fora do Controlador Lógico Programável (CLP)"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

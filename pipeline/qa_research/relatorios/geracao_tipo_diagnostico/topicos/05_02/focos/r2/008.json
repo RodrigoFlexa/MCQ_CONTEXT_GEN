@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 2,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em geradores em paralelo, compartilhamento anômalo de kW com kvar normal e frequência praticamente fixa indica conflito entre modo isócrono e droop.",
+      "pergunta": "Com dois geradores em paralelo, a partida de um grande motor quase não altera a frequência; um deles absorve quase todo o degrau de kW e o outro pouco muda, embora os kvar se repartam normalmente. Qual causa primária?",
+      "resposta": "Um gerador em modo isócrono contra outro em droop.",
+      "explicacao": "Se ambos estivessem em droop, o degrau de kW produziria algum desvio de frequência e os dois aumentariam carga ativa. Frequência quase fixa com kW concentrado em uma máquina indica governador isócrono.",
+      "resposta_padrao": "Droop ativo desajustado entre os geradores.",
+      "por_que_nao": "Com ambos em droop, haveria desvio perceptível de frequência acompanhando a redistribuição de kW; aqui ela fica praticamente fixa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possível desvio de frequência quando a geração opera em droop"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o compartilhamento de carga"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudanças nos ajustes de droop exigem compatibilização dos parâmetros configuráveis do PMS usados na assistência à partida de grandes motores.",
+      "pergunta": "Após reajustar o droop dos geradores, a partida assistida do compressor passou a levar a tensão acima do ajuste normal e a frequência a oscilar; sem a assistência, a mesma partida fica estável. Qual causa primária?",
+      "resposta": "Parâmetros de partida do PMS incompatíveis com os novos droops.",
+      "explicacao": "A lógica assistida usa ajustes de droop e parâmetros configuráveis. Se a partida fica estável sem assistência após o reajuste dos governadores, a causa está na parametrização do PMS não atualizada.",
+      "resposta_padrao": "Defeito no AVR ou no governador de um gerador.",
+      "por_que_nao": "Sem a assistência, os controles físicos sustentam a partida normalmente; o erro aparece na compensação calculada pelo PMS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajustes de droop e parâmetros configuráveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "depende de inspeção, teste, manutenção e controle de mudanças"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Proteção de subtensão deve suportar o afundamento esperado na partida de grandes motores; pickup ou temporização inadequados causam desligamento espúrio.",
+      "pergunta": "No fechamento do disjuntor de um grande motor, a corrente segue a curva esperada e a frequência pouco varia, mas o alimentador abre por subtensão antes de a aceleração se consolidar. Qual causa primária?",
+      "resposta": "Ajuste da proteção de subtensão incompatível com a partida do motor.",
+      "explicacao": "A corrente e a frequência caracterizam partida normal, não falta elétrica. O desligamento antes de a tensão se recuperar indica pickup ou temporização da subtensão sem suportabilidade ao afundamento esperado.",
+      "resposta_padrao": "Curto-circuito no motor.",
+      "por_que_nao": "A corrente segue a curva normal de partida e a frequência quase não se altera; o desligamento é antecipado pela proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "causando afundamento de tensão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A escolha entre essas funções depende da zona a proteger, do nível de corrente disponível, da velocidade requerida e da tolerância operacional à perda de carga."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Afundamento acentuado apenas no ponto do motor, com barramento principal firme, indica baixa rigidez local por impedância elevada no caminho de alimentação.",
+      "pergunta": "A tensão no barramento principal fica aceitável durante a partida, mas no cubículo do motor a queda é muito maior e a aceleração só é lenta nessa alimentação. Qual causa primária?",
+      "resposta": "Baixa rigidez do barramento de partida por impedância elevada da alimentação.",
+      "explicacao": "Afundamento muito maior no ponto do motor do que no barramento principal, com pouca variação de frequência, indica fraqueza elétrica local no caminho fonte-motor, não limitação global da geração.",
+      "resposta_padrao": "Falta de potência reativa na geração.",
+      "por_que_nao": "Insuficiência global de reativos apareceria também no barramento principal; aqui o afundamento é local, associado à impedância da alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a partida de grande consumidor precisa considerar a rigidez do barramento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "impõe corrente elevada e consumo significativo de potência reativa"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

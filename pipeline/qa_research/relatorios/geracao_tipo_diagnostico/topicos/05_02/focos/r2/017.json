@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade real do banco de baterias do 24 Vcc durante perda da fonte CA.",
+      "pergunta": "No teste mensal do 24 Vcc, ao retirar a alimentação CA do retificador a tensão do barramento cai instantaneamente, e o banco não apresenta corrente de descarga; minutos antes, em flutuação, a tensão estava normal. Qual é a causa primária?",
+      "resposta": "Banco de baterias desconectado do barramento 24 Vcc.",
+      "explicacao": "A tensão em flutuação pode ser sustentada pelo retificador mesmo com a bateria fora. Queda instantânea sem corrente de descarga indica indisponibilidade da alimentação por bateria, não perda gradual de capacidade.",
+      "resposta_padrao": "Banco de baterias descarregado.",
+      "por_que_nao": "Mesmo degradado ou descarregado, o banco tende a entrar em descarga; ausência de corrente indica desconexão do barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "condição de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Coerência entre lógica de reboot e retenção de trip do CLP após afundamento de tensão.",
+      "pergunta": "Depois de um afundamento curto, o CLP reinicia, I/O e 24 Vcc permanecem saudáveis, os permissivos de campo normalizam, mas o processo só sai de trip após reset manual. Qual causa primária explica o bloqueio?",
+      "resposta": "Retenção indevida do sinal de trip na lógica de reboot do CLP.",
+      "explicacao": "Como alimentação, I/O e permissivos retornam, não há trip de campo persistente. O bloqueio apenas após o reboot aponta incoerência entre inicialização e lógica de trip.",
+      "resposta_padrao": "Falha de um permissivo de campo.",
+      "por_que_nao": "Os permissivos já voltaram ao normal antes do reset; o estado travado é mantido pela lógica pós-reinicialização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Classificação da alimentação local de atuação de válvulas de shutdown como carga essencial.",
+      "pergunta": "No retorno após blackout, supervisão e CLP voltam, o ar de instrumento segue normal, mas um conjunto de válvulas de shutdown não responde nem ao automático nem ao comando local. Qual a causa primária?",
+      "resposta": "Painel local de atuação das válvulas fora da alimentação essencial.",
+      "explicacao": "CLP, supervisão e ar de instrumento normais descartam causa central ou pneumática. Se nem automático nem local atuam após a perda de energia normal, faltou alimentação no painel local.",
+      "resposta_padrao": "Falha do CLP ou da comunicação.",
+      "por_que_nao": "O comando local também falha; isso desloca a causa para a alimentação da atuação no campo, não para a lógica central.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

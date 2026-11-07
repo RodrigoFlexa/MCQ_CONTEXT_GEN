@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 1,
+  "rodada": 3,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O modo de processo define a demanda elétrica; tratá-la como fixa entre modos produz reserva incoerente.",
+      "pergunta": "Dois modos previstos foram avaliados com a mesma carga elétrica total. No comissionamento, apenas o que mantém um trem extra de compressão perde a reserva, com combustível e capacidade dos geradores dentro da faixa. Qual causa primária explica a divergência?",
+      "resposta": "Demanda elétrica tratada como fixa entre modos de processo",
+      "explicacao": "O processamento determina a demanda dos consumidores. Se combustível e capacidade dos geradores permanecem adequados, a perda de reserva apenas no arranjo com mais serviços de processo em operação indica que a carga não foi vinculada ao modo.",
+      "resposta_padrao": "Subdimensionamento dos turbogeradores.",
+      "por_que_nao": "A mesma geração atende os demais modos e o combustível segue adequado; a diferença surge com os consumidores acionados por cada arranjo de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o processamento determina a demanda dos consumidores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Comparar modos de produção, composições e destinos do gás permite verificar coerência entre demanda, combustível, reserva e disponibilidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Regime estacionário não captura a resposta dinâmica de frequência e compartilhamento de carga após perda de geração.",
+      "pergunta": "A frequência cruza o ajuste de subfrequência na perda de um gerador, mas a carga final fica abaixo da capacidade remanescente e o combustível segue adequado. Qual causa primária faltou na avaliação original?",
+      "resposta": "Avaliação apenas em regime estacionário da geração integrada",
+      "explicacao": "O regime estacionário serve para estados estabilizados e não descreve, por si só, a resposta dinâmica do compartilhamento de carga. Como a condição final é suportável, o defeito está no transitório não avaliado.",
+      "resposta_padrao": "Potência remanescente insuficiente.",
+      "por_que_nao": "Se fosse insuficiência de capacidade, a condição final também seria inviável; aqui a violação ocorre no nadir transitório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação preliminar identifica combinações tecnicamente viáveis, que depois exigem detalhamento econômico, dinâmico e de confiabilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse tipo de abordagem é adequado para estimar estados operacionais e balanços de processo em condições estabilizadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ela não descreve por si só fenômenos transitórios, como recomposição após blackout, black start, load shedding ou resposta dinâmica ao compartilhamento de carga entre geradores."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Adequação elétrica inclui reserva e disponibilidade no estado relevante; folga com todos em serviço não substitui redundância N+1.",
+      "pergunta": "Com todos os geradores em serviço há folga, mas durante manutenção programada de um deles qualquer degrau normal de carga consome a margem e um trip adicional força rejeição. Combustível não limita. Qual causa primária?",
+      "resposta": "Capacidade instalada sem redundância N+1 no estado relevante",
+      "explicacao": "A adequação deve cobrir reserva e disponibilidade no estado relevante. Se a deficiência aparece com um gerador indisponível, apesar de combustível normal e carga rotineira, falta redundância N+1; não é apenas problema da lógica de rejeição.",
+      "resposta_padrao": "Load shedding insuficiente.",
+      "por_que_nao": "A margem já inexiste antes da contingência final; a deficiência é estrutural de disponibilidade, não apenas da lógica de alívio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Comparar modos de produção, composições e destinos do gás permite verificar coerência entre demanda, combustível, reserva e disponibilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O suprimento de combustível e a capacidade elétrica precisam permanecer adequados nos estados operacionais relevantes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

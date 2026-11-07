@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 2,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Divergência entre a entrada física no cartão e o valor usado pela lógica indica forcing ativo, não defeito de campo.",
+      "pergunta": "Durante o teste funcional com N2, o LED do cartão de entrada acompanha o pressostato, mas o bit da lógica fica travado no mesmo valor da simulação anterior e o permissivo continua liberado. Qual a causa primária?",
+      "resposta": "Forcing mantido na entrada do PLC.",
+      "explicacao": "A mudança física chega ao cartão, mas a lógica continua usando um valor artificial da etapa de teste. Isso mascara o estado real e mantém o permissivo indevidamente.",
+      "resposta_padrao": "Pressostato defeituoso.",
+      "por_que_nao": "O cartão recebe a comutação física; quem permanece artificialmente fixo é o valor usado pela lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica de automação, a comunicação entre instrumentos de campo e o Controlador Lógico Programável (PLC)"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando o mesmo sinal bloqueia a partida mas não derruba o equipamento em teste funcional, a lógica foi implementada só como permissivo de partida.",
+      "pergunta": "Sem o status de soprador, o aquecedor não parte. Em teste funcional, após a partida com esse status presente, retirar o mesmo sinal não o desliga; a mudança chega ao PLC e não há bypass ativo. Qual a causa primária?",
+      "resposta": "Lógica configurada só como permissivo de partida do aquecedor.",
+      "explicacao": "O PLC enxerga o sinal, pois ele já bloqueia a partida. Se a retirada em operação não provoca proteção, a condição não foi implementada para continuidade/intertravamento.",
+      "resposta_padrao": "Falha do feedback de operação do soprador.",
+      "por_que_nao": "Se o feedback faltasse, a partida já seria bloqueada; o problema está no uso lógico do sinal após a partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso ajuda a revelar problemas de integração, sintonia inicial, atuação de sopradores e aquecedores e falhas de comunicação que poderiam comprometer permissivos ou intertravamentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Intertravamento é a lógica que força uma ação de proteção quando uma condição definida ocorre; permissivo é a condição que precisa estar satisfeita para permitir partida, continuidade de operação ou execução de uma etapa;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "bypass ou override é a supressão temporária de uma entrada, condição ou resposta automática."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

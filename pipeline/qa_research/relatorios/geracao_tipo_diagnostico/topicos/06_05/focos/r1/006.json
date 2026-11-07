@@ -1,0 +1,117 @@
+{
+  "item": "06_05",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separar a votação instrumentada do critério de resposta operacional em emergência.",
+      "pergunta": "Um detector de gás entra em alarme alto, as ações automáticas 2ooN não disparam e a equipe só aciona alarme geral e restringe acesso após um segundo detector confirmar. Depois se verifica que a primeira leitura correspondia a liberação real. Qual foi a causa primária do atraso na resposta humana?",
+      "resposta": "procedimento de emergência subordinado à votação instrumentada",
+      "explicacao": "A lógica 2ooN limita ações automáticas; para resposta humana, qualquer detecção deve ser tratada conservadoramente. Esperar confirmação reproduz a votação do F&G no procedimento e cria atraso operacional indevido.",
+      "resposta_padrao": "Falha do segundo detector da zona.",
+      "por_que_nao": "Mesmo sem segunda confirmação, a resposta operacional não deveria esperar a votação usada só para autorizar ações automáticas.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A votação do sistema instrumentado e a decisão operacional durante uma emergência não são necessariamente equivalentes."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "qualquer detecção deveria ser tratada como real para fins de precaução operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "lógica, votação, documentação, instalação física, testes, gestão de mudanças e manutenção devem ser tratadas como partes inseparáveis de uma mesma função de segurança."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilizar filosofia 2ooN com cobertura espacial e tempo de resposta da zona.",
+      "pergunta": "Liberações de teste na borda da zona repetem o mesmo padrão: um detector alarma rápido, outro só responde tardiamente e o terceiro não vê a nuvem; com 2ooN, a ação automática não sai a tempo, embora todos passem nos testes. Qual causa primária explica isso?",
+      "resposta": "votação 2ooN incompatível com a cobertura real da zona",
+      "explicacao": "Os detectores respondem nos testes, mas a coincidência exigida não se forma a tempo no campo. A lógica depende de combinações que a cobertura instalada não materializa nesse cenário de liberação.",
+      "resposta_padrao": "Um dos detectores está descalibrado.",
+      "por_que_nao": "O padrão espacial repetitivo com todos os sensores aprovados mostra limitação da combinação lógica, não deriva de calibração.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Exigir coincidência de mais sinais tende a aumentar a robustez contra atuações indevidas, mas pode reduzir a sensibilidade prática"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a lógica é inadequada, mal implementada ou degradada por manutenção deficiente, recomendações não implantadas ou arranjo físico incompatível, a consequência pode ser dupla: perda de prevenção e perda de mitigação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer perda de cobertura por instalação física diferente do arranjo estudado.",
+      "pergunta": "Após montagem, testes funcionais e calibração estão normais, mas testes de liberação mostram pontos cegos exatamente onde o estudo previa detecção; os desvios batem com diferenças físicas de posição e orientação dos detectores em relação ao arranjo estudado. Qual a causa primária?",
+      "resposta": "planta de F&G instalada fora das coordenadas do estudo",
+      "explicacao": "Como os instrumentos passam nos testes e os pontos cegos coincidem com desvios de posição e orientação, a perda de aderência vem do arranjo construído não corresponder ao estudo de cobertura.",
+      "resposta_padrao": "Sensibilidade insuficiente dos detectores.",
+      "por_que_nao": "Deriva de sensibilidade não produz cegueira sistemática alinhada ao desvio geométrico entre campo e estudo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "planta de F&G instalada fora das coordenadas do estudo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O efeito sistêmico é claro: a barreira perde aderência ao cenário para o qual foi concebida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "lógica, votação, documentação, instalação física, testes, gestão de mudanças e manutenção devem ser tratadas como partes inseparáveis de uma mesma função de segurança."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar erro de implementação de causa e efeito distinto de falha de campo.",
+      "pergunta": "Na mesma combinação de detectores, o sistema confirma evento sempre na zona correta, mas fecha dampers e libera dilúvio de outro módulo; comunicações, I/O e sensores testam bem, e o desvio surgiu após revisão de software. Qual causa primária explica esse padrão?",
+      "resposta": "matriz de causa e efeito implementada incorretamente",
+      "explicacao": "A detecção é confirmada na zona certa, mas as saídas sempre atuam no módulo errado após revisão de software. O padrão repetível com hardware saudável aponta para mapeamento lógico incorreto.",
+      "resposta_padrao": "Falha de campo nos atuadores do módulo correto.",
+      "por_que_nao": "Atuadores avariados não explicam a atuação consistente de saídas de outro módulo com a mesma combinação de detectores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a lógica é inadequada, mal implementada ou degradada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A não atuação do F&G, a alocação inadequada de detectores e falhas de manutenção foram associadas ao agravamento de evento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "lógica, votação, documentação, instalação física, testes, gestão de mudanças e manutenção devem ser tratadas como partes inseparáveis de uma mesma função de segurança."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

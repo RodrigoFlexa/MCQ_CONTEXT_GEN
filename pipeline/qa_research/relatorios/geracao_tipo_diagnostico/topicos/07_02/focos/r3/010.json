@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "rodada": 3,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar escopo de rede excessivo no acesso remoto de terceiro pelo alcance lateral a ativos fora da tarefa.",
+      "pergunta": "Chamado remoto restrito a um medidor fiscal: com a mesma conta e pelo terminal dedicado de suporte, o fornecedor só vê tela de leitura, mas os registros da sessão mostram conexões bem-sucedidas a vários controladores da mesma sub-rede de controle. Qual causa primária?",
+      "resposta": "Regra de acesso remoto liberada para toda a sub-rede de controle",
+      "explicacao": "Como a aplicação e a conta ficaram em leitura, o sinal decisivo é o alcance lateral a outros controladores. Isso aponta para escopo de rede maior que a tarefa, não para privilégio funcional.",
+      "resposta_padrao": "Perfil do fornecedor com privilégio excessivo.",
+      "por_que_nao": "O perfil observado permaneceu só leitura; o desvio foi alcançar outros ativos, indicando escopo de rede amplo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "restringe rotas de acesso"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar escopo funcional excessivo pelo protocolo ou serviço exposto além da necessidade do suporte remoto.",
+      "pergunta": "Durante suporte só para consulta de alarmes, a aplicação remota continua sem botões de ajuste e a conta não muda; ainda assim, o firewall registra conexões bem-sucedidas da mesma sessão à porta usada pelo software de engenharia do controlador. Qual causa primária?",
+      "resposta": "Regra de acesso remoto liberando protocolo de engenharia desnecessário",
+      "explicacao": "Sem mudança de conta e com a interface ainda sem ajuste, o ponto decisivo é a conexão bem-sucedida ao serviço de engenharia. A exposição está no protocolo liberado, não no papel do usuário.",
+      "resposta_padrao": "Conta com privilégio de engenharia.",
+      "por_que_nao": "As restrições da aplicação permaneceram e não houve troca de conta; o alcance indevido veio do serviço exposto no caminho remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "remove serviços desnecessários, restringe rotas de acesso"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar exposição direta à internet no caminho de acesso remoto pela ausência de passagem pela VPN prevista.",
+      "pergunta": "O servidor usado para suporte remoto recebe tentativas de login de endereços públicos, mas não há autenticação correspondente na VPN e os demais ativos protegidos pela mesma borda não recebem esse tráfego. Qual causa primária?",
+      "resposta": "Acessibilidade direta à internet do servidor de suporte remoto",
+      "explicacao": "Se o host recebe tentativas vindas da internet sem qualquer passagem pela VPN, o caminho previsto foi contornado. O problema é exposição direta do servidor, não uso indevido do túnel.",
+      "resposta_padrao": "Credenciais da VPN comprometidas.",
+      "por_que_nao": "Sem autenticação nem registros na VPN, o tráfego chega direto ao host exposto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "recomenda-se evitar acessibilidade direta a partir da internet. Quando o acesso remoto for necessário, recomenda-se usar método seguro, como Rede Privada Virtual (VPN)."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "evitar acessibilidade direta pela internet, posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

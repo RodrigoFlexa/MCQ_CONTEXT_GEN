@@ -1,0 +1,113 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Redundância aparente não aumenta a disponibilidade quando dois trens dependem da mesma utilidade crítica.",
+      "pergunta": "Dois trens de compressão foram duplicados, mas o KPI de disponibilidade quase não mudou. As falhas próprias dos compressores seguem o histórico; quando se perde a água de resfriamento, os dois trens param ao mesmo tempo. Qual a causa primária?",
+      "resposta": "Água de resfriamento compartilhada como gargalo comum",
+      "explicacao": "A duplicação dos compressores não preserva a função se ambos dependem da mesma utilidade. O desligamento simultâneo na perda da água de resfriamento revela um ponto comum de falha, reduzindo o ganho real de disponibilidade.",
+      "resposta_padrao": "Confiabilidade dos compressores abaixo da prevista.",
+      "por_que_nao": "As falhas próprias seguem o histórico; as paradas coincidem com a perda da mesma utilidade compartilhada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "restrições de utilidades"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reserva fria pode perder a função por falha de comutação sob demanda, mesmo com o equipamento reserva saudável.",
+      "pergunta": "No arranjo com reserva fria, o equipamento reserva recebe comando e acelera quando o ativo falha, mas a função só volta após a transferência manual do circuito, sem reparo mecânico. Qual a causa primária?",
+      "resposta": "Falha de comutação automática do reserva fria",
+      "explicacao": "O reserva está apto a operar, pois assume a função sem reparo mecânico. O sinal decisivo é a retomada apenas após transferência manual, indicando falha na comutação e não no equipamento em si.",
+      "resposta_padrao": "Falha em espera do equipamento reserva.",
+      "por_que_nao": "Ele recebe comando, acelera e sustenta o serviço após a transferência manual; o problema está na comutação automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O ganho de confiabilidade da redundância com reserva fria é mais forte no início e pode se esgotar em campanhas longas.",
+      "pergunta": "A confiabilidade acumulada de um arranjo 1+1 com reserva fria começa acima da de um arranjo simples, mas a vantagem encolhe continuamente em campanhas longas. Os testes sob demanda do reserva seguem bem-sucedidos e não há paradas simultâneas. Qual a causa primária?",
+      "resposta": "Degradação progressiva do equipamento ativo em serviço",
+      "explicacao": "Com o reserva respondendo bem aos testes e sem eventos simultâneos, o encurtamento do benefício ao longo do tempo decorre da degradação do ativo em operação. A redundância ajuda no início, mas não compensa indefinidamente campanhas longas.",
+      "resposta_padrao": "Falha em espera do reserva.",
+      "por_que_nao": "Os testes sob demanda seguem bem-sucedidos; a perda de vantagem ao longo do tempo aponta para degradação do ativo operante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a redundância pode elevar a confiabilidade e a disponibilidade no início da missão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "esse benefício não é ilimitado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "em tempos mais longos, a degradação dos equipamentos ativos pode deixar de ser compensada pelo reserva."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A disponibilidade operacional de arranjos redundantes pode permanecer baixa quando o reparo depende de um acesso físico comum.",
+      "pergunta": "Mesmo com 2x100%, toda intervenção em um dos módulos paralisa também o outro porque ambos dependem do mesmo acesso de içamento e isolamento. A taxa de falha dos módulos está normal, mas a disponibilidade operacional permanece baixa. Qual a causa primária?",
+      "resposta": "Acesso de reparo compartilhado entre os módulos",
+      "explicacao": "A redundância não remove indisponibilidade quando o reparo exige um recurso físico comum que tira os dois caminhos de serviço. O KPI cai por dependência de acesso, não por pior confiabilidade intrínseca dos módulos.",
+      "resposta_padrao": "Tempo de reparo ativo elevado.",
+      "por_que_nao": "A perda vem do bloqueio simultâneo pelo acesso comum; o reparo ativo de um módulo não explica a parada do outro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de reparo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "dois equipamentos com a mesma frequência de falha e o mesmo tempo de reparo ativo podem apresentar disponibilidades operacionais muito diferentes se seus tempos logísticos e administrativos forem distintos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

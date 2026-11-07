@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 2,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio a contas de serviço: componente de coleta não deve ter permissão de operação.",
+      "pergunta": "Setpoints retornam a valores antigos sempre que o serviço de coleta do otimizador reinicia; não houve login de operador, checksums de lógica e firmware seguem iguais, e as escritas saem da conta do conector. Qual causa primária?",
+      "resposta": "Conta de serviço do conector com privilégio de operação.",
+      "explicacao": "As escritas partem da própria aplicação. Para coleta, ela deveria ter apenas observação; se consegue atuar no processo, o desvio primário é privilégio excessivo da conta de serviço.",
+      "resposta_padrao": "Bug no serviço de coleta do otimizador.",
+      "por_que_nao": "O bug só virou ação no processo porque a conta do conector tinha permissão de escrita.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "conceder a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Menor privilégio por escopo de ativos: perfil somente leitura não substitui restrição de alcance na rede de manutenção.",
+      "pergunta": "Durante diagnóstico de um pacote, o notebook na rede de manutenção lista e abre sessão em PLCs e servidores de outros sistemas; a conta é só de leitura e os acessos aparecem como permitidos no firewall. Qual causa primária explica esse alcance?",
+      "resposta": "ACL do conduíte de manutenção permitindo alcance a ativos não relacionados.",
+      "explicacao": "O problema não é o tipo de ação permitido pela conta, mas o escopo de ativos alcançáveis. Menor privilégio também limita quais ativos podem ser vistos e acessados na tarefa.",
+      "resposta_padrao": "Perfil de engenharia concedido à conta de manutenção.",
+      "por_que_nao": "A conta permanece só de leitura; o desvio é o alcance lateral a ativos fora do escopo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "limita quais ativos podem ser vistos, configurados ou modificados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Menor privilégio temporal: acesso temporário de fornecedor deve expirar ou ser removido ao fim da atividade.",
+      "pergunta": "Meses depois da intervenção, surgem novas autenticações do fornecedor pelo fluxo regular de acesso; os registros não mostram sessão contínua, e a credencial havia sido aberta só para aquela atividade. Qual causa primária?",
+      "resposta": "Conta temporária de fornecedor sem expiração após a intervenção.",
+      "explicacao": "O menor privilégio inclui duração mínima compatível com a tarefa. Novos logons meses depois descartam sessão remota pendurada e apontam para credencial temporária ainda válida.",
+      "resposta_padrao": "Sessão remota não encerrada ao fim do suporte.",
+      "por_que_nao": "Os registros mostram novos logons pelo método normal meses depois, não permanência de uma conexão antiga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pelo menor tempo compatível com a atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "apenas as permissões estritamente necessárias"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pode abrir demanda por acesso remoto, conexão temporária"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

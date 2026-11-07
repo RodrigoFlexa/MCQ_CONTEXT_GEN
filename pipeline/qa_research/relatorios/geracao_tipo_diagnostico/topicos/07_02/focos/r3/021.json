@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falta de contexto de modo operacional como origem de alarmes analíticos espúrios em transientes normais.",
+      "pergunta": "O detector de anomalia do compressor alarma em toda partida e no teste periódico de recirculação, embora pressão, corrente, vibração e sequência de proteção repitam o padrão histórico saudável desses regimes. Qual é a causa primária?",
+      "resposta": "Ausência de contexto de modo operacional no modelo.",
+      "explicacao": "Partida e recirculação têm assinaturas válidas diferentes da carga estável. Sem contexto operacional, o modelo interpreta transientes normais desses regimes como anomalia.",
+      "resposta_padrao": "Descalibração de instrumento.",
+      "por_que_nao": "Deriva de instrumento não apareceria apenas em regimes específicos com trajetória repetível e saudável, sem efeitos locais associados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar oscilação por bias remoto ao uso de WAN/nuvem não determinística em função próxima ao controle.",
+      "pergunta": "Uma aplicação antes consultiva passou a escrever bias a cada 10 s a partir da nuvem. Com jitter da WAN surgem correções alternadas e oscilação; instrumentos e malhas locais ficam estáveis quando o bias automático é bloqueado. Qual é a causa primária?",
+      "resposta": "Caminho WAN/nuvem não determinístico no loop de ajuste automático.",
+      "explicacao": "A função deixou de ser apenas consultiva e passou a influenciar ajustes frequentes. Nessa proximidade com o controle, latência e jitter da WAN tornam-se incompatíveis com a atuação.",
+      "resposta_padrao": "Instabilidade da rede WAN.",
+      "por_que_nao": "A WAN é o gatilho imediato; a causa primária é colocá-la dentro de um loop de ajuste frequente próximo ao controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Também aparecem arquiteturas híbridas, nas quais controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

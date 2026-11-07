@@ -1,0 +1,101 @@
+{
+  "item": "06_07",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre ordem das tarefas e indisponibilização sequencial de barreiras compartilhadas.",
+      "pergunta": "Cada tarefa do programa foi liberada isoladamente. Só quando a ordem mudou, a segunda passou a iniciar com menor disponibilidade de uma barreira que estava íntegra no começo do dia; nenhum equipamento novo falhou. Qual causa primária explica a queda do grau de segurança do conjunto?",
+      "resposta": "impacto da tarefa anterior sobre a barreira solidária",
+      "explicacao": "Na avaliação dinâmica, uma operação pode degradar barreira usada adiante. Com a ordem alterada, a segunda tarefa já começa com menor proteção, algo que a análise isolada e estática não captura.",
+      "resposta_padrao": "Falha física da barreira na segunda tarefa.",
+      "por_que_nao": "Não houve falha nova; a perda aparece apenas quando a tarefa anterior vem antes, indicando efeito sequencial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar o grau de segurança ao longo de uma sequência de tarefas, em vez de tratar o sistema como estático."
+        },
+        {
+          "bloco": "F",
+          "trecho": "impactos de operações sobre barreiras, apoiando a checagem sequencial."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de critério de aceitabilidade para concluir sobre um índice quantitativo de segurança.",
+      "pergunta": "Um verificador já modelou condições iniciais, impactos de cada passo e gerou um número para o grau de segurança do programa. Mesmo assim, ninguém consegue dizer tecnicamente se o programa é aceitável ou não. Qual é a causa?",
+      "resposta": "ausência de critério de aceitabilidade do grau de segurança",
+      "explicacao": "A metodologia só permite concluir se o programa é aceitável quando o número calculado é comparado a um critério previamente definido; sem esse referencial, o resultado não decide nada.",
+      "resposta_padrao": "Faltam mais dados para rodar a análise.",
+      "por_que_nao": "Os dados já foram processados e o número existe; o que falta é o limite para aceitá-lo ou rejeitá-lo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permitir verificação explícita de programas de intervenção quanto ao grau de segurança, desde que exista um critério de aceitabilidade definido."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito de mudança temporária de configuração na validade das premissas e da condição analisada.",
+      "pergunta": "A sequência foi considerada aceitável no planejamento, mas no campo houve uma alteração temporária de configuração durante o trabalho e o mesmo número continuou sendo usado sem revisão. As barreiras físicas não falharam, porém a decisão ficou inconsistente. Qual causa primária explica isso?",
+      "resposta": "premissas desatualizadas pela alteração temporária de configuração",
+      "explicacao": "O valor só é útil se dados, premissas e condição analisada corresponderem à situação real. Alteração temporária de configuração durante o trabalho invalida a base da avaliação se não houver revisão.",
+      "resposta_padrao": "Houve degradação física das barreiras em campo.",
+      "por_que_nao": "A inconsistência começou com a mudança temporária de configuração, sem evidência de falha física nova.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "utilidade do número calculado depende da validade dos dados de entrada, das premissas do modelo e da coerência entre a condição real e a condição analisada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "alterações temporárias feitas durante o trabalho"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "podem exigir reavaliação das premissas de risco."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de dependência comum entre barreiras que aparentam estar separadas no planejamento.",
+      "pergunta": "Duas barreiras constavam separadas no planejamento. Durante a manutenção de um único utilitário de apoio, ambas ficaram indisponíveis na mesma etapa, sem defeito nos elementos finais. Que causa técnica explica essa perda simultânea?",
+      "resposta": "dependência solidária das barreiras no utilitário comum",
+      "explicacao": "Barreiras que compartilham suporte não são independentes. A perda de um único utilitário pode indisponibilizar ambas na mesma etapa, e isso precisa ser representado nas relações entre barreiras.",
+      "resposta_padrao": "Ocorreram duas falhas independentes ao mesmo tempo.",
+      "por_que_nao": "Um único suporte retirado derrubou as duas funções; isso caracteriza dependência comum, não coincidência de falhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "conceito de conjunto solidário de barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "representar as relações entre barreiras"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

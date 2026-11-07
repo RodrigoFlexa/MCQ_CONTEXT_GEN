@@ -1,0 +1,83 @@
+{
+  "item": "02_11",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer desvio de ponto de orvalho causado por uso de pacote termodinâmico fora da faixa validada de pressão.",
+      "pergunta": "Só nas campanhas de maior pressão, a simulação passa a prever gás bem mais seco que o medido; vazão de TEG, pureza, temperaturas da coluna e checagem do analisador permanecem coerentes. Qual causa primária explica esse desvio sistemático?",
+      "resposta": "Pacote termodinâmico fora da faixa validada de pressão",
+      "explicacao": "Com dados de campo consistentes e desvio restrito às condições de maior pressão, a causa mais provável é a aplicação do modelo de propriedades além da faixa em que foi validado para equilíbrio água-glicol.",
+      "resposta_padrao": "Baixa eficiência de contato da torre.",
+      "por_que_nao": "Se fosse eficiência da torre, o erro apareceria também nas demais pressões; aqui ele surge apenas quando a pressão aumenta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na escolha do modelo termodinâmico, não existe um pacote universalmente superior para qualquer condição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Fora da faixa validada de um pacote de propriedades, deve-se selecionar e validar outro modelo adequado ao equilíbrio água-glicol e às condições de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir piora real da desidratação de divergência causada por incerteza do analisador de umidade.",
+      "pergunta": "Sem mudança em circulação, pureza do TEG e temperaturas da absorvedora, o analisador online de umidade mostra picos intermitentes que não aparecem no balanço de água nem nas amostras de verificação. Qual é a causa primária da divergência?",
+      "resposta": "Incerteza do analisador online de umidade",
+      "explicacao": "Os picos não acompanham variáveis de processo nem verificação independente. No contexto de validação de desidratação, isso aponta para limitação da medição de umidade, não para piora real da secagem.",
+      "resposta_padrao": "Queda da pureza do TEG pobre.",
+      "por_que_nao": "Se a pureza do TEG tivesse caído, haveria coerência com balanço de água e demais sinais de processo, o que não ocorreu.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A simulação de torres de desidratação com TEG envolve incertezas práticas, porque a validação depende de dados de campo e de medições de umidade cuja confiabilidade pode ser limitada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, discrepâncias entre modelo e operação real nem sempre significam erro exclusivo do simulador; podem refletir incerteza na eficiência da torre, nos internos ou nos instrumentos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O ponto de orvalho de água obtido na saída da unidade depende fortemente da pureza do TEG pobre."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar erro de modelagem por transferir parâmetros de colunas com pratos para coluna com recheio estruturado.",
+      "pergunta": "O mesmo ajuste que funcionava em torres com pratos passa a superestimar a secagem nesta coluna com recheio estruturado, sem sinais de inundação, canalização ou desvio instrumental. Qual causa explica o erro persistente?",
+      "resposta": "Aplicação de correlações de pratos à coluna com recheio estruturado",
+      "explicacao": "A diferença de internos altera a forma de representar transferência de massa e eficiência. O bloco destaca que colunas com recheio estruturado desafiam literatura e experiência de simulação construídas majoritariamente com pratos.",
+      "resposta_padrao": "Baixa eficiência real do recheio.",
+      "por_que_nao": "Sem sinais hidráulicos ou instrumentais, o desvio sistemático ligado à origem do ajuste indica inadequação do modelo herdado de colunas com pratos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em ambiente offshore, a predominância de colunas com recheio estruturado adiciona um desafio quando a literatura disponível ou a experiência de simulação foi construída majoritariamente com pratos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, discrepâncias entre modelo e operação real nem sempre significam erro exclusivo do simulador; podem refletir incerteza na eficiência da torre, nos internos ou nos instrumentos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de obediência ao comando remoto de defeito de posicionador quando o sinal chega ao campo, mas o atuador só responde localmente.",
+      "pergunta": "A saída do controlador muda no sistema e o sinal chega ao posicionador, mas a válvula só se move quando acionada no próprio atuador; ar de suprimento e mecânica estão normais. Qual é a causa primária?",
+      "resposta": "atuador mantido em controle local",
+      "explicacao": "Se o sinal já chega ao posicionador e o conjunto opera por comando local, a causa não é rede, ar ou mecânica; a forma de atuação do atuador ainda não está configurada para obedecer ao comando remoto.",
+      "resposta_padrao": "Falha do posicionador.",
+      "por_que_nao": "O sinal chega ao campo e o conjunto responde localmente, excluindo defeito primário do posicionador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pendências de conversão de válvulas para comando automático"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fazer os atuadores de campo respeitarem comandos da Interface Homem-Máquina (IHM)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer falsa indicação de modulação na IHM quando falta retorno independente de posição da válvula.",
+      "pergunta": "No sinótico, a posição exibida acompanha exatamente a saída do controlador, mas em campo a haste permanece nos batentes até receber comando local. Qual causa primária explica essa falsa aparência de modulação?",
+      "resposta": "indicador de posição da válvula não comissionado",
+      "explicacao": "Quando a posição mostrada replica o comando, sem correspondência com o curso observado, a IHM não recebe retorno independente da válvula; falta o indicador de posição comissionado para comprovar a modulação real.",
+      "resposta_padrao": "Posicionador descalibrado.",
+      "por_que_nao": "Descalibração altera a relação comando-curso; aqui a variável exibida apenas espelha o comando, sem retorno real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o indicador de posição ainda permanecia pendente."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "indicação de posição e resposta observável do atuador em campo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar inversão do sentido de atuação do conjunto válvula/atuador a partir de teste integrado em manual.",
+      "pergunta": "Com o controlador em manual, elevar a saída de 20% para 80% faz a haste percorrer o curso todo, porém na direção oposta à exigida pela função de processo prevista. Qual causa primária?",
+      "resposta": "sentido de atuação da válvula invertido",
+      "explicacao": "Em manual, a ação do controlador sai da causa. Se o curso é contínuo, mas no sentido incompatível com a função prevista, há descompasso entre a forma de atuação configurada e o que o processo requer.",
+      "resposta_padrao": "Ação reversa do controlador.",
+      "por_que_nao": "Com o controlador em manual, o erro persiste e sai do algoritmo de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da forma de atuação e da correspondência entre projeto, lógica e montagem de campo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sentido incorreto de atuação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

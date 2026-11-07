@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 3,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir lógica de trip não implementada de falha no sensor ou na cadeia de desligamento.",
+      "pergunta": "Na baixa pressão de sucção, o valor do transmissor chega corretamente ao controlador e o alarme dispara; não há bypasses, e ao forçar o bit de trip a saída desliga a bomba. Pela condição de processo, ela nunca para. Qual a causa primária?",
+      "resposta": "Trip automático por baixa pressão não implementado.",
+      "explicacao": "A medição e a cadeia de desligamento funcionam quando o bit é forçado; falta a ligação lógica entre a condição de baixa pressão e o comando de parada.",
+      "resposta_padrao": "O transmissor de pressão está defeituoso.",
+      "por_que_nao": "O controlador recebe a baixa pressão corretamente e a bomba desliga quando o trip é forçado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permaneceram pendências antes da operação envolvendo conversão de válvulas para comando automático, instalação de trip de emergência de bombas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer polaridade invertida na entrada digital usada em permissivo/intertravamento.",
+      "pergunta": "Com a condição segura presente, a partida permanece bloqueada; ao simular a condição de falha, o cartão de entrada muda de estado e o permissivo libera. Em campo, o contato comuta corretamente nos dois testes. Qual a causa primária?",
+      "resposta": "Entrada digital do permissivo com polaridade invertida.",
+      "explicacao": "Como contato, fiação e cartão respondem, a inversão está na interpretação do estado seguro/perigoso pela lógica, típica de parametrização invertida da entrada.",
+      "resposta_padrao": "A chave de campo está defeituosa.",
+      "por_que_nao": "O contato muda corretamente em campo e no cartão; o erro está na leitura lógica desse estado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras e alinhamento entre documentação, prática de campo e lógica implantada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir setpoint de alarme parametrizado incorretamente de erro de medição.",
+      "pergunta": "Um alarme HH entra sempre na mesma leitura; transmissor e indicação local concordam em toda a faixa. Quando só o ajuste do HH é elevado no controlador durante o teste, a atuação migra exatamente para o novo valor. Qual a causa primária?",
+      "resposta": "Setpoint do HH parametrizado incorretamente.",
+      "explicacao": "A medição acompanha a indicação independente; se a atuação desloca junto apenas com a mudança do ajuste, a causa está no parâmetro do alarme.",
+      "resposta_padrao": "O transmissor está descalibrado.",
+      "por_que_nao": "O ponto de atuação acompanha a alteração do ajuste do HH, não um desvio próprio da medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

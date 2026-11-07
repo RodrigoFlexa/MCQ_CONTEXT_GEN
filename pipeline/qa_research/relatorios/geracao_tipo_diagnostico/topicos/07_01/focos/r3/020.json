@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 3,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falta de integração de inversão de polaridade do feedback quando o PLC recebe a mudança, mas o permissivo reage ao estado oposto.",
+      "pergunta": "Com o soprador em vazão estável, o contato de operação muda de estado e a entrada do PLC acompanha, mas o permissivo do aquecedor só fica satisfeito quando o soprador para. Qual a causa primária?",
+      "resposta": "Polaridade invertida do feedback do soprador na lógica do permissivo.",
+      "explicacao": "O sinal existe e chega ao PLC, porém a liberação ocorre no estado físico oposto. Isso exclui ausência de integração e indica interpretação invertida do feedback na lógica do permissivo.",
+      "resposta_padrao": "Defeito no soprador ou no contato de operação.",
+      "por_que_nao": "Há vazão estável e a entrada do PLC acompanha a comutação; o erro está na leitura lógica do estado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica de automação, a comunicação entre instrumentos de campo e o Controlador Lógico Programável (PLC)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "atuação de sopradores e aquecedores e falhas de comunicação que poderiam comprometer permissivos ou intertravamentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permissivo é a condição que precisa estar satisfeita para permitir partida, continuidade de operação ou execução de uma etapa"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar erro de associação do sinal na lógica quando o valor de campo chega ao PLC, mas quem altera o permissivo é outro transmissor.",
+      "pergunta": "Na pressurização com N2, o transmissor testado varia em campo e a entrada analógica correspondente no PLC acompanha, mas o permissivo só muda quando se altera outro transmissor paralelo do mesmo vaso. Qual a causa primária?",
+      "resposta": "Permissivo associado ao transmissor paralelo errado na lógica do PLC.",
+      "explicacao": "Como o sinal do transmissor testado chega corretamente ao PLC, a falha não está no instrumento nem no canal. O permissivo está referenciado ao tag errado dentro da lógica.",
+      "resposta_padrao": "Transmissor testado descalibrado.",
+      "por_que_nao": "A variação do transmissor aparece na entrada correspondente; quem altera o permissivo é o outro transmissor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica de automação, a comunicação entre instrumentos de campo e o Controlador Lógico Programável (PLC)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso ajuda a revelar problemas de integração"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permissivo é a condição que precisa estar satisfeita para permitir partida, continuidade de operação ou execução de uma etapa"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

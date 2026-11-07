@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 4,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Detectar perda de observabilidade do estado de redundância, distinguindo-a de falha do canal reserva.",
+      "pergunta": "No teste de comutação do par redundante, as malhas seguem estáveis e as PVs continuam atualizando, mas a supervisão não muda a indicação de ativo/reserva nem registra falha do canal retirado. Qual causa primária?",
+      "resposta": "Status do par redundante não integrado ao supervisório.",
+      "explicacao": "A comutação preservou a função; falhou apenas a visibilidade do estado degradado. Isso aponta para ausência de integração do status ativo/reserva e da falha do canal na camada supervisória.",
+      "resposta_padrao": "Canal reserva indisponível.",
+      "por_que_nao": "Se o reserva estivesse indisponível, a comutação não preservaria as malhas; o defeito está na detectabilidade do estado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "indisponibilidade de informações de estado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separar falha de coleta histórica de falha de medição ou de controle pelas camadas afetadas.",
+      "pergunta": "Dashboards e tendências históricas passam a mostrar platôs e lacunas, enquanto telas de operação, alarmes ao vivo e a atuação das malhas seguem coerentes. Qual causa primária explica esse padrão?",
+      "resposta": "Coleta do historian interrompida.",
+      "explicacao": "Como dados ao vivo, alarmes e controle permanecem íntegros, o problema não está em campo nem no controlador. A indisponibilidade aparece apenas na camada de coleta e armazenamento histórico.",
+      "resposta_padrao": "Transmissor intermitente.",
+      "por_que_nao": "Uma falha do transmissor afetaria também as telas ao vivo, variáveis correlatas ou a própria malha, não só o histórico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar falha no servidor supervisório primário pela continuidade do controle e recuperação via failover.",
+      "pergunta": "Todas as estações congelam alarmes e tendências ao mesmo tempo, mas as malhas seguem atuando; ao assumir o servidor supervisório reserva, a atualização volta sem intervenção nos controladores. Qual causa primária?",
+      "resposta": "Servidor supervisório primário indisponível.",
+      "explicacao": "O controle continuou funcionando e a recuperação veio apenas com a assunção do servidor reserva. Isso localiza a falha na redundância do supervisório, não em controladores, rede de campo ou instrumentos.",
+      "resposta_padrao": "Falha do controlador.",
+      "por_que_nao": "Se o controlador fosse a causa, a troca do servidor supervisório não restauraria alarmes e tendências sem qualquer ação no controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "03_02",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar erro de pré-tensão pela translação da curva tensão de topo versus offset.",
+      "pergunta": "Depois do retensionamento, a tensão de topo medida ficou acima da prevista por quase a mesma diferença em toda a faixa de offset; a inclinação da curva não mudou e comprimento e peso linear conferem com o cadastro. Qual a causa primária?",
+      "resposta": "pré-tensão aplicada acima da informada no modelo",
+      "explicacao": "Com a mesma inclinação da curva tensão-offset, a rigidez global permaneceu. Um desvio quase paralelo nas tensões ao longo de toda a faixa indica alteração da condição de contorno, isto é, da pré-tensão.",
+      "resposta_padrao": "A rigidez axial das linhas aumentou.",
+      "por_que_nao": "Mudança de rigidez alteraria a inclinação da relação tensão-offset, não um deslocamento quase paralelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Entre as condições de contorno, a pré-tensão é explicitamente informada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso permite relacionar offset da plataforma, rigidez do sistema e tensão no topo das linhas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar picos de tensão não previstos à subestimação dos deslocamentos dinâmicos globais em análise quase-estática.",
+      "pergunta": "Os alarmes de pico de tensão aparecem só nos estados de mar com maiores movimentos globais; offset médio, heading médio e tensões médias seguem a previsão. O que explica a subestimação recorrente desses picos?",
+      "resposta": "amplitudes dos deslocamentos dinâmicos globais subestimadas na análise quase-estática",
+      "explicacao": "Na análise quase-estática, as amplitudes de deslocamentos dinâmicos globais entram na avaliação das tensões. Se médias batem e os picos falham justamente nos mares mais móveis, o erro está nessa parcela dinâmica.",
+      "resposta_padrao": "A pré-tensão das linhas está excessiva.",
+      "por_que_nao": "Pré-tensão alta elevaria também as tensões médias, não apenas os picos associados a certos estados de mar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em análise quase-estática, amplitudes dos deslocamentos dinâmicos globais também passam a influenciar a avaliação das tensões."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso permite relacionar offset da plataforma, rigidez do sistema e tensão no topo das linhas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar uso indevido da hipótese de carregamentos ambientais colineares pela mudança de qual grupo recebe maior carga.",
+      "pergunta": "Quando vento, onda e corrente ficam quase alinhados, a distribuição de tensões prevista coincide com o monitoramento; com corrente cruzada, o offset muda pouco, mas o grupo mais carregado passa a ser outro. Qual a causa primária do erro de previsão?",
+      "resposta": "hipótese de carregamentos ambientais colineares no cálculo",
+      "explicacao": "O cálculo acerta quando os agentes estão alinhados e falha quando suas direções divergem. Isso caracteriza uso de formulação cuja validade depende da premissa de colinearidade dos carregamentos ambientais.",
+      "resposta_padrao": "Há perda de rigidez ou de pré-tensão em um grupo de linhas.",
+      "por_que_nao": "Um problema permanente de linha apareceria também nos casos alinhados, não só quando as direções ambientais se cruzam.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "há formulações em que os carregamentos ambientais são tratados como colineares"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interpretação do resultado deve respeitar exatamente essas premissas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar erro na estimativa de restauração quando se usa soma de tensões de topo sem projeções direcionais.",
+      "pergunta": "Com a mesma soma de tensões de topo, a estimativa interna de força restauradora não muda após rotação do casco, mas o offset medido aumenta na mesma direção de deriva, sem retensionamento. Que causa primária explica o erro?",
+      "resposta": "uso das tensões sem projeções horizontais na direção de deriva",
+      "explicacao": "A restauração em uma deriva específica depende da soma das projeções horizontais das tensões nessa direção, não da soma escalar das tensões de topo. Com rotação, a orientação muda e a projeção pode cair.",
+      "resposta_padrao": "Houve perda de pré-tensão de alguma linha.",
+      "por_que_nao": "Sem retensionamento, o erro aparece após a rotação; a soma das tensões ficou igual, mas a componente útil na deriva mudou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para uma direção de deriva dada, a força de restauração pode ser obtida pelo somatório das projeções das tensões horizontais de cada linha nessa direção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso permite relacionar offset da plataforma, rigidez do sistema e tensão no topo das linhas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

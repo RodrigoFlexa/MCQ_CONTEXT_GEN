@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 2,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Escolha inadequada de disponibilidade como KPI para continuidade de corrida, que é atributo de confiabilidade.",
+      "pergunta": "O dashboard mensal segue acima da meta de disponibilidade, mas poucas corridas planejadas de 72 h terminam sem trip e os retornos levam minutos. Qual causa primária do desalinhamento?",
+      "resposta": "Uso de disponibilidade para medir confiabilidade de campanha",
+      "explicacao": "Disponibilidade mede fração do tempo apto a operar; completar 72 h sem trip exige continuidade no intervalo. Como os retornos são rápidos, o KPI mensal permanece alto mesmo com baixa chance de concluir a corrida sem interrupção.",
+      "resposta_padrao": "MTTR alto.",
+      "por_que_nao": "Os retornos em minutos indicam recuperação curta; o problema é a continuidade do serviço ao longo do intervalo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "disponibilidade expressa a probabilidade de o sistema estar operacional em um dado instante; confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso ocorre porque a disponibilidade combina frequência de interrupções e duração de recuperação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir melhoria de mantenabilidade de melhoria de confiabilidade na leitura de indicadores.",
+      "pergunta": "Com a mesma frequência de falhas, um sistema passou a voltar mais rápido após cada evento por melhor acesso e recursos; o relatório atribuiu isso a maior confiabilidade. Qual é a causa primária do erro?",
+      "resposta": "Confusão entre mantenabilidade e confiabilidade",
+      "explicacao": "A frequência de falhas não mudou, então a capacidade de seguir operando no intervalo permaneceu igual. O que melhorou foi o tempo para restaurar o serviço após cada falha, atributo de mantenabilidade que também afeta disponibilidade.",
+      "resposta_padrao": "A confiabilidade aumentou com reparos mais rápidos.",
+      "por_que_nao": "Reparo mais rápido reduz o tempo indisponível após a falha, mas não reduz a probabilidade de a falha ocorrer.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mantenabilidade expressa a probabilidade de restaurar um sistema defeituoso a um estado operacional dentro de um tempo especificado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "aumentar o MTBF tende a elevar a disponibilidade, enquanto aumentar o MTTR tende a reduzi-la."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que a piora do MTBF pode anular ganho de MTTR na disponibilidade.",
+      "pergunta": "O tempo médio de reparo caiu após reforço da manutenção, porém a disponibilidade mensal não melhorou; no mesmo período, as paradas não programadas ficaram bem mais frequentes. Qual causa primária anulou o ganho?",
+      "resposta": "Redução do MTBF",
+      "explicacao": "A melhora de MTTR reduz a duração das paradas, mas o aumento das falhas encurta o uptime entre eventos. Como disponibilidade combina ambos, a queda do MTBF pode neutralizar o ganho de reparo.",
+      "resposta_padrao": "MTTR ainda alto.",
+      "por_que_nao": "O sinal decisivo é o aumento das paradas não programadas; disponibilidade depende também da frequência de interrupções.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumentar o MTBF tende a elevar a disponibilidade, enquanto aumentar o MTTR tende a reduzi-la."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso ocorre porque a disponibilidade combina frequência de interrupções e duração de recuperação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

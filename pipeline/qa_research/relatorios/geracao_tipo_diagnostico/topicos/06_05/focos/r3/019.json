@@ -1,0 +1,61 @@
+{
+  "item": "06_05",
+  "foco": 19,
+  "rodada": 3,
+  "contexto": {
+    "A1": 17,
+    "A2": 18,
+    "F": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar lógica de mitigação de gás indevidamente condicionada à confirmação posterior de ignição.",
+      "pergunta": "Dois detectores de gás confirmam a zona no controlador, mas a SDV só fecha quando um detector de chama próximo é testado; setpoints e válvula conferem. Qual é a causa primária?",
+      "resposta": "lógica de isolamento condicionada à detecção de chama",
+      "explicacao": "Com a votação de gás já confirmada e a válvula fechando quando há chama, o problema não está no sensor nem na saída, mas na lógica que exige confirmação posterior de ignição.",
+      "resposta_padrao": "A votação de gás ainda não estava satisfeita.",
+      "por_que_nao": "O enunciado informa que a zona já estava confirmada antes do teste de chama; o requisito adicional é lógico, não de votação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A análise do cenário precisa considerar a liberação, a dispersão e possíveis fontes de ignição, sem depender da identificação posterior de uma fonte específica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Falhas de detecção, comunicação ou lógica podem atrasar isolamento e mitigação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de elemento final de omissão de uma resposta automática específica na matriz de causa e efeito.",
+      "pergunta": "Voto de gás confirmado: o log mostra ESD e isolamento, mas nenhum bit de comando da BDV muda de estado; em teste dedicado e por outra causa, a válvula opera normalmente. Qual causa primária?",
+      "resposta": "depressurização não prevista na matriz dessa zona",
+      "explicacao": "Se o voto é válido, outras respostas saem no evento e a BDV funciona por outros comandos, a causa não é a válvula nem a saída, mas a ausência dessa resposta na matriz.",
+      "resposta_padrao": "Falha no canal de saída da BDV.",
+      "por_que_nao": "Se fosse saída, haveria comando sem atuação; aqui não há comando no evento e a válvula responde normalmente em outras demandas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A indisponibilidade do F&G pode comprometer tanto o alarme quanto as ações automáticas previstas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Limiares, votação e respostas devem estar definidos na matriz de causa e efeito da unidade; valores de uma instalação não constituem ajustes universais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em F&G, perda de comunicação, mapeamento incorreto de sinais, falhas de configuração ou inconsistências entre telas e lógica podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Segregação real de cargas redundantes entre ramos de UPS para evitar perda simultânea por falha simples.",
+      "pergunta": "Falhando um dos UPS de 120 Vca, caem ao mesmo tempo as duas estações redundantes de supervisão do shutdown; outras cargas são recuperadas pela interligação e a capacidade do UPS remanescente é suficiente. Qual é a causa primária?",
+      "resposta": "Estações redundantes concentradas no mesmo UPS.",
+      "explicacao": "Com interligação recuperando outras cargas e capacidade suficiente no UPS remanescente, a perda simultânea das duas estações só se explica por alocação de ambas no mesmo ramo.",
+      "resposta_padrao": "Sobrecarga do UPS remanescente.",
+      "por_que_nao": "Havia capacidade disponível; o sinal decisivo é a queda simultânea das duas redundâncias por uma única falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A continuidade na falha do inversor depende da disponibilidade do bypass quando a rede CA alternativa está aceitável.",
+      "pergunta": "Com a entrada do UPS normal e a rede CA de reserva dentro da faixa, o disparo do inversor derruba instantaneamente as cargas essenciais, sem continuidade nem descarga relevante da bateria. Que elemento explica o evento?",
+      "resposta": "Bypass do UPS indisponível.",
+      "explicacao": "Numa falha do inversor com rede alternativa aceitável, a carga deveria ser mantida via caminho estático de transferência. A ausência de continuidade sem uso da bateria aponta para indisponibilidade do bypass.",
+      "resposta_padrao": "Banco de baterias degradado.",
+      "por_que_nao": "Sem descarga relevante da bateria e com CA alternativa válida, a continuidade deveria vir do bypass, não da autonomia do banco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falhas de recomposição pós-blackout podem ser causadas por lógica de reboot/trip incoerente mesmo com alimentação essencial preservada.",
+      "pergunta": "Depois de um blackout curto, o barramento essencial retorna e as alimentações 24 Vcc e UPS seguem estáveis, mas o CLP que executa a recomposição permanece travado em trip até reset manual; isso começou após alteração de software. Qual a causa?",
+      "resposta": "Incoerência da lógica de reboot/trip do CLP.",
+      "explicacao": "As alimentações essenciais permaneceram estáveis. O travamento em trip apenas após retorno de energia, surgido depois de mudança de software, caracteriza lógica de reboot/trip incoerente.",
+      "resposta_padrao": "Indisponibilidade da bateria do sistema essencial.",
+      "por_que_nao": "As fontes essenciais se mantiveram saudáveis; o sintoma decisivo é o travamento em trip só liberado por reset manual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção de cargas essenciais pela consequência da perda, e não pela baixa potência, para viabilizar black start e funções críticas.",
+      "pergunta": "No black start, o gerador de emergência estabiliza o barramento com margem, mas o reset do shutdown e o comando remoto de válvulas não retornam porque o switch de comunicação entre CLP e supervisão ficou sem energia; cargas menos críticas seguem alimentadas. Qual a causa primária?",
+      "resposta": "Switch de comunicação crítica fora da alimentação essencial.",
+      "explicacao": "Havia margem de geração e cargas menos críticas seguiram energizadas. A recomposição falhou porque uma carga de baixa potência, mas crítica para comando e comunicação, ficou fora da alimentação essencial.",
+      "resposta_padrao": "Gerador de emergência subdimensionado.",
+      "por_que_nao": "Há margem no barramento e consumidores menos essenciais continuam ligados; o erro está na seleção da carga crítica, não na potência instalada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

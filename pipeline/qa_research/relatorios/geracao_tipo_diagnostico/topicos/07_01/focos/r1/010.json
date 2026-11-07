@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relaciona ausência de movimento aos pequenos comandos e início do curso apenas com pulso extra ao atrito estático no atuador.",
+      "pergunta": "Sem diferencial de processo no corpo, pequenos degraus da saída do controlador não movem a haste; quando entra um pulso adicional, ela salta e depois acompanha o comando. Suprimento e realimentação do posicionador permanecem normais. Qual é a causa primária?",
+      "resposta": "Atrito estático elevado no atuador.",
+      "explicacao": "Sem diferencial de processo, o comando usual não rompe a aderência; o pulso fornece energia extra e, depois do breakaway, a válvula segue normalmente. Isso localiza a causa no atuador, não no sinal nem no ar de suprimento.",
+      "resposta_padrao": "Posicionador descalibrado.",
+      "por_que_nao": "Se fosse calibração do posicionador, o desvio apareceria durante o deslocamento; aqui a falha está só em iniciar o movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fornecer energia adicional quando o comando usual não consegue iniciar o movimento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distingue degradação por compensação por pulsos mal parametrizada de agravamento mecânico do atrito.",
+      "pergunta": "O controle passou a atender folgadamente a meta de erro após habilitar a compensação, mas o curso acumulado e as reversões da válvula quase dobraram; cada pulso produz deslocamento maior que o necessário e o ar de suprimento não mudou. Qual causa primária explica isso?",
+      "resposta": "Amplitude dos pulsos de compensação superdimensionada.",
+      "explicacao": "A malha melhorou além do necessário, porém à custa de muito mais movimento. No método por pulsos, isso indica energia adicional excessiva, que recupera desempenho mas acelera degradação do elemento final.",
+      "resposta_padrao": "O atrito mecânico da válvula piorou.",
+      "por_que_nao": "Atrito pior tende a degradar o controle; aqui a piora observada é o excesso de curso introduzido pela própria compensação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Existe, portanto, um compromisso entre recuperar desempenho da malha e limitar desgaste adicional do elemento final."
+        },
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Associa saltos discretos de mesmo tamanho para erros diferentes ao uso de lei de pulsos de amplitude fixa.",
+      "pergunta": "Perto do setpoint, erros de 2% e de 10% geram incrementos adicionais de curso com o mesmo tamanho; o erro máximo fica aceitável, mas o curso acumulado cresce muito. Qual causa primária está por trás desse padrão?",
+      "resposta": "Compensação por pulsos de amplitude fixa.",
+      "explicacao": "Saltos adicionais iguais para erros diferentes caracterizam lei fixa. O método destacado no bloco usa amplitude variável justamente para reduzir movimentação sem perda significativa de desempenho.",
+      "resposta_padrao": "A sintonia do controlador está agressiva.",
+      "por_que_nao": "Sintonia agressiva não produz incrementos discretos idênticos para erros distintos; isso aponta para a lógica do compensador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhece que a compensação por pulsos é recurso temporário e que sua permanência após correção mecânica vira a causa do movimento extra.",
+      "pergunta": "Depois da intervenção mecânica, pequenos passos locais já movem a válvula sem atraso, mas em automático ainda surgem 'kicks' periódicos e o índice de curso segue alto. Qual causa primária explica a persistência desse comportamento?",
+      "resposta": "Compensador por pulsos mantido habilitado.",
+      "explicacao": "Se a correção mecânica eliminou o atraso a pequenos comandos, os movimentos extras remanescentes não vêm mais do atrito físico. Eles indicam que a lógica de compensação continuou ativa após a intervenção.",
+      "resposta_padrao": "A malha ficou mal sintonizada depois da manutenção.",
+      "por_que_nao": "A válvula já responde a pequenos passos sem atraso; o padrão residual é o pulso artificial ainda habilitado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de compensação pode sustentar a operação até a correção mecânica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mas não substitui a eliminação da causa física do atrito."
+        },
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Permissões operacionais em clientes espelho: distinguir visualização da capacidade de comando.",
+      "pergunta": "Alarmes e valores continuam atualizando numa estação da sala de apoio, mas reconhecimentos e comandos digitados nela nunca surtem efeito; no audit trail, essa máquina não aparece como origem de ações. Qual a causa primária?",
+      "resposta": "Acesso por estação espelho somente leitura",
+      "explicacao": "Telas e alarmes atualizando descartam perda de comunicação. Sem origem dessa máquina no audit trail para ações, o problema não é travamento do controle, mas uso de uma estação com permissão apenas de visualização.",
+      "resposta_padrao": "Falha da HMI ou da comunicação com o controle.",
+      "por_que_nao": "Se fosse falha de HMI/comunicação, a estação não atualizaria alarmes e valores normalmente; os logs mostram apenas uso de leitura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reconhecer permissões e procedimentos aplicáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "assegurar que as pessoas entendam o significado operacional dos dados e dos alertas produzidos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir alerta analítico de falha física do instrumento ao diagnosticar manutenção desnecessária.",
+      "pergunta": "O alarme de “desvio do modelo” reaparece depois da troca do transmissor; em campo ele calibra bem, o valor bruto no DCS acompanha o processo e a malha segue estável. Qual a causa primária da troca repetida?",
+      "resposta": "Confusão entre desvio analítico e defeito do transmissor",
+      "explicacao": "Os sinais descartam falha física do instrumento: calibração correta, valor bruto coerente e malha estável. A causa foi interpretar um alerta analítico como se indicasse defeito do transmissor.",
+      "resposta_padrao": "Transmissor intermitente ou mal calibrado.",
+      "por_que_nao": "A substituição não elimina o alarme, e o valor bruto no DCS continua coerente com o campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "assegurar que as pessoas entendam o significado operacional dos dados e dos alertas produzidos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconhecer limites da automação, condições de uso e sinais de comportamento anormal."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

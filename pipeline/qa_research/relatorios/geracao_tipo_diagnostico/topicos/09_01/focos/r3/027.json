@@ -1,0 +1,91 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "rodada": 3,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto da omissão de penalidades por atraso na função objetivo da otimização logística.",
+      "pergunta": "Menor consumo e menos embarcações contratadas se confirmaram na execução; berço, navegação e transferência ficaram dentro do previsto. Ainda assim, o trimestre fechou com custo total maior por multas de atraso em cargas críticas. Qual a causa primária desse resultado?",
+      "resposta": "função objetivo sem penalidades por atraso de cargas críticas",
+      "explicacao": "O plano foi escolhido por reduzir consumo e frota, mas F exige avaliar também o custo total com penalidades. Como a execução aderiu aos tempos previstos, a causa está na formulação econômica da otimização.",
+      "resposta_padrao": "Frota subdimensionada.",
+      "por_que_nao": "Os tempos operacionais executados aderiram ao plano; o erro foi selecionar o menor consumo sem valorar o custo das multas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos, utilização da frota, consumo associado à operação e custo total com penalidades"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses indicadores precisam ser lidos em conjunto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma política pode reduzir consumo ou frota contratada e ainda assim ser inadequada se aumentar ruptura de suprimento ou atrasos críticos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de representar a interferência de navio-tanque de reabastecimento no modelo logístico.",
+      "pergunta": "Os desvios de programação aparecem só nos dias de recebimento de combustível por navio-tanque: porto, navegação e transferência seguem normais, mas a embarcação de apoio espera liberação para aproximar e depois atende no tempo previsto. Qual a causa primária do erro de previsão?",
+      "resposta": "interferência do navio-tanque de reabastecimento não modelada",
+      "explicacao": "F recomenda representar navios-tanque de reabastecimento e esperas exógenas. Como o atraso surge apenas nessa janela e desaparece após a liberação, a causa não é navegação nem transferência.",
+      "resposta_padrao": "Tempo de navegação subestimado.",
+      "por_que_nao": "A viagem e a transferência ficam dentro do previsto; o desvio nasce na espera para aproximação durante a operação simultânea.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar porto, unidades marítimas, navios-tanque de reabastecimento e incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a circulação e a permanência de embarcações de apoio na vizinhança operacional exigem coordenação compatível com o risco marítimo e de processo presente naquele momento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando SIMOPS são mal coordenadas, aumentam as esperas, as reprogramações e a variabilidade do tempo de atendimento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de monitorar separadamente stockout de insumos críticos, sem depender apenas de indicadores agregados de atendimento.",
+      "pergunta": "O painel mostra alto atendimento no prazo e menor consumo após a nova política. As paradas curtas ocorreram por falta de um único químico essencial, embora o volume entregue e os atrasos médios tenham melhorado. Qual a causa primária desse diagnóstico favorável enganoso?",
+      "resposta": "ausência de indicador de stockout do insumo crítico",
+      "explicacao": "F explicita que stockout de insumos críticos deve compor a leitura de desempenho. Indicadores agregados de prazo e consumo podem parecer bons e ainda ocultar a ruptura do item que afeta a operação.",
+      "resposta_padrao": "Consumo do químico acima do previsto.",
+      "por_que_nao": "Isso explicaria a falta do material, não o painel continuar classificando a política como boa apesar das paradas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos, utilização da frota, consumo associado à operação e custo total com penalidades"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses indicadores precisam ser lidos em conjunto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma política pode reduzir consumo ou frota contratada e ainda assim ser inadequada se aumentar ruptura de suprimento ou atrasos críticos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

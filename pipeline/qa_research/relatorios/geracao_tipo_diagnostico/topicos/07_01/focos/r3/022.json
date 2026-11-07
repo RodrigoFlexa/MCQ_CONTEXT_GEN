@@ -1,0 +1,109 @@
+{
+  "item": "07_01",
+  "foco": 22,
+  "rodada": 3,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar entrada de SIF mantida em simulação após proof test como causa de perda da proteção.",
+      "pergunta": "A variável de processo sobe no campo e no DCS, mas na SIF fica cravada no valor usado no proof test, com qualidade boa e bypass já retirado. Qual a causa primária?",
+      "resposta": "Entrada da SIF mantida em simulação/forçada.",
+      "explicacao": "Leitura fixa exatamente no valor de teste, com qualidade boa e bypass removido, exclui falha de processo e do transmissor; indica simulação ou força ainda aplicada na entrada da função.",
+      "resposta_padrao": "Transmissor de campo com defeito.",
+      "por_que_nao": "A leitura sobe no campo e no DCS; só a variável da SIF fica presa no valor de teste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a função ainda atua integralmente, atua parcialmente ou está indisponível"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária deve confirmar que a função protegida voltou à configuração pretendida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse retorno não é apenas energizar o equipamento ou retirar uma inibição"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer atuação apenas parcial da função de isolamento quando o caminho de bypass da ESDV permanece aberto.",
+      "pergunta": "O trip manda fechar a ESDV, o fim de curso confirma fechado, mas a pressão a jusante mal cai e o escoamento continua; na intervenção anterior foi usada a linha de contorno. Qual causa primária explica isso?",
+      "resposta": "Linha de bypass da ESDV deixada aberta.",
+      "explicacao": "Com fechamento confirmado e manutenção recente usando o contorno, a barreira atua só parcialmente; manter pressão e escoamento indica caminho alternativo aberto, não simples passagem pela sede.",
+      "resposta_padrao": "Vazamento pela sede da ESDV.",
+      "por_que_nao": "Passagem pela sede não sustenta pressão e fluxo quase normais com indicação confirmada de fechamento total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a função ainda atua integralmente, atua parcialmente ou está indisponível"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária deve confirmar que a função protegida voltou à configuração pretendida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda prática de proteção por manutenção da votação 2oo3 com apenas um canal disponível.",
+      "pergunta": "Na lógica 2oo3 de gás, um canal está em bypass e outro em falha. O detector remanescente responde no bump test, mas o ESD não atua quando ele detecta gás. Qual a causa primária?",
+      "resposta": "Votação 2oo3 mantida com só um canal disponível.",
+      "explicacao": "Com um canal em bypass e outro em falha, manter 2oo3 torna a função indisponível na prática; o detector remanescente mede corretamente, mas sozinho não consegue gerar a resposta automática.",
+      "resposta_padrao": "Detector remanescente descalibrado.",
+      "por_que_nao": "O bump test confirma resposta do detector; a lógica continua exigindo dois votos que já não existem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a função ainda atua integralmente, atua parcialmente ou está indisponível"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "esses estados alteram a função de barreiras"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "múltiplas indisponibilidades pequenas podem interagir e reduzir a efetividade global das barreiras"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir redundância aparente de redundância independente a partir da perda de alimentação comum nos canais remanescentes.",
+      "pergunta": "Dois canais de detecção ainda disponíveis entram em falha no mesmo instante; solver, rede e demais laços seguem normais, mas nos bornes locais de ambos some o 24 Vcc. Qual causa primária?",
+      "resposta": "Perda da alimentação 24 Vcc comum aos dois canais.",
+      "explicacao": "A perda simultânea restrita aos dois canais com ausência local de 24 Vcc, enquanto solver e outros laços seguem normais, aponta para alimentação comum e falta de independência real da redundância.",
+      "resposta_padrao": "Falha do solver.",
+      "por_que_nao": "Solver e demais laços permanecem normais; a anomalia comum observada é a perda de 24 Vcc em campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "existe redundância independente"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "múltiplas indisponibilidades pequenas podem interagir e reduzir a efetividade global das barreiras"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

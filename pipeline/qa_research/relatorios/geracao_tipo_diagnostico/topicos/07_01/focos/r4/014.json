@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 4,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir tela alimentada por dado histórico de problema de refresh ou lentidão do processo, usando a coerência entre camadas.",
+      "pergunta": "No overview, só a pressão de descarga avança em degraus exatos de 60 s; no faceplate da mesma malha e no controlador a curva é contínua, e os degraus coincidem com os pontos da tendência histórica. Qual causa primária explica isso?",
+      "resposta": "Tag do overview vinculada ao historian, não ao dado em tempo real.",
+      "explicacao": "A malha usa dado em tempo real no faceplate e no controlador, mas o overview replica exatamente a cadência do histórico. Isso aponta vínculo da tela ao tag histórico, não refresh geral nem lentidão do processo.",
+      "resposta_padrao": "Refresh lento da tela do supervisório.",
+      "por_que_nao": "As demais tags da mesma tela atualizam normalmente, e só essa variável segue exatamente os instantes de coleta do historian.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer associação incorreta de causa/alarmística na supervisão quando a lógica e os sinais de campo indicam outro evento primário.",
+      "pergunta": "Durante o teste integrado, a bomba para quando o nível baixo do vaso entra; o pressostato apontado pela HMI como causa não muda em campo nem no PLC, e o buffer de eventos registra o nível como primeiro evento. O que explica a anunciação?",
+      "resposta": "Tag de alarme do trip vinculada ao pressostato errado na supervisão.",
+      "explicacao": "O PLC registra o nível baixo como primeiro evento e o pressostato anunciado não comuta. O teste integrado evidencia erro de associação da causa exibida ao operador, não defeito do instrumento mostrado.",
+      "resposta_padrao": "Defeito no pressostato anunciado pela HMI.",
+      "por_que_nao": "Esse pressostato não mudou de estado nem no campo nem no PLC; a parada foi iniciada por outro permissivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "falhas de sequência, alarmes mal associados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

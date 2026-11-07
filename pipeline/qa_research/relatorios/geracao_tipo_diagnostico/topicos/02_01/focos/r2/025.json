@@ -1,0 +1,83 @@
+{
+  "item": "02_01",
+  "foco": 25,
+  "rodada": 2,
+  "contexto": {
+    "A1": 23,
+    "A2": 24,
+    "F": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de incluir entradas simultâneas ao sistema de armazenamento no balanço da transferência.",
+      "pergunta": "Medidor de transferência e arqueação do navio fecham, mas a redução de inventário dos tanques é menor que o volume embarcado. No mesmo intervalo, houve envio contínuo de óleo dos separadores para a estocagem, sem indício de interface, gás livre ou vazamento. Qual causa primária explica o balanço?",
+      "resposta": "Entrada simultânea de produção nos tanques não contabilizada",
+      "explicacao": "Se navio e medidor concordam, a transferência foi representada. A diferença remanescente com o inventário decorre de entrada ao sistema de armazenamento durante a janela do alívio.",
+      "resposta_padrao": "Erro do medidor de transferência.",
+      "por_que_nao": "O navio confirma o mesmo volume medido; o desvio está no balanço do estoque frente às entradas do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma falha de medição compromete o balanço quando altera o volume atribuído à transferência ou ao inventário."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Transientes de partida e parada podem fazer a vazão medida deixar de representar a transferência líquida.",
+      "pergunta": "Nos trechos longos em vazão estável, inventário e volume embarcado fecham; a diferença aparece somente nos ciclos de partida e parada da transferência, sem mudança persistente de pressão, temperatura ou BS&W. Qual causa primária está por trás do desbalanceamento?",
+      "resposta": "Transiente de partida/parada da linha de transferência",
+      "explicacao": "O desvio restrito aos eventos de liga/desliga aponta para condição transitória, não para viés fixo. Partidas e paradas podem fazer a vazão medida não representar, sozinha, a transferência líquida.",
+      "resposta_padrao": "Medidor de transferência descalibrado.",
+      "por_que_nao": "Um erro de calibração tenderia a aparecer também em regime estável, não só nos eventos transitórios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode refletir incerteza dos testes de poços, instrumentos de interface, transientes, rotas não contabilizadas ou vazamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconciliação entre medidor, inventário e recebido permite localizar perda após o ponto de medição.",
+      "pergunta": "A queda de inventário dos tanques e o totalizado do medidor concordam, mas a arqueação do navio fica menor; ao mesmo tempo surge redução de pressão na linha final e óleo no dreno do manifold. Qual é a causa primária?",
+      "resposta": "Vazamento na linha de transferência a jusante do medidor",
+      "explicacao": "Inventário e medidor indicam saída real dos tanques. Se o navio recebe menos e há sinais físicos na linha final, a perda está depois do ponto medido.",
+      "resposta_padrao": "Medidor de transferência com sobreleitura.",
+      "por_que_nao": "A sobreleitura não explicaria a queda de inventário compatível com o totalizado nem os indícios físicos após o ponto de medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode refletir incerteza dos testes de poços, instrumentos de interface, transientes, rotas não contabilizadas ou vazamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A investigação compara medições independentes, histórico operacional, amostras e condições dos instrumentos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O balanço da transferência serve para reconciliar três grandezas que podem divergir: produção medida, variação de inventário nos tanques e volume efetivamente transferido."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

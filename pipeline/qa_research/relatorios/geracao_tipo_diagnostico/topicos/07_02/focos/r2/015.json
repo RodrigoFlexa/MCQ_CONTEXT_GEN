@@ -1,0 +1,63 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito colateral de contenção em OT: bloqueio de conduíte essencial pode retirar proteção e permissivos sem falha dos controladores.",
+      "pergunta": "Permissivos de partida e feedback remoto de ESD sumiram em dois trens; PLCs e painéis locais seguiram executando lógica sem reinício. Na mesma janela, entrou uma ACL emergencial para restringir tráfego lateral. Qual causa primária explica o efeito?",
+      "resposta": "ACL de contenção bloqueando o conduíte crítico entre controle e proteção.",
+      "explicacao": "A perda foi seletiva em funções dependentes de comunicação entre sistemas, enquanto a lógica local permaneceu ativa. Isso aponta para a contenção interrompendo tráfego essencial, não para falha interna dos controladores.",
+      "resposta_padrao": "Malware nos PLCs.",
+      "por_que_nao": "Se os PLCs estivessem comprometidos, seriam esperados reinícios, anomalias locais ou alteração de lógica; aqui desapareceram apenas funções intersistemas após a ACL.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a contenção em OT busca limitar propagação e reduzir exposição sem introduzir risco operacional maior que o evento original."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da perda de cargas críticas em falha de UPS quando o bypass seguro não assume após o isolamento da seção avariada.",
+      "pergunta": "A UPS apresentou fumaça e arco elétrico; a entrada seguia disponível, o ramo de bypass estava saudável e as cargas críticas caíram quando a seção com falha foi isolada. Qual causa primária explica essa perda?",
+      "resposta": "Não transferência das cargas críticas para o bypass seguro.",
+      "explicacao": "Com entrada presente e bypass saudável, a queda após isolar a parte avariada indica que o caminho alternativo não assumiu as cargas essenciais durante a resposta ao evento elétrico.",
+      "resposta_padrao": "Falha total da UPS.",
+      "por_que_nao": "Mesmo com falha interna, a entrada disponível e o bypass saudável manteriam as cargas se a transferência segura tivesse ocorrido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro."
+        }
+      ],
+      "k": 2,
+      "regua": [
+        "a resposta começa por sim, não ou um juízo de adequação; comece pelo elemento decisivo"
+      ]
+    }
+  ]
+}

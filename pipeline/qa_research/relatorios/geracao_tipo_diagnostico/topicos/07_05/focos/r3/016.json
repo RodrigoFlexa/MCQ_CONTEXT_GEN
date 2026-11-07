@@ -1,0 +1,117 @@
+{
+  "item": "07_05",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção de sobressalentes para item raro deve combinar consequência da falha, lead time e possibilidade de substituição temporária.",
+      "pergunta": "Uma placa de proteção, já classificada internamente como de alta consequência, não foi mantida a bordo porque o consumo histórico era zero; ao falhar pela primeira vez, a troca levaria minutos, mas a reposição remota levou dias e não havia modo alternativo sem reduzir segurança. Qual a causa primária?",
+      "resposta": "Seleção do sobressalente baseada só no consumo histórico.",
+      "explicacao": "Consumo histórico baixo não basta para excluir um item de alta consequência. Sem substituição temporária e com reposição remota, a seleção deveria considerar impacto da falha e lead time.",
+      "resposta_padrao": "A peça não precisava de estoque por quase nunca falhar.",
+      "por_que_nao": "Mesmo rara, a falha tem alta consequência, sem alternativa segura e com reposição remota demorada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quanto maior a consequência da perda de função para segurança, produção ou meio ambiente, maior tende a ser a necessidade de planejar materiais de forma proativa."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a disponibilidade imediata a bordo pode ser decisiva para o tempo de retorno à produção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "precisa considerar consequência da falha, tempo de reposição, probabilidade de uso e possibilidade de substituição temporária sem degradar segurança ou produção."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A possibilidade de substituição temporária por equipamento reserva pode tornar secundária a ausência de peça nova a bordo.",
+      "pergunta": "Falhou a bomba titular de água de resfriamento; a reserva entrou em carga, a vazão total permaneceu nominal e nenhum limite operacional foi reduzido. O reparo do conjunto retirado levou semanas fora de bordo e não havia peça nova. Que condição explica o baixo impacto?",
+      "resposta": "Substituição temporária viável pela bomba reserva.",
+      "explicacao": "O reparo demorado não afetou a função porque a redundância manteve a vazão nominal. A necessidade de estoque imediato muda quando há substituição temporária sem degradar produção ou segurança.",
+      "resposta_padrao": "O impacto foi baixo porque o reparo do conjunto é rápido.",
+      "por_que_nao": "O reparo levou semanas; a continuidade veio da entrada imediata do reserva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A criticidade do equipamento influencia a estratégia de manutenção e, por consequência, a política de sobressalentes."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "entrada de equipamento reserva em funcionamento para preservar a continuidade da produção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "possibilidade de substituição temporária sem degradar segurança ou produção."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade de reparáveis depende de rastreabilidade no ciclo retirar-substituir-reparar-testar-retornar ao estoque.",
+      "pergunta": "Cartões reparados voltam testados, há peças fisicamente na prateleira, mas o sistema segue sem saldo disponível e cada nova falha abre compra emergencial; etiquetas e números de série do retirado, do reparado e do reinstalado não coincidem. Qual a causa primária?",
+      "resposta": "Perda de rastreabilidade no ciclo de reparáveis.",
+      "explicacao": "Em reparáveis, disponibilidade depende do ciclo retirar-substituir-reparar-testar-retornar ao estoque com rastreabilidade. Se série e cadastro não se fecham, a peça física não vira sobressalente disponível.",
+      "resposta_padrao": "Faltam cartões sobressalentes.",
+      "por_que_nao": "Há cartões reparados a bordo; o que impede o uso é a perda de vínculo entre retirada, reparo e retorno.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A criticidade do equipamento influencia a estratégia de manutenção e, por consequência, a política de sobressalentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em itens reparáveis, a decisão relevante não é apenas possuir uma peça nova"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "garantir um ciclo funcional de retirar, substituir, reparar, testar e retornar ao estoque sem perder rastreabilidade e disponibilidade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Criticidade não dimensiona sozinha mínimo e estoque de segurança; é preciso considerar reposição, uso e redundância.",
+      "pergunta": "Dois itens da mesma classe crítica receberam mínimo 1; o primeiro rompe estoque repetidamente com 180 dias de reposição e sem substituto, o segundo vence parado com reposição curta e equipamento reserva disponível. Compras cumprem prazo. Qual a causa primária desse padrão?",
+      "resposta": "Estoque dimensionado apenas pela classe de criticidade.",
+      "explicacao": "Criticidade orienta a estratégia, mas não define sozinha mínimos e estoques de segurança. Igualar itens pela classe ignora lead time, chance de uso e substituição temporária, gerando falta num caso e excesso no outro.",
+      "resposta_padrao": "Itens da mesma criticidade devem ter o mesmo mínimo.",
+      "por_que_nao": "Mesma classe não elimina diferenças de lead time, probabilidade de uso e possibilidade de substituição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A criticidade do equipamento influencia a estratégia de manutenção e, por consequência, a política de sobressalentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O recorte disponível não fornece método fechado para converter criticidade em nível mínimo, máximo, estoque de segurança ou ponto de reposição."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "precisa considerar consequência da falha, tempo de reposição, probabilidade de uso e possibilidade de substituição temporária sem degradar segurança ou produção."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

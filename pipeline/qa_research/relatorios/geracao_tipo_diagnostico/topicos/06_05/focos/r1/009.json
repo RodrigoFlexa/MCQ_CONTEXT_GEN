@@ -1,0 +1,79 @@
+{
+  "item": "06_05",
+  "foco": 9,
+  "rodada": 1,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer intertravamento de dupla confirmação em descarga de CO2 a partir da sequência de atuações observada.",
+      "pergunta": "Duas detecções confirmadas na sala protegida por CO2 geraram alarme e isolamentos, mas a descarga só veio após confirmação local, confirmação do operador e temporização. Qual causa explica a ausência de descarga automática inicial?",
+      "resposta": "intertravamento de dupla confirmação da descarga de CO2",
+      "explicacao": "A sequência observada corresponde ao arranjo em que a descarga de CO2 não é automática na primeira detecção: exige confirmação local, confirmação do operador e só então temporização.",
+      "resposta_padrao": "Falha do sistema de CO2.",
+      "por_que_nao": "A descarga ocorre quando as confirmações são dadas, indicando bloqueio lógico deliberado, não indisponibilidade do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em um arranjo específico de combate por dióxido de carbono (CO2), foi adotada dupla verificação com confirmação local e posterior confirmação do operador em supervisório antes da descarga, seguida de temporização."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse caso ilustra que intertravamentos de maior consequência para pessoas e equipamentos podem adotar confirmações adicionais para reduzir disparos indevidos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de integração entre F&G e ventilação quando outras ações automáticas ocorrem e o HVAC responde localmente.",
+      "pergunta": "Com gás confirmado na zona, houve alarme, ESD e fechamento das válvulas de isolamento, mas ventiladores e dampers ficaram inalterados; em comando local, o HVAC responde. Qual é a causa primária?",
+      "resposta": "interface F&G-ventilação da zona não implementada",
+      "explicacao": "Como alarme, ESD e isolamento atuaram e o HVAC responde a comando local, detecção e atuadores estão disponíveis; o desvio está na interface da causa e efeito entre F&G e ventilação.",
+      "resposta_padrao": "Damper travado.",
+      "por_que_nao": "Os atuadores de ventilação respondem localmente; a falha aparece só quando o comando deveria vir do F&G.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "elas podem depender de interfaces com parada de emergência (ESD), isolamento, ventilação ou sistemas de combate."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar ausência de desenergização automática de equipamentos inadequados à área classificada por falta de integração do F&G.",
+      "pergunta": "Gás confirmado na área fechou SDVs e gerou ESD, mas um motor e um painel não adequados à área classificada permaneceram energizados; ambos desligam normalmente por comando elétrico. Qual é a causa primária?",
+      "resposta": "interface F&G para desenergizar equipamentos inadequados à área classificada",
+      "explicacao": "Se SDVs e ESD atuam e os circuitos desligam por comando elétrico, a detecção e os equipamentos finais estão disponíveis; falta a integração do F&G para remover essas fontes de ignição.",
+      "resposta_padrao": "Disjuntor defeituoso.",
+      "por_que_nao": "Os circuitos desligam normalmente pelo comando elétrico; o desvio está na integração automática com o F&G.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "desconexão de fontes de energia de equipamentos inadequados à área classificada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "elas podem depender de interfaces com parada de emergência (ESD), isolamento, ventilação ou sistemas de combate."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

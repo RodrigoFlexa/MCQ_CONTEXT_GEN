@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir caminho de comando íntegro da falta de habilitação do comando remoto no atuador.",
+      "pergunta": "Durante a circulação com N2, o comando abre/fecha sai da IHM, o bit correspondente muda no PLC e o sinal chega ao painel local, mas a válvula só se move pelos botões do próprio atuador. Qual a causa primária?",
+      "resposta": "Habilitação de comando remoto do atuador ausente.",
+      "explicacao": "Como o comando sai da IHM, muda no PLC e chega ao atuador, o caminho de comunicação está íntegro. O defeito decisivo é o atuador não estar configurado para obedecer à fonte remota.",
+      "resposta_padrao": "Comando da IHM não mapeado até o atuador.",
+      "por_que_nao": "Esse diagnóstico cairia se o sinal não chegasse ao atuador; aqui ele já está presente no painel local.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "fazer os atuadores de campo respeitarem comandos da Interface Homem-Máquina (IHM)"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A função disponível em campo pode diferir da função prevista em projeto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer erro de associação do canal de entrada no PLC quando o sinal físico chega ao ponto esperado, mas outra variável é usada pela lógica.",
+      "pergunta": "No teste integrado, atuar o fim de curso da válvula A muda o estado elétrico no borne previsto e no diagnóstico do canal correspondente, mas quem altera na lógica e na tela é a válvula B. Qual a causa primária?",
+      "resposta": "Endereçamento do ponto de entrada no PLC incorreto.",
+      "explicacao": "O sinal físico chegou ao borne e ao canal corretos; a troca ocorre na associação do canal à variável usada pela lógica e pela supervisão, caracterizando erro de configuração no PLC.",
+      "resposta_padrao": "Fiação cruzada entre os fins de curso.",
+      "por_que_nao": "Se a fiação estivesse cruzada, a mudança não apareceria no borne previsto nem no canal físico correspondente da entrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

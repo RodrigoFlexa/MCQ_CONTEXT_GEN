@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 4,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Defesa em profundidade: distinguir erro de regra na borda da ausência de barreiras sucessivas até domínios críticos.",
+      "pergunta": "Uma regra temporária aberta no firewall IT/OT permitiu, do lado corporativo, alcançar SCADA, PLCs de processo, interface de manutenção do SIS e estação do sistema elétrico; não houve bloqueios em camadas intermediárias. Qual causa primária tornou esse único erro suficiente para expor todos esses domínios?",
+      "resposta": "Firewall perimetral como única barreira até os domínios críticos.",
+      "explicacao": "Se uma única regra na borda expôs supervisão, controle, proteção e elétrico, faltavam barreiras sucessivas internas. Com defesa em profundidade, o erro perimetral não bastaria para alcançar todos esses domínios.",
+      "resposta_padrao": "Uma regra permissiva excessiva no firewall IT/OT.",
+      "por_que_nao": "Essa regra foi o gatilho; ela só alcançou PLCs, SIS e sistema elétrico porque não havia contenção adicional depois da borda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "dificulta que um problema em uma interface alcance todos os ativos conectados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Segmentação por criticidade: reconhecer roteamento entre VLANs sem filtros como caminho de propagação entre domínios distintos.",
+      "pergunta": "Controle de processo, F&G e sistema elétrico estão em VLANs distintas e switches de acesso independentes. Depois do comprometimento de um host na análise, surgem sessões para todos esses domínios; os pacotes só se encontram no núcleo OT, sem bloqueios entre VLANs. Qual causa primária explica essa propagação?",
+      "resposta": "Roteamento inter-VLAN no núcleo OT sem filtros interdomínio.",
+      "explicacao": "As VLANs separavam apenas o domínio de camada 2. A propagação ocorreu porque o núcleo encaminhava tráfego entre domínios de criticidade diferente sem contenção compatível.",
+      "resposta_padrao": "Todos os sistemas estavam na mesma rede.",
+      "por_que_nao": "O enunciado informa VLANs distintas e switches de acesso independentes; o alcance comum surgiu no roteamento entre elas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade entre finalidade operacional e direção do fluxo: identificar conduíte bidirecional desnecessário como caminho de retorno à camada de controle.",
+      "pergunta": "A aplicação analítica só precisa receber dados do processo, mas, após seu comprometimento, ela inicia conexões para controladores usando o mesmo conduíte já existente; nenhuma estação de engenharia foi usada. Qual causa primária explica o alcance de volta à camada de controle?",
+      "resposta": "Conduíte bidirecional em interface que exigia só saída de dados.",
+      "explicacao": "Se a necessidade operacional era apenas exportar dados, a zona analítica não deveria conseguir iniciar sessões de retorno. O problema decisivo é a direção de fluxo liberada além do necessário.",
+      "resposta_padrao": "Vulnerabilidade explorável nos controladores.",
+      "por_que_nao": "A vulnerabilidade por si só não explica a alcançabilidade a partir da analítica; ela dependeu do caminho de retorno habilitado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Separar domínios não remove a vulnerabilidade de origem, mas dificulta que um problema em uma interface alcance todos os ativos conectados."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

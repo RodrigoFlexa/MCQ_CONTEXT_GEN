@@ -1,0 +1,79 @@
+{
+  "item": "02_04",
+  "foco": 9,
+  "rodada": 2,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da previsão de injetividade do histórico do índice de injetividade, além dos ensaios laboratoriais.",
+      "pergunta": "Recalibrado só com ensaios recentes e os valores atuais de vazão/pressão, o modelo volta a prever queda branda; no campo, o poço repete desde o início o mesmo padrão de perda visto em campanhas anteriores. Qual a causa primária do erro?",
+      "resposta": "Ausência do histórico do índice de injetividade na calibração",
+      "explicacao": "O bloco F diz que a predição confiável depende do histórico do índice de injetividade e de dados laboratoriais. Se o mesmo padrão antigo reaparece, o erro decisivo é ter ignorado esse histórico na calibração.",
+      "resposta_padrao": "A função de dano à formação escolhida é inadequada.",
+      "por_que_nao": "Sem incorporar o histórico que já mostrava esse padrão, qualquer função tende a ficar mal calibrada neste cenário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a predição confiável depende de histórico do índice de injetividade e de dados laboratoriais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar apenas vazão e pressão sem recalibrar o modelo pode mascarar mudança de mecanismo dominante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de dados laboratoriais do par água-formação vigente para manter a validade da previsão de injetividade.",
+      "pergunta": "Mantidos os parâmetros antigos do modelo, a previsão começa a divergir logo após a troca permanente da água injetada no mesmo poço; vazão, pressão e histórico anterior ainda pareciam coerentes. Qual é a causa primária do desvio?",
+      "resposta": "Ausência de dados laboratoriais do novo par água-formação",
+      "explicacao": "O histórico do poço não se transfere automaticamente quando muda o tipo de água. A1 e F ligam a previsão confiável aos dados experimentais do tipo de água e da formação considerados.",
+      "resposta_padrao": "O coeficiente de filtração do sistema aumentou.",
+      "por_que_nao": "Sem ensaio do novo par água-formação, isso vira apenas um ajuste de parâmetro; o erro nasce de reaproveitar base experimental da água anterior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a predição confiável depende de histórico do índice de injetividade e de dados laboratoriais"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "baseada em modelos teóricos alimentados por dados experimentais do tipo de água e da formação considerados."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da cinética de retenção como elemento necessário para reproduzir atraso inicial no declínio da injetividade.",
+      "pergunta": "Na simulação, a perda de injetividade começa desde o primeiro volume poroso injetado; no campo, com sólidos, água e vazão estáveis, há um trecho inicial quase sem perda antes da aceleração. Que elemento do modelo está faltando?",
+      "resposta": "Cinética de retenção de partículas",
+      "explicacao": "F afirma que a previsão combina balanço de massa, cinética de retenção e Darcy modificada. O trecho inicial quase sem perda indica dinâmica de retenção ausente; mudar só o coeficiente altera intensidade, não esse atraso.",
+      "resposta_padrao": "Coeficiente de filtração subestimado.",
+      "por_que_nao": "O coeficiente muda quanto material tende a ser retido, mas não cria sozinho o período inicial quase sem perda descrito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelos matemáticos que combinam balanço de massa, cinética de retenção de partículas e uma forma modificada da lei de Darcy."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto maior esse coeficiente, maior tende a ser a quantidade de material retido no meio poroso."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

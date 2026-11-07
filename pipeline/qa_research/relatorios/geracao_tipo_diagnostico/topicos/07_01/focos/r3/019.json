@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 3,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sobrescrita temporária da atuação normal por override manual na saída da malha.",
+      "pergunta": "Com a malha em automático, a saída do PID varia e atualiza, mas a válvula fica em 42% e só se move quando um valor manual é alterado na estação de manutenção; posição, ar e modo remoto estão normais. Qual causa primária?",
+      "resposta": "Override manual ativo na saída da malha",
+      "explicacao": "A válvula e o atuador respondem normalmente ao valor manual, descartando defeito do elemento final. O comportamento indica intervenção temporária sobrescrevendo a atuação normal do controlador.",
+      "resposta_padrao": "Posicionador defeituoso.",
+      "por_que_nao": "Como a válvula acompanha imediatamente as mudanças do valor manual, o posicionador e o caminho até o atuador estão íntegros.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Divergência entre lógica válida e instrução operacional desatualizada na partida.",
+      "pergunta": "A partida automática ocorre sem desvios, mas a partida manual falha sempre no mesmo permissivo quando qualquer equipe segue a instrução vigente passo a passo; I/Os e lógica passaram nos testes. Qual causa primária?",
+      "resposta": "Procedimento de partida desatualizado",
+      "explicacao": "Se a sequência automática e os testes validam I/Os e lógica, a falha reproduzida apenas ao seguir a instrução manual aponta para desatualização do procedimento frente à configuração atual.",
+      "resposta_padrao": "Defeito no permissivo do PLC.",
+      "por_que_nao": "A mesma lógica fecha o permissivo na partida automática e nos testes, o que afasta defeito do PLC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "procedimentos de operação, como partida, parada e isolamento, precisavam estar atualizados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a disciplina de gestão influencia a capacidade de sustentar a integridade da automação ao longo do tempo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permite testar antecipadamente a lógica, confirmar desempenho"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

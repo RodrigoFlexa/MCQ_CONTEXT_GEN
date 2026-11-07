@@ -1,0 +1,87 @@
+{
+  "item": "02_01",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Não equivalência entre corrigir a vazão com médias temporais e totalizar com variáveis auxiliares sincronizadas.",
+      "pergunta": "Os pulsos do medidor fecham, mas o volume corrigido diverge apenas nos períodos com forte oscilação intrahorária de pressão e temperatura; em regime estável, os cálculos coincidem. Qual a causa primária?",
+      "resposta": "Correção posterior com médias horárias de pressão e temperatura.",
+      "explicacao": "Com P e T variando dentro da hora, corrigir por médias não equivale a integrar a vazão já corrigida; quando o escoamento estabiliza, a diferença desaparece. O problema está no modelo de correção/totalização.",
+      "resposta_padrao": "Transmissor de pressão ou temperatura descalibrado.",
+      "por_que_nao": "Se fosse viés do transmissor, o desvio persistiria também em regime estável e não dependeria da variabilidade intrahorária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa conversão é relevante para a incerteza porque adiciona dependência de variáveis auxiliares, como pressão, temperatura e propriedades do fluido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Assim, a qualidade do resultado final depende não só do medidor principal, mas também dos instrumentos e modelos usados para correção e totalização."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sua avaliação considera o modelo de medição, os padrões de calibração, a repetibilidade, a resolução e as grandezas de influência."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Intervenção em medição de ramal alterando apenas o rateio denuncia uso de medição de apropriação, não de medição comum diretamente compartilhada.",
+      "pergunta": "O total exportado pela linha comum não muda, mas a parcela atribuída a cada origem muda quando se troca ou recalibra um transmissor de vazão de um ramal. Qual a causa primária?",
+      "resposta": "Transmissor de vazão do ramal usado no rateio das origens.",
+      "explicacao": "Se apenas a divisão entre origens muda após intervenção no ramal e o total comum permanece íntegro, o rateio depende dessa medição de ramal, caracterizando apropriação e não medição comum diretamente compartilhada.",
+      "resposta_padrao": "Descalibração do medidor comum de exportação.",
+      "por_que_nao": "Problema no medidor comum alteraria o total exportado, não só a divisão entre origens após mexer em um ramal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O Regulamento Técnico de Medição, RTM, distingue medições pela finalidade, incluindo medição fiscal, medição fiscal compartilhada, medição de apropriação, medição para controle operacional e medição para transferência de custódia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "As categorias se diferenciam pelo rigor do controle metrológico, pela rotina de calibrações e pelas características metrológicas exigidas dos instrumentos, como classe de exatidão."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Lógica de seleção automática de instrumento auxiliar pode degradar a cadeia metrológica da correção mesmo com sensores individualmente coerentes.",
+      "pergunta": "Sem salto na vazão observada, o volume corrigido apresenta degraus exatamente nas trocas automáticas entre dois transmissores de temperatura; ambos, lidos isoladamente, permanecem coerentes. Qual a causa primária?",
+      "resposta": "Seleção automática de transmissores de temperatura na correção fiscal.",
+      "explicacao": "Degraus sincronizados com a comutação, sem mudança física correspondente e com sensores individualmente coerentes, indicam uso de lógica de seleção na entrada auxiliar da correção, não defeito do medidor principal.",
+      "resposta_padrao": "Falha de um transmissor de temperatura.",
+      "por_que_nao": "Como ambos os sensores permanecem coerentes isoladamente e o efeito surge só na troca automática, o decisivo é a lógica de seleção aplicada ao cálculo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Assim, a qualidade do resultado final depende não só do medidor principal, mas também dos instrumentos e modelos usados para correção e totalização."
+        },
+        {
+          "bloco": "F",
+          "trecho": "As categorias se diferenciam pelo rigor do controle metrológico, pela rotina de calibrações e pelas características metrológicas exigidas dos instrumentos, como classe de exatidão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sua avaliação considera o modelo de medição, os padrões de calibração, a repetibilidade, a resolução e as grandezas de influência."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

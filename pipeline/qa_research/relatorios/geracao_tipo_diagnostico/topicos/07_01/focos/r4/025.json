@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 25,
+  "rodada": 4,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Verificar que o teste funcional deve abranger também efeitos temporizados da matriz; aprovar só a ação imediata não valida a função.",
+      "pergunta": "No ensaio mensal de ESD, o fechamento da alimentação foi observado e o teste foi dado como aprovado. Na primeira demanda real, a alimentação isola, mas a válvula de blowdown não abre após o atraso configurado; por comando local ela abre normalmente. Qual a causa primária da aprovação anterior?",
+      "resposta": "Teste funcional encerrado antes do efeito temporizado da matriz.",
+      "explicacao": "O ensaio confirmou só a ação imediata. A verificação funcional deve cobrir os efeitos definidos no cenário, inclusive os temporizados, fechando a cadeia detecção-lógica-saída-ação protetiva.",
+      "resposta_padrao": "Falha da válvula de blowdown.",
+      "por_que_nao": "Ela abre por comando local; a lacuna observada é que o ensaio aprovado não verificou o efeito temporizado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o objetivo é confirmar que as condições de entrada levam aos efeitos definidos para os intertravamentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "tendem a aumentar a dependência de sequências corretas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que um intertravamento não está validado se o elemento final estava indisponível no ensaio; bit de saída sem ação protetiva não basta.",
+      "pergunta": "Na última prova registrada de um intertravamento, o iniciador entrou e o bit de trip mudou, mas a válvula final estava travada fechada para manutenção e o teste foi aceito assim. Depois da liberação, a mesma condição perigosa é detectada e não há isolamento automático. Qual a causa primária da aprovação anterior?",
+      "resposta": "Válvula final indisponível durante o teste funcional.",
+      "explicacao": "A proteção só fica validada quando a causa produz o efeito final pelo encadeamento completo. Com a válvula indisponível, o ensaio não representou o arranjo real nem comprovou a ação protetiva.",
+      "resposta_padrao": "Defeito da válvula final.",
+      "por_que_nao": "A pergunta trata da aprovação anterior, e o registro mostra que o fechamento automático nem chegou a ser verificado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a proteção depende da coerência entre causa, decisão automática e efeito final"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o comportamento observado no teste, porém, vale para os cenários exercitados e para o arranjo disponível naquele momento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "testes e compensações não devem ser avaliados como eventos isolados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

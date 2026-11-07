@@ -1,0 +1,119 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Controle por bandas evita repasse direto das oscilações de alimentação para a vazão de saída.",
+      "pergunta": "As golfadas de entrada seguem iguais, mas, depois da mudança na lógica da malha de nível, a vazão líquida de saída passou a oscilar quase em fase com a alimentação; a válvula movimenta continuamente e o nível fica dentro da faixa normal. Qual a causa primária?",
+      "resposta": "remoção do controle por bandas na malha de nível",
+      "explicacao": "Com controle por bandas, a saída tende a ficar próxima da vazão média enquanto o nível permanece na faixa. A modulação contínua faz a válvula seguir a perturbação e transmite a oscilação a jusante.",
+      "resposta_padrao": "Golfadas mais severas a montante.",
+      "por_que_nao": "As golfadas não mudaram; o sinal decisivo é a alteração da lógica com a válvula modulando mesmo dentro da faixa normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também amortecem flutuações de vazão e atenuam oscilações vindas dos poços, reduzindo o surge de pressão a jusante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Atraso da válvula/atuador pode degradar a robustez da malha de nível mesmo com PI inalterado.",
+      "pergunta": "O sinal de saída do controlador de nível muda imediatamente, mas a posição real da válvula líquida responde com atraso visível; em degraus de alimentação, o nível ultrapassa a banda e caça, embora a sintonia do PI seja a mesma. Qual a causa primária?",
+      "resposta": "dinâmica lenta da válvula de saída líquida",
+      "explicacao": "A análise simplificada supõe válvula rápida. Se o comando muda e a posição real atrasa, o aumento do atraso da malha explica a perda de robustez e a oscilação, sem exigir culpar a sintonia original.",
+      "resposta_padrao": "PI mal sintonizado.",
+      "por_que_nao": "O indício decisivo é o atraso entre comando e posição real; com a válvula lenta, a hipótese de atuador rápido deixa de valer.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pode-se assumir relação linear entre altura e volume e dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle; essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A relação altura-volume do separador pode mudar com o nível e alterar a dinâmica da malha.",
+      "pergunta": "Perto do topo de operação, a malha de nível passa a oscilar e a ultrapassar o setpoint; na faixa média histórica ela era estável. A válvula responde sem atraso e a carga média mudou pouco. Que causa explica esse comportamento?",
+      "resposta": "não linearidade altura-volume na faixa superior do vaso",
+      "explicacao": "A sintonia foi eficaz em outra faixa, então o problema não é simplesmente o PI. Ao mudar a região de inventário, muda o ganho do processo se a relação altura-volume não for aproximadamente linear.",
+      "resposta_padrao": "PI desajustado para a nova carga.",
+      "por_que_nao": "A carga média mudou pouco e o mesmo ajuste funciona na faixa média; o que mudou foi a região geométrica do vaso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a dinâmica do separador e a variabilidade da produção exigem alguma estratégia de controle compatível com o regime operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pode-se assumir relação linear entre altura e volume e dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle; essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em simulação específica de separador trifásico, um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado."
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "a resposta começa por sim, não ou um juízo de adequação; comece pelo elemento decisivo"
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O nível operacional define o volume de retenção disponível para amortecer transientes.",
+      "pergunta": "Com as mesmas oscilações de entrada, surgiram picos maiores de pressão e vazão a jusante quando o separador passou a trabalhar próximo do nível baixo normal; composição, pressão de operação e equipamentos seguintes não mudaram. Qual a causa primária?",
+      "resposta": "inventário líquido insuficiente para amortecimento no separador",
+      "explicacao": "Operar com baixo inventário reduz o hold-up disponível para desacoplar as oscilações a montante. Sem essa folga, a variabilidade atravessa o vaso e aparece mais intensamente nas etapas seguintes.",
+      "resposta_padrao": "Golfadas mais severas dos poços.",
+      "por_que_nao": "As oscilações de entrada foram descritas como as mesmas; o que mudou foi o volume de retenção usado para amortecê-las.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a alimentação varia com frequência, o vaso fornece volume de retenção para desacoplar parcialmente a variabilidade a montante das etapas seguintes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "também amortecem flutuações de vazão e atenuam oscilações vindas dos poços, reduzindo o surge de pressão a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa função amortecedora explica por que o controle de nível, pressão e interface é central para a estabilidade da planta."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

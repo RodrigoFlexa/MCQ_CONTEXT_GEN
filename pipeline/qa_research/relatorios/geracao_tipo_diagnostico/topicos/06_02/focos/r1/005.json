@@ -1,0 +1,125 @@
+{
+  "item": "06_02",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Configuração de entrada automática da bomba reserva como condição para manter a redundância prevista da barreira.",
+      "pergunta": "A bomba principal desarma; a reserva pega localmente no primeiro comando, as permissivas estão satisfeitas e não há defeito mecânico. Mesmo assim ela não assume sozinha na perda da principal. Qual é a causa primária?",
+      "resposta": "Bomba reserva sem partida automática habilitada.",
+      "explicacao": "Como a reserva parte localmente e as permissivas estão satisfeitas, a indisponibilidade não é mecânica. A degradação está na configuração que impede a entrada automática exigida pelo cenário, eliminando a redundância prevista.",
+      "resposta_padrao": "Falha mecânica da bomba reserva.",
+      "por_que_nao": "Ela parte normalmente por comando local; o que falta é a configuração de assunção automática no cenário de demanda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "bombas reservas não configuradas para entrada automática quando essa função é necessária ao cenário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "perda da redundância prevista"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "verificar funcionalidade significa confirmar que, quando demandada, ela executará a função de segurança prevista"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda da função preventiva quando o controlador fica em manual sem controle compensatório adequado.",
+      "pergunta": "A pressão se afasta do setpoint, mas a saída do controlador permanece fixa até intervenção do operador; transmissor e válvula respondem bem em teste. Qual causa primária explica essa degradação?",
+      "resposta": "Controlador em modo manual sem compensação adequada.",
+      "explicacao": "Se transmissor e válvula respondem bem, a cadeia de campo não explica o desvio persistente. O problema é a malha sem correção automática, aumentando atraso de resposta e dependência da atuação humana.",
+      "resposta_padrao": "Válvula de controle travando.",
+      "por_que_nao": "A válvula responde normalmente em teste; a perda está no controle deixar de corrigir automaticamente o erro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "malhas em modo manual sem controle compensatório adequado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "atraso de resposta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "aumento da probabilidade de erro humano"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "fatores humanos também influenciam o desempenho"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança temporária de arranjo pode desatualizar a premissa de risco ao alterar a dinâmica e o tempo disponível para atuação.",
+      "pergunta": "Num retorno após parada, o desvio chega ao limite de pressão muito mais rápido que antes, embora sensores e atuadores estejam íntegros; a única alteração mantida foi um bypass temporário do vaso que dava volume de retenção. Qual causa primária?",
+      "resposta": "Premissa de risco desatualizada pelo bypass temporário do volume de retenção.",
+      "explicacao": "Com instrumentação íntegra e resposta mais rápida ao desvio após a mudança temporária, o problema está na análise ainda baseada no arranjo permanente. O bypass reduziu o tempo disponível para atuação previsto.",
+      "resposta_padrao": "Lentidão dos instrumentos de proteção.",
+      "por_que_nao": "Os instrumentos estão íntegros; quem mudou foi a dinâmica do processo por uma alteração temporária não refletida na premissa de risco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "premissas de risco desatualizadas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudanças temporárias"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o arranjo de processo, as interdependências entre sistemas e a carga operacional podem diferir da condição permanente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "da resposta dinâmica do processo e do tempo disponível para atuação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Confiabilidade do alarme como parte da capacidade de detecção da barreira, distinta da integridade da medição.",
+      "pergunta": "O historiador registra várias passagens pelo limite alto em turnos diferentes, o transmissor está saudável e o desvio só é percebido depois no trend, embora o ponto exista na configuração. Qual causa primária?",
+      "resposta": "Falha de confiabilidade do alarme alto.",
+      "explicacao": "A medição existe e se mantém coerente no histórico; o problema está na barreira de detecção não alertar de forma confiável quando o limite é atingido. Isso reduz a capacidade de resposta em tempo útil.",
+      "resposta_padrao": "Operador desatento.",
+      "por_que_nao": "A recorrência em turnos distintos com transmissor saudável indica perda de annunciação confiável, não mero erro individual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alarmes sem confiabilidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redução de capacidade de detecção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a combinação de barreiras deve cobrir detecção do desvio"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

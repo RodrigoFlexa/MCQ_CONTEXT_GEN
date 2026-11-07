@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 13,
+  "rodada": 3,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de isolamento real do segmento no back feeding para evitar retroalimentar seções não previstas.",
+      "pergunta": "Fechado o back feeding, também aparece tensão na seção não essencial ligada apenas pelo tie entre painéis; o balanço do painel essencial isolado estava dentro da capacidade da emergência. Qual causa primária explica a sobrecarga?",
+      "resposta": "Disjuntor de interligação com a seção não prevista mantido fechado.",
+      "explicacao": "Se o segmento planejado cabia na emergência e a outra seção só podia ser energizada pelo tie, faltou o isolamento exigido no back feeding; a sobrecarga veio da retroalimentação dessa seção adicional.",
+      "resposta_padrao": "Capacidade insuficiente do gerador de emergência.",
+      "por_que_nao": "O segmento correto cabia na fonte; o sinal decisivo é a energização da seção adicional ligada pelo tie.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "isolamento adequado das fontes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "retroalimentação de partes não previstas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "compatibilidade entre o segmento da rede a ser energizado e a capacidade disponível da geração de emergência"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de bloqueio do back feeding por realimentação incorreta do estado do disjuntor da fonte principal.",
+      "pergunta": "No cubículo, o disjuntor do gerador principal está em teste e sem tensão; no sistema de supervisão, ele permanece como fechado e o back feeding é recusado, com seletora correta e emergência disponível. Qual causa primária?",
+      "resposta": "Contato auxiliar do disjuntor do gerador principal indicando fechado.",
+      "explicacao": "O permissivo exige o disjuntor principal aberto ou em teste. Com posição física correta e ausência de tensão, a recusa se explica pela informação de estado errada usada na lógica de permissivos.",
+      "resposta_padrao": "O disjuntor do gerador principal não foi realmente isolado.",
+      "por_que_nao": "A posição local em teste e a ausência de tensão mostram isolamento físico; o bloqueio nasce do sinal de posição enviado à lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "com disjuntores abertos ou em teste"
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende de permissivos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permissivos de fechamento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência do back feeding da alimentação da lógica de intertravamento em estados degradados de UPS.",
+      "pergunta": "Pelo bypass local de manutenção, o disjuntor de back feeding fecha; pela sequência normal de recomposição, não. Isso só ocorre após blackout com um UPS indisponível, embora os sinais hardwired de permissivo permaneçam presentes. Qual causa primária?",
+      "resposta": "UPS da lógica de intertravamento do back feeding indisponível.",
+      "explicacao": "Como o disjuntor fecha pelo bypass local, mecanismo e circuito de potência estão íntegros. A recusa apenas na sequência normal, após perda de UPS, aponta para falta de alimentação da lógica/intertravamento do back feeding.",
+      "resposta_padrao": "Falha mecânica do disjuntor de back feeding.",
+      "por_que_nao": "O fechamento pelo bypass local mostra que o mecanismo funciona; a falha está no caminho lógico alimentado pela UPS perdida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da lógica de intertravamento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a lógica de controle não bloquear a própria retomada de energia"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "com perda parcial de UPS, bateria ou controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "01_01",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Definição e apuração de MTTR separando tempo de reparo de esperas de indisponibilidade.",
+      "pergunta": "O tempo efetivo de intervenção permanece em cerca de 3 horas, mas o MTTR mensal sobe para 11 horas depois que passaram a usar apenas horários de abertura e encerramento da ordem de serviço, com longas janelas de espera por acesso. Qual causa primária explica o salto do indicador?",
+      "resposta": "Registro do MTTR incluindo esperas de indisponibilidade, não só o tempo de reparo.",
+      "explicacao": "MTTR exige registrar os intervalos de reparo e distingui-los de esperas. Usar abertura e fechamento da ordem de serviço incorporou fila e restrições de acesso ao indicador.",
+      "resposta_padrao": "A equipe perdeu capacitação e está reparando mais devagar.",
+      "por_que_nao": "O tempo efetivo de intervenção se manteve; o aumento veio da forma de registrar a indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Uso de dados locais de mantenabilidade em vez de bancos setoriais para prever disponibilidade.",
+      "pergunta": "A disponibilidade prevista no estudo RAM ficou alta; a taxa de falha observada veio próxima da base setorial, mas cada restauração demora muito mais por mobilização e acesso restrito. Qual causa primária tornou a previsão otimista?",
+      "resposta": "Uso de MTTR genérico de banco setorial, sem aderência às condições locais.",
+      "explicacao": "A previsão pode errar mesmo com frequência de falha compatível quando o modelo usa tempos de reparo não representativos da logística e acessibilidade reais.",
+      "resposta_padrao": "Os equipamentos instalados são menos confiáveis que os da base setorial.",
+      "por_que_nao": "A taxa de falha observada ficou próxima da base; o desvio aparece no tempo de retorno à operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Padronização taxonômica e integração dos registros de falha para distinguir causas e priorizar ações.",
+      "pergunta": "Depois de anos de histórico, o mesmo evento aparece como \"falha elétrica\" na manutenção, \"trip de processo\" na operação e \"parada do trem\" na produção, em bancos separados. Qual causa primária impede priorizar ações corretivas?",
+      "resposta": "Taxonomia de falhas não padronizada entre áreas.",
+      "explicacao": "A confiança analítica cresce com o tempo só se os registros permanecerem padronizados e úteis para distinguir causas equivalentes entre áreas.",
+      "resposta_padrao": "O histórico ainda é curto para uma análise confiável.",
+      "por_que_nao": "O volume de dados existe; o problema é que o mesmo evento não vira a mesma causa registrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis e úteis à priorização de ações corretivas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Registros acumulados por anos tendem a aumentar a confiança analítica, desde que permaneçam padronizados e eletronicamente gerenciados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ponderação de indicadores pela criticidade funcional para revelar limitantes reais de disponibilidade.",
+      "pergunta": "O item que mais falha não altera a produção, enquanto outro, com uma única falha no mês, derruba exportação e disponibilidade observada. O painel segue priorizando só o primeiro pelo número de ocorrências. Qual causa primária distorce a leitura?",
+      "resposta": "Indicador sem ponderação pela criticidade funcional do item.",
+      "explicacao": "Frequência isolada não basta. Um item pouco falho pode ser o principal limitante se sua indisponibilidade bloquear produção ou exportação.",
+      "resposta_padrao": "O item que mais falha é necessariamente o principal limitante do desempenho.",
+      "por_que_nao": "Neste cenário, a consequência funcional da falha é mais determinante que a contagem de ocorrências.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seu significado depende da criticidade funcional do item no sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar apenas médias sem contexto funcional pode mascarar os verdadeiros limitantes do desempenho"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

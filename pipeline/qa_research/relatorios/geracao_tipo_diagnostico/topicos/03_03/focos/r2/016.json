@@ -1,0 +1,101 @@
+{
+  "item": "03_03",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Configuração liga/desliga versus controle de posição em válvula de controle de pressão do tanque.",
+      "pergunta": "No teste de malha da válvula de controle de pressão do tanque, comandos manuais de 20%, 40%, 60% e 80% sempre a deixam totalmente fechada abaixo de 50% e totalmente aberta acima de 50%, com tempos de curso normais. Qual a causa primária?",
+      "resposta": "Configuração liga/desliga da válvula de controle do tanque.",
+      "explicacao": "Resposta binária repetitiva a todos os comandos intermediários, com curso normal, caracteriza configuração on/off da válvula ou da lógica; defeito mecânico ou descalibração não produzem esse limiar fixo.",
+      "resposta_padrao": "Posicionador da válvula descalibrado.",
+      "por_que_nao": "Descalibração desloca posição ou ganho, mas não cria resposta rigidamente binária a qualquer comando intermediário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Casos investigados mostraram comissionamento incompleto de instrumentos de pressão e válvula do tanque configurada como totalmente aberta ou fechada, embora documento de projeto previsse controle de posição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "No comissionamento, a coerência entre diagrama de tubulação e instrumentação, lógica de controle, atuadores de campo e indicação na interface humana-máquina é crítica."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de malha de pressão não comissionada a partir de resposta correta em campo sem reflexo na interface e nos alarmes.",
+      "pergunta": "Durante o loop check final, o transmissor de pressão responde corretamente ao calibrador em campo, mas a tendência e os alarmes na HMI não mudam. Qual a causa primária?",
+      "resposta": "Malha de pressão do tanque sem comissionamento concluído.",
+      "explicacao": "Se o transmissor segue o calibrador, o elemento de campo mede; sem tendência nem alarmes na interface, a falha está no comissionamento da malha e sua integração com lógica e HMI.",
+      "resposta_padrao": "Transmissor de pressão defeituoso.",
+      "por_que_nao": "O transmissor acompanha o calibrador em campo; o que falta é a integração com tendência e alarmes, típica de comissionamento incompleto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Casos investigados mostraram comissionamento incompleto de instrumentos de pressão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "No comissionamento, a coerência entre diagrama de tubulação e instrumentação, lógica de controle, atuadores de campo e indicação na interface humana-máquina é crítica."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir blank remanescente após manutenção de simples obstrução local na ventilação.",
+      "pergunta": "Pressão do tanque sobe já na menor vazão de gás inerte, logo após a reinstalação de manutenção com isolamento por blank; os demais tanques no mesmo coletor operam normalmente e não há saída de gás nesse vent. Qual a causa primária?",
+      "resposta": "Blank de manutenção mantido na rota de vent/alívio.",
+      "explicacao": "Tanque único afetado após reinstalação com blank e sem fluxo na saída de vent, enquanto o coletor atende os demais, aponta para blank mantido na rota normal de vent e alívio.",
+      "resposta_padrao": "Obstrução da linha de ventilação do tanque.",
+      "por_que_nao": "A coincidência com a reinstalação após isolamento por blank e a perda simultânea do caminho normal de vent e alívio apontam para o blank remanescente.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a manutenção indevida de blank pode impedir a rota normal de vent e alívio e permitir que o gás inerte eleve a pressão do tanque."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a possibilidade de isolar claramente tanques individuais é relevante, sobretudo para manutenção, gas freeing e retorno ao serviço."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade da capacidade do vent/alívio com a vazão de enchimento de projeto.",
+      "pergunta": "Na corrida de comissionamento com água, a rota de vent está livre, a jusante está atmosférico e o alívio abre no ponto previsto; ainda assim, perto da vazão de enchimento de projeto, a pressão sobe acima do esperado. Qual a causa primária?",
+      "resposta": "Dispositivo de vent/alívio subdimensionado para a vazão de enchimento.",
+      "explicacao": "Com jusante livre, abertura no setpoint correto e teste com água, a sobrepressão apenas na vazão de projeto indica seleção/capacidade de vent inadequada ao cenário de enchimento.",
+      "resposta_padrao": "Restrição local na linha de vent.",
+      "por_que_nao": "Com rota livre, jusante atmosférica e alívio abrindo no ponto previsto, resta insuficiência de capacidade do conjunto para a vazão de enchimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Do ponto de vista técnico, a escolha e o ajuste precisam ser compatíveis com os cenários de enchimento, descarga, expansão térmica de líquido confinado, interação com gás inerte e contrapressão a jusante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No carregamento, se a atmosfera do tanque não for ventilada adequadamente, a pressão tende a subir"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

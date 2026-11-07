@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 17,
+  "rodada": 3,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de SOE ou registro event-driven para reconstruir a sequência causal de permissivos, modos e trips.",
+      "pergunta": "Com relógios alinhados entre BPCS, SIS e relés, uma parada breve deixa perda de permissivo, comando de parada e queda de pressão registrados no mesmo segundo; os estados discretos chegam ao historiador por varredura de 2 s. O que impede apontar o iniciador?",
+      "resposta": "Ausência de SOE dos estados discretos críticos",
+      "explicacao": "O sincronismo exclui erro de tempo. Como modos, permissivos e trips foram capturados por polling, a sequência causal dentro da janela de 2 s não fica preservada.",
+      "resposta_padrao": "Desalinhamento temporal entre as fontes de dados.",
+      "por_que_nao": "Os relógios estão coerentes; o problema é a coleta por varredura, que não conserva a ordem dos eventos discretos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registros confiáveis dos estados do sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem esse preparo, a organização pode confundir consequência com causa"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependências de supervisão entre controle, proteção e energia devem ser conhecidas antes de isolar enlaces OT.",
+      "pergunta": "Depois do isolamento de um uplink com tráfego suspeito, o controle local continua normal, mas o PMS perde estados de disjuntores e a estação congela a lista de bypass do SIS. Que causa técnica explica o agravamento?",
+      "resposta": "Interrupção de enlace comum de supervisão entre BPCS, PMS e SIS",
+      "explicacao": "As perdas surgem após a contenção e atingem apenas funções de supervisão cruzadas, com controle e proteção locais preservados; isso indica dependência compartilhada no uplink isolado.",
+      "resposta_padrao": "Propagação do incidente para os sistemas elétrico e de proteção.",
+      "por_que_nao": "O efeito aparece só após o isolamento e sem perda das funções locais, padrão de caminho comum interrompido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

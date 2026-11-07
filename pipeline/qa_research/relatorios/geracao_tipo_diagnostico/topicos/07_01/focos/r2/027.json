@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 2,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir ponto classificado como evento de falha de anunciação, usando a presença no SOE e a ausência na lista de alarmes.",
+      "pergunta": "Um ponto cruza repetidamente HH; cada ocorrência entra no SOE com carimbo de tempo, mas nunca aparece na lista de alarmes nem exige reconhecimento, enquanto outros alarmes anunciam normalmente. Qual configuração explica isso?",
+      "resposta": "Classificação do ponto como evento, não como alarme.",
+      "explicacao": "Registro apenas no SOE, sem entrada na lista de alarmes nem reconhecimento, caracteriza ponto tratado como evento. Falha de anunciação isolada não muda a classificação funcional do ponto.",
+      "resposta_padrao": "Anunciação do alarme desabilitada na IHM.",
+      "por_que_nao": "Se fosse só anunciação desabilitada, o ponto ainda apareceria como alarme e exigiria reconhecimento; aqui ele só entra no SOE.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "classificação entre alarme e evento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer seleção em modo local como causa de bloqueio ao comando remoto, distinguindo-a de falha de mapeamento do comando.",
+      "pergunta": "Os fins de curso e a posição do atuador atualizam na tela, permissivos estão satisfeitos e o equipamento movimenta pelos botões do painel local; da estação, o comando retorna como não permitido. Qual a causa primária?",
+      "resposta": "Chave local/remoto do atuador em local.",
+      "explicacao": "Com feedback normal e atuação local íntegra, a cadeia de campo está funcional. Com permissivos satisfeitos, o bloqueio do comando remoto indica seleção em modo local.",
+      "resposta_padrao": "Comando da IHM não mapeado até o atuador.",
+      "por_que_nao": "Quando o mapeamento falta, o comando remoto tende a ser emitido e não executado; aqui ele já é barrado pelo modo local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comandos da IHM fossem executados pelos atuadores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar falha de mapeamento de um sinal ao supervisório quando o controlador recebe e usa corretamente a informação de campo.",
+      "pergunta": "O fim de curso muda no PLC e libera o permissivo dependente desse estado; o registro de eventos do controlador mostra a transição, mas a tela mantém o valor antigo só desse ponto. Qual a causa primária?",
+      "resposta": "Mapeamento desse sinal para a IHM incorreto.",
+      "explicacao": "O controlador recebe a mudança e a usa no permissivo, descartando defeito de campo, cabo e entrada. A inconsistência ficou restrita ao caminho desse ponto até a supervisão.",
+      "resposta_padrao": "Fim de curso defeituoso.",
+      "por_que_nao": "Se o fim de curso estivesse defeituoso, o controlador não registraria a transição nem liberaria o permissivo dependente dela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correção para que sinais de campo chegassem à IHM"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir permissivo configurado invertido de falha no feedback, quando o estado recebido está correto mas a habilitação reage ao oposto.",
+      "pergunta": "O status de 'soprador em operação' muda corretamente no controlador e na tela, mas o permissivo do aquecedor dependente desse soprador só fica satisfeito quando ele está parado. Qual a causa primária?",
+      "resposta": "Lógica do permissivo configurada invertida.",
+      "explicacao": "O estado do soprador chega corretamente ao sistema. O erro está na avaliação lógica da condição habilitadora, que passa a aceitar justamente a condição oposta à requerida.",
+      "resposta_padrao": "Defeito no feedback de operação do soprador.",
+      "por_que_nao": "O feedback acompanha corretamente ligado e desligado; o problema é a interpretação lógica desse sinal no permissivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

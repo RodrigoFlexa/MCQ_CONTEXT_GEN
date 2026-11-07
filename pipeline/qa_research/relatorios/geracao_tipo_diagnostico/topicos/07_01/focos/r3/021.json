@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir permissivo de execução de etapa de intertravamento pela forma como a sequência reage à condição anormal.",
+      "pergunta": "Na sequência automática, a baixa pressão é indicada corretamente. A etapa atual segue ativa, mas a próxima só inicia quando a pressão retorna, sem reset nem atuação protetiva no instante da queda. Qual a causa primária na lógica?",
+      "resposta": "Permissivo de avanço da etapa para essa pressão.",
+      "explicacao": "A condição não força ação protetiva quando ocorre; apenas bloqueia a execução da etapa seguinte e libera assim que normaliza. Esse padrão caracteriza permissivo de etapa, não intertravamento.",
+      "resposta_padrao": "Intertravamento configurado para baixa pressão.",
+      "por_que_nao": "Intertravamento forçaria a ação de proteção no momento da ocorrência; aqui só o avanço da etapa fica bloqueado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Intertravamento é a lógica que força uma ação de proteção quando uma condição definida ocorre"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permissivo é a condição que precisa estar satisfeita para permitir partida, continuidade de operação ou execução de uma etapa"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar a supressão na condição lógica da proteção, distinguindo-a de supressão da entrada ou da resposta automática.",
+      "pergunta": "A pressão de alta-alta cruza o valor de trip e continua atualizando em tendência e indicação, mas o bit da função não muda, não há alarme dessa proteção e nenhuma resposta automática ocorre. Qual a causa primária?",
+      "resposta": "Bypass na condição lógica da função.",
+      "explicacao": "A medição continua chegando e sendo exibida, então a entrada não foi suprimida. Como o bit da função não muda, a condição lógica foi bypassada; se fosse só a resposta, o trip apareceria.",
+      "resposta_padrao": "Override na resposta automática da função.",
+      "por_que_nao": "Se a resposta estivesse suprimida, o bit de trip e o alarme da proteção mudariam de estado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "bypass ou override é a supressão temporária de uma entrada, condição ou resposta automática."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em operação real, esses estados alteram a função de barreiras e exigem gestão explícita."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer o limite de validade de ensaio em N2 para permissivos e intertravamentos dependentes de combustão ou composição do gás.",
+      "pergunta": "Intertravamentos, comunicação e atuadores passaram em circuito fechado com N2. Na primeira admissão de gás, surgem desvios só nos permissivos ligados à combustão/composição, com sinais de campo coerentes. O que explica aparecer apenas agora?",
+      "resposta": "Validação apenas em circuito fechado com N2.",
+      "explicacao": "O ensaio com N2 ajuda a validar integração e atuação, mas não reproduz combustão, composição do gás nem respostas de barreiras associadas ao inventário real.",
+      "resposta_padrao": "Falha de instrumento de campo.",
+      "por_que_nao": "Os sinais de campo seguem coerentes; o que mudou foi o cenário de processo, que o teste com N2 não reproduz.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "No comissionamento, a lógica de automação, a comunicação entre instrumentos de campo e o Controlador Lógico Programável (PLC), a verificação e a calibração de instrumentos e a operação assistida dos equipamentos servem para retirar incertezas antes da condição operacional com gás natural."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma condição com N2 e circuito fechado é útil para certos subsistemas, mas não reproduz todos os cenários de processo, combustão, composição de gás ou resposta de barreiras associadas ao inventário real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em operação real, esses estados alteram a função de barreiras e exigem gestão explícita."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

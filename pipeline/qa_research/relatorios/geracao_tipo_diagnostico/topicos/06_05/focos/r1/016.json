@@ -1,0 +1,117 @@
+{
+  "item": "06_05",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha no elemento sensor de falha no caminho de sinal usando teste com gás no cabeçote versus injeção elétrica no laço.",
+      "pergunta": "No detector de gás por ponto, a simulação elétrica no marshalling dispara alarme e causa/efeito completos, mas o teste com gás no cabeçote não gera resposta ou responde muito tarde; comunicação e lógica desse canal estão normais. Qual é a causa primária?",
+      "resposta": "cabeçote sensor degradado do detector de gás",
+      "explicacao": "A cadeia de sinal e as funções automáticas respondem na simulação elétrica. O que falha é a percepção do fenômeno perigoso no ambiente real, isolando o cabeçote sensor.",
+      "resposta_padrao": "Falha na lógica de votação.",
+      "por_que_nao": "A mesma lógica atua corretamente quando o sinal é injetado no laço; o defeito está antes do processamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se o detector continua apto a perceber o fenômeno perigoso no ambiente real"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se as funções automáticas associadas seguem executáveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a comprovação vem do teste funcional da cadeia completa, da detecção à ação prevista na matriz de causa e efeito"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar perda de integridade no caminho de sinal entre detector e controlador quando o sensor detecta localmente, mas o controlador não recebe a mudança.",
+      "pergunta": "No bump test, o detector entra em alarme localmente, mas a entrada correspondente no controlador não muda; quando o sinal é injetado no cartão, a lógica e as saídas atuam normalmente. O que está causando isso?",
+      "resposta": "circuito de transmissão entre detector e controlador",
+      "explicacao": "O detector percebe o estímulo e o controlador executa a lógica quando recebe sinal simulado. A falha fica restrita ao trecho de transmissão entre ambos.",
+      "resposta_padrao": "Detector descalibrado.",
+      "por_que_nao": "A atuação local durante o bump test mostra que o detector percebeu o gás; a perda ocorre depois disso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório, e a rastreabilidade temporal dos eventos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar erro de mapeamento entre controlador e supervisório quando a função automática ocorre, mas o operador não vê nem registra o evento.",
+      "pergunta": "A lógica do controlador recebe o alarme e executa as saídas previstas; outros pontos da mesma rede registram normalmente, mas esse ponto não aparece na tela do operador nem no histórico. Qual a causa primária?",
+      "resposta": "mapeamento incorreto do ponto entre controlador e supervisório",
+      "explicacao": "Como o controlador recebeu o alarme e atuou, campo e lógica estão funcionais. A perda está na coerência do ponto apresentado e registrado no supervisório.",
+      "resposta_padrao": "Falha intermitente do detector.",
+      "por_que_nao": "Se o detector estivesse falhando, o controlador não teria executado as saídas automáticas previstas para esse alarme.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua disponibilidade e funcionalidade devem ser sustentadas por sistemática de gestão, testes e manutenções requeridos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "inconsistências entre telas e lógica podem preservar hardware em campo e, ainda assim, comprometer a resposta de segurança"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório, e a rastreabilidade temporal dos eventos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Usar ausência de etapa esperada no log do controlador e a sequência temporal para identificar lógica de acionamento implementada incorretamente.",
+      "pergunta": "Depois de uma alteração de lógica, o log do controlador e o supervisório mostram o evento final, mas nenhum dos dois registra a etapa intermediária prevista, embora a confirmação local em campo tenha ocorrido. Qual causa primária isso indica?",
+      "resposta": "implementação incorreta da lógica de acionamento no controlador",
+      "explicacao": "A etapa prevista não aparece nem no controlador nem no supervisório, apesar da confirmação local. Isso aponta para lógica executada de forma diferente da configurada, não só para problema de visualização.",
+      "resposta_padrao": "Atraso de comunicação com o supervisório.",
+      "por_que_nao": "A ausência do estado intermediário também no log do controlador exclui atraso apenas de tela ou rede supervisória.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas latentes podem só se tornar visíveis durante uma liberação real"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a ausência de registros esperados no evento investigado indicou indício de falha de implementação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O intervalo registrado entre disparo local e indicação de CO2 disparado também mostra que a sequência temporal é relevante para verificar se a lógica configurada foi realmente executada"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

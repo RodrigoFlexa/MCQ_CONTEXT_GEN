@@ -1,0 +1,101 @@
+{
+  "item": "06_07",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Validade das condições iniciais no verificador dinâmico de grau de segurança.",
+      "pergunta": "A sequência executada foi a planejada, mas já na checagem inicial o grau calculado só coincide com o previsto quando uma barreira entra como indisponível desde o início; durante os passos, nenhuma nova perda ocorre. Qual causa primária explica a diferença?",
+      "resposta": "Condição inicial de disponibilidade da barreira incorreta no verificador",
+      "explicacao": "Se a divergência aparece antes de qualquer impacto das tarefas, o erro está no estado inicial modelado. A ADQR depende das condições iniciais armazenadas e da coerência entre condição real e analisada.",
+      "resposta_padrao": "Falha provocada pela primeira tarefa da sequência.",
+      "por_que_nao": "A diferença surge antes do primeiro impacto operacional previsto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "armazenar condições iniciais e impactos de operações sobre barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coerência entre a condição real e a condição analisada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Representação de dependências comuns por conjunto solidário de barreiras no grafo.",
+      "pergunta": "Ao retirar de serviço um utilitário comum, duas barreiras ficam indisponíveis no campo, mas o verificador continua contando ambas separadamente e o grau calculado quase não muda. Qual causa primária explica essa divergência?",
+      "resposta": "Omissão do conjunto solidário de barreiras no grafo",
+      "explicacao": "A metodologia exige modelar relações entre barreiras. Se uma dependência comum não entra no grafo, o cálculo preserva crédito fictício como se as duas barreiras fossem independentes.",
+      "resposta_padrao": "Dados de confiabilidade dos elementos finais estão errados.",
+      "por_que_nao": "Os elementos finais permanecem íntegros; a divergência vem da dependência comum não representada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "conceito de conjunto solidário de barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "modelagem por grafo de conjunto para representar as relações entre barreiras"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de critério de aceitabilidade para transformar o grau calculado em decisão técnica.",
+      "pergunta": "Dois revisores usam os mesmos dados, obtêm o mesmo grau de segurança para a sequência e chegam a decisões opostas, sem diferença de cálculo nem de cenário. Qual causa primária permite essa contradição?",
+      "resposta": "Critério de aceitabilidade do grau de segurança não definido",
+      "explicacao": "O número calculado, por si só, não diz se o programa pode ser aceito. A verificação explícita só é tecnicamente conclusiva quando existe critério de aceitabilidade pré-definido.",
+      "resposta_padrao": "Erro de cálculo ou parametrização do verificador.",
+      "por_que_nao": "O resultado é reproduzível; falta a referência técnica para julgar o valor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permitir verificação explícita de programas de intervenção quanto ao grau de segurança, desde que exista um critério de aceitabilidade definido"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Parâmetros de desempenho de barreiras precisam refletir envelhecimento para manter válida a avaliação dinâmica.",
+      "pergunta": "O teste funcional confirma a posição final do atuador, mas o tempo medido de fechamento aumentou; no verificador, permanece o dado histórico e a janela calculada entre tarefas não muda. Qual causa primária explica a diferença?",
+      "resposta": "Tempo de fechamento da barreira desatualizado nos dados do modelo",
+      "explicacao": "A ADQR depende de dados de entrada válidos e coerentes com a condição real. Envelhecimento pode alterar desempenho temporal da barreira sem impedir sua função final.",
+      "resposta_padrao": "Falha funcional do atuador.",
+      "por_que_nao": "A função final foi cumprida; o descolamento vem do parâmetro temporal usado na análise.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "utilidade do número calculado depende da validade dos dados de entrada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coerência entre a condição real e a condição analisada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "envelhecimento por fadiga e corrosão"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

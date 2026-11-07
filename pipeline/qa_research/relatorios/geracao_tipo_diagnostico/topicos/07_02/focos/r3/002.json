@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 3,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência arquitetural criada por usar o mesmo edge para integração local e nuvem.",
+      "pergunta": "Na instabilidade da WAN, só os tags que passam por um controlador de borda chegam atrasados ao SCADA local; I/O e malhas dos PLCs seguem normais, e esse mesmo equipamento publica MQTT para nuvem. Qual causa primária explica o atraso local?",
+      "resposta": "Controlador de borda comum ao SCADA local e ao broker MQTT em nuvem.",
+      "explicacao": "O mesmo ponto de interconexão atende máquina-nuvem e máquina-on-premise; sem separação adequada na fronteira, a degradação do caminho cloud contamina a supervisão local, embora o controle de campo permaneça normal.",
+      "resposta_padrao": "Problema no link de internet.",
+      "por_que_nao": "A WAN instável não deveria atrasar o SCADA local se a publicação em nuvem estivesse segregada do caminho supervisório.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Defesa em profundidade na OT: segmentação interna para conter propagação lateral entre componentes supervisórios.",
+      "pergunta": "Logs mostram execução de binários não autorizados em um servidor analítico; em seguida, HMI, estação de engenharia e historiador passam a executá-los também, mas SIS e sistema elétrico não. Esses quatro ativos compartilham a mesma zona, sem filtro interno. Qual causa primária permitiu essa propagação?",
+      "resposta": "Zona OT plana sem barreiras internas entre analytics, HMI, engenharia e historiador.",
+      "explicacao": "O alcance coincide exatamente com a zona compartilhada. Sem barreiras sucessivas internas, o problema em um servidor se propaga lateralmente aos demais ativos conectados além do necessário.",
+      "resposta_padrao": "Mesma vulnerabilidade de sistema operacional nos quatro ativos.",
+      "por_que_nao": "A vulnerabilidade pode ser comum, mas o limite da propagação acompanhando a fronteira da zona mostra que o fator decisivo foi o caminho lateral permitido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "item": "07_03",
+  "foco": 23,
+  "rodada": 4,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Priorização de bad actors não pode usar MTBF isoladamente quando a indisponibilidade é dominada pelo tempo de recuperação.",
+      "pergunta": "Um compressor deixou de ser priorizado porque seu MTBF superou o dos demais; ainda assim, suas poucas falhas responderam pela maior perda de produção do mês, com retornos de muitas horas. Qual causa primária torna esse diagnóstico enganoso?",
+      "resposta": "Uso isolado do MTBF na priorização dos bad actors",
+      "explicacao": "MTBF alto só indica falhas menos frequentes. Como os retornos desse compressor são longos, a indisponibilidade foi dominada pela recuperação; ranquear sem MTTR mascara o principal impacto operacional.",
+      "resposta_padrao": "Ele realmente deixou de ser crítico, já que seu MTBF ficou melhor.",
+      "por_que_nao": "Intervalos maiores entre falhas não compensam retornos muito lentos quando a perda é causada pela indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "MTBF resume o comportamento de falha observado, enquanto MTTR resume a capacidade de restaurar a função após a falha."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um sistema pode apresentar intervalos médios longos entre falhas e ainda assim perder muita produção se a recuperação for lenta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Também é necessário reconhecer o limite do indicador médio"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O valor de MTTR depende da definição operacional de início e fim e das parcelas efetivamente incluídas no indicador.",
+      "pergunta": "O MTTR registrado de um analisador dobrou após mudar o marco de início da falha. Tempo de intervenção, peças, acesso e testes pós-reparo permaneceram equivalentes; aumentou só o período entre o primeiro alarme e a liberação para manutenção. Qual causa primária explica o salto?",
+      "resposta": "Definição do MTTR ampliada para incluir alarme e espera pré-reparo",
+      "explicacao": "Os tempos ativos não mudaram. O salto veio da nova base do indicador, que passou a incorporar a parcela entre alarme e liberação, além do reparo propriamente dito.",
+      "resposta_padrao": "O reparo do analisador ficou mais demorado.",
+      "por_que_nao": "Os tempos ativos e os recursos permaneceram equivalentes; o que mudou foi a parcela contabilizada pelo indicador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "MTTR, Mean Time To Repair, expressa o tempo médio de reparo segundo a definição adotada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O intervalo completo entre falha e retorno também pode incluir esperas que precisam ser discriminadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A base do MTTR deve explicitar quais atividades de reparo inclui."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

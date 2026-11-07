@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar alarmes analíticos repetitivos em transientes à ausência de contexto de modo operacional.",
+      "pergunta": "Um modelo preditivo dispara anomalia em toda partida e parada, embora os instrumentos estejam validados e as trajetórias repitam o padrão histórico desses regimes; quando o operador informa modo estável, o alerta some. Qual é a causa primária?",
+      "resposta": "Ausência de contexto de modo operacional nos dados do modelo.",
+      "explicacao": "O bloco destaca que sinais sem contexto de modo operacional geram diagnósticos frágeis e alarmes espúrios. Como o alerta some ao informar o regime, o problema está no contexto do dado, não na instrumentação.",
+      "resposta_padrao": "Descalibração dos instrumentos usados pelo modelo.",
+      "por_que_nao": "Se fosse calibração, o desvio persistiria também em regime estável e não sumiria com a simples indicação do modo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falta de tratamento de qualidade do sinal quando dado remoto congelado continua válido para analytics.",
+      "pergunta": "Quando a comunicação de um analisador com a camada analítica cai por alguns minutos, o valor remoto fica estável com timestamp renovado e sem invalidação, enquanto a HMI local continua variando; o modelo segue emitindo recomendação normal. Qual é a causa primária?",
+      "resposta": "Ausência de tratamento de qualidade do sinal integrado.",
+      "explicacao": "O bloco destaca que sinais sem tratamento de qualidade produzem diagnósticos frágeis. Como a medição local varia e o valor remoto permanece válido e congelado, falta tratamento de qualidade na integração.",
+      "resposta_padrao": "Analisador travado em campo.",
+      "por_que_nao": "Se o analisador estivesse travado, a HMI local também permaneceria congelada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem tratamento de qualidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar oscilação introduzida por aplicação remota a atraso de comunicação incompatível com ajustes operacionais frequentes.",
+      "pergunta": "Correções automáticas vindas de uma aplicação remota passaram a gerar oscilações lentas só nos períodos de maior tráfego de rede; com a aplicação desabilitada, as malhas locais estabilizam sem retuning nem troca de instrumento. Qual causa primária?",
+      "resposta": "Atraso de comunicação incompatível com a frequência dos ajustes.",
+      "explicacao": "Se a instabilidade acompanha o tráfego de rede e desaparece sem a aplicação externa, a causa é atraso de comunicação incompatível para ajustes frequentes, não problema intrínseco das malhas locais.",
+      "resposta_padrao": "Sintonia inadequada das malhas locais.",
+      "por_que_nao": "A mesma sintonia fica estável sem a aplicação remota; o sintoma acompanha a condição da rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de fallback seguro em perda de conectividade de aplicação acoplada ao controle.",
+      "pergunta": "Na perda do link com a aplicação que envia correções ao processo, a última correção continua atuando por minutos; controladores e medições locais seguem normais, e o desvio desaparece ao retirar a atuação remota. Qual é a causa primária?",
+      "resposta": "Ausência de fallback seguro na perda de conectividade.",
+      "explicacao": "O bloco ressalta o comportamento em perda de conectividade para aplicações próximas ao controle. Se a última correção permanece ativa durante a perda do link, falta fallback seguro; a perda do enlace sozinha não explica a deriva.",
+      "resposta_padrao": "Falha de comunicação com a aplicação remota.",
+      "por_que_nao": "Perder o link não deveria manter a correção ativa em aplicação próxima ao controle; o elemento decisivo é o comportamento adotado na desconexão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

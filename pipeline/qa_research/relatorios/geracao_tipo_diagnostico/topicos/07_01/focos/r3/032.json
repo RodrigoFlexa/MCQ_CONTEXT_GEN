@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 32,
+  "rodada": 3,
+  "contexto": {
+    "A1": 31,
+    "F": 32,
+    "A2": 33
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar operador lógico incorreto em intertravamento a partir de testes funcionais de iniciadores independentes.",
+      "pergunta": "Baixa vazão e alta-alta temperatura são dois iniciadores do mesmo shutdown. Nos testes, cada bit muda corretamente no PLC quando simulado isoladamente, mas a saída de trip só aparece com os dois ativos ao mesmo tempo. Qual a causa primária?",
+      "resposta": "Lógica E no intertravamento em vez de OU.",
+      "explicacao": "Cada iniciador é reconhecido corretamente; o sinal decisivo é o trip surgir apenas com simultaneidade, assinatura típica de operador lógico configurado como AND.",
+      "resposta_padrao": "Um dos iniciadores está ajustado fora do ponto.",
+      "por_que_nao": "Ambos mudam de estado corretamente no PLC quando testados isoladamente; o defeito está na combinação lógica entre eles.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes da matriz de causa e efeito e dos cenários de atuação dos intertravamentos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar selo indevido de shutdown pela permanência do trip após normalização do iniciador.",
+      "pergunta": "Uma queda breve de pressão aciona o trip; segundos depois, o bit de baixa pressão já voltou ao normal no PLC, mas o shutdown só libera no reset manual, que atua normalmente. Qual a causa primária?",
+      "resposta": "Selo indevido de trip na lógica do intertravamento.",
+      "explicacao": "Como o iniciador retorna ao normal e o reset manual funciona, a persistência não vem do sensor nem do elemento final, mas de retenção lógica do trip.",
+      "resposta_padrao": "O pressostato ficou mecanicamente travado em alarme.",
+      "por_que_nao": "O estado de baixa pressão já voltou ao normal no PLC; quem permanece ativo é apenas o shutdown.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes da matriz de causa e efeito e dos cenários de atuação dos intertravamentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "confirmar a atuação do sistema de segurança"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir amortecimento excessivo no transmissor de restrição no processo pela repetição do atraso em bancada.",
+      "pergunta": "No circuito fechado com N2, um degrau de pressão aparece de imediato no manômetro de referência, mas a PV do PLC leva cerca de 20 s para acompanhar. Em bancada, o transmissor calibra bem e repete o mesmo atraso entre pressão aplicada e 4–20 mA. Qual a causa primária?",
+      "resposta": "Amortecimento excessivo configurado no transmissor de pressão.",
+      "explicacao": "Calibração estática conforme não elimina ajuste dinâmico errado. Reproduzir o atraso no próprio 4–20 mA em bancada localiza a causa no amortecimento interno do transmissor.",
+      "resposta_padrao": "Há obstrução parcial na linha de impulso.",
+      "por_que_nao": "O mesmo atraso aparece em bancada, com pressão aplicada diretamente ao transmissor e sem a linha de impulso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Antes da disponibilidade de gás natural, sopradores, aquecedores e leitos foram operados em circuito fechado com nitrogênio (N2)."
+        },
+        {
+          "bloco": "F",
+          "trecho": "observar problemas de equipamentos, ajustar instrumentos e realizar sintonia inicial de controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode revelar defeitos de integração, estanqueidade, medição e lógica"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

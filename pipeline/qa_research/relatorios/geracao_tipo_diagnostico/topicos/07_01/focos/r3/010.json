@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "rodada": 3,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre lei de amplitude do compensador por pulsos e aumento de movimentação principalmente perto do setpoint.",
+      "pergunta": "Erros de 1% e 8% acionam pulsos de igual altura; largura e intervalo variam, não há sobrecurso extra em degraus grandes, mas reversões e curso acumulado aumentam perto do setpoint. Qual a causa primária?",
+      "resposta": "Compensação por pulsos de amplitude fixa.",
+      "explicacao": "Sem escalar a amplitude com o tamanho do erro, pequenos desvios recebem energia desproporcional, elevando curso e reversões. A falta de piora relevante em degraus grandes afasta pulsos apenas excessivos em termos absolutos.",
+      "resposta_padrao": "Pulsos com amplitude excessiva.",
+      "por_que_nao": "Se fosse só excesso absoluto de amplitude, a degradação apareceria também nos erros maiores; aqui o traço decisivo é o mesmo pulso para erros distintos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Foi proposto um método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de parametrizar a compensação por pulsos com dados reais de operação, e não apenas condição de teste.",
+      "pergunta": "No teste com carga constante, a compensação ficou aceitável; em operação normal, sem mudança de sintonia, ruído ou suprimento, o erro segue dentro da meta, mas curso acumulado e reversões crescem nas faixas mais usadas. Desabilitado o compensador, o breakaway é igual ao histórico. Qual causa primária?",
+      "resposta": "Parametrização do compensador com dados não representativos da operação.",
+      "explicacao": "Como o breakaway sem compensação não mudou, o atrito não piorou. O problema surge ao aplicar no envelope real um ajuste obtido fora dele; o bloco liga a escolha dos parâmetros aos dados de operação.",
+      "resposta_padrao": "Aumento do atrito mecânico da válvula.",
+      "por_que_nao": "Se o atrito tivesse aumentado, o comportamento sem compensação também teria se alterado; aqui o desvio aparece só quando o ajuste enfrenta o serviço real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

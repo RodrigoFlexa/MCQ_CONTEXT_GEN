@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A redundância de UPS só existe se as estações redundantes estiverem realmente segregadas entre ramos independentes.",
+      "pergunta": "Ao retirar o UPS A para manutenção, as duas estações redundantes de supervisão reiniciam; os demais consumidores do barramento B seguem alimentados e o UPS B permanece estável, sem sobrecarga. Qual causa primária explica a perda simultânea das duas estações?",
+      "resposta": "Concentração das duas estações redundantes no UPS A.",
+      "explicacao": "Como o barramento B e seu UPS permaneceram normais, a perda simultânea das duas estações aponta para falta de segregação real: ambas dependiam do ramo A, apesar da arquitetura aparentemente redundante.",
+      "resposta_padrao": "Falha do disjuntor de interligação entre os UPS.",
+      "por_que_nao": "Uma estação realmente segregada no barramento B permaneceria energizada mesmo sem a interligação fechar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "distribuição correta entre ramos redundantes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A seleção de cargas de UPS deve ser guiada pela consequência da perda de energia, não pela menor potência consumida.",
+      "pergunta": "No blackout, o UPS mantém tomadas de manutenção e iluminação local, mas perdem-se comando dos geradores, CLP de recomposição e comunicação crítica; tensão de saída e autonomia do UPS permanecem normais. Qual causa primária explica essa perda?",
+      "resposta": "Comando, recomposição e comunicação crítica fora do UPS essencial.",
+      "explicacao": "O UPS continuou saudável e sustentou cargas menos críticas. A falha está na seleção/alocação das cargas essenciais: funções de recomposição e comando ficaram fora da alimentação que deveria mantê-las energizadas.",
+      "resposta_padrao": "Falha no inversor do UPS.",
+      "por_que_nao": "O inversor continuou alimentando outras cargas com tensão normal; o problema está na alocação das cargas críticas.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Modificações acumuladas podem fazer a carga real exceder a capacidade de contingência de um único UPS, anulando a redundância prevista.",
+      "pergunta": "Durante o teste anual de contingência, o TIE fecha e o UPS B assume o quadro já estabilizado, mas desarma por sobrecarga; em ensaio isolado ele entrega a potência nominal, e o quadro hoje alimenta mais consumidores do que no comissionamento. Qual a causa primária?",
+      "resposta": "Carga instalada atual acima da capacidade de contingência de um UPS.",
+      "explicacao": "Se o UPS B entrega sua potência nominal isoladamente, a anomalia não é defeito interno. O quadro real cresceu além do caso de contingência originalmente suportado por um único UPS.",
+      "resposta_padrao": "Defeito interno no UPS B.",
+      "por_que_nao": "Ele entrega a potência nominal em ensaio isolado; a falha aparece apenas com a carga real atual do quadro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "efeitos de modificações acumuladas ao longo da vida operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar a redundância prevista em projeto na configuração realmente instalada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

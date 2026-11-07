@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar a UPS como último elo da cadeia de emergência quando geração principal e gerador de emergência falham.",
+      "pergunta": "Na perda da geração principal, o gerador de emergência não entrou, e DCS, ESD e F&G perderam energia na mesma transição, embora fossem previstos para permanecer alimentados. Sem mudança de lógica ou setpoint, qual elemento específico faltou na cadeia de suporte?",
+      "resposta": "UPS da cadeia de emergência",
+      "explicacao": "Quando a geração principal cai e o gerador de emergência não parte, a UPS é o último meio para sustentar funções críticas. A perda simultânea na mesma transição indica ausência dessa sustentação, não problema lógico.",
+      "resposta_padrao": "Falha de partida do gerador de emergência.",
+      "por_que_nao": "Se só o gerador de emergência falhasse, as funções críticas ainda seriam mantidas pela UPS; a queda imediata mostra que esse último suporte não estava disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se a geração principal for perdida e o gerador de emergência não partir, ela é o meio que resta para manter alimentadas as funções críticas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a perda da geração principal, somada à falha de partida do gerador de emergência e à indisponibilidade da UPS"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer o bypass seguro da UPS como caminho que mantém cargas críticas durante falha elétrica interna.",
+      "pergunta": "Com fumaça e arco elétrico na UPS, as proteções atuaram, mas os equipamentos críticos continuaram energizados somente depois do isolamento das fontes e da transferência manual. Qual elemento sustentou a alimentação nesse quadro?",
+      "resposta": "bypass seguro da UPS",
+      "explicacao": "Diante de fumaça e arco na UPS, a continuidade após isolamento do trecho em falha depende da transferência das cargas críticas para o bypass seguro; baterias ou inversor avariado não sustentam esse arranjo.",
+      "resposta_padrao": "Banco de baterias da UPS.",
+      "por_que_nao": "O enunciado indica isolamento da falha e transferência; nessa condição, a manutenção da energia vem do caminho de bypass, não do banco de baterias.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

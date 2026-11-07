@@ -1,0 +1,117 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Confirmar o componente de comunicação afetado, e não fabricante ou função, para agrupar ativos realmente expostos.",
+      "pergunta": "Um aviso de vulnerabilidade reúne ativos de fornecedores e funções diferentes na mesma contenção, enquanto outros do mesmo fabricante ficam fora. Todos os incluídos compartilham o mesmo módulo embarcado de rede. Qual causa primária define essa seleção?",
+      "resposta": "Presença do mesmo componente de comunicação vulnerável.",
+      "explicacao": "Na triagem em OT, o decisivo é verificar se o ativo usa o componente afetado. Fabricante, função ou criticidade não explicam uma seleção que atravessa linhas de produto distintas.",
+      "resposta_padrao": "É um problema do mesmo fabricante.",
+      "por_que_nao": "A seleção cruza fornecedores e exclui outros produtos do próprio fabricante; o fator comum é o componente embarcado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o componente instalado estiver afetado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir presença de vulnerabilidade da probabilidade de exploração pela exposição direta à internet.",
+      "pergunta": "Um controlador remoto legado, na mesma versão dos pares, passou a registrar SYNs externos no serviço vulnerável depois da troca de enlace; os demais continuam acessíveis apenas pela rede de controle. Qual causa primária elevou o risco desse ativo?",
+      "resposta": "Acessibilidade direta à internet do serviço vulnerável.",
+      "explicacao": "A versão vulnerável por si só não diferencia esse ativo dos pares. O que aumenta a probabilidade de exploração é a exposição direta, sem a barreira de firewall e isolamento.",
+      "resposta_padrao": "Firmware desatualizado.",
+      "por_que_nao": "Os pares têm a mesma versão; o sinal decisivo é que só esse ativo passou a ser alcançável externamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar a consequência operacional ao papel do sistema atingido no processo.",
+      "pergunta": "A mesma fraqueza foi identificada no historiador e no controlador de vazão. Só no segundo apareceram abertura indevida de válvula e desvio de fluxo, sem perda geral da rede. Qual causa primária explica o efeito no processo?",
+      "resposta": "Comprometimento do controlador de vazão.",
+      "explicacao": "O efeito relevante depende da função do sistema atingido. Um historiador afeta dados; já um controlador que atua sobre vazão e válvulas pode alterar o comportamento do processo.",
+      "resposta_padrao": "O segundo evento foi um ataque mais severo.",
+      "por_que_nao": "O enunciado não mostra agravamento geral de rede; a diferença decisiva é o ativo comprometido atuar diretamente no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar incompatibilidade entre patch, firmware e comunicação em sistemas legados antes da aplicação em produção.",
+      "pergunta": "Na qualificação, o hotfix de segurança funcionou em servidores suportados, mas no controlador legado a CPU ficou normal e as remotas perderam comunicação até o rollback. Qual causa primária explica essa falha apenas nesse equipamento?",
+      "resposta": "Incompatibilidade do hotfix com firmware e comunicação legados.",
+      "explicacao": "Quando a atualização falha só no ativo legado e o rollback restaura a comunicação, a causa primária é incompatibilidade com firmware e comunicação existentes, não defeito geral de rede.",
+      "resposta_padrao": "Defeito nas remotas ou no link de rede.",
+      "por_que_nao": "A perda surge só após o hotfix nesse controlador e desaparece com o retorno; os sistemas suportados aceitam a correção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

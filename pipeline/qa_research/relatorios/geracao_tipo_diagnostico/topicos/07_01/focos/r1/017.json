@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar perda súbita na segunda falha à degradação oculta de um enlace redundante sem detecção prévia.",
+      "pergunta": "Com o anel de automação operando normal, um primeiro rompimento de fibra não alterou o serviço nem gerou alarme. Dias depois, outro rompimento em trecho diferente isolou várias remotas. Qual causa primária explica a perda nesse segundo evento?",
+      "resposta": "Primeiro enlace redundante já indisponível sem detecção.",
+      "explicacao": "Em rede redundante, uma única ruptura deveria ser tolerada. A perda só no segundo evento indica que a redundância já estava degradada e essa condição não foi percebida nem tratada.",
+      "resposta_padrao": "O segundo rompimento da fibra derrubou a rede.",
+      "por_que_nao": "Se o caminho redundante estivesse íntegro, um único segundo rompimento não eliminaria o serviço; o sinal decisivo é a degradação oculta anterior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar sintoma restrito a uma estação na camada de supervisão, distinguindo-o de perda de medição ou de controle.",
+      "pergunta": "Só uma estação de operação exibe valores congelados; outra estação, alarmes e tendências seguem atualizando, e as malhas continuam atuando normalmente. Qual é a causa primária desse sintoma?",
+      "resposta": "Perda da conexão da estação local com o servidor supervisório.",
+      "explicacao": "Há perda de visibilidade em um único cliente, sem perda de medição nem de comando. Pela análise por camadas, a falha está na supervisão local, não no campo nem no controlador.",
+      "resposta_padrao": "Falha do transmissor de campo.",
+      "por_que_nao": "Se fosse o transmissor, o desvio apareceria também na outra estação e afetaria a coerência das malhas, não apenas um cliente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir, em failover de controlador, perda do caminho de comando do canal reserva de falha geral de comunicação com o campo.",
+      "pergunta": "Na comutação para o controlador reserva, as PVs continuam coerentes na supervisão, mas as válvulas permanecem no último valor e não obedecem ao automático. Qual causa primária esse padrão indica?",
+      "resposta": "Interface de saída do controlador reserva indisponível.",
+      "explicacao": "A medição e a visibilidade permanecem íntegras após a comutação; a perda aparece só no comando. Isso aponta para o caminho de saída do canal reserva, sem redundância efetiva.",
+      "resposta_padrao": "Falha de comunicação com o campo.",
+      "por_que_nao": "Se a comunicação de campo tivesse sido perdida, as PVs também deixariam de chegar de forma coerente; o sintoma está restrito às saídas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

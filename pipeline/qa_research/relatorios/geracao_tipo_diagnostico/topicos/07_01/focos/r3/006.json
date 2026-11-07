@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre pressão de instrumento, pressão de carga e atuação do posicionador durante o movimento da válvula.",
+      "pergunta": "Durante um degrau de abertura, o sinal pneumático sobe de 0,6 para 0,8 bar, mas a pressão na câmara do atuador vai perto do suprimento para mover a haste e depois recua, com posição final correta e suprimento estável. Qual elemento explica esse comportamento?",
+      "resposta": "Posicionador da válvula",
+      "explicacao": "Com posicionador, a pressão de carga não precisa coincidir com o sinal do controlador; ela pode subir usando o suprimento para vencer a carga e depois ser reajustada para manter a posição requerida.",
+      "resposta_padrao": "Atrito estático no conjunto móvel da válvula.",
+      "por_que_nao": "Stiction tende a produzir permanência seguida de salto e degradação da modulação; aqui a posição final é atingida e a pressão de carga é reajustada de modo compatível com a ação do posicionador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a pressão de carga é a pressão efetivamente aplicada ao diafragma ou pistão para deslocá-lo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando não há posicionador, essa pressão pode coincidir com a pressão de instrumento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Erro estático de posicionamento introduzido pelo ajuste de zero do posicionador, isolado da malha e das forças de processo.",
+      "pergunta": "Com calibrador aplicado diretamente ao posicionador e sem ΔP de processo, comandos de 20%, 50% e 80% levam repetidamente a 18%, 48% e 78% de curso, nos dois sentidos, com suprimento normal. Qual a causa primária?",
+      "resposta": "Ajuste de zero do posicionador deslocado",
+      "explicacao": "O desvio constante e repetível, com sinal injetado direto no posicionador e sem forças de processo, indica erro de posicionamento introduzido pelo próprio posicionador, não pela malha nem pela carga do obturador.",
+      "resposta_padrao": "Escala do controlador incorreta.",
+      "por_que_nao": "O controlador está fora do ensaio; o mesmo offset aparece com sinal aplicado direto ao posicionador, isolando a causa nesse componente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na prática, o posicionador pode melhorar a capacidade de vencer forças de processo e não linearidades, mas também pode introduzir erro de posicionamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

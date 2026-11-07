@@ -1,0 +1,101 @@
+{
+  "item": "06_07",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A necessidade de explicitar o estado inicial das barreiras para que a sequência operacional reflita a proteção realmente disponível.",
+      "pergunta": "Uma intervenção começou com uma barreira já desativada por condição pré-existente conhecida. Quando uma segunda barreira foi retirada temporariamente, o roteiro ainda indicava proteção suficiente. Qual causa primária explica essa divergência?",
+      "resposta": "Condição inicial das barreiras não explicitada na sequência",
+      "explicacao": "A análise da sequência partiu como se todas as barreiras estivessem ativas. Sem registrar a indisponibilidade inicial, a retirada temporária da segunda barreira pareceu aceitável, embora levasse o conjunto abaixo da proteção necessária.",
+      "resposta_padrao": "A causa foi a retirada temporária da segunda barreira.",
+      "por_que_nao": "Essa retirada só se tornou crítica porque a atividade já começou com outra barreira desativada e isso não entrou no estado inicial analisado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "definição explícita da condição inicial da atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "identifica-se quais barreiras estão ativas e quais estão desativadas antes do início do plano operacional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A verificação deve acompanhar a passagem entre etapas, não apenas a aceitabilidade isolada de cada passo.",
+      "pergunta": "Na drenagem para abertura de linha, zero de pressão foi confirmado com a sangria aberta. No passo seguinte a sangria foi fechada, e a barreira mecânica prevista só entraria depois; cada etapa, vista separadamente, havia sido liberada. Qual causa primária melhor explica a exposição?",
+      "resposta": "Passagem entre etapas sem análise do estado das barreiras",
+      "explicacao": "O problema não estava em um passo isolado, mas na transição. Ao fechar a sangria antes de ativar a barreira seguinte, a sequência deixou de preservar um conjunto de proteção suficiente.",
+      "resposta_padrao": "Houve falha da sangria.",
+      "por_que_nao": "O zero de pressão foi confirmado enquanto a sangria estava aberta; a exposição apareceu quando a sequência mudou de etapa sem outra barreira já ativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada operação da sequência é analisada quanto ao seu impacto sobre o estado dessas barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se a passagem de um passo para o seguinte preserva um conjunto de proteção suficiente"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A contagem binária de barreiras pode superestimar proteção quando existem dependências comuns entre funções tratadas como independentes.",
+      "pergunta": "O quadro mostrava duas barreiras ativas em todas as etapas. Quando um painel era desenergizado para teste, sumiam juntos a detecção automática e o fechamento comandado, sem alteração na contagem 1/0. Qual causa primária explica essa leitura enganosa?",
+      "resposta": "Dependência comum da alimentação do painel entre as barreiras",
+      "explicacao": "As duas funções eram contadas separadamente, mas dependiam da mesma alimentação. A soma binária permaneceu igual e mascarou uma dependência oculta que eliminava ambas ao mesmo tempo.",
+      "resposta_padrao": "A contagem das barreiras estava errada.",
+      "por_que_nao": "Mesmo contadas como duas, elas não eram independentes; o erro decisivo foi ignorar a dependência comum da alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "barreiras ativadas receberam valor um e desativadas valor zero"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não representa sozinha degradação parcial, desempenho degradado, dependências ocultas nem incertezas operacionais"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O estado binário ativo/inativo não substitui a avaliação de desempenho real quando a barreira está degradada, mas ainda operante.",
+      "pergunta": "Leituras de gás voltavam a subir após cada abertura de tampa, e a renovação de ar medida estava bem abaixo do esperado; ainda assim a planilha mantinha a ventilação como barreira ativa porque o exaustor seguia ligado. Qual causa primária isso indica?",
+      "resposta": "Tratamento binário de ventilação degradada como barreira ativa",
+      "explicacao": "A barreira não estava totalmente indisponível, mas seu desempenho era insuficiente. Marcá-la apenas como ativa ocultou a degradação parcial e superestimou a proteção efetiva durante o trabalho.",
+      "resposta_padrao": "O detector de gás estava descalibrado.",
+      "por_que_nao": "A recorrência coincide com baixa renovação de ar medida; o sinal decisivo aponta para eficácia insuficiente da ventilação, não para erro de leitura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "barreiras ativadas receberam valor um e desativadas valor zero"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não representa sozinha degradação parcial, desempenho degradado, dependências ocultas nem incertezas operacionais"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

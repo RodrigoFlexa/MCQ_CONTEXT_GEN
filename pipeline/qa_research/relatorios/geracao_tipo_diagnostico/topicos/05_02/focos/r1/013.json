@@ -1,0 +1,109 @@
+{
+  "item": "05_02",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Permissivo de back feeding exige isolamento elétrico dos geradores principais antes da recomposição parcial.",
+      "pergunta": "O fechamento para back feeding é recusado com o gerador de emergência disponível e a seletora em realimentação; um gerador principal está parado, mas seu disjuntor permaneceu fechado no barramento. Qual causa primária impede a recomposição parcial?",
+      "resposta": "Disjuntor do gerador principal fora de aberto ou teste",
+      "explicacao": "Nesse arranjo, o back feeding só é permitido com os geradores principais inoperantes e eletricamente isolados. Manter um disjuntor principal fechado bloqueia o permissivo para evitar paralelismo ou retroalimentação indevida.",
+      "resposta_padrao": "Falta capacidade ao gerador de emergência para assumir o painel principal.",
+      "por_que_nao": "A carga nem chega a ser aplicada; a manobra é barrada antes do fechamento por ausência do permissivo de isolamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa realimentação só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste"
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende de permissivos, isolamento adequado das fontes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A utilidade do back feeding depende das cargas realmente conectadas ao painel alcançado e dos auxiliares necessários à retomada da geração principal.",
+      "pergunta": "Com o back feeding estabelecido, HMI e instrumentos retornam e a tensão no painel permanece normal, mas os auxiliares de lubrificação e resfriamento dos geradores principais continuam sem tensão. Qual é a causa?",
+      "resposta": "Auxiliares dos geradores principais fora do segmento realimentado",
+      "explicacao": "O back feeding só restaura as cargas ligadas ao painel alcançado. Se controles voltam, mas os auxiliares para partir ou sustentar os geradores principais não recebem energia, eles não pertencem ao trecho realimentado.",
+      "resposta_padrao": "O gerador de emergência está subdimensionado.",
+      "por_que_nao": "Sem queda de tensão no painel e com as cargas leves já restabelecidas, o problema é de topologia das cargas atendidas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode restaurar instrumentos, controles ou serviços necessários à recuperação da planta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "da condição dos sistemas auxiliares que permitem partir ou sustentar os geradores principais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O segmento energizado por back feeding deve ser compatível com a capacidade da geração de emergência.",
+      "pergunta": "Ao fechar o back feeding, a corrente sobe em todos os polos, a frequência do gerador de emergência cai progressivamente e a proteção atua por sobrecarga; em vazio ele permanece estável. Qual causa primária explica o colapso?",
+      "resposta": "Carga do segmento realimentado acima da capacidade da geração de emergência",
+      "explicacao": "A assinatura é de sobrecarga sustentada após energizar o trecho, não de defeito do gerador em vazio nem de curto instantâneo. O segmento conectado excede a finalidade e a capacidade da fonte emergencial.",
+      "resposta_padrao": "Há um curto-circuito no painel realimentado.",
+      "por_que_nao": "Curto tende a atuação instantânea de proteção; aqui há afundamento progressivo de frequência típico de excesso de carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compatibilidade entre o segmento da rede a ser energizado e a capacidade disponível da geração de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização de cargas que excedam a finalidade da fonte emergencial"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A recomposição por back feeding depende da lógica de intertravamento permanecer funcional também em estados degradados de controle.",
+      "pergunta": "Gerador de emergência pronto, fontes principais isoladas e seletora correta: o back feeding fecha em teste, mas após blackout com perda de uma UPS de controle o comando é recusado sem defeito mecânico no disjuntor. Qual causa primária?",
+      "resposta": "Intertravamento do back feeding dependente da UPS de controle indisponível",
+      "explicacao": "A manobra funciona quando o canal de controle está energizado e falha apenas no estado degradado. Isso aponta para lógica de intertravamento sem alimentação, não para defeito mecânico nem falta de capacidade.",
+      "resposta_padrao": "O disjuntor de back feeding travou mecanicamente.",
+      "por_que_nao": "Ele fecha normalmente em teste; a recusa aparece apenas quando a UPS de controle se perde.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado, da lógica de intertravamento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a lógica de controle não bloquear a própria retomada de energia"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

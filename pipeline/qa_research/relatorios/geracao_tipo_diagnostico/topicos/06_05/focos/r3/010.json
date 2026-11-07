@@ -1,0 +1,91 @@
+{
+  "item": "06_05",
+  "foco": 10,
+  "rodada": 3,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Indisponibilidade de um elemento final inibido pode anular a atuação automática mesmo com voto válido.",
+      "pergunta": "Confirmado alto gás, o controlador registra o voto e emite o fechamento da SDV, mas a válvula permanece aberta. No teste de manutenção, ela fecha pelo mesmo cartão de saída e retorna sem anomalia. Qual a causa primária da falta de atuação automática?",
+      "resposta": "bypass ativo na saída de fechamento da SDV",
+      "explicacao": "O voto foi atingido e a válvula responde pelo mesmo caminho de saída quando testada; isso exclui defeito do detector e do atuador e aponta indisponibilidade da ação automática por inibição de elemento crítico.",
+      "resposta_padrao": "Solenóide ou atuador da SDV com falha.",
+      "por_que_nao": "A válvula fecha no teste pelo mesmo cartão de saída; o problema é a indisponibilidade da atuação automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve incluir gestão de inibições, testes e manutenções dos elementos críticos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "desempenho não depende apenas do sensor: depende também da matriz de causa e efeito, da gestão de inibições, da manutenção, dos testes requeridos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "elas podem depender de interfaces com parada de emergência (ESD), isolamento, ventilação ou sistemas de combate."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade do F&G depende de registrar também comandos e retornos das ações de causa e efeito.",
+      "pergunta": "No histórico do incidente aparecem alarmes de gás e reconhecimentos do operador com carimbo de tempo normal, mas não surgem transições de comandos nem retornos de SDV e dampers; em teste funcional posterior, essas ações existem localmente. Qual a causa primária da baixa rastreabilidade?",
+      "resposta": "eventos das saídas e feedbacks não configurados no supervisório",
+      "explicacao": "Os alarmes e reconhecimentos chegaram ao supervisório, descartando perda total de comunicação. A ausência seletiva de comandos e retornos indica configuração de registros incapaz de reconstruir as ações automáticas.",
+      "resposta_padrao": "Perda de comunicação entre controlador e supervisório.",
+      "por_que_nao": "Alarmes e reconhecimentos foram registrados normalmente; a lacuna é seletiva nos pontos de atuação e retorno.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os registros do supervisório permitam reconstruir eventos e ações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "registros pouco práticos dificultam entender o que ocorreu durante um incidente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando os registros supervisórios são pouco práticos ou incompletos, o diagnóstico do evento e a reconstrução da resposta ficam prejudicados."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A execução da causa e efeito pode falhar por interface F&G–ESD incorreta, apesar da lógica de ambos estar correta.",
+      "pergunta": "Alto gás confirmado na zona muda o ponto de saída de isolamento no controlador de F&G, mas o ESD não indica entrada recebida e nenhuma SDV fecha. Quando a mesma entrada é simulada no painel de ESD, as válvulas respondem corretamente. Qual a causa primária?",
+      "resposta": "interligação física F&G–ESD não implementada corretamente",
+      "explicacao": "O F&G gerou a saída e o ESD executa o isolamento quando sua entrada é simulada; assim, ambos os sistemas funcionam isoladamente e a falha primária está na interface física entre eles.",
+      "resposta_padrao": "Falha na lógica do ESD.",
+      "por_que_nao": "Quando a entrada é simulada no painel de ESD, as SDVs fecham; a lógica de ESD estava apta.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "elas podem depender de interfaces com parada de emergência (ESD), isolamento, ventilação ou sistemas de combate."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Também mostra que uma mudança formalmente aprovada pode não se materializar em campo se a implementação falhar."
+        },
+        {
+          "bloco": "F",
+          "trecho": "selecionar bem a lógica não basta; é preciso demonstrar que ela permanece executável"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

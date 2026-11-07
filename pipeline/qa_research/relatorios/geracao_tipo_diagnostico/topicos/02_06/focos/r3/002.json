@@ -1,0 +1,83 @@
+{
+  "item": "02_06",
+  "foco": 2,
+  "rodada": 3,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dualidade da função da detecção de gás: shutdown automático e alerta às pessoas.",
+      "pergunta": "Na prova funcional, o detector entra em gas trip, SDVs fecham e motores param, mas sirene e beacon da área não atuam; ambos respondem no teste manual. Qual é a causa primária?",
+      "resposta": "Saídas de alerta às pessoas ausentes da matriz de causa e efeito.",
+      "explicacao": "A detecção de gás deve alertar pessoas e acionar shutdown. Como o shutdown ocorreu e os avisadores funcionam em teste manual, a falha está na associação lógica dos alertas à detecção.",
+      "resposta_padrao": "Falha elétrica das sirenes e beacons.",
+      "por_que_nao": "Os avisadores respondem no teste manual; o desvio aparece só quando a detecção de gás deveria acioná-los.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Os níveis de alarme e de shutdown por gás e suas ações devem estar definidos na matriz de causa e efeito"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Cobertura do gas shutdown deve incluir fontes autônomas de energia que sustentam a movimentação de hidrocarbonetos.",
+      "pergunta": "Com gas trip confirmado, alimentadores da área abrem e SDVs fecham, mas um skid de stripping com motor diesel mantém vazão até o motor ser parado localmente. Qual causa primária explica isso?",
+      "resposta": "Interface de trip por gás ausente no motor diesel do skid.",
+      "explicacao": "O shutdown por gás deve remover ou isolar fontes de gás e energia. Como o desligamento elétrico e as SDVs atuaram, a energia remanescente que sustentou a vazão foi o motor diesel autônomo.",
+      "resposta_padrao": "Há uma fonte remota de hidrocarboneto ainda alimentando a linha.",
+      "por_que_nao": "As SDVs já fecharam; a vazão só cessa quando o motor local para, indicando energia motriz ainda ativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acionar ações automáticas que removam ou isolem fontes de gás e energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "cobrir de fato todas as fontes relevantes de hidrocarboneto na área"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre níveis de alarme e de shutdown na parametrização da detecção de gás.",
+      "pergunta": "Durante teste com gás padrão, um detector salta direto para gas trip em concentração que nos demais pontos gera só alarme baixo; calibração e leitura local conferem. Qual é a causa primária?",
+      "resposta": "Setpoint de shutdown configurado no patamar de alarme.",
+      "explicacao": "Se a medição está correta e apenas um ponto entra em trip prematuro, o problema não é sensoriamento, mas a configuração dos níveis e ações desse detector na lógica.",
+      "resposta_padrao": "Detector descalibrado.",
+      "por_que_nao": "A leitura local confere com o gás aplicado; o erro está no patamar que dispara o shutdown.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Os níveis de alarme e de shutdown por gás e suas ações devem estar definidos na matriz de causa e efeito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Alarmes e shutdowns fazem a ponte entre detecção de desvio e resposta do sistema"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

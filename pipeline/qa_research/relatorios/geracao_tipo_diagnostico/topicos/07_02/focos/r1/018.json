@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Saúde do banco de baterias da UPS e continuidade da camada de supervisão em interrupções curtas de alimentação.",
+      "pergunta": "Os servidores de supervisão reiniciam apenas em interrupções curtas da alimentação; sem alarme de sobrecarga, controladores e proteção seguem estáveis, e a tensão do banco da UPS despenca no autoteste. Qual a causa primária?",
+      "resposta": "Banco de baterias degradado da UPS.",
+      "explicacao": "Em dupla conversão, interrupções curtas deveriam ser sustentadas sem reinicialização. Sem sobrecarga, a queda abrupta da tensão do banco no autoteste aponta perda de capacidade armazenada nas baterias da UPS.",
+      "resposta_padrao": "Instabilidade da alimentação de entrada.",
+      "por_que_nao": "UPS de dupla conversão saudável suporta interrupções curtas; o indício decisivo é a queda da tensão do banco no autoteste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa etapa carrega o banco de baterias"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Integridade da lógica carregada do SIS como causa de perda de demanda com entrada, setpoint e elemento final íntegros.",
+      "pergunta": "Depois de carregar nova aplicação, o mesmo valor de teste que antes gerava trip agora só muda a entrada no SOE; o setpoint segue igual, o resumo de bypass está desligado e o elemento final aprova em teste. Qual a causa primária?",
+      "resposta": "Alteração indevida da lógica do SIS.",
+      "explicacao": "A entrada do SIS muda no SOE no valor esperado, o setpoint não mudou, bypass está desligado e o elemento final está apto. Restando a cadeia lógica carregada, a causa primária é alteração indevida da lógica.",
+      "resposta_padrao": "Transmissor defeituoso.",
+      "por_que_nao": "A entrada muda no SOE no mesmo valor de teste e o setpoint segue igual; o problema está depois do sensor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "capacidade de comparar comportamento atual com referência histórica"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito de inhibit remanescente sobre a atuação de uma função instrumentada de proteção.",
+      "pergunta": "O trip de proteção não atua, mas o registro mostra demanda reconhecida e bloqueada; o elemento final aprova em teste e o indicador-resumo de bypass ficou ativo desde a intervenção anterior. Qual a causa primária?",
+      "resposta": "Inhibit ativo na função instrumentada.",
+      "explicacao": "Houve reconhecimento da demanda, então a condição de processo e o sensoriamento existiram. O bloqueio registrado junto com resumo de bypass ativo desde a intervenção aponta inhibit remanescente, não falha do elemento final.",
+      "resposta_padrao": "Válvula de shutdown travada.",
+      "por_que_nao": "O elemento final aprova em teste e o registro mostra a demanda bloqueada antes do comando de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela se relaciona com temas como gestão de alarmes, overrides, inhibits e avaliação de risco operacional em condições anormais"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "quem autoriza isolamento ou bypass"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limitação de analytics/edge como camada isolada, sem integração ao monitoramento de segurança e à decisão operacional.",
+      "pergunta": "Analytics em edge indicaram degradação horas antes e as medições ficaram disponíveis no painel local, mas nenhum alarme crítico chegou à sala de controle nem houve escalonamento; a resposta só veio após atuação do SIS. Qual a causa primária?",
+      "resposta": "Analytics de edge não integrado ao monitoramento de segurança.",
+      "explicacao": "A detecção ocorreu com antecedência e ficou visível localmente, logo não era ausência de dados nem erro preditivo puro. O fracasso foi a camada analítica não alimentar alarmes, escalonamento e resposta das funções críticas.",
+      "resposta_padrao": "Algoritmo preditivo mal calibrado.",
+      "por_que_nao": "A degradação foi detectada horas antes e as medições estavam disponíveis; faltou integração com alarmes e resposta operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics em dispositivos, edge computing e modelos digitais podem ampliar observação e previsão de falhas, porém não substituem monitoramento de segurança nem garantem resposta adequada sem integração com funções críticas e decisão operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "definir quem interpreta alarmes e anomalias"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "há critérios claros para escalonamento"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

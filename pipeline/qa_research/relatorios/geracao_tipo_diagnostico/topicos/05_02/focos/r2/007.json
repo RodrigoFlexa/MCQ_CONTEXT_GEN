@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O estado do bus tie altera níveis de curto e a base de coordenação; a seletividade precisa valer para a topologia interligada.",
+      "pergunta": "Com o bus tie aberto, um curto em um alimentador é eliminado no próprio disjuntor; com o bus tie fechado, a mesma classe de falta passa a abrir o primário do transformador. Qual a causa primária?",
+      "resposta": "Coordenação de proteção válida só com bus tie aberto.",
+      "explicacao": "Fechar o bus tie altera caminhos de falta, níveis de curto, sensibilidades e tempos. Se a seletividade se perde apenas nessa topologia, os ajustes não cobriam a operação interligada.",
+      "resposta_padrao": "Aumento do nível de curto-circuito com o bus tie fechado.",
+      "por_que_nao": "Esse efeito da interligação só vira desligamento indevido quando os ajustes não foram coordenados para a topologia fechada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Nessa arquitetura, relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário, para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A abertura pela retaguarda, com corrente medida localmente e sem início da função a jusante, indica indisponibilidade da proteção principal do alimentador.",
+      "pergunta": "Durante um curto em alimentador, o IED local registra corrente acima do pickup, mas nenhuma função inicia; o primário abre no tempo exato da retaguarda. Qual a causa primária?",
+      "resposta": "Função de proteção principal do alimentador indisponível.",
+      "explicacao": "A corrente chegou ao IED e a falta foi limpa no atraso da retaguarda. Sem início da função local, não é descoordenação; a proteção principal do alimentador falhou ou estava indisponível.",
+      "resposta_padrao": "Descoordenação da retaguarda do primário.",
+      "por_que_nao": "Se fosse apenas coordenação, a proteção do alimentador ao menos iniciaria; aqui ela não iniciou mesmo acima do pickup.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para isso, a seletividade coordena a atuação entre dispositivos a montante e a jusante, enquanto a retaguarda atua quando a proteção principal falha ou não cobre adequadamente determinada zona."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em certos arranjos, a proteção do barramento elimina a falta pela abertura da fonte primária, não por comandos aos alimentadores.",
+      "pergunta": "Na injeção de teste da proteção dedicada do barramento, só a bobina de abertura do disjuntor primário é comandada; nenhum alimentador recebe trip. Que elemento explica essa lógica?",
+      "resposta": "Proteção de barramento com atuação no disjuntor primário.",
+      "explicacao": "Nessa arquitetura, a proteção do barramento pode exigir abertura da fonte primária para eliminar a zona protegida, sem comandar os alimentadores.",
+      "resposta_padrao": "Falha no circuito de trip dos alimentadores.",
+      "por_que_nao": "O padrão aparece no teste funcional da própria proteção do barramento; é a filosofia prevista para essa zona.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a proteção de barramento pode usar transformadores de corrente nas buchas primárias ou proteção diferencial de terra, exigindo abertura da fonte primária."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

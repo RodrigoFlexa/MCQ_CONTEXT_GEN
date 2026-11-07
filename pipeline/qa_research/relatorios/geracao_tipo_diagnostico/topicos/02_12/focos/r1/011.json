@@ -1,0 +1,79 @@
+{
+  "item": "02_12",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de seleção errada da realimentação de pressão após mudança de destino do gás.",
+      "pergunta": "Na transferência de exportação para reinjeção, o coletor de reinjeção fica abaixo do alvo, mas a PV da malha de capacidade segue no setpoint; velocidade e reciclo quase não mudam, e a linha de exportação está isolada. Qual a causa primária?",
+      "resposta": "Transmissor de pressão da exportação ainda selecionado",
+      "explicacao": "Com a exportação isolada, PV em setpoint e o header ativo abaixo do alvo, a malha está lendo a pressão errada para o modo atual.",
+      "resposta_padrao": "Falta de capacidade do compressor.",
+      "por_que_nao": "Se a PV controlada está normal numa linha isolada e a máquina quase não reage, o problema é a realimentação escolhida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa relação não é universal e depende do arranjo, da malha selecionada e do modo operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a unidade precisa sustentar exportação, por exemplo, o compressor tende a responder à condição exigida na descarga;"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de ponto de controle de pressão mal localizado frente à restrição variável da remoção de CO2.",
+      "pergunta": "Com a pressão de descarga controlada estável, a pressão no coletor de reinjeção cai sempre que aumenta a carga da remoção de CO2; a máquina ainda tem margem e o anti-surge quase não atua. O que explica o desvio?",
+      "resposta": "Tomada de pressão de controle a montante da remoção de CO2",
+      "explicacao": "A restrição variável da etapa de CO2 fica fora da variável controlada; manter a pressão antes dela não garante a pressão requerida no coletor de reinjeção.",
+      "resposta_padrao": "Restrição na linha de reinjeção.",
+      "por_que_nao": "A queda coincide com a carga da remoção de CO2 enquanto a descarga controlada permanece normal e a máquina ainda tem margem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a pressão passa a ser a variável proxy da necessidade do processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "porque mudam a composição do gás, o encaminhamento das correntes e as restrições do sistema a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de setpoint de pressão não comutado entre modos operacionais de destinos distintos.",
+      "pergunta": "Ao direcionar o gás para flare, a descarga permanece no mesmo patamar alto usado antes para exportação, PV e pressão local coincidem, e o compressor passa a reciclar sem mudança relevante de sucção. Qual a causa primária?",
+      "resposta": "Setpoint do modo de exportação mantido na malha",
+      "explicacao": "Destinos diferentes pedem pressões diferentes; se a medição está correta e o patamar alto antigo persiste após a troca de destino, o alvo ativo não mudou.",
+      "resposta_padrao": "Aumento de contrapressão no flare.",
+      "por_que_nao": "PV e pressão local concordam num nível alto sem elevação a jusante; quem sustenta esse patamar é o alvo de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada destino impõe uma exigência diferente de pressão, continuidade de fornecimento e flexibilidade operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa relação não é universal e depende do arranjo, da malha selecionada e do modo operacional."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

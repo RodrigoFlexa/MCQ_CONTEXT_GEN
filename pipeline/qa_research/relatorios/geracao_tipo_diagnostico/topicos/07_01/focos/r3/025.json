@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 25,
+  "rodada": 3,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Condicionamento por estado operacional na matriz pode ocultar falha quando o teste foi feito em outro modo.",
+      "pergunta": "A alta vibração é detectada e registrada, e a mesma válvula de shutdown fecha por outras causas. Só com o equipamento rodando essa alta vibração deixa de gerar parada; em standby, o teste foi aprovado. Qual a causa primária?",
+      "resposta": "Condicionamento da causa ao estado de operação configurado incorretamente.",
+      "explicacao": "A causa é detectada e o elemento final atua por outras causas; a diferença aparece só com o equipamento rodando. Isso aponta para condicionamento indevido dessa causa na matriz conforme o estado operacional.",
+      "resposta_padrao": "A chave de alta vibração está defeituosa.",
+      "por_que_nao": "A causa é detectada e registrada; defeito no iniciador não explica a falha seletiva só com o equipamento em operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o comportamento observado no teste, porém, vale para os cenários exercitados e para o arranjo disponível naquele momento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "as condições de entrada levam aos efeitos definidos para os intertravamentos da unidade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O desempenho de intertravamentos, permissivos e compensações muda com o regime operacional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sequência de partida desatualizada após alteração de lógica pode manter intertravamento travado sem defeito de I/O.",
+      "pergunta": "Alterada a lógica de partida, o procedimento vigente é seguido; todos os permissivos de campo ficam verdadeiros, mas o intertravamento não arma. Um operador experiente sempre libera a partida executando na HMI uma sequência não prevista no procedimento. Qual a causa primária?",
+      "resposta": "Procedimento de partida sem o reset de latch exigido pela lógica atual.",
+      "explicacao": "A liberação ocorre de forma repetitiva por uma sequência não documentada após mudança de lógica. Isso indica desalinhamento entre a configuração implantada e o procedimento usado na partida.",
+      "resposta_padrao": "Há falha intermitente no PLC.",
+      "por_que_nao": "Defeito aleatório não seria eliminado sempre pela mesma sequência manual após a alteração de lógica.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras e alinhamento entre documentação, prática de campo e lógica implantada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se o procedimento estiver desatualizado, a execução pode deixar de refletir a configuração real do sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a proteção depende da coerência entre causa, decisão automática e efeito final"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

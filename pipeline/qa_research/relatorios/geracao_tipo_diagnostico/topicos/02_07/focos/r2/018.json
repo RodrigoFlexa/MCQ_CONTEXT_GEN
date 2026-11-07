@@ -1,0 +1,79 @@
+{
+  "item": "02_07",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que a hipótese de válvula rápida pode falhar e que a dinâmica do elemento final desestabiliza a malha de nível.",
+      "pergunta": "Em manual, um degrau na abertura da válvula de saída líquida só altera a vazão após atraso perceptível e em rampa lenta; em automático, degraus de alimentação passaram a produzir caça do nível com o mesmo PI. Qual a causa primária?",
+      "resposta": "dinâmica lenta da válvula de saída líquida",
+      "explicacao": "A lentidão aparece também fora do controlador, logo a limitação está no elemento final. A hipótese de válvula rápida deixa de valer e a malha perde robustez.",
+      "resposta_padrao": "PI mal sintonizado.",
+      "por_que_nao": "A mesma resposta lenta surge com o controlador fora de serviço; o problema não nasce do ajuste do PI.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle; essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar restrição hidráulica a jusante da válvula líquida a partir de saturação da malha sem aumento correspondente de vazão.",
+      "pergunta": "O nível líquido sobe até perto do alto-alto com alimentação praticamente constante; a posição medida da válvula de saída acompanha o comando até abertura elevada, mas a vazão na linha quase não aumenta. Qual a causa primária?",
+      "resposta": "restrição a jusante da válvula de saída líquida",
+      "explicacao": "Com a posição acompanhando o comando e a entrada estável, o desequilíbrio persiste por limitação hidráulica depois da válvula, levando o nível ao limite apesar da ação da malha.",
+      "resposta_padrao": "válvula de controle travando.",
+      "por_que_nao": "A posição medida acompanha o comando até grande abertura; a limitação está depois da válvula, não no atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sem controle adequado, o desequilíbrio entre entradas e saídas pode levar o nível aos limites do vaso;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir descontrole da interface óleo-água de degradação global da separação quando o nível total permanece estável.",
+      "pergunta": "Água no óleo e óleo na água passaram a aparecer em picos alternados, enquanto pressão e nível total permaneceram estáveis e a alimentação não mudou. Qual a causa primária?",
+      "resposta": "malha de interface óleo-água comprometida",
+      "explicacao": "Nível total estável não fixa a interface. Contaminação alternada das duas saídas indica a interface migrando entre as tomadas de óleo e água, não uma piora uniforme da separação.",
+      "resposta_padrao": "emulsão mais estável no separador.",
+      "por_que_nao": "Emulsão estável costuma degradar a separação de modo persistente, não alternar crossover entre as duas saídas com nível total estável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de nível, pressão e interface é central para a estabilidade da planta."
+        },
+        {
+          "bloco": "F",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

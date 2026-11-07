@@ -1,0 +1,113 @@
+{
+  "item": "05_02",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Com barramento seccionado, a contingência deve ser suportada por seção; folga total do sistema não substitui reserva local.",
+      "pergunta": "Com a interligação entre barramentos aberta, a seção A opera com dois geradores a 65% cada e a B com um a 10%; a perda de um gerador da A derruba só esse lado. Fechada a interligação, a mesma contingência é suportada. Qual causa primária?",
+      "resposta": "Reserva girante insuficiente na seção A com barramento seccionado.",
+      "explicacao": "A capacidade global existe, pois a contingência é suportada com os barramentos interligados. O colapso só aparece quando a seção A precisa absorver localmente a perda de um gerador, sem margem suficiente.",
+      "resposta_padrao": "Potência instalada total insuficiente.",
+      "por_que_nao": "Com a interligação fechada, a mesma perda é absorvida; o problema é a falta de margem local na seção isolada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A prevenção e a análise de blackouts exigem mais do que verificar potência instalada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esses recursos ajudam a entender se a configuração instalada mantém margem suficiente diante de partidas de motores, rejeição de cargas, separação de barramentos e falhas em equipamentos sensíveis."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na recomposição parcial, back feeding só ajuda a partir a geração principal se o segmento alcançado incluir seus auxiliares de partida.",
+      "pergunta": "No blackout, o gerador de emergência sustenta tensão sem sobrecarga, o back feeding devolve DCS e iluminação, mas bombas de pré-lubrificação e ventiladores de resfriamento dos geradores principais continuam sem tensão. Qual causa primária?",
+      "resposta": "Auxiliares de partida dos geradores principais fora do segmento realimentado.",
+      "explicacao": "A fonte emergencial suporta o painel alcançado, mas os serviços necessários à partida da geração principal não estão entre as cargas desse trecho. A recomposição parcial restaura controles, porém não habilita a partida.",
+      "resposta_padrao": "Gerador de emergência subdimensionado.",
+      "por_que_nao": "Não há sobrecarga nem colapso de tensão; a limitação é topológica, pelas cargas efetivamente alcançadas no back feeding.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A prevenção e a análise de blackouts exigem mais do que verificar potência instalada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "e da condição dos sistemas auxiliares que permitem partir ou sustentar os geradores principais."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A eficácia do load shedding depende do tempo de atuação; rejeitar MW suficientes tarde demais não evita o blackout.",
+      "pergunta": "No registro do evento, os alimentadores previstos para rejeição abrem, mas a primeira etapa só ocorre depois que a frequência já cruzou a faixa de trip dos geradores; a soma das cargas abertas cobriria o déficit. Qual causa primária?",
+      "resposta": "Atuação tardia do load shedding.",
+      "explicacao": "O montante rejeitado seria suficiente, mas foi retirado depois que a frequência já entrou na região de atuação das proteções dos geradores. O fator decisivo é o atraso do esquema.",
+      "resposta_padrao": "Quantidade insuficiente de carga rejeitada.",
+      "por_que_nao": "As cargas abertas cobriam o déficit; faltou rapidez para aliviar os geradores antes do trip.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A prevenção e a análise de blackouts exigem mais do que verificar potência instalada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Load shedding é a rejeição seletiva de cargas para reduzir rapidamente a demanda elétrica quando isso for requerido para evitar blackout."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se o esquema atuar tarde, com prioridades inadequadas ou baseado em análise de carga desatualizada, sua eficácia diminui."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A seleção das cargas do load shedding deve seguir criticidade; estabilizar frequência sem preservar funções essenciais indica priorização errada.",
+      "pergunta": "Na perda de um gerador, a frequência se recupera após o shedding, mas saem cargas essenciais enquanto consumidores de processo menos críticos permanecem energizados. Qual causa primária?",
+      "resposta": "Priorização inadequada das cargas no load shedding.",
+      "explicacao": "O sistema recupera a frequência, então a rejeição de potência funcionou. O defeito está em quais consumidores foram descartados, contrariando a criticidade necessária para segurança e continuidade operacional.",
+      "resposta_padrao": "Potência remanescente insuficiente.",
+      "por_que_nao": "A frequência se estabiliza após o shedding; o problema não é falta de MW, e sim a hierarquia das cargas rejeitadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A prevenção e a análise de blackouts exigem mais do que verificar potência instalada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores que permaneceram conectados e aumenta a chance de preservar alimentação para funções essenciais."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

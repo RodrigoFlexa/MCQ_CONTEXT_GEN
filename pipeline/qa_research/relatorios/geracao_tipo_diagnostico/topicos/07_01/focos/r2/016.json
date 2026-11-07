@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir cobertura parcial da automação de perda de comunicação pelo fato de as informações nunca terem existido na supervisão.",
+      "pergunta": "Desde a partida, um pacote mantém sequência e leituras só no painel local; no supervisório nunca existiram valor, estado, alarme de comunicação ou comando remoto para ele. Qual a causa primária?",
+      "resposta": "Pacote não integrado ao PLC.",
+      "explicacao": "A ausência estrutural desde a partida, com acompanhamento local previsto, indica cobertura parcial da automação, não perda de comunicação de algo que já estava integrado.",
+      "resposta_padrao": "Falha de comunicação com o PLC.",
+      "por_que_nao": "Perda de comunicação aparece como ausência de atualização ou congelamento de sinais antes disponíveis; aqui eles nunca existiram na supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nesses casos, parte da visibilidade do processo depende de observação complementar do operador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir travamento da lógica local de perda de comunicação em equipamento com controlador próprio.",
+      "pergunta": "O PLC indica enlace saudável com um controlador local; mesmo assim, valores e status ficam congelados, o comando remoto falha e a sequência também não executa pelo painel local. Qual a causa primária?",
+      "resposta": "Travamento da lógica local do controlador do pacote.",
+      "explicacao": "Com alimentação e enlace íntegros, a falha simultânea do comando remoto e do local indica que o próprio controlador deixou de executar sua lógica.",
+      "resposta_padrao": "Perda de comunicação entre o pacote e o PLC.",
+      "por_que_nao": "Se fosse só comunicação, a sequência e os comandos locais no painel continuariam funcionando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

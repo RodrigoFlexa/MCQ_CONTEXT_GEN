@@ -1,0 +1,117 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir tempo de reparo ativo de downtime operacional ao estimar disponibilidade por MTBF e MTTR.",
+      "pergunta": "A disponibilidade estimada por MTBF/(MTBF+MTTR) ficou muito acima da razão uptime/tempo total; o número de falhas coincide com o histórico, e as horas de intervenção ativa batem, mas cada evento soma espera por acesso, liberação e retorno seguro. Qual é a causa primária dessa discrepância?",
+      "resposta": "Uso do tempo de reparo ativo no lugar do downtime operacional",
+      "explicacao": "A aproximação por MTBF e MTTR só representa a disponibilidade observada se o tempo usado refletir a indisponibilidade considerada. Aqui foram excluídos tempos logísticos e administrativos, inflando o resultado.",
+      "resposta_padrao": "MTBF foi superestimado.",
+      "por_que_nao": "O número de falhas coincide com o histórico; a divergência nasce fora da intervenção ativa, nos tempos logísticos e administrativos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o tempo de reparo ativo não deve ser confundido com toda a indisponibilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar espera por sobressalente como causa de queda de disponibilidade operacional sem mudança em falhas ou reparo ativo.",
+      "pergunta": "Mesmo número de falhas por trimestre e o mesmo tempo de reparo ativo por evento, mas a disponibilidade operacional caiu depois que o estoque local foi retirado e as ordens passaram a aguardar material. Qual causa primária explica a queda?",
+      "resposta": "Espera por sobressalente",
+      "explicacao": "Sem mudar frequência de falhas nem reparo ativo, a indisponibilidade total aumenta quando cada evento incorpora espera por peça; isso reduz a disponibilidade operacional.",
+      "resposta_padrao": "Menor confiabilidade do equipamento.",
+      "por_que_nao": "A frequência de falhas permaneceu igual; a perda veio do downtime logístico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "espera por sobressalentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dois equipamentos com a mesma frequência de falha e o mesmo tempo de reparo ativo podem apresentar disponibilidades operacionais muito diferentes"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar alta disponibilidade com baixa continuidade de serviço causada por baixo MTBF.",
+      "pergunta": "Disponibilidade mensal acima de 99%, porém ocorrem vários trips curtos por semana e cada retorno leva poucos minutos. Qual causa primária explica a perda de continuidade do serviço?",
+      "resposta": "MTBF baixo",
+      "explicacao": "A disponibilidade segue alta porque a recuperação é rápida, mas os sinais mostram interrupções frequentes. O problema dominante é pouco tempo entre falhas, isto é, menor confiabilidade.",
+      "resposta_padrao": "MTTR alto.",
+      "por_que_nao": "Os retornos são rápidos; o problema é a frequência das interrupções, não a duração da recuperação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumentar o MTBF tende a elevar a disponibilidade, enquanto aumentar o MTTR tende a reduzi-la."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a disponibilidade combina frequência de interrupções e duração de recuperação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que redundância não eleva a disponibilidade funcional quando há utilidade compartilhada crítica.",
+      "pergunta": "Com dois trens duplicados saudáveis, a função fica indisponível sempre que cai a pressão do header de ar de instrumento, sem evidência de falha mecânica simultânea. Qual causa primária impede o ganho esperado de disponibilidade?",
+      "resposta": "Falta do ar de instrumento comum",
+      "explicacao": "A duplicação dos equipamentos não preserva a função quando ambos dependem da mesma utilidade. A indisponibilidade acompanha o gargalo compartilhado, não falhas independentes dos trens.",
+      "resposta_padrao": "Falha simultânea dos dois trens.",
+      "por_que_nao": "O evento coincide com a perda da utilidade comum; redundância não elimina indisponibilidade por recursos compartilhados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

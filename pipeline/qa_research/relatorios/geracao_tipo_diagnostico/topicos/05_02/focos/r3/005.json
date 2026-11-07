@@ -1,0 +1,61 @@
+{
+  "item": "05_02",
+  "foco": 5,
+  "rodada": 3,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Partilha incremental de potência ativa entre geradores em paralelo depende do ajuste relativo de droop dos governadores.",
+      "pergunta": "Com dois geradores em paralelo, os MW ficam iguais em um ponto de carga. Quando a demanda sobe ou desce, o mesmo gerador absorve quase todo o incremento; ao retornar ao ponto inicial, a divisão volta a igualar, com frequência estável e MVAr bem repartidos. Qual causa primária?",
+      "resposta": "Ajustes de droop dos governadores descoordenados",
+      "explicacao": "O desvio aparece na partilha incremental de potência ativa, típico de inclinações de droop diferentes. Se fosse apenas viés de setpoint, o desequilíbrio permaneceria também quando a carga total voltasse ao ponto original.",
+      "resposta_padrao": "Setpoints de carga ou velocidade desalinhados entre os governadores.",
+      "por_que_nao": "Com viés fixo de setpoint, a assimetria apareceria também no ponto de carga ao qual o sistema retornou; aqui o erro surge na resposta ao incremento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de recursos de controle depende do problema dominante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a necessidade principal é repartir carga entre geradores locais, os ajustes coordenados de reguladores, excitação e droop são o núcleo da solução."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Flicker por variação rápida de reativos em barra alimentada por cabo longo exige compensação reativa dinâmica, não compensação em degraus.",
+      "pergunta": "Sob carga cíclica em barramento alimentado por cabo longo, a tensão oscila rapidamente e há flicker. Bancos de capacitores chaveados corrigem o nível médio, mas não a oscilação; THD e divisão de MW/MVAr entre geradores permanecem normais. Qual elemento ausente é a causa primária?",
+      "resposta": "Compensador estático rápido de reativos no barramento",
+      "explicacao": "O problema dominante é dinâmico: variações rápidas de MVAr. Compensação em degraus ajusta só o valor médio, enquanto compensação rápida é a que estabiliza a tensão e mitiga flicker nesse contexto.",
+      "resposta_padrao": "Banco de capacitores insuficiente.",
+      "por_que_nao": "Os capacitores já corrigem o nível médio de tensão; o que falta é velocidade de resposta para acompanhar a oscilação cíclica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando o desafio dominante é sustentar tensão diante de cabos longos ou variações rápidas de reativos, dispositivos de compensação rápida podem ser mais relevantes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sistemas FACTS, sigla de Flexible AC Transmission Systems, e equipamentos como SVC, Static Var Compensator, e STATCOM, Static Synchronous Compensator, são empregados para fornecer ou absorver potência reativa rapidamente e, assim, estabilizar a tensão e mitigar flicker."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em cabos submarinos em corrente alternada, a potência reativa associada ao cabo cresce com o comprimento e com o quadrado da tensão, podendo aumentar desvios de tensão, perdas e risco de sobretensão, especialmente em step-outs longos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

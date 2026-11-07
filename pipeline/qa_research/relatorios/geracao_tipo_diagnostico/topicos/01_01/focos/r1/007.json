@@ -1,0 +1,101 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto de utilidades compartilhadas na diferença entre redundância física e disponibilidade efetiva modelada.",
+      "pergunta": "Dois trens 100% redundantes tiveram disponibilidade prevista alta no RAM; na operação, qualquer perda de água de resfriamento derruba ambos, mesmo sem falha nos equipamentos principais. Qual causa primária explica o desvio?",
+      "resposta": "gargalo compartilhado da água de resfriamento não modelado",
+      "explicacao": "A duplicação dos equipamentos principais não preserva a função quando os dois dependem da mesma utilidade. Se essa dependência comum fica fora da lógica funcional, o RAM superestima a disponibilidade.",
+      "resposta_padrao": "Falha de partida do trem reserva.",
+      "por_que_nao": "A perda ocorre com os dois trens simultaneamente por falta da utilidade comum, não na comutação para o reserva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de representar modos operacionais na lógica RAM após o detalhamento do sistema.",
+      "pergunta": "Na revisão detalhada, o RAM continua prevendo a mesma disponibilidade para dois modos de operação, mas o histórico mostra perdas muito diferentes entre eles, sem mudança relevante nas taxas de falha dos equipamentos. O que falta no modelo?",
+      "resposta": "representação dos modos operacionais na lógica RAM",
+      "explicacao": "Com o detalhamento, o modelo precisa comparar modos operacionais. Se as taxas de falha são semelhantes e a diferença aparece entre regimes, o problema está na lógica que não representa esses modos.",
+      "resposta_padrao": "Frequências de falha subestimadas.",
+      "por_que_nao": "Erro de taxa afetaria a previsão de forma geral; aqui a divergência aparece especificamente entre modos de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Após maior detalhamento do sistema, modelos mais completos permitem identificar os maiores contribuintes de falha, comparar modos operacionais e refinar previsões de disponibilidade e confiabilidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Cálculo correto de MTTR a partir do retorno ao estado operacional, e não do encerramento administrativo.",
+      "pergunta": "Depois da migração do sistema de manutenção, o MTTR do painel subiu 35%, mas a duração das intervenções em campo e o momento de liberação do equipamento não mudaram; as ordens agora são encerradas dias depois. Qual a causa?",
+      "resposta": "fechamento administrativo usado como retorno operacional",
+      "explicacao": "O MTTR observado depende do instante de falha e do retorno ao estado operacional. Se o sistema passou a usar o encerramento administrativo da ordem, o indicador piora sem mudança real no reparo.",
+      "resposta_padrao": "Reparos mais lentos da manutenção.",
+      "por_que_nao": "O tempo de intervenção e a liberação em campo permaneceram iguais; mudou apenas o momento de encerramento do registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário levantar modos de falha que geram perda ao sistema, histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de distinguir mecanismos de falha no banco de dados para priorização e atualização útil do RAM.",
+      "pergunta": "Há anos de registros eletrônicos e alto volume de ocorrências, mas os maiores contribuintes mudam a cada revisão e os planos saem genéricos; quase todas as falhas entram só como mecânica, elétrica ou instrumentação. Qual causa primária explica isso?",
+      "resposta": "registro de falhas sem distinção de mecanismos",
+      "explicacao": "Volume histórico não basta quando as causas não são distinguíveis. Sem separar mecanismos de falha, a priorização fica instável e as ações corretivas saem genéricas, reduzindo o valor analítico do banco.",
+      "resposta_padrao": "Histórico insuficiente.",
+      "por_que_nao": "O cenário já traz anos de registros e alto volume; o problema é a baixa discriminação técnica das causas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis e úteis à priorização de ações corretivas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

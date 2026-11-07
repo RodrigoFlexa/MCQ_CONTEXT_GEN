@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "rodada": 4,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Condição do banco de baterias deve ser confirmada por desempenho em descarga, não só por tensão em flutuação.",
+      "pergunta": "No teste periódico de autonomia do 24 Vcc, a corrente de descarga repete a carga histórica do quadro, mas a tensão colapsa em poucos minutos, muito antes do tempo antes obtido; em flutuação, o barramento parecia normal. Qual a causa primária?",
+      "resposta": "Banco de baterias com capacidade degradada",
+      "explicacao": "Tensão de flutuação normal não comprova capacidade. Com a mesma carga histórica e colapso muito antecipado apenas em descarga, o problema está na reserva do banco.",
+      "resposta_padrao": "Carga adicional no barramento 24 Vcc.",
+      "por_que_nao": "A corrente de descarga ficou compatível com a carga histórica; a demanda não mudou de forma relevante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Se o bypass aceitável não assume a carga quando o inversor sai, a indisponibilidade está no caminho de bypass.",
+      "pergunta": "Quando o inversor é bloqueado em ensaio, a fonte de bypass permanece dentro da faixa, mas a saída do UPS cai em vez de transferir. Qual a causa primária?",
+      "resposta": "Caminho de bypass estático do UPS indisponível",
+      "explicacao": "Com a fonte de bypass apta, a retirada do inversor deveria resultar em transferência. A queda da saída aponta indisponibilidade do caminho de bypass, não da fonte.",
+      "resposta_padrao": "Falha do inversor do UPS.",
+      "por_que_nao": "O inversor foi retirado deliberadamente; o sinal decisivo é a ausência de transferência para o bypass disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Carga sustentada pelo bypass com retorno automático recusado caracteriza indisponibilidade do inversor, não mero modo operacional.",
+      "pergunta": "A saída do UPS segue a fonte de bypass, os afundamentos a montante chegam à carga, a bateria não descarrega e toda tentativa automática de voltar ao modo inversor é rejeitada. Qual a causa primária?",
+      "resposta": "Inversor do UPS indisponível",
+      "explicacao": "O bypass está disponível e alimentando a carga. A recusa repetida do retorno ao modo normal, sem descarga da bateria, aponta indisponibilidade do estágio inversor.",
+      "resposta_padrao": "UPS mantido em bypass.",
+      "por_que_nao": "As tentativas automáticas de retorno ao modo normal são recusadas; isso não é apenas uma condição operacional escolhida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

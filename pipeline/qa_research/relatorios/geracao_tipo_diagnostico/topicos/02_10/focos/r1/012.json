@@ -1,0 +1,69 @@
+{
+  "item": "02_10",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer o controle por bandas pela interface variando dentro de limites enquanto a descarga a jusante é estabilizada.",
+      "pergunta": "Quando a interface oscila entre dois limites sem buscar o centro, a válvula de água quase não atua dentro dessa faixa e a vazão ao hidrociclone fica mais estável, com melhora do óleo na água, qual causa primária explica esse padrão?",
+      "resposta": "Controle por bandas da interface",
+      "explicacao": "Nessa filosofia, a interface pode variar dentro de uma faixa permitida e a prioridade passa a ser estabilizar a descarga, o que pode melhorar o desempenho do hidrociclone.",
+      "resposta_padrao": "PID mal sintonizado com ganho baixo.",
+      "por_que_nao": "Um PID lento não cria ação deliberadamente mais rápida só fora da faixa nem troca o objetivo de centrar o nível por estabilizar a descarga.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "controle por bandas, no qual a interface pode variar dentro de uma faixa permitida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "desloca o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mais eficiente que o PID para estabilizar descargas e melhorar a qualidade da água descartada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha pode responder com atraso ou excesso de correção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar Dead Band Assimétrico pela resposta mais rápida à queda da interface para proteger a qualidade da água de injeção.",
+      "pergunta": "A válvula de descarga reage mais cedo e mais rápido quando a interface se aproxima do limite baixo do que do alto; isso se repete de forma consistente e a qualidade da água de injeção melhora. Qual causa explica essa assimetria?",
+      "resposta": "Dead Band Assimétrico",
+      "explicacao": "Essa estratégia acelera intencionalmente a correção quando a interface diminui, para preservar a qualidade da água de injeção; a assimetria é de controle, não de mecânica.",
+      "resposta_padrao": "Histerese da válvula de controle.",
+      "por_que_nao": "Histerese é defeito mecânico dependente de atrito e não uma resposta intencional, repetível e direcionada à queda da interface para proteger a água.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "preservar mais eficientemente a qualidade da água de injeção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o inventário do vaso e a posição da interface passam a variar mais rapidamente"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

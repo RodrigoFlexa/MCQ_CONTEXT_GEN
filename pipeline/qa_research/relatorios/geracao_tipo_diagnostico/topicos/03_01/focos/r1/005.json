@@ -1,0 +1,91 @@
+{
+  "item": "03_01",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Trade-off da lógica tandem com referência absoluta principal: menor demanda de potência à custa de degradação relativa quando a direção ambiental gira.",
+      "pergunta": "Com DGPS e sensores relativos coerentes, o aliviador segue alinhado à resultante ambiental, a posição absoluta fica estável e a potência média permanece baixa, mas afastamento e aproamento relativos degradam quando a direção ambiental roda. Qual causa primária explica esse comportamento?",
+      "resposta": "Lógica tandem com referência absoluta principal",
+      "explicacao": "Nesse modo, o DP prioriza a posição absoluta e o weather vaning; a referência relativa entra como correção. Mudanças direcionais podem piorar a geometria relativa sem exigir grande aumento de potência.",
+      "resposta_padrao": "Potência insuficiente do DP.",
+      "por_que_nao": "Falta de empuxo tenderia a elevar a demanda e levar à perda do controle absoluto; aqui o sistema permanece estável em posição absoluta com baixa potência média.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o aliviador mantém weather vaning alinhando-se com a resultante ambiental"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle principal da posição é feito pelo sistema absoluto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A estratégia apresentada busca suavizar o controle do afastamento e do aproamento relativos e otimizar a demanda de potência."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limitação do modo tandem em locações com ponto único e aproamento variável, especialmente nas transições da operação e sob mudanças bruscas de direção ambiental.",
+      "pergunta": "No início e no fim da transferência, sem sair do setor permitido e sem falha de sensores, propulsores ou geração, a geometria relativa degrada logo após mudanças rápidas da direção ambiental; no restante da permanência, a posição se mantém. Qual causa primária melhor explica esse padrão?",
+      "resposta": "Modo tandem em SPM de aproamento variável",
+      "explicacao": "A lógica descrita não é universal. Em certas locações com aproamento variável, o modo tandem dificulta manter a posição justamente nas transições e quando a direção ambiental muda abruptamente.",
+      "resposta_padrao": "Condição ambiental acima do limite de operação.",
+      "por_que_nao": "Se fosse excesso geral de severidade, a dificuldade apareceria ao longo da permanência; o padrão seletivo por fase e por giro direcional aponta inadequação da lógica aplicada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Entretanto, essa lógica não é apresentada como solução universal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "em algumas locações com FPSO SPM de aproamento variável, o modo tandem pode dificultar a manutenção da posição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sobretudo no início e no fim do offloading e quando há mudanças abruptas da direção dos agentes ambientais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o casco pode girar para buscar alinhamento com a resultante ambiental"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito geométrico da referência relativa na proa: pequenas guinadas alteram mais a estação de alívio do que a posição absoluta do casco.",
+      "pergunta": "Na tela do DP, a posição absoluta quase não muda, mas a distância na estação de alívio e o aproamento relativo oscilam com pequenas guinadas, gerando correções curtas e repetidas. Qual causa primária explica essa discrepância?",
+      "resposta": "Referência relativa localizada na proa",
+      "explicacao": "As correções relativas são baseadas na área de conexão do hawser na proa. Pequenas guinadas deslocam esse ponto mais do que o casco em coordenadas absolutas.",
+      "resposta_padrao": "Erro do sensor relativo de distância.",
+      "por_que_nao": "A oscilação acompanha as guinadas e aciona correções coerentes; isso é compatível com a geometria do ponto de referência, não com leitura errática isolada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as medições relativas são usadas para corrigir desvios em relação a uma área de referência na proa onde se conecta o hawser"
+        },
+        {
+          "bloco": "F",
+          "trecho": "chamada retângulo de tolerância."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

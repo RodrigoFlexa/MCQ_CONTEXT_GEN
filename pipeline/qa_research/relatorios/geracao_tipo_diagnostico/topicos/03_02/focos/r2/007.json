@@ -1,0 +1,83 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de revalidar o modelo hidrodinâmico quando a resposta da embarcação muda.",
+      "pergunta": "Sem troca de sensores nem do algoritmo, as estimativas batiam com a boia antes de uma conversão do casco e passaram a mostrar viés direcional sistemático, em mar semelhante e em toda a faixa de períodos. Qual é a causa primária?",
+      "resposta": "resposta hidrodinâmica do casco alterada sem revalidação do modelo",
+      "explicacao": "A inferência depende do modelo hidrodinâmico e de validação compatível com a própria embarcação. Erro amplo após a conversão indica incompatibilidade do modelo com a nova resposta do casco.",
+      "resposta_padrao": "Sensor de movimento descalibrado.",
+      "por_que_nao": "O desvio começou com a mudança hidrodinâmica do casco e aparece de forma ampla, não com assinatura típica de limitação instrumental isolada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dependem da resposta hidrodinâmica representada nos modelos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade entre a janela temporal de processamento e a condição de mar na recuperação direcional por movimentos.",
+      "pergunta": "Com o mesmo registro de movimentos, a direção de onda estimada oscila em mar evolutivo; reprocessando em janelas menores, ela passa a coincidir com a boia, sem qualquer troca de sensor ou de modelo. Qual causa explica isso?",
+      "resposta": "janela temporal da calibração inadequada para essa condição de mar",
+      "explicacao": "Se a mesma série converge ao encurtar a janela, o problema é aplicar como universal o intervalo temporal do ensaio original, não sensor nem sensibilidade intrínseca de RAO.",
+      "resposta_padrao": "Região de baixa sensibilidade dos RAOs.",
+      "por_que_nao": "Baixa sensibilidade de RAO não desaparece por reduzir apenas a janela e costuma se concentrar em faixas de período.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Resultados do modelo devem ser interpretados com essas limitações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sem adotar um intervalo de tempo ou variação angular de um ensaio como regra universal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da direção absoluta estimada da integridade da referência de heading.",
+      "pergunta": "A direção do mar em referência norte passa a dar saltos, enquanto a direção relativa ao casco e as amplitudes de movimento permanecem estáveis e coerentes com a boia. Que elemento técnico explica essa divergência?",
+      "resposta": "erro no sensor de heading",
+      "explicacao": "A direção absoluta depende da referência de aproamento. Se a assinatura relativa ao casco continua coerente, a falha está na medição de heading, não no mar nem nos sensores de movimento.",
+      "resposta_padrao": "Mudança real na direção do mar.",
+      "por_que_nao": "Se o mar tivesse mudado, a resposta relativa ao casco também se alteraria, o que não ocorreu.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o comportamento passa a ser sensível à direcionalidade relativa entre vento, onda e correnteza."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

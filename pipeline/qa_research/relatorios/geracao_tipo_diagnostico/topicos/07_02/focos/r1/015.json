@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar alterações coordenadas de setpoints e atuadores à camada de comando do controle, distinguindo-as de falhas de campo ou de alimentação.",
+      "pergunta": "Válvulas de controle mudam de posição sem solicitação do operador, setpoints aparecem alterados em mais de uma malha e vazão/pressão acompanham os novos comandos, sem perda de energia. Qual a causa primária?",
+      "resposta": "Alteração não autorizada de comandos no sistema de controle.",
+      "explicacao": "Mudanças coordenadas em setpoints, válvulas, vazão e pressão indicam atuação na camada de controle. A ausência de perda de energia e de sinais elétricos afasta falha de alimentação como causa primária.",
+      "resposta_padrao": "Falha de instrumentos ou de válvulas em campo.",
+      "por_que_nao": "Falhas de campo não explicam alteração simultânea de setpoints e comandos em várias malhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar contenção mal aplicada como causa do agravamento quando o bloqueio de comunicação suprime funções essenciais de controle e proteção.",
+      "pergunta": "Durante a contenção de um alerta em dispositivos embarcados, foi aplicado bloqueio total entre a remota e a sala de controle; logo depois perderam-se comando de processo e uma proteção dependente dessa comunicação, sem evidência de exploração. Qual foi a causa primária do agravamento?",
+      "resposta": "Regra de bloqueio que interrompeu a comunicação crítica.",
+      "explicacao": "Os efeitos começaram após a própria medida de contenção. Em OT, isolar sem preservar o tráfego essencial pode criar risco maior que o alerta original, ao retirar controle e proteção necessários.",
+      "resposta_padrao": "Exploração ativa da vulnerabilidade TCP/IP embarcada.",
+      "por_que_nao": "O agravamento surgiu imediatamente após o bloqueio e faltam sinais de execução remota.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A contenção em OT busca limitar propagação e reduzir exposição sem introduzir risco operacional maior que o evento original."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar rota paralela de acesso remoto direto à internet como causa de exposição persistente, distinguindo-a de erro no firewall entre negócios e controle.",
+      "pergunta": "Mesmo após fechar as regras entre negócios e controle, um controlador remoto continua visível em varreduras externas; os logs mostram tráfego pela conexão celular de manutenção, não pela DMZ. Qual causa primária mantém a exposição?",
+      "resposta": "Modem celular com acesso direto à internet no segmento de controle.",
+      "explicacao": "A exposição persiste por um caminho que contorna a segmentação principal. Como o tráfego não passa pela DMZ nem pelo firewall entre redes, a causa é a rota paralela de acesso remoto.",
+      "resposta_padrao": "Regra permissiva no firewall entre negócios e controle.",
+      "por_que_nao": "Os logs mostram que o tráfego usa um caminho fora desse firewall.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

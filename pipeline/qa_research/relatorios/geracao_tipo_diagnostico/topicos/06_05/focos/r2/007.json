@@ -1,0 +1,117 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar atraso de atuação causado por votação entre tecnologias de detecção com dinâmicas de resposta incompatíveis.",
+      "pergunta": "No teste integrado de fogo, o detector de chama alarma na hora, mas o dilúvio só parte quando o detector térmico da mesma área entra em alarme; ambos aprovam testes individuais. Qual a causa primária do atraso?",
+      "resposta": "Coincidência obrigatória entre detector de chama e detector térmico",
+      "explicacao": "A combinação liberadora depende de duas tecnologias com tempos de resposta distintos; a coincidência só se materializa tardiamente, apesar do bom desempenho individual dos detectores.",
+      "resposta_padrao": "Detector térmico descalibrado.",
+      "por_que_nao": "Ele responde normalmente ao ensaio da sua tecnologia; o atraso vem do voto obrigatório com resposta mais lenta, não de calibração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar requisito de confirmação entre zonas adjacentes a partir do padrão de atuação do ESD.",
+      "pergunta": "Dois detectores da própria zona atingem alto-alto e só geram alarme; o ESD surge imediatamente quando a zona adjacente também entra em alto-alto, com saídas e válvulas comprovadamente íntegras. Qual a causa primária?",
+      "resposta": "Confirmação cruzada entre zonas adjacentes para liberar o ESD",
+      "explicacao": "Como a própria zona já confirma a detecção e a atuação aparece apenas com a vizinha, a condição faltante é uma confirmação entre zonas, não falha de saída.",
+      "resposta_padrao": "Falha na saída do ESD.",
+      "por_que_nao": "A ação ocorre assim que a zona adjacente confirma, mostrando que a cadeia final funciona e que a limitação é lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer matriz de causa e efeito configurada apenas para alarme quando a detecção válida não demanda isolamento.",
+      "pergunta": "Gás em alto-alto nessa zona sempre dispara alarme e registro, mas nunca fecha a SDV associada, sem bypass ativo; a mesma SDV fecha por comando manual e por outras causas automáticas. Qual causa explica esse padrão?",
+      "resposta": "Matriz de causa e efeito dessa zona configurada apenas para alarme",
+      "explicacao": "Se a detecção gera alarme e a SDV responde por outras demandas, a cadeia final está íntegra; o evento de gás dessa zona não foi configurado para comandar isolamento.",
+      "resposta_padrao": "Solenóide da SDV travado.",
+      "por_que_nao": "A SDV atua por comando manual e por outras lógicas automáticas; o que falta é a demanda desta causa de gás.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A escolha entre apenas alarmar e também atuar automaticamente não é universal; depende da Filosofia de Segurança e da demonstração baseada em risco."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Inferir que a votação considera níveis específicos de alarme, não apenas a presença de detecção em mais de um cabeçote.",
+      "pergunta": "Um cabeçote vai a 55% LIE e o adjacente a 18% LIE; há alarme, mas não isolamento. Em liberações mais difusas, quando dois detectores passam do nível alto, o isolamento ocorre. Qual a causa primária?",
+      "resposta": "Votação configurada para exigir dois alarmes altos",
+      "explicacao": "O segundo cabeçote detecta gás, mas em nível que não compõe a combinação liberadora; a lógica considera níveis específicos de alarme, não qualquer dupla de detecções.",
+      "resposta_padrao": "Segundo detector mal posicionado.",
+      "por_que_nao": "Ele detecta gás e participa quando também atinge o nível alto; o problema é a combinação lógica exigida, não cegueira de cobertura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Exigir coincidência de mais sinais tende a aumentar a robustez contra atuações indevidas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

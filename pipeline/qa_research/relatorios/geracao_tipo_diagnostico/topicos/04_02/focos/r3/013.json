@@ -1,0 +1,83 @@
+{
+  "item": "04_02",
+  "foco": 13,
+  "rodada": 3,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Integração de módulos distribuídos a infraestrutura existente depende de compatibilidade funcional da arquitetura.",
+      "pergunta": "Após a ampliação, os novos pontos têm alimentação e comunicação no sistema distribuído adicionado, mas a supervisão existente não os incorpora nem associa seus estados à lógica; as funções originais seguem normais. Qual a causa primária?",
+      "resposta": "incompatibilidade funcional da arquitetura de controle existente com a expansão distribuída",
+      "explicacao": "Como alimentação, comunicação no sistema adicionado e funções originais estão preservadas, não é perda física de enlace. O problema aparece na integração à supervisão e à lógica existente, sinal típico de incompatibilidade funcional de arquitetura.",
+      "resposta_padrao": "Falha de comunicação do novo módulo.",
+      "por_que_nao": "Há alimentação, comunicação no sistema distribuído e o controle original permanece íntegro; falta compatibilidade arquitetural para incorporar os novos pontos.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "podem ser integrados a instalações subsea já existentes para ampliar instrumentação e comunicação, desde que a compatibilidade funcional da arquitetura seja atendida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A escolha entre elétrica pura, eletro-hidráulica centralizada e eletro-hidráulica descentralizada depende da função requerida, da filosofia fail-safe, da integração com a infraestrutura já instalada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença diagnóstica entre arquitetura eletro-hidráulica centralizada e alternativas que reduzem linhas ou inventário distribuído.",
+      "pergunta": "Cada válvula nova exigiu mais linhas hidráulicas longas, o inventário de fluido aumentou e uma perda no tronco comum derruba várias funções; nenhum atuador tem suprimento próprio. Qual arquitetura explica esse padrão?",
+      "resposta": "arquitetura eletro-hidráulica centralizada",
+      "explicacao": "Sem unidade local por atuador, a potência hidráulica permanece comum e distribuída por linhas longas. Isso aumenta o inventário de fluido e faz uma perda no tronco afetar várias funções, ao contrário da descentralização.",
+      "resposta_padrao": "controle multiplexado",
+      "por_que_nao": "O multiplexado tende a reduzir linhas dedicadas pela seleção local; aqui há crescimento de linhas e dependência de alimentação hidráulica comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há também arquiteturas descentralizadas eletro-hidráulicas, nas quais cada atuador recebe sua própria unidade de suprimento, reduzindo número de linhas e volume total de fluido hidráulico distribuído pelo sistema."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A escolha entre elétrica pura, eletro-hidráulica centralizada e eletro-hidráulica descentralizada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da falta de fail-safe passivo em atuação elétrica subsea.",
+      "pergunta": "Desde o comissionamento, a válvula atua eletricamente com rapidez e precisão, mas no blackout test fica na última posição; essa função deveria ir sozinha para o seguro e não usa hidráulica para mover. Qual a causa primária?",
+      "resposta": "ausência de pacote de mola fail-safe integrado",
+      "explicacao": "O comportamento em serviço é compatível com atuação elétrica. Na perda de energia, o retorno seguro deveria ser passivo; sem hidráulica associada à função, a causa decisiva é faltar a mola fail-safe integrada.",
+      "resposta_padrao": "Falha do comando de fechamento.",
+      "por_que_nao": "No blackout test não há comando ativo; o retorno exigido deveria ocorrer passivamente pela mola.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o movimento da válvula é produzido por atuador elétrico, inclusive em configuração linear com pacote de mola fail safe integrado, eliminando a necessidade de umbilical hidráulico naquela função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Os benefícios atribuídos incluem menor tempo de resposta, maior precisão de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

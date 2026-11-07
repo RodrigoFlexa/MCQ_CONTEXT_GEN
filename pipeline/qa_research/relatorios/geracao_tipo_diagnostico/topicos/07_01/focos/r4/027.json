@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 4,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir ausência de conversão da válvula para comando automático de simples falha de mapeamento do comando remoto.",
+      "pergunta": "O atuador da válvula tem apenas botoeira local e retorno de fins de curso instalados. A ordem remota é aceita na tela, os estados aberto/fechado chegam ao sistema, mas não há mudança em saída alguma do controlador para essa válvula. Qual a causa primária?",
+      "resposta": "Válvula não convertida para comando automático.",
+      "explicacao": "Há realimentação e atuação local, mas falta o caminho físico/lógico de atuação remota no controle; isso caracteriza conversão para automático não implementada.",
+      "resposta_padrao": "Comando da IHM não mapeado até o atuador.",
+      "por_que_nao": "Sem interface de atuação remota implementada para essa válvula, não existe caminho automático já existente para mapear.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto e forma de atuação dos elementos finais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pendências antes da operação envolvendo conversão de válvulas para comando automático"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar leitura e alarme corretos com ausência específica do intertravamento automático de trip da bomba.",
+      "pergunta": "Durante o teste funcional, a sucção é levada ao valor previsto de atuação; a leitura chega correta ao controlador e o alarme entra, mas o motor continua energizado. Pelo ESD geral, a mesma bomba desliga normalmente. Qual a causa primária?",
+      "resposta": "Trip automático da bomba por baixa pressão não implementado.",
+      "explicacao": "A medição existe e o caminho de parada do motor funciona em outra lógica; o elo ausente é o intertravamento automático dessa condição de processo.",
+      "resposta_padrao": "Relé ou saída de trip da bomba defeituoso.",
+      "por_que_nao": "O mesmo caminho derruba a bomba pelo ESD geral; a falha está na lógica dessa proteção de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "medir, decidir, alarmar, intertravar e comandar atuadores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "instalação de trip de emergência de bombas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar travamento de start automático pós-modificação à permanência de etapa obsoleta na lógica de sequência.",
+      "pergunta": "Depois de uma modificação de linha, os equipamentos da rota atual respondem aos comandos individuais e seus estados chegam corretamente ao controlador. Mesmo assim, o start automático trava sempre na mesma espera por confirmação de um item retirado da rota. Qual a causa primária?",
+      "resposta": "Etapa obsoleta mantida na sequência automática de partida.",
+      "explicacao": "A instrumentação do arranjo atual funciona; o bloqueio vem de lógica não atualizada, ainda dependente de condição que deixou de existir após a modificação.",
+      "resposta_padrao": "Falta um novo sensor de confirmação no trecho modificado.",
+      "por_que_nao": "Os estados do arranjo instalado já são recebidos corretamente; a sequência espera uma condição antiga, não uma medição ausente do novo arranjo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras e alinhamento entre documentação, prática de campo e lógica implantada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças sem fechamento adequado degradam a confiabilidade informacional da planta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

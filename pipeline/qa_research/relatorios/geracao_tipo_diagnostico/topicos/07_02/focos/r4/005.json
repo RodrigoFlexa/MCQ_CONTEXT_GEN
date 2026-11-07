@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 4,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Segregação de funções como barreira contra erro não detectado na validação de mudanças em IACS.",
+      "pergunta": "Uma correção de lógica passa no teste final, mas a falha reaparece no primeiro ciclo raro de operação; a validação está em nome diferente, porém saiu da mesma sessão remota e da mesma estação usada na carga. Qual causa primária?",
+      "resposta": "Ausência de segregação entre implementação e validação.",
+      "explicacao": "A validação não foi independente: ocorreu no mesmo contexto técnico da implementação. O bloco foco associa essa separação à redução de erros não detectados em manutenção e suporte remoto.",
+      "resposta_padrao": "Cobertura de teste insuficiente.",
+      "por_que_nao": "Isso pode ocorrer em outros casos, mas aqui o sinal decisivo é a validação sem independência do implementador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre privilégio de observação e privilégio de operação para contas de serviço em sistemas industriais.",
+      "pergunta": "Quando o painel de analytics, contratado só para tendências, reinicia, surgem comandos de start/stop aceitos pelos controladores; não há login humano, e checksums de lógica e firmware permanecem iguais. Qual causa primária permitiu esse efeito?",
+      "resposta": "Conta de serviço do painel com privilégio de operação.",
+      "explicacao": "Sem alteração de lógica ou firmware, o efeito veio de escritas válidas no processo. Pelo bloco foco, atuar no processo caracteriza privilégio de operação, incompatível com um serviço apenas observacional.",
+      "resposta_padrao": "Falha do software do painel.",
+      "por_que_nao": "A falha pode gerar a escrita, mas não explica sua atuação no processo sem permissão operacional na conta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O princípio do menor privilégio significa conceder a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio ao escopo de visibilidade de dados em historiadores e sistemas de supervisão compartilhados.",
+      "pergunta": "Sem conseguir abrir sessão em controladores fora do pacote, um fornecedor baixa pelo historiador e pela supervisão tendências e alarmes de vários sistemas alheios à sua tarefa, sem qualquer escrita. Qual causa primária explica a exposição?",
+      "resposta": "Permissões de observação excessivas no historiador e na supervisão.",
+      "explicacao": "O alcance indevido não vem de sessão nos controladores, mas das permissões da conta nas camadas compartilhadas de dados. No bloco foco, menor privilégio também limita quais ativos podem ser vistos.",
+      "resposta_padrao": "Regra de firewall ampla demais.",
+      "por_que_nao": "O enunciado já mostra que não há sessão nos controladores; a exposição ocorre por consultas autorizadas nas camadas compartilhadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em IACS, isso reduz a superfície de erro e de abuso porque limita quais ativos podem ser vistos, configurados ou modificados."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "04_02",
+  "foco": 4,
+  "rodada": 4,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separar falha seletiva de telemetria de retorno de defeito geral no SCM usando atuação preservada e outros sinais do mesmo módulo ainda vivos.",
+      "pergunta": "O choke responde ao comando e a vazão muda; o heartbeat do SCM e leituras de outro barramento do mesmo módulo continuam chegando, mas a posição do choke e dois transmissores do mesmo enlace somem juntos. Qual elemento é a causa primária?",
+      "resposta": "canal de retorno de telemetria desse enlace",
+      "explicacao": "A atuação do choke e o heartbeat preservado mostram SCM e energia operantes; a perda conjunta só dos sinais que compartilham um enlace aponta para o caminho de retorno, não para hidráulica nem para o módulo inteiro.",
+      "resposta_padrao": "módulo de controle subsea com defeito",
+      "por_que_nao": "O mesmo módulo segue vivo, atuando e transmitindo dados de outro barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "precisam receber comando e retornar informação de estado sem acesso direto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o desempenho do controle subsea depende da integridade do umbilical, da arquitetura de comunicação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas nesses caminhos podem comprometer comando, monitoração e resposta do sistema"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar gargalo no enlace multiplexado quando aumento de taxa de aquisição atrasa comando e feedback sem alterar tempos internos do SCM.",
+      "pergunta": "Com a aquisição em alta frequência de sensores adicionais habilitada, comandos e retornos desse conjunto passam a atrasar; o diagnóstico local do SCM mantém tempos internos normais e, reduzindo só a taxa desses sensores, tudo volta ao normal. Qual elemento é a causa primária?",
+      "resposta": "canal multiplexado de comunicação desse conjunto",
+      "explicacao": "O atraso aparece com o aumento de tráfego e desaparece ao reduzir a taxa; como os tempos internos do SCM permanecem normais, o gargalo está no enlace multiplexado, não no processamento nem na hidráulica.",
+      "resposta_padrao": "sobrecarga de processamento do SCM",
+      "por_que_nao": "Os tempos internos seguem normais; a anomalia acompanha a carga do enlace e some ao aliviar esse tráfego.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle pode ser hidráulico, eletro-hidráulico multiplexado ou inteiramente elétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o desempenho do controle subsea depende da integridade do umbilical, da arquitetura de comunicação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas nesses caminhos podem comprometer comando, monitoração e resposta do sistema"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar falha recorrente em arquiteturas diferentes à qualificação do componente comum, e não ao tipo de atuação ou a erro local de montagem.",
+      "pergunta": "Após cada ciclo previsto de pressão e temperatura, a resistência de isolamento cai apenas nos circuitos que usam um novo conector molhado; isso ocorre em conjuntos eletro-hidráulicos e elétricos, enquanto cabos e eletrônica sem esse conector permanecem normais. Qual causa primária explica o padrão?",
+      "resposta": "qualificação inadequada do novo conector molhado",
+      "explicacao": "A falha acompanha um componente comum em arquiteturas diferentes e surge sob os ciclos de serviço esperados, o que aponta para qualificação inadequada do conector, não para montagem isolada nem para o tipo de atuação.",
+      "resposta_padrao": "erro de montagem do conector",
+      "por_que_nao": "O mesmo padrão aparece em instalações independentes e só após os ciclos de serviço previstos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção entre essas arquiteturas depende da função, da distância, da qualificação dos componentes e da estratégia de manutenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tipo de atuação, isoladamente, não garante maior confiabilidade ou define a maturidade de toda uma tecnologia."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

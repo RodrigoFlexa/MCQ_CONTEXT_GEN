@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 2,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade contínua de fluxos entre domínios: reconhecer serviço automático residual como causa de comunicação interdomínios injustificada.",
+      "pergunta": "Todo dia, no mesmo minuto, o servidor de engenharia troca blocos idênticos de dados com um host da zona do SIS; não há manutenção aberta, logins interativos nem novos hosts. Qual a causa primária?",
+      "resposta": "Tarefa de sincronização interdomínios mantida em produção.",
+      "explicacao": "Periodicidade fixa, mesmos hosts e ausência de acesso interativo apontam para um fluxo automático autorizado que permaneceu ativo sem necessidade operacional atual.",
+      "resposta_padrao": "Movimentação lateral por malware.",
+      "por_que_nao": "Ataques tendem a variar origem, destino ou autenticação; aqui o padrão é estável, recorrente e entre hosts conhecidos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade da barreira de acesso remoto com a criticidade das zonas alcançadas.",
+      "pergunta": "Durante suporte remoto ao sistema elétrico, o mesmo bastion estabelece sessões para a engenharia do controle básico e do SIS; perfis individuais estão corretos e não há falhas de autenticação. Que causa explica isso?",
+      "resposta": "Jump server comum a zonas de criticidade distinta.",
+      "explicacao": "Se as contas estão corretas, o problema não é privilégio individual. O mesmo conduíte remoto alcançando BPCS e SIS mostra barreira incompatível com a criticidade das funções.",
+      "resposta_padrao": "Privilégio excessivo da conta do fornecedor.",
+      "por_que_nao": "Os perfis e a autenticação estão aderentes; a exposição vem do bastion compartilhado entre zonas diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Gestão de ativos aplicada ao monitoramento arquitetural: detectar conexão fora da arquitetura por ativo legado residente.",
+      "pergunta": "Quando o pacote legado é energizado, reaparece tráfego para a rede de manutenção a partir do mesmo MAC de um controlador na mesma porta do switch, embora o desenho mostre o pacote isolado; regras e credenciais não mudaram. Qual a causa primária?",
+      "resposta": "Controlador legado fisicamente conectado fora da arquitetura aprovada.",
+      "explicacao": "A origem fixa na mesma porta e o reaparecimento apenas com o pacote energizado indicam um ativo residente não refletido na arquitetura, não uma mudança lógica central.",
+      "resposta_padrao": "Alteração indevida de ACL ou rota.",
+      "por_que_nao": "Regras e credenciais não mudaram; o sinal decisivo é a identidade local estável surgindo com a energização do pacote.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação deve verificar gestão de ativos, competências, configuração e eficácia dos controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Coerência do escopo dos sistemas conectados: distinguir coleta via historiador de integração direta indevida com controladores.",
+      "pergunta": "Capturas mostram um servidor de monitoramento consultando controladores diretamente, embora os dados previstos devessem sair apenas pelo historiador; o historiador continua recebendo e servindo dados normalmente. Qual a causa primária?",
+      "resposta": "Integração direta indevida do monitoramento à rede de controladores.",
+      "explicacao": "O sinal decisivo é o novo caminho direto até os controladores, apesar de existir camada prevista de mediação. Isso amplia o escopo conectado além do necessário.",
+      "resposta_padrao": "Falha ou saturação do historiador.",
+      "por_que_nao": "O historiador continua operante; a anomalia é a comunicação nova e direta entre o servidor e os controladores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

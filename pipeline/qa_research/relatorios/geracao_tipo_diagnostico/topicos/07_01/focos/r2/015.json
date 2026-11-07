@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir supressão de um evento real no histórico por validação/checagem de normalidade do historian, e não por falha de medição nem por baixa taxa de coleta.",
+      "pergunta": "O historian de uma pressão não mostra o pico de uma perturbação que durou cerca de dois minutos; na hora, a IHM ao vivo alarmou alto e o controlador fechou a válvula, enquanto outras tags do evento ficaram gravadas. Qual a causa primária?",
+      "resposta": "Validação de normalidade do historian rejeitando o pico",
+      "explicacao": "O alarme ao vivo e a ação do controlador confirmam que o pico existiu, e a duração exclui simples subamostragem. Como o historian registrou o restante do evento, a supressão veio da validação/checagem de normalidade dessa tag.",
+      "resposta_padrao": "Intervalo de coleta do historian excessivo.",
+      "por_que_nao": "Uma perturbação de dois minutos seria registrada, e outras variáveis do mesmo evento foram capturadas normalmente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer retenção do último valor bom na supervisão quando a qualidade do dado degrada, distinguindo isso de transmissor travado ou perda geral de comunicação.",
+      "pergunta": "Na supervisão, o nível fica parado em 63,4% por minutos, mas no controlador o PV varia e a válvula acompanha; não há perda geral de comunicação, e a qualidade dessa tag aparece bad. Qual a causa?",
+      "resposta": "Retenção do último valor válido na supervisão",
+      "explicacao": "Com a tag em bad e o controlador ainda vendo a variável variar, o número exibido não representa o estado físico atual. A supervisão está mantendo o último valor bom em vez de invalidar a apresentação.",
+      "resposta_padrao": "Transmissor de nível travado.",
+      "por_que_nao": "O controlador continua recebendo variação do PV; o congelamento ocorre só na apresentação da supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "item": "02_12",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de histerese no elemento final a partir da divergência entre comando e posição real da válvula anti-surge.",
+      "pergunta": "Durante quedas rápidas de vazão, o comando da válvula anti-surge vai para 70%, mas a posição real só se move após vencer sempre o mesmo patamar morto, em abertura e fechamento; o curso parcial também piorou. Qual a causa primária?",
+      "resposta": "Posicionador da válvula anti-surge com histerese",
+      "explicacao": "O patamar morto entre comando e posição real, repetido no curso parcial, identifica histerese do elemento final. Se fosse sintonia, a válvula seguiria o comando mesmo com resposta ruim da malha.",
+      "resposta_padrao": "Sintonia inadequada da malha anti-surge.",
+      "por_que_nao": "A posição real não acompanha o comando; o sinal decisivo aponta para a válvula, não para o algoritmo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "realimentação de posição ao sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "F",
+          "trecho": "detectar degradação, atraso, histerese ou falha de atuação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "teste automático de curso parcial"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito do mau posicionamento da medição de sucção na qualidade do controle e na repartição de carga entre compressores paralelos.",
+      "pergunta": "Na divisão de carga entre dois trens paralelos, um deles entra em reciclo quando o outro parte. O sinal de pressão usado pelo controle quase não varia, mas o manômetro junto à sucção desse compressor muda imediatamente. Qual a causa primária?",
+      "resposta": "Transmissor de pressão de sucção instalado longe da sucção real",
+      "explicacao": "A medida usada pela malha não representa o estado real na sucção local. Em paralelos, instrumentação mal localizada mascara a interação entre trens e faz o controle reagir tarde, provocando reciclo indevido.",
+      "resposta_padrao": "Balanceamento de carga entre os trens mal ajustado.",
+      "por_que_nao": "A divergência entre o sinal do controle e a indicação local denuncia medição não representativa, não erro da lógica de repartição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em compressores em paralelo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a seleção e a localização da instrumentação também afetam a qualidade do controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Uso de variáveis mecânicas para distinguir degradação do compressor de problema de controle.",
+      "pergunta": "A capacidade passa a oscilar, embora a válvula de reciclo siga o comando. O deslocamento axial cresce continuamente no mesmo sentido e sobe a temperatura do mancal de escora; a carga da planta não mudou. Qual a causa primária?",
+      "resposta": "Degradação do mancal de escora",
+      "explicacao": "Sem atraso do elemento final nem mudança de carga, os sinais mecânicos dominam. Crescimento contínuo do deslocamento axial com aquecimento do mancal identifica degradação do mancal de escora.",
+      "resposta_padrao": "Instabilidade da malha anti-surge.",
+      "por_que_nao": "A válvula acompanha o comando; o padrão axial e térmico é mecânico, não de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incluindo vibração, deslocamento axial e temperaturas de mancais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "complementa a visão do controle porque revela degradações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "que podem comprometer resposta, estabilidade ou disponibilidade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o de monitoração acompanha variáveis mecânicas"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "02_06",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar intertravamento em override de forcing de sinal quando a medição e o alarme permanecem válidos.",
+      "pergunta": "Trip HH de pressão: a indicação no sistema acompanha o manômetro local e o alarme é emitido, mas a parada automática não ocorre durante uma intervenção; retirada a condição excepcional, volta a ocorrer. Qual a causa primária?",
+      "resposta": "Intertravamento HH de pressão em override",
+      "explicacao": "Como a medição e o alarme seguem o valor real, o caminho do sinal está válido. O que ficou suprimido foi apenas a ação automática, característica de override temporário do trip.",
+      "resposta_padrao": "Forcing do sinal de pressão no CLP.",
+      "por_que_nao": "No forcing a indicação tende a ficar artificial ou congelada; aqui ela acompanhou o campo e o alarme atuou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uso de bypass, override ou forcing"
+        },
+        {
+          "bloco": "F",
+          "trecho": "leitura de equipamentos fora do Controlador Lógico Programável (CLP)"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Alarmes e shutdowns fazem a ponte entre detecção de desvio e resposta do sistema."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer dependência do histórico da manobra como causa de trajetórias transitórias diferentes antes da estabilização.",
+      "pergunta": "Duas partidas do mesmo circuito, com mesmo arranjo, fluido e carga, mostram trajetórias intermediárias diferentes de pressão e vazão; depois, ambas convergem aos mesmos valores sem ajuste de controle. Qual a causa primária da diferença?",
+      "resposta": "Dependência do histórico da manobra antes da estabilização",
+      "explicacao": "Os blocos definem estabilização como a etapa em que o sistema deixa de responder fortemente ao histórico. Se o ponto final é o mesmo e só o percurso muda, trata-se de regime transiente.",
+      "resposta_padrao": "Malha de controle mal sintonizada.",
+      "por_que_nao": "Uma sintonia ruim manteria desvio ou oscilação; aqui a diferença some quando o sistema entra na faixa estável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o comportamento intermediário até que as variáveis atinjam condição estável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema deixa de responder fortemente ao histórico da manobra"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as variáveis de processo podem entrar em regime transiente"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar shutdown por gás incompleto quando uma fonte secundária de hidrocarboneto permanece energizada.",
+      "pergunta": "Com alarme alto de gás, as bombas principais param e suas descargas despressurizam, mas o conjunto que esgota fundo de tanque segue com corrente e pulsação normais; a concentração só cai quando ele é parado manualmente. Qual a causa primária?",
+      "resposta": "Bomba de stripping fora da lógica de shutdown por gás",
+      "explicacao": "A barreira automática retirou parte das fontes, mas a movimentação de hidrocarbonetos continuou pelo conjunto remanescente. A queda do gás só após sua parada manual revela omissão dessa bomba na lógica.",
+      "resposta_padrao": "Ventilação insuficiente da área.",
+      "por_que_nao": "A concentração cai ao desligar o conjunto ainda energizado, indicando manutenção da fonte e não falha de ventilação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interface com detecção de vazamentos e resposta a emergências."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A análise precisa abranger bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Nessa condição, o shutdown da área ficou incompleto."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

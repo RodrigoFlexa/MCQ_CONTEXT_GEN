@@ -1,0 +1,91 @@
+{
+  "item": "06_05",
+  "foco": 6,
+  "rodada": 4,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Realocação física do detector sem revisão de zoneamento pode manter a lógica íntegra e ainda acionar a zona errada.",
+      "pergunta": "Depois de deslocarem um detector para liberar acesso mecânico, ele continua alarmando e comandando a zona original, mas agora costuma ser o primeiro a responder a liberações do módulo vizinho; I/O, comunicação e lógica do tag testam bem. Qual a causa primária desse padrão?",
+      "resposta": "realocação física do detector sem revisão do zoneamento associado",
+      "explicacao": "O tag e a lógica permanecem coerentes com a zona configurada; o desvio começou com a mudança física. A falha é de aderência entre localização instalada e zoneamento/cobertura previstos, não de software ou comunicação.",
+      "resposta_padrao": "Erro na matriz de causa e efeito.",
+      "por_que_nao": "O mesmo tag segue acionando corretamente a zona para a qual está configurado; o problema surgiu com o deslocamento físico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "casos de planta de F&G instalada fora das coordenadas do estudo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, lógica, votação, documentação, instalação física, testes, gestão de mudanças e manutenção devem ser tratadas como partes inseparáveis de uma mesma função de segurança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Comando de delúvio confirmado sem descarga de água em vários módulos indica falha na barreira comum de combate.",
+      "pergunta": "O controlador registra incêndio, comando de delúvio e abertura da válvula, mas os bicos não descarregam; o mesmo ocorreu em testes recentes de outros módulos, com queda de pressão apenas quando há demanda de água. Qual a causa primária?",
+      "resposta": "baixa confiabilidade do sistema de água de incêndio",
+      "explicacao": "Detecção, lógica e válvula local chegaram a atuar. Como o sintoma se repete em outros módulos e aparece na entrega de água, a falha está na barreira comum de combate, não na causa e efeito local.",
+      "resposta_padrao": "Falha na lógica de delúvio desse módulo.",
+      "por_que_nao": "Há registro do comando e da abertura da válvula; o problema é comum a vários módulos e surge só sob demanda de água.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "combinações perigosas entre ausência de detecção de chama, baixa confiabilidade do sistema de combate e ausência de dilúvio em módulos específicos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a consequência pode ser dupla: perda de prevenção e perda de mitigação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "as barreiras interagem e podem falhar em cascata."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Incêndio confirmado sem bit automático para o delúvio, com hidráulica local funcional, aponta para omissão da saída na matriz.",
+      "pergunta": "No flame test desse módulo, o evento de incêndio é confirmado na zona correta; a válvula de delúvio abre e descarrega água em acionamento manual, mas no automático esse módulo nunca recebe bit de comando, embora os demais recebam. Qual a causa primária?",
+      "resposta": "ausência do delúvio desse módulo na matriz de causa e efeito",
+      "explicacao": "A detecção do incêndio existe e a parte hidráulica local funciona. Como o bit automático não é gerado para esse módulo, falta o vínculo lógico da zona com sua saída de delúvio.",
+      "resposta_padrao": "Associação incorreta entre bit e canal de saída.",
+      "por_que_nao": "Aqui o bit automático nem chega a existir para esse módulo; canal errado exigiria comando presente no ponto equivocado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "combinações perigosas entre ausência de detecção de chama, baixa confiabilidade do sistema de combate e ausência de dilúvio em módulos específicos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a lógica é inadequada, mal implementada ou degradada por manutenção deficiente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

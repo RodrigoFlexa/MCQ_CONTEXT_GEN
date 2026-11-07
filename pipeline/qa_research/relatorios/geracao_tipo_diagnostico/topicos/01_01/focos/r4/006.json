@@ -1,0 +1,83 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 4,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda de ganho da redundância por gargalo comum de descarga, apesar de equipamentos duplicados.",
+      "pergunta": "Com os dois compressores disponíveis, a vazão total não passa do patamar de um único trem; isoladamente, cada um entrega seu desempenho, mas juntos a pressão no coletor sobe e o anti-surge de ambos começa a atuar. Qual a causa primária?",
+      "resposta": "Coletor de descarga comum saturado",
+      "explicacao": "Cada trem, sozinho, atende ao desempenho. A limitação surge apenas na operação simultânea, acompanhada por aumento de contrapressão comum, caracterizando gargalo compartilhado de descarga e não perda individual de capacidade.",
+      "resposta_padrao": "Desgaste ou perda de desempenho de um dos compressores.",
+      "por_que_nao": "Cada compressor entrega o esperado quando opera isoladamente; o limitante aparece somente quando ambos descarregam no mesmo sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar divergência entre previsão de disponibilidade e KPI real por modelagem incorreta do modo 1 ativo + 1 reserva.",
+      "pergunta": "As perdas de função aparecem quase só na troca do trem ativo para o reserva e na primeira demanda após semanas parado; em corrida contínua, cada trem cumpre a carga. Qual a causa primária da divergência entre KPI observado e previsão de disponibilidade?",
+      "resposta": "Modelagem em paralelo de arranjo 1 ativo + 1 reserva",
+      "explicacao": "O desvio se concentra nas transições e na primeira demanda do reserva, não na operação contínua. Isso indica que a previsão ignorou standby, partida e comutação ao tratar o arranjo como paralelo simples.",
+      "resposta_padrao": "Falha de partida do reserva frio.",
+      "por_que_nao": "Isso explica o evento imediato, mas a divergência sistemática frente à previsão vem de o modelo não representar standby e transições.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar neutralização da redundância por sobressalente crítico único compartilhado.",
+      "pergunta": "Os dois módulos 100% têm falhas raras e reparo ativo curto. A indisponibilidade longa aparece só quando uma segunda falha do mesmo cartucho ocorre antes de o primeiro retornar reparado; acesso, equipe e diagnóstico seguem normais. Qual a causa primária?",
+      "resposta": "Sobressalente rotativo único compartilhado",
+      "explicacao": "O reparo ativo não piorou. O alongamento surge apenas quando duas falhas concorrem pela mesma reposição, típico de redundância limitada por recurso compartilhado de manutenção, não por maior taxa de falhas.",
+      "resposta_padrao": "Oficina de reparo lenta.",
+      "por_que_nao": "Se a oficina fosse o limitante, todo reparo daquele cartucho seria demorado; o atraso surge só na concorrência pelo mesmo item.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo, isto é, a intervenção propriamente dita, a tempos logísticos e administrativos, como diagnóstico, mobilização de pessoal, espera por sobressalentes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

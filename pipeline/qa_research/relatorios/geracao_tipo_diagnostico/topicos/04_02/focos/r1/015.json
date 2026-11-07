@@ -1,0 +1,87 @@
+{
+  "item": "04_02",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separação diagnóstica entre seleção elétrica correta e ausência de força hidráulica comum em módulo multiplexado.",
+      "pergunta": "Três válvulas do mesmo módulo recebem comando, a telemetria confirma a seleção local correta para cada função, mas nenhuma desenvolve pressão no atuador nem muda de posição. Qual é a causa primária comum?",
+      "resposta": "perda do suprimento hidráulico comum do módulo submarino",
+      "explicacao": "A seleção elétrica está funcionando, mas falta a força que move os atuadores. Como várias funções do mesmo módulo falham sem pressurização do atuador, o elemento comum é o suprimento hidráulico.",
+      "resposta_padrao": "falha da eletrônica submarina",
+      "por_que_nao": "A eletrônica está escolhendo corretamente cada função; o que não aparece é a pressurização que a hidráulica deveria fornecer.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a eletrônica decide qual função deve ser executada, enquanto a hidráulica fornece a força necessária ao movimento do atuador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da etapa de seleção eletrônica da função quando a hidráulica está disponível e a função errada é executada.",
+      "pergunta": "Dois comandos diferentes chegam ao módulo e a pressão hidráulica comum permanece estável, mas a telemetria local mostra sempre o mesmo canal elétrico acionado e a mesma válvula se move. Qual causa primária explica a seleção errada?",
+      "resposta": "eletrônica submarina de seleção da função",
+      "explicacao": "O desvio aparece na escolha do canal antes da atuação hidráulica. Como a força hidráulica está disponível e a função escolhida já sai errada, a causa está na seleção eletrônica local.",
+      "resposta_padrao": "solenóide local travada",
+      "por_que_nao": "A anomalia já aparece no canal elétrico escolhido pelo módulo; a solenóide atua depois dessa etapa de seleção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção da função ocorre localmente no módulo submarino por meio da eletrônica submarina e de válvulas solenóides"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a eletrônica decide qual função deve ser executada, enquanto a hidráulica fornece a força necessária ao movimento do atuador."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da mola como causa primária do fechamento em válvula subsea com filosofia fail-safe close.",
+      "pergunta": "Sem comando de fechamento, a pressão de controle cai e a válvula vai para fechado; a comunicação permanece estável e há pequeno descarte de fluido apenas na despressurização. Qual causa primária explica o movimento?",
+      "resposta": "mola do atuador fail-safe close",
+      "explicacao": "Nessa filosofia, a perda de pressão apenas libera o mecanismo. O fechamento é executado pela mola, e o pequeno descarte pode ocorrer na despressurização rápida do atuador.",
+      "resposta_padrao": "comando espúrio de fechamento",
+      "por_que_nao": "O gatilho observado foi a perda de pressão de controle com despressurização do atuador; nesse arranjo a ida ao fechado decorre da mola.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola e leva a válvula ao estado seguro fechado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em algumas arquiteturas, esse fechamento envolve descarte de pequeno volume de fluido hidráulico à base de água para despressurização rápida do atuador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

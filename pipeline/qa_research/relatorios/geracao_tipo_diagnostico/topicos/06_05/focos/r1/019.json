@@ -1,0 +1,79 @@
+{
+  "item": "06_05",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "A2": 18,
+    "F": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Coerência entre leitura em campo e tendência no controlador para diagnosticar falha no caminho do sinal.",
+      "pergunta": "O indicador local de um detector sobe até 32% LIE e um portátil ao lado confirma a nuvem, mas a tendência no controlador fica congelada; não há alarme nem isolamento até o valor aparecer de uma vez. Qual é a causa primária?",
+      "resposta": "Perda intermitente de comunicação entre o detector e a lógica de F&G",
+      "explicacao": "A medição em campo está válida e coerente com o portátil. O congelamento no controlador, seguido de atualização súbita, indica falha no caminho do sinal até a lógica, atrasando alarme e ações automáticas.",
+      "resposta_padrao": "Detector descalibrado.",
+      "por_que_nao": "Se fosse calibração, o desvio apareceria na leitura local; o salto tardio no controlador aponta transmissão, não medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Falhas de detecção, comunicação ou lógica podem atrasar isolamento e mitigação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre setpoints por zona e ausência de resposta automática mesmo com detecção válida.",
+      "pergunta": "Dois detectores da mesma zona sobem de forma estável até 25% LIE, os alarmes ficam registrados sem falha e o bump test passa, mas o isolamento automático não ocorre; em outra área, 20% LIE já isola. Qual causa explica isso?",
+      "resposta": "Limiar de atuação automática dessa zona configurado acima de 25% LIE",
+      "explicacao": "Os dois canais responderam, os eventos foram registrados e não há indício de falha de sinal. A diferença entre áreas aponta para setpoint de resposta automática definido na matriz dessa zona.",
+      "resposta_padrao": "Detectores fora de calibração.",
+      "por_que_nao": "Os dois detectores concordam, o teste funcional está normal e os alarmes chegaram à lógica; os valores não são universais entre zonas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Limiares, votação e respostas devem estar definidos na matriz de causa e efeito da unidade; valores de uma instalação não constituem ajustes universais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre falha lógica e insuficiência de cobertura/tempo de resposta na detecção de gás.",
+      "pergunta": "Durante um vazamento, um portátil junto ao ponto de fuga indica acima de 40% LIE por quase um minuto; o primeiro detector fixo só alarma 50 s depois, e o isolamento ocorre imediatamente após esse alarme. Bump test e setpoints estão normais. Qual causa primária?",
+      "resposta": "Tempo de resposta da malha de gás incompatível com esse cenário de dispersão",
+      "explicacao": "Como o isolamento ocorre assim que o detector fixo alarma, a lógica está íntegra. Com testes e setpoints normais, o atraso vem da cobertura/tempo de resposta da detecção frente à liberação e dispersão.",
+      "resposta_padrao": "Falha na lógica de isolamento.",
+      "por_que_nao": "A ação automática acontece sem atraso quando o alarme finalmente chega; o problema está antes, na detecção a tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a suficiência da proteção também depende de cobertura e tempo de resposta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "preservar cobertura significa manter capacidade suficiente para detectar o cenário perigoso e permitir a atuação lógica prevista"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

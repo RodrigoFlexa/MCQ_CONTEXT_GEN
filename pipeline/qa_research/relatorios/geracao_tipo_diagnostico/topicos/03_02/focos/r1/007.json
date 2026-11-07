@@ -1,0 +1,101 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Influência de mudanças de heading na recuperação direcional do mar a partir dos movimentos em navio com turret.",
+      "pergunta": "O estimador direcional baseado nos movimentos passa a alternar a direção do mar sempre que o navio gira em torno do turret; boias próximas indicam ambiente praticamente estável e os sensores de movimento estão íntegros. Qual é a causa primária?",
+      "resposta": "Variação de aproamento não representada adequadamente no modelo hidrodinâmico.",
+      "explicacao": "A discrepância acompanha o giro do casco, não uma mudança ambiental nem defeito de sensor. No turret, mudanças de heading alteram a recuperação direcional quando não são bem representadas no modelo.",
+      "resposta_padrao": "Falha ou deriva dos sensores de movimento.",
+      "por_que_nao": "Os sensores estão íntegros e a mudança segue o giro do casco, não um desvio instrumental aleatório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa liberdade de rotação permite que o navio busque aproamento mais favorável à resultante ambiental"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito de baixa sensibilidade dos RAOs na observabilidade da direção do mar.",
+      "pergunta": "Picos de erro na direção de onda estimada aparecem sempre na mesma faixa de período; nessa faixa, respostas medidas quase não mudam entre direções vizinhas, e fora dela o algoritmo volta a acertar. Qual elemento explica o erro?",
+      "resposta": "Região de baixa sensibilidade dos RAOs.",
+      "explicacao": "Quando os movimentos quase não diferenciam direções naquela banda, a informação direcional fica mal condicionada. Esse padrão é típico da baixa sensibilidade dos RAOs, não de falha geral do sistema.",
+      "resposta_padrao": "Calibração incorreta dos sensores inerciais.",
+      "por_que_nao": "Uma calibração ruim tenderia a afetar várias faixas; aqui o erro fica concentrado justamente onde a resposta perde sensibilidade direcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Estimativas de condições de mar a partir dos movimentos do FPSO dependem da resposta hidrodinâmica representada nos modelos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limitação de extrapolar a validação de um modelo hidrodinâmico além do envelope ambiental coberto.",
+      "pergunta": "Um modelo reproduziu bem os movimentos na campanha de validação sob mar ameno. Ao inferir condições durante tempestade, passou a divergir de registros independentes, sem troca de sensores nem alteração do casco. Qual é a causa principal?",
+      "resposta": "Uso do modelo fora do envelope ambiental validado.",
+      "explicacao": "Acerto em mar ameno não comprova igual precisão em condição extrema. A validação precisa cobrir dados compatíveis com a embarcação e com o envelope ambiental da aplicação.",
+      "resposta_padrao": "Degradação dos sensores ao longo do tempo.",
+      "por_que_nao": "A divergência aparece associada à tempestade; em condições semelhantes às validadas o desempenho continuaria compatível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desempenho em mar ameno não demonstra a mesma precisão em condições extremas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Não universalidade de intervalo temporal e variação angular derivados de ensaio na interpretação do modelo.",
+      "pergunta": "A mesma janela temporal e a mesma variação angular definidas num ensaio anterior passam a produzir estimativas inconsistentes em outra campanha, embora algoritmo, sensores e método de processamento não tenham mudado. O que está causando isso?",
+      "resposta": "Uso universal indevido da janela e faixa angular do ensaio.",
+      "explicacao": "O problema surge ao reaplicar como regra fixa parâmetros de um ensaio específico. O texto destaca que intervalo de tempo e variação angular não devem ser universalizados.",
+      "resposta_padrao": "Erro intrínseco do algoritmo de estimação.",
+      "por_que_nao": "Com a campanha original o algoritmo funcionava; a inconsistência aparece ao impor a mesma parametrização experimental em outro contexto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Resultados do modelo devem ser interpretados com essas limitações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sem adotar um intervalo de tempo ou variação angular de um ensaio como regra universal."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 3,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer duplicação de dados em arquitetura híbrida quando o mesmo ponto chega por caminhos de borda e supervisão.",
+      "pergunta": "No broker, a mesma vazão é publicada duas vezes, com poucos milissegundos de diferença: uma mensagem traz carimbo do equipamento de borda e a outra carimbo do SCADA. Localmente a tag continua única. Qual causa primária?",
+      "resposta": "Dupla publicação do mesmo sinal por controlador de borda e SCADA.",
+      "explicacao": "Dois carimbos de origem para a mesma variável indicam dois produtores distintos. O bloco F descreve a arquitetura híbrida em que o controlador de borda envia à nuvem enquanto o SCADA também alimenta consumidores.",
+      "resposta_padrao": "Assinatura duplicada do mesmo tópico no dashboard.",
+      "por_que_nao": "Assinatura duplicada repetiria a mesma origem e o mesmo timestamp, não duas cadeias de publicação distintas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar exposição coerente em múltiplas barreiras à indefinição dos fluxos permitidos numa nova interface IT/OT.",
+      "pergunta": "Comissionada uma plataforma analítica, o mesmo executável corporativo passou a abrir sessões permitidas, por duas barreiras sucessivas, para PLCs, HMIs e servidor histórico; porém seu consumo efetivo vem só do histórico. Qual causa primária explica essa abertura?",
+      "resposta": "Escopo de tráfego da interface analítica-OT indefinido.",
+      "explicacao": "A mesma abertura indevida reproduzida em duas barreiras aponta requisito mal definido para a interface, não erro isolado de um firewall. O bloco F exige definir o tráfego que cruza a fronteira e sua finalidade operacional.",
+      "resposta_padrao": "Regras permissivas demais em um dos firewalls.",
+      "por_que_nao": "A exposição apareceu de forma coerente em duas barreiras diferentes; isso aponta escopo de fluxo indefinido que depois virou regra.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

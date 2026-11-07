@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 31,
+  "rodada": 2,
+  "contexto": {
+    "A1": 30,
+    "F": 31,
+    "A2": 32
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir desabilitação do registro de eventos de perda de comunicação com o sistema de controle.",
+      "pergunta": "Após ajuste para enxugar a lista de alarmes, os trips continuam atuando corretamente, mas a sequência perdeu registros de permissivos, modos e fins de curso no supervisório. Qual causa primária?",
+      "resposta": "Registro de eventos desabilitado na reconfiguração.",
+      "explicacao": "As atuações e a lógica seguem corretas; o que sumiu foi a trilha cronológica das mudanças de estado. Esses sinais deveriam permanecer como eventos registrados, mesmo quando deixam de ser anunciados.",
+      "resposta_padrao": "Falha de comunicação com o PLC.",
+      "por_que_nao": "As atuações e os estados atuais continuam chegando; desapareceram apenas mudanças de estado que deveriam seguir registradas como eventos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "evento é uma mudança de estado registrada para análise, sem demanda de ação imediata."
+        },
+        {
+          "bloco": "F",
+          "trecho": "eventos devem permanecer disponíveis para registro, diagnóstico e análise sem anunciar indevidamente."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer retorno de pseudo-alarmes por restauração de versão antiga da configuração.",
+      "pergunta": "Restaurada a base do supervisório, voltaram a anunciar como alarmes mensagens de modo, disponibilidade e fim de curso já tratadas antes; campo, lógica e sequências não mudaram. Qual causa primária?",
+      "resposta": "Versão desatualizada da configuração de alarmes restaurada.",
+      "explicacao": "Reapareceu, após restauração, exatamente um padrão antigo de anunciação, sem mudança de campo ou lógica. Isso aponta para retorno de uma versão anterior da configuração de alarmes, não para defeito novo em instrumentos.",
+      "resposta_padrao": "Defeito novo nos instrumentos de campo.",
+      "por_que_nao": "As medições e sequências permaneceram coerentes; o que voltou foi um comportamento antigo de anunciação, típico de rollback de configuração.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "a organização perde capacidade de saber qual configuração está válida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a configuração de alarmes precisa associar cada anúncio a uma ação esperada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar atraso na identificação do alarme crítico à priorização errada de avisos sem ação.",
+      "pergunta": "Partidas normais geram muitos anúncios de disponibilidade e modo; quando surge uma anormalidade real no mesmo período, o único anúncio acionável demora a ser reconhecido, com poucas variáveis fora de faixa. Qual causa primária?",
+      "resposta": "Classe de prioridade alta para avisos sem ação imediata.",
+      "explicacao": "Poucas variáveis fora de faixa descartam flood por instabilidade de processo. O atraso surge porque avisos sem ação imediata competem com o anúncio acionável, indicando prioridade definida sem considerar a resposta esperada.",
+      "resposta_padrao": "Instabilidade do processo durante a partida.",
+      "por_que_nao": "O número de variáveis realmente em desvio é pequeno; a competição vem dos avisos de modo e disponibilidade, não da severidade do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Alarme é um aviso que requer ação do operador em tempo restrito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A racionalização de alarmes deve avaliar causa, consequência, prioridade e resposta esperada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "aumenta o tempo de resposta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

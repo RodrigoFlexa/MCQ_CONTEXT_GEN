@@ -1,0 +1,83 @@
+{
+  "item": "05_01",
+  "foco": 8,
+  "rodada": 4,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de tempo de regeneração suficiente antes do retorno do leito à produção no PSA.",
+      "pergunta": "Sem mudança nas pressões de alta e baixa dos leitos, um ajuste de temporização fez o O₂ permanecer alto durante quase todo o passo de produção, alternadamente em ambos os leitos. Qual a causa primária?",
+      "resposta": "Tempo de regeneração dos leitos ajustado insuficiente.",
+      "explicacao": "O leito volta a produzir sem estar previamente regenerado o bastante. Falha de pressurização afetaria só o início do passo; comutação tardia, só o final.",
+      "resposta_padrao": "Etapa de pressurização do leito indisponível.",
+      "por_que_nao": "Sem pressurização, o desvio se concentra no começo do passo; aqui ele persiste por quase toda a produção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a alimentação é comutada para o outro leito previamente regenerado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ciclo completo é dividido em produção, equalização e purga ou regeneração por despressurização"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Tempos de ciclo em PSA são usualmente curtos, da ordem de segundos a minutos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Trade-off entre pureza, recuperação e consumo específico em PSA de nitrogênio.",
+      "pergunta": "O O₂ no nitrogênio caiu para valores consistentemente menores que os habituais, mas a vazão útil também caiu e o consumo específico de ar subiu; pressão de alimentação e sequência do PSA permanecem normais. Qual a causa primária?",
+      "resposta": "Setpoint de pureza do nitrogênio ajustado mais restritivo.",
+      "explicacao": "Pureza mais alta em PSA reduz recuperação e eleva consumo específico. Com alimentação e ciclo normais, esse conjunto indica alvo de pureza mais severo, não perda de desempenho do leito.",
+      "resposta_padrao": "Pressão de alimentação insuficiente ao PSA.",
+      "por_que_nao": "Pressão insuficiente tende a degradar a separação e elevar o O₂ do produto, não a melhorá-la com menor recuperação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Enquanto a frente não alcança a saída, o gás menos adsorvido permanece enriquecido no produto."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "elevar pureza tende a afetar consumo específico e recuperação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de iniciar a produção com leito previamente regenerado em PSA de dois leitos.",
+      "pergunta": "Na retomada após parada longa, o nitrogênio só entra em especificação depois que cada leito completa uma vez produção e regeneração; pressões e comutações seguem normais desde o início. Qual a causa primária?",
+      "resposta": "Leitos colocados em produção sem regeneração prévia.",
+      "explicacao": "No PSA, o leito que assume a produção deve estar previamente regenerado. Sem esse estado inicial, a pureza só estabiliza após um ciclo completo em cada leito.",
+      "resposta_padrao": "Comutação tardia dos leitos.",
+      "por_que_nao": "Comutação tardia repetiria picos no fim de cada passo; aqui o problema aparece só até os leitos restabelecerem o ciclo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a alimentação é comutada para o outro leito previamente regenerado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o leito em serviço entra em regeneração por despressurização"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

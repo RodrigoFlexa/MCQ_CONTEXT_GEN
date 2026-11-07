@@ -1,0 +1,61 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Redundância funcional de recomposição exige segregação lógica dos permissivos e caminhos de comando, não só alimentação independente.",
+      "pergunta": "Cada canal automático de fechamento permanece energizado por UPS distinta, e o fechamento local do disjuntor funciona, mas os dois canais recusam atuar enquanto aguardam o mesmo permissivo de um controlador em reboot. Qual a causa primária da perda de redundância?",
+      "resposta": "Permissivo comum em um único controlador",
+      "explicacao": "A segregação elétrica existe, mas os dois canais compartilham a mesma habilitação lógica. Enquanto esse controlador reinicia, ambos os fechamentos automáticos ficam bloqueados ao mesmo tempo.",
+      "resposta_padrao": "Falha na alimentação elétrica dos canais automáticos.",
+      "por_que_nao": "As UPS distintas mantiveram os canais energizados; o bloqueio está no caminho lógico comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica de controle não bloquear a própria retomada de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A utilidade do back feeding na recomposição depende de o segmento realimentado incluir os auxiliares necessários à partida da geração principal.",
+      "pergunta": "Com o back feeding estável, instrumentos e controle voltam ao painel essencial, sem sobrecarga nem intertravamento ativo, mas a partida dos geradores principais não avança. Qual causa primária trava a recomposição?",
+      "resposta": "Painel realimentado sem os auxiliares de partida dos geradores principais",
+      "explicacao": "O back feeding pode restaurar controle e ainda não alcançar bombas, ventilação ou outros serviços indispensáveis à partida. Sem esses auxiliares, a recomposição para antes de recuperar a geração principal.",
+      "resposta_padrao": "Capacidade insuficiente da geração de emergência.",
+      "por_que_nao": "O painel realimentado permaneceu estável e sem sobrecarga; o impasse é de abrangência das cargas restauradas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a arquitetura redundante continuar válida no estado degradado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "da condição dos sistemas auxiliares que permitem partir ou sustentar os geradores principais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

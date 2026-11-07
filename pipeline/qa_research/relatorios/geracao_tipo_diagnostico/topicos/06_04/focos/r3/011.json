@@ -1,0 +1,83 @@
+{
+  "item": "06_04",
+  "foco": 11,
+  "rodada": 3,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Crédito de camada na LOPA só vale no modo operacional em que a função realmente atua.",
+      "pergunta": "No teste de causa e efeito, a proteção de alta pressão fica bloqueada enquanto a permissiva de partida está ativa; ainda assim, a planilha SIL do cenário de partida manteve para essa função o mesmo crédito da operação normal. Qual a causa primária do SIL menor que o necessário?",
+      "resposta": "Crédito da SIF de alta pressão bloqueada na partida",
+      "explicacao": "O cenário existe justamente no modo em que essa função não atua. A alocação ficou inconsistente com as condições operacionais consideradas e com o crédito real da camada.",
+      "resposta_padrao": "Frequência de iniciação maior na partida.",
+      "por_que_nao": "Mesmo com a mesma frequência, a LOPA fica errada ao creditar uma camada indisponível no único modo em que o cenário ocorre.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A qualidade da alocação depende das premissas adotadas sobre cenário, severidade, frequência de iniciação, crédito das camadas e condições operacionais consideradas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Uma Função Instrumentada de Segurança (SIF) combina lógica, sensores e elementos finais para detectar uma condição perigosa e levar o processo a um estado seguro ou menos perigoso."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em well test, a alocação de SIL deve cobrir cenários que atravessam equipamentos temporários e sistemas permanentes.",
+      "pergunta": "No well test, uma causa no separador temporário só é interrompida pelo ESD da linha permanente. A planilha SIL do skid omite essa atuação, e a do permanente trata apenas causas próprias. Qual causa primária deixou a função sem requisito SIL?",
+      "resposta": "LOPA fragmentada por pacote no arranjo de well test",
+      "explicacao": "O desvio nasce em um subsistema e é contido em outro. Ao separar a análise por pacotes, o cenário transversal ficou fora do escopo de ambas as alocações.",
+      "resposta_padrao": "Falha de cadastro da SIF no inventário.",
+      "por_que_nao": "A função existe fisicamente; o indício decisivo é que o cenário cruza temporário e permanente e some das análises isoladas.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a função de segurança não deve ser analisada item a item de forma isolada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o desvio pode nascer em um subsistema e ser contido em outro."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A qualidade da alocação depende das premissas adotadas sobre cenário, severidade, frequência de iniciação, crédito das camadas e condições operacionais consideradas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Cada LOPA deve tratar um cenário único; misturar severidade e camadas de cenários diferentes distorce o SIL.",
+      "pergunta": "A LOPA de alta pressão do vaso registra consequência de ruptura do casco, mas credita válvula de controle e reciclo automático que só limitam desvios com saída ainda parcial. Qual causa primária explica esse SIL incoerente?",
+      "resposta": "Mescla de cenários distintos na mesma LOPA",
+      "explicacao": "A consequência usada pertence a um caminho acidental, enquanto as camadas creditadas pertencem a outro. A inconsistência nasce da definição incorreta do cenário analisado.",
+      "resposta_padrao": "Frequência iniciadora incorreta.",
+      "por_que_nao": "O sinal decisivo é a combinação da severidade de um caminho com camadas de outro; erro de frequência sozinho não produz isso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A qualidade da alocação depende das premissas adotadas sobre cenário, severidade, frequência de iniciação, crédito das camadas e condições operacionais consideradas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a LOPA tende a ser mais apropriada quando se deseja explicitar a contribuição de cada camada e justificar de forma estruturada a necessidade de uma SIF e seu SIL."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

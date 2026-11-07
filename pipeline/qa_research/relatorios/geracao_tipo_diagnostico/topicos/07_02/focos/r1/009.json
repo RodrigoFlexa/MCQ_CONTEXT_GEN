@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 9,
+  "rodada": 1,
+  "contexto": {
+    "A1": 8,
+    "F": 9,
+    "A2": 10
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre alcançabilidade externa em IACS e acessibilidade direta de ativos OT à internet.",
+      "pergunta": "Varreduras e tentativas de login vindas de IPs externos chegam direto ao serviço remoto de uma estação de engenharia, sem passar pelo concentrador de acesso e fora de qualquer janela de suporte. Qual é a causa primária dessa exposição?",
+      "resposta": "Acessibilidade direta da estação de engenharia à internet.",
+      "explicacao": "O sinal decisivo é o tráfego externo alcançar a estação sem VPN nem ponto controlado de entrada. Em IACS, a exposição direta aumenta a alcançabilidade por agentes externos.",
+      "resposta_padrao": "Vulnerabilidade não corrigida no serviço remoto.",
+      "por_que_nao": "Uma falha exposta pode ser explorada, mas não explica o serviço estar alcançável diretamente da internet, fora do ponto controlado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reduzir a exposição de rede diminui a chance de alcançabilidade por agentes externos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "recomenda-se evitar acessibilidade direta a partir da internet."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre permissões do acesso remoto e alcance operacional indevido mesmo com VPN e dispositivo verificado.",
+      "pergunta": "Durante suporte via VPN, o notebook dedicado do fornecedor passou nas verificações e a sessão ficou no horário autorizado, mas a mesma conta alterou parâmetros em controladores fora do equipamento em manutenção. Qual causa primária explica esse alcance indevido?",
+      "resposta": "Permissões excessivas no perfil de acesso remoto.",
+      "explicacao": "Com canal seguro e dispositivo verificado, o fator decisivo restante é a permissão disponível na sessão. Se a conta alcança controladores fora do escopo, o problema primário é privilégio excessivo.",
+      "resposta_padrao": "Comprometimento do notebook do fornecedor.",
+      "por_que_nao": "O equipamento foi verificado, e as alterações ocorreram com ações tecnicamente permitidas pela própria conta; o desvio estava no alcance concedido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre rastreabilidade de intervenção remota e existência de registro de sessão por ativo acessado.",
+      "pergunta": "Uma alteração indevida apareceu após suporte de terceiro. A VPN registra usuário e horário, mas não há trilha do ativo acessado nem das ações executadas na sessão. Qual causa primária explica essa lacuna?",
+      "resposta": "Ausência de registro de sessão por ativo acessado.",
+      "explicacao": "A autenticação da VPN mostra quem e quando, mas não qual alvo foi operado. A impossibilidade de reconstrução decorre da falta de trilha de sessão associada ao ativo alcançado.",
+      "resposta_padrao": "Uso de conta compartilhada.",
+      "por_que_nao": "Quem acessou e quando já são conhecidos; o que falta é a evidência do que foi feito e em qual ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa medida protege o tráfego em trânsito e cria um ponto de entrada mais controlado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre persistência do risco após suporte remoto e não encerramento técnico do acesso ao fim da atividade.",
+      "pergunta": "O fornecedor informou fim do diagnóstico remoto, porém horas depois o mesmo endereço ainda trocava tráfego pelo túnel autorizado e surgiram novas mudanças sem novo evento de autenticação. Qual causa primária explica a atuação posterior?",
+      "resposta": "Sessão remota não encerrada ao fim da atividade.",
+      "explicacao": "Sem novo login, a nova atuação não depende de reutilização de credenciais. O indício decisivo é a permanência do tráfego pelo túnel após o término informado da intervenção.",
+      "resposta_padrao": "Roubo de credenciais do terceiro.",
+      "por_que_nao": "Sem novo evento de autenticação, a continuidade da atuação veio da sessão já existente, não de credenciais usadas novamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

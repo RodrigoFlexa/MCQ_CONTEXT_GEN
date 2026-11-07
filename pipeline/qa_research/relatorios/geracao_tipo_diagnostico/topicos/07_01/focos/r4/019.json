@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 4,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer forcing em variável analógica quando a entrada bruta acompanha o campo, mas a PV usada no controle fica fixa.",
+      "pergunta": "Com o indicador local e o valor bruto da entrada acompanhando o processo, a PV usada pelo controlador fica cravada em 60,0% com qualidade boa e a malha deixa de corrigir. Qual é a causa primária?",
+      "resposta": "Forcing na PV analógica do controlador",
+      "explicacao": "Campo e entrada bruta variam, descartando transmissor e cartão. PV fixa em valor exato, ainda válida, indica forcing acima da aquisição, retirando a medição real do controle.",
+      "resposta_padrao": "Transmissor travado.",
+      "por_que_nao": "Se o transmissor estivesse travado, o valor bruto da entrada não acompanharia o campo nem a variação do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar override na seleção de setpoint em cascata quando o secundário indica CAS, recebe o remoto, mas só responde ao SP local.",
+      "pergunta": "No faceplate do secundário, o modo permanece em CAS e o SP remoto vindo do primário muda corretamente, mas a malha só reage quando o SP local do próprio secundário é editado; PV, saída e comunicação permanecem normais. Qual causa primária?",
+      "resposta": "Override na seleção de setpoint local do secundário",
+      "explicacao": "Com o secundário indicado em CAS e recebendo o SP remoto, não é perda de comunicação nem simples modo local. Se só o SP local move a malha, o caminho normal de cascata foi sobreposto.",
+      "resposta_padrao": "Falha de comunicação entre os controladores.",
+      "por_que_nao": "O SP remoto chega e é mostrado no secundário; o problema está na adoção do caminho de setpoint, não na transmissão do valor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

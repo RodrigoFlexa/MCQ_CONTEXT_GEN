@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer privilégio remoto incompatível com a tarefa como causa de alteração indevida por sessão autorizada.",
+      "pergunta": "Durante suporte remoto liberado só para leitura de diagnóstico, os logs mostram escrita aceita pelo perfil do fornecedor em um PLC fora da ordem de serviço, sem troca de conta nem elevação de privilégio; em teste posterior, o mesmo perfil também altera parâmetros nesse segmento. Qual é a causa primária?",
+      "resposta": "Perfil remoto com privilégio de configuração além do escopo da tarefa.",
+      "explicacao": "A sessão era autorizada, e o próprio perfil concedido aceitava escrita em ativo fora do serviço solicitado; o elemento decisivo é o escopo de acesso incompatível com a necessidade operacional.",
+      "resposta_padrao": "Comprometimento do notebook do fornecedor.",
+      "por_que_nao": "Os sinais decisivos mostram que o perfil autorizado, por si só, já permitia a alteração indevida, sem elevação de privilégio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na aplicação prática, convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir acesso remoto permanente de terceiro de sessão esquecida quando a alcançabilidade externa persiste sem login ativo.",
+      "pergunta": "Fora das janelas combinadas, não há usuário autenticado nem sessão interativa aberta, mas o fornecedor continua conseguindo iniciar novas conexões para ativos de controle pelo mesmo caminho remoto já implantado. Qual causa primária explica essa exposição remanescente?",
+      "resposta": "Canal remoto permanente de terceiro, sem delimitação por necessidade operacional.",
+      "explicacao": "O problema não é uma sessão esquecida, e sim a própria disponibilidade contínua do caminho de acesso, que mantém alcançabilidade externa fora da necessidade operacional.",
+      "resposta_padrao": "Sessão remota não encerrada ao fim da atividade.",
+      "por_que_nao": "O enunciado informa ausência de sessão ativa; o que persiste é a possibilidade de abrir novas conexões a qualquer momento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na aplicação prática, convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "reduzir a exposição de rede diminui a chance de alcançabilidade por agentes externos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar incapacidade de atribuir mudança em ativo específico à falta de registros de sessão com rastreabilidade ao ativo e à ação.",
+      "pergunta": "Após mudança inesperada em uma malha, sabe-se qual conta do fornecedor autenticou e em que horário. Os registros disponíveis param no VPN e no firewall; por eles não se determina em qual controlador houve atuação nem quais comandos foram executados. Qual causa primária?",
+      "resposta": "Registro de sessão insuficiente para rastrear a intervenção.",
+      "explicacao": "Há evidência de entrada, mas falta trilha vinculando usuário, ativo e ação executada; sem esse nível de registro, a intervenção não fica tecnicamente rastreável.",
+      "resposta_padrao": "Uso de conta compartilhada pelo fornecedor.",
+      "por_que_nao": "A identidade e o horário já são conhecidos; o dado ausente é a trilha da atuação dentro do ambiente e no ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

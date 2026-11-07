@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 4,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Segregação elétrica real das estações master é necessária para que a redundância de supervisão sobreviva à perda de uma UPS.",
+      "pergunta": "Na perda de um único quadro de UPS, a master ativa e a de espera desligam juntas, mas remotas, rede e I/Os seguem operando por outra alimentação. Qual causa primária elimina a redundância do supervisório?",
+      "resposta": "Ambas as estações master alimentadas pelo mesmo UPS",
+      "explicacao": "Se remotas, rede e I/Os permanecem operando, a falha não está no campo nem no failover. O desligamento simultâneo das duas masters indica alimentação comum, sem segregação real entre canais.",
+      "resposta_padrao": "Falha da lógica de troca automática entre master e reserva.",
+      "por_que_nao": "A lógica de failover não derruba eletricamente as duas estações ao mesmo tempo enquanto a rede de campo continua viva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sequência de abandono latched pode bloquear permissivos de fechamento mesmo com alimentação de comando e hardware íntegros.",
+      "pergunta": "Alimentação de comando estável e fechamento local normal, mas o fechamento remoto permanece bloqueado após o blackout e o supervisório mantém o status de abandono ativo. Qual causa primária mantém a inibição?",
+      "resposta": "Sequência de abandono não resetada",
+      "explicacao": "Comando e disjuntor estão aptos, pois o fechamento local funciona. O status de abandono ainda ativo mantém bloqueado o permissivo lógico de fechamento remoto na recomposição.",
+      "resposta_padrao": "Falha na saída remota do controlador para o disjuntor.",
+      "por_que_nao": "O fechamento local confirma circuito de fechamento e disjuntor operantes; o bloqueio vem do estado lógico de abandono.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A ordem do script de reinicialização pode impedir a recomposição automática em estados anormais, apesar de hardware saudável.",
+      "pergunta": "A recomposição automática não libera fechamento; repetindo o reboot manualmente, em ordem diferente entre supervisão, controladores e I/Os, a liberação aparece sempre. Qual causa primária explica essa diferença?",
+      "resposta": "Ordem incorreta do script de reinicialização",
+      "explicacao": "Se a liberação surge de forma repetível ao mudar apenas a sequência de boot, a limitação não é o hardware. A causa está no script automático de reinicialização.",
+      "resposta_padrao": "Falha intermitente de comunicação entre controladores e I/Os.",
+      "por_que_nao": "A mesma comunicação funciona de modo repetível sem trocar hardware, desde que a sequência de reboot seja alterada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

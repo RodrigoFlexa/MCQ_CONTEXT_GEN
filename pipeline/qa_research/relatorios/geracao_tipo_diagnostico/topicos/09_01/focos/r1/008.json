@@ -1,0 +1,105 @@
+{
+  "item": "09_01",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar inviabilidade de roteiros por uso indevido da hipótese de ausência de janelas de atendimento no planejamento de PSV.",
+      "pergunta": "Roteiros com trânsito real aderente ao previsto e capacidade folgada chegam repetidamente cedo demais ou tarde demais para transferir carga. O custo calculado é ótimo. O que está causando essa inviabilidade?",
+      "resposta": "hipótese de inexistência de restrições de horário de atendimento",
+      "explicacao": "Se trânsito e capacidade estão corretos, mas a operação falha por coincidência de chegada fora da janela útil, a causa primária é um modelo que assume atendimento sem restrição horária.",
+      "resposta_padrao": "Subestimação do tempo de viagem.",
+      "por_que_nao": "O trânsito real já aderiu ao previsto; o desvio aparece por chegar fora das janelas operacionais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inexistência de restrições de horário de atendimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma rota eficiente em custo não é, por si só, prova de executabilidade operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer atraso logístico gerado por vinculação fixa entre plataforma e PSV, mesmo com folga de frota.",
+      "pergunta": "Há PSV com espaço livre e tempo disponível, mas pedidos urgentes de uma plataforma esperam o retorno do mesmo navio, enquanto outro segue ocioso na mesma área. Qual a causa primária?",
+      "resposta": "premissa de uma única embarcação por plataforma",
+      "explicacao": "Capacidade ociosa na área descarta falta de frota. O atraso nasce da regra de atendimento exclusivo, que rigidiza a alocação dos pedidos entre embarcações.",
+      "resposta_padrao": "Falta de embarcações.",
+      "por_que_nao": "Existe outro PSV disponível e com espaço; o problema é a vinculação fixa plataforma-navio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada plataforma ser atendida por uma única embarcação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alocação de pedidos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar plano logisticamente ótimo, porém inexequível por omitir restrição de posicionamento seguro na interface marítima.",
+      "pergunta": "A mesma escala, na mesma instalação, é abortada por comandantes diferentes: a ETA está correta, mas as aproximações precisam ser refeitas antes da transferência; visibilidade, propulsão e radar normais. O que está faltando no planejamento?",
+      "resposta": "restrição de posicionamento seguro não modelada",
+      "explicacao": "Como o padrão se repete com comandantes diferentes e sem falha de navegação ou ambiente adverso, a causa é a ausência da restrição operacional de posicionamento seguro na interface.",
+      "resposta_padrao": "Erro de manobra na aproximação.",
+      "por_que_nao": "A repetição com comandantes diferentes e sistemas normais aponta para restrição da interface, não falha individual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "necessidade de posicionamento seguro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "restrições físicas e operacionais da interface marítima"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a exposição ao risco é associada à duração da operação, ao layout das instalações, às condições ambientais e a falhas humanas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar quebra de ciclo logístico causada pela aplicação indevida da hipótese de permanência prolongada do PSV fora do porto.",
+      "pergunta": "O ciclo logístico só fecha no software quando o PSV fica fora até três dias; na operação real, retornos frequentes ao porto quebram a sequência, embora velocidade, consumo e capacidade coincidam com o previsto. Qual é a causa?",
+      "resposta": "hipótese de até três dias sem retorno ao porto",
+      "explicacao": "Com desempenho real aderente ao planejado, a ruptura do ciclo não vem do navio. Ela decorre da premissa de permanência prolongada em viagem aplicada fora do sistema para o qual foi formulada.",
+      "resposta_padrao": "Desempenho abaixo do previsto do PSV.",
+      "por_que_nao": "Velocidade, consumo e capacidade estão aderentes; o desvio nasce da premissa de permanência em viagem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permanência do PSV em viagem por até três dias sem retorno ao porto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas condições pertencem ao sistema descrito e não devem ser universalizadas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 4,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar o broker MQTT como ponto comum de falha na arquitetura híbrida quando apenas o caminho MQTT congela em múltiplos consumidores.",
+      "pergunta": "Somente as variáveis recebidas via MQTT congelam ao mesmo tempo no SCADA local e na nuvem; tags nativas do SCADA seguem atualizando e os painéis dos controladores continuam coerentes. Qual a causa primária?",
+      "resposta": "Indisponibilidade do broker MQTT central",
+      "explicacao": "No arranjo híbrido, o broker é o ponto comum de distribuição para SCADA e nuvem. Como os painéis locais seguem coerentes e as tags nativas do SCADA continuam atualizando, o problema não está no processo nem no SCADA como um todo.",
+      "resposta_padrao": "Falha nos controladores de borda.",
+      "por_que_nao": "Vários controladores seguem coerentes localmente, e o congelamento aparece só no caminho comum distribuído por MQTT.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real"
+        },
+        {
+          "bloco": "F",
+          "trecho": "protocolos e brokers distribuem esses dados"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir ausência de contexto de modo operacional da hipótese de modelo analítico inadequado ao comparar trens equivalentes.",
+      "pergunta": "O mesmo modelo analítico roda em dois trens equivalentes. Só no trem sem a indicação de partida/parada integrada surgem alarmes de desvio nos transientes; em regime estável, ambos acompanham bem. Qual a causa primária?",
+      "resposta": "Ausência de contexto de modo operacional nos dados do modelo",
+      "explicacao": "A diferença entre trens equivalentes usando o mesmo modelo afasta defeito intrínseco do algoritmo. Falta, no trem afetado, a informação que separa transientes de operação estável para interpretar corretamente os dados.",
+      "resposta_padrao": "Modelo calibrado apenas para regime permanente.",
+      "por_que_nao": "O mesmo modelo acompanha corretamente os transientes no trem onde a indicação operacional está integrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar divergências recorrentes entre disciplinas ao uso de modelos paralelos separados, em vez de plataforma unificada de simulação.",
+      "pergunta": "Cada disciplina atualiza seu próprio modelo; isoladamente todos convergem, mas, ao integrar, reaparecem divergências recorrentes de propriedades físicas, termodinâmica e método de solução. Qual é a causa primária?",
+      "resposta": "Modelos paralelos em ambientes separados, sem plataforma unificada de simulação",
+      "explicacao": "Se cada modelo fecha sozinho, mas as divergências retornam na integração em mais de um domínio, o problema é estrutural do arranjo com modelos separados. A plataforma unificada existe justamente para manter esses elementos alinhados entre disciplinas.",
+      "resposta_padrao": "Erro de calibração em um dos modelos.",
+      "por_que_nao": "O padrão recorrente entre várias disciplinas após a integração aponta desalinhamento estrutural do arranjo, não um único modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma plataforma unificada de simulação pode reunir reservatório, poços, escoamento, facilidades de produção e cenários de segurança em um mesmo ambiente de modelagem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "propriedades físicas, termodinâmica e métodos de solução permanecem alinhados entre disciplinas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduzindo divergências entre modelos paralelos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar fonte de entrada offline quando a aplicação executa normalmente, mas não usa dados correntes no modo online.",
+      "pergunta": "Os cálculos rodam sem erro a cada 5 minutos, mas balanços e alocação ficam iguais por horas enquanto SCADA e historiador mudam; só após a atualização noturna os resultados incorporam o período. Qual a causa primária?",
+      "resposta": "Fonte de entrada apontada para base offline, não para dados correntes",
+      "explicacao": "A execução frequente mostra que o cálculo está ativo. Como os resultados só mudam depois da atualização noturna, a aplicação não está lendo dados correntes do modo online, mas uma base atualizada fora desse fluxo.",
+      "resposta_padrao": "Job de execução programada inativo.",
+      "por_que_nao": "A execução está ocorrendo normalmente; o que permanece desatualizado é a base usada pela aplicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ativo passa a usar dados correntes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

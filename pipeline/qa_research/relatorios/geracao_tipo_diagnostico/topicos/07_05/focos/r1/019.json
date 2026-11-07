@@ -1,0 +1,101 @@
+{
+  "item": "07_05",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A indisponibilidade real pode ser causada por endereço de armazenagem incorreto, mesmo com saldo correto no sistema.",
+      "pergunta": "O sistema libera uma solenóide como disponível; a equipe só a encontra horas depois, intacta, em outro endereço físico, e a contagem total do item bate com o sistema. Qual a causa primária da indisponibilidade inicial?",
+      "resposta": "Localização cadastral incorreta do sobressalente",
+      "explicacao": "Havia estoque físico e saldo correto, mas não no local informado. Sem correspondência entre registro e localização, a disponibilidade registrada não vira disponibilidade real para a manutenção.",
+      "resposta_padrao": "Ruptura de estoque do item.",
+      "por_que_nao": "O item foi localizado intacto e o saldo total estava correto; faltava acuracidade do endereço, não quantidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o registro precisa corresponder ao item fisicamente existente e recuperável no local informado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "erro de cadastro, localização imprecisa ou controle frágil de transações pode aumentar o tempo de busca"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Divergência concentrada após retiradas emergenciais, com endereço e contagem corretos, aponta para falha de registro de transações.",
+      "pergunta": "As divergências de saldo surgem só em itens de alto giro retirados em correções emergenciais; endereço, descrição e contagem cíclica estão corretos, mas o sistema mantém disponibilidade logo após a retirada. Qual a causa primária?",
+      "resposta": "Baixa de movimentação não registrada no sistema",
+      "explicacao": "Como localização, descrição e contagem não explicam a divergência, o sinal decisivo é o saldo permanecer disponível após a retirada, típico de falha no registro da transação.",
+      "resposta_padrao": "Erro de contagem no inventário físico.",
+      "por_que_nao": "A divergência aparece associada à retirada emergencial e persiste no sistema imediatamente depois dela, padrão de transação não lançada.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "falhas no registro de transações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "erro de cadastro, localização imprecisa ou controle frágil de transações pode aumentar o tempo de busca"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A ausência de estrutura hierárquica funcional no cadastro fragmenta a demanda e prejudica o planejamento de sobressalentes.",
+      "pergunta": "Em bombas redundantes do mesmo serviço, o mesmo kit aparece reservado por equipamento individual; um trem acumula sobra e o outro para por falta, embora o consumo total seja estável. Qual a causa primária?",
+      "resposta": "Cadastro de equipamentos sem estrutura hierárquica funcional",
+      "explicacao": "A hierarquia por conjuntos funcionais alimenta o planejamento e a gestão de estoques. Sem ela, a demanda de sobressalentes iguais fica fragmentada entre equipamentos equivalentes.",
+      "resposta_padrao": "Estoque mínimo mal dimensionado.",
+      "por_que_nao": "O consumo agregado está estável; o desequilíbrio entre trens decorre da fragmentação cadastral da demanda, não só da quantidade reabastecida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A estruturação hierárquica de equipamentos e instalações organiza os itens por conjuntos funcionais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "favorece o planejamento das intervenções e serve de insumo para a gestão de estoques e materiais sobressalentes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Acuracidade operacional exige que o reparável esteja não só presente, mas recuperável; status errado cria estoque fantasma utilizável.",
+      "pergunta": "No sistema há um atuador reserva “em estoque”. Ele é localizado na oficina desmontado, incompleto e sem teste de retorno, mas segue reservado como disponível. Qual a causa primária?",
+      "resposta": "Status cadastral incorreto do reparável como recuperável",
+      "explicacao": "Acuracidade operacional exige que o item registrado esteja existente e recuperável no local informado. Um reparável desmontado e incompleto não pode constar como disponibilidade real.",
+      "resposta_padrao": "Falha de preservação do atuador.",
+      "por_que_nao": "Mesmo que haja dano físico, o sintoma decisivo é o sistema tratá-lo como pronto para uso sem condição recuperável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o registro precisa corresponder ao item fisicamente existente e recuperável no local informado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a disponibilidade registrada não se converte em disponibilidade real para a manutenção."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

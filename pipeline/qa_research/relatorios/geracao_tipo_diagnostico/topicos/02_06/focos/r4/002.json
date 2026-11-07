@@ -1,0 +1,61 @@
+{
+  "item": "02_06",
+  "foco": 2,
+  "rodada": 4,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar gas trip incompleto à permanência de fontes de energia elétrica não essenciais fora da lógica de desenergização por gás.",
+      "pergunta": "Num teste com gás padrão, SDVs fecham e bombas param, mas tomadas industriais e aquecedores elétricos de manutenção da área seguem energizados; esses circuitos desarmam normalmente quando acionados pelo ESD elétrico geral. Qual causa primária explica a mitigação incompleta?",
+      "resposta": "Circuitos elétricos não essenciais fora do shutdown por gás.",
+      "explicacao": "A detecção por gás deve também remover fontes de energia. Como esses circuitos abrem no ESD elétrico geral, a permanência energizada no gas trip indica omissão deles na lógica por gás.",
+      "resposta_padrao": "Falha dos disjuntores desses circuitos.",
+      "por_que_nao": "Eles desarmam no ESD elétrico geral; o que falta é seu desligamento automático pelo gas trip.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar incoerência entre o inventário real de equipamentos da área e a matriz de causa e efeito após modificação permanente.",
+      "pergunta": "Retrofit concluído, uma nova bomba de drenagem foi incorporada à área. No gas trip, os equipamentos originais param, essa bomba continua operando e desliga normalmente no comando local; a documentação operacional ainda lista o arranjo anterior. Qual causa primária explica o desvio?",
+      "resposta": "Inventário da área desatualizado na matriz de causa e efeito.",
+      "explicacao": "A bomba responde ao comando local, enquanto os equipamentos antigos param. Isso aponta lógica ainda baseada no arranjo anterior, incompatível com o inventário real que pode alimentar o cenário perigoso.",
+      "resposta_padrao": "Falha do contator da nova bomba.",
+      "por_que_nao": "Ela desliga no comando local; o sinal decisivo é a incoerência entre o inventário real e a lógica implementada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica de causa e efeito deve ser coerente com o inventário de equipamentos capazes de alimentar o cenário perigoso."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A eficácia dessa filosofia depende de a lógica implementada cobrir de fato todas as fontes relevantes de hidrocarboneto na área."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "operar com premissas desatualizadas, incompletas ou não comunicadas entre turnos e funções"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 32,
+  "rodada": 1,
+  "contexto": {
+    "A1": 31,
+    "F": 32,
+    "A2": 33
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir erro na associação causa-efeito da lógica de segurança de defeito no elemento final quando entrada e saída isoladas respondem corretamente.",
+      "pergunta": "No teste da matriz de causa e efeito, o sinal de baixa vazão é lido corretamente no PLC e a válvula prevista fecha quando sua saída é forçada; ainda assim, o intertravamento automático fecha outra válvula. Qual é a causa primária?",
+      "resposta": "Associação errada da causa à válvula na matriz de causa e efeito.",
+      "explicacao": "A entrada é reconhecida e o elemento final correto atua quando comandado diretamente. O erro aparece só no encadeamento automático daquele iniciador, caracterizando mapeamento incorreto entre causa e efeito.",
+      "resposta_padrao": "Há falha na válvula ou no solenóide que deveria atuar.",
+      "por_que_nao": "A atuação correta quando a saída é forçada elimina defeito do elemento final e aponta erro de lógica associativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes da matriz de causa e efeito e dos cenários de atuação dos intertravamentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer inversão de estado normal/trip por configuração errada de contato digital no intertravamento, e não por defeito do sensor.",
+      "pergunta": "Durante a pressurização de teste, o pressostato comuta exatamente no ponto esperado, mas pressão normal aparece como trip e abrir o contato restaura a condição saudável no PLC. Qual causa explica esse comportamento?",
+      "resposta": "Contato NA/NF configurado invertido na entrada do intertravamento.",
+      "explicacao": "O sensor comuta de forma repetível no ponto correto. O problema está no significado atribuído ao estado elétrico da entrada, que inverte condição normal e condição de trip.",
+      "resposta_padrao": "O pressostato está defeituoso.",
+      "por_que_nao": "A comutação repetível no ponto de teste afasta defeito do sensor e indica inversão lógica/elétrica da entrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "cenários de atuação dos intertravamentos para confirmar a atuação do sistema de segurança"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar troca de canais entre campo e sistema de controle quando cada medição local está correta, mas a tag que varia no PLC é outra.",
+      "pergunta": "Ao aquecer apenas o leito 1 em circuito fechado com N2, a tendência que sobe no PLC é a temperatura do leito 2; em campo, cada indicador local acompanha seu próprio sensor e ambos calibram bem. Qual é a causa primária?",
+      "resposta": "Cruzamento de canais de entrada entre os dois transmissores.",
+      "explicacao": "As medições locais corretas e a boa calibração descartam erro dos sensores. A inversão aparece entre campo e PLC, indicando associação trocada das entradas.",
+      "resposta_padrao": "O transmissor do leito 2 está descalibrado.",
+      "por_que_nao": "As indicações locais corretas nos dois pontos mostram que o erro está na integração com o controle, não na medição em campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e o Controlador Lógico Programável (PLC)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "operados em circuito fechado com nitrogênio (N2)"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar falha de atuador de configuração errada do estado normal da solenóide de shutdown quando a cadeia lógica atua, mas o piloto não é aliviado.",
+      "pergunta": "A saída de shutdown do PLC desenergiza e o relé acompanha, mas a válvula de bloqueio continua aberta; quando o ar piloto é ventilado manualmente, ela fecha de imediato. Qual causa primária resta?",
+      "resposta": "Estado normal invertido da solenóide de bloqueio.",
+      "explicacao": "A lógica até o relé está correta e a válvula fecha ao perder piloto. Logo, a inconformidade está na solenóide, cuja condição desenergizada não alivia o piloto como exigido.",
+      "resposta_padrao": "O atuador da válvula está travado.",
+      "por_que_nao": "O fechamento imediato ao ventilar o piloto mostra integridade mecânica e desloca a causa para a solenóide/fail-safe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cenários de atuação dos intertravamentos para confirmar a atuação do sistema de segurança"
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

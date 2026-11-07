@@ -1,0 +1,109 @@
+{
+  "item": "04_02",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "No controle multiplexado, uma falha isolada com comando presente e sem pressurização do ramo aponta para a solenóide local de seleção.",
+      "pergunta": "Arranjo multiplexado com várias válvulas no mesmo suprimento: uma delas não atua; o comando chega ao módulo, a saída elétrica daquela função é emitida, mas a pressão no ramo do atuador não se altera. Qual é a causa primária?",
+      "resposta": "válvula solenóide de seleção daquela função",
+      "explicacao": "No multiplexado, a função é escolhida localmente por eletrônica e solenóides. Com comando recebido, saída elétrica presente e sem pressurização do ramo, falha comum de comunicação ou de suprimento fica excluída.",
+      "resposta_padrao": "Falta de pressão hidráulica comum do sistema.",
+      "por_que_nao": "As demais válvulas usam o mesmo suprimento e respondem; a perda está na comutação local daquela função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas porque a seleção da função ocorre no módulo submarino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino por meio da eletrônica submarina e de válvulas solenóides"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Resposta lenta e menos precisa com comando chegando no tempo certo indica efeito de compressibilidade e perdas em linhas hidráulicas longas.",
+      "pergunta": "O carimbo do comando no módulo é normal e a pressão na fonte hidráulica se mantém, mas a válvula do poço mais distante atinge a nova posição com atraso e menor precisão, sobretudo em pequenas manobras. Qual causa primária explica isso?",
+      "resposta": "volumes compressíveis e perdas nas linhas hidráulicas extensas",
+      "explicacao": "Atraso após o recebimento do comando, dependente de distância e mais visível em pequenos movimentos, caracteriza limitação da transmissão hidráulica por compressibilidade e perdas, não atraso de comunicação.",
+      "resposta_padrao": "Latência da comunicação elétrica.",
+      "por_que_nao": "O comando chega ao módulo no tempo esperado; o atraso surge entre o comando recebido e o movimento do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção da solução deve considerar pelo menos: função a ser comandada, necessidade de fail-safe, infraestrutura disponível no umbilical, profundidade e distância, quantidade de válvulas a controlar, criticidade da resposta temporal e capacidade de intervenção por ROV."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Os benefícios atribuídos incluem menor tempo de resposta, maior precisão de controle"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esses efeitos são tecnicamente coerentes quando o acionamento elétrico reduz volumes compressíveis, perdas por linhas hidráulicas extensas e dependência de fluido de controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em fail-safe close, pequeno descarte apenas na despressurização pode ser do circuito de alívio rápido do atuador.",
+      "pergunta": "Durante testes, a válvula fail-safe close fecha rapidamente sempre que a pressão de controle é aliviada; em cada evento aparece pequeno descarte de fluido à base de água, sem perda contínua entre testes. O que está causando esse descarte?",
+      "resposta": "circuito de despressurização rápida do atuador fail-safe",
+      "explicacao": "Algumas arquiteturas aceleram o fechamento descarregando pequeno volume de fluido de controle. O descarte apenas nos eventos de alívio de pressão exclui vazamento externo contínuo.",
+      "resposta_padrao": "Vazamento hidráulico externo no atuador.",
+      "por_que_nao": "Não há perda contínua; o fluido aparece somente quando a pressão é intencionalmente aliviada para o fechamento fail-safe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em todos os casos, o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em algumas arquiteturas, esse fechamento envolve descarte de pequeno volume de fluido hidráulico à base de água para despressurização rápida do atuador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Retrofit de monitoramento em sistema existente pode falhar por incompatibilidade funcional entre a expansão distribuída e o controle legado.",
+      "pergunta": "Na ampliação do monitoramento, energia e comunicação do cabo existente estão disponíveis, e o pacote novo funciona isoladamente; ainda assim, o sistema legado não consegue endereçar nem incorporar as novas funções sem reengenharia ampla. Qual causa primária explica isso?",
+      "resposta": "incompatibilidade funcional entre a expansão distribuída e o controle legado",
+      "explicacao": "A disponibilidade de energia e comunicação não basta. A integração para ampliar instrumentação em sistema existente depende de compatibilidade funcional da arquitetura de controle.",
+      "resposta_padrao": "Falta de capacidade no umbilical existente.",
+      "por_que_nao": "O cenário já informa energia e comunicação disponíveis; a limitação remanescente é de arquitetura funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sistemas distribuídos de potência e controle podem ser integrados a instalações subsea já existentes para ampliar instrumentação e comunicação, desde que a compatibilidade funcional da arquitetura seja atendida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de expansão é relevante quando se busca adicionar monitoramento sem reconstruir todo o sistema de controle."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

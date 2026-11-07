@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 4,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Controle de acesso em IACS deve abranger também a estação de origem, não apenas a credencial.",
+      "pergunta": "A mesma credencial de engenharia, no jump server habitual, só acessa um PLC. Quando usada de um notebook ligado localmente à rede de controle, alcança também IHM, relés e outro controlador; perfil da conta e regras do firewall não mudaram. Qual a causa primária?",
+      "resposta": "Falta de restrição da conta à estação de engenharia autorizada.",
+      "explicacao": "Em IACS, o controle de acesso alcança estações de engenharia. Se a mesma conta muda de alcance conforme a estação de origem, o problema está no vínculo do acesso ao endpoint autorizado.",
+      "resposta_padrao": "Credencial com privilégios excessivos.",
+      "por_que_nao": "No jump server, a mesma conta e o mesmo perfil não tinham esse alcance; o fator decisivo foi a origem em notebook não controlado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar privilégio administrativo do privilégio de engenharia pelos efeitos observados em IACS.",
+      "pergunta": "Durante atualização autorizada de firmware, a mesma credencial do fornecedor também criou um novo usuário local no servidor de supervisão e deixou desabilitado o serviço de proteção da estação de engenharia; não houve outras mudanças de lógica. Qual a causa primária?",
+      "resposta": "Privilégio administrativo concedido à credencial do fornecedor.",
+      "explicacao": "Atualizar firmware é compatível com privilégio de engenharia, mas criar contas e desabilitar proteções caracteriza privilégio administrativo, mais amplo e inadequado para a tarefa descrita.",
+      "resposta_padrao": "Privilégio de engenharia excessivo.",
+      "por_que_nao": "Alterar firmware exige engenharia, mas criar conta local e desabilitar proteção são capacidades administrativas.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O menor privilégio em IACS inclui limitar tecnicamente o tempo de vigência do acesso de fornecedor.",
+      "pergunta": "Dois acessos noturnos mudaram setpoints pela conta nominal do fornecedor, via caminho remoto aprovado e MFA válido; os registros do próprio fornecedor mostram sessões iniciadas por sua equipe nesses horários, embora a autorização fosse só diurna. Qual a causa primária?",
+      "resposta": "Conta do fornecedor sem restrição temporal de uso.",
+      "explicacao": "O menor privilégio inclui conceder acesso pelo menor tempo compatível com a atividade. Se a própria equipe autorizada acessou fora da janela prevista, faltou limitação temporal efetiva da conta.",
+      "resposta_padrao": "Credencial do fornecedor comprometida.",
+      "por_que_nao": "Os próprios registros do fornecedor coincidem com os logins; o problema foi a conta permanecer válida fora da janela autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "item": "03_03",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de setpoint indevido do alarme de alto O₂, distinguindo-o de falha do canal de alarme.",
+      "pergunta": "No teste funcional, o indicador local do analisador e a amostra portátil coincidem acima do limite aplicável; ao forçar o contato de alarme, a anunciação ocorre, mas em operação real nada dispara nesse valor. Qual a causa?",
+      "resposta": "Setpoint do alarme de alto O₂ ajustado acima do aplicável",
+      "explicacao": "Medição e cadeia de anunciação respondem quando testadas; sobra o limiar configurado para comparar a leitura, exatamente o item que deve estar ajustado em nível apropriado.",
+      "resposta_padrao": "Falha do canal de alarme.",
+      "por_que_nao": "O contato forçado reproduz a resposta completa; se o canal estivesse defeituoso, o alarme também falharia nesse teste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capacidade de resposta dos alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "é relevante confirmar se os alarmes estão ajustados em níveis apropriados"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de ponto de monitoramento inadequado, restrito ao gerador, quando a corrente distribuída já está fora de especificação.",
+      "pergunta": "Na saída do gerador, o analisador fixo e a amostra portátil atendem ao critério; no header comum e na entrada de dois tanques, o portátil mede O₂ maior, sem qualquer alarme. Que elemento explica o desvio passar despercebido?",
+      "resposta": "Tomada do analisador de O₂ restrita à descarga do gerador",
+      "explicacao": "A saída do gerador está conforme por duas medições independentes; o problema aparece só a jusante. Como o alarme enxerga apenas a descarga do gerador, a degradação na distribuição fica invisível.",
+      "resposta_padrao": "Nitrogênio gerado a bordo fora de especificação.",
+      "por_que_nao": "Duas medições independentes na saída do gerador estão conformes; a elevação de O₂ surge só depois da distribuição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A verificação não se limita ao gerador; interessa também a corrente efetivamente distribuída e a condição do tanque protegido."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de intertravamento ou resposta automática de alto O₂ ausente do modo operacional correto.",
+      "pergunta": "O₂ no header ultrapassa o limite do modo de descarga; indicação local, DCS e alarme sonoro atuam, mas a transferência segue sem qualquer comando automático ou mudança de permissivas, repetindo-se no teste funcional. Qual a causa primária?",
+      "resposta": "Intertravamento de alto O₂ não atribuído ao modo de descarga",
+      "explicacao": "A medição e o alarme funcionam; falta a resposta operacional vinculada ao alto O₂ no modo em curso. O problema está na lógica associada ao modo, não na detecção.",
+      "resposta_padrao": "Falha do analisador de O₂.",
+      "por_que_nao": "A indicação local, o DCS e o alarme repetem o mesmo valor e a mesma atuação; a lacuna está na resposta automática configurada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ação operacional prevista quando o oxigênio sobe acima do aceitável para o modo em curso"
+        },
+        {
+          "bloco": "F",
+          "trecho": "qual resposta operacional será adotada para alto teor de oxigênio no fluxo de gás inerte"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

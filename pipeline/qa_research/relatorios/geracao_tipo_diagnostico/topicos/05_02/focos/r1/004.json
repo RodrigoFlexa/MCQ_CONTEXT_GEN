@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer sobretensão pós-partida de motor por compensação temporária de reativos mantida além da aceleração.",
+      "pergunta": "Durante a partida direta de um grande motor, a tensão do barramento cai na aceleração, recupera e sobe acima do normal quando a corrente já estabilizou; o compensador temporário continua exportando kVAr nesse instante. Qual a causa primária?",
+      "resposta": "Compensação temporária de reativos mantida após o fim da aceleração.",
+      "explicacao": "Na aceleração o motor exige muitos reativos; perto da velocidade nominal essa demanda cai. Se a compensação temporária permanece conectada, passa a fornecer reativos em excesso e eleva a tensão do barramento.",
+      "resposta_padrao": "AVR do gerador descalibrado.",
+      "por_que_nao": "O desvio aparece quando a demanda reativa do motor cai e coincide com exportação persistente do compensador, assinatura de compensação excedente, não de referência fixa do AVR.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Próximo à velocidade nominal do motor, a demanda reativa cai."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a compensação temporária de reativos usada para sustentar a tensão durante a partida não for retirada, ela passa a fornecer reativos em excesso em relação à nova demanda, e a tensão do barramento tende a subir, podendo chegar a sobretensão."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir circulação reativa persistente entre geradores já sincronizados de problema de sincronismo momentâneo.",
+      "pergunta": "Dois geradores já em paralelo dividem bem a potência ativa e mantêm frequência estável; com pouca carga reativa no barramento, um injeta kVAr e o outro absorve kVAr continuamente. Qual elemento explica essa circulação reativa?",
+      "resposta": "Referências de tensão desajustadas entre os reguladores de excitação.",
+      "explicacao": "Com pouca carga reativa externa, kVAr opostos persistentes indicam diferença efetiva de tensão entre máquinas. Em paralelo, isso provoca circulação reativa; como a ativa está bem compartilhada, o foco está no controle de excitação.",
+      "resposta_padrao": "Descasamento de tensão no sincronismo.",
+      "por_que_nao": "Isso gera degrau reativo na conexão; circulação contínua após o sincronismo, com ativa bem compartilhada, aponta para referências de tensão dos reguladores.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "se houver diferença de tensão, circulam correntes elevadas, sobretudo reativas;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a necessidade principal é repartir carga entre geradores locais, os ajustes coordenados de reguladores, excitação e droop são o núcleo da solução."
+        },
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar transiente de partida mal corrigido à ausência do estado do bus tie na lógica do PMS.",
+      "pergunta": "Nos relatórios de eventos, a partida automática do mesmo motor aplica exatamente as mesmas correções pós-fechamento com tie aberto e com tie fechado; a pior queda de tensão ocorre quando os barramentos ficam seccionados. Qual causa primária explica esse comportamento?",
+      "resposta": "Estado do bus tie não considerado pela lógica do PMS.",
+      "explicacao": "O PMS deve ajustar suas correções pela configuração da rede, incluindo o bus tie. Se o perfil aplicado não muda entre barramento interligado e seccionado, a lógica não está usando essa informação decisiva.",
+      "resposta_padrao": "Reserva dinâmica insuficiente da geração.",
+      "por_que_nao": "A pista decisiva é o PMS repetir o mesmo perfil com topologias diferentes; isso aponta para tratamento incorreto do tie, não para limitação intrínseca das máquinas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comportamento do sistema muda com a natureza da carga e com a configuração da rede."
+        },
+        {
+          "bloco": "F",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "item": "02_06",
+  "foco": 3,
+  "rodada": 3,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar cobertura incompleta do shutdown por gás quando a bomba de stripping permanece como fonte ativa de hidrocarboneto.",
+      "pergunta": "Com gás confirmado na área de transferência, o ESD para bombas de carga e fecha válvulas associadas, mas a pressão da linha de stripping continua subindo e o fluxo só cessa quando a bomba de stripping é parada localmente. Qual a causa primária?",
+      "resposta": "Bomba de stripping fora da lógica de shutdown por gás da área.",
+      "explicacao": "A detecção e o ESD atuaram em outras cargas. A permanência apenas do stripping mantendo pressão e fluxo indica causa e efeito incompleta para uma fonte relevante de hidrocarboneto.",
+      "resposta_padrao": "Falha do shutdown da área.",
+      "por_que_nao": "O shutdown atuou nas bombas de carga; o sinal decisivo é a permanência apenas da fonte de stripping, típica de cobertura incompleta da lógica.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A análise precisa abranger bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma salvaguarda mantém sua função quando o que foi analisado em risco, previsto em projeto, descrito em procedimento e executado na prática permanece coerente."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir trip HH inexistente de trip temporariamente inibido na operação de stripping.",
+      "pergunta": "No stripping, o nível do tanque receptor alcança HH, o alarme aparece no DCS, mas bomba e válvula de entrada seguem operando; no teste de laço, esse HH não altera nenhum estado no SIS. Qual a causa primária?",
+      "resposta": "Trip HH do tanque receptor não implementado no stripping.",
+      "explicacao": "O instrumento detecta e alarma, mas o HH não entra em lógica alguma. Isso descarta falha de medição ou mera atuação bloqueada e aponta salvaguarda automática não implementada.",
+      "resposta_padrao": "Trip de alto nível temporariamente inibido.",
+      "por_que_nao": "Se houvesse inibição, a função existiria; o teste mostra que o HH não participa de nenhuma lógica do SIS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa função pode se enfraquecer se a salvaguarda não for implementada de fato"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se depender de presença humana contínua em área de risco por longos períodos. Em operação de stripping, esse desalinhamento foi tratado como fator causal relevante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falsa restauração de barreira por encerramento de ação corretiva sem evidência funcional registrada.",
+      "pergunta": "A proteção de fechamento remoto de uma ESDV falha em dois testes separados por meses; no sistema, a ação corretiva aparece encerrada nas duas vezes, mas não há registro de teste funcional, retirada de inibição ou evidência de restauração. Qual a causa primária?",
+      "resposta": "Ação corretiva encerrada sem evidência registrada do restabelecimento da proteção.",
+      "explicacao": "A repetição após encerramentos sem qualquer prova funcional indica perda de visibilidade sobre o estado real da barreira, não falha comprovada de um único componente.",
+      "resposta_padrao": "Falha recorrente do solenóide da ESDV.",
+      "por_que_nao": "O elemento decisivo é a ausência sistemática de evidência de restauração após cada encerramento, mantendo incerto o status real da barreira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando ações corretivas não são acompanhadas com evidências registradas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa condição, a organização perde visibilidade sobre pendências e sobre o estado real das barreiras."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

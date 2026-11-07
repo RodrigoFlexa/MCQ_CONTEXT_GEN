@@ -1,0 +1,97 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre critério de falha e capacidade do MTBF captar perdas parciais de função que acumulam LPO.",
+      "pergunta": "O MTBF do conjunto quase não muda, mas o LPO cresce com várias ocorrências curtas de vazão abaixo do requerido, registradas como desvio operacional; trips são raros. Qual causa primária explica esse descolamento?",
+      "resposta": "Critério de falha baseado só em desarme total.",
+      "explicacao": "As ocorrências geram perda funcional produtiva, embora sem parada total. Se só o trip entra como falha, o MTBF deixa de refletir perturbações repetitivas que acumulam perda de produção.",
+      "resposta_padrao": "Falha crônica do equipamento.",
+      "por_que_nao": "A cronicidade explica a repetição, mas não por que o indicador deixa de contar perdas funcionais sem trip.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pequenas perturbações sucessivas podem acumular perda de produção e manter vulnerabilidades operacionais mesmo sem parada total da planta."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Delimitação da fronteira funcional do indicador em arranjos redundantes com transferência automática.",
+      "pergunta": "Na transferência automática entre bombas duty/standby, uma desarma, a reserva assume em segundos e a pressão se mantém na faixa; mesmo assim, a disponibilidade do serviço cai no relatório. Qual causa primária gerou essa indisponibilidade?",
+      "resposta": "Falha da bomba lançada como falha do serviço redundante.",
+      "explicacao": "Houve falha do componente, mas não perda da função do serviço monitorado. O evento foi classificado no nível errado para a disponibilidade do sistema.",
+      "resposta_padrao": "Perda de redundância.",
+      "por_que_nao": "Perder redundância aumenta vulnerabilidade, mas sem perda da função o serviço não ficou indisponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Cálculo de MTBF em itens reparáveis com horas efetivas de operação, não tempo calendário.",
+      "pergunta": "Uma bomba usada só em campanhas e outra idêntica em serviço contínuo tiveram uma falha cada; após trocar a apuração por datas de calendário, ambas passaram a exibir MTBF igual no semestre. Qual causa primária igualou esse indicador?",
+      "resposta": "Uso de tempo calendário no lugar do tempo acumulado de operação.",
+      "explicacao": "Para item reparável, o MTBF usual usa horas efetivas de operação. Substituir esse denominador por tempo corrido mascara diferenças de exposição entre equipamentos.",
+      "resposta_padrao": "Mesmo número de falhas no período.",
+      "por_que_nao": "Com tempos de operação muito diferentes, uma falha para cada item não produz o mesmo MTBF.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de registrar todas as atividades de reparo para que o MTTR represente o esforço real de mantenabilidade.",
+      "pergunta": "Os relatos de turno mostram três tentativas e 12 horas-homem entre a falha e o retorno à função, sem espera de material ou liberação; no lançamento estruturado do CMMS aparece só a etapa final, de 30 minutos, e o MTTR caiu. Qual causa primária distorce esse indicador?",
+      "resposta": "Omissão das atividades intermediárias de reparo no registro.",
+      "explicacao": "O MTTR de reparo depende dos intervalos definidos e de registros consistentes das atividades. Contar só a última tentativa encurta artificialmente o reparo medido.",
+      "resposta_padrao": "Diagnóstico difícil do defeito.",
+      "por_que_nao": "Isso elevaria o tempo de reparo observado; o indicador caiu porque só a etapa final foi contabilizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador, enquanto o tempo total indisponível pode incluir esperas logísticas e administrativas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

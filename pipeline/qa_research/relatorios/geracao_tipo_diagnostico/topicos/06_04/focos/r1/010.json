@@ -1,0 +1,113 @@
+{
+  "item": "06_04",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir alarme de processo no BPCS de SIF pela ausência de ação automática e de requisitos SIL.",
+      "pergunta": "O desvio de nível alto sempre gera aviso no console e correção manual, mas nunca comanda válvula ou parada automática; além disso, a malha não tem SIL definido. Qual a causa primária disso?",
+      "resposta": "alarme no sistema de controle, não uma SIF",
+      "explicacao": "Sem atuação automática para levar o processo a estado seguro e sem exigência de SIL, a camada descrita é um alarme operacional do sistema de controle, não uma função instrumentada de segurança.",
+      "resposta_padrao": "Falha da lógica de trip.",
+      "por_que_nao": "O comportamento é consistente por projeto e sem SIL atribuído; não há trip automático previsto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Eles podem alertar o operador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "abrindo uma janela para correção operacional antes de se atingir o nível de atuação da proteção instrumentada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "esses alarmes não estão sujeitos aos mesmos requisitos aplicáveis às malhas de proteção instrumentadas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que a LOPA pode alterar a alocação de SIL ao explicitar o crédito de cada camada, diferentemente do gráfico de risco usado em triagem.",
+      "pergunta": "No reestudo de um mesmo cenário, severidade e frequência de iniciação não mudaram, mas o SIL mudou quando cada camada disponível passou a ser creditada separadamente, com premissas registradas. Qual a causa primária da divergência?",
+      "resposta": "uso de LOPA com crédito explícito das camadas",
+      "explicacao": "A mudança decorre do método: a LOPA detalha e registra o crédito de cada camada de proteção, refinando a redução de risco requerida e podendo alterar o SIL em relação a uma triagem inicial.",
+      "resposta_padrao": "Erro de cálculo no primeiro estudo.",
+      "por_que_nao": "O gatilho da mudança foi a explicitação rastreável das camadas de proteção, característica da LOPA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas instrumentados de segurança são usados para manter o risco de acidente em nível tolerável por meio de funções específicas de proteção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A LOPA permite incorporar a redução de risco requerida aos valores de Nível de Integridade de Segurança (SIL) com maior precisão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "favorecendo consideração mais detalhada das camadas de proteção disponíveis"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar que a alocação de SIL não é automaticamente transferível entre ativos quando mudam as premissas locais.",
+      "pergunta": "Copiou-se o SIL de uma instalação de referência. Na análise local, a consequência considerada era a mesma, mas frequência de iniciação, camadas creditadas e regime operacional eram diferentes. Qual a causa primária do resultado divergente?",
+      "resposta": "transferência indevida da alocação de SIL entre ativos",
+      "explicacao": "Mesmo com a mesma consequência, a alocação depende das premissas locais sobre frequência de iniciação, crédito das camadas e condições operacionais. Por isso o SIL não pode ser simplesmente reaproveitado de outro ativo.",
+      "resposta_padrao": "Consequência mais severa na análise local.",
+      "por_que_nao": "A consequência foi mantida; o que mudou foram as premissas locais que sustentam a alocação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas instrumentados de segurança são usados para manter o risco de acidente em nível tolerável por meio de funções específicas de proteção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o resultado seja automaticamente transferível entre ativos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A qualidade da alocação depende das premissas adotadas sobre cenário, severidade, frequência de iniciação, crédito das camadas e condições operacionais consideradas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falha no elemento final da SIF quando sensor e lógica atuam, mas o processo não é levado a estado seguro.",
+      "pergunta": "Na SIF que isola a alimentação por alta pressão, o transmissor detectou o desvio, o solver entrou em trip, o comando de fechamento saiu e o bypass está fechado, mas a vazão não caiu. Qual elemento específico é a causa primária?",
+      "resposta": "válvula de bloqueio da alimentação",
+      "explicacao": "Sensor e lógica cumpriram a detecção e o comando. Se a vazão não caiu com bypass fechado, falhou o elemento final responsável por levar o processo ao estado seguro.",
+      "resposta_padrao": "solver da SIF.",
+      "por_que_nao": "O solver reconheceu o desvio e enviou o comando; a falha remanescente está no elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma Função Instrumentada de Segurança (SIF) combina lógica, sensores e elementos finais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "levar o processo a um estado seguro ou menos perigoso."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

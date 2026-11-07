@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 4,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de validar frescor/idade da medição no monitoramento operacional; valor em faixa sozinho não sustenta status confiável.",
+      "pergunta": "O dashboard mantém um compressor em “normal” por 18 minutos; a página segue atualizando e a PV usada no status continua na faixa, mas no controlador essa mesma medição acompanhou a manobra e só o timestamp exibido no dashboard ficou parado. Qual é a causa primária desse falso normal?",
+      "resposta": "Checagem de frescor da tag ausente no dashboard",
+      "explicacao": "O valor instantâneo permaneceu plausível, porém o timestamp não avançou enquanto a mesma PV mudou no controlador. O erro não é de campo, e sim do monitoramento aceitar dado envelhecido como atual.",
+      "resposta_padrao": "Transmissor travado em campo.",
+      "por_que_nao": "A mesma PV acompanhou a manobra no controlador; o indício decisivo é o dashboard aceitar valor antigo sem validar sua idade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Uso de heartbeat/sinal próprio da cadeia de dados para detectar indisponibilidade do sistema que transporta ou processa as informações do painel.",
+      "pergunta": "Três indicadores de áreas sem relação ficam estáveis e “saudáveis” no painel web; o DCS continua variando normalmente e a página se renova, mas o heartbeat do coletor de dados parou no início do congelamento. Qual causa primária explica o painel seguir saudável?",
+      "resposta": "Heartbeat do coletor fora da lógica de saúde do painel",
+      "explicacao": "As variáveis não relacionadas congelaram juntas só no painel, enquanto o DCS segue normal. Isso aponta para indisponibilidade da cadeia de processamento/transporte dos dados, não para condição real de processo.",
+      "resposta_padrao": "Perda de comunicação com os controladores.",
+      "por_que_nao": "Se os controladores estivessem sem comunicação, o DCS também sofreria; o sinal decisivo é a parada do heartbeat do coletor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A checagem de normalidade em dashboards precisa considerar coerência entre variáveis correlatas, não apenas limites isolados.",
+      "pergunta": "Nível e pressão permanecem na faixa que alimenta o status “normal”, mas a vazão de alimentação sobe, a válvula de saída satura e o tempo de residência calculado despenca. Qual causa primária explica o status continuar normal?",
+      "resposta": "Regra de normalidade sem coerência entre variáveis relacionadas",
+      "explicacao": "Os valores isolados de nível e pressão ainda estão em faixa, mas o conjunto das variáveis indica condição operacional incompatível com “normal”. A lógica do painel não cruza sinais correlatos.",
+      "resposta_padrao": "Transmissor de vazão com defeito.",
+      "por_que_nao": "A saturação da válvula e a queda do tempo de residência confirmam mudança operacional coerente; a falha está na regra do painel, não em uma única medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards, a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

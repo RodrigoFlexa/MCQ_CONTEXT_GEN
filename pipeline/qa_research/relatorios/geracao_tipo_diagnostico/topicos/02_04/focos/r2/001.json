@@ -1,0 +1,83 @@
+{
+  "item": "02_04",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda recorrente de injeção por filosofia de redundância incapaz de permitir manutenção programada sem corte de vazão.",
+      "pergunta": "Toda manutenção preventiva de uma bomba exige reduzir a injeção, embora não haja falhas inesperadas, a água permaneça na especificação e as demais bombas estejam disponíveis. Qual é a causa primária?",
+      "resposta": "Ausência de bomba reserva para manutenção em operação",
+      "explicacao": "Sem falha inesperada nem restrição de qualidade, a perda aparece ao isolar uma bomba para serviço. Isso indica redundância incapaz de manter a injeção durante manutenção programada.",
+      "resposta_padrao": "Baixa confiabilidade das bombas.",
+      "por_que_nao": "As perdas ocorrem em paradas programadas, com bombas saudáveis; o problema é a filosofia de redundância adotada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a filosofia de redundância das bombas é uma decisão de disponibilidade operacional, não apenas de capacidade nominal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "permitir manutenção sem perda total de injeção"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que a redundância de bombas não reduz indisponibilidade quando o arranjo mantém um elemento comum a montante como ponto único de falha.",
+      "pergunta": "Mesmo com uma bomba reserva instalada, qualquer alta de ΔP no filtro fino comum tira todas as bombas de serviço; testes individuais das bombas seguem normais. Qual a causa primária de a redundância não reduzir a indisponibilidade?",
+      "resposta": "Filtro fino comum a montante como ponto único de falha",
+      "explicacao": "A reserva protege contra falha individual de bomba, mas não contra indisponibilidade de um elemento compartilhado. Como o filtro é comum a todas, o arranjo hidráulico anula o benefício da reserva.",
+      "resposta_padrao": "Quantidade insuficiente de bombas de reserva.",
+      "por_que_nao": "Há bomba reserva instalada; a indisponibilidade vem de um componente comum do arranjo, que derruba todos os trens simultaneamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A configuração exata depende do arranjo do sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "captação, tratamento e bombeamento formam uma cadeia hidráulica e operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "filtragem fina e posterior bombeamento para injeção."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir redundância definida pela vazão média daquela definida pelo perfil real de demanda do sistema de injeção.",
+      "pergunta": "A média diária de injeção é atendida com uma bomba fora, mas em picos previsíveis de demanda o cabeçalho perde pressão e alguns poços saem da faixa; fora desses períodos sobra capacidade. Qual a causa primária?",
+      "resposta": "Redundância definida pela vazão média, não pelo perfil de vazão",
+      "explicacao": "O sistema cobre a demanda média, mas não os picos previstos do processo. O critério de redundância foi definido pela média, ignorando o perfil de vazão exigido.",
+      "resposta_padrao": "Falha de controle de pressão do cabeçalho.",
+      "por_que_nao": "O desvio surge só nos picos reprodutíveis e some fora deles, sinal de capacidade disponível insuficiente para esse perfil, não de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A configuração exata depende do arranjo do sistema, da criticidade da injeção, do perfil de vazão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não apenas de capacidade nominal."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

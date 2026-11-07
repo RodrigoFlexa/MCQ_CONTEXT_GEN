@@ -1,0 +1,57 @@
+{
+  "item": "07_01",
+  "foco": 31,
+  "rodada": 3,
+  "contexto": {
+    "A1": 30,
+    "F": 31,
+    "A2": 32
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar divergência de configuração de alarmes entre nós redundantes a partir da mudança de anunciação após failover.",
+      "pergunta": "Com o servidor principal, mudanças de modo e fins de curso aparecem só no histórico; após failover para o redundante, passam a tocar buzina e exigir reconhecimento, enquanto os alarmes de processo mantêm o mesmo comportamento. Qual causa primária explica a diferença?",
+      "resposta": "Configuração de alarmes desatualizada no servidor redundante.",
+      "explicacao": "A lógica e os alarmes de processo não mudam com o failover; muda apenas a categorização e a anunciação de estados, indicando divergência de configuração entre os nós redundantes.",
+      "resposta_padrao": "Instabilidade de comunicação provocada pela comutação de servidor.",
+      "por_que_nao": "Os dados de processo e os alarmes acionáveis permanecem coerentes; só muda a forma de anunciar estados sem ação imediata.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando ambos são configurados de forma semelhante, informações que deveriam apenas ser registradas passam a competir por atenção com alarmes realmente acionáveis."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a organização perde capacidade de saber qual configuração está válida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir perda de informação ou defeito de anunciação da correta reclassificação de mensagens para eventos mantendo registro histórico.",
+      "pergunta": "Modos, permissivos e fins de curso deixaram de tocar buzina e não pedem reconhecimento, mas continuam consultáveis com carimbo de tempo; os alarmes de processo seguem anunciando normalmente. Qual é a causa primária dessa mudança?",
+      "resposta": "Mensagens reclassificadas como eventos no supervisório.",
+      "explicacao": "As informações permanecem disponíveis para diagnóstico, mas sem competir por atenção com alarmes acionáveis; isso caracteriza separação correta entre evento e alarme, não perda de dados.",
+      "resposta_padrao": "Falha da buzina ou do reconhecimento do sistema supervisório.",
+      "por_que_nao": "Se a anunciação estivesse defeituosa, os alarmes de processo também deixariam de soar e exigir reconhecimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Alarme é um aviso que requer ação do operador em tempo restrito; evento é uma mudança de estado registrada para análise, sem demanda de ação imediata."
+        },
+        {
+          "bloco": "F",
+          "trecho": "enquanto eventos devem permanecer disponíveis para registro, diagnóstico e análise sem anunciar indevidamente."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

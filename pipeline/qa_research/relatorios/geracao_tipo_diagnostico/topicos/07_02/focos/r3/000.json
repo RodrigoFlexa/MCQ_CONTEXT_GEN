@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 3,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar instabilidade de malha ao uso de sinal de realimentação cruzando a fronteira IT/OT, incompatível com a necessidade de determinismo do controle.",
+      "pergunta": "Uma malha que passou a usar um valor vindo de aplicação corporativa oscila nos picos administrativos; a perda de pacotes é baixa, mas a latência varia e o mesmo sinal, ligado direto ao controlador, estabiliza. Qual causa primária explica?",
+      "resposta": "Sinal de realimentação roteado pela fronteira IT/OT.",
+      "explicacao": "O sintoma acompanha carga administrativa e desaparece quando o valor volta ao controlador. Como OT prioriza controle determinístico, usar um sinal que cruza para consumo corporativo introduz atraso variável incompatível com a malha.",
+      "resposta_padrao": "Falta de banda na rede corporativa.",
+      "por_que_nao": "O problema some ao retirar o sinal da fronteira IT/OT, e não há saturação nem perda compatíveis com gargalo de banda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "OT prioriza controle determinístico, segurança operacional e disponibilidade do processo; IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar o controlador de borda como elemento comum quando atrasos em nuvem e no SCADA local aparecem apenas nos ativos IIoT, sem perda do controle local.",
+      "pergunta": "Quando a publicação em nuvem atrasa, o SCADA local também atrasa, mas só nos ativos com gateway IIoT; tags nativas do SCADA seguem normais e os PLCs mantêm controle. Qual causa primária correlaciona esses sintomas?",
+      "resposta": "Controlador de borda compartilhado entre nuvem e SCADA local.",
+      "explicacao": "Em arquiteturas híbridas, o mesmo controlador de borda pode publicar em nuvem e alimentar o SCADA. Se só os ativos IIoT exibem o atraso e os PLCs seguem estáveis, o acoplamento está nesse intermediário.",
+      "resposta_padrao": "Sobrecarga do SCADA.",
+      "por_que_nao": "Se fosse SCADA, as tags nativas também degradariam; a restrição aos ativos IIoT aponta para o intermediário comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar conduíte IT/OT aberto além da finalidade operacional quando uma integração que deveria ser só leitura permite sessões de retorno até a supervisão.",
+      "pergunta": "A nova aplicação analítica só precisava ler dados. Mesmo assim, os logs passaram a mostrar sessões iniciadas da zona analítica para a supervisão por rota autorizada, e setpoints ficaram tecnicamente alcançáveis por esse caminho. Qual causa primária explica a exposição?",
+      "resposta": "Conduíte IT/OT bidirecional além da finalidade operacional.",
+      "explicacao": "O requisito era só leitura. Sessões iniciadas da zona analítica para a supervisão por rota autorizada mostram que a fronteira foi desenhada para permitir retorno, contrariando a finalidade operacional do intercâmbio de dados.",
+      "resposta_padrao": "Privilégios excessivos da aplicação analítica.",
+      "por_que_nao": "Mesmo sem necessidade de escrita, o próprio caminho de retorno já existe; o problema nasce do conduíte permitido, não do perfil do usuário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

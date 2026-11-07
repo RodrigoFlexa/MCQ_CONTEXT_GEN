@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 4,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Não generalizar remediação qualificada de um produto OT para outro produto diferente.",
+      "pergunta": "Um hotfix emitido para o supervisório foi replicado no sistema de monitoramento de máquinas. O supervisório seguiu estável; no outro, o serviço do fornecedor não inicia após reinício e a reversão local normaliza. Qual a causa primária?",
+      "resposta": "Remediação generalizada para produto OT fora do contexto qualificado.",
+      "explicacao": "O pacote funcionou no produto para o qual foi qualificado e causou indisponibilidade só no outro. Em OT, remediação não deve ser reaplicada em produtos diferentes sem validação específica de compatibilidade.",
+      "resposta_padrao": "O hotfix estava defeituoso.",
+      "por_que_nao": "Se fosse defeito do pacote, tenderia a afetar também o produto-alvo; o sinal decisivo é a falha restrita ao produto diferente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa ação não deve ser generalizada para outros produtos fora desse contexto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar reversão apenas dos binários a rollback insuficiente do ambiente OT atualizado.",
+      "pergunta": "Ao reverter um patch em servidor OT, os executáveis antigos voltam, mas clientes e coletores continuam sem conectar até restaurarem a imagem completa da máquina. Qual a causa primária da indisponibilidade prolongada?",
+      "resposta": "Rollback parcial, sem retorno consistente das dependências do patch.",
+      "explicacao": "A volta dos binários não recuperou o serviço; só a restauração integral normalizou. Isso caracteriza retorno incompleto do ambiente após a atualização, justamente o tipo de risco que precisa ser coberto no plano de retorno.",
+      "resposta_padrao": "O patch estava corrompido.",
+      "por_que_nao": "A falha persistiu depois de retirar o patch; o sinal importante é que a reversão dos binários sozinha não recompôs o estado funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de remediação compatível para geração legada a partir de falha restrita ao legado.",
+      "pergunta": "Na estação legada, a correção instala, mas a ferramenta de carga e o serviço de licença deixam de abrir; a mesma mídia funciona na plataforma sucessora homologada em bancada. Qual a causa primária?",
+      "resposta": "Ausência de remediação compatível para a geração legada.",
+      "explicacao": "A mesma mídia funciona na plataforma sucessora e quebra componentes essenciais só no legado. Isso aponta para inexistência de correção compatível para aquela geração, não para defeito geral do pacote.",
+      "resposta_padrao": "A instalação do patch foi mal executada.",
+      "por_que_nao": "Uma execução ruim não explicaria o funcionamento correto da mesma mídia na plataforma homologada; o fator discriminante é a geração legada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas legados, a decisão raramente é apenas “atualizar ou não atualizar”."
+        },
+        {
+          "bloco": "F",
+          "trecho": "até que exista remediação compatível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

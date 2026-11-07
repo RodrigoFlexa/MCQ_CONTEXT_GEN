@@ -1,0 +1,101 @@
+{
+  "item": "02_06",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Cobertura da lógica de shutdown por gás deve incluir a bomba de stripping como fonte ativa de hidrocarboneto.",
+      "pergunta": "Alarme de gás na área parou bombas de carga e fechou ESDs principais, mas a linha de stripping manteve circulação e sua bomba seguiu energizada; detectores e saídas atuaram normalmente. Qual é a causa primária do shutdown incompleto?",
+      "resposta": "Bomba de stripping fora da lógica de shutdown por gás da área.",
+      "explicacao": "A detecção atuou, porém uma fonte capaz de manter a movimentação de hidrocarbonetos permaneceu energizada. O problema é a cobertura da causa e efeito, que deve incluir também a bomba de stripping.",
+      "resposta_padrao": "Falha na ventilação da área.",
+      "por_que_nao": "O gás persistiu porque uma fonte de hidrocarboneto continuou energizada; ventilação ruim não explicaria a circulação mantida no stripping após o ESD.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A análise precisa abranger bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança temporária no arranjo deve ser incorporada à lógica de shutdown por gás para manter coerência com o inventário real.",
+      "pergunta": "Depois de ligar um skid temporário de bombeio na área, o alarme de gás derruba apenas os equipamentos permanentes; o skid continua transferindo hidrocarboneto, e a passagem de serviço ainda descreve o arranjo antigo. Qual causa explica isso?",
+      "resposta": "Skid temporário de bombeio fora da lógica de shutdown por gás.",
+      "explicacao": "O arranjo real mudou, mas a barreira automática continuou cobrindo só os equipamentos permanentes. A lógica deve ser coerente com o inventário efetivo de fontes, inclusive após mudanças temporárias.",
+      "resposta_padrao": "O operador deixou o skid ligado.",
+      "por_que_nao": "A barreira automática deveria removê-lo sem depender de intervenção humana; o desvio surgiu do arranjo novo fora da lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tecnicamente, a lógica de causa e efeito deve ser coerente com o inventário de equipamentos capazes de alimentar o cenário perigoso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Revisão de estudos de risco antes do início da operação, reavaliação de mudanças temporárias e passagem de serviço com registro de mudanças, isolamentos e condições operacionais são mecanismos para reduzir o risco de operar com premissas desatualizadas, incompletas ou não comunicadas entre turnos e funções, especialmente durante manobras e condições anormais."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Detecção de gás só cumpre a função de mitigação quando a matriz define ação automática de shutdown, não apenas alarme.",
+      "pergunta": "Na HMI, o detector muda para estado de gas trip, a sirene toca, nenhum bypass está ativo, mas nenhum equipamento da área recebe comando automático; as saídas de ESD respondem normalmente em outras causas. Qual causa primária explica esse comportamento?",
+      "resposta": "Matriz da área configurada só para alarme de gás.",
+      "explicacao": "A detecção existe e a infraestrutura de ESD responde em outras causas. O que falta é a definição implementada das ações automáticas de shutdown por gás para aquela área.",
+      "resposta_padrao": "Falha do CLP nas saídas de shutdown.",
+      "por_que_nao": "O evento chega como gas trip e as saídas atuam por outras causas; falta a ação configurada para esse evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Os níveis de alarme e de shutdown por gás e suas ações devem estar definidos na matriz de causa e efeito da unidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em boas práticas de engenharia citadas para instalações offshore, a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Parar bomba não basta; a lógica por gás deve também isolar fonte admitida que possa continuar alimentando o vazamento.",
+      "pergunta": "Mesmo com a bomba parada por alarme de gás, a drenagem de hidrocarboneto na área continua e a pressão só cai quando fecham manualmente a válvula de alimentação remota. Qual causa primária explica a permanência do cenário?",
+      "resposta": "Válvula de isolamento da alimentação fora do shutdown por gás.",
+      "explicacao": "A fonte não estava energizada, mas permaneceu admitida. Se o caminho de alimentação continua aberto após o alarme, a lógica não isolou uma fonte capaz de sustentar o vazamento.",
+      "resposta_padrao": "Era apenas pressão residual da linha.",
+      "por_que_nao": "O escoamento só cessa ao fechar a alimentação remota; pressão residual cairia sozinha sem manter admissão contínua.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em boas práticas de engenharia citadas para instalações offshore, a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

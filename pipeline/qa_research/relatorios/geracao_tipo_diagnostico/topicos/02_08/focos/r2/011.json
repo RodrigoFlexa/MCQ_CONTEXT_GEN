@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de separar períodos estáveis dos transitórios na análise de estabilidade hidráulica.",
+      "pergunta": "As pressões no topo e no separador só “perdem correlação” durante partidas e movimentações de controle; nos patamares longos, a mesma faixa de vazão repete o mesmo padrão. Qual causa primária explica a aparente inconsistência dos dados?",
+      "resposta": "Inclusão de dados transitórios na análise de estabilidade",
+      "explicacao": "Para avaliar estabilidade, é preciso distinguir regime estável de transientes. A repetibilidade nos patamares mostra que o comportamento é consistente; a dispersão vem da mistura de períodos não comparáveis.",
+      "resposta_padrao": "Instrumentação de pressão descalibrada.",
+      "por_que_nao": "Nos patamares estáveis, as leituras se repetem coerentemente; a dispersão aparece só em partidas e mudanças de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento útil combina pressões, temperaturas e identificação de períodos estáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "relacionar contrapressão no topo, pressão no separador"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre mínimo de temperatura em alívio dinâmico de PSV e estimativa estática.",
+      "pergunta": "No alívio por PSV, a pressão segue o previsto, mas a menor temperatura do ramal aparece nos primeiros segundos de abertura e fica bem abaixo da estimativa estacionária. Qual causa primária explica esse desvio?",
+      "resposta": "Transiente de abertura da PSV não capturado no cálculo estático",
+      "explicacao": "A dinâmica de abertura altera instantaneamente vazão e expansão, produzindo um mínimo de temperatura que a avaliação estática não reproduz, mesmo com pressão aliviada aparentemente correta.",
+      "resposta_padrao": "Efeito Joule-Thomson do gás aliviado.",
+      "por_que_nao": "O Joule-Thomson existe em todo o alívio, mas não explica sozinho o vale inicial concentrado no instante de abertura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "simulação dinâmica já foi usada em estudos para avaliar comportamento de válvulas de segurança e alívio (PSVs, Pressure Safety Valves), temperaturas e vazões de alívio"
+        },
+        {
+          "bloco": "F",
+          "trecho": "resultados podem diferir de avaliações estáticas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite de transferir resultado de caso modelado para sistema com geometria hidráulica diferente.",
+      "pergunta": "Reaproveitado de um arranjo parecido, o modelo prevê contrapressão e coleta no KOD; em campo, os desvios surgem só no sistema rerroteado, com mesmos fluidos e sequência operacional. Qual causa primária invalida a transferência direta daquele caso?",
+      "resposta": "Geometria hidráulica diferente da do caso de referência",
+      "explicacao": "O resultado de um caso não pode ser transplantado automaticamente. Mantidos fluidos e operação, o rerroteamento altera perdas, volumes e tempos de resposta, mudando contrapressão e retenção.",
+      "resposta_padrao": "Header subdimensionado para a vazão de alívio.",
+      "por_que_nao": "A carga e a sequência permaneceram as mesmas; o desvio apareceu com o rerroteamento, que muda a hidráulica sem aumentar a vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "resultados de um caso modelado não devem ser universalizados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende de fluidos, geometria, malha de controle e cenários de operação comparáveis."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

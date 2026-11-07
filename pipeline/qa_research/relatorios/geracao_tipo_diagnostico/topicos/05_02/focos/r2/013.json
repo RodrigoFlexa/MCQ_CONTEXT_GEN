@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reabertura do disjuntor de emergência apenas durante o reboot indica trip persistente da lógica de controle.",
+      "pergunta": "No blackout, o gerador de emergência atinge tensão e frequência, o disjuntor fecha e reabre por trip; testes locais do disjuntor passam, e o problema só aparece enquanto o sistema de controle ainda reinicia. Qual causa primária?",
+      "resposta": "Sinal de trip do VMS mantido durante o reboot.",
+      "explicacao": "A reabertura ligada apenas à janela de reinício, com disjuntor saudável, caracteriza comando de trip vindo da lógica de controle, não defeito elétrico real no barramento.",
+      "resposta_padrao": "Falta elétrica real no barramento essencial.",
+      "por_que_nao": "Se fosse defeito no barramento, a abertura persistiria após o reboot; o comportamento só nessa janela aponta trip lógico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da lógica de intertravamento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda simultânea dos dois canais redundantes após falha de um UPS revela ausência de segregação elétrica da redundância.",
+      "pergunta": "Com a perda de um único conjunto UPS, desaparecem ao mesmo tempo as duas estações master do controle elétrico e a recomposição fica sem supervisão dos dois canais, embora o arranjo previsto fosse redundante. Qual causa primária?",
+      "resposta": "Duas estações master redundantes alimentadas pelo mesmo UPS.",
+      "explicacao": "A perda simultânea dos dois canais após falha de uma única fonte revela causa comum de alimentação e quebra da independência entre redundâncias.",
+      "resposta_padrao": "Falha simultânea da rede de comunicação.",
+      "por_que_nao": "A coincidência exata com a perda de um único UPS caracteriza dependência elétrica comum, não uma pane autônoma de comunicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é uma ferramenta de recomposição condicionada ao arranjo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Recusa do back feeding com demais permissivos válidos aponta para seletora do painel essencial fora do modo de realimentação.",
+      "pergunta": "Mesmo com o gerador de emergência disponível, disjuntores dos geradores principais em aberto ou teste e fechamento local sem anomalia, o comando de realimentação é recusado; o painel de cargas essenciais continua indicado no modo normal. Qual causa primária?",
+      "resposta": "Chave seletora do painel de cargas essenciais fora de realimentação.",
+      "explicacao": "No back feeding, além do isolamento das fontes, a seletora do painel deve estar em realimentação; os demais sinais afastam defeito do disjuntor de manobra.",
+      "resposta_padrao": "Defeito no disjuntor de back feeding ou no circuito de fechamento.",
+      "por_que_nao": "O fechamento local está normal; a recusa depende do permissivo de modo do painel, não da manobra elétrica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "com a chave seletora do painel de cargas essenciais posicionada para realimentação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não é mera transferência automática de fonte"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ela depende de permissivos, isolamento adequado das fontes"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

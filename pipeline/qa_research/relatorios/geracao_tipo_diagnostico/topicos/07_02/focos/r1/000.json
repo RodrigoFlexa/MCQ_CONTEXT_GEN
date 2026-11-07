@@ -1,0 +1,117 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Propagação entre domínios de criticidade distinta por conectividade compartilhada além do necessário.",
+      "pergunta": "Uma alteração indevida em uma estação de engenharia refletiu quase ao mesmo tempo no controle de processo, no SIS e no sistema elétrico; os três eram acessíveis pela mesma rota de rede e não houve perda comum de energia. Qual causa primária explica a ampliação?",
+      "resposta": "Conectividade compartilhada além do necessário entre controle de processo, SIS e sistema elétrico.",
+      "explicacao": "O alcance simultâneo a domínios diferentes, sem causa física comum, indica que a arquitetura permitiu propagação entre funções de criticidade distinta pela mesma conectividade.",
+      "resposta_padrao": "Malware na estação de engenharia.",
+      "por_que_nao": "Isso pode iniciar o evento, mas não explica o alcance simultâneo; o sinal decisivo é a rota comum entre domínios distintos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo pode incluir o sistema básico de controle de processo, funções de camada independente de proteção, sistemas instrumentados de segurança, sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da camada supervisória como ponto agregador de interconexão IT/OT quando consumidores externos passam a usar o SCADA.",
+      "pergunta": "Alarmes, histórico e telas ficaram lentos depois que aplicações analíticas e sistemas corporativos passaram a consumir dados do mesmo SCADA; malhas e controladores locais mantiveram comportamento normal. Qual causa primária melhor explica esse padrão?",
+      "resposta": "Ponto de interconexão IT/OT concentrado no SCADA.",
+      "explicacao": "Como o controle local permaneceu normal e a degradação surgiu com novos consumidores externos, o problema aponta para a camada supervisória usada como hub de integração.",
+      "resposta_padrao": "Sobrecarga dos controladores de campo.",
+      "por_que_nao": "As malhas e os controladores locais seguiram normais; a lentidão apareceu onde SCADA, histórico e consumidores externos se concentram.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito de modelos de dados heterogêneos entre fornecedores na migração da integração para a camada supervisória.",
+      "pergunta": "Tags de controladores do mesmo fornecedor se integram diretamente, mas entre fornecedores diferentes só convergem no SCADA; nada mudou em banda, endereçamento ou carga. Qual causa técnica explica esse ponto único de integração?",
+      "resposta": "Modelos de dados distintos entre fornecedores.",
+      "explicacao": "Se a dificuldade aparece apenas entre fabricantes diferentes e não houve mudança de rede, a limitação está na padronização próxima à fonte, levando a integração ao SCADA.",
+      "resposta_padrao": "Limitação de banda da rede.",
+      "por_que_nao": "O comportamento varia com o fornecedor dos controladores, não com o volume de tráfego; a restrição é de modelo de dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integração frequentemente migra para a camada supervisória."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da nova fronteira IT/OT criada por arquitetura híbrida com edge enviando dados simultaneamente para SCADA local e nuvem.",
+      "pergunta": "Somente os ativos que passaram a alimentar SCADA local em tempo real e aplicações analíticas em nuvem começaram a abrir sessões externas não previstas; o restante das telecomunicações segue estável. Qual causa primária explica esse tráfego?",
+      "resposta": "Controlador de borda enviando dados a broker MQTT em nuvem.",
+      "explicacao": "A anomalia ficou restrita aos ativos com arquitetura híbrida. Esse padrão indica a interface máquina-nuvem criada pelo edge, não uma instabilidade geral de telecomunicações.",
+      "resposta_padrao": "Instabilidade do link de telecomunicações.",
+      "por_que_nao": "Se fosse o link, outras telecomunicações também sofreriam; o desvio aparece só nos ativos com envio simultâneo local e nuvem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima ou ao redor dela podem existir bases de dados, aplicações analíticas e sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

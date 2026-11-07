@@ -1,0 +1,105 @@
+{
+  "item": "07_05",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade imediata a bordo de sobressalente eletrônico pode dominar o tempo total de retorno mais que o reparo físico.",
+      "pergunta": "Falhas de um conversor são repetidamente localizadas na mesma célula de potência. A troca com testes leva 3 horas quando a peça está disponível, mas a retomada da produção vem consumindo cerca de 72 horas, concentradas entre separação, transporte, embarque e recebimento. Qual a causa primária?",
+      "resposta": "ausência a bordo da célula de potência sobressalente",
+      "explicacao": "O tempo dominante não está no reparo, mas na cadeia logística até obter a célula. Em ambiente remoto, o lead time total supera o tempo físico da troca.",
+      "resposta_padrao": "Reparo complexo do conversor de frequência.",
+      "por_que_nao": "Quando a célula está disponível, troca e testes terminam em 3 horas; o atraso está fora da bancada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o tempo de execução do serviço e testes depende fortemente da existência de componentes sobressalentes a bordo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse comportamento decorre do lead time total efetivo, que combina identificação da necessidade, separação, transporte, embarque, recebimento e instalação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em ambiente remoto, esse lead time pode superar o tempo físico do reparo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reparável só deve contar como disponível após teste funcional e liberação; saldo e localização corretos não bastam.",
+      "pergunta": "No sistema, duas placas aparecem como disponíveis e localizadas corretamente. Na área técnica, ambas estão etiquetadas em quarentena: uma recém-reparada e outra aguardando ensaio funcional. Quando ocorre a falha, não existe peça liberada para instalar. Qual a causa primária?",
+      "resposta": "placa reparada liberada em estoque sem ensaio funcional",
+      "explicacao": "Para reparáveis, disponibilidade real exige reparar, testar e só então retornar ao estoque com rastreabilidade. Registrar como disponível antes disso mascara a falta de item funcional pronto para uso.",
+      "resposta_padrao": "Erro de inventário no almoxarifado.",
+      "por_que_nao": "Quantidade e localização conferem; a divergência está no status de liberação do reparável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "garantir um ciclo funcional de retirar, substituir, reparar, testar e retornar ao estoque sem perder rastreabilidade e disponibilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O desempenho do almoxarifado depende de monitoramento contínuo da integridade das informações e da capacidade real de atendimento à manutenção."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A cobertura de reparáveis em rotação deve ser dimensionada pelo ciclo completo retirar-substituir-reparar-testar-retornar.",
+      "pergunta": "Duas falhas do mesmo módulo ocorreram com 20 dias de intervalo. A primeira foi coberta sem parada longa; na segunda, o equipamento aguardou o retorno do módulo retirado, embora o reparo externo e os testes estivessem dentro do prazo usual. Qual a causa primária?",
+      "resposta": "apenas um módulo sobressalente em rotação",
+      "explicacao": "O intervalo entre falhas ficou menor que o ciclo completo do reparável. Mesmo com reparo externo normal, um único módulo em rotação não sustenta a disponibilidade.",
+      "resposta_padrao": "A oficina externa atrasou o reparo.",
+      "por_que_nao": "O prazo externo estava dentro do usual; faltou cobertura suficiente para o ciclo retirar-reparar-testar-retornar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a decisão relevante não é apenas possuir uma peça nova, mas garantir um ciclo funcional de retirar, substituir, reparar, testar e retornar ao estoque sem perder rastreabilidade e disponibilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a seleção do que manter a bordo precisa considerar consequência da falha, tempo de reposição, probabilidade de uso e possibilidade de substituição temporária sem degradar segurança ou produção."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção de sobressalentes a bordo deve considerar a possibilidade de substituição temporária, não só o histórico de consumo.",
+      "pergunta": "Cartões de comunicação falham raramente, mas cada falha paralisa o trem até chegar reposição. Sensores com histórico de falha maior não causam parada porque há canais redundantes que os cobrem temporariamente. O estoque foi definido só pelo consumo histórico. Qual a causa primária?",
+      "resposta": "critério sem considerar ausência de substituição temporária",
+      "explicacao": "Frequência de uso sozinha não define o que manter a bordo. Um item raro pode exigir estoque quando sua falha não tem cobertura temporária sem degradar produção ou segurança.",
+      "resposta_padrao": "O baixo histórico de consumo do cartão.",
+      "por_que_nao": "Baixa frequência não elimina a necessidade de estoque quando não há cobertura temporária sem perda operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção do que manter a bordo precisa considerar consequência da falha, tempo de reposição, probabilidade de uso e possibilidade de substituição temporária sem degradar segurança ou produção."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quanto maior a consequência da perda de função para segurança, produção ou meio ambiente, maior tende a ser a necessidade de planejar materiais de forma proativa."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 6,
+  "rodada": 4,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Validade temporal de contas temporárias de terceiros em acesso remoto para remediação.",
+      "pergunta": "Dois dias depois do encerramento do suporte, a sessão anterior já havia sido finalizada e não existe conexão persistente, mas a credencial temporária do fornecedor ainda inicia nova autenticação sem nova aprovação. Qual é a causa primária?",
+      "resposta": "Conta temporária do fornecedor sem expiração configurada.",
+      "explicacao": "Como houve logout da sessão anterior e nova autenticação posterior, a exposição não vem de sessão presa. Em acesso de terceiro para remediação, A2 exige validade temporal e confirmação da janela autorizada.",
+      "resposta_padrao": "A sessão remota ficou aberta depois do serviço.",
+      "por_que_nao": "O enunciado informa encerramento da sessão anterior e nova autenticação posterior; isso exclui sessão persistente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identidade individual verificável para terceiros em suporte remoto a ativos OT.",
+      "pergunta": "Durante a janela autorizada, o jump server registra o mesmo usuário do fornecedor ativo ao mesmo tempo em dois notebooks diferentes, ambos em tarefas previstas, sem falhas de autenticação nem acessos fora do horário. O que explica esse quadro?",
+      "resposta": "Credencial compartilhada entre técnicos do fornecedor.",
+      "explicacao": "Uso simultâneo da mesma identidade em dois endpoints, dentro da janela e sem sinais de tentativa indevida, aponta conta genérica compartilhada. A2 exige identidade individual verificável para terceiros.",
+      "resposta_padrao": "A credencial do fornecedor foi comprometida.",
+      "por_que_nao": "A simultaneidade ocorreu só na janela autorizada, com duas tarefas previstas e sem sinais típicos de uso indevido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "identidade individual verificável"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Registro de sessão como controle de rastreabilidade em acessos remotos de terceiros.",
+      "pergunta": "Um parâmetro crítico foi alterado e restaurado durante suporte remoto autorizado. O jump server registra identidade, origem, horário e ativo acessado, mas não há trilha de comandos, telas ou arquivos da sessão. O que explica essa lacuna?",
+      "resposta": "Ausência de registro de sessão no jump server.",
+      "explicacao": "Se identidade, origem, horário e ativo estão registrados no ponto de acesso, mas a interação não está, o controle ausente é a gravação da sessão. A2 trata registro de sessão como requisito técnico.",
+      "resposta_padrao": "O controlador não registrou o evento corretamente.",
+      "por_que_nao": "Há registro da autenticação e do ativo alcançado; o que falta é a trilha da interação da sessão remota.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

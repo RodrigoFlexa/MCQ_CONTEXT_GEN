@@ -1,0 +1,105 @@
+{
+  "item": "07_04",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da disponibilidade calculada em relação à arquitetura de redundância no modelo de confiabilidade.",
+      "pergunta": "Numa comparação entre arranjo 1x100% e 2x100% em espera automática, a indisponibilidade calculada saiu quase igual, com as mesmas taxas e reparos e sem eventos de causa comum no modelo. Qual a causa primária?",
+      "resposta": "Arquitetura de redundância duty-standby modelada incorretamente",
+      "explicacao": "Com taxas e reparos idênticos e sem causa comum, retirar redundância deveria alterar a indisponibilidade. Resultado quase igual indica que a lógica de standby não foi representada corretamente.",
+      "resposta_padrao": "Os dados de falha dos componentes estão ruins.",
+      "por_que_nao": "Com os mesmos dados nas duas arquiteturas, a falta de sensibilidade à redundância aponta erro estrutural do modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em aplicações específicas, essas ferramentas podem alimentar modelos de confiabilidade para comparar estratégias de manutenção, redundância ou vida útil de componentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Conclusões de um modelo dependem da arquitetura e das hipóteses de falha adotadas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre FMEA e FTA para representar falhas combinadas que levam ao evento topo.",
+      "pergunta": "A planilha do estudo lista componente, causa local e efeito na etapa seguinte para cada falha, mas o evento indesejado só ocorre quando duas proteções falham em combinação e isso não aparece no estudo. Qual a causa primária?",
+      "resposta": "Uso de FMEA sem FTA para o evento topo",
+      "explicacao": "O estudo descreve falhas individuais e seus efeitos locais, típico de FMEA. Como o evento depende da combinação de duas falhas, faltou a modelagem lógica do evento topo por FTA.",
+      "resposta_padrao": "Faltaram modos de falha na planilha.",
+      "por_que_nao": "As falhas individuais já estão mapeadas; o que falta é a combinação lógica que produz o evento indesejado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O FMEA mapeia modos de falha, causas locais e efeitos sobre etapas seguintes e sobre o sistema."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A FTA modela combinações lógicas de falhas que levam a um evento indesejado."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite do FMEA isolado para priorização de inspeção sem probabilidade, consequência e barreiras.",
+      "pergunta": "Dois trechos com perda de espessura semelhante receberam a mesma prioridade; um conduz hidrocarboneto inflamável e outro água de baixa consequência. A planilha usada só traz modo de falha, causa local e efeito. Qual a causa primária?",
+      "resposta": "Uso do FMEA como substituto de um plano RBI",
+      "explicacao": "FMEA registra modo, causa e efeito, mas a priorização de inspeção precisa incorporar probabilidade, consequência e barreiras. Mesma perda de espessura não implica mesma criticidade em serviços distintos.",
+      "resposta_padrao": "A perda de espessura semelhante justifica a mesma prioridade.",
+      "por_que_nao": "Criticidade resulta de probabilidade e consequência; serviços e barreiras diferentes mudam a prioridade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a organizar a lógica da RBI, mas não substituem sozinhas um plano completo de inspeção."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A criticidade não é apenas severidade do dano; ela resulta da interação entre chance de falhar e impacto da falha."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "dois pontos com perda de espessura semelhante podem exigir estratégias diferentes se um estiver em serviço de hidrocarboneto inflamável e outro em serviço de baixa consequência."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interpretação da lógica AND/OR em FTA para funções redundantes.",
+      "pergunta": "Na árvore de falhas da perda da função de alívio, a frequência do evento topo ficou quase igual à soma das falhas individuais de duas válvulas 100% redundantes, embora a perda ocorra apenas quando ambas falham. Qual a causa primária?",
+      "resposta": "Porta OR usada no lugar de AND",
+      "explicacao": "Se a função só se perde com falha simultânea das duas redundantes, o evento topo exige combinação lógica. Frequência quase igual à soma das falhas individuais denuncia OR em vez de AND.",
+      "resposta_padrao": "Há falha de causa comum entre as válvulas.",
+      "por_que_nao": "Uma causa comum teria de ser modelada como evento próprio; a soma simples das falhas individuais indica porta errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A FTA modela combinações lógicas de falhas que levam a um evento indesejado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Conclusões de um modelo dependem da arquitetura e das hipóteses de falha adotadas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "rodada": 1,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de classificação incorreta de ponto como evento em vez de alarme a partir do comportamento de registro sem anunciação.",
+      "pergunta": "Quando uma variável cruza repetidamente o limite alto, o histórico registra a ocorrência, a proteção associada atua, outros alarmes da estação anunciam normalmente e não há supressão ativa. Qual a causa primária da ausência de anunciação ao operador?",
+      "resposta": "Classificação do ponto como evento, não como alarme.",
+      "explicacao": "O sinal existe e é processado, pois há registro temporal e atuação da proteção. Como a anunciação dos demais pontos está normal e não há supressão, a discrepância está na classificação configurada desse ponto.",
+      "resposta_padrao": "Falha na buzina ou alarme inibido.",
+      "por_que_nao": "A estação anuncia outros alarmes e não há supressão ativa; o comportamento seletivo é típico de ponto configurado como evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "classificação entre alarme e evento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de válvula prevista para controle contínuo, mas implementada/comissionada como abre-fecha, pela resposta binária ao comando.",
+      "pergunta": "Numa malha de vazão, a saída do controlador varia, mas a válvula só assume 0% ou 100% também no teste local; ar de instrumento e curso mecânico estão normais. Qual a causa primária?",
+      "resposta": "Implementação da válvula como abre/fecha, não modulante.",
+      "explicacao": "Com ar e mecânica normais, o comportamento binário inclusive em teste local aponta para forma de atuação configurada/comissionada como on-off, incompatível com controle contínuo.",
+      "resposta_padrao": "Posicionador descalibrado ou stiction.",
+      "por_que_nao": "Essas falhas degradam proporcionalidade, mas não transformam sistematicamente a atuação em apenas dois estados inclusive no teste local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forma de atuação dos elementos finais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comissionada apenas como totalmente aberta ou fechada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de falha no caminho de comando remoto entre IHM e atuador, distinguindo-a de falha de atuador, comunicação ou permissivos.",
+      "pergunta": "Com seletor em remoto, permissivos satisfeitos e sem intertravamentos ativos, o comando pela IHM é aceito, porém o atuador só responde aos botões de campo; a posição volta normalmente à tela. Qual a causa primária?",
+      "resposta": "Comando da IHM não mapeado até o atuador.",
+      "explicacao": "O retorno de posição comprova comunicação de campo e o atuador funciona localmente. Sem bloqueios lógicos ativos, a falha está no caminho configurado do comando remoto até a saída.",
+      "resposta_padrao": "Falha do atuador ou da comunicação com o campo.",
+      "por_que_nao": "O atuador opera localmente e a posição retorna à tela; o que falta é somente a execução do comando remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que comandos da IHM fossem executados pelos atuadores"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de perda de indicação no supervisório por ausência de integração do retorno de campo, apesar de a lógica local receber o sinal.",
+      "pergunta": "A abertura local da válvula muda o fim de curso no painel e libera um permissivo dependente desse estado, mas a IHM mantém a posição anterior e não registra evento. Qual a causa primária?",
+      "resposta": "Retorno de posição não implementado no supervisório.",
+      "explicacao": "Como o painel local e a lógica de permissivo reconhecem a mudança, o sinal de campo existe. A perda está na integração desse retorno com a IHM/sistema supervisor.",
+      "resposta_padrao": "Fim de curso defeituoso.",
+      "por_que_nao": "Se o fim de curso estivesse falho, o permissivo dependente desse estado não seria liberado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma informação de campo pode não ser recebida pelo sistema supervisor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que sinais de campo chegassem à IHM"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

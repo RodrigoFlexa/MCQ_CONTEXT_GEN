@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 3,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda de disponibilidade em reserva fria por falha de comutação automática do standby.",
+      "pergunta": "Nos testes periódicos, o ativo e o reserva fria cumprem a função quando selecionados manualmente. Nas falhas do ativo, porém, a função só retorna depois de comando local no reserva, sem perda de utilidades comum. Qual a causa primária?",
+      "resposta": "falha na comutação automática do reserva",
+      "explicacao": "Como ativo e reserva funcionam isoladamente e não há dependência comum perdida, a indisponibilidade aparece apenas na transição. Isso aponta para falha de partida/comutação automática do standby.",
+      "resposta_padrao": "O reserva fria está indisponível por degradação em espera.",
+      "por_que_nao": "Ele cumpre a função quando acionado manualmente; a perda ocorre só na troca automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar queda de disponibilidade causada por intertravamento de proteção, não por falha física.",
+      "pergunta": "As oscilações da variável de processo permaneceram no mesmo patamar histórico, mas a disponibilidade caiu logo após a habilitação de uma proteção; cada parada termina com reset, sem intervenção mecânica. Qual a causa primária?",
+      "resposta": "habilitação do intertravamento de proteção",
+      "explicacao": "Com a variável oscilando como antes e sem reparo mecânico, a queda do KPI vem da lógica que desliga o equipamento para proteger o processo, reduzindo a continuidade mesmo sem dano.",
+      "resposta_padrao": "Piora do processo.",
+      "por_que_nao": "O comportamento da variável não mudou; mudou a lógica que passou a retirar o equipamento de serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A fração de tempo disponível depende de quais indisponibilidades são incluídas no indicador."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um sistema pode ser projetado para falhar de modo seguro mesmo que isso reduza sua continuidade operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "decisões de proteção podem retirar equipamentos de serviço para evitar danos maiores."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer indisponibilidade herdada de falha anterior como causa de baixa disponibilidade no período.",
+      "pergunta": "Zero novas falhas foram abertas no mês, mas os dias parados se concentram no início e a ordem de serviço associada foi aberta no último dia do mês anterior. Qual a causa primária da baixa disponibilidade?",
+      "resposta": "indisponibilidade herdada do período anterior",
+      "explicacao": "Disponibilidade do mês usa uptime sobre o tempo observado. Se o equipamento entra no período ainda em reparo, essa indisponibilidade conta mesmo sem nova falha aberta.",
+      "resposta_padrao": "Erro no registro de falhas.",
+      "por_que_nao": "A ordem já aberta explica os dias parados no início; o KPI usa tempo indisponível, não só novas aberturas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em estado estacionário, pode ser representada pela razão entre uptime e tempo total observado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas reparáveis, ela resulta da alternância entre períodos operacionais e períodos indisponíveis por falha ou reparo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

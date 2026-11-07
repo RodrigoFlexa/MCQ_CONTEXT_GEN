@@ -1,0 +1,113 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limitação da malha de interface por perda de margem no elemento final de controle.",
+      "pergunta": "Com a produção maior, a vazão de água de saída entra em platô; o controlador pede 100% de abertura, a posição acompanha e a interface sobe nos slug curtos. Qual causa primária explica a perda de estabilidade?",
+      "resposta": "Válvula de descarga de água no limite de capacidade.",
+      "explicacao": "Com comando e posição no máximo, o elemento final perdeu margem operacional. Sem essa margem, a malha não consegue corrigir perturbações mesmo sem mudança de lógica.",
+      "resposta_padrao": "PID mal sintonizado.",
+      "por_que_nao": "A saída saturada com a posição acompanhando indica falta de capacidade do atuador, não erro principal de sintonia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode surgir porque o elemento final de controle perdeu margem operacional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de windup integral em Dead Band Assimétrico por falta de anti-windup.",
+      "pergunta": "Durante um distúrbio curto, a válvula encosta no limite; a interface volta à faixa, mas a recuperação segue lenta e o integrador demora a descarregar. Isso só ocorre no Dead Band Assimétrico. Qual causa primária?",
+      "resposta": "Ausência de anti-windup no Dead Band Assimétrico.",
+      "explicacao": "Saturação seguida de recuperação lenta e memória do integral caracteriza windup. O bloco cita essa falha como capaz de distorcer a resposta integral e retardar a recuperação.",
+      "resposta_padrao": "A banda morta está larga demais.",
+      "por_que_nao": "Faixa larga muda a frequência de atuação, mas não explica o integrador permanecer carregado após sair da saturação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem distorcer a resposta integral, retardar recuperação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de shutdown indevido por trip de baixo nível amarrado à variável errada.",
+      "pergunta": "O alarme e o shutdown de \"baixo nível do vaso\" disparam quando só a interface é reduzida; o transmissor de nível total permanece alto. Qual causa primária explica o disparo?",
+      "resposta": "Associação incorreta do trip de baixo nível à medição de interface.",
+      "explicacao": "Se o nível total permanece alto e o disparo acompanha apenas a interface, a lógica do trip foi vinculada à variável errada, não a uma perda real de inventário.",
+      "resposta_padrao": "Transmissor de nível descalibrado.",
+      "por_que_nao": "O disparo reproduzível ao mexer só na interface, com nível total alto, aponta amarração lógica incorreta e não erro aleatório de medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "associação incorreta de trip por nível baixo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "com a finalidade de preservar mais eficientemente a qualidade da água de injeção."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interação entre as malhas de interface e de DPR em sistema separador-hidrociclone.",
+      "pergunta": "Ao colocar em automático o controle da interface pelo underflow, surgem oscilações; a malha de DPR no overflow corrige em sentido oposto e, isoladas, ambas eram estáveis. Qual causa primária?",
+      "resposta": "Acoplamento das malhas via underflow e overflow do hidrociclone.",
+      "explicacao": "As duas malhas manipulam correntes do mesmo equipamento e compartilham o balanço de massa. Se isoladas são estáveis e juntas oscilam, a causa é a interação entre elas.",
+      "resposta_padrao": "Um dos controladores está com ganho excessivo.",
+      "por_que_nao": "A oscilação aparece só com as duas malhas fechadas; o balanço de massa compartilhado explica a instabilidade conjunta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "manipula a vazão de underflow do hidrociclone para controlar a interface no separador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR)"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

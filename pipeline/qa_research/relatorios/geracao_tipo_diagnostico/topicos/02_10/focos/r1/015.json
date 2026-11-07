@@ -1,0 +1,117 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interação entre a malha de interface que manipula o underflow e a malha de DPR que manipula o overflow do hidrociclone.",
+      "pergunta": "Após retunar a interface, underflow e overflow do hidrociclone passaram a oscilar em oposição de fase; a interface ficou mais estável e o DPR segue controlado, mas o óleo na água piorou. Qual a causa primária?",
+      "resposta": "interação da malha de interface no underflow com a malha de DPR no overflow",
+      "explicacao": "Underflow e overflow compartilham o balanço de massa do mesmo equipamento. Ao usar o underflow para interface e o overflow para DPR, uma malha altera a condição da outra e pode desestabilizar a descarga ao tratamento.",
+      "resposta_padrao": "Entupimento ou desgaste dos hidrociclones.",
+      "por_que_nao": "Isso reduz eficiência, mas não explica oscilações surgidas com a mudança da malha e em oposição de fase entre underflow e overflow enquanto o DPR permanece controlado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manipula a vazão de underflow do hidrociclone para controlar a interface no separador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Escolha do objetivo da malha de interface quando a estabilidade da alimentação aos hidrociclones é mais importante que manter um setpoint rígido.",
+      "pergunta": "A interface quase não se move e o DPR permanece estável, porém a alimentação dos hidrociclones pulsa e o teor de óleo na água varia mais desde que se passou a segurá-la rigidamente em um único valor. Sem mudança relevante de carga, qual causa explica a piora?",
+      "resposta": "controle rígido da interface em setpoint único",
+      "explicacao": "Quando a regularidade da alimentação ao hidrociclone é mais crítica, prender a interface num valor único pode aumentar a oscilação de vazão e split. O objetivo adequado passa a ser limitar a excursão.",
+      "resposta_padrao": "Sintonia inadequada da malha de DPR.",
+      "por_que_nao": "O sinal decisivo é a piora ocorrer após endurecer o objetivo da interface; o problema nasce da filosofia da malha, não do DPR isolado.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança da variável manipulada mais adequada para controlar a interface quando a camada de emulsão se espessa.",
+      "pergunta": "Com a camada de emulsão agora muito mais espessa, a mesma banda de interface que antes funcionava passa a gerar excursões frequentes e descarga irregular aos hidrociclones. Qual elemento técnico virou a causa primária?",
+      "resposta": "controle da interface pelo underflow do hidrociclone",
+      "explicacao": "A2 indica que, com emulsão muito espessa, a variável manipulada mais adequada pode mudar. Nessa condição, manter a interface pelo underflow tende a perder vantagem e o overflow pode ser mais favorável.",
+      "resposta_padrao": "Banda de interface estreita demais.",
+      "por_que_nao": "A mesma faixa era aceitável antes; o sinal novo é a emulsão espessa, que muda a variável manipulada mais adequada.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "essa filosofia depende de a faixa admissível ser compatível com a geometria do separador, com a espessura da camada de emulsão e com a sensibilidade do equipamento a jusante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de emulsão se torna muito espessa, a variável manipulada mais adequada pode mudar"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma estratégia de controle de overflow pode ser mais favorável nesse cenário específico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre a constante de tempo do hidrociclone e a tolerância a oscilações da interface sem perda relevante a jusante.",
+      "pergunta": "Oscilações moderadas da interface persistem, mas a concentração de óleo na água tratada quase não muda e os hidrociclones recuperam rapidamente pequenas perturbações. Qual causa explica essa tolerância sem perda relevante a jusante?",
+      "resposta": "dinâmica de óleo-na-água mais lenta que a constante do hidrociclone",
+      "explicacao": "Se a concentração de óleo na água varia mais lentamente que a resposta do hidrociclone, a oscilação da interface não se traduz em perda relevante a jusante. O ponto decisivo é a relação entre constantes de tempo.",
+      "resposta_padrao": "Grande folga de capacidade do separador.",
+      "por_que_nao": "Folga pode ajudar, mas o decisivo aqui é a relação de tempos entre a variação de concentração e a resposta do hidrociclone.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado e não constitui regra geral para qualquer separador."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

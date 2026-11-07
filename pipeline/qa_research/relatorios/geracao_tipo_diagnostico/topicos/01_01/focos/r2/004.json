@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 4,
+  "rodada": 2,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade instantânea não substitui confiabilidade quando a exigência é manter serviço contínuo por um intervalo.",
+      "pergunta": "O painel mensal mostra disponibilidade acima de 99%, mas uma operação contínua de 6 horas quase nunca termina sem interrupção; quando para, o retorno leva poucos minutos. Qual causa primária faz o KPI parecer bom mesmo com esse desempenho?",
+      "resposta": "Uso de disponibilidade instantânea para medir uma exigência de confiabilidade.",
+      "explicacao": "Disponibilidade responde ao estado em um instante; completar 6 horas sem interrupção exige continuidade ao longo de um intervalo. Reparos curtos preservam a disponibilidade, mas não garantem confiabilidade da missão.",
+      "resposta_padrao": "Baixa disponibilidade do sistema.",
+      "por_que_nao": "As verificações instantâneas seguem altas; o sinal decisivo é a incapacidade de sustentar o serviço durante todo o intervalo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade expressa a probabilidade de o sistema estar operacional em um dado instante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo, sob condições definidas e assumindo operação no início do período"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso ocorre porque a disponibilidade combina frequência de interrupções e duração de recuperação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade operacional varia conforme o KPI inclui ou exclui tempos logísticos e administrativos no downtime.",
+      "pergunta": "Mesmo conjunto de falhas e mesmo tempo de oficina, o relatório de operação fecha com disponibilidade bem menor que o da manutenção; a diferença cresce nos eventos com espera por acesso, sobressalente e liberação. Qual causa explica essa divergência?",
+      "resposta": "Disponibilidade operacional contabilizando downtime além do reparo ativo.",
+      "explicacao": "A disponibilidade depende das indisponibilidades incluídas no indicador. Quando o cálculo vai da falha ao retorno seguro à operação, ele fica menor que o baseado só no reparo ativo.",
+      "resposta_padrao": "O relatório de manutenção está errado.",
+      "por_que_nao": "A divergência acompanha esperas logísticas e administrativas, sinal de recorte diferente do downtime, não de erro de registro.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A fração de tempo disponível depende de quais indisponibilidades são incluídas no indicador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo, isto é, a intervenção propriamente dita, a tempos logísticos e administrativos, como diagnóstico, mobilização de pessoal, espera por sobressalentes, acesso, liberação do equipamento e retorno seguro à operação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o desempenho global não depende só de quantas falhas ocorrem, mas também de quão rápido e sob quais condições o sistema retorna à operação aceitável."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mantenabilidade é a probabilidade de restaurar dentro de um tempo especificado, não apenas o MTTR médio.",
+      "pergunta": "O número de falhas não mudou, e o MTTR médio ficou parecido. Mesmo assim, caiu muito a parcela de eventos restabelecidos em até 2 horas, meta do sistema. Qual causa primária explica a piora?",
+      "resposta": "Redução da mantenabilidade para restauração em até 2 horas.",
+      "explicacao": "Mantenabilidade é a probabilidade de restaurar dentro de um tempo especificado. A média de reparo pode ficar semelhante enquanto diminui a chance de cumprir o prazo de 2 horas.",
+      "resposta_padrao": "Aumento do MTTR.",
+      "por_que_nao": "O enunciado informa média de reparo semelhante; o que piorou foi a probabilidade de retorno dentro do limite definido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mantenabilidade expressa a probabilidade de restaurar um sistema defeituoso a um estado operacional dentro de um tempo especificado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o desempenho global não depende só de quantas falhas ocorrem, mas também de quão rápido e sob quais condições o sistema retorna à operação aceitável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

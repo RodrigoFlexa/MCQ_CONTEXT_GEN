@@ -1,0 +1,89 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir ausência de registro de sessão da hipótese de conta compartilhada quando identidade e janela estão corretas, mas faltam evidências das ações executadas.",
+      "pergunta": "VPN, MFA e contas nominais estavam corretos, e a conexão do fornecedor ocorreu na janela aprovada. Depois surgiu alteração indevida em permissivo, mas a auditoria só dispõe de login/logout e fluxos de rede. Qual causa primária explica não se reconstituir a ação executada?",
+      "resposta": "Ausência de registro de sessão.",
+      "explicacao": "Com identidade individual e janela aprovadas, login/logout e fluxos mostram quem conectou e quando, não o que fez dentro da sessão. O controle faltante é o registro de sessão.",
+      "resposta_padrao": "Conta compartilhada.",
+      "por_que_nao": "As conexões eram nominais e autenticadas; faltou rastrear as ações dentro da sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão e revisão periódica dos acessos ativos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar acessos ainda necessários, porém excessivos e desatualizados, à falta de revisão periódica dos acessos ativos.",
+      "pergunta": "Contas nominais de técnicos ainda ativos no fornecedor e com MFA válido continuam necessárias para outros ativos, mas também mantêm, há meses, acesso a um sistema descomissionado e a outro pacote que não atendem mais. Qual causa primária explica o achado?",
+      "resposta": "Ausência de revisão periódica dos acessos ativos.",
+      "explicacao": "Não é offboarding: os usuários seguem ativos e precisam de alguns acessos. O problema é a permanência de permissões sem necessidade atual, algo que a revisão periódica detecta e corrige.",
+      "resposta_padrao": "Falha de desativação das contas quando o contrato acabou.",
+      "por_que_nao": "As contas continuam necessárias e em uso; o excesso persistiu por falta de recertificação do escopo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão e revisão periódica dos acessos ativos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de monitoramento do escopo autorizado para terceiros quando identidade e janela estão corretas, mas a sessão alcança ativos fora da tarefa aprovada.",
+      "pergunta": "O mesmo perfil do fornecedor é necessário em chamados multiativos. Nesta intervenção, porém, a autorização cobria só o sistema de vibração. A conta individual entrou na janela aprovada e os registros depois mostram consulta a PLCs de outro pacote, sem alerta durante a atividade. Qual causa primária explica o desvio?",
+      "resposta": "Ausência de monitoramento da aderência ao escopo previsto.",
+      "explicacao": "A identidade e a janela estavam corretas; o desvio ocorreu dentro da própria intervenção autorizada. Para terceiros, o controle decisivo é confirmar aderência ao escopo aprovado.",
+      "resposta_padrao": "Privilégio mínimo não aplicado ao perfil.",
+      "por_que_nao": "O perfil amplo era tecnicamente justificável em outros chamados; faltou vigiar se a sessão aderiu ao escopo daquele serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão e revisão periódica dos acessos ativos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falta de identidade individual verificável da hipótese de ausência de gravação quando a camada externa identifica o usuário, mas o ponto de execução não.",
+      "pergunta": "Os logs da VPN identificam dois técnicos nominais do fornecedor; já o audit trail do ativo atribui todas as alterações do período ao mesmo usuário local. A sessão foi gravada, mas a autoria do download indevido continua indeterminada. Qual causa primária explica isso?",
+      "resposta": "Ausência de identidade individual verificável no ponto de execução.",
+      "explicacao": "A gravação existia e a VPN individualizou os acessos externos, mas a alteração ficou associada a uma identidade comum no ativo. Sem identidade individual onde a ação ocorre, a autoria não se sustenta.",
+      "resposta_padrao": "Ausência de registro de sessão.",
+      "por_que_nao": "Havia gravação; o que faltou foi identidade nominal onde a alteração ficou registrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão e revisão periódica dos acessos ativos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

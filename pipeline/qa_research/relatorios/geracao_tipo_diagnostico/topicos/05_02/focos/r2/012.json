@@ -1,0 +1,61 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Segregação elétrica real entre canais redundantes de supervisão.",
+      "pergunta": "A master ativa e a reserva apagam juntas quando cai a UPS A, enquanto rede e remotas seguem energizadas pela UPS B. Qual a causa primária?",
+      "resposta": "alimentação das duas estações master pela mesma UPS A",
+      "explicacao": "Se rede, remotas e UPS B permanecem vivas, a perda simultânea das duas masters com uma única falha revela dependência elétrica comum entre os canais redundantes.",
+      "resposta_padrao": "Falha do mecanismo de transferência para a estação reserva.",
+      "por_que_nao": "A reserva também desenergiza na mesma ocorrência; sem alimentação segregada, não existe canal disponível para assumir.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência oculta da bateria que mascara trip de controle no reboot do gerador de emergência.",
+      "pergunta": "Sem alimentação de bateria, o gerador de emergência parte, atinge tensão nominal e o disjuntor chega a fechar, mas abre de novo em todas as tentativas enquanto o controle reinicializa. Com bateria, a recomposição ocorre normalmente. Qual a causa primária?",
+      "resposta": "trip mantido ao disjuntor pela lógica de controle no reboot",
+      "explicacao": "A partida mecânica e o fechamento momentâneo mostram que gerador e disjuntor funcionam. A repetição só durante o reboot sem bateria indica saída de trip mantida pela lógica, antes mascarada pela alimentação de bateria.",
+      "resposta_padrao": "Defeito mecânico no disjuntor do gerador de emergência.",
+      "por_que_nao": "O disjuntor fecha e a recomposição volta ao normal com bateria; a anomalia acompanha o reboot do controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

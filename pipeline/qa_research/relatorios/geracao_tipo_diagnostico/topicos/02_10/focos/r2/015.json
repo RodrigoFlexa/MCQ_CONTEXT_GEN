@@ -1,0 +1,115 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Acoplamento entre o controle de interface e o controle de DPR por compartilharem o balanço de massa do hidrociclone.",
+      "pergunta": "Com o controlador de interface ou o de DPR isoladamente em automático, o hidrociclone fica estável; com ambos ativos, underflow e overflow oscilam em oposição de fase e o óleo na água piora. Qual a causa primária?",
+      "resposta": "Acoplamento entre o controle de interface por underflow e o DPR por overflow",
+      "explicacao": "Underflow e overflow compartilham o balanço de massa do mesmo hidrociclone; quando ambas as malhas atuam, cada correção muda a condição enfrentada pela outra. A estabilidade isolada de cada controlador descarta sintonia ruim como causa primária.",
+      "resposta_padrao": "Sintonia agressiva do controlador de interface.",
+      "por_que_nao": "Cada malha fica estável quando a outra é isolada; a oscilação surge da interação entre ambas no mesmo equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separação de escalas de tempo entre a variação de óleo na água e a resposta do hidrociclone.",
+      "pergunta": "A interface percorre toda a banda em poucos minutos, a vazão aos hidrociclones oscila junto, mas o teor de óleo na água descartada quase não se altera e se recompõe rápido após perturbações curtas. O que explica essa tolerância?",
+      "resposta": "Dinâmica de óleo na água mais lenta que a do hidrociclone",
+      "explicacao": "O hidrociclone recompõe seu split muito mais rápido do que a concentração de óleo na água consegue variar. Assim, oscilações moderadas da interface podem não se traduzir em perda relevante na qualidade da água tratada.",
+      "resposta_padrao": "Alta eficiência intrínseca do hidrociclone.",
+      "por_que_nao": "Eficiência sozinha não explica o amortecimento; o sinal decisivo é a diferença de escala de tempo entre a resposta do hidrociclone e a variação do óleo na água.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado e não constitui regra geral para qualquer separador."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando a qualidade da água depende da regularidade da alimentação ao hidrociclone, a filosofia de controle por banda pode ser superior ao setpoint fixo da interface.",
+      "pergunta": "A interface quase não se move e fica no alvo, porém a descarga aos hidrociclones serrilha e o óleo na água oscila; permitindo excursão entre dois limites, a descarga estabiliza. Qual causa explicava a piora inicial?",
+      "resposta": "Controle rígido da interface em setpoint único",
+      "explicacao": "Quando a variável importante é a regularidade da alimentação ao hidrociclone, segurar a interface rigidamente no alvo pode gerar mais oscilação de vazão e de split do que um controle por banda.",
+      "resposta_padrao": "Hidrociclone subdimensionado.",
+      "por_que_nao": "A capacidade do equipamento não mudou, e a mesma linha estabiliza quando a filosofia da malha de interface deixa de perseguir um único valor.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Espessamento da camada de emulsão pode tornar inadequado o controle da interface pelo underflow.",
+      "pergunta": "Com a camada de emulsão muito mais espessa, alargar e estreitar a banda sem tocar limites geométricos não elimina a descarga irregular para os hidrociclones; ao tirar a interface do underflow, a alimentação estabiliza. Qual era a causa primária?",
+      "resposta": "Controle da interface pelo underflow inadequado para camada de emulsão espessa",
+      "explicacao": "Com emulsão espessa, a variável manipulada mais adequada pode deixar de ser o underflow. Como a banda permaneceu compatível com a geometria, a persistência da instabilidade aponta para inadequação do underflow, não para simples ajuste da faixa.",
+      "resposta_padrao": "Faixa de interface incompatível com o separador.",
+      "por_que_nao": "A banda foi alterada sem atingir limites geométricos e a instabilidade persistiu; o quadro só cessa quando a interface deixa de ser manipulada pelo underflow.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "essa filosofia depende de a faixa admissível ser compatível com a geometria do separador, com a espessura da camada de emulsão e com a sensibilidade do equipamento a jusante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de emulsão se torna muito espessa, a variável manipulada mais adequada pode mudar"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "havendo indicação de que uma estratégia de controle de overflow pode ser mais favorável nesse cenário específico."
+        }
+      ],
+      "k": 4,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    }
+  ]
+}

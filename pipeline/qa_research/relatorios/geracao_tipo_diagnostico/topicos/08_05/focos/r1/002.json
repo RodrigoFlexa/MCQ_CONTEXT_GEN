@@ -1,0 +1,117 @@
+{
+  "item": "08_05",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Uso de base de extremos pode enviesar a estimativa de disponibilidade operacional.",
+      "pergunta": "A campanha real registra muitas janelas seguras, porém o estudo histórico mostrou disponibilidade muito menor com os mesmos limites. As excedências concentram-se em estados raros, da mesma base usada para verificar cargas máximas. Qual a causa do viés?",
+      "resposta": "uso de base de extremos para estimar disponibilidade cotidiana",
+      "explicacao": "Dados voltados à cauda extrema servem a projeto e integridade. Aplicados à rotina operacional, superrepresentam estados raros e reduzem artificialmente a disponibilidade estimada.",
+      "resposta_padrao": "Limites operacionais excessivamente conservadores.",
+      "por_que_nao": "O viés ficou concentrado em estados raros da base de extremos; o problema estava na seleção dos dados, não no limite em si.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção do conjunto de dados deve ser coerente com a decisão que será tomada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um conjunto centrado em extremos pode distorcer a avaliação de disponibilidade cotidiana."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em operação, interessa saber quando iniciar, manter ou interromper atividades"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Janelas efetivamente operadas não representam a exposição ambiental total para integridade de longo prazo.",
+      "pergunta": "Na extensão de vida, a fadiga calculada caiu mesmo com mais anos de exposição. A série ambiental usada veio só das janelas efetivamente operadas em campanhas passadas; tempestades que levaram ao cancelamento ficaram fora do banco. Qual causa explica o resultado?",
+      "resposta": "uso de janelas operadas para representar a exposição ambiental total",
+      "explicacao": "Dados de operação ativa servem à disponibilidade da campanha, não à integridade de longo prazo; ao excluir cancelamentos por mau tempo, a cauda extrema desaparece.",
+      "resposta_padrao": "Melhora das condições ambientais ao longo dos anos.",
+      "por_que_nao": "A redução nasceu do filtro do banco por janelas operadas; as tempestades canceladas deixaram de compor a exposição considerada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uso de dados representativos de condições operacionais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não basta, por si só, para inferir comportamento em extremos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um conjunto adequado para rotina operacional pode subestimar demandas de integridade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Análise conjunta exige simultaneidade entre vento, onda e corrente na base histórica.",
+      "pergunta": "Excedências combinadas de vento, onda e corrente aparecem com frequência no estudo, mas não são vistas no histórico operacional; depois verifica-se que cada pico veio de horário diferente. Qual a causa principal?",
+      "resposta": "quebra da simultaneidade entre vento, onda e corrente na base",
+      "explicacao": "Combinar máximos não simultâneos infla cenários conjuntos e distorce critérios. Para decisões baseadas em resposta, a coincidência entre agentes precisa ser preservada.",
+      "resposta_padrao": "A previsão meteorológica está ruim.",
+      "por_que_nao": "O viés surgiu na montagem da série histórica: a combinação crítica era artificial por juntar picos de instantes diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção do conjunto de dados deve ser coerente com a decisão que será tomada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "simultaneidade entre agentes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "parâmetros de probabilidade conjunta necessários a análises baseadas em resposta."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Critérios meteoceanográficos dependem de base representativa da locação real.",
+      "pergunta": "Os critérios meteoceanográficos definidos com dados de um ponto vizinho falham repetidamente numa locação poucos quilômetros distante; a série é longa, mas a batimetria e a exposição ao mar diferem. Qual a causa principal?",
+      "resposta": "uso de base de locação vizinha sem representatividade local",
+      "explicacao": "Mesmo distâncias pequenas podem alterar o regime ambiental por batimetria e exposição. Série longa e boa metodologia não compensam falta de aderência ao local estudado.",
+      "resposta_padrao": "A série histórica é curta demais.",
+      "por_que_nao": "A duração era adequada; o desvio seguia diferenças locais de exposição e batimetria, não falta de tempo de registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção do conjunto de dados deve ser coerente com a decisão que será tomada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o primeiro critério é a especificidade ao local, sempre que praticável"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "regime de ondas, vento e correntes varia entre bacias, locações e até entre posições próximas com batimetria e exposição distintas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

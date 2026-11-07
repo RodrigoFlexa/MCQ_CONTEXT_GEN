@@ -1,0 +1,87 @@
+{
+  "item": "06_03",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança de escopo em SIMOPS exige revisar a fronteira de isolamento; PT ativa não supre essa atualização física.",
+      "pergunta": "Durante a retirada de um spool, decidiu-se incluir um ramal adjacente encontrado corroído. A PT permaneceu válida, mas o certificado de isolamento seguia limitado ao trecho original; ao soltar o novo flange, entrou produto. Qual a causa primária?",
+      "resposta": "Fronteira de isolamento não revisada para o ramal incluído",
+      "explicacao": "A frente de trabalho foi ampliada sem estender o isolamento correspondente. A permissão podia continuar formalmente ativa, mas deixou de representar o estado real controlado para o novo trecho.",
+      "resposta_padrao": "Falha na Permissão de Trabalho.",
+      "por_que_nao": "A PT é só parte da coordenação; o desvio decisivo foi o isolamento continuar cobrindo apenas o trecho original.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alterado sem controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle do isolamento e o controle da permissão têm escopos distintos, mas precisam ser coerentes entre si"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sem atualização diante de mudanças de escopo tendem a perder efetividade como barreira de coordenação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança temporária do estado da planta, como partida, pode invalidar isolamento já estável se não houver revalidação.",
+      "pergunta": "Pressão zerada e dreno seco ficaram estáveis por horas no trecho em manutenção. Quando começou a partida de um sistema interligado, o manômetro voltou a subir sem manobra local. Qual causa primária explica esse retorno?",
+      "resposta": "Partida de sistema interligado sem revalidar o isolamento",
+      "explicacao": "O isolamento estava coerente com a condição anterior de parada. A repressurização surgiu junto da partida, indicando que o estado real da planta mudou sem revisão da fronteira isolada.",
+      "resposta_padrao": "Uma válvula do isolamento estava passando.",
+      "por_que_nao": "O retorno de pressão sincronizado com a partida aponta invalidação do isolamento pela mudança de condição, não passagem aleatória da mesma barreira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isolamentos de processo costumam estar associados a mudanças temporárias do estado da planta, como manutenção planejada, partida, parada ou recomissionamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "para que a tarefa autorizada corresponda ao estado real da planta."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando o perigo dominante é energia de processo, controles de ignição e coordenação não substituem isolamento físico adequado.",
+      "pergunta": "Na abertura planejada de uma linha, havia gas test, vigia de fogo, área isolada e comunicação entre equipes; para o processo, constava só o fechamento de uma válvula operacional a montante. No primeiro afrouxamento, saiu fluido pressurizado. Qual foi a causa primária?",
+      "resposta": "Fechamento de válvula operacional como único isolamento do trecho",
+      "explicacao": "Os controles presentes tratavam ignição e interface, mas o mecanismo dominante era energia de processo. A frente de trabalho não ficou fisicamente separada da fonte de pressão.",
+      "resposta_padrao": "Faltou controle de fontes de ignição.",
+      "por_que_nao": "A liberação ocorreu por energia de processo ainda presente; controles de ignição não evitam contenção perdida por isolamento inadequado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O mecanismo físico do isolamento é separar a frente de trabalho de fontes de pressão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando o esquema é inadequado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o risco está ligado à energia de processo, isolamento e despressurização tendem a ganhar peso."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

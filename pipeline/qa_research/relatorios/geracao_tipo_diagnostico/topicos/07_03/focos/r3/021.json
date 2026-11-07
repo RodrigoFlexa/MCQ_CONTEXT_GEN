@@ -1,0 +1,101 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 3,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O marco de retorno à função deve coincidir com a recuperação funcional, não apenas com o fim da intervenção física.",
+      "pergunta": "O reparo mecânico termina às 10h, mas o equipamento só reassume carga às 16h após teste funcional e alinhamento. Mesmo assim, o relatório passou a contar 10h como retorno; o MTTR caiu sem reduzir LPO. Qual é a causa primária?",
+      "resposta": "Retorno à função registrado no fim do reparo mecânico.",
+      "explicacao": "O retorno deve ser marcado quando a função volta de fato. Antecipar esse marco para o fim do reparo físico encurta artificialmente o MTTR e eleva a disponibilidade, embora a perda de produção siga até reassumir carga.",
+      "resposta_padrao": "Melhoria real no tempo de reparo.",
+      "por_que_nao": "A função só foi recuperada após teste e reassunção de carga; o LPO não diminuiu.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A disponibilidade observada depende da base temporal adotada, especialmente da inclusão ou não de horas em que o item não era requerido.",
+      "pergunta": "Uma bomba passou a operar só em campanhas; nos intervalos ficou em reserva, testando normalmente e pronta para partir. MTBF e MTTR permaneceram estáveis, mas a disponibilidade observada caiu muito no fechamento mensal. Qual causa primária explica isso?",
+      "resposta": "Inclusão de horas não requeridas na base da disponibilidade.",
+      "explicacao": "A disponibilidade observada varia com o tempo total adotado na apuração. Com o item apto e sem piora de falhas ou reparos, a queda vem de incluir no denominador horas fora da janela em que sua função era requerida.",
+      "resposta_padrao": "Degradação por longos períodos em standby.",
+      "por_que_nao": "A bomba seguia testando e pronta para partir; falhas e reparos não pioraram.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "MTBF e MTTR resumem comportamento observado, mas podem esconder dispersão, mudanças de regime"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A separação correta entre falhas distintas depende do registro explícito da recuperação da função entre ocorrências.",
+      "pergunta": "Dois desligamentos por proteção ocorreram em dias diferentes, e o historiador registra horas de operação normal entre eles, mas o relatório consolidou tudo como uma falha longa. Qual causa primária distorceu os indicadores?",
+      "resposta": "Ausência de registro de retorno à função entre ocorrências.",
+      "explicacao": "As mensagens devem registrar perda e recuperação da função. Sem o evento de retorno, duas falhas distintas são tratadas como uma indisponibilidade contínua, reduzindo o número de falhas e alongando indevidamente o reparo.",
+      "resposta_padrao": "Uma única falha intermitente do mesmo componente.",
+      "por_que_nao": "Houve operação normal entre os desligamentos; a função foi recuperada e depois perdida novamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O início da falha deve ser registrado no instante da perda real da função, não na abertura administrativa da ordem.",
+      "pergunta": "O first-out mostra perda de função às 02:10; a ordem é aberta às 07:00 e o retorno real ocorre às 11:30. Depois de usar 07:00 como início, MTBF e disponibilidade subiram sem queda do LPO. Qual causa primária?",
+      "resposta": "Registro tardio do início da falha.",
+      "explicacao": "Em itens reparáveis, MTBF e disponibilidade dependem do instante de perda da função. Trocar esse marco pela abertura da ordem acrescenta operação fictícia e encurta artificialmente a indisponibilidade observada.",
+      "resposta_padrao": "Redução real do tempo de indisponibilidade.",
+      "por_que_nao": "A perda de função começou às 02:10 e o retorno permaneceu às 11:30; mudou só o marco do registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

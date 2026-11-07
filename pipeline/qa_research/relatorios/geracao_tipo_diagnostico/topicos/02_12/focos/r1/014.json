@@ -1,0 +1,109 @@
+{
+  "item": "02_12",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir parada por intertravamento de atuação do controle a partir da queda de pressão do óleo.",
+      "pergunta": "Durante a aceleração, a parada automática ocorre logo após queda da pressão de óleo; a demanda de processo segue estável e vibração e temperaturas ainda sem desvio. Qual causa primária do desarme?",
+      "resposta": "Intertravamento por baixa pressão do óleo de lubrificação",
+      "explicacao": "Queda de óleo seguida de parada, sem desvio mecânico prévio nem ação anormal do controle, aponta para proteção por variável do subsistema de óleo; no arranjo funcional, quem executa a parada automática é o intertravamento.",
+      "resposta_padrao": "Falha do controle anti-surge.",
+      "por_que_nao": "O controle modula reciclo para evitar surge; quem provoca parada automática por risco é o intertravamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o de intertravamento executa parada automática em situações de risco"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o de óleo sustenta lubrificação e acionamentos auxiliares"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar descolamento entre comando e posição da válvula anti-surge à histerese do elemento final.",
+      "pergunta": "O comando da válvula anti-surge muda rapidamente, mas a posição real responde com atraso e patamares; a máquina começa a oscilar perto do limite, sem mudança de sucção. Qual causa primária?",
+      "resposta": "Histerese no atuador-posicionador da válvula anti-surge",
+      "explicacao": "Se o comando muda e a posição real atrasa e trava em patamares, o problema está no elemento final. A realimentação de posição serve exatamente para evidenciar histerese ou falha de atuação, não erro de sintonia.",
+      "resposta_padrao": "Sintonia inadequada do controlador anti-surge.",
+      "por_que_nao": "A divergência entre comando e posição real mostra limitação do elemento final, não necessariamente do algoritmo.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula, o que ajuda a detectar degradação, atraso, histerese ou falha de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O subsistema de controle busca atender a demanda do processo e evitar surge"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar distribuição errática de carga em paralelo por tomada de sucção mal posicionada.",
+      "pergunta": "Dois compressores em paralelo ficam estáveis isoladamente; juntos, um recicla e o outro assume quase toda a carga, embora válvulas e rotações acompanhem os comandos, e os transmissores locais de sucção difiram do cabeçalho comum. Qual causa primária?",
+      "resposta": "Tomada de pressão de sucção mal posicionada",
+      "explicacao": "Em paralelo, a carga depende de medições representativas do estado comum. Diferença entre leituras locais e do cabeçalho, com máquinas saudáveis e atuadores obedecendo, indica tomada de sucção em ponto não representativo.",
+      "resposta_padrao": "Um dos compressores está menos eficiente.",
+      "por_que_nao": "Se ambos ficam estáveis sozinhos e os atuadores seguem comando, o desbalanceamento aparece pela medição não representativa do cabeçalho.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Em compressores em paralelo e em sistemas com múltiplos estágios, a seleção e a localização da instrumentação também afetam a qualidade do controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo, introduzir atrasos ou mascarar interações entre estágios."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso significa que variações observadas nas malhas nem sempre nascem de um problema local do compressor"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer aumento de contrapressão de exportação como causa externa de abertura da válvula anti-surge.",
+      "pergunta": "O mesmo trem opera sem reciclo para combustível, mas passa a abrir a válvula anti-surge ao ser alinhado para exportação, com sucção, composição, válvula e monitoramento mecânico inalterados. Qual causa primária?",
+      "resposta": "Maior contrapressão na exportação de gás",
+      "explicacao": "Ao mudar apenas o destino, muda a pressão requerida. Com sucção, composição e condição mecânica iguais, a abertura de reciclo só na exportação indica aumento da contrapressão imposta a jusante, não degradação local.",
+      "resposta_padrao": "Perda de desempenho do compressor.",
+      "por_que_nao": "A anomalia só aparece no modo de exportação e desaparece em combustível, sem indícios locais de degradação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "como poços em teste, quantidade de poços com gas lift, pressão de exportação de gás e quantidade de poços de gás em operação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "variações observadas nas malhas nem sempre nascem de um problema local do compressor; muitas vezes refletem mudanças legítimas de carga da planta inteira."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O destino do gás após tratamento influencia principalmente a pressão requerida"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

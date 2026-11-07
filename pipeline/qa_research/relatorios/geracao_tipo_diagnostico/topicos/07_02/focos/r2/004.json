@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 2,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio a contas de aplicação e interfaces conectadas ao IACS, não só a usuários humanos.",
+      "pergunta": "Setpoints mudaram fora do turno em vários controladores. Não houve login humano; os eventos saíram do servidor de otimização, e o problema cessou ao retirar a permissão de escrita dessa interface, mantendo a coleta. Qual a causa primária?",
+      "resposta": "Conta de aplicação do otimizador com permissão indevida de escrita",
+      "explicacao": "A função requerida do servidor era apenas leitura. Se a coleta continua após remover a escrita e as alterações cessam, o elemento decisivo é privilégio excessivo da aplicação conectada ao IACS.",
+      "resposta_padrao": "Comprometimento do servidor de otimização.",
+      "por_que_nao": "O sinal decisivo é que a função necessária permaneceu íntegra sem escrita; o defeito era a permissão além do necessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "conceder a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre privilégio de observação e privilégio de operação em acessos remotos de suporte.",
+      "pergunta": "Durante suporte para analisar tendências, surgiram comandos abrir/fechar pela supervisão remota em bombas auxiliares. Não houve download, mudança de configuração nem alteração de firmware. Qual a causa primária?",
+      "resposta": "Privilégio de operação concedido a acesso que deveria ser só de observação",
+      "explicacao": "Os efeitos observados vieram de comandos operacionais via supervisão, sem sinais de ação de engenharia. Para análise de tendências, o privilégio adequado seria apenas observação, não atuação no processo.",
+      "resposta_padrao": "Privilégio de engenharia excessivo.",
+      "por_que_nao": "Sem alteração de lógica, configuração ou firmware, a hipótese técnica correta é operação indevida, não privilégio de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Controle temporal do acesso de fornecedores como parte do menor privilégio em IACS.",
+      "pergunta": "Três meses depois da entrega, um teste interno autenticou de primeira com a antiga conta do fornecedor e alcançou a estação de engenharia. Qual causa primária deve ser apontada?",
+      "resposta": "Conta de fornecedor não revogada ao término da atividade",
+      "explicacao": "O indício decisivo é a permanência válida de uma credencial sem tarefa definida. Em IACS, menor privilégio também limita o tempo de uso, não apenas o que a conta pode acessar.",
+      "resposta_padrao": "Senha do fornecedor vazada.",
+      "por_que_nao": "O próprio teste controlado provou que o acesso seguia habilitado; o defeito primário é a permanência da conta além do prazo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pelo menor tempo compatível com a atividade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "conceder a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

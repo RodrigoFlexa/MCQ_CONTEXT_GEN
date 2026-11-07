@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar exposição por presença do componente vulnerável no ativo, não por fabricante ou conectividade genérica.",
+      "pergunta": "Um alerta setorial sobre pilha TCP/IP embarcada mobilizou equipamentos de fornecedores diferentes. Só os ativos que usam o mesmo módulo Ethernet entraram em contenção imediata; outros, com função semelhante, ficaram fora. Qual causa primária explica essa seleção?",
+      "resposta": "Presença da pilha Treck TCP/IP nesse módulo.",
+      "explicacao": "Alertas desse tipo atingem a pilha embarcada, não indistintamente todo equipamento em rede. A contenção correta recai nos ativos que realmente usam o componente vulnerável e cuja exposição precisa ser avaliada caso a caso.",
+      "resposta_padrao": "É um problema de todos os equipamentos conectados em rede.",
+      "por_que_nao": "O alerta recai sobre um componente específico; sem a pilha afetada, o ativo pode não estar vulnerável mesmo conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar se o ativo usa o componente afetado e por avaliar a exposição real"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que VPN atualizada não elimina risco se o endpoint remoto estiver comprometido.",
+      "pergunta": "Alterações não autorizadas surgem apenas durante sessões remotas de suporte; os firewalls não registram acesso direto à rede de controle e a VPN está atualizada. Qual causa primária permanece plausível nesse cenário?",
+      "resposta": "Comprometimento do dispositivo conectado à VPN.",
+      "explicacao": "VPN atualizada reduz exposição, mas não elimina risco. Se os eventos só aparecem durante a sessão remota e não há acesso direto pela internet, o vetor decisivo pode ser a estação remota insegura entrando pelo túnel autorizado.",
+      "resposta_padrao": "Falha do firewall perimetral.",
+      "por_que_nao": "Os registros descartam acessibilidade direta; a VPN herda risco do endpoint que se conecta a ela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar indisponibilidade pós-patch em OT como incompatibilidade de atualização não qualificada.",
+      "pergunta": "Logo após instalar a versão mais recente indicada para corrigir uma vulnerabilidade, um controlador manteve CPU estável, mas perdeu comunicação com remotas; ao restaurar a imagem anterior, tudo normalizou. Qual causa primária?",
+      "resposta": "Incompatibilidade do patch com firmware e comunicação existentes.",
+      "explicacao": "Em OT, instalar a versão mais recente sem validar compatibilidade pode causar indisponibilidade ou comportamento não previsto. Como o problema começou com a atualização e sumiu com o rollback, a causa primária é a incompatibilidade da mudança.",
+      "resposta_padrao": "Defeito físico na rede de comunicação.",
+      "por_que_nao": "A falha apareceu com a mudança de versão e desapareceu com o rollback, apontando para incompatibilidade introduzida pela atualização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

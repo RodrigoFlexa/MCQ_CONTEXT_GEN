@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 2,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de ponte de rede em notebook dual-homed como violação transitória da segregação entre redes.",
+      "pergunta": "Broadcasts da rede administrativa passam a aparecer nos switches do processo só enquanto o notebook de suporte fica conectado simultaneamente às duas redes; ao remover a interface administrativa, o tráfego cessa. Qual causa primária?",
+      "resposta": "Ponte de rede habilitada no notebook de suporte.",
+      "explicacao": "Se o vazamento de broadcasts só existe com o mesmo notebook nas duas redes e desaparece ao remover uma interface, o caminho indevido está no próprio endpoint, não na arquitetura fixa.",
+      "resposta_padrao": "Ausência de firewall entre as duas redes.",
+      "por_que_nao": "Se fosse a arquitetura fixa sem firewall, o tráfego apareceria continuamente, não apenas com esse notebook conectado nas duas interfaces.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "restringe rotas de acesso"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "verificar a condição do dispositivo usado na conexão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de rota de contingência fora do firewall como via de exposição de dispositivo remoto.",
+      "pergunta": "No retorno automático para o enlace satelital de contingência, um controlador remoto passa a receber sondagens do escritório e tentativas de login da rede corporativa; no enlace principal, o firewall não registra esse tráfego. Qual causa primária?",
+      "resposta": "Enlace de contingência roteado fora do firewall de controle.",
+      "explicacao": "Como o padrão surge só na contingência e o firewall principal não o vê, o caminho alternativo está contornando a barreira prevista para o dispositivo remoto.",
+      "resposta_padrao": "Falha intermitente do firewall principal.",
+      "por_que_nao": "Uma falha do firewall afetaria também o enlace principal; aqui a exposição aparece apenas quando entra o caminho alternativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "restringe rotas de acesso"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de serviço SMB desnecessário como superfície de ataque residual incompatível com o papel do ativo.",
+      "pergunta": "Portas 139 e 445 de um historiador recebem enumeração e sessões nulas durante a varredura mensal da rede administrativa; os demais servidores do mesmo segmento não exibem isso, e esse ativo não usa compartilhamento de arquivos. Qual causa primária?",
+      "resposta": "SMB desnecessário habilitado no historiador.",
+      "explicacao": "A varredura alcançou o segmento, mas só o host com compartilhamento exposto respondeu nessas portas; o papel operacional dele não exige essa função.",
+      "resposta_padrao": "Falha de segmentação entre a rede administrativa e a de controle.",
+      "por_que_nao": "A segmentação explica a chegada da varredura, mas não o serviço exposto apenas nesse ativo e incompatível com seu papel.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduz a chance de varredura externa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "compatível com o papel operacional de cada ativo digital"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

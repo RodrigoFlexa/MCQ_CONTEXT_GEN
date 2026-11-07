@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 17,
+  "rodada": 4,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre atraso de contenção e autoridade pré-definida para isolamento ou bypass em resposta OT.",
+      "pergunta": "Severidade alta declarada em minutos, anomalia confinada a um conduíte já identificado e duas contenções previstas no procedimento; ainda assim, o turno aguarda 35 minutos pela gerência para bloquear o enlace ou operar em bypass local. Qual causa primária explica a demora?",
+      "resposta": "Autoridade de isolamento ou bypass não definida para o turno.",
+      "explicacao": "Com severidade, conduíte e opções de contenção já definidos, o atraso não veio da detecção nem da classificação; veio da falta de autoridade previamente atribuída para isolar ou operar em bypass sem esperar a gerência.",
+      "resposta_padrao": "Faltaram critérios de escalonamento.",
+      "por_que_nao": "A gravidade já estava reconhecida e o caminho de contenção já era conhecido; o gargalo era a autorização para executar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quem autoriza isolamento ou bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "critérios claros para escalonamento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Correlação de eventos dispersos e necessidade de critérios de escalonamento na resposta a incidentes em IACS.",
+      "pergunta": "Falhas de login na estação de engenharia, sessão fora de janela no historiador e varredura na DMZ surgem na mesma hora; cada console local marca seu evento como baixo, embora tudo esteja visível ao plantão. Nada sobe de prioridade até perda de telas. Qual causa primária?",
+      "resposta": "Ausência de critérios claros para escalonamento.",
+      "explicacao": "Os sinais já existiam e eram visíveis; o problema foi não haver regra para correlacionar eventos dispersos e elevar severidade antes do impacto operacional.",
+      "resposta_padrao": "Faltou monitoramento central.",
+      "por_que_nao": "Os eventos foram detectados e apresentados; a falha estava em transformá-los em decisão de resposta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "arranjo de gestão capaz de transformar sinais dispersos em decisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "critérios claros para escalonamento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto de dependências cruzadas entre controle, proteção e energia na seleção de contenção.",
+      "pergunta": "Bloquear um fluxo suspeito entre DMZ e controle encerra as conexões externas. Logo depois, os controladores seguem em automático, mas o DCS deixa de atualizar permissivos elétricos e a indicação de bypass do SIS congela. Qual causa tornou essa contenção inadequada?",
+      "resposta": "Dependências entre controle, proteção e energia não mapeadas previamente.",
+      "explicacao": "A ação bloqueou o tráfego suspeito, mas também interrompeu trocas necessárias entre supervisão, proteção e sistemas elétricos. Com controle local preservado, o erro foi desconhecer essas dependências antes da contenção.",
+      "resposta_padrao": "Falha do firewall de contenção.",
+      "por_que_nao": "O bloqueio ocorreu como previsto; os efeitos colaterais vieram de dependências funcionais não entendidas, não de mau funcionamento do firewall.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Priorização de verificações e restrições conforme exposição potencial e criticidade do ativo afetado.",
+      "pergunta": "Um alerta de vulnerabilidade atinge vários ativos, mas só um dispositivo remoto está acessível e usa a pilha exposta. A equipe começa checagens presenciais em estações isoladas e deixa esse ponto sem restrição por horas. Qual causa primária do desvio?",
+      "resposta": "Ausência de priorização por exposição potencial e criticidade.",
+      "explicacao": "A ordem técnica da resposta ignorou exposição e criticidade: o ativo realmente alcançável ficou sem restrição, enquanto recursos foram gastos primeiro em estações isoladas.",
+      "resposta_padrao": "A causa foi indisponibilidade de patch do fornecedor.",
+      "por_que_nao": "Mesmo sem patch, o ativo mais exposto deveria receber primeiro isolamento ou restrição de conectividade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "direcionamento proporcional e priorizado das verificações"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "avaliar a exposição potencial dos dispositivos afetados"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "minimizar a exposição de rede dos sistemas de controle"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

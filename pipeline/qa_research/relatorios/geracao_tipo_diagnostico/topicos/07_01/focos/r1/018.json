@@ -1,0 +1,105 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir problema de processo/transmissor de perda de atualização na camada de visualização usando timestamp e coerência entre variáveis.",
+      "pergunta": "A vazão no dashboard fica exatamente igual por 20 minutos, enquanto a mesma malha no controlador reage à manobra e variáveis relacionadas mudam; o timestamp exibido não avança. Qual causa primária?",
+      "resposta": "perda de atualização da tag no historian",
+      "explicacao": "A camada de controle continua refletindo o processo e as variáveis correlatas permanecem coerentes. O sintoma está restrito à visualização/histórico, com tempo congelado, caracterizando dado stale no historian.",
+      "resposta_padrao": "Transmissor de vazão travado.",
+      "por_que_nao": "Se o transmissor estivesse travado, a malha no controlador também não acompanharia a manobra; o defeito aparece só na camada de visualização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar a causa na comunicação da remota de I/O pela perda simultânea de várias medições de campo com remota energizada.",
+      "pergunta": "Pressão, nível e temperatura ligados à mesma remota ficaram indisponíveis ao mesmo tempo no DCS; indicadores locais seguem coerentes e a remota permanece energizada com canais normais. Qual causa primária explica o sintoma comum?",
+      "resposta": "falha de comunicação com a remota de I/O",
+      "explicacao": "A perda simultânea de sinais não relacionados, com instrumentos locais coerentes e a remota energizada, desloca o diagnóstico para a camada que transporta os dados entre a remota e o sistema de controle.",
+      "resposta_padrao": "Falha da remota de I/O.",
+      "por_que_nao": "Se a remota estivesse falhada, seus canais não permaneceriam normais; com instrumentos locais coerentes, o defeito está na comunicação com ela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer perda de observabilidade quando o evento causal vem de permissivo/intertravamento local não integrado ao PLC.",
+      "pergunta": "A partida é liberada e o motor entra em serviço, mas a parada ocorre minutos depois sempre com indicação local de baixo nível no skid; no supervisório só fica o desligamento do motor, sem histórico dessa variável. Qual causa primária?",
+      "resposta": "chave local de baixo nível não integrada ao PLC",
+      "explicacao": "O sistema registra apenas o efeito final no motor. A variável que provoca a atuação existe localmente no skid e não é observada nem historizada pela automação central.",
+      "resposta_padrao": "Sobrecarga do motor.",
+      "por_que_nao": "A parada sempre coincide com a indicação local de baixo nível e o supervisório enxerga só o efeito; isso caracteriza causa fora da observabilidade do PLC, não defeito elétrico aleatório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência simultânea de alarme e atuação automática por bypass temporário ativo, apesar de medição válida.",
+      "pergunta": "O nível medido cruza o patamar que normalmente gera alarme e fechamento automático, com valor válido e atualização normal, mas não há alarme nem comando; essa função tem intervenção temporária ainda aberta. Qual causa primária?",
+      "resposta": "bypass ativo do intertravamento de nível",
+      "explicacao": "A medição está válida, atualizada e acima do patamar esperado, mas a lógica não reage. Com intervenção temporária ainda aberta, a causa é supressão temporária da função normal.",
+      "resposta_padrao": "Transmissor de nível descalibrado.",
+      "por_que_nao": "Descalibração não explica ausência simultânea de alarme e fechamento com dado válido e atualização normal; a pendência temporária aponta para supressão lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

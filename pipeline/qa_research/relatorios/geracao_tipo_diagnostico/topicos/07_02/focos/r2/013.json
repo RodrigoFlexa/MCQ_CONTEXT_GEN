@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Confirmar a presença real do componente afetado no ativo, e não inferir vulnerabilidade apenas pela versão da plataforma.",
+      "pergunta": "Um boletim afeta um módulo de comunicação opcional. Dois servidores, no mesmo segmento isolado, têm a mesma versão da plataforma; só um mostra o serviço correspondente em execução, porta associada aberta e arquivos do módulo no inventário. Qual causa explica por que só ele está afetado?",
+      "resposta": "Componente vulnerável instalado e ativo nesse servidor.",
+      "explicacao": "Mesma versão-base e mesma conectividade não bastam. Serviço em execução, porta em escuta e artefatos do módulo indicam que só esse ativo usa o componente atingido.",
+      "resposta_padrao": "Maior exposição de rede desse servidor.",
+      "por_que_nao": "A conectividade foi mantida equivalente; o diferencial decisivo é a presença do componente vulnerável no ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar falha surgida após patch, com lógica intacta, à ausência de qualificação da atualização para as funções de processo.",
+      "pergunta": "Sequências temporizadas falharam logo após um patch no runtime do controlador; checksums da lógica e mapeamento de I/O permaneceram iguais, a rede ficou estável e o rollback do runtime normalizou. Qual a causa primária?",
+      "resposta": "Patch de runtime não qualificado para as funções de processo dessa revisão.",
+      "explicacao": "Como lógica, I/O e rede permaneceram íntegros e o rollback do runtime eliminou a falha, o desvio veio da atualização sem validação para essa revisão e suas funções de processo.",
+      "resposta_padrao": "Erro na lógica de controle.",
+      "por_que_nao": "A lógica não mudou; o comportamento anômalo apareceu com a troca do runtime e sumiu ao revertê-la.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer a falta de rollback validado como causa de indisponibilidade prolongada após uma atualização malsucedida.",
+      "pergunta": "Ao remover um patch do supervisório, os executáveis antigos voltaram, mas o banco já havia sido migrado conforme previsto e não existia imagem íntegra prévia do sistema. Qual causa primária prolongou a indisponibilidade?",
+      "resposta": "Ausência de plano de retorno validado antes da atualização.",
+      "explicacao": "A reversão parcial não recompôs um sistema cujo banco foi migrado. Sem imagem consistente ou caminho de rollback testado, a indisponibilidade persiste mesmo após retirar os binários novos.",
+      "resposta_padrao": "Patch defeituoso.",
+      "por_que_nao": "O defeito exigiu reverter, mas o tempo fora veio da falta de um rollback compatível e previamente preparado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a correção deve ser avaliada com as equipes de TI/OT e o fornecedor, considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

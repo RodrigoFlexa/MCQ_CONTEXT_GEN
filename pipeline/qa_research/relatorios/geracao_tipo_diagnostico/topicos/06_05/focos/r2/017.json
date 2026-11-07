@@ -1,0 +1,65 @@
+{
+  "item": "06_05",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir comando de atuação e retorno de campo na indicação de descarga confirmada no supervisório.",
+      "pergunta": "No teste integrado de descarga, o controlador registra o comando em t0 e a confirmação local em t0+6 s. Em todas as repetições, a tela já mostra “CO2 disparado” em t0, embora os relógios do controlador e do supervisório estejam sincronizados. Qual é a causa primária?",
+      "resposta": "Tag “CO2 disparado” vinculada ao comando, não ao retorno confirmado.",
+      "explicacao": "Com relógios sincronizados, a indicação antecipada e repetitiva aponta uso do bit de comando como status. “Disparado” deveria refletir o retorno confirmado após a atuação local.",
+      "resposta_padrao": "Relógio do supervisório adiantado.",
+      "por_que_nao": "A sincronização foi verificada, e a antecipação coincide exatamente com o instante do comando em todas as repetições.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "envolvendo confirmação local e confirmação posterior no supervisório"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O intervalo registrado entre disparo local e indicação de CO2 disparado também mostra que a sequência temporal é relevante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inconsistências entre telas e lógica podem preservar hardware em campo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda do enlace controlador-supervisório quando a lógica local segue íntegra e a interface congela.",
+      "pergunta": "Vários pontos de F&G do mesmo controlador ficam congelados no supervisório por minutos, mas o log local do controlador continua mudando e as atuações automáticas ocorrem no tempo certo. Detectores e cartões respondem normalmente em campo. Qual causa primária explica o desvio?",
+      "resposta": "Perda de comunicação entre o controlador de F&G e o supervisório.",
+      "explicacao": "Como o controlador segue registrando eventos e executando as lógicas, o problema não está no campo nem na CPU. O congelamento concentrado na interface indica falha no enlace controlador-supervisório.",
+      "resposta_padrao": "Falha do controlador de F&G.",
+      "por_que_nao": "O controlador continua processando sinais e executando as ações automáticas, então a degradação está só na comunicação com a interface.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a comunicação com a lógica e com a interface do operador estiver degradada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a coerência entre campo, controlador e supervisório"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se a transmissão do sinal permanece íntegra"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "item": "02_05",
+  "foco": 22,
+  "rodada": 1,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da proteção contra sobrepressão do caminho fail-safe ao flare em arranjos com recuperação de vapores.",
+      "pergunta": "Durante o carregamento, a pressão do tanque sobe logo após o trip da recuperação de vapores; os conjuntos P/V passaram em teste funcional, o IG está disponível e abrir manualmente a rota ao flare normaliza a pressão. Qual a causa primária?",
+      "resposta": "Falha do meio fail-safe de comutação para o flare",
+      "explicacao": "Com recuperação de vapores, o caminho normal de ventilação pode depender desse arranjo. Se a pressão normaliza ao abrir manualmente a rota ao flare, a falha está na comutação automática/fail-safe, não no conjunto P/V nem no IG.",
+      "resposta_padrao": "Trip da recuperação de vapores.",
+      "por_que_nao": "O trip só vira sobrepressão quando o sistema não garante automaticamente o caminho ao flare.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando existe sistema de hydrocarbon blanketing ou de recuperação de hidrocarbonetos, a rota normal ao flare pode ficar condicionada ao estado desse arranjo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "meio fail-safe para garantir caminho ao flare se a comutação falhar."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de comutação para IG de retaguarda quando se perde hydrocarbon blanketing.",
+      "pergunta": "Perdido o hydrocarbon blanketing, o tanque deixa de manter leve pressão positiva durante resfriamento noturno; as P/V não chegam a atuar e a tendência some quando o IG entra manualmente. Qual a causa primária?",
+      "resposta": "Falha da comutação para o IG de retaguarda",
+      "explicacao": "Nesse arranjo, a perda do gás de blanket deve ser absorvida pela retaguarda de IG para manter pressurização e excluir ar. Como a admissão manual de IG elimina o sintoma antes da atuação das P/V, faltou a comutação.",
+      "resposta_padrao": "Perda do hydrocarbon blanketing.",
+      "por_que_nao": "A perda da fonte inicial deveria ser absorvida pela retaguarda de IG; o sintoma decorre da comutação não ocorrida.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Em alguns arranjos, pode existir blanketing por hidrocarboneto, mas com necessidade de sistema de IG de retaguarda."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "para manter pressurização, acomodar expansão e contração do conteúdo, excluir ar"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o espaço de vapor sofre variações de pressão durante enchimento, esvaziamento e mudanças térmicas; por isso, o sistema precisa permitir respiração controlada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Função da via alternativa de ventilação durante teste ou indisponibilidade da P/V principal.",
+      "pergunta": "Com a P/V principal isolada para teste, pequenas mudanças térmicas passam a gerar alarmes de pressão, embora o IG permaneça estável; após reconfigurar o header de ventilação, o comportamento normal retorna. Qual a causa primária?",
+      "resposta": "Via alternativa de ventilação indisponível",
+      "explicacao": "Isolar a P/V principal não deveria retirar a capacidade de respirar. Como o IG estava estável e a normalização veio da reconfiguração do header, faltava a rota alternativa exigida durante falha ou teste da válvula principal.",
+      "resposta_padrao": "O isolamento da P/V principal para teste.",
+      "por_que_nao": "Esse estado exige uma via alternativa disponível; sem ela, o teste retira a respiração controlada do tanque.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses conjuntos não eliminam a necessidade de procedimentos de teste nem a necessidade de uma via alternativa para que a ventilação ocorra se a válvula principal falhar."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "da existência de rota confiável de ventilação ou alívio."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Papel do rompedor P/V de emergência como última salvaguarda da respiração do tanque.",
+      "pergunta": "Sob aquecimento solar, a pressão do tanque ultrapassa a faixa normal sem transferência de carga; a P/V principal não alivia e também não há atuação da proteção de emergência prevista. Qual elemento explica a perda da última salvaguarda?",
+      "resposta": "Rompedor de pressão e vácuo de emergência indisponível",
+      "explicacao": "O rompedor P/V de emergência existe como salvaguarda adicional quando a respiração normal falha. Se a P/V principal não alivia e a proteção de emergência também não responde, o elemento crítico perdido é o próprio rompedor.",
+      "resposta_padrao": "Válvula P/V principal travada fechada.",
+      "por_que_nao": "Isso explicaria a falha normal de respiração, mas não a ausência da salvaguarda de emergência observada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como salvaguarda adicional, pode ser previsto rompedor de pressão e vácuo de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tratado como elemento crítico à segurança e sujeito a testes e manutenção de rotina."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o espaço de vapor sofre variações de pressão durante enchimento, esvaziamento e mudanças térmicas; por isso, o sistema precisa permitir respiração controlada."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

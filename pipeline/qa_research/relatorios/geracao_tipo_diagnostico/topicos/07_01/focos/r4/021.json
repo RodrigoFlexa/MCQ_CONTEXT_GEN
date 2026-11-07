@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 21,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compensação provisória só vale como barreira se o canal remanescente for realmente independente.",
+      "pergunta": "Durante a manutenção de um transmissor de alta-alta, a compensação provisória usa o redundante com alarme alto. Numa oscilação breve do painel 24 Vcc, os dois canais ficam com qualidade ruim ao mesmo tempo, enquanto lógica e elemento final permanecem saudáveis. Qual a causa primária?",
+      "resposta": "Fonte de 24 Vcc comum aos dois canais de medição.",
+      "explicacao": "A compensação perde eficácia porque o canal remanescente não é independente: a mesma perturbação derruba a função indisponível e a medida compensatória, embora lógica e elemento final continuem íntegros.",
+      "resposta_padrao": "Falha do PLC ou do SIS.",
+      "por_que_nao": "A indisponibilidade aparece só nos dois canais de medição e coincide com a oscilação da mesma alimentação; lógica e elemento final não falham.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário avaliar se o risco residual pode ser controlado por compensações operacionais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "existe redundância independente;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma função degradada precisa ser tratada conforme sua criticidade"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer atuação parcial de uma função instrumentada pela perda de apenas uma perna final de resposta.",
+      "pergunta": "Na alta-alta de pressão, o bit da função entra, a válvula de bloqueio fecha, mas o blowdown associado não abre e a pressão cai bem mais devagar que no teste de referência. Sensores e lógica de detecção estão coerentes. Qual a causa primária?",
+      "resposta": "Ramo de blowdown da função indisponível.",
+      "explicacao": "A detecção e parte da resposta automática funcionam, mas a despressurização não. O padrão indica perda parcial da função instrumentada, localizada no caminho final de blowdown, e não falha do sensor ou ausência de trip.",
+      "resposta_padrao": "A função de alta-alta não atuou.",
+      "por_que_nao": "O bit da função entrou e a válvula de bloqueio fechou; a falha está na perna de resposta que deveria abrir o blowdown.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a função ainda atua integralmente, atua parcialmente ou está indisponível"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Intertravamento é a lógica que força uma ação de proteção quando uma condição definida ocorre"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma função degradada precisa ser tratada conforme sua criticidade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

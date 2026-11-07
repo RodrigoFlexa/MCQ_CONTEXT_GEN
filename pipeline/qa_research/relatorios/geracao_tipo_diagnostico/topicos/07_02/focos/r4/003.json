@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 4,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interação entre arquitetura SCADA e disponibilidade elétrica: perda de supervisão por ausência de alimentação ininterrupta na camada SCADA.",
+      "pergunta": "Na transferência automática para a fonte de contingência, controladores e switches industriais seguem operando, mas HMI central, historiador e clientes remotos reiniciam juntos e a supervisão some por cerca de um minuto. Qual a causa primária?",
+      "resposta": "SCADA alimentado fora da UPS.",
+      "explicacao": "A queda afeta só a camada de supervisão e coincide com a comutação de energia; controle e rede industrial permanecem ativos, indicando ausência de energia ininterrupta no SCADA.",
+      "resposta_padrao": "Falha na rede de supervisão.",
+      "por_que_nao": "Os elementos de rede e o controle permaneceram ativos; o sinal decisivo é o reboot simultâneo da camada SCADA exatamente na transferência elétrica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas SCADA dependem de energia confiável e ininterrupta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de revisar ativos e fluxos interdomínios após migração, removendo componentes legados da arquitetura.",
+      "pergunta": "Meses depois da migração do historiador, o firewall ainda registra tráfego periódico do servidor antigo para a supervisão; nenhum cliente o consulta e desligá-lo elimina o fluxo sem efeito operacional. Qual a causa primária?",
+      "resposta": "Historiador legado não descomissionado.",
+      "explicacao": "O ativo antigo continua conectado e gerando fluxo entre domínios sem função operacional remanescente, mostrando divergência entre a arquitetura planejada, os ativos conectados e os fluxos necessários.",
+      "resposta_padrao": "Malware no servidor antigo.",
+      "por_que_nao": "O fluxo desaparece ao retirar o ativo obsoleto e não há impacto operacional nem novos destinos, padrão mais compatível com integração legada mantida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade da barreira com a criticidade quando uma integração prevista para leitura ganha capacidade de escrita.",
+      "pergunta": "O conector analítico sempre só leu tendências; após atualização, setpoints passam a mudar a partir do mesmo endereço e pela mesma política liberada, sem login de operador nem sessão de engenharia. Qual a causa primária?",
+      "resposta": "Permissão de escrita no canal de integração.",
+      "explicacao": "O mesmo enlace antes usado para leitura passou a alterar setpoints sem uso das estações próprias de operação ou engenharia; a barreira deixou de ser compatível com a criticidade da função.",
+      "resposta_padrao": "Conta de operador comprometida.",
+      "por_que_nao": "Não há eventos de autenticação correspondentes, e a origem das mudanças é o próprio host integrador pelo fluxo já autorizado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudança de setpoint"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

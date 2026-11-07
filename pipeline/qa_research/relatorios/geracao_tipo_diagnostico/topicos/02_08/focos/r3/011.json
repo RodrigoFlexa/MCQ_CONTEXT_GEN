@@ -1,0 +1,83 @@
+{
+  "item": "02_08",
+  "foco": 11,
+  "rodada": 3,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de períodos estáveis e estratificação por vazão no monitoramento de headers.",
+      "pergunta": "Sem alarmes de instrumento, os registros do header mostram grande espalhamento mensal de pressão e temperatura. Quando se isolam trechos com derivadas próximas de zero e a mesma faixa de vazão, os pontos colapsam em curvas repetíveis. Qual causa primária gerou a variabilidade aparente?",
+      "resposta": "Mistura de faixas de vazão e períodos não estáveis na mesma análise",
+      "explicacao": "O bloco F diz que o monitoramento útil requer pressões, temperaturas, períodos estáveis e faixas de vazão. Ao misturar regimes e transientes no mesmo conjunto, a correlação física se perde artificialmente.",
+      "resposta_padrao": "Instrumentação inconsistente do header.",
+      "por_que_nao": "A repetibilidade das curvas quando os dados são segmentados por estabilidade e vazão mostra coerência das medições; o problema estava no tratamento dos dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento útil combina pressões, temperaturas e identificação de períodos estáveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "relacionar contrapressão no topo, pressão no separador e faixas de vazão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite de transferência de estudos de alívio quando a interação da malha de controle difere.",
+      "pergunta": "O modelo reaproveitado acerta patamares e testes manuais isolados. O pico extra no header só aparece quando recirculações automáticas fecham e uma válvula modulante reposiciona antes da abertura total da BDV. Qual causa primária invalida usá-lo como referência direta?",
+      "resposta": "Interação da malha de controle diferente da do caso de referência",
+      "explicacao": "Se patamar e teste isolado coincidem com o modelo, a hidráulica principal está coerente. O desvio surgir apenas com atuações automáticas aponta para não comparabilidade da malha de controle usada no caso transferido.",
+      "resposta_padrao": "BDV com abertura lenta.",
+      "por_que_nao": "Nos testes manuais isolados a BDV reproduz o perfil previsto; o pico inesperado surge só quando outras malhas atuam em conjunto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "resultados de um caso modelado não devem ser universalizados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a transferência para FPSO depende de fluidos, geometria, malha de controle e cenários de operação comparáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da comparabilidade de fluidos ao reaproveitar estudos de headers e KOD.",
+      "pergunta": "A contrapressão inicial coincide com o estudo reaproveitado, mas segundos depois a linha esfria, surge líquido e o KOD coleta muito mais que o previsto; layout e lógica são equivalentes. Qual causa primária invalida essa transferência?",
+      "resposta": "Composição mais condensável que a do caso de referência",
+      "explicacao": "A transferência do caso exige fluidos comparáveis. Se o fluido atual condensa mais com a queda de temperatura e pressão, aumenta o inventário líquido e a coleta no KOD além do previsto pelo estudo reaproveitado.",
+      "resposta_padrao": "Knock-out drum subdimensionado.",
+      "por_que_nao": "A divergência começa quando o resfriamento gera líquido adicional não representado no caso reaproveitado; o vaso recebe uma alimentação diferente da prevista.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inventário líquido, simultaneidade de fontes, variação temporal das vazões e compressibilidade do gás podem alterar pico de carga, contrapressão e quantidade de líquido efetivamente coletada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a transferência para FPSO depende de fluidos, geometria, malha de controle e cenários de operação comparáveis."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em dutos de gás com condensação da fração pesada, a queda de temperatura e pressão pode gerar líquido"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de sincronização antes do fechamento de bus tie entre barramentos energizados.",
+      "pergunta": "Ao fechar o bus tie entre duas seções já energizadas, surgem pico de corrente, forte transitório e perda de várias cargas, embora cada seção opere estável isoladamente. Qual a causa primária?",
+      "resposta": "fechamento do bus tie sem sincronização entre os barramentos",
+      "explicacao": "A interligação entre barramentos energizados exige controle rigoroso de condição elétrica. Se o fechamento ocorre fora de sincronismo, aparecem transitórios severos e pode haver perda ampla de cargas.",
+      "resposta_padrao": "O disjuntor de interligação está com defeito ou em curto.",
+      "por_que_nao": "Cada seção opera normalmente isolada; o evento aparece apenas na manobra de acoplamento entre barramentos energizados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Estado aberto ou fechado do bus tie altera níveis de curto-circuito e a base de coordenação seletiva.",
+      "pergunta": "Com o barramento normalmente seccionado, uma falta em alimentador era eliminada localmente. Depois que o bus tie passou a ficar fechado, a mesma falta passou a abrir o disjuntor do transformador, sem mudança de ajustes. Qual a causa primária?",
+      "resposta": "mudança da base de coordenação das proteções pelo bus tie fechado",
+      "explicacao": "O bus tie fechado cria caminhos adicionais de corrente de falta e altera níveis de curto-circuito, sensibilidades e tempos de atuação. Ajustes seletivos no barramento seccionado podem deixar de ser seletivos.",
+      "resposta_padrao": "O relé do alimentador está defeituoso.",
+      "por_que_nao": "A atuação indevida surgiu com a nova topologia, não com mudança no alimentador; o tie fechado alterou o comportamento elétrico do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a seletividade coordena a atuação entre dispositivos a montante e a jusante"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Coordenação da retaguarda de terra do primário com as proteções de alimentadores do barramento secundário.",
+      "pergunta": "Numa falta monofásica à terra em um alimentador do secundário, o relé de terra do primário abre a fonte antes do disjuntor do alimentador, embora não haja indicação diferencial no transformador. Qual a causa primária?",
+      "resposta": "descoordenação do relé de terra de retaguarda do primário com o alimentador",
+      "explicacao": "Nessa arquitetura, a retaguarda de terra do primário deve ser coordenada com a proteção de terra dos alimentadores do secundário. Sem essa coordenação, uma falta no alimentador derruba todo o barramento ou o transformador.",
+      "resposta_padrao": "Há defeito interno no transformador.",
+      "por_que_nao": "Sem atuação diferencial e com a ocorrência iniciada por uma falta no alimentador, o quadro é de perda de seletividade da retaguarda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos com transformadores em paralelo e secundários conectados por barramento interligado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Secundários interligados de transformadores em paralelo permitem retroalimentação por caminho alternativo.",
+      "pergunta": "Mesmo com o disjuntor primário de T1 aberto, seu secundário segue em tensão nominal e a corrente de T2 sobe para alimentar as cargas daquela seção. Qual a causa primária?",
+      "resposta": "retroalimentação pelo barramento interligado entre os secundários",
+      "explicacao": "Com transformadores em paralelo e secundários interligados, cargas podem ser alimentadas por caminho alternativo. A elevação de corrente em T2 mostra alimentação real da outra seção, não tensão residual.",
+      "resposta_padrao": "É apenas tensão induzida residual.",
+      "por_que_nao": "Tensão nominal sustentada com aumento de carga em T2 caracteriza alimentação efetiva por caminho alternativo, não acoplamento residual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos com transformadores em paralelo e secundários conectados por barramento interligado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permite alimentar cargas por caminhos alternativos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

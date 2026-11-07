@@ -1,0 +1,105 @@
+{
+  "item": "02_10",
+  "foco": 25,
+  "rodada": 1,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda do sinal confiável do PT pode mascarar sobrepressão real e impedir a ação corretiva do PIC.",
+      "pergunta": "A indicação de pressão no sistema permanece fixa no valor normal, o PIC não muda a saída, mas o manômetro local mostra subida contínua até a PSV aliviar. Qual é a causa primária?",
+      "resposta": "PT travado em leitura normal.",
+      "explicacao": "Se a pressão real sobe no campo e a PSV alivia enquanto a PV permanece fixa, o PIC está recebendo medição falsa; a falha está no PT, não na sintonia da malha.",
+      "resposta_padrao": "PIC mal sintonizado.",
+      "por_que_nao": "Sintonia ruim altera a resposta da malha, mas não mantém a PV congelada enquanto a pressão real sobe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No arranjo descrito, o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "degradação de casco, internos, conexões ou pontos de instrumentação pode alterar resposta do processo e confiabilidade da medição."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Concordância entre PT e indicação local, com controle estável em novo patamar, aponta para alteração indevida do alvo do PIC.",
+      "pergunta": "Separador antes estável em 8 barg passa a operar estável em 11 barg após intervenção no sistema; vazão e composição não mudaram, PT e manômetro local concordam, e a malha modula normalmente. O que explica esse novo patamar?",
+      "resposta": "Setpoint do PIC alterado indevidamente.",
+      "explicacao": "Com PT e indicação local concordando e a malha controlando sem instabilidade, a pressão mais alta é real e está sendo mantida como alvo; isso aponta para setpoint alterado do PIC.",
+      "resposta_padrao": "PT descalibrado para mais.",
+      "por_que_nao": "A indicação local confirma a pressão real alta; descalibração isolada do PT não faria o campo concordar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controlador e indicador de pressão, PIC, compara a pressão medida com a condição normal ou necessária para acionar medidas destinadas a reduzir riscos de alta ou baixa pressão."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O acompanhamento contínuo das variáveis de processo ajuda a perceber desvios de comportamento que podem indicar perda de desempenho do sistema."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A sequência de atuação distingue shutdown por ESDV do alívio por PSV em eventos de alta pressão.",
+      "pergunta": "Nos transientes de pressão, ocorre fechamento brusco de bloqueio e parada do vaso sempre abaixo da pressão de ajuste da PSV registrada; não há descarga pela PSV. Qual causa primária explica a interrupção?",
+      "resposta": "ESDV acionada pela lógica de alta pressão.",
+      "explicacao": "Isolamento brusco abaixo do ajuste documentado da PSV, sem alívio ao topo, caracteriza atuação da proteção de shutdown por alta pressão, não falha da válvula de segurança.",
+      "resposta_padrao": "PSV emperrada ou ajustada errado.",
+      "por_que_nao": "A pressão não atingiu o ajuste informado da PSV, e o sintoma é isolamento brusco, não falha de alívio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A válvula de desligamento de emergência, ESDV, é apresentada como elemento de isolamento de parte da planta quando há desvios de processo indicativos de risco, como descarga de produto, vazamento, alta pressão e outros problemas operacionais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas funções não são equivalentes: a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A documentação técnica deve permitir identificar volume, condições operacionais e de projeto, pressões de ajuste das proteções, instrumentação e correntes conectadas, conforme os requisitos aplicáveis à unidade offshore."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Restrição residual em ESDV pode elevar a contrapressão da saída e degradar o controle mesmo com medição correta.",
+      "pergunta": "Desde o último teste de shutdown, sem mudança relevante de alimentação, a pressão do separador subiu, o controlador passou a pedir mais abertura na rota de gás, mas a vazão dessa rota quase não responde; PT confere com o manômetro local. Qual causa explica melhor?",
+      "resposta": "ESDV da saída de gás parcialmente fechada.",
+      "explicacao": "Após teste de shutdown, pressão real alta com maior demanda de alívio e pouca resposta de vazão indica restrição residual na válvula de isolamento, elevando a contrapressão da saída.",
+      "resposta_padrao": "Setpoint do PIC elevado.",
+      "por_que_nao": "Se o setpoint tivesse subido, a malha não pediria mais alívio para reduzir a pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A válvula de desligamento de emergência, ESDV, é apresentada como elemento de isolamento de parte da planta quando há desvios de processo indicativos de risco, como descarga de produto, vazamento, alta pressão e outros problemas operacionais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas funções não são equivalentes: a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

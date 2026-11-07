@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 3,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que sistemas de informação conectados ao IACS também têm escopo de acesso crítico e podem degradar visibilidade/ disponibilidade mesmo sem escrita.",
+      "pergunta": "Telas travam e alarmes atrasam só quando o historiador corporativo reinicia a coleta; o processo segue sob controle local e o problema some quando ele passa a ler a réplica, não o ambiente operacional. Qual a causa primária?",
+      "resposta": "Historiador corporativo conectado diretamente à infraestrutura do IACS.",
+      "explicacao": "Como o problema aparece só quando o historiador lê o ambiente operacional e desaparece na réplica, a causa é o acesso direto desse sistema conectado ao IACS, afetando disponibilidade e visibilidade.",
+      "resposta_padrao": "Falha na rede de supervisão.",
+      "por_que_nao": "A relação exclusiva com a origem e com o caminho de coleta do historiador aponta acesso legítimo do sistema conectado, não defeito aleatório da rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir escopo indevido da própria estação de engenharia, e não do usuário, quando ela alcança também funções instrumentadas de segurança.",
+      "pergunta": "Sem login dedicado no SIS, tentativas de sessão de engenharia nesse sistema aparecem toda vez que a estação usada para manter o DCS entra na rede; removida a estação, o evento cessa. Qual a causa primária?",
+      "resposta": "Estação de engenharia do DCS com acesso também ao SIS.",
+      "explicacao": "Em IACS, o escopo de acesso inclui estações de engenharia e o SIS. As tentativas de sessão surgindo apenas com aquela estação online indicam alcance indevido da própria estação ao sistema de segurança.",
+      "resposta_padrao": "Defeito no SIS.",
+      "por_que_nao": "O evento depende da presença da estação do DCS; falha interna do SIS não seguiria esse vínculo externo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão, funções instrumentadas de segurança"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Inferir compartilhamento de identidade como falha primária de controle de acesso quando uma credencial nominativa de engenharia aparece em uso simultâneo interno.",
+      "pergunta": "Na troca de turno, a mesma credencial nominativa de engenharia aparece ativa em dois terminais internos quase ao mesmo tempo; depois surge alteração de lógica sem nova autorização. Qual a causa primária?",
+      "resposta": "Compartilhamento da credencial nominativa de engenharia.",
+      "explicacao": "Permissões de engenharia exigem rastreabilidade por pessoa. A mesma credencial nominativa ativa em dois terminais internos na passagem de turno indica compartilhamento da identidade, falha primária que permitiu a alteração sem responsabilização individual.",
+      "resposta_padrao": "Comprometimento externo da conta.",
+      "por_que_nao": "O uso simultâneo em terminais internos no momento da passagem de turno aponta repasse operacional da credencial, não intrusão remota.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de Automação e Controle Industrial (IACS), o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "conceder a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

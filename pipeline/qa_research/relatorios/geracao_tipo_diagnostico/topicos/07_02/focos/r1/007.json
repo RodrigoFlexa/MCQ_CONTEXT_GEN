@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "rodada": 1,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de ações em IACS depende de identidade nominal individual, não apenas de logs de acesso.",
+      "pergunta": "Durante intervenção aprovada de terceiro, a sessão ficou gravada, mas três técnicos usaram o mesmo login \"SUPORTE\". Surgiu alteração indevida em permissivo. Qual causa primária explica a impossibilidade de atribuição individual?",
+      "resposta": "Conta compartilhada sem identidade individual verificável.",
+      "explicacao": "Houve registro da sessão, mas o acesso não estava vinculado a uma pessoa específica. O elemento decisivo é a ausência de identidade nominal para cada técnico.",
+      "resposta_padrao": "Falta de registro de sessão.",
+      "por_que_nao": "A sessão foi gravada; o que faltou foi vincular cada ação a um usuário individual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "identidade individual verificável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Acesso de terceiros em IACS deve ter expiração compatível com a janela autorizada da atividade.",
+      "pergunta": "Sem falhas de autenticação, o mesmo técnico do fornecedor, com MFA válido e perfil correto, voltou a conectar-se semanas após concluir o serviço. Que causa de controle de acesso explica o acesso indevido?",
+      "resposta": "Ausência de validade temporal no acesso do terceiro.",
+      "explicacao": "Identidade e perfil estavam corretos; o acesso ocorreu porque a autorização permaneceu ativa além da intervenção prevista, em vez de expirar com a janela autorizada.",
+      "resposta_padrao": "Credencial do fornecedor comprometida.",
+      "por_que_nao": "O acesso foi feito pelo próprio técnico identificado e autenticado regularmente; o desvio está na autorização que não expirou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "dentro da janela autorizada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Privilégio mínimo deve limitar o alcance do perfil ao necessário para a tarefa aprovada, sobretudo em ativos críticos.",
+      "pergunta": "Pelos menus normais da estação, um técnico aprovado apenas para diagnosticar um analisador conseguiu alterar parâmetros do sistema elétrico e permissivos de processo, sem elevação temporária. Qual causa explica essa exposição?",
+      "resposta": "Privilégio mínimo não aplicado ao perfil concedido.",
+      "explicacao": "A conta era válida e a atividade existia, mas as permissões excediam o necessário para a tarefa. O problema central é direito excessivo sobre funções críticas.",
+      "resposta_padrao": "Falha de segmentação de rede.",
+      "por_que_nao": "As alterações foram feitas pelas funções já liberadas na própria aplicação; o excesso estava na permissão da conta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "privilégio mínimo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Revisão periódica de acessos ativos é o controle que detecta e remove autorizações antigas ainda habilitadas.",
+      "pergunta": "Várias contas ativas pertencem a contratados sem uso há meses, inclusive em ativos críticos; há aprovações antigas, mas nenhuma recertificação recente dos acessos. Qual causa primária melhor explica o achado?",
+      "resposta": "Ausência de revisão periódica dos acessos ativos.",
+      "explicacao": "A recorrência em múltiplas contas antigas indica falha sistêmica de recertificação, não um erro isolado de encerramento. O controle contínuo de acessos ficou ausente.",
+      "resposta_padrao": "Falha pontual no desligamento de usuários.",
+      "por_que_nao": "O problema aparece em várias contas com autorizações antigas, sinal de ausência de revisão contínua dos acessos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "revisão periódica dos acessos ativos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A eficácia desses controles não é avaliada apenas pela existência de procedimentos"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

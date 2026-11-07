@@ -1,0 +1,69 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 4,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir omissão de desenergização automática na matriz de causa e efeito de falha no elemento final.",
+      "pergunta": "Dois detectores de gás entram em alto-alto; alarme geral e fechamento de dampers ocorrem, mas o log do controlador não registra comando de desligamento para o motor não Ex da área, que desliga normalmente por ESD manual. Qual causa primária explica esse padrão?",
+      "resposta": "matriz de causa e efeito sem desenergização desse motor por gás",
+      "explicacao": "A detecção foi confirmada e outras ações automáticas ocorreram, mas não houve comando lógico para esse motor. Como o desligamento funciona por ESD manual, a causa está na matriz que não inclui essa desenergização por gás.",
+      "resposta_padrao": "Falha do contator do motor.",
+      "por_que_nao": "O contator atua no ESD manual, e o controlador nem chega a emitir comando de desligamento no evento de gás.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "detecção de gás pode iniciar uma sequência escalonada de respostas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "desconexão de fontes de energia de equipamentos inadequados à área classificada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar omissão do comando de dilúvio na matriz do módulo a partir de atuação parcial das demais respostas automáticas.",
+      "pergunta": "No teste integrado com a mesma combinação de detectores que aciona dilúvio em módulos equivalentes, este módulo gera ESD e para o HVAC, mas o controlador não emite comando para a válvula de dilúvio; solenóide e válvula abrem no teste local. Qual causa primária?",
+      "resposta": "matriz de causa e efeito sem comando de dilúvio para esse módulo",
+      "explicacao": "A combinação de entradas já confirma o evento e outras respostas automáticas saem normalmente. Sem comando do controlador e com solenóide e válvula aprovadas localmente, a causa primária é a ausência do dilúvio na matriz desse módulo.",
+      "resposta_padrao": "Falha da válvula de dilúvio.",
+      "por_que_nao": "A válvula e a solenóide funcionam no teste local, e o controlador não chega a enviar comando de abertura no teste integrado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "ausência de dilúvio em módulos específicos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

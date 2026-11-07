@@ -1,0 +1,105 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Classificação funcional de eventos para apuração correta de falhas e MTBF.",
+      "pergunta": "O MTBF caiu após a integração do historiador, mas no período houve só uma perda real de função; o restante foram mudanças de modo, permissivos e resets automáticos. Qual é a causa primária dessa queda aparente?",
+      "resposta": "Classificação de mudanças de estado como falhas",
+      "explicacao": "O número de falhas foi inflado por mensagens que não indicam perda nem recuperação da função. Como o MTBF usa falhas no período, a classificação errada derruba o indicador.",
+      "resposta_padrao": "Houve aumento real de falhas do equipamento.",
+      "por_que_nao": "No período ocorreu só uma perda de função; os demais registros não caracterizam falha funcional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre MTTR de reparo e tempo total indisponível na apuração de indicadores.",
+      "pergunta": "As horas de intervenção em campo ficaram estáveis, mas o MTTR dobrou quando a medição passou a contar da falha até o encerramento da ordem, incluindo espera de material. O que passou a causar esse MTTR?",
+      "resposta": "Inclusão de esperas logísticas e administrativas no MTTR",
+      "explicacao": "O tempo de reparo em campo não mudou; o indicador passou a somar espera de material e fechamento administrativo. Isso eleva o MTTR reportado sem piora da execução do reparo.",
+      "resposta_padrao": "A equipe demorou mais para reparar.",
+      "por_que_nao": "As horas efetivas de intervenção permaneceram iguais; mudou o intervalo contabilizado no indicador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador, enquanto o tempo total indisponível pode incluir esperas logísticas e administrativas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Inadequação de MTBF em horas para itens cuja falha relevante é por demanda.",
+      "pergunta": "Num gerador de emergência em standby, a taxa de partidas malsucedidas nos testes não mudou, mas o \"MTBF em horas\" subiu muito num trimestre com mais horas de teste contínuo. Qual causa explica esse ganho aparente?",
+      "resposta": "Uso de MTBF em horas para falha por demanda",
+      "explicacao": "O tempo acumulado cresceu com mais teste contínuo, mas a probabilidade de falhar na partida não melhorou. Para esse item, a falha relevante é baseada em demanda.",
+      "resposta_padrao": "A confiabilidade aumentou com mais testes.",
+      "por_que_nao": "A proporção de partidas malsucedidas permaneceu a mesma; só aumentaram as horas usadas no cálculo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "distinguir taxas de falha baseadas em tempo das baseadas em demanda"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de populações tecnicamente compatíveis para comparar MTBF entre fabricantes.",
+      "pergunta": "Comparando válvulas motorizadas, um fabricante passou a parecer pior no MTBF só depois que o relatório reuniu no mesmo cálculo atuadores de ciclo frequente e válvulas que quase só atuam em testes e demandas. Qual causa explica essa diferença?",
+      "resposta": "Mistura de subpopulações tecnicamente incompatíveis no MTBF",
+      "explicacao": "Regimes de atuação diferentes geram bases de falha diferentes. Ao misturar itens de ciclo frequente com itens testados por demanda, o MTBF deixa de ser comparável entre fabricantes.",
+      "resposta_padrao": "O fabricante comparado é menos confiável.",
+      "por_que_nao": "Os conjuntos reunidos não têm o mesmo regime de atuação, então o indicador agregado não é comparável.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "distinguir taxas de falha baseadas em tempo das baseadas em demanda"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

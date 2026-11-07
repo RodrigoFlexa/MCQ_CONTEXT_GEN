@@ -1,0 +1,87 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 4,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A priorização só altera custo ou dimensionamento quando há restrição logística ativa; com capacidade ociosa, a fila é irrelevante.",
+      "pergunta": "Trocar FIFO por prioridade crítica mudou a sequência do manifesto, mas não alterou datas de saída, backlog, ocupação média nem custo; todas as requisições já embarcavam na primeira janela disponível. Qual a causa primária dessa insensibilidade?",
+      "resposta": "Capacidade logística ociosa em todas as janelas.",
+      "explicacao": "Sem restrição vinculante de embarcação, janela ou capacidade, mudar a ordem de atendimento não muda o resultado. A priorização só pesa quando existe disputa real pelos recursos logísticos.",
+      "resposta_padrao": "Penalidades de atraso baixas.",
+      "por_que_nao": "Se todas as requisições já embarcam na primeira janela e não há backlog, a penalidade nem chega a atuar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a política de prioridade altera o resultado porque muda quais demandas serão atendidas primeiro quando há restrição de embarcações, janelas operacionais ou capacidade logística."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O resultado depende da demanda, das penalidades, das capacidades e das janelas adotadas"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudar a fila de embarque não resolve atraso quando o gargalo está a montante, no lead time de suprimento até a base.",
+      "pergunta": "Os sobressalentes que restauram função passaram a ter prioridade no cais, mas continuam chegando ao campo depois da necessidade; nos registros, o maior intervalo fica entre a emissão do pedido e a chegada à base, não entre a chegada à base e o embarque. Qual a causa primária do atraso recorrente?",
+      "resposta": "Lead time de suprimento até a base.",
+      "explicacao": "A prioridade no embarque já está funcionando. Como a maior espera ocorre antes da disponibilidade na base, o atraso nasce no ressuprimento, não no sequenciamento offshore.",
+      "resposta_padrao": "Critério FIFO no embarque.",
+      "por_que_nao": "O padrão observado mostra que, quando o item chega à base, ele já segue na primeira oportunidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a política de prioridade altera o resultado porque muda quais demandas serão atendidas primeiro"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "selecionar a estratégia exige observar pelo menos quatro variáveis: frequência de consumo, impacto da falta, prazo de reposição e possibilidade de consolidação da demanda."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Penalidades muito altas para demandas críticas podem justificar viagem extra e menor ocupação média para reduzir custo total.",
+      "pergunta": "Depois da nova priorização, materiais cuja falta interrompe produção deixaram de atrasar e o custo total caiu, embora tenha surgido uma saída extra com convés folgado; mar, tonelagem mensal e tempos de liberação não mudaram, e os atrasos remanescentes ficaram só em consumíveis rotineiros. Qual causa primária explica o novo dimensionamento?",
+      "resposta": "Penalidade elevada por atraso dos materiais de perda de produção.",
+      "explicacao": "Quando o custo da espera é muito maior para cargas críticas, passa a ser economicamente coerente antecipar saídas parciais para elas e empurrar atrasos para itens de baixa consequência.",
+      "resposta_padrao": "Capacidade semanal de carga insuficiente.",
+      "por_que_nao": "Se o gargalo fosse físico, as saídas extras tenderiam a sair saturadas; aqui elas surgem com folga para evitar atraso crítico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Priorizar demandas críticas pode mudar o dimensionamento e a utilização da frota em relação ao atendimento por ordem de chegada, FIFO."
+        },
+        {
+          "bloco": "F",
+          "trecho": "penalidades elevadas por atraso reforçaram o valor de critérios de prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

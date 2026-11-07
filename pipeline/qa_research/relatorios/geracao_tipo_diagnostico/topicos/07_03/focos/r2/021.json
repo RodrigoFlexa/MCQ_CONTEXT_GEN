@@ -1,0 +1,113 @@
+{
+  "item": "07_03",
+  "foco": 21,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que o MTTR médio pode mascarar dispersão relevante para planejamento de janelas e recursos.",
+      "pergunta": "O MTTR médio quase não mudou, a mediana ficou estável, mas cresceram as intervenções que estouram a janela por poucos reparos muito longos. Qual causa primária torna esse indicador enganoso para planejamento?",
+      "resposta": "Cauda longa do MTTR escondida pela média",
+      "explicacao": "Poucos reparos extremos aumentam o impacto operacional sem alterar muito média e mediana. O valor médio isolado mascara a dispersão relevante para programar janelas e recursos.",
+      "resposta_padrao": "Houve piora geral da mantenabilidade da equipe.",
+      "por_que_nao": "Se a piora fosse geral, a mediana e a maioria dos reparos também subiriam, não só poucos casos extremos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "MTBF e MTTR resumem comportamento observado, mas podem esconder dispersão"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar o limite do uso isolado de indicadores médios de confiabilidade quando a perda depende da recorrência e do momento das falhas.",
+      "pergunta": "Dois trens tiveram o mesmo MTBF e a mesma disponibilidade observada no semestre. Mesmo assim, um respondeu por quase toda a perda de produção, concentrada em várias interrupções curtas nas horas de maior vazão. Qual causa primária explica a divergência?",
+      "resposta": "Uso isolado de indicadores médios de confiabilidade",
+      "explicacao": "MTBF e disponibilidade média não capturam bem recorrência concentrada nem oportunidade perdida. Vários eventos curtos em momentos críticos podem gerar LPO muito maior com médios semelhantes.",
+      "resposta_padrao": "O trem com mais perda é menos confiável.",
+      "por_que_nao": "Os indicadores médios iguais afastam piora global; a diferença aparece no agrupamento temporal dos eventos e no impacto produtivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade observada relaciona o tempo apto à operação com o tempo total considerado na base de apuração."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pequenas perturbações sucessivas podem acumular perda de produção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "MTBF e MTTR resumem comportamento observado, mas podem esconder dispersão, mudanças de regime"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Atribuir a perda de função ao nível funcional correto no histórico, evitando imputar falhas comuns de suporte aos equipamentos alimentados.",
+      "pergunta": "Várias bombas de serviços diferentes passaram a “falhar” e “recuperar” no mesmo segundo sempre que o mesmo alimentador abriu; nenhuma exigiu reparo local. Qual causa primária gerou esse histórico de confiabilidade?",
+      "resposta": "Trip do alimentador comum lançado como falha das bombas",
+      "explicacao": "A coincidência exata dos eventos, sem sintomas locais e com retorno imediato após energização, indica perda de suporte comum registrada indevidamente como falha individual de cada bomba.",
+      "resposta_padrao": "Ocorreram falhas elétricas simultâneas nas bombas.",
+      "por_que_nao": "Sem intervenção local e com recuperação imediata ao retorno da alimentação, não há evidência de falha própria em cada equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso evita combinar em um mesmo número equipamentos, regimes ou funções que falham por mecanismos diferentes."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir etapas de um mesmo reparo de novos eventos de falha para não distorcer o MTBF.",
+      "pergunta": "Um colapso do compressor virou três “falhas” no relatório: isolamento, troca do selo e ajuste final. Não houve retorno à função entre essas etapas. Qual causa primária derrubou artificialmente o MTBF?",
+      "resposta": "Fragmentação de uma única falha em múltiplos eventos registrados",
+      "explicacao": "Sem recuperação da função entre as etapas, houve um único evento com várias atividades de reparo. Dividi-lo em várias falhas infla o denominador do MTBF.",
+      "resposta_padrao": "Foram falhas repetitivas durante o reparo.",
+      "por_que_nao": "Sem retorno à função entre as etapas, tratava-se do mesmo evento de reparo, não de novas perdas de função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        },
+        {
+          "bloco": "F",
+          "trecho": "divide-se o tempo de operação acumulado pelo número de falhas no período"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

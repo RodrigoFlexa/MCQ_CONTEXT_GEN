@@ -1,0 +1,105 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A exposição explorável de dispositivos OT depende do caminho de acesso; internet direta muda o risco mesmo com firmware igual.",
+      "pergunta": "Tentativas de conexão de IPs públicos aparecem repetidamente em um gateway remoto; controladores idênticos, com o mesmo firmware, seguem sem eventos atrás do firewall interno. Qual causa primária explica a diferença de exposição?",
+      "resposta": "Acessibilidade direta à internet do gateway remoto.",
+      "explicacao": "Se equipamentos idênticos permanecem sem eventos quando isolados, o fator decisivo não é o firmware em si, mas o caminho de acesso. Tráfego vindo de IPs públicos indica exposição direta do gateway.",
+      "resposta_padrao": "Vulnerabilidade na pilha TCP/IP embarcada do equipamento.",
+      "por_que_nao": "A mesma fraqueza pode existir nos demais equipamentos; o sinal discriminante é que só o ativo acessível da internet recebe tráfego público.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A propagação de incidentes da TI para a automação indica falha de segregação entre rede corporativa e rede de controle.",
+      "pergunta": "Após ransomware em estações administrativas, surgem varreduras TCP em HMIs e PLCs; não houve acesso remoto externo nem uso recente de mídia removível. Qual causa primária permitiu que o tráfego da TI alcançasse a automação?",
+      "resposta": "Ausência de segregação por firewall entre rede corporativa e rede de controle.",
+      "explicacao": "Sem acesso externo ativo e sem mídia removível recente, a origem nas estações administrativas aponta para caminho lateral existente entre TI e OT. O alcance aos ativos de automação depende dessa falta de isolamento.",
+      "resposta_padrao": "Pendrive contaminado na área operacional.",
+      "por_que_nao": "O tráfego anômalo partiu da sub-rede administrativa e o enunciado exclui uso recente de mídia removível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "minimizar a exposição de rede dos sistemas de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em OT, correções só devem ser aplicadas quando compatíveis com a versão homologada pelo fornecedor.",
+      "pergunta": "Downloads para controladores passam a falhar e o software de engenharia fecha ao abrir projeto logo após atualização de segurança da estação; outras aplicações da rede seguem normais e não há sinais de atividade maliciosa. Qual causa primária?",
+      "resposta": "Patch de segurança incompatível com a versão homologada do software de engenharia.",
+      "explicacao": "A correlação temporal com a atualização, somada à normalidade da rede e ausência de indícios de ataque, aponta para incompatibilidade introduzida pelo patch. Em automação, correções dependem de compatibilidade do fornecedor.",
+      "resposta_padrao": "Falha de rede intermitente.",
+      "por_que_nao": "As demais aplicações seguem normais e a anomalia começou imediatamente após a atualização da estação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter patches e estratégias de remediação com fornecedores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A própria contenção pode ser a causa do agravamento quando corta um conduíte que sustenta funções essenciais de controle e proteção.",
+      "pergunta": "Durante a contenção de uma suspeita digital, o tráfego anômalo cessa no mesmo instante em que HMIs perdem comando e o estado do ESD fica indisponível; antes disso, o processo estava estável. Qual causa primária do agravamento?",
+      "resposta": "Bloqueio do conduíte de rede que sustentava controle e indicação do ESD.",
+      "explicacao": "A simultaneidade entre o fim do tráfego e a perda de comando/indicação mostra que a ação de contenção removeu um caminho também essencial à operação. Em OT, isolamento sem mapear dependências pode derrubar salvaguardas.",
+      "resposta_padrao": "O ataque derrubou o sistema de controle.",
+      "por_que_nao": "Os sintomas críticos aparecem exatamente quando a contenção é aplicada, indicando efeito da própria ação sobre dependências operacionais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode ser inadequada se provocar perda de controle do processo ou indisponibilidade de salvaguardas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

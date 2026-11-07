@@ -1,0 +1,65 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 3,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da assinatura do controle por bandas quando a alimentação é interrompida.",
+      "pergunta": "Com a alimentação zerada por teste, o nível cai, mas a vazão de saída fica quase constante e a válvula mal se move até cruzar o limite inferior; então a correção é rápida. Qual causa explica esse comportamento?",
+      "resposta": "lógica de controle por bandas da malha de nível",
+      "explicacao": "Com alimentação interrompida, a saída fica no valor médio estimado enquanto o nível permanece na banda; só ao cruzar o limite inferior entra a ação rápida. O padrão é da estratégia, não do elemento final.",
+      "resposta_padrao": "Válvula de saída travada.",
+      "por_que_nao": "Quando o nível cruza o limite, ela atua rapidamente; o atraso só existe dentro da banda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida, que pode ser implementada por PID, para retornar o inventário à faixa permitida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da falha de comutação para ação rápida na lógica de controle por bandas.",
+      "pergunta": "Confirmado por indicação local, o nível passa da banda alta, mas a vazão de saída fica no mesmo valor médio e a válvula quase não se move; em manual, a válvula responde normalmente. Qual é a causa primária?",
+      "resposta": "falha na comutação para ação rápida do controle por bandas",
+      "explicacao": "Fora da banda, a lógica deveria abandonar a vazão média e entrar em ação rápida por PID. Como a válvula responde em manual, o elemento final não é o limitante; o defeito está na comutação do modo de controle.",
+      "resposta_padrao": "Estimativa errada da vazão média de entrada.",
+      "por_que_nao": "Esse erro deriva o nível dentro da faixa, mas fora dela deveria haver ação rápida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida, que pode ser implementada por PID, para retornar o inventário à faixa permitida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as malhas devem estabilizar o inventário preservando a separação e as restrições a jusante"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

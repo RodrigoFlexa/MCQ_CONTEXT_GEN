@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "rodada": 4,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda de hardening quando a substituição de hardware restaura configuração padrão e reexpõe um serviço desnecessário.",
+      "pergunta": "Depois da troca de CPU de um gateway, a interface web antes inacessível voltou a responder a partir da rede corporativa; regras de firewall e endereçamento não mudaram. Qual causa primária reabriu a exposição?",
+      "resposta": "Configuração padrão com serviço web desnecessário habilitado.",
+      "explicacao": "Se rota, endereçamento e firewall não mudaram, a nova acessibilidade veio da configuração do próprio ativo. Hardening reduz a superfície de ataque ao remover serviços não necessários.",
+      "resposta_padrao": "Liberação indevida no firewall.",
+      "por_que_nao": "Sem mudança de regras ou rota, o sinal decisivo é o reaparecimento do serviço no host substituído.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "hardening funciona porque remove serviços desnecessários, restringe rotas de acesso, reduz a chance de varredura externa"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "minimizar exposição de rede, evitar acessibilidade direta pela internet"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar remediação aplicada na camada errada quando a vulnerabilidade persiste no módulo de comunicação separado do firmware principal.",
+      "pergunta": "Atualizaram o firmware principal de vários controladores para tratar uma CVE, mas o teste de exposição continuou positivo apenas nos que usam placa de comunicação dedicada; lógica e remotas permaneceram estáveis. Qual causa primária?",
+      "resposta": "Firmware da placa de comunicação permaneceu vulnerável.",
+      "explicacao": "A fraqueza pode estar no firmware do componente de comunicação, separado do firmware principal. Atualizar a CPU não corrige o módulo de rede afetado.",
+      "resposta_padrao": "Instalação incompleta do patch no controlador.",
+      "por_que_nao": "A persistência restrita aos ativos com placa dedicada indica alvo errado de remediação, não falha genérica de instalação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o componente instalado estiver afetado, a correção deve ser avaliada"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir superseleção de ativos vulneráveis causada por classificação por família de produto sem verificar o componente realmente presente.",
+      "pergunta": "O inventário marcou toda uma família de controladores como vulnerável, mas os ensaios só reproduzem a falha nos modelos com interface IP; os seriais não expõem o serviço citado. Qual causa primária levou à superseleção?",
+      "resposta": "Classificação pela família sem confirmar o componente afetado.",
+      "explicacao": "Boletins podem atingir apenas parte de uma família. O padrão entre modelos IP e seriais mostra que o enquadramento correto depende do componente ou serviço realmente presente.",
+      "resposta_padrao": "Falha do scanner de vulnerabilidades.",
+      "por_que_nao": "O comportamento acompanha a presença do componente de comunicação, não uma limitação de detecção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

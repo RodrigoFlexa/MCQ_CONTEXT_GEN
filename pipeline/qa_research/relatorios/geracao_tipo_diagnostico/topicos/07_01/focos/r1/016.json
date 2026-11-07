@@ -1,0 +1,117 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar equipamento saudável localmente de equipamento efetivamente integrado ao PLC.",
+      "pergunta": "Desde a partida, um analisador em rede atualiza leitura e autodiagnóstico no painel local, mas o PLC nunca recebeu valor nem estado desse equipamento. Qual é a causa primária?",
+      "resposta": "Interface de comunicação do analisador com o PLC não configurada.",
+      "explicacao": "Leitura e autodiagnóstico locais mostram que o equipamento está ativo. Como o PLC nunca recebeu valor nem estado desde a partida, a falha primária está na integração funcional da comunicação com o controlador.",
+      "resposta_padrao": "Analisador defeituoso.",
+      "por_que_nao": "Se o defeito fosse do analisador, a leitura local e o autodiagnóstico não permaneceriam atualizando normalmente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista"
+        },
+        {
+          "bloco": "F",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar a perda na interface entre controlador local de pacote e sistema central, distinguindo-a de falha de campo.",
+      "pergunta": "Os valores de um pacote continuam mudando no controlador local e a sequência automática segue operando, porém no DCS ficam congelados e o comando remoto some apenas para esse pacote. Qual a causa primária?",
+      "resposta": "Perda do link de comunicação entre o controlador local do pacote e o PLC.",
+      "explicacao": "Medições e lógica local seguem ativas, descartando falha geral do pacote e dos instrumentos. O sintoma combina perda de atualização, de estado e de comando remoto na camada de integração com o sistema central.",
+      "resposta_padrao": "Falha dos instrumentos do pacote.",
+      "por_que_nao": "Os instrumentos continuam alimentando o controlador local e a sequência automática permanece funcionando, então a perda está no enlace de integração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir perda de alimentação de remota de I/O de falha de rede pela ausência de função local.",
+      "pergunta": "Várias variáveis de uma remota desaparecem juntas, os comandos não chegam, a porta do switch segue ativa, mas o módulo remoto está sem display e sem resposta local. Qual causa primária explica o sintoma?",
+      "resposta": "Falha na alimentação da remota de I/O.",
+      "explicacao": "A perda simultânea de sinais e comandos pode sugerir rede, mas remota apagada e sem resposta local mostra comprometimento da própria remota. Com switch ativo, o elemento decisivo é a alimentação do módulo.",
+      "resposta_padrao": "Falha de rede.",
+      "por_que_nao": "Rede indisponível não explica módulo remoto apagado e sem lógica local quando a porta do switch permanece ativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda oculta de redundância quando a falha aparece somente na comutação para o canal reserva.",
+      "pergunta": "Na operação normal, supervisão e comando permanecem disponíveis; quando é testada a comutação para o canal reserva da rede, tudo se perde até voltar ao principal. Qual a causa primária?",
+      "resposta": "Canal secundário da rede redundante indisponível.",
+      "explicacao": "Se o serviço se perde apenas no failover, o canal principal está funcional. O teste expõe que não há caminho alternativo efetivo, portanto a redundância de rede está degradada no canal reserva.",
+      "resposta_padrao": "Oscilação momentânea de comunicação.",
+      "por_que_nao": "O sintoma só aparece na transferência planejada, o que caracteriza indisponibilidade do caminho redundante e não instabilidade aleatória do canal principal.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 3,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Gestão de ativos na arquitetura segmentada: reconhecer um ponto de engenharia fora do inventário pelo padrão de comunicação com PLCs.",
+      "pergunta": "Nos logs do switch da rede de controle, um MAC ausente do inventário aparece de forma persistente na mesma porta e abre sessões nas portas de programação de vários PLCs; a estação oficial não foi usada. Qual a causa primária?",
+      "resposta": "Estação de engenharia não inventariada conectada à rede de controle",
+      "explicacao": "A gestão de ativos deve cobrir os sistemas conectados. Um MAC persistente fora do inventário, usando portas de programação com vários PLCs, caracteriza um ponto de engenharia efetivamente conectado fora do escopo aprovado.",
+      "resposta_padrao": "Comprometimento da estação oficial de engenharia.",
+      "por_que_nao": "A origem é outro MAC, em outra porta física, e a estação autorizada permaneceu sem uso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação deve verificar gestão de ativos, competências, configuração e eficácia dos controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Eficácia de controles interdomínios: diagnosticar objeto de origem amplo demais em regra de firewall.",
+      "pergunta": "Uma regra criada para um único servidor da DMZ começa a liberar acessos de vários hosts da mesma sub-rede corporativa à supervisão; nos logs, todos batem na mesma política e a topologia não mudou. Qual a causa primária?",
+      "resposta": "Objeto de origem definido como sub-rede na regra do firewall",
+      "explicacao": "Se a política pensada para um único servidor casa com vários IPs da mesma sub-rede, o objeto de origem foi definido amplo demais, tornando a barreira incompatível com a criticidade envolvida.",
+      "resposta_padrao": "Falha do firewall interdomínios.",
+      "por_que_nao": "O equipamento filtra normalmente; o indício decisivo é a mesma regra casar com vários IPs da sub-rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "configuração e eficácia dos controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

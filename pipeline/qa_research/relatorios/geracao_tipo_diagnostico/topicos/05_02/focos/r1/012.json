@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Segregação elétrica real entre canais redundantes de supervisão.",
+      "pergunta": "Falhando apenas a UPS A, as duas estações master do sistema de supervisão desenergizam ao mesmo tempo, embora o arranjo previsse redundância. Qual causa primária explica essa perda simultânea?",
+      "resposta": "Alimentação comum das duas estações master pela UPS A",
+      "explicacao": "Se a falha de uma única UPS derruba simultaneamente os dois canais master, a redundância é apenas nominal. A causa primária é a alimentação comum, que elimina a independência entre canais.",
+      "resposta_padrao": "Falha simultânea das duas estações master.",
+      "por_que_nao": "A coincidência com a falha isolada de uma única UPS caracteriza causa comum na alimentação, não dois defeitos independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso reduziu a independência entre canais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de bloqueio lógico oculto que impede o fechamento do disjuntor do gerador de emergência na recomposição.",
+      "pergunta": "No blackout total, o gerador de emergência parte e permanece apto mecanicamente, mas seu disjuntor não se mantém fechado em cada tentativa durante o reboot do controle; sem bateria, isso persiste. Qual a causa primária?",
+      "resposta": "Comando de trip mantido pela lógica de controle ao disjuntor",
+      "explicacao": "Com o gerador mecanicamente disponível e a recusa ocorrendo repetidamente durante o reboot sem bateria, a limitação está no comando. O caso descrito aponta trip contínuo enviado pela lógica de controle.",
+      "resposta_padrao": "Defeito no disjuntor do gerador de emergência.",
+      "por_que_nao": "A repetição apenas no reboot sem bateria aponta comando lógico persistente, não falha mecânica do disjuntor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Permissivo específico para back feeding na recomposição parcial a partir da geração de emergência.",
+      "pergunta": "A geração de emergência energiza normalmente seu próprio quadro, mas o painel de cargas essenciais que deveria ser realimentado segue desenergizado. Geradores principais estão inoperantes, disjuntores abertos e não há sobrecarga. Qual causa primária explica o impasse?",
+      "resposta": "Chave seletora do painel de essenciais fora de realimentação",
+      "explicacao": "No back feeding, fontes isoladas e geradores principais indisponíveis não bastam. Sem a seletora do painel de cargas essenciais na posição de realimentação, o permissivo para energizar o trecho recuperável não é atendido.",
+      "resposta_padrao": "Capacidade insuficiente do gerador de emergência.",
+      "por_que_nao": "Sem sobrecarga nem tentativa de sustentação de carga, o bloqueio ocorre no permissivo de realimentação, antes do limite de capacidade.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "essa realimentação só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste, e com a chave seletora do painel de cargas essenciais posicionada para realimentação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ela depende de permissivos, isolamento adequado das fontes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

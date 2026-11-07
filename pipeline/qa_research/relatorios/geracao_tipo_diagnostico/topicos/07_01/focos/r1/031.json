@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 31,
+  "rodada": 1,
+  "contexto": {
+    "A1": 30,
+    "F": 31,
+    "A2": 32
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar eventos de mudança de estado de alarmes acionáveis durante sequências e comissionamento.",
+      "pergunta": "Na partida de um circuito em teste com N2, buzina e reconhecimento disparam a cada abertura de válvula, mudança de permissivo e partida de auxiliar; a sequência termina correta e as variáveis seguem estáveis. Qual causa primária explica essa inundação?",
+      "resposta": "Eventos de mudança de estado configurados como alarmes.",
+      "explicacao": "As transições são esperadas na sequência e precisam de registro, não de ação imediata. Anunciá-las como alarmes gera pseudo-alarmes e disputa atenção com os alarmes realmente acionáveis.",
+      "resposta_padrao": "Há instabilidade do processo na partida.",
+      "por_que_nao": "A sequência fecha corretamente e as variáveis seguem estáveis; o que cresce são anúncios de transições normais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "evento é uma mudança de estado registrada para análise, sem demanda de ação imediata."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando ambos são configurados de forma semelhante, informações que deveriam apenas ser registradas passam a competir por atenção com alarmes realmente acionáveis."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação antecipada permite testar a lógica de regeneração"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer priorização indevida de avisos sem ação imediata como causa de degradação da resposta operacional.",
+      "pergunta": "Sem alteração no alarme crítico de pressão, novas mensagens de disponibilidade, modo e fim de curso passaram a usar a mesma buzina e prioridade; numa anormalidade real, o operador demora a localizar o único anúncio acionável. Qual causa primária?",
+      "resposta": "Avisos sem ação imediata priorizados como alarmes.",
+      "explicacao": "A prioridade deve refletir consequência e resposta esperada. Se mensagens rotineiras recebem o mesmo tratamento do alarme crítico, competem com ele e produzem pseudo-alarmes.",
+      "resposta_padrao": "O alarme crítico foi configurado com prioridade baixa.",
+      "por_que_nao": "O comportamento piorou sem mudança nele; as novas mensagens é que passaram a competir no mesmo nível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A racionalização de alarmes deve avaliar causa, consequência, prioridade e resposta esperada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a configuração de alarmes precisa associar cada anúncio a uma ação esperada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "aumenta o tempo de resposta"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir alarmes iniciadores de estados consequenciais de trip que deveriam apenas ser registrados.",
+      "pergunta": "Durante o teste funcional de um trip, a causa iniciadora é detectada e a atuação automática ocorre, mas a lista fica tomada por contator aberto, permissivo removido e fins de curso, todos com reconhecimento obrigatório. Qual causa primária do mascaramento?",
+      "resposta": "Estados consequenciais do trip configurados como alarmes.",
+      "explicacao": "Após o trip, esses sinais são efeitos esperados da atuação e úteis para análise. Quando anunciados como alarmes, enterram o anúncio que realmente exigia resposta do operador.",
+      "resposta_padrao": "A lógica do trip está defeituosa.",
+      "por_que_nao": "A causa iniciadora é detectada e a atuação automática ocorre; o ruído vem dos estados esperados após o trip.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Alarme é um aviso que requer ação do operador em tempo restrito;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evento é uma mudança de estado registrada para análise, sem demanda de ação imediata."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "testes da matriz de causa e efeito e dos cenários de atuação dos intertravamentos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

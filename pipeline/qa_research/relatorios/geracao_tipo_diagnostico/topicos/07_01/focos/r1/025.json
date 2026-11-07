@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 25,
+  "rodada": 1,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir efeito ausente na matriz de causa e efeito de falha no elemento final quando entrada e saída isoladas funcionam.",
+      "pergunta": "Na simulação de alto-alto nível, o evento entra no lógico de segurança; a válvula fecha quando a saída é forçada e também por outra causa da mesma lógica, mas esse iniciador não produz o fechamento automático. Qual a causa primária?",
+      "resposta": "Associação do alto-alto nível ao fechamento ausente na matriz de causa e efeito.",
+      "explicacao": "A entrada desse iniciador chega ao lógico, e o caminho de saída até a válvula prova estar íntegro. O que falta é o vínculo específico entre essa causa e esse efeito na matriz.",
+      "resposta_padrao": "Falha do solenóide ou da válvula final.",
+      "por_que_nao": "O fechamento ocorre por forçamento da saída e por outra causa da mesma lógica, então o caminho final está íntegro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as condições de entrada levam aos efeitos definidos para os intertravamentos da unidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a proteção depende da coerência entre causa, decisão automática e efeito final"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer falsa aprovação de intertravamento quando o ensaio exercita só a saída, sem a cadeia causa-lógica-efeito.",
+      "pergunta": "O relatório do “teste funcional” mostra apenas que a bomba parou quando a saída do lógico de segurança foi forçada. Na demanda real, a pressão ultrapassa o setpoint, o alarme aparece e nada para automaticamente. Qual causa explica a falsa aprovação?",
+      "resposta": "Forçamento direto da saída usado como teste funcional.",
+      "explicacao": "Forçar a saída comprova apenas comando final e elemento de campo. O teste funcional correto precisa exercitar detecção, lógica e saída; por isso o resultado registrado não validou a função automática.",
+      "resposta_padrao": "Falha na lógica do intertravamento.",
+      "por_que_nao": "Pode haver falha lógica, mas a falsa aprovação decorre de terem testado só a saída, não a função completa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes funcionais verificam se um cenário previsto produz a resposta automática esperada no sistema de segurança"
+        },
+        {
+          "bloco": "F",
+          "trecho": "observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva"
+        },
+        {
+          "bloco": "F",
+          "trecho": "e não apenas do estado isolado de um instrumento ou equipamento"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar falha em alimentação comum de atuação a partir de múltiplos intertravamentos com causa e comando registrados, mas sem efeito final.",
+      "pergunta": "Três intertravamentos de áreas diferentes registram causa e comando de saída, mas nenhuma válvula pneumática muda de estado; o ar nos manifolds está normal e a anomalia começou após serviço no painel comum dos solenóides. Qual a causa primária?",
+      "resposta": "Perda da alimentação 24 Vcc comum dos solenóides.",
+      "explicacao": "As causas são detectadas e os comandos são emitidos, logo detecção e lógica funcionam. Ar normal exclui a parte pneumática; a falha simultânea após serviço no painel comum aponta para a alimentação elétrica dos solenóides.",
+      "resposta_padrao": "Perda de ar de instrumento.",
+      "por_que_nao": "A pressão nos manifolds permaneceu normal, e a coincidência com serviço no painel comum indica falta elétrica compartilhada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma falha em elemento aparentemente periférico pode degradar permissivos ou reduzir a capacidade de resposta de várias barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a proteção depende da coerência entre causa, decisão automática e efeito final"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

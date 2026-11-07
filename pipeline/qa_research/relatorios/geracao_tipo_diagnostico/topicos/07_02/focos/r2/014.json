@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compatibilidade entre firmware de controlador e software de engenharia ao remediar vulnerabilidades em OT.",
+      "pergunta": "Só o PLC que recebeu atualização de firmware para corrigir uma vulnerabilidade passou a perder comunicação com a estação de engenharia; a lógica local seguiu executando, os demais PLCs no mesmo switch ficaram normais e o problema sumiu com o rollback. Qual causa primária?",
+      "resposta": "Incompatibilidade entre o firmware atualizado do PLC e o software de engenharia.",
+      "explicacao": "Em OT, a remediação pode exigir validação prévia entre firmware, comunicação e funções de processo. Como apenas o PLC atualizado foi afetado e o rollback restaurou a comunicação, a causa é incompatibilidade de versão.",
+      "resposta_padrao": "Falha física no enlace de rede do PLC.",
+      "por_que_nao": "Os demais controladores no mesmo caminho permaneceram estáveis, e a reversão da versão eliminou a perda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade efetiva de um IACS não depende apenas do software de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Exposição real como causa determinante de eventos em sistemas legados sem patch imediato.",
+      "pergunta": "Tentativas de autenticação e varreduras em um servidor legado surgem apenas nas janelas de coleta de arquivos para o ambiente corporativo; fora delas, o ativo fica estável e sem eventos. Qual causa primária explica esse padrão?",
+      "resposta": "Roteamento temporário entre o legado OT e a rede corporativa.",
+      "explicacao": "Em legados, o tratamento depende da exposição real. Como os eventos só aparecem nas janelas de integração com o corporativo, a causa primária é a conectividade temporária criada nesse período.",
+      "resposta_padrao": "Vulnerabilidade crítica não corrigida no servidor legado.",
+      "por_que_nao": "A falha pode existir, mas o padrão observado depende da conectividade; sem ela, os eventos cessam.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A disponibilidade efetiva de um IACS não depende apenas do software de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Modo de falha comum criado por alimentar barreiras distintas pela mesma UPS.",
+      "pergunta": "DCS, ESD e F&G ficaram indisponíveis ao mesmo tempo durante um único isolamento elétrico para manutenção, sem alterações de lógica nem anomalias de rede; consumidores essenciais em outros painéis seguiram energizados. Qual causa primária isso revela?",
+      "resposta": "Dependência da mesma UPS por DCS, ESD e F&G.",
+      "explicacao": "A perda simultânea de barreiras distintas por uma única intervenção elétrica indica modo de falha comum na alimentação ininterrupta compartilhada, não problema de lógica, comunicação ou falhas independentes em cada sistema.",
+      "resposta_padrao": "Erro de lógica ou intertravamento comum.",
+      "por_que_nao": "O gatilho foi um isolamento elétrico único, sem mudança de lógica e sem sinais de comprometimento do controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A falta de manutenção em UPS pode levar à perda simultânea de energia para sistemas de controle industrial, de shutdown de emergência e de mitigação de emergência, porque esses sistemas podem depender da mesma alimentação ininterrupta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

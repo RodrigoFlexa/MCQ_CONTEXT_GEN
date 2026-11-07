@@ -1,0 +1,95 @@
+{
+  "item": "07_03",
+  "foco": 22,
+  "rodada": 2,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Apuração correta do MTTR separando tempo de reparo das esperas logísticas, administrativas e operacionais.",
+      "pergunta": "O MTTR de um gerador dobrou no trimestre, mas as ordens mostram o mesmo tempo de reparo e o mesmo teste final; cresceram apenas espera por sobressalente e por janela operacional. Qual a causa primária?",
+      "resposta": "Inclusão de esperas logísticas e operacionais no MTTR",
+      "explicacao": "O tempo de reparo não mudou. Pelos blocos, MTTR considera os intervalos de reparo definidos; espera por material ou janela de intervenção compõe indisponibilidade total, não o tempo médio de reparo.",
+      "resposta_padrao": "O reparo ficou mais lento.",
+      "por_que_nao": "Os registros mostram duração estável da atividade de reparo e do teste; aumentaram só esperas fora do reparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "MTBF e MTTR resumem comportamento observado"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O MTTR de reparo considera os intervalos de reparo definidos no indicador"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o tempo total indisponível pode incluir esperas logísticas e administrativas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não são intercambiáveis"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite do MTBF médio quando períodos com regimes operacionais diferentes são consolidados.",
+      "pergunta": "O MTBF anual das bombas ficou parecido com o do ano anterior, porém neste ano houve semestre sem falhas e, depois da mudança do modo de operação, falhas semanais. Qual a causa primária dessa leitura enganosa?",
+      "resposta": "MTBF anual agregando períodos com regimes diferentes",
+      "explicacao": "O valor anual resumiu dois comportamentos distintos e mascarou a quebra após o novo regime. O bloco F alerta que indicadores médios podem esconder mudanças de regime quando períodos diferentes são combinados.",
+      "resposta_padrao": "Desgaste natural das bombas.",
+      "por_que_nao": "A concentração das ocorrências só depois da mudança operacional indica alteração de regime, não envelhecimento uniforme ao longo do ano.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também é necessário reconhecer o limite do indicador médio"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem esconder dispersão, mudanças de regime"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "MTBF resume o comportamento de falha observado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Comparabilidade de indicadores exige separar subpopulações submetidas a condições ambientais distintas.",
+      "pergunta": "Painel único mostra MTBF estável para transmissores iguais; no histórico, os de convés aberto falham nos meses chuvosos e os abrigados quase não falham. Qual a causa primária?",
+      "resposta": "Agregação de transmissores expostos e abrigados no mesmo MTBF",
+      "explicacao": "As populações não são tecnicamente compatíveis: a exposição ambiental altera o mecanismo dominante e distorce o número médio quando tudo é consolidado. O bloco F destaca que diferenças de condições ambientais mudam a interpretação dos dados.",
+      "resposta_padrao": "O modelo de transmissor é pouco confiável.",
+      "por_que_nao": "Se fosse problema do modelo, o grupo abrigado tenderia a falhar de forma semelhante, e não permanecer estável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso evita combinar em um mesmo número equipamentos, regimes ou funções que falham por mecanismos diferentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "diferenças entre fabricantes, configurações ou condições ambientais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

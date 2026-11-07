@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "rodada": 4,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Inferir falta de comutação para bypass seguro em falha de UPS com arco, mesmo com entrada disponível.",
+      "pergunta": "BPCS, ESD e F&G caíram no instante em que a seção com arco da UPS foi isolada; a entrada CA e o bypass permaneceram normais. Qual causa primária explica a perda conjunta?",
+      "resposta": "Ausência de transferência das cargas críticas para o bypass seguro",
+      "explicacao": "Com entrada CA e bypass normais, a queda ao isolar a seção avariada mostra que as cargas críticas continuavam dependentes do caminho defeituoso, sem comutação para o bypass.",
+      "resposta_padrao": "Falha do inversor da UPS.",
+      "por_que_nao": "O inversor avariado explica o arco, mas, com entrada e bypass disponíveis, as cargas só cairiam se não tivessem sido comutadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pode se manifestar com fumaça e arco elétrico na seção inversora"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar bloqueio de conduíte essencial por contenção de rede quando apenas funções cruzadas entre controle e proteção somem.",
+      "pergunta": "Permissivos de partida e feedbacks do SIS desapareceram, mas painéis locais, I/O e lógica dos dois lados seguiram normais. Os enlaces ficaram up e, desde a contenção, só as tentativas nesses pares de portas não recebem retorno. Qual causa primária?",
+      "resposta": "Regra de contenção bloqueando o conduíte crítico entre controle e SIS",
+      "explicacao": "Como lógica, I/O e enlaces permaneceram íntegros, e a perda atingiu apenas sinais que cruzam controle e SIS após a contenção, a causa é bloqueio de política no conduíte crítico.",
+      "resposta_padrao": "Falha da rede industrial.",
+      "por_que_nao": "Uma pane de rede afetaria outros fluxos e enlaces; aqui a perda ficou restrita aos sinais entre controle e SIS na janela de contenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma ação tecnicamente correta do ponto de vista de segurança da informação pode ser inadequada se provocar perda de controle do processo ou indisponibilidade de salvaguardas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

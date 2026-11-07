@@ -1,0 +1,61 @@
+{
+  "item": "07_01",
+  "foco": 3,
+  "rodada": 4,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar no computador de vazão a falha quando a variável de temperatura fica retida só no cálculo, embora o transmissor responda em outro uso.",
+      "pergunta": "Na placa de orifício, o transmissor de temperatura usado pelo controle acompanha o processo, mas no computador de vazão a temperatura permanece no último valor e a vazão só reage a DP e pressão estática. Qual a causa primária?",
+      "resposta": "Entrada de temperatura do computador de vazão retida no último valor.",
+      "explicacao": "Na placa de orifício, o cálculo depende também da temperatura. Se o transmissor responde no controle, mas o computador mantém o último valor, a falha está na entrada desse computador, não no transmissor nem no algoritmo.",
+      "resposta_padrao": "Procedimento de cálculo sem compensação de temperatura.",
+      "por_que_nao": "Sem compensação, o valor de temperatura no computador ainda variaria; aqui ele fica retido apenas nesse equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "transmissores de pressão estática, pressão diferencial e temperatura fornecem sinais a um computador de vazão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "que calcula a vazão segundo o procedimento configurado no sistema"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha do transmissor de temperatura de falha no sistema de controle quando o sinal primário muda e o sinal padrão já sai fixo do campo.",
+      "pergunta": "O milivolt do termopar cresce no borne do transmissor durante o aquecimento, mas a corrente de saída permanece fixa e indicação, registro e controle repetem o mesmo valor. Qual a causa primária?",
+      "resposta": "Transmissor de temperatura travado na conversão do sinal primário.",
+      "explicacao": "O sensor está respondendo ao processo no ponto de entrada do transmissor. Como o sinal padrão já sai fixo do campo e afeta igualmente indicação, registro e controle, o ponto comum de falha é o transmissor.",
+      "resposta_padrao": "Falha no cartão analógico do sistema de controle.",
+      "por_que_nao": "A corrente já sai fixa do transmissor; defeito a jusante não congelaria a saída padrão no campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sensor é o elemento que responde à variável de processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa resposta pode aparecer como tensão termoelétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O transmissor converte o sinal primário gerado pelo sensor em um sinal de instrumentação padrão, tornando-o utilizável por indicação, registro ou controle."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

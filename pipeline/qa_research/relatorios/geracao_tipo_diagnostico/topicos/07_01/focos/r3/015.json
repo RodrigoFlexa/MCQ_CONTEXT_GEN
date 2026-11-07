@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar descarte de amostras inválidas no historian, distinguindo-o de baixa taxa de coleta.",
+      "pergunta": "Na tendência histórica, a pressão fica reta por 18 minutos e depois retoma; no período, a tela ao vivo variou, o controlador agiu, e no banco bruto há amostras com timestamp e valor, todas marcadas invalid. Qual a causa primária?",
+      "resposta": "Validação do historian descartando amostras inválidas",
+      "explicacao": "As amostras chegaram ao banco, então não faltou coleta. Como vieram inválidas, a camada histórica as rejeitou na tendência, ocultando uma variação que existiu para operação e controle.",
+      "resposta_padrao": "Intervalo de coleta excessivo do historian.",
+      "por_que_nao": "Coleta lenta gera poucos pontos ou degraus; não explica amostras efetivamente recebidas, com valor e timestamp, mas invalidadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer cobertura parcial da automação quando só um resumo chega ao PLC, distinguindo-a de falha de comunicação.",
+      "pergunta": "O painel próprio mostra partidas, estados e proteções normalmente, e o processo confirma a atuação, mas no PLC chega só a falha geral e nunca houve estados individuais nem comando remoto. Qual a causa primária?",
+      "resposta": "Integração apenas por alarme-resumo ao PLC",
+      "explicacao": "O equipamento funciona e é acompanhado localmente. A ausência histórica de pontos individuais e de comando remoto indica cobertura parcial da automação, não perda de uma interface já existente.",
+      "resposta_padrao": "Falha de comunicação do equipamento com o PLC.",
+      "por_que_nao": "Perda de comunicação pressupõe integração individual implementada; aqui ela nunca existiu, e só o resumo chegou ao PLC desde o início.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar retenção do último valor válido na supervisão, distinguindo-a de falha de atualização da tag.",
+      "pergunta": "Na HMI, a vazão congela em 128 m³/h; o carimbo de atualização segue avançando, a qualidade da tag muda para bad e o indicador local varia com a malha. Qual a causa primária?",
+      "resposta": "Retenção do último valor válido na supervisão",
+      "explicacao": "Como tempo e qualidade continuam chegando, a tela segue atualizada. Com qualidade ruim, a supervisão mantém o último valor bom e passa a exibir algo que não representa o processo.",
+      "resposta_padrao": "Falha de atualização dessa tag na camada de supervisão.",
+      "por_que_nao": "Se a tag não estivesse atualizando, carimbo e qualidade tenderiam a congelar também; aqui a supervisão recebe a informação e preserva só o valor anterior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

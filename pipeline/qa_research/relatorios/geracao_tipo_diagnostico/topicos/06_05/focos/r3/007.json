@@ -1,0 +1,105 @@
+{
+  "item": "06_05",
+  "foco": 7,
+  "rodada": 3,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Menor confirmação na função automática aumenta a suscetibilidade a disparos espúrios distribuídos entre detectores.",
+      "pergunta": "Paradas automáticas vêm de elevações breves e isoladas, já observadas em cabeçotes diferentes; substituições e calibrações não mudam o padrão, e nenhum evento registrou segundo detector confirmando. Qual causa primária explica essas paradas recorrentes?",
+      "resposta": "votação 1ooN no shutdown automático da zona",
+      "explicacao": "Picos isolados, distribuídos entre vários cabeçotes e persistentes após trocas indicam que o problema decisivo não é um detector específico, mas a lógica aceitar um único sinal para liberar a parada.",
+      "resposta_padrao": "Interferência elétrica recorrente nos detectores.",
+      "por_que_nao": "A distribuição entre cabeçotes e a persistência após substituições mostram que o que torna os picos suficientes para parar o processo é a aceitação de um único canal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Exigir menos confirmação tende a acelerar a resposta, porém pode elevar a suscetibilidade a disparos indesejados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a votação deve ser escolhida em conjunto com a cobertura real, o tipo de fenômeno perigoso, o tempo disponível para resposta e a consequência da ação associada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Alarme e ação automática podem requerer votações diferentes; prender o aviso à mesma 2ooN da atuação elimina alerta antecipado.",
+      "pergunta": "Na tendência, um detector permanece acima do alarme alto, mas o aviso geral só aparece quando um segundo detector da zona também entra em alto, exatamente junto com o fechamento da SDV. Qual causa primária explica essa simultaneidade?",
+      "resposta": "alarme geral subordinado à mesma votação 2ooN da SDV",
+      "explicacao": "O primeiro detector já atingiu o nível de alarme, mas o aviso só nasceu com o segundo voto e coincidiu com a ação automática; isso mostra alarme amarrado à mesma confirmação usada no isolamento.",
+      "resposta_padrao": "Setpoint do primeiro detector ajustado alto demais.",
+      "por_que_nao": "A tendência já mostra o primeiro acima do limiar; o atraso desaparece exatamente quando surge o segundo voto, não por nova elevação do primeiro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Na proteção de processo, a detecção de gás pode iniciar uma sequência escalonada de respostas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Condições operacionais podem determinar a participação dos detectores na votação; um condicionamento indevido bloqueia a atuação mesmo com a dupla válida.",
+      "pergunta": "Nos testes com injeção direta, a mesma dupla de detectores fecha a SDV de processo quando o sinal de “ventilação indisponível” está ativo; com ventilação saudável, a dupla só gera alarme. Detectores, saídas e SDV aprovam provas individuais. Qual causa primária?",
+      "resposta": "votação condicionada indevidamente ao status da ventilação",
+      "explicacao": "Como a injeção foi feita nos próprios detectores e os elementos finais aprovam provas individuais, a mudança de comportamento com a única variável digital alterada revela condicionamento lógico indevido da votação.",
+      "resposta_padrao": "A ventilação normal dispersa o gás e evita a atuação.",
+      "por_que_nao": "O ensaio não dependeu de dispersão real; a única diferença entre os testes foi o estado lógico da ventilação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela não trata apenas da contagem de sinais, mas também de quais detectores, em que zona e sob quais condições participam da decisão lógica."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Uma votação compatível no estudo pode falhar em campo quando a implantação física elimina a sobreposição prevista entre detectores.",
+      "pergunta": "Na área da bomba, o estudo previa dois detectores com sobreposição; em campo, ambos foram montados do mesmo lado por interferência estrutural. Nos testes do lado oposto, só há um voto, embora cabeçotes e lógica passem em prova. Qual causa primária?",
+      "resposta": "detectores instalados fora das coordenadas previstas no estudo",
+      "explicacao": "A lógica e os detectores funcionam, mas a sobreposição prevista desapareceu quando os dois foram instalados do mesmo lado; assim, a combinação exigida pela votação deixou de ser materializável.",
+      "resposta_padrao": "Votação 2ooN inadequada para a zona.",
+      "por_que_nao": "A 2ooN era compatível com a cobertura projetada; o defeito observado surgiu da implantação física fora das coordenadas previstas.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "foram citados casos de planta de F&G instalada fora das coordenadas do estudo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

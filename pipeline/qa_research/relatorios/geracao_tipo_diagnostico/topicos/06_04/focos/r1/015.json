@@ -1,0 +1,101 @@
+{
+  "item": "06_04",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Independência entre barreiras depende de lógica de atuação não compartilhada.",
+      "pergunta": "Dois trens de shutdown, com sensores e válvulas finais distintos, não atuaram automaticamente no mesmo evento. Os dispositivos de campo passam nos testes locais e o acionamento manual direto em cada válvula funciona. Qual causa primária explica a perda simultânea?",
+      "resposta": "lógica de atuação compartilhada no mesmo solver",
+      "explicacao": "Como sensores e elementos finais respondem localmente, a perda comum ficou na camada automática. Barreiras nominais distintas deixam de ser independentes quando dependem da mesma lógica de atuação.",
+      "resposta_padrao": "Falha simultânea dos instrumentos de campo.",
+      "por_que_nao": "Os testes locais e o acionamento direto confirmam os dispositivos de campo operantes; o ponto comum remanescente é a lógica automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O uso de múltiplas barreiras só produz robustez quando elas operam de maneira independente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "lógica de atuação não compartilhada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Independência entre barreiras exige fontes de energia distintas.",
+      "pergunta": "Na perda do quadro normal, a detecção de gás de alta e o fechamento automático das tomadas de ar do abrigo ficaram indisponíveis ao mesmo tempo; o gerador de emergência assumiu normalmente e ambos retornaram sem reparo assim que a alimentação do sistema instrumentado foi restabelecida. Qual causa primária liga as duas perdas?",
+      "resposta": "alimentação elétrica comum pelo mesmo UPS",
+      "explicacao": "Se dois sistemas retornam juntos com a mesma alimentação instrumentada, havia dependência de uma fonte comum. A robustez aparente desaparece quando as barreiras não têm energia independente.",
+      "resposta_padrao": "Falha do gerador de emergência.",
+      "por_que_nao": "O gerador assumiu normalmente; a indisponibilidade cessou com o restabelecimento da alimentação instrumentada comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "fontes de energia distintas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sem essa independência, a contagem nominal de barreiras pode superestimar a proteção real."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Redundância só é robusta com segregação física dos circuitos.",
+      "pergunta": "Um incêndio localizado abaixo de uma única bandeja de cabos retirou, em segundos, o sinal de dois circuitos de shutdown redundantes; transmissores, válvulas e painéis extremos ficaram íntegros. Qual causa primária explica a perda das duas barreiras?",
+      "resposta": "roteamento conjunto dos circuitos redundantes na mesma bandeja",
+      "explicacao": "A falha simultânea, com equipamentos de extremidade íntegros, indica causa comum no trecho compartilhado. Sem segregação física, um único incêndio elimina os dois circuitos redundantes.",
+      "resposta_padrao": "Dano térmico simultâneo nos instrumentos de campo.",
+      "por_que_nao": "Transmissores, válvulas e painéis permaneceram íntegros; a perda se concentrou no trajeto comum exposto ao fogo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "separação física"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O uso de múltiplas barreiras só produz robustez quando elas operam de maneira independente"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A funcionalidade de um SCE depende também das premissas adotadas no estudo de risco.",
+      "pergunta": "Mesmo com a válvula de despressurização abrindo no tempo de teste e sem piora de confiabilidade, um tie-in elevou o inventário do segmento e o tempo para atingir a condição assumida no cenário de incêndio passou a exceder o previsto. Qual causa primária tornou essa barreira insuficiente?",
+      "resposta": "capacidade de despressurização insuficiente para o novo inventário",
+      "explicacao": "A barreira continua confiável e funcional no teste, mas deixou de cumprir a função requerida no cenário acidental após a mudança de inventário. Funcionalidade inclui as premissas do estudo de risco.",
+      "resposta_padrao": "Falha mecânica da válvula de despressurização.",
+      "por_que_nao": "O tempo de abertura e a confiabilidade não pioraram; o que mudou foi a demanda do cenário frente à capacidade disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A funcionalidade da barreira corresponde à capacidade de cumprir sua função conforme projetada, incluindo confiabilidade e premissas adotadas nos estudos de risco."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para cada SCE pode ser definido um resultado esperado de desempenho, denominado Performance Standard"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_03",
+  "foco": 22,
+  "rodada": 4,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Validade semântica dos eventos de falha e retorno para cálculo de MTBF.",
+      "pergunta": "O MTBF de um controlador despencou após remapearem os eventos; não houve trip, perda de controle nem corretiva, e os novos registros coincidem com AUTO/MAN e habilita/inibe. Qual a causa primária?",
+      "resposta": "Contagem de mudanças de estado operacionais como falhas/retornos",
+      "explicacao": "Sem perda e recuperação reais da função, os eventos adicionais não representam falha. O cálculo passou a contar transições operacionais como se fossem falhas e retornos, distorcendo o MTBF.",
+      "resposta_padrao": "Defeito intermitente do controlador após o remapeamento.",
+      "por_que_nao": "Os sinais mostram ausência de perda funcional; os registros acompanham apenas transições de estado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Bancos de dados de confiabilidade evoluíram justamente para tratar subpopulações não homogêneas, distinguir taxas de falha baseadas em tempo das baseadas em demanda e categorizar modos de falha."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Padronizar essa classificação permite comparar fabricantes, equipamentos e períodos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "MTBF não substitui MTTR ou disponibilidade na priorização por impacto operacional.",
+      "pergunta": "No ranking mensal, o item B aparece como pior por ter mais ocorrências, embora o item A tenha retirado muito mais horas de produção porque cada retorno foi lento. Que interpretação técnica está causando esse ranking enganoso?",
+      "resposta": "Uso do MTBF como proxy de disponibilidade operacional",
+      "explicacao": "Frequência de falhas e tempo para restaurar a função medem dimensões diferentes. Mais falhas com retorno rápido podem gerar menos indisponibilidade que poucas falhas com recuperação lenta.",
+      "resposta_padrao": "O item B é o pior porque falhou mais vezes.",
+      "por_que_nao": "O impacto observado veio do tempo de recuperação; MTBF e MTTR não são intercambiáveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também é necessário reconhecer o limite do indicador médio: MTBF e MTTR resumem comportamento observado, mas podem esconder dispersão, mudanças de regime e diferenças entre fabricantes, configurações ou condições ambientais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses indicadores descrevem dimensões diferentes do desempenho: MTBF resume o comportamento de falha observado, enquanto MTTR resume a capacidade de restaurar a função após a falha."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Por isso, não são intercambiáveis."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Indicador obtido em subconjunto só pode ser extrapolado a populações tecnicamente compatíveis.",
+      "pergunta": "Uma campanha com sensores permanentes de um único fabricante e arranjo mostrou MTBF alto; em seguida alongaram a periodicidade de todos, inclusive os de outra arquitetura e histórico distinto. Que causa técnica invalida essa extrapolação?",
+      "resposta": "Generalização automática de indicador fora do conjunto tecnicamente compatível",
+      "explicacao": "A comparação foi válida apenas no conjunto estudado. Estender o resultado para outras arquiteturas ou históricos cria população não homogênea e torna a referência inadequada para definir periodicidade.",
+      "resposta_padrao": "O MTBF alto medido justifica alongar o intervalo de todos.",
+      "por_que_nao": "O valor só é válido para o conjunto estudado; outras populações não são tecnicamente compatíveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Os indicadores só são comparáveis quando as populações analisadas são tecnicamente compatíveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "permitiu comparação de desempenho entre fabricantes dentro do conjunto estudado, sem que isso autorize generalização automática para toda a instalação offshore ou para qualquer FPSO."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

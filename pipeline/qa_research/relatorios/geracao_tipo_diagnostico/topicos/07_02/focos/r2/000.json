@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 2,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar o controlador de borda híbrido como ponto de fronteira IT/OT quando nuvem e SCADA local falham em conjunto.",
+      "pergunta": "Os controladores locais seguem estáveis. Só os ativos que passaram a alimentar o SCADA em tempo real e uma aplicação em nuvem começaram a abrir sessões externas pelo mesmo equipamento intermediário; quando ele reinicia, some também a atualização supervisória local. Qual causa primária explica esse padrão?",
+      "resposta": "Controlador de borda atuando como ponte nuvem-SCADA",
+      "explicacao": "Em arquiteturas híbridas, o mesmo controlador de borda pode alimentar o SCADA local e enviar dados à nuvem; se os dois efeitos aparecem só atrás dele, esse intermediário é a causa comum decisiva.",
+      "resposta_padrao": "Falha no enlace de telecomunicações externo.",
+      "por_que_nao": "A perda coincide com o reinício do intermediário e afeta também a atualização local do SCADA, o que o enlace externo isolado não explica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Arquitetura IT/OT é a organização dos sistemas, redes e interfaces"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima ou ao redor dela podem existir bases de dados, aplicações analíticas e sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar exposição de serviço industrial vulnerável como causa de interferência remota direta em funções de processo.",
+      "pergunta": "Sem uso de estação de engenharia nem acesso local registrado, houve comandos de válvula e mudanças de vazão vindos de endereços externos diretamente contra um equipamento industrial acessível pela rede. Qual causa primária melhor explica a interferência?",
+      "resposta": "Interface industrial exposta com vulnerabilidade explorável",
+      "explicacao": "A interferência remota direta em válvulas e vazão, sem passagem por estação de engenharia ou acesso local, aponta para serviço industrial exposto em rede com vulnerabilidade explorável.",
+      "resposta_padrao": "Comprometimento da estação de engenharia.",
+      "por_que_nao": "Os eventos partiram diretamente de endereços externos contra o equipamento acessível em rede, sem trânsito pela estação de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Arquitetura IT/OT é a organização dos sistemas, redes e interfaces"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando sistemas industriais expostos em rede têm vulnerabilidades exploráveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

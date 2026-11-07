@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 4,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer caminho paralelo de dados em arquitetura híbrida, independente do SCADA, via controlador de borda para broker MQTT.",
+      "pergunta": "Durante a parada do SCADA e do historiador locais, o painel em nuvem continua recebendo em tempo real os dados de um pacote, sem lacunas; a IHM do pacote segue atualizada. Qual causa primária explica esse comportamento?",
+      "resposta": "Publicação direta ao broker MQTT pelo controlador de borda.",
+      "explicacao": "Se a nuvem continua atualizando em tempo real com SCADA e historiador indisponíveis, há um caminho paralelo da arquitetura híbrida: o controlador de borda publica diretamente no broker, sem depender da camada supervisória.",
+      "resposta_padrao": "Replicação do historiador local para a nuvem.",
+      "por_que_nao": "O historiador estava indisponível durante todo o período, e a atualização externa permaneceu contínua e em tempo real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir consumo analítico diretamente na camada de controle do consumo via camada supervisória ou historiador.",
+      "pergunta": "Sempre que a aplicação corporativa de analytics roda, aumenta a carga de comunicação de vários PLCs; o historiador local permanece folgado e, mesmo parado para manutenção, a aplicação continua atualizando. Qual causa primária explica esse efeito?",
+      "resposta": "Coleta direta dos PLCs pela aplicação analítica.",
+      "explicacao": "Se a aplicação segue atualizando com o historiador parado e a sobrecarga aparece nos PLCs, a fonte consumida está na camada de controle, não na supervisória onde esse consumo externo deveria terminar.",
+      "resposta_padrao": "Sobrecarga do historiador local.",
+      "por_que_nao": "A aplicação continua recebendo dados com o historiador fora de serviço, enquanto o aumento de carga ocorre nos PLCs.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar interface máquina-máquina entre controladores como caminho de coordenação independente da supervisão.",
+      "pergunta": "Mesmo com o SCADA indisponível, um pacote continua reajustando automaticamente a referência de outro; a captura de rede mostra tráfego cíclico apenas entre os dois controladores. Qual causa primária explica essa coordenação?",
+      "resposta": "Interface máquina-máquina direta entre os dois controladores.",
+      "explicacao": "A coordenação persiste sem a camada supervisória e o tráfego observado ocorre só entre os controladores, indicando troca direta de dados por um caminho máquina-máquina independente do SCADA.",
+      "resposta_padrao": "Distribuição da referência pelo SCADA redundante.",
+      "por_que_nao": "A supervisão está indisponível, e a evidência de rede mostra troca cíclica diretamente entre os controladores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em termos funcionais, a camada supervisória costuma reunir aplicações de SCADA"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

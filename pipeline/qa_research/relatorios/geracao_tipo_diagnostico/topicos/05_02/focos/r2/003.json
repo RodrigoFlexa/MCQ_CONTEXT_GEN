@@ -1,0 +1,57 @@
+{
+  "item": "05_02",
+  "foco": 3,
+  "rodada": 2,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Conflito de controle ativo entre geradores em paralelo por ausência de droop em mais de um governador.",
+      "pergunta": "Com dois geradores já em paralelo, a carga total fica quase constante, mas os kW de cada máquina oscilam em oposição e a frequência caça; tensão e kVAr permanecem estáveis. Qual a causa primária?",
+      "resposta": "Dois governadores sem droop ativo em paralelo.",
+      "explicacao": "Com carga total quase fixa, a oscilação anti-fase de kW mostra circulação de potência ativa. Tensão e kVAr estáveis afastam a excitação; a causa é conflito de controle de frequência por governadores sem droop no paralelo.",
+      "resposta_padrao": "Carga do processo oscilando.",
+      "por_que_nao": "Se a demanda variasse de fato, a soma dos kW mudaria; aqui a potência só migra entre geradores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sincronismo é a etapa que antecede qualquer compartilhamento de carga em paralelo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "aplicar correções rápidas baseadas na configuração da rede, estados de disjuntores, bus tie e ajustes de droop"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Fechamento em barramento energizado depende de permissivo específico de sincronismo, além de grandezas elétricas alinhadas.",
+      "pergunta": "Tensão, frequência e fase entram na janela, o sincronoscópio para, e o mesmo disjuntor fecha em barra morta; com barramento energizado, porém, não sai pulso de fechamento. Qual a causa primária?",
+      "resposta": "Permissivo de sincronismo bloqueado.",
+      "explicacao": "Como o disjuntor fecha em barra morta, a parte mecânica está apta. O bloqueio aparece só na condição que exige lógica de sincronismo com controles, permissivos e proteções.",
+      "resposta_padrao": "Defeito mecânico no disjuntor.",
+      "por_que_nao": "Um defeito mecânico impediria o fechamento também em barra morta; aqui a falha é específica do fechamento com barra viva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sincronismo é a condição que permite conectar um gerador a um barramento energizado sem produzir transitórios excessivos de corrente, torque e potência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende de controles, permissivos, proteções e sequência de fechamento."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

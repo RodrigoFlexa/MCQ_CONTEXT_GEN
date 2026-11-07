@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 15,
+  "rodada": 3,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separação apropriada de barramentos pode ser o próprio estágio decisivo do load shedding em arranjos interligados.",
+      "pergunta": "Com tie fechado, a perda do gerador da seção A derruba as duas seções mesmo após o descarte previsto de alimentadores. No mesmo carregamento, com tie aberto, a seção B permanece estável e a seção A se recupera com a mesma potência rejeitada. Qual causa primária explica o colapso no arranjo interligado?",
+      "resposta": "Ausência da abertura do bus tie como estágio de load shedding",
+      "explicacao": "A mesma potência rejeitada funciona com os barramentos separados. O que falta no arranjo interligado é a separação apropriada de barramentos dentro do esquema, evitando que a contingência de uma seção arraste a outra.",
+      "resposta_padrao": "Potência rejeitada insuficiente no load shedding.",
+      "por_que_nao": "A quantidade rejeitada já se mostrou suficiente quando os barramentos não permaneceram acoplados; o problema decisivo é topológico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "partidas de motores, rejeição de cargas, separação de barramentos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O load shedding precisa ser coordenado com a automação de processo para impedir partidas automáticas durante a recuperação.",
+      "pergunta": "Perdido um gerador, o primeiro estágio abre e a frequência se estabiliza. Um segundo mergulho começa exatamente quando a bomba de reserva parte por baixa pressão, sem nova falha elétrica e sem religamento de carga antes rejeitada. Qual causa primária?",
+      "resposta": "Partida automática da bomba de reserva não bloqueada pelo load shedding",
+      "explicacao": "Houve recuperação inicial após o shedding. O novo mergulho coincide com uma partida criada pela lógica de processo, indicando falta de coordenação do esquema com a automação, não erro na primeira rejeição.",
+      "resposta_padrao": "Primeiro estágio insuficiente.",
+      "por_que_nao": "Se fosse insuficiente, a frequência continuaria caindo logo após o primeiro estágio; aqui ela se estabiliza antes da nova partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores que permaneceram conectados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A tabela de prioridades do load shedding deve preservar funções críticas de processo quando a potência remanescente permite.",
+      "pergunta": "Nos testes do PMS e no evento real, a perda de um gerador sempre abre, por disjuntor próprio, a bomba de óleo lubrificante do compressor no primeiro estágio, enquanto utilidades não críticas ficam para depois; a frequência se estabiliza e o balanço mostra que ela poderia permanecer energizada. Qual causa primária?",
+      "resposta": "Classificação de criticidade incorreta da bomba de óleo lubrificante na tabela de shedding",
+      "explicacao": "Com disjuntor próprio e potência remanescente suficiente, a perda dessa bomba não se explica por agrupamento nem por déficit de geração. O problema é sua prioridade de rejeição estar acima da de cargas menos críticas.",
+      "resposta_padrao": "Falta de geração disponível após a contingência.",
+      "por_que_nao": "O balanço do evento mostra que a função essencial poderia permanecer alimentada se consumidores menos críticos fossem rejeitados antes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "aumenta a chance de preservar alimentação para funções essenciais."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ajustes de relés de subfrequência dos alimentadores devem ser coordenados com a atuação do load shedding.",
+      "pergunta": "Os registros mostram que, na perda de um gerador, o primeiro estágio abre no tempo previsto e a frequência para de cair, mas alguns alimentadores não prioritários já haviam desligado por seus relés de subfrequência; em afundamentos menores, esses mesmos relés atuam sem chamada do shedding. Qual causa primária?",
+      "resposta": "Descoordenação dos relés de subfrequência com o load shedding",
+      "explicacao": "Como os mesmos relés atuam até em afundamentos que não pedem shedding, seus ajustes invadem a faixa operacional do PMS. A perda de seletividade vem da coordenação proteção-shedding, não do balanço de potência.",
+      "resposta_padrao": "Primeiro estágio de load shedding tardio.",
+      "por_que_nao": "Os relés também atuam em eventos que nem demandam shedding; isso aponta para sobreposição de ajustes, não para atraso do primeiro estágio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "proteção e coordenação, dinâmica de rede e filosofia de power management."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

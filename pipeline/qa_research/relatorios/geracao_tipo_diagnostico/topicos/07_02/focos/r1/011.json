@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar tentativas vindas de IPs públicos sem sessão VPN à exposição direta da interface de gerenciamento de ativo de controle.",
+      "pergunta": "Logs do perímetro mostram tentativas à porta de gerenciamento de um controlador vindas de muitos IPs públicos, sem sessão no concentrador VPN e sem tráfego interno anômalo. Qual causa primária explica esse padrão?",
+      "resposta": "Acessibilidade direta pela internet da interface de gerenciamento.",
+      "explicacao": "Origem distribuída em IPs públicos e ausência de sessão VPN indicam que a interface está exposta externamente. O hardening correto evita acessibilidade direta pela internet e mantém ativos de controle atrás de firewalls.",
+      "resposta_padrao": "Comprometimento do dispositivo de um fornecedor conectado por VPN.",
+      "por_que_nao": "Sem sessão no concentrador e com origens públicas dispersas, o caminho de acesso não passou pela VPN.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ausência de segregação entre rede corporativa e rede de controle quando tráfego administrativo alcança diretamente estações operacionais.",
+      "pergunta": "Durante inventário de ativos do escritório, estações de operação recebem pacotes de descoberta e varredura originados da rede administrativa; as malhas locais seguem estáveis. Que causa primária permite isso?",
+      "resposta": "Conexão direta da rede de controle à corporativa, sem firewall.",
+      "explicacao": "Se a própria varredura administrativa chega à sub-rede operacional, falta a barreira de segregação. O scanner é só o gatilho; a causa é a ausência de isolamento por firewall entre os ambientes.",
+      "resposta_padrao": "Ferramenta de inventário agressiva demais.",
+      "por_que_nao": "Mesmo agressiva, ela não alcançaria diretamente a rede de controle se essa rede estivesse isolada da corporativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "restringe rotas de acesso"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer serviço embarcado desnecessário como superfície de ataque evitável em ativos de controle.",
+      "pergunta": "Um CLP que só precisa falar com HMI e estação de engenharia passa a receber sondagens HTTP e tentativas de login na interface web embarcada; ao desabilitá-la, a operação não perde função e os alertas cessam. Qual causa primária?",
+      "resposta": "Servidor web embarcado desnecessário mantido habilitado.",
+      "explicacao": "A exploração ocorreu pela interface web, e sua remoção não afetou a função operacional. Isso caracteriza serviço desnecessário ampliando a superfície de ataque, exatamente o que o hardening deve eliminar.",
+      "resposta_padrao": "Credenciais fracas no CLP.",
+      "por_que_nao": "Os alertas cessarem quando o serviço é desabilitado mostra que o vetor principal era a interface exposta, não a força da senha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários, restringe rotas de acesso, reduz a chance de varredura externa"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha introduzida por hardening genérico de TI da hipótese de defeito de aplicação em estação de engenharia.",
+      "pergunta": "Depois de aplicar à estação de engenharia a mesma imagem de hardening usada em PCs administrativos, ela continua pingando controladores e abrindo telas, mas perde upload/download de lógica e diagnóstico. Que causa explica a falha?",
+      "resposta": "Bloqueio de portas ou serviços de engenharia pelo hardening corporativo.",
+      "explicacao": "A conectividade básica permaneceu, mas funções ligadas ao papel de engenharia falharam logo após a baseline corporativa. Isso indica hardening não seletivo, incompatível com o papel operacional da estação.",
+      "resposta_padrao": "Defeito no software do fornecedor.",
+      "por_que_nao": "O padrão seletivo após a aplicação da imagem, com comunicação básica preservada, aponta para bloqueio de serviços e regras, não para falha geral do aplicativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital."
+        },
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários, restringe rotas de acesso"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

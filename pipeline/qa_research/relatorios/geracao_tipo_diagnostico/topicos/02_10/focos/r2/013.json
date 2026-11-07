@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 13,
+  "rodada": 2,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Acoplamento separador-hidrociclone: perseguir rigidamente a interface pode pulsar a descarga e piorar a água.",
+      "pergunta": "A vazão ao hidrociclone oscila no ritmo de pequenas variações da interface, embora a válvula siga o comando sem atraso e longe do fim de curso; ao permitir que a interface caminhe dentro de uma faixa, a vazão se estabiliza e o TOG cai. Qual a causa primária do problema inicial?",
+      "resposta": "PID perseguindo continuamente o setpoint da interface",
+      "explicacao": "Sem saturação nem erro do atuador, as correções contínuas para centrar a interface estavam sendo transmitidas à descarga. No bloco F, o controle por bandas melhora quando o jusante responde melhor a vazão estável do que à interface rigidamente centrada.",
+      "resposta_padrao": "Sintonia excessivamente agressiva do controlador de interface.",
+      "por_que_nao": "Com válvula longe do limite e resposta fiel, o defeito não é só ganho; o problema desaparece quando a lógica para de perseguir continuamente o setpoint.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa abordagem desloca o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando a corrente a jusante, como o hidrociclone, responde melhor a vazão mais estável do que a interface rigidamente centrada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando a água de injeção é mais sensível a quedas da interface, a malha precisa assimetria deliberada.",
+      "pergunta": "Degraus iguais para cima e para baixo na interface geram correções idênticas da válvula; no processo, só as quedas mantidas da interface pioram imediatamente a água de injeção. Com posição real acompanhando o comando e folga nos fins de curso, qual causa explica essa vulnerabilidade?",
+      "resposta": "Controle simétrico sem Dead Band Assimétrico",
+      "explicacao": "O bloco F afirma que reação mais rápida à diminuição da interface preserva melhor a qualidade da água de injeção. Se o atuador responde igual nos dois sentidos e só a queda é crítica, falta a assimetria deliberada da lógica.",
+      "resposta_padrao": "Válvula com atrito maior em uma das direções.",
+      "por_que_nao": "A posição real acompanha o comando e há margem de atuação nos dois sentidos; a assimetria necessária é de lógica, não mecânica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Também foi testado um Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com a finalidade de preservar mais eficientemente a qualidade da água de injeção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falha de implementação: trip de nível baixo associado indevidamente à interface controlada.",
+      "pergunta": "Durante o teste funcional, baixar somente a interface óleo-água aciona shutdown por nível baixo, embora o nível total permaneça normal e os transmissores concordem; repetir o teste produz o mesmo resultado. Qual a causa primária?",
+      "resposta": "Associação incorreta do trip de nível baixo à interface",
+      "explicacao": "A2 cita esse tipo de falha de implementação. Se o nível total não caiu e as indicações são coerentes, o disparo não vem do processo nem da medição, mas da lógica que vinculou o trip à variável errada.",
+      "resposta_padrao": "Transmissor de nível descalibrado.",
+      "por_que_nao": "O evento é reproduzível com nível total normal e indicações coerentes; o problema está na associação lógica do trip.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interface pode variar dentro de uma faixa permitida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas de implementação, como associação incorreta de trip por nível baixo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "02_03",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda de desempenho por aplicar o mesmo DPR/split a liner com geometria de overflow diferente.",
+      "pergunta": "Com a mesma alimentação e sem indício de fouling, a troca do liner por outro de capacidade nominal semelhante elevou o óleo na água tratada. Os setpoints numéricos de DPR e split foram mantidos e a instrumentação conferiu. Qual a causa primária?",
+      "resposta": "Uso de setpoint universal em liner com geometria de overflow diferente",
+      "explicacao": "DPR e split dependem acopladamente da geometria do overflow; números válidos para um liner não se transferem automaticamente a outro. Operar com os mesmos alvos pode sair da faixa validada e elevar óleo residual.",
+      "resposta_padrao": "Instrumentação de DPR descalibrada.",
+      "por_que_nao": "Os instrumentos conferiram; o erro foi manter alvos herdados como universais apesar da geometria diferente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Geometria do overflow, vazões e pressões nas saídas influenciam esses parâmetros de forma acoplada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A operação fora da faixa validada pode comprometer o campo centrífugo e aumentar óleo residual na água."
+        },
+        {
+          "bloco": "F",
+          "trecho": "evitando atribuir um valor universal de DPR ou split a qualquer liner."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda de eficiência por operação abaixo do turndown efetivo, com vazão por liner baixa demais.",
+      "pergunta": "A vazão total de água caiu e todos os liners permaneceram em serviço. Sem mudança na qualidade da alimentação, em ΔP ou no DPR, o óleo no underflow aumentou; ao retirar alguns liners de operação, a qualidade voltou. Qual a causa primária?",
+      "resposta": "Operação abaixo do turndown efetivo do liner",
+      "explicacao": "Com muitos liners abertos, a vazão por liner ficou abaixo da condição selecionada. Em hidrociclones, mudanças de vazão alteram velocidade tangencial, split e escoamento interno; isso pode piorar a separação mesmo em baixa carga.",
+      "resposta_padrao": "Subdosagem de químico a montante.",
+      "por_que_nao": "A recuperação imediata ao reduzir o número de liners aponta causa hidráulica de vazão por liner, não mudança química.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A operação fora da faixa validada pode comprometer o campo centrífugo e aumentar óleo residual na água."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o turndown efetivo do hidrociclone tende a ser limitado porque mudanças de vazão alteram simultaneamente velocidade tangencial, tempo de residência, split e distribuição interna do escoamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "operar muito abaixo ou muito acima da condição para a qual a geometria foi selecionada pode degradar a separação, mesmo sem mudança de hardware."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar piora da separação por aumento de contrapressão na saída de água tratada, alterando o split e o escoamento interno.",
+      "pergunta": "Sem mudança na alimentação, a água tratada piorou depois de fechar parcialmente a válvula da saída de água; o rejeito oleoso diminuiu e a queda de pressão global quase não mudou. Qual a causa primária?",
+      "resposta": "Aumento da contrapressão no underflow",
+      "explicacao": "A pressão traseira na descarga de água participa do padrão interno de escoamento e da divisão entre overflow e underflow. Ao elevá-la, o split e o campo separador se deslocam, aumentando óleo residual.",
+      "resposta_padrao": "Entupimento no overflow.",
+      "por_que_nao": "O gatilho foi o estrangulamento da saída de água; a pressão traseira do underflow altera o escoamento interno mesmo sem grande mudança na queda de pressão global.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Geometria do overflow, vazões e pressões nas saídas influenciam esses parâmetros de forma acoplada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A descarga de água também sofre influência da pressão traseira: ela participa da definição do padrão interno de escoamento e ajuda a forçar a corrente rica em óleo a sair pelo overflow, enquanto a água tratada segue pelo underflow."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

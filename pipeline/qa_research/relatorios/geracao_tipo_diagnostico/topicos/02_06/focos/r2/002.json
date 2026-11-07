@@ -1,0 +1,83 @@
+{
+  "item": "02_06",
+  "foco": 2,
+  "rodada": 2,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Associar atuação automática na área errada ao mapeamento incorreto do detector no grupo de shutdown.",
+      "pergunta": "O detector de gás entra em trip, a sirene local toca e o histórico mostra comandos automáticos só no módulo vizinho; as saídas de ESD locais funcionam em outras causas. Qual a causa primária?",
+      "resposta": "Detector associado ao grupo de shutdown do módulo vizinho.",
+      "explicacao": "Como as saídas locais respondem em outras causas, não há falha geral de ESD. O gas trip está vinculado à área errada na matriz de causa e efeito, deixando as fontes locais sem atuação automática.",
+      "resposta_padrao": "Falha das saídas de ESD do módulo onde o gás foi detectado.",
+      "por_que_nao": "As saídas locais funcionam em outras causas e houve atuação automática em outro módulo, o que aponta erro de associação na matriz.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Os níveis de alarme e de shutdown por gás e suas ações devem estar definidos na matriz de causa e efeito da unidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A eficácia dessa filosofia depende de a lógica implementada cobrir de fato todas as fontes relevantes de hidrocarboneto na área."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer fonte remota conectada como causa de shutdown por gás incompleto na área afetada.",
+      "pergunta": "No gas trip, bombas e válvulas locais atuam, mas a pressão da linha que vazava só cai quando para uma bomba a montante, em área adjacente, ainda alinhada ao mesmo circuito. Qual a causa primária?",
+      "resposta": "Bomba a montante da área adjacente fora do shutdown por gás.",
+      "explicacao": "As ações locais ocorreram, porém uma fonte remota continuou admitindo hidrocarboneto pelo circuito conectado. A lógica não cobriu todo o inventário capaz de alimentar o cenário perigoso.",
+      "resposta_padrao": "Válvula de isolamento local com vazamento interno.",
+      "por_que_nao": "A pressão se sustenta enquanto a bomba remota opera e cai quando ela para, sinal de alimentação ativa e não de simples leak-by local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tecnicamente, a lógica de causa e efeito deve ser coerente com o inventário de equipamentos capazes de alimentar o cenário perigoso."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir vazamento sustentado por coluna hidrostática de simples inventário residual após gas trip.",
+      "pergunta": "Com o gás em trip, todos os motores da área desenergizam, mas o derrame continua sem pulsação; ao mesmo tempo, cai o nível de um tanque de slop mais alto. Qual a causa primária?",
+      "resposta": "Alimentação gravitacional do tanque de slop fora do isolamento por gás.",
+      "explicacao": "Sem motores energizados, o escoamento sustentado vem da coluna hidrostática do tanque elevado. A salvaguarda removeu energia, mas não isolou uma fonte de hidrocarboneto ainda admitida.",
+      "resposta_padrao": "Inventário residual preso na tubulação.",
+      "por_que_nao": "A queda contínua do nível no tanque mais alto mostra reposição do vazamento; inventário residual não reduziria o nível do tanque fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A análise precisa abranger bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

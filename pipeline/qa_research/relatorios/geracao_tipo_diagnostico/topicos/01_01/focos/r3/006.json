@@ -1,0 +1,57 @@
+{
+  "item": "01_01",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A previsão de ganho de redundância depende de o arranjo operar de fato como reserva fria, não em rodízio com exposição semelhante.",
+      "pergunta": "O \"reserva\" acumula quase as mesmas horas do ativo por rodízio programado, e os dois exibem desgaste semelhante. A análise previa o ganho de um arranjo 1+1 com reserva fria. Qual a causa primária da superestimação?",
+      "resposta": "Operação alternada, não reserva fria",
+      "explicacao": "Reserva fria pressupõe baixa exposição do reserva à carga. Horas acumuladas e desgaste semelhantes mostram que ambos trabalharam em regime equivalente, anulando o benefício esperado desse tipo de standby.",
+      "resposta_padrao": "Degradação progressiva do equipamento ativo em serviço.",
+      "por_que_nao": "O sinal decisivo é que o reserva envelhece junto com o ativo; a premissa errada é o regime operacional, não só o envelhecimento do ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em reserva fria, falha dependente do tempo parado indica falha em espera, distinta de falha de partida ou de comutação.",
+      "pergunta": "Depois de longos períodos sem demanda, o reserva frio não assume na primeira chamada. Quando entra em rotina de testes semanais com partida e transferência, volta a assumir normalmente, sem mudança no ativo. Qual a causa primária?",
+      "resposta": "Falha em espera do reserva frio",
+      "explicacao": "O comportamento depende do tempo parado. Como partida e transferência funcionam sob testes frequentes, o indício dominante é uma falha latente desenvolvida durante a permanência em espera.",
+      "resposta_padrao": "Falha de partida do reserva.",
+      "por_que_nao": "Com testes regulares, a partida e a transferência ocorrem normalmente; o discriminante técnico é a perda de prontidão após longa espera.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

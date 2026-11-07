@@ -1,0 +1,105 @@
+{
+  "item": "07_01",
+  "foco": 22,
+  "rodada": 1,
+  "contexto": {
+    "A1": 21,
+    "F": 22,
+    "A2": 23
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar perda de redundância efetiva por causa comum entre canais aparentemente redundantes.",
+      "pergunta": "Dois transmissores de alto nível indicam coerentemente, mas compartilham a mesma linha de impulso; quando essa tomada obstrui, os dois sinais congelam juntos. Qual causa primária explica a perda simultânea dessa proteção?",
+      "resposta": "Causa comum na redundância dos dois canais.",
+      "explicacao": "Os dois canais parecem ativos, mas a obstrução da tomada comum derruba ambos ao mesmo tempo. Sem independência entre os caminhos de medição, não existe redundância efetiva da função.",
+      "resposta_padrao": "Falha simultânea dos dois transmissores.",
+      "por_que_nao": "O congelamento conjunto quando a tomada comum obstrui caracteriza causa comum, não duas falhas independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "existe redundância independente;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma função degradada precisa ser tratada conforme sua criticidade, pelas consequências da falha e pela possibilidade de medidas compensatórias realmente eficazes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer compensação ineficaz quando o tempo de resposta humano é incompatível com a evolução do cenário perigoso.",
+      "pergunta": "Um detector fixo está indisponível e a compensação virou ronda com explosímetro a cada 30 minutos; o cenário perigoso pode se estabelecer em poucos minutos e não há detecção automática alternativa. Qual causa torna essa compensação ineficaz?",
+      "resposta": "Tempo de resposta da ronda incompatível com o cenário.",
+      "explicacao": "A ronda só aumenta vigilância. Como o cenário se forma em poucos minutos e não há outra detecção automática, o tempo humano de percepção e resposta não recompõe a barreira.",
+      "resposta_padrao": "Frequência de ronda insuficiente.",
+      "por_que_nao": "Mesmo mais frequente, a ronda continua descontínua e mais lenta que a evolução do cenário perigoso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a compensação reduz probabilidade, consequência ou apenas aumenta vigilância;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o tempo de exposição é aceitável para o cenário;"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar aumento de criticidade pela acumulação de atrasos em testes e manutenções de elementos que compõem a mesma barreira.",
+      "pergunta": "O proof test do sensor foi adiado 15 dias, o da lógica 10 e o do elemento final 20; cada atraso isolado foi aceito como pequeno, mas a confiança na função caiu mesmo sem falha declarada. Qual causa técnica explica isso?",
+      "resposta": "Acúmulo de atrasos na mesma barreira.",
+      "explicacao": "Mesmo sem falha individual declarada, atrasos sucessivos em sensor, lógica e elemento final da mesma função reduzem conjuntamente a confiança da barreira e elevam a criticidade.",
+      "resposta_padrao": "O atraso mais longo do elemento final.",
+      "por_que_nao": "A criticidade cresce pelo acúmulo de postergações em elementos que compõem a mesma barreira, não por um atraso isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "e há impacto combinado com outras indisponibilidades."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A criticidade cresce quando a postergação se acumula em elementos que compõem a mesma barreira."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar retorno ao serviço incompleto quando um ajuste temporário de teste permanece na configuração operacional.",
+      "pergunta": "Depois da manutenção, a função atua no teste local e a inibição é removida, mas na partida o trip ocorre abaixo da condição usual; o histórico registra um ajuste temporário usado no teste. Qual causa primária explica o disparo?",
+      "resposta": "Setpoint temporário de teste mantido na configuração.",
+      "explicacao": "Atuar no teste local não garante retorno à configuração pretendida. O disparo abaixo do usual logo após manutenção, somado ao registro do ajuste temporário, aponta para setpoint de teste não revertido.",
+      "resposta_padrao": "Deriva do transmissor.",
+      "por_que_nao": "A atuação correta no teste local e o histórico do ajuste temporário deslocam o diagnóstico para configuração remanescente, não para deriva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma função degradada precisa ser tratada conforme sua criticidade, pelas consequências da falha e pela possibilidade de medidas compensatórias realmente eficazes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária deve confirmar que a função protegida voltou à configuração pretendida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse retorno não é apenas energizar o equipamento ou retirar uma inibição;"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

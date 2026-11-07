@@ -1,0 +1,105 @@
+{
+  "item": "02_04",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer redundância mal definida por capacidade nominal, sem margem operacional para perdas de carga e indisponibilidade.",
+      "pergunta": "A soma das capacidades de placa excede a meta, mas, com uma bomba fora para manutenção, as remanescentes vão ao limite de rotação e o ΔP normal dos filtros já derruba a vazão abaixo da meta. Qual a causa primária?",
+      "resposta": "Redundância dimensionada só pela capacidade nominal, sem margem operacional",
+      "explicacao": "O sinal decisivo é perder a meta com perdas normais do processo quando uma bomba sai de serviço. Isso indica filosofia de redundância baseada em placa, não em disponibilidade com margens reais do sistema.",
+      "resposta_padrao": "Entupimento dos filtros.",
+      "por_que_nao": "O enunciado fala em ΔP normal; essa perda já deveria estar absorvida pela configuração de redundância.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "decisão de disponibilidade operacional, não apenas de capacidade nominal."
+        },
+        {
+          "bloco": "F",
+          "trecho": "permitir manutenção sem perda total de injeção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "cada etapa a montante impõe perdas de carga"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir impacto de MTTR offshore elevado de baixa confiabilidade intrínseca das bombas.",
+      "pergunta": "Falhas são raras, mas cada evento mantém a injeção reduzida até a chegada da equipe e do sobressalente no próximo embarque; em bancada, o reparo da bomba leva poucas horas. Qual a causa primária das grandes perdas por evento?",
+      "resposta": "MTTR offshore elevado",
+      "explicacao": "A frequência de falhas não é o problema dominante. A perda por evento cresce porque a indisponibilidade fica longa no ambiente offshore, tornando a redundância mais sensível ao tempo de reparo.",
+      "resposta_padrao": "As bombas são pouco confiáveis.",
+      "por_que_nao": "O enunciado informa que as falhas são raras; o impacto alto vem da duração da indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reduzir impacto de falhas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa decisão tende a ser mais sensível quando o reparo offshore é demorado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar falta de folga operacional na redundância para amortecer transientes de partida e parada.",
+      "pergunta": "Com duas bombas já a 95% da rotação, a injeção fica estável; na troca entre bomba titular e reserva, qualquer rampa provoca queda temporária de vazão, sem mudança de ΔP nos filtros, qualidade da água ou contrapressão dos poços. Qual a causa primária?",
+      "resposta": "Margem operacional insuficiente na configuração de redundância",
+      "explicacao": "O problema aparece no transiente, não em regime permanente. Como as bombas ativas já estão perto do limite, falta folga para amortecer a transferência entre máquinas.",
+      "resposta_padrao": "Sintonia ruim da rampa de partida.",
+      "por_que_nao": "Sem folga de capacidade, até uma rampa bem ajustada não evita a queda momentânea de vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "amortecer variações operacionais durante partidas, paradas ou degradação de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "perfil de vazão e das margens operacionais do conjunto captação-tratamento-injeção"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer quando o gargalo da injeção é a aceitação dos poços, não a disponibilidade mecânica das bombas.",
+      "pergunta": "Mesmo após acrescentar uma bomba reserva, a vazão total cai enquanto a pressão do cabeçalho e as pressões de injeção dos poços sobem; a água tratada permanece na especificação e as bombas seguem na curva prevista. Qual a causa primária?",
+      "resposta": "Declínio de injetividade dos poços",
+      "explicacao": "Com bombas disponíveis, água conforme e desempenho hidráulico preservado, o aumento de contrapressão com queda de vazão aponta para menor aceitação dos poços, não para falta de redundância.",
+      "resposta_padrao": "Falta de capacidade nas bombas.",
+      "por_que_nao": "As bombas estão entregando a curva prevista; a reserva melhora disponibilidade mecânica, mas não recupera aceitação dos poços.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mesmo com redundância, o sistema continua vulnerável a água fora de especificação, incrustação, corrosão, entrada de areia e declínio de injetividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade mecânica e qualidade da água precisam ser tratadas de forma integrada"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

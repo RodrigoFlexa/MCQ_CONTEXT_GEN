@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 3,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar endereço duplicado em rede/remota a partir de espelhamento alternado de dois conjuntos de pontos na supervisão.",
+      "pergunta": "Depois de trocar uma remota, os pontos dela e os de outra área passam a aparecer alternadamente com os mesmos degraus e valores na supervisão; localmente, ambas as áreas continuam coerentes. Qual causa primária explica esse espelhamento intermitente?",
+      "resposta": "Endereço de comunicação duplicado na remota substituída.",
+      "explicacao": "Espelhamento alternado entre dois conjuntos após troca de remota, com operação local íntegra, indica colisão de identidade na rede; a supervisão lê ora um nó, ora o outro.",
+      "resposta_padrao": "Mapeamento de tags trocado na supervisão.",
+      "por_que_nao": "Troca de tags gera associação fixa; não faz dois conjuntos alternarem e repetirem exatamente os mesmos degraus.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa arquitetura tende a reunir hardware e software heterogêneos, muitas vezes distribuídos pela instalação e conectados entre si"
+        },
+        {
+          "bloco": "F",
+          "trecho": "amplia a importância prática da comunicação e do diagnóstico entre camadas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir tela ligada ao historian de tag em tempo real pela discrepância entre alarme live e PV mostrada em degraus.",
+      "pergunta": "No overview da malha, a PV sobe em degraus de 60 s; o alarme de alta anuncia antes do gráfico acompanhar, e no controlador e no indicador local a variação é contínua. Qual causa primária?",
+      "resposta": "Tela vinculada ao tag do historian, não ao dado em tempo real.",
+      "explicacao": "Alarme e controle usam dado vivo do controlador; a curva em degraus de 60 s indica que a tela está lendo a fonte amostrada do historian.",
+      "resposta_padrao": "Intervalo de coleta do historian excessivo.",
+      "por_que_nao": "Coleta lenta no historian não atrasaria a tela operacional se ela estivesse ligada à tag online.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer ausência de propagação do status de qualidade à supervisão quando o controlador já trata a PV como ruim.",
+      "pergunta": "Durante falhas breves de comunicação, o controlador marca uma PV como ruim e entra em fallback, mas na supervisão o ponto fica congelado com qualidade boa e depois salta para o valor atual. Qual causa primária explica a discrepância?",
+      "resposta": "Status de qualidade não propagado pelo gateway.",
+      "explicacao": "O controlador já reconhece dado ruim; se a supervisão mantém valor congelado como válido, a interface entre camadas está mascarando o status de qualidade.",
+      "resposta_padrao": "Perda de comunicação com a remota de I/O.",
+      "por_que_nao": "Isso explica o fallback do controlador, mas não a supervisão continuar exibindo o dado como bom.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "amplia a importância prática da comunicação e do diagnóstico entre camadas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre bypass temporário e permanência indevida de permissivo mesmo com entrada válida.",
+      "pergunta": "Sem mudança de versão lógica, o estado bruto da entrada do pressostato muda corretamente no PLC quando a pressão cai, mas o permissivo de partida continua satisfeito após uma intervenção temporária de manutenção. Qual causa primária?",
+      "resposta": "Bypass ativo no permissivo de pressão mínima.",
+      "explicacao": "A entrada chega corretamente ao PLC e a lógica não foi alterada; o comportamento anômalo após intervenção temporária indica retirada momentânea da lógica normal do permissivo.",
+      "resposta_padrao": "Pressostato defeituoso.",
+      "por_que_nao": "O estado bruto da entrada muda corretamente no PLC, descartando defeito do instrumento e da fiação até a automação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre bypass de intertravamento e perda de atuação automática com alarme e elemento final íntegros.",
+      "pergunta": "Com versão lógica e setpoints inalterados, a pressão cruza o valor de alta-alta do último teste, o alarme HH entra e a válvula fecha no teste da saída digital, mas o shutdown não atua. Qual causa primária?",
+      "resposta": "Bypass ativo no intertravamento de alta-alta pressão.",
+      "explicacao": "Alarme e medição válidos mostram que a condição foi reconhecida, e o teste da saída comprova o caminho físico de atuação; o trecho removido está na lógica de trip.",
+      "resposta_padrao": "Solenóide da válvula de shutdown falho.",
+      "por_que_nao": "A válvula fecha no teste da saída digital, confirmando que elemento final e caminho de atuação estão disponíveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre forcing em feedback digital e interpretação incorreta do estado operacional.",
+      "pergunta": "Sem mudança de versão lógica, após liberação de manutenção os analógicos do skid chegam com timestamp atual e coerentes com equipamento parado, o contato de run está aberto no módulo de entrada, mas o status consolidado continua “em serviço”. Qual causa primária?",
+      "resposta": "Forcing ativo no retorno digital de operação.",
+      "explicacao": "Os demais sinais chegam atualizados e coerentes, então não há perda geral de comunicação; a incoerência fica concentrada no bit que sustenta o status de operação.",
+      "resposta_padrao": "Falha de comunicação com o skid.",
+      "por_que_nao": "Os outros pontos do mesmo conjunto continuam válidos e atualizados, o que afasta indisponibilidade do transporte de dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

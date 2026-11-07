@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 4,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar falha idêntica em equipamentos heterogêneos sob pacote malformado a vulnerabilidade na pilha TCP/IP embarcada comum.",
+      "pergunta": "PLCs, gateways seriais e IHMs legados de fornecedores distintos travam com o mesmo pacote TCP malformado em teste controlado; aplicações, sistemas operacionais e switches são diferentes. Qual causa primária comum explica o comportamento?",
+      "resposta": "Pilha TCP/IP embarcada comum vulnerável.",
+      "explicacao": "O gatilho idêntico em produtos e topologias diferentes descarta aplicação ou switch comum e aponta para fraqueza no componente de comunicação embarcado compartilhado.",
+      "resposta_padrao": "Saturação ou falha da rede Ethernet comum.",
+      "por_que_nao": "O sintoma se repete em switches e arranjos distintos, sempre disparado pelo mesmo pacote malformado.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar sistemas de controle industrial"
+        },
+        {
+          "bloco": "F",
+          "trecho": "coexistência com equipamentos embarcados sem suporte pleno a atualizações frequentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer a falta de reaplicação do baseline seletivo de hardening após restauração como causa de reexposição do ativo.",
+      "pergunta": "Restaurado com imagem padrão de TI, um servidor de supervisão volta a responder a RDP e compartilhamento vindos da rede administrativa; firewall central e comunicações OT necessárias não mudaram. Qual causa primária reapareceu?",
+      "resposta": "Baseline de hardening específico ausente na restauração.",
+      "explicacao": "Sem reaplicar o hardening seletivo do ativo, serviços e rotas desnecessários retornam após a restauração, mesmo com o perímetro e as funções operacionais preservados.",
+      "resposta_padrao": "Regra excessivamente aberta no firewall central.",
+      "por_que_nao": "A exposição surgiu só depois da restauração desse servidor, sem mudança nas regras do perímetro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "hardening funciona porque remove serviços desnecessários, restringe rotas de acesso"
+        },
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir vulnerabilidade persistente por ausência de firmware corretivo suportado da hipótese de falha rotineira de patching.",
+      "pergunta": "Na mesma família de analisadores, os modelos novos saem da lista de vulnerabilidades após atualização; um modelo antigo permanece exposto à mesma CVE e não aceita a branch atual de firmware. Qual causa primária explica a permanência?",
+      "resposta": "Plataforma legada sem firmware corretivo suportado.",
+      "explicacao": "Quando o modelo antigo não suporta a linha atual de firmware, a vulnerabilidade persiste por ausência de caminho técnico de correção, não por falha da rotina de atualização.",
+      "resposta_padrao": "Falha na execução da rotina de patching.",
+      "por_que_nao": "O mesmo processo corrige os modelos novos; o antigo não suporta a branch que remedia a CVE.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dependência de fornecedores e coexistência com equipamentos embarcados sem suporte pleno a atualizações frequentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

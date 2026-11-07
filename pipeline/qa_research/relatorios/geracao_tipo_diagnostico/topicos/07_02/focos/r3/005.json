@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 3,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar conta privilegiada compartilhada a partir de perda de rastreabilidade sem falha de logging.",
+      "pergunta": "Os logs estão íntegros, e o mesmo usuário de suporte aparece em turnos sobrepostos a partir de notebooks cadastrados para equipes diferentes, executando mudanças de configuração autorizadas. Sem lacunas de auditoria nem bypass do acesso remoto, qual causa primária explica a falta de autoria rastreável?",
+      "resposta": "Uso de conta privilegiada compartilhada.",
+      "explicacao": "Uso sobreposto da mesma credencial por equipes diferentes indica conta compartilhada. O problema decisivo não é intrusão nem perda de log, mas quebra de rastreabilidade em acesso de maior privilégio.",
+      "resposta_padrao": "Comprometimento da credencial.",
+      "por_que_nao": "As conexões vêm de hosts cadastrados e em janelas autorizadas; o indício decisivo é a mesma conta ser usada por equipes diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir excesso de escopo na credencial do fornecedor de problema de segmentação de rede.",
+      "pergunta": "Durante manutenção de um pacote, só a credencial daquele fornecedor consegue abrir sessões também em controladores e servidores de outros pacotes; pelo mesmo jump host e mesma rota, credenciais de outros terceiros não conseguem. Qual causa primária explica esse alcance?",
+      "resposta": "Conta de fornecedor com permissões cruzadas entre pacotes.",
+      "explicacao": "Como o caminho de rede é o mesmo para outros terceiros, o alcance lateral não decorre do firewall. O excesso está no escopo da credencial, além da tarefa e dos ativos necessários.",
+      "resposta_padrao": "Regra de firewall ampla demais.",
+      "por_que_nao": "Se fosse o firewall, outras credenciais no mesmo caminho teriam o mesmo alcance.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "isso reduz a superfície de erro e de abuso porque limita quais ativos podem ser vistos, configurados ou modificados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a cada pessoa, equipe, aplicação ou fornecedor apenas as permissões estritamente necessárias"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar reautenticação tardia com privilégio elevado não revogado, e não com sessão remota pendente.",
+      "pergunta": "Três semanas depois do suporte, o mesmo usuário do fornecedor volta a se autenticar pelo fluxo regular e consegue alterar configuração de controladores sem novo pedido; o túnel anterior foi encerrado no dia do serviço e há nova autenticação completa. Qual causa primária?",
+      "resposta": "Privilégio de engenharia não revogado após a atividade.",
+      "explicacao": "Nova autenticação semanas depois descarta sessão remota pendurada. O acesso elevado permaneceu ativo além do tempo necessário para a tarefa, contrariando o menor privilégio por tempo.",
+      "resposta_padrao": "Sessão remota não encerrada.",
+      "por_que_nao": "O acesso reaparece por nova autenticação regular, não por continuidade técnica da sessão anterior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acesso de engenharia pode alterar configuração, lógica e firmware;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

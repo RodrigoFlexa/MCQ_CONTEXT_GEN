@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda do 24 Vcc de comando dos painéis dos geradores provoca queda da geração sem falha mecânica.",
+      "pergunta": "Com dois geradores em paralelo, rotação, combustível, temperaturas e vibração permanecem normais, mas ambos perdem comando e indicação local e abrem o disjuntor quase ao mesmo tempo; o barramento não registra falta. Qual a causa primária?",
+      "resposta": "Desenergização do 24 Vcc dos painéis de controle dos geradores",
+      "explicacao": "Sem alimentação de comando e supervisão, o gerador pode seguir mecanicamente disponível, mas não permanece conectado nem controlável.",
+      "resposta_padrao": "Trip mecânico das máquinas motrizes.",
+      "por_que_nao": "Os parâmetros mecânicos permaneceram normais nos dois conjuntos; o sinal comum é a perda de comando e supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle de geradores em operação levou à perda da geração principal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de comando de válvulas pode vir da alimentação do cartão-relé do CLP pela UPS, não do 24 Vcc geral.",
+      "pergunta": "Com a energia principal perdida, as válvulas ainda respondem; quando a UPS A cai, some o comando remoto, embora os dois sistemas 24 Vcc com retificadores e baterias sigam normais. Qual causa explica isso?",
+      "resposta": "Cartão-relé do CLP alimentado pela UPS A",
+      "explicacao": "A perda combinada da rede principal com a falha da UPS A desenergiza o cartão-relé e bloqueia o comando das válvulas.",
+      "resposta_padrao": "Falha das válvulas ou do CLP.",
+      "por_que_nao": "O sintoma acompanha a UPS A; como os sistemas 24 Vcc permanecem saudáveis, a perda está na alimentação intermediária de comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "desenergizou parte do controle associado às válvulas de tanques."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "TIE fechado entre barramentos 24 Vcc elimina a independência real entre trens redundantes.",
+      "pergunta": "Uma falta em um dos quadros 24 Vcc derruba os dois trens de controle embora cada banco, isolado, suporte toda a demanda; repetindo a condição com o TIE aberto, só o lado defeituoso cai. Qual a causa primária?",
+      "resposta": "TIE fechado interligando os dois sistemas 24 Vcc",
+      "explicacao": "Com os barramentos interligados, a redundância fica apenas nominal e a falha de um lado alcança cargas que deveriam permanecer segregadas.",
+      "resposta_padrao": "Capacidade insuficiente do banco de baterias remanescente.",
+      "por_que_nao": "Cada sistema, isoladamente, atende toda a demanda; a perda simultânea só aparece quando a interligação cria o ponto comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 24,
+  "rodada": 2,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Teste funcional só valida o cenário e o arranjo exercitados; um caminho auxiliar de alívio no teste pode mascarar a resposta real da barreira.",
+      "pergunta": "Na causa-e-efeito, uma SDV foi aprovada com N2 e linha descarregando para dreno. Em serviço com hidrocarboneto, a mesma causa aciona a lógica e a SDV fecha no mesmo tempo do teste, mas a pressão a jusante demora a cair e o permissivo permanece ativo por alguns segundos. Qual a causa primária?",
+      "resposta": "Caminho de despressurização disponível só no teste funcional.",
+      "explicacao": "Detecção, lógica e tempo de fechamento repetem o ensaio; o desvio aparece apenas sem o dreno/alívio usado no teste. O teste validou um arranjo mais favorável que o disponível em operação.",
+      "resposta_padrao": "SDV lenta ou com defeito de atuação.",
+      "por_que_nao": "O tempo de curso repetiu o do teste; mudou o arranjo hidráulico do cenário, não a atuação da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seu significado depende do fluido, das condições de operação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o comportamento observado no teste, porém, vale para os cenários exercitados e para o arranjo disponível naquele momento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída para a ação protetiva"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Intertravamento pode estar correto em um modo operacional e ausente em outro; entrada válida com alarme, mas sem efeito final só em regeneração, aponta omissão na matriz.",
+      "pergunta": "Alta temperatura em um leito muda o estado da entrada e gera alarme no SIS tanto em produção quanto em regeneração. Só em produção a lógica fecha combustível e isola o leito; em regeneração, sem bypass ativo, nenhuma saída é comandada. Qual a causa primária?",
+      "resposta": "Modo de regeneração ausente da matriz de causa e efeito.",
+      "explicacao": "A entrada é detectada nos dois modos e não há bypass; a diferença está no efeito automático. O comportamento das barreiras muda com o regime, e o teste em produção não valida a regeneração.",
+      "resposta_padrao": "Transmissor de temperatura descalibrado.",
+      "por_que_nao": "A condição é detectada corretamente nos dois modos; falta apenas a resposta automática específica da regeneração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O desempenho de intertravamentos, permissivos e compensações muda com o regime operacional e com o contexto da instalação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Partidas, paradas, isolamento de sistemas, comissionamento, regeneração"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a matriz de causa e efeito é testada, o objetivo é confirmar que as condições de entrada levam aos efeitos definidos para os intertravamentos da unidade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em partida após isolamento, a ordem de restabelecimento pode derrubar permissivos mesmo com sinais e equipamentos íntegros.",
+      "pergunta": "Retomando um trem isolado, o permissivo de pressurização cai sempre quando a válvula principal abre. Pressões e contatos de campo seguem coerentes, e a partida conclui sem bloqueio quando a equalização é feita antes de armar os intertravamentos. Qual a causa primária?",
+      "resposta": "Armamento dos intertravamentos antes da equalização da linha.",
+      "explicacao": "O problema depende da ordem de partida e desaparece ao corrigi-la, com instrumentação coerente. Em partidas e após isolamentos, a barreira passa a depender criticamente da sequência correta de restabelecimento.",
+      "resposta_padrao": "Transmissor de pressão defeituoso.",
+      "por_que_nao": "Os sinais permanecem coerentes e o bloqueio some ao mudar a ordem da sequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Partidas, paradas, isolamento de sistemas, comissionamento, regeneração, indisponibilidade simultânea de equipes ou de equipamentos críticos e execução de serviços concorrentes tendem a aumentar a dependência de sequências corretas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esse retorno não é apenas energizar o equipamento ou retirar uma inibição; ele envolve verificar se procedimento, lógica operacional, condição do processo e evidência de saneamento estão alinhados."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

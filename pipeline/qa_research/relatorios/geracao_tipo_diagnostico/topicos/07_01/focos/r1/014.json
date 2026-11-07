@@ -1,0 +1,117 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 1,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar ação direta/reversa do controlador invertida a partir da resposta correta do elemento final em manual e agravamento em automático.",
+      "pergunta": "Quando a temperatura sobe acima do setpoint, a saída do controlador diminui; em manual, aumentar a saída abre a válvula de resfriamento e a temperatura cai. Qual causa primária explica a piora em automático?",
+      "resposta": "Ação direta/reversa do controlador configurada invertida.",
+      "explicacao": "O teste manual mostra que mais saída abre a válvula e reduz a temperatura, então atuador e sentido da válvula estão corretos. A piora só em automático indica ação do controlador com sinal oposto ao processo.",
+      "resposta_padrao": "Válvula de resfriamento instalada invertida.",
+      "por_que_nao": "Em manual, aumentar a saída abre a válvula e derruba a temperatura, provando que o caminho final age no sentido certo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sentido incorreto de atuação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "os sistemas controladores, que geram ações de controle executadas por atuadores"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer associação incorreta de tag na supervisão quando a tela reproduz a assinatura de outra variável, com campo e controlador coerentes.",
+      "pergunta": "Na tela, o nível de um vaso repete exatamente o ruído e os degraus da pressão de sucção; no controlador e no campo, o nível está coerente com o visor local. Qual causa primária?",
+      "resposta": "Tag de supervisão do nível associado ao sinal errado.",
+      "explicacao": "A tela replica exatamente a assinatura de outra variável, enquanto o controlador e a indicação de campo permanecem coerentes com o nível real. Isso caracteriza associação do ponto de supervisão ao tag errado, não falha do transmissor.",
+      "resposta_padrao": "Transmissor de nível com defeito.",
+      "por_que_nao": "Se o transmissor estivesse errado, o controlador e a checagem de campo também refletiriam o erro, não uma cópia perfeita da pressão de sucção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "oferecem interface para que operadores visualizem a situação operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir desalinhamento temporal de dados na supervisão/historian de atraso real de instrumento pela inversão causal só nas tendências.",
+      "pergunta": "Nas tendências, a vazão sempre parece subir alguns segundos antes da abertura da válvula; em campo e na lógica, a válvula abre primeiro e a malha responde normalmente. O que explica essa inversão recorrente?",
+      "resposta": "Desalinhamento de timestamps entre os sinais na supervisão/historian.",
+      "explicacao": "A relação causal impossível aparece apenas nas tendências; em campo e na lógica, a sequência física é correta. O problema está na coerência temporal dos dados exibidos, por timestamps desalinhados entre sinais.",
+      "resposta_padrao": "Transmissor de posição da válvula com atraso.",
+      "por_que_nao": "A ordem física e a lógica do controlador permanecem corretas; só a visualização histórica inverte os eventos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Localizar perda de integração entre PLC autônomo de skid e DCS sem confundir com falha do skid ou pane geral do DCS.",
+      "pergunta": "O painel local do skid mostra pressões, temperaturas e comandos funcionando; no sistema central, todos os pontos desse skid ficam indisponíveis, mas os demais processos seguem normais. Qual causa primária?",
+      "resposta": "Falha no gateway de comunicação entre o PLC do skid e o DCS.",
+      "explicacao": "O skid mantém medição e comando no painel local, logo sensores, atuadores e PLC do pacote seguem operantes. A indisponibilidade restrita ao sistema central aponta para a interface de comunicação entre o PLC do skid e o DCS.",
+      "resposta_padrao": "Pane no DCS central.",
+      "por_que_nao": "Os demais processos permanecem normais e o pacote continua operando localmente, isolando a falha na interface desse skid.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "hardware e software heterogêneos, muitas vezes distribuídos pela instalação e conectados entre si"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface"
+        },
+        {
+          "bloco": "F",
+          "trecho": "amplia a importância prática da comunicação e do diagnóstico entre camadas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

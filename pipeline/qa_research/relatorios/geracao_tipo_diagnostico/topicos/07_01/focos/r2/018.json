@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite de observabilidade: proteção local não integrada ao PLC oculta a causa do desligamento no supervisório.",
+      "pergunta": "Minutos após cada partida, o motor desarma; no skid, a lâmpada de baixa pressão de óleo acende e exige reset local, mas no supervisório só fica registrado \"motor parado\". Manômetro e transmissor integrado permanecem normais. O que explica a falta da causa no supervisório?",
+      "resposta": "Pressostato local de baixa pressão não integrado ao PLC",
+      "explicacao": "O desligamento nasce em proteção local fora da observabilidade do PLC. Como manômetro e transmissor integrado permanecem normais, o problema não é baixa pressão real, mas um pressostato local cujo estado não chega ao supervisório.",
+      "resposta_padrao": "Baixa pressão real do óleo lubrificante.",
+      "por_que_nao": "Manômetro e transmissor integrado seguem normais; o efeito visível no supervisório vem de uma proteção local sem integração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando parte dos ativos ou medições não está integrada ao PLC, a percepção do estado global da planta fica distribuída entre a automação e observações complementares."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso tende a dificultar a correlação automática entre causa e efeito"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Redundância de alimentação: retirada de um canal revela que o outro já estava indisponível.",
+      "pergunta": "Ao retirar a fonte B no teste de redundância, o PLC desliga, embora o processo estivesse estável; nos dias anteriores, o diagnóstico mostrava corrente nula na fonte A sem alarme de degradação. Qual causa primária?",
+      "resposta": "Fonte A redundante já estava indisponível",
+      "explicacao": "O PLC já operava alimentado por um único caminho efetivo. A retirada da fonte B removeu a única alimentação disponível; a corrente nula na A antes do teste evidencia perda de redundância latente.",
+      "resposta_padrao": "Defeito na fonte B retirada no teste.",
+      "por_que_nao": "A corrente nula na A antes do teste mostra que o PLC já dependia apenas da B.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dashboards: status de normalidade deve considerar a validade da medição, não apenas o último valor exibido.",
+      "pergunta": "O dashboard mantém o equipamento em \"normal\" enquanto três tags da mesma remota ficam no último valor com qualidade inválida; a página continua atualizando. Qual causa primária do falso status?",
+      "resposta": "Checagem de normalidade sem validar a qualidade das tags",
+      "explicacao": "As tags inválidas e em último valor mostram indisponibilidade de dados, não normalidade do equipamento. Se a página continua atualizando e o status permanece \"normal\", a lógica de checagem ignora a validade das medições.",
+      "resposta_padrao": "Falha de comunicação com a remota de I/O.",
+      "por_que_nao": "Isso explica os dados inválidos, não o status \"normal\" persistente; o erro está na lógica de avaliação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em soluções com coleta periódica por historian, checagem de normalidade e validade das medições e uso de dashboards, a visualização pode apoiar decisão operacional, desde que os dados sejam consistentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

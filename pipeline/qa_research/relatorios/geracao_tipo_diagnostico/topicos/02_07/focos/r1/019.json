@@ -1,0 +1,79 @@
+{
+  "item": "02_07",
+  "foco": 19,
+  "rodada": 1,
+  "contexto": {
+    "A1": 18,
+    "F": 19,
+    "A2": 20
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito do aumento do atraso da malha sobre a estabilidade de um PI previamente adequado.",
+      "pergunta": "Oscilações sustentadas de nível surgiram sem mudança de carga, após inserir filtragem/comunicação adicional; a válvula e o transmissor respondem corretamente, mas a correção sempre chega tarde e com maior ultrapassagem. Qual é a causa primária?",
+      "resposta": "aumento do atraso da malha de nível",
+      "explicacao": "O PI pode ser adequado e perder robustez quando se adiciona atraso na medição ou atuação. Como válvula e transmissor seguem corretamente, mas tarde, o elemento decisivo é o atraso extra da malha.",
+      "resposta_padrao": "PI mal ajustado.",
+      "por_que_nao": "A malha era estável antes e a mudança coincidiu com filtragem/comunicação adicional; a assinatura decisiva é a correção correta, porém tardia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumento de atraso da malha"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto da não linearidade altura-volume do vaso na sintonia da malha de nível.",
+      "pergunta": "Com o mesmo PI, o nível fica estável na faixa média, mas perto do mínimo ou do máximo a resposta vira oscilatória ou muito lenta; vazões e resposta da válvula permanecem normais. Que causa explica isso?",
+      "resposta": "relação altura-volume não linear do vaso",
+      "explicacao": "Se a geometria torna o ganho nível-volume variável, a mesma sintonia funciona no centro e falha nas extremidades. O comportamento dependente da faixa de nível aponta para não linearidade do vaso, não para um único ajuste errado.",
+      "resposta_padrao": "ganho do PI inadequado.",
+      "por_que_nao": "Um erro único de sintonia degradaria a faixa toda; a mudança só perto dos extremos revela ganho de processo variável com o nível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode-se assumir relação linear entre altura e volume"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência do controle por bandas da estimativa da vazão média de entrada.",
+      "pergunta": "No controle por bandas, o nível percorre lentamente de um limite ao outro em dente de serra; dentro da faixa a válvula quase não se move, e ao cruzar o limite volta rápido. Qual a causa primária?",
+      "resposta": "estimativa errada da vazão média de entrada",
+      "explicacao": "No controle por bandas, a saída fica próxima da média estimada de entrada enquanto o nível permanece dentro da faixa. Se essa média estiver enviesada, o inventário deriva até a borda e retorna rapidamente quando a ação rápida entra.",
+      "resposta_padrao": "histerese na válvula de saída.",
+      "por_que_nao": "A válvula corrige prontamente ao sair da banda; o desvio lento dentro da faixa indica referência média errada, não limitação mecânica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o nível ultrapassa a banda, o sistema comuta para ação rápida"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

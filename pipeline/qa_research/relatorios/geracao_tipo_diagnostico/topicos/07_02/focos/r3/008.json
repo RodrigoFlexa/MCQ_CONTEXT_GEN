@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 8,
+  "rodada": 3,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar software idêntico surgindo em segmentos isolados ao notebook temporário reutilizado com software não autorizado.",
+      "pergunta": "O mesmo serviço desconhecido aparece, em datas diferentes, em duas estações de segmentos sem rota entre si. A instalação partiu do diretório temporário do mesmo notebook de manutenção, reutilizado em outros contratos; não havia VPN ativa nem mídia removível. Qual causa primária?",
+      "resposta": "Notebook temporário reutilizado com software não autorizado.",
+      "explicacao": "O serviço surgiu em segmentos isolados, sem vetor de rede ou mídia, sempre a partir do mesmo notebook. O bloco foco diz que dispositivos temporários podem introduzir software não autorizado e que o risco aumenta quando são reutilizados.",
+      "resposta_padrao": "Malware propagado pela rede OT.",
+      "por_que_nao": "Não havia rota entre os segmentos, nem VPN ou mídia; a origem local repetida foi o mesmo notebook.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado porque podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O risco é maior quando o dispositivo é reutilizado entre múltiplos contratos ou instalações, ou quando sua atualização e integridade não são verificadas antes do uso."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir alteração não rastreada feita localmente por notebook temporário da hipótese de falha de logs centrais.",
+      "pergunta": "O checksum da lógica muda durante inspeção em campo, mas o servidor de versionamento e a estação residente não registram download. A auditoria do controlador aponta escrita pela porta frontal no horário em que um terceiro conectou notebook de manutenção local. Qual a causa primária?",
+      "resposta": "Edição online local pelo notebook temporário.",
+      "explicacao": "Sem registro de download no ambiente central, mas com escrita confirmada pela porta frontal do controlador, a alteração foi feita por conexão local. O bloco foco destaca o risco de alterações não rastreadas introduzidas por dispositivos temporários.",
+      "resposta_padrao": "Falha no servidor de versionamento ou nos logs centrais.",
+      "por_que_nao": "A auditoria do controlador mostra uma escrita real pela porta local, não apenas ausência de registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado porque podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Assim, decisões sobre acesso de terceiros devem considerar não só autenticação, mas também condição do equipamento utilizado, momento operacional da intervenção e possibilidade de retorno seguro ao estado normal após a atividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar a criticidade súbita de intervenção remota ao bypass de manutenção da UPS compartilhada.",
+      "pergunta": "Durante coleta remota de backups, um afundamento breve da alimentação reinicia ao mesmo tempo consoles de processo, shutdown e fogo e gás. A mesma rotina já havia sido executada sem efeito; desta vez, a UPS comum estava em bypass de manutenção. Qual causa tornou a intervenção crítica?",
+      "resposta": "UPS compartilhada em bypass de manutenção.",
+      "explicacao": "O reinício simultâneo ocorreu porque a barreira de alimentação ininterrupta estava degradada. O bloco foco afirma que falhas na UPS podem afetar vários sistemas ao mesmo tempo e tornam atividades remotas mais sensíveis.",
+      "resposta_padrao": "Falha do software de backup.",
+      "por_que_nao": "A rotina já era estável; o gatilho foi o afundamento de energia com a UPS comum fora da proteção ininterrupta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas em sistemas de alimentação ininterrupta podem afetar simultaneamente sistemas de controle, shutdown de emergência e mitigação de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nessa condição, qualquer atividade remota ou de manutenção sobre ativos digitais torna-se mais sensível"
+        },
+        {
+          "bloco": "F",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação, mas também condição do equipamento utilizado, momento operacional da intervenção e possibilidade de retorno seguro ao estado normal após a atividade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

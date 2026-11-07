@@ -1,0 +1,125 @@
+{
+  "item": "07_01",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir sentido de atuação invertido do elemento final de erro de ação do controlador durante teste integrado.",
+      "pergunta": "Com o controlador em manual durante recirculação com N2, elevar a saída de 30% para 60% fez a válvula ir suavemente para fechar, confirmado no indicador local, e a variável respondeu a esse fechamento. Qual a causa primária?",
+      "resposta": "Posicionador com ação invertida.",
+      "explicacao": "Com o controlador em manual, o erro não está na ação do controlador. O curso suave e confirmado em campo indica sentido incorreto de atuação no elemento final, típico de falha revelada em teste integrado.",
+      "resposta_padrao": "A ação direta/reversa do controlador está errada.",
+      "por_que_nao": "Em manual, o controlador não define o sentido do movimento; quem o inverte é o conjunto final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sentido incorreto de atuação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre modo de atuação pretendido, capacidade de modulação ou de abre-fecha, indicação de posição e resposta observável do atuador em campo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer associação incorreta de alarme no supervisório quando processo e lógica respondem ao equipamento correto.",
+      "pergunta": "Na circulação com N2, alta pressão no vaso A foi confirmada pelo transmissor, manômetro local e atuação automática correta da lógica ligada ao A, mas o operador recebeu “alta pressão vaso B”. Qual a causa primária?",
+      "resposta": "Associação do alarme à tag errada no supervisório.",
+      "explicacao": "A condição real e a resposta automática pertencem ao vaso A; só a apresentação ao operador aponta B. Isso caracteriza alarme mal associado na camada de supervisão, não defeito do transmissor do vaso B.",
+      "resposta_padrao": "Transmissor do vaso B com defeito.",
+      "por_que_nao": "A condição perigosa, a atuação automática e as medições locais convergem para o vaso A; o erro está na associação do alarme.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alarmes mal associados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar falha de sequência por uso da variável errada na condição de transição.",
+      "pergunta": "A etapa de aquecimento inicia normalmente e a temperatura requerida aparece no transmissor e na tela, mas a regeneração só avança quando varia a pressão de outra linha. Qual a causa primária?",
+      "resposta": "Transição da sequência vinculada à tag errada.",
+      "explicacao": "A condição correta é atingida e exibida, mas a sequência depende da mudança de outra variável. Isso indica erro de configuração na lógica de regeneração: a transição de etapa foi ligada à tag errada.",
+      "resposta_padrao": "Transmissor de temperatura descalibrado.",
+      "por_que_nao": "A temperatura correta já aparece no sistema; a etapa só muda quando uma variável sem relação se altera.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testar antecipadamente a lógica de regeneração"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de sequência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "erro de configuração"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir intermitência no enlace PLC-supervisório de falha de campo a partir de congelamento simultâneo apenas na supervisão.",
+      "pergunta": "Várias tendências na tela congelam por segundos e retornam juntas durante circulação quente com N2, enquanto os controles locais seguem atuando e o PLC continua atualizando entradas. Qual a causa primária?",
+      "resposta": "Intermitência no link PLC-supervisório.",
+      "explicacao": "Congelamento simultâneo só na supervisão, com controles e PLC ainda atualizando, indica perda intermitente no enlace entre camadas. Testes integrados sob condição representativa expõem esse tipo de falha, invisível em checagens estáticas.",
+      "resposta_padrao": "Falha simultânea em vários transmissores.",
+      "por_que_nao": "Os controladores continuam atuando e o PLC segue vendo as entradas; a perda ocorre só na supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "comunicação intermitente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

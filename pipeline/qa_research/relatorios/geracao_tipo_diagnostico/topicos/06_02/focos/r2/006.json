@@ -1,0 +1,113 @@
+{
+  "item": "06_02",
+  "foco": 6,
+  "rodada": 2,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Arquitetura de instrumentação: uma causa comum a montante pode anular alarme e trip redundantes.",
+      "pergunta": "Após manutenção, dois transmissores redundantes de alta pressão instalados na mesma tomada de processo ficaram com leitura baixa e idêntica; o manômetro local sobe e, em bancada, ambos respondem normalmente. Qual causa primária explica o não disparo do alarme e do trip?",
+      "resposta": "Isolamento comum da tomada de processo.",
+      "explicacao": "Leitura idêntica nos dois canais, com teste individual aprovado, aponta para causa comum a montante. Pela arquitetura, o isolamento da tomada cega simultaneamente alarme e trip.",
+      "resposta_padrao": "Falha simultânea dos dois transmissores.",
+      "por_que_nao": "Os dois passam em bancada, e o viés idêntico após manutenção indica falha comum upstream, não duas falhas independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a suficiência dessa combinação depende da arquitetura do sistema"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "maior vulnerabilidade a falha comum"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Fatores humanos: ergonomia e discriminabilidade dos comandos influenciam erros em procedimentos críticos.",
+      "pergunta": "Operadores experientes erram a sequência de isolamento só à noite, usando respirador, em duas válvulas lado a lado com volantes idênticos e sentidos opostos; o erro some no mock-up após diferenciar os comandos, sem treino adicional. Qual causa primária explica a recorrência?",
+      "resposta": "Arranjo ergonômico espelhado dos comandos das válvulas.",
+      "explicacao": "O padrão depende da condição de uso e desaparece com redesign físico, sem mudança de treinamento. Isso caracteriza fator humano de projeto/tarefa, elevando erro de seleção em procedimento crítico.",
+      "resposta_padrao": "Falta de treinamento da equipe.",
+      "por_que_nao": "A mesma equipe treinada deixou de errar sem reciclagem, apenas com mudança física dos comandos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "fatores humanos também influenciam o desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "identificar melhorias em projetos e tarefas para reduzir a chance de erros em procedimentos críticos para a segurança"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "aumento da probabilidade de erro humano"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Adequação temporal da barreira de detecção ao cenário: latência de amostragem versus dinâmica do processo.",
+      "pergunta": "O analisador de hidrocarbonetos acusa corretamente quando amostra, mas o alarme só aparece na próxima varredura, depois de desvio de P/T e atuação do alívio em eventos agudos. Qual causa primária explica essa detecção tardia?",
+      "resposta": "Ciclo de amostragem do analisador incompatível com a dinâmica do cenário.",
+      "explicacao": "O detector mede corretamente, mas tarde demais. A limitação é o tempo morto entre amostragens, incompatível com a resposta dinâmica do desvio e com o tempo útil para atuação.",
+      "resposta_padrao": "Descalibração do analisador.",
+      "por_que_nao": "Ele confirma a contaminação quando amostra; o problema é latência temporal, não exatidão da medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a combinação de barreiras deve cobrir detecção do desvio, confirmação da severidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "da resposta dinâmica do processo e do tempo disponível para atuação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redução de capacidade de detecção"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Alteração de processo exige reavaliar o cenário e ampliar a análise a equipamentos similares sujeitos ao mesmo mecanismo.",
+      "pergunta": "Meses após elevar a temperatura de serviço, um segundo trocador paralelo rompeu tubos pelo mesmo mecanismo do primeiro; o caso inicial gerou ação apenas no equipamento falhado, e os demais similares mantiveram as mesmas premissas. Qual causa primária explica a recorrência?",
+      "resposta": "Análise de risco não estendida aos trocadores similares.",
+      "explicacao": "A mesma condição alterada e o mesmo mecanismo em equipamentos paralelos indicam falha de abrangência da revisão. A reavaliação deveria alcançar os similares expostos ao mesmo mecanismo.",
+      "resposta_padrao": "Diferença construtiva entre os trocadores.",
+      "por_que_nao": "Com condição de processo alterada e mesmo mecanismo de falha, o ponto decisivo é a falta de extensão da revisão, não uma diferença individual presumida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção de barreiras deve partir do cenário de risco e do modo de falha esperado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando as condições de processo são alteradas, há necessidade de atualizar as análises de risco"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "verificar a abrangência do cenário para equipamentos similares sujeitos ao mesmo mecanismo de falha"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

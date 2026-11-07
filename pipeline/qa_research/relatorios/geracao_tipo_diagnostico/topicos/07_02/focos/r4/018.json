@@ -1,0 +1,69 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "rodada": 4,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite dos analytics preditivos quando o alerta é correto e visível, mas não aciona funções críticas nem decisão operacional.",
+      "pergunta": "O aviso preditivo apareceu corretamente na HMI e no historiador em três ocorrências parecidas, foi confirmado depois na inspeção, mas nenhum permissivo operacional, prioridade de alarme ou regra de parada estava associado a ele; a intervenção só veio após atuação da proteção. Qual a causa primária da resposta tardia?",
+      "resposta": "Alerta analítico sem vínculo com permissivos operacionais.",
+      "explicacao": "O modelo detectou corretamente e o aviso chegou à supervisão; faltava ligação com funções críticas e critérios operacionais que convertessem a previsão em ação antes da proteção.",
+      "resposta_padrao": "Modelo analítico mal calibrado.",
+      "por_que_nao": "A indicação se repetiu em condições semelhantes e foi confirmada depois; o atraso veio da ausência de vínculo com permissivos e priorização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics em dispositivos, edge computing e modelos digitais podem ampliar observação e previsão de falhas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não substituem monitoramento de segurança nem garantem resposta adequada sem integração com funções críticas e decisão operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a qualidade da resposta melhora quando há critérios claros para escalonamento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da alimentação não ininterrupta no núcleo da rede de supervisão sobre HMIs, alarmes e historiador.",
+      "pergunta": "Afundamentos de 200 ms não reiniciam controladores, SIS nem estações, mas todas as HMIs congelam juntas, alarmes cessam e o historiador abre lacuna; os LEDs do switch central apagam nesse instante e tudo volta sem reboot. Qual a causa primária?",
+      "resposta": "Switch central da rede de supervisão fora da UPS.",
+      "explicacao": "Sem reboot de controladores ou estações, a perda é de comunicação/supervisão durante o afundamento. O apagamento do switch identifica perda de alimentação ininterrupta no núcleo da rede.",
+      "resposta_padrao": "Falha no switch central.",
+      "por_que_nao": "O comportamento é sincronizado com afundamentos da rede e o retorno é imediato, sinal típico de perda de alimentação, não de defeito interno.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas SCADA foram descritos como dependentes de fonte elétrica confiável e ininterrupta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "degradação de energia pode provocar reinicializações, travamentos, perda de comunicação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

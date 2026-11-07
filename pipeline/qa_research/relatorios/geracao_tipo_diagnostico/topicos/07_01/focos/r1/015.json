@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 15,
+  "rodada": 1,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir limitação de amostragem do historian de lentidão de sensor ou do processo.",
+      "pergunta": "Durante uma perturbação rápida, os indicadores locais e o controlador mostram resposta contínua, mas o historian registra PV e saída em degraus de 10 s, com o mesmo atraso em várias malhas independentes e sem perdas de comunicação. Qual é a causa primária?",
+      "resposta": "Intervalo de coleta do historian excessivo.",
+      "explicacao": "Degraus e atraso idênticos em várias variáveis, inclusive na saída do controlador, caracterizam limitação de amostragem na camada de histórico, não dinâmica de um sensor específico nem do processo.",
+      "resposta_padrao": "Sensor lento ou mal calibrado.",
+      "por_que_nao": "O mesmo padrão aparecendo em várias malhas e também no sinal de saída não nasce de um transmissor de campo isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer perda de coerência temporal por dessincronização de tempo entre fontes de dados e historian.",
+      "pergunta": "Nas tendências históricas, a vazão passa a subir antes da abertura da válvula e partidas aparecem antes do comando, embora a operação ao vivo e as sequências no controlador estejam corretas. Que causa explica essa inversão aparente de causa e efeito?",
+      "resposta": "Sincronização de tempo entre fontes e historian perdida.",
+      "explicacao": "Se os valores são plausíveis, mas a ordem temporal entre eventos de subsistemas distintos fica impossível apenas no histórico, a causa está no carimbo de tempo e não na lógica do processo.",
+      "resposta_padrao": "Latência de comunicação na rede.",
+      "por_que_nao": "Latência aparece como atraso de atualização; inversão consistente de sequência entre eventos históricos aponta para relógios desalinhados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "hardware e software heterogêneos, muitas vezes distribuídos pela instalação e conectados entre si"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falta de integração funcional ao PLC de simples falha de comunicação de um equipamento de pacote.",
+      "pergunta": "O painel local de um pacote mostra partida, parada e estados normalmente, e as variáveis de processo confirmam sua atuação, mas no PLC nunca surgiram pontos individuais de status nem comando remoto; só há alarme resumo desde o comissionamento. Qual a causa?",
+      "resposta": "Interface do pacote com o PLC inexistente.",
+      "explicacao": "Funcionamento local confirmado com ausência histórica de pontos e comando remoto indica cobertura parcial da automação. Presença física e energização não comprovam integração funcional ao controlador.",
+      "resposta_padrao": "Falha de comunicação com o equipamento.",
+      "por_que_nao": "Se nunca houve pontos individuais nem comando remoto desde o início, não se perdeu um enlace que antes existia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "energização ou presença física do equipamento não bastam para comprovar integração funcional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "equipamentos precisam ser lidos e acompanhados fora do PLC"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

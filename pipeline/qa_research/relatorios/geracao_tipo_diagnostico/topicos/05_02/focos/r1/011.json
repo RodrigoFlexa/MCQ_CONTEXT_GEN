@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "rodada": 1,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falha de recomposição causada por trip persistente da lógica de controle durante reboot.",
+      "pergunta": "Durante a recomposição após blackout total, o gerador de emergência atinge rotação e tensão nominais, mas o disjuntor abre a cada tentativa de energização enquanto a lógica de controle reinicia; em reinícios usuais com bateria disponível, o fechamento se mantém. Qual causa primária explica isso?",
+      "resposta": "Sinal de trip mantido pela lógica de controle no reboot",
+      "explicacao": "O conjunto mecânico e o disjuntor se mostram aptos nos reinícios usuais; no estado anormal, a lógica mantém trip durante o reboot e impede o fechamento sustentado.",
+      "resposta_padrao": "Falha do disjuntor do gerador de emergência.",
+      "por_que_nao": "Nos reinícios usuais com bateria o fechamento se mantém, descartando defeito intrínseco do disjuntor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar perda de atuação remota com lógica ativa à falta de alimentação do cartão-relé do CLP.",
+      "pergunta": "Com uma UPS redundante já indisponível, uma perda da alimentação principal faz os bits de comando mudarem no CLP, mas as válvulas de tanques não atuam pelo sistema de controle; localmente elas atuam. Qual elemento explica isso?",
+      "resposta": "Desenergização do cartão-relé do CLP",
+      "explicacao": "A lógica recebe o comando, mas a etapa de saída fica sem energia quando a UPS falha junto com a principal; no caso descrito, quem perde alimentação é o cartão-relé do CLP.",
+      "resposta_padrao": "Falha de comunicação do sistema de controle.",
+      "por_que_nao": "Se os bits mudam no CLP e a atuação local existe, a comunicação e a mecânica não são a causa primária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer perda simultânea de canais redundantes por alimentação comum das estações mestras em uma UPS.",
+      "pergunta": "As duas estações mestras do sistema de controle caem juntas quando falha uma única UPS redundante, embora a outra UPS permaneça íntegra e o arranjo previsse independência entre canais. O que explica essa perda simultânea?",
+      "resposta": "Alimentação das duas estações mestras pela mesma UPS",
+      "explicacao": "A redundância aparente foi anulada por uma fonte comum; com ambas as estações na mesma UPS, uma única falha derruba os dois canais.",
+      "resposta_padrao": "Falha da própria UPS.",
+      "por_que_nao": "Uma única UPS não deveria derrubar ambos os canais se a segregação prevista estivesse realmente implementada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

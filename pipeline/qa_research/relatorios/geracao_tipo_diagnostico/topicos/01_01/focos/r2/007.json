@@ -1,0 +1,117 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "rodada": 2,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Lógica funcional do sistema define se a falha de um item realmente gera perda na RAM.",
+      "pergunta": "Falhas de um transmissor individual entram repetidamente no banco, mas o processo segue estável com a lógica 2oo3 e sem perda de produção; ainda assim o RAM aponta esse item como maior contribuidor de indisponibilidade. Qual causa primária explica o desvio?",
+      "resposta": "Falha de um canal 2oo3 tratada como perda da função",
+      "explicacao": "A lógica RAM deve considerar apenas modos que realmente retiram a função do sistema. Em votação 2oo3, a perda de um único canal não implica indisponibilidade da função protegida.",
+      "resposta_padrao": "Alta taxa de falha dos transmissores.",
+      "por_que_nao": "A função continua atendida com um canal indisponível; o erro é tratar essa falha como perda do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "MTTR em RAM deve refletir acessibilidade, logística e estratégia de manutenção da instalação analisada.",
+      "pergunta": "A previsão de disponibilidade copiada de instalação semelhante acertou o número de falhas anuais dos principais pacotes, mas subestimou fortemente as horas perdidas; na prática, içamento compartilhado, acesso difícil e espera logística alongam os reparos. Qual causa primária no modelo RAM?",
+      "resposta": "MTTR parametrizado com dados não representativos da instalação",
+      "explicacao": "Como a frequência de falhas foi bem prevista, o erro está na mantenabilidade local. Acessibilidade, logística e recursos compartilhados alongam o reparo e exigem MTTR característico da instalação analisada.",
+      "resposta_padrao": "Taxas de falha dos equipamentos estão erradas.",
+      "por_que_nao": "O número de falhas anuais bateu; a divergência vem das horas de reparo, influenciadas pelo contexto local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade observada exige registrar o instante real de perda funcional, não a abertura do chamado.",
+      "pergunta": "O painel de disponibilidade mostra perdas menores que as vistas no historiador: o equipamento tripa e fica indisponível, mas a falha só entra no CMMS quando a manutenção recebe o chamado; o trabalho em campo não mudou. Qual causa primária?",
+      "resposta": "Início da falha registrado no chamado, não na perda funcional",
+      "explicacao": "Disponibilidade observada depende do instante real em que a função se perde. Se o registro começa no recebimento do chamado, parte da indisponibilidade fica fora do cálculo.",
+      "resposta_padrao": "Houve melhora real na manutenção.",
+      "por_que_nao": "O historiador mostra a mesma duração de indisponibilidade; mudou o marco inicial usado no indicador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A qualidade da avaliação de disponibilidade e confiabilidade depende da qualidade dos registros de falha e retorno à operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "No monitoramento operacional, registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Confiabilidade analítica de séries históricas depende de padronização contínua da codificação de falhas.",
+      "pergunta": "Os maiores contribuintes do Pareto mudaram de um ano para outro sem alteração de processo, manutenção ou perdas observadas; a troca coincidiu com a migração do sistema, que passou a usar taxonomias diferentes para o mesmo mecanismo. Qual causa primária?",
+      "resposta": "Quebra de padronização na codificação eletrônica das falhas",
+      "explicacao": "Séries longas só são comparáveis se a codificação permanecer padronizada. Ao mudar a taxonomia, o mesmo mecanismo é dividido ou reunido e o Pareto aparenta mudar sem mudança física.",
+      "resposta_padrao": "O perfil de falhas se deteriorou abruptamente.",
+      "por_que_nao": "Sem mudança de processo, manutenção ou perdas, a virada coincide com a recodificação do banco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Registros acumulados por anos tendem a aumentar a confiança analítica, desde que permaneçam padronizados e eletronicamente gerenciados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Dados de falhas, mecanismos de falha e manutenção precisam circular entre áreas, e sua coleta deve ser planejada para que as causas sejam distinguíveis e úteis à priorização de ações corretivas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

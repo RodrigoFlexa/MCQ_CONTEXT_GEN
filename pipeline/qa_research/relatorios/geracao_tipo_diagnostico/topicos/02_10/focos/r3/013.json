@@ -1,0 +1,91 @@
+{
+  "item": "02_10",
+  "foco": 13,
+  "rodada": 3,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sentido correto da assimetria no Dead Band para priorizar quedas da interface e proteger a água de injeção.",
+      "pergunta": "Quedas curtas da interface pioram imediatamente a água de injeção; subidas equivalentes quase não afetam o resultado. Ainda assim, a malha acelera correções nas subidas e suaviza nas quedas, com a válvula seguindo o comando. Qual a causa primária?",
+      "resposta": "Dead Band Assimétrico invertido para a direção errada",
+      "explicacao": "No Dead Band Assimétrico, a reação mais rápida deve ocorrer quando a interface diminui. Como a assimetria observada atua no sentido oposto e o atuador acompanha o comando, a falha está na direção da lógica.",
+      "resposta_padrao": "Falta de Dead Band Assimétrico.",
+      "por_que_nao": "Há assimetria visível; o erro é ela privilegiar a subida, não a queda da interface.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a reação era mais rápida à diminuição do nível de interface"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com a finalidade de preservar mais eficientemente a qualidade da água de injeção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "bugs de lógica"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "No controle por bandas, sair da faixa deve acionar parâmetros mais rápidos; ausência dessa comutação indica falha de implementação.",
+      "pergunta": "Quando a interface cruza o limite inferior, o alarme de fora da faixa entra, mas a recuperação segue no mesmo ritmo lento usado dentro da faixa; a válvula acompanha o comando e fica longe dos fins de curso. Qual causa explica?",
+      "resposta": "Comutação para parâmetros rápidos fora da banda inoperante",
+      "explicacao": "No controle por bandas, cruzar o limite deve acionar um conjunto mais rápido. Como a saída da faixa é reconhecida, o atuador responde e não há saturação, falta a comutação da sintonia rápida.",
+      "resposta_padrao": "Sintonia conservadora da malha de interface.",
+      "por_que_nao": "Uma sintonia globalmente lenta afetaria todo o regime; o sinal decisivo é não mudar de resposta ao sair da banda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se sair dessa faixa, um conjunto de parâmetros mais rápido atua"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Outra filosofia é o controle por bandas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "bugs de lógica"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A comparação entre filosofias de controle perde validade quando o modelo omite a influência de agentes emulsificantes.",
+      "pergunta": "Mesmo após reajuste químico que recoloca as correntes líquidas no patamar usual, a filosofia escolhida em simulação perde a vantagem prevista quando entra um blend mais emulsificante; espuma, arraste no gás, instrumentação e atuadores seguem normais. Qual a causa primária dessa divergência?",
+      "resposta": "Modelo sem influência dos agentes emulsificantes",
+      "explicacao": "A divergência aparece com um blend que altera a persistência da emulsão, sem sinais de falha de instrumentos, atuadores, espuma ou arraste no gás. Isso aponta para limitação do modelo por omitir o efeito dos emulsificantes.",
+      "resposta_padrao": "Desemulsificante incompatível com o novo blend.",
+      "por_que_nao": "O reajuste químico recuperou a qualidade absoluta; o que falhou foi a aderência do modelo ao efeito do blend na comparação das filosofias.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões são condicionadas aos arranjos e parâmetros estudados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "influência de agentes emulsificantes limitam a validade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comparar filosofias de controle"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

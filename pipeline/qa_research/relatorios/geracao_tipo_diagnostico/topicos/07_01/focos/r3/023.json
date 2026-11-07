@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 23,
+  "rodada": 3,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Retorno ao serviço de SIF 2oo3 exige reverter a votação de manutenção à configuração pretendida.",
+      "pergunta": "No primeiro disparo real após o proof test de uma SIF 2oo3, a função atua com um único transmissor no setpoint; os outros dois seguem abaixo do limite, saudáveis, sem force, sem bad quality e sem bypass. Qual causa primária explica a atuação?",
+      "resposta": "Votação de manutenção não revertida na SIF.",
+      "explicacao": "Com os outros dois canais abaixo do setpoint, saudáveis e sem forçamento, a atuação por um único canal indica que a configuração de votação não voltou ao arranjo pretendido após o teste.",
+      "resposta_padrao": "Um segundo transmissor estava falho ou forçado e completou a votação.",
+      "por_que_nao": "Os dois canais remanescentes aparecem saudáveis, sem force, sem bad quality e abaixo do ponto de disparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária deve confirmar que a função protegida voltou à configuração pretendida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse retorno não é apenas energizar o equipamento ou retirar uma inibição"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A criticidade cresce pelo acúmulo de postergações em elementos que compõem a mesma barreira.",
+      "pergunta": "A mesma prorrogação do proof test do transmissor deixou de ser aceitável sem mudança no processo e com o canal saudável; no histórico, o solenóide e o partial stroke da ESDV correspondente já estavam vencidos. Qual a causa primária?",
+      "resposta": "Postergações acumuladas em transmissor, solenóide e ESDV da mesma SIF.",
+      "explicacao": "O salto de criticidade não vem da extensão isolada do transmissor, mas do acúmulo de atrasos em elementos da mesma barreira, aumentando a indisponibilidade latente combinada.",
+      "resposta_padrao": "A nova extensão do transmissor, sozinha, tornou a função crítica.",
+      "por_que_nao": "O próprio histórico mostra que a criticidade mudou quando os atrasos passaram a coexistir na mesma barreira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar impactos do atraso sequencial de manutenções e testes sobre a segurança operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A criticidade cresce quando a postergação se acumula em elementos que compõem a mesma barreira."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "e há impacto combinado com outras indisponibilidades."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compensação temporária só é tecnicamente válida como mitigação se for independente do canal indisponível.",
+      "pergunta": "Para manter produção com um transmissor de trip indisponível, ficou ativo apenas um alarme alto no DCS derivado do mesmo transmissor, mesma linha de impulso e mesma remota. Que causa técnica faz a barreira permanecer degradada?",
+      "resposta": "Compensação não independente do canal de disparo.",
+      "explicacao": "Usar o mesmo transmissor, a mesma linha e a mesma remota não recompõe independência nem atuação automática; isso apenas acrescenta vigilância sobre o mesmo ponto vulnerável.",
+      "resposta_padrao": "O alarme alto no DCS compensa temporariamente a perda do canal.",
+      "por_que_nao": "Essa compensação compartilha o mesmo caminho de falha e não restaura uma barreira independente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária deve confirmar que a função protegida voltou à configuração pretendida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "existe redundância independente; a compensação reduz probabilidade, consequência ou apenas aumenta vigilância"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

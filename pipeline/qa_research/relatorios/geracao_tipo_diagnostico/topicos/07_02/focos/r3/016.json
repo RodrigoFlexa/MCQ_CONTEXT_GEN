@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Exposição potencial em OT depende de a interface vulnerável estar habilitada e alcançável, não só da revisão instalada.",
+      "pergunta": "Alertas de exploração surgem para vários controladores com a mesma revisão. Só alguns sofrem resets, e apenas neles a porta de gerenciamento responde a sondagens; nos demais, essa interface está desabilitada. Qual a causa primária?",
+      "resposta": "Interface de gerenciamento vulnerável habilitada.",
+      "explicacao": "Com a mesma revisão instalada em todos, o diferencial técnico é a função vulnerável estar ativa e alcançável. A exposição real existe onde a porta de gerenciamento responde às sondagens.",
+      "resposta_padrao": "Firmware vulnerável desatualizado dos controladores.",
+      "por_que_nao": "A mesma revisão existe nos controladores sem resets; o sinal decisivo é a interface responder só nos afetados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar a exposição potencial dos dispositivos afetados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em OT crítico, a contenção por atualização pode ser inadequada quando a própria aplicação da correção indisponibiliza temporariamente a salvaguarda.",
+      "pergunta": "Correção homologada existe para o controlador de shutdown. No teste, cada aplicação reinicia o par redundante, o canal protegido entra em bypass por alguns segundos e não há outra salvaguarda equivalente ativa. Qual a causa primária de a remediação imediata não ser aplicada?",
+      "resposta": "Reboot obrigatório do par redundante de shutdown.",
+      "explicacao": "O impeditivo decisivo não é falta de correção, mas a perda temporária da função de proteção causada pela própria atualização, incompatível com a preservação das salvaguardas em serviço.",
+      "resposta_padrao": "Falta de janela de manutenção.",
+      "por_que_nao": "Mesmo com janela, o problema técnico permanece: a atualização coloca a função de shutdown em bypass por alguns segundos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua aplicação em ambiente crítico depende de compatibilidade do fornecedor, impacto sobre disponibilidade e condições locais de operação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sistemas de shutdown de emergência e sistemas de mitigação de emergência, reduzindo sua confiabilidade e efetividade"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A segregação IT/OT pode ser burlada por host dual-homed, mesmo sem falha aparente no firewall perimetral.",
+      "pergunta": "Varreduras vindas da rede administrativa chegam a HMIs e PLCs sem qualquer log correspondente no firewall OT. Elas só aparecem quando a estação de engenharia está com cabo no switch de controle e Wi‑Fi corporativo ativos ao mesmo tempo, cessando ao desligar o Wi‑Fi. Qual a causa primária?",
+      "resposta": "Estação de engenharia dual-homed fazendo ponte IT/OT.",
+      "explicacao": "A ausência de registros no firewall exclui o caminho perimetral. O tráfego depende de a estação estar conectada simultaneamente às duas redes, caracterizando bypass da segregação por host dual-homed.",
+      "resposta_padrao": "Regra permissiva no firewall entre corporativo e controle.",
+      "por_que_nao": "Se o caminho fosse o firewall, haveria registros nele e o tráfego não dependeria do Wi‑Fi da estação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 6,
+  "rodada": 3,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Coexistência de versões em par redundante como limitação da estratégia de remediação do fornecedor.",
+      "pergunta": "Atualiza-se apenas o membro de reserva de um par redundante; ele sobe saudável, comunica, aceita a mesma lógica, mas a redundância não rearma até o rollback. Qual causa primária explica o quadro?",
+      "resposta": "Coexistência de versões não suportada no par redundante.",
+      "explicacao": "Como o standby volta saudável, comunica e aceita a lógica, falha de hardware ou carga incorreta ficam menos prováveis. A perda só enquanto há versões distintas indica estratégia de remediação sem patch escalonado no par.",
+      "resposta_padrao": "Falha do controlador de reserva após a atualização.",
+      "por_que_nao": "Ele permanece operacional e a redundância volta com o rollback; o sinal decisivo é a incompatibilidade do estado com versões diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estratégia de remediação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da divulgação de componentes embarcados pelo fornecedor para identificar os ativos realmente afetados.",
+      "pergunta": "Dois painéis com mesmo modelo, mesma revisão aparente e mesmo firmware visível recebem triagem diferente após um alerta; a biblioteca citada não aparece nas ferramentas locais. O que impede definir localmente quais estão afetados?",
+      "resposta": "Ausência de inventário de componentes embarcados do fornecedor.",
+      "explicacao": "Modelo, revisão aparente e firmware visível iguais não bastam quando a diferença está em componente embarcado não exposto localmente. Sem essa divulgação do fornecedor, a triagem dos afetados fica ambígua.",
+      "resposta_padrao": "Inventário interno incompleto.",
+      "por_que_nao": "Os identificadores locais já coincidem; o elemento discriminante está em componente embarcado não visível às ferramentas da instalação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em dispositivos embarcados e componentes de IACS"
+        },
+        {
+          "bloco": "F",
+          "trecho": "clareza sobre ativos afetados"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ausência de rollback suportado pelo fornecedor como causa de exposição prolongada mesmo com patch e janela disponíveis.",
+      "pergunta": "Há patch e janela semanal. Em bancada ele instala, mas o pacote entregue para campo não inclui mídia de restauração nem procedimento suportado de retorno, e a mudança é adiada só no sistema crítico. Qual causa mantém a exposição?",
+      "resposta": "Ausência de rollback suportado pelo fornecedor.",
+      "explicacao": "Patch e janela existem; o impeditivo é o risco de indisponibilidade sem recuperação suportada. Em sistema crítico, aplicar a correção sem caminho formal de retorno contraria a necessidade de remediar sem indisponibilidade indevida.",
+      "resposta_padrao": "Falta de janela de manutenção.",
+      "por_que_nao": "A janela existe e o patch já instalou em bancada; o bloqueio é não haver recuperação suportada se a correção degradar a função crítica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "qualidade do suporte"
+        },
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

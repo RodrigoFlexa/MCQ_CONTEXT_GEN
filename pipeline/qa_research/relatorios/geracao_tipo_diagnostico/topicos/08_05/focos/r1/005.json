@@ -1,0 +1,83 @@
+{
+  "item": "08_05",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Combinar marginais separadamente pode criar casos artificialmente severos quando falta probabilidade conjunta.",
+      "pergunta": "Na análise de offloading, a disponibilidade despencou depois que vento, ondas e corrente passaram a ser escolhidos separadamente para montar poucos casos representativos. Os casos limitantes reúnem picos simultâneos dos três agentes, mas isso quase não aparece no histórico medido. Qual causa primária explica a distorção?",
+      "resposta": "montagem independente de cenários sem probabilidade conjunta",
+      "explicacao": "Sem probabilidade conjunta, a seleção separada dos agentes cria combinações artificialmente severas, plausíveis isoladamente, mas raras em conjunto, derrubando a disponibilidade calculada.",
+      "resposta_padrao": "Capacidade insuficiente da embarcação para manter posição.",
+      "por_que_nao": "A série simultânea quase não contém essas coincidências críticas; o viés nasceu da montagem dos cenários, não da capacidade do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a base ambiental não fornece probabilidade conjunta de ocorrência, a seleção direta de cenários representativos fica dificultada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a combinação exaustiva dos agentes tende a gerar grande número de casos, incluindo combinações de probabilidade muito baixa."
+        },
+        {
+          "bloco": "F",
+          "trecho": "cenários artificiais formados por valores individualmente plausíveis, mas pouco prováveis em conjunto."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Direções relativas simultâneas dos agentes ambientais controlam a resposta dinâmica e as cargas no posicionamento.",
+      "pergunta": "Movimentos de yaw e cargas nas amarras ficaram superestimados, embora as distribuições isoladas de vento, ondas e corrente coincidam com as medições. A divergência surgiu quando o banco ambiental foi reduzido a casos com os três agentes no mesmo rumo. Qual causa primária?",
+      "resposta": "suposição de colinearidade permanente entre vento, ondas e correntes",
+      "explicacao": "A resposta dinâmica depende das direções relativas simultâneas. Forçar alinhamento entre os agentes altera aproamento e carregamentos mesmo quando as estatísticas isoladas permanecem corretas.",
+      "resposta_padrao": "Amortecimento hidrodinâmico subestimado no modelo.",
+      "por_que_nao": "O desvio apareceu ao perder as direções relativas simultâneas; com marginais aderentes, não é um erro global de amortecimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a resposta de uma unidade flutuante e de embarcações aliviadoras depende da ação combinada desses carregamentos, inclusive de suas direções relativas no mesmo instante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "os movimentos do casco e o aproamento frente ao ambiente predominante influenciam diretamente a distribuição de carregamentos no sistema de posicionamento e nas conexões submarinas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A série simultânea só é útil se o período histórico representar o regime sazonal da análise.",
+      "pergunta": "Uma campanha simultânea curta, feita em meses de mar mais calmo, foi usada para estimar disponibilidade anual. As combinações típicas da estação chuvosa praticamente desapareceram do resultado. Qual causa primária?",
+      "resposta": "janela histórica sazonal não representativa",
+      "explicacao": "Preservar simultaneidade não basta. Se o período coberto pega apenas meses calmos, a base deixa de representar o regime anual da locação.",
+      "resposta_padrao": "Mudança recente no regime meteoceanográfico da locação.",
+      "por_que_nao": "A ausência coincide com os meses não cobertos pela campanha; isso aponta falta de representatividade temporal, não mudança física do local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o uso de dados brutos medidos ou aquisitados simultaneamente é uma alternativa para preservar melhor as ocorrências conjuntas observadas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade do conjunto continua condicionada à locação, ao período histórico coberto e à aderência entre o regime observado e a aplicação pretendida"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

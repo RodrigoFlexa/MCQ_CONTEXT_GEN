@@ -1,0 +1,105 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "rodada": 1,
+  "contexto": {
+    "A1": 26,
+    "F": 27,
+    "A2": 28
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Leitura conjunta de KPIs logísticos para evitar falso ganho com redução de frota ou consumo.",
+      "pergunta": "O painel passou a apontar ganho depois de cortar uma embarcação: consumo caiu, utilização subiu, mas cresceram atrasos de cargas críticas, ruptura de diesel e custo total com penalidades. O que está causando esse diagnóstico enganoso de desempenho?",
+      "resposta": "leitura isolada de consumo e utilização da frota",
+      "explicacao": "O desempenho logístico não pode ser inferido por um KPI isolado. O bloco foco afirma que consumo, atrasos, rupturas e custo com penalidades precisam ser avaliados em conjunto.",
+      "resposta_padrao": "Faltam embarcações para atender a demanda.",
+      "por_que_nao": "Uma frota menor pode ser adequada; o erro mostrado é concluir melhora apesar da piora dos indicadores críticos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esses indicadores precisam ser lidos em conjunto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma política pode reduzir consumo ou frota contratada e ainda assim ser inadequada se aumentar ruptura de suprimento ou atrasos críticos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência do resultado do modelo à representação de esperas exógenas na cadeia logística offshore.",
+      "pergunta": "Nos testes, a política mantinha baixa ruptura de diesel. Na operação, as faltas aparecem após fila de berço na base e janelas meteo desfavoráveis, sem aumento de consumo nem mudança de demanda. Qual hipótese de modelagem é a causa mais provável?",
+      "resposta": "esperas por fatores exógenos sub-representadas",
+      "explicacao": "O resultado modelado depende de representar incertezas como tempos de berço e espera por fatores exógenos. Como as rupturas surgem nessas condições, a hipótese otimista nessas esperas é o fator decisivo.",
+      "resposta_padrao": "O consumo de diesel ficou maior que o previsto.",
+      "por_que_nao": "O consumo e a demanda não mudaram; o padrão das faltas acompanha atrasos externos de base e meteorologia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Executabilidade física da programação depende de acessibilidade e sequência de içamento no convés.",
+      "pergunta": "Uma programação otimizada respeita peso total, área ocupada, segregação e capacidades de tanque, mas no embarque real parte das cargas fica bloqueada no convés e não sai na ordem de entrega. Qual elemento faltou no modelo?",
+      "resposta": "restrição de acessibilidade e sequência de içamento no convés",
+      "explicacao": "Capacidade global não basta. O arranjo real precisa manter acesso para içamento e sequência de atendimento; bloqueio de cargas no convés indica que essa restrição física não foi representada.",
+      "resposta_padrao": "A embarcação não tinha área de convés suficiente.",
+      "por_que_nao": "A área e as demais capacidades já estavam atendidas; o sinal decisivo é a impossibilidade de acessar a carga na ordem necessária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Arrumar a carga exige considerar segregação, amarração, sequência de atendimento e acesso para içamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A solução programada deve permanecer executável nas condições reais da embarcação e do FPSO."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto do reabastecimento intermediário no custo total logístico, mesmo com serviço estável.",
+      "pergunta": "Diárias contratadas, atrasos e ruptura de suprimento ficaram estáveis após trocar a classe dos PSVs, mas o custo total subiu e passou a haver cobrança recorrente de bunker em ponto intermediário. Qual causa primária do aumento?",
+      "resposta": "necessidade de reabastecimento intermediário",
+      "explicacao": "Sem piora de atendimento nem mudança de diária contratada, o novo componente que explica o custo é a etapa extra de abastecimento fora da rota direta operacional.",
+      "resposta_padrao": "A nova classe de PSV tem diária mais alta.",
+      "por_que_nao": "As diárias contratadas ficaram estáveis; o acréscimo aparece junto com o bunker cobrado em ponto intermediário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Custos também podem mudar com a composição da frota, com o uso de cargas múltiplas e com a necessidade de reabastecimento intermediário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "potencial de maior eficiência de custo e nível de serviço equivalente"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

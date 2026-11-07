@@ -1,0 +1,65 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "rodada": 4,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando a regularidade da descarga ao hidrociclone é mais crítica, manter a interface rigidamente num valor pode piorar a água tratada; limitar a excursão por bandas pode ser mais adequado.",
+      "pergunta": "Com o overflow mantido fixo em teste e carga quase constante, o underflow faz correções pequenas e suaves, sem degraus; a interface fica quase imóvel, mas o TOG serrilha. Quando a atuação passa a ocorrer só nos limites da banda, o TOG estabiliza. Qual causa primária explicava a piora?",
+      "resposta": "Controle rígido da interface em setpoint único",
+      "explicacao": "Manter a interface quase imóvel exigia modulação contínua do underflow, introduzindo variabilidade desnecessária no hidrociclone. Ao limitar apenas a excursão, a descarga fica mais estável e o óleo na água varia menos.",
+      "resposta_padrao": "Sintonia agressiva do controlador de interface.",
+      "por_que_nao": "As correções eram pequenas e suaves, e a melhora veio ao mudar a filosofia para banda; não havia sinal de agressividade excessiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A malha de DPR no overflow estabiliza o split do hidrociclone; sem ela, pequenas variações de alimentação podem virar variabilidade de óleo na água mesmo com interface estável.",
+      "pergunta": "Interface e vazão média de água ficam estáveis, o ΔP do hidrociclone não deriva, mas o TOG acompanha pequenas oscilações de pressão na alimentação; o posicionador do overflow responde normal no teste, porém a abertura ficou fixa durante a campanha. Qual a causa primária?",
+      "resposta": "Malha de DPR do overflow fora de serviço",
+      "explicacao": "Com o overflow fixo, pequenas mudanças na alimentação alteram o DPR e o split do hidrociclone. A eficiência passa a oscilar e o óleo na água varia, embora a interface do separador permaneça estável.",
+      "resposta_padrao": "Válvula de overflow travada.",
+      "por_que_nao": "O posicionador respondeu normalmente no teste; o problema era a ausência de correção automática do DPR, não travamento mecânico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação e da concentração de óleo na água descartada."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

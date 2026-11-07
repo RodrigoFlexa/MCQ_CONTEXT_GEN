@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 21,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença funcional entre permissivo de partida e intertravamento atuante durante a operação.",
+      "pergunta": "A condição de alta temperatura gera indicação e alarme, o equipamento continua operando, e depois de uma parada manual a religação fica bloqueada até normalizar. Qual a causa primária na lógica?",
+      "resposta": "Configuração apenas como permissivo de partida.",
+      "explicacao": "A condição chega ao sistema, mas não força ação protetiva em operação; ela só impede nova partida quando permanece fora do aceitável.",
+      "resposta_padrao": "Falha do intertravamento.",
+      "por_que_nao": "O bloqueio de religamento mostra que o sinal e a lógica existem; o erro está na aplicação da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Intertravamento é a lógica que força uma ação de proteção quando uma condição definida ocorre"
+        },
+        {
+          "bloco": "F",
+          "trecho": "permissivo é a condição que precisa estar satisfeita para permitir partida, continuidade de operação ou execução de uma etapa"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de independência real entre canais redundantes de uma função instrumentada.",
+      "pergunta": "Um canal da SIF está em manutenção. O canal redundante permanece saudável, mas um único ponto de comunicação coloca ambos indisponíveis ao mesmo tempo. Qual causa primária isso revela na arquitetura?",
+      "resposta": "Redundância não independente no mesmo ponto de comunicação.",
+      "explicacao": "Redundância só preserva a função se for independente; um ponto comum capaz de derrubar os dois canais cria falha de causa comum.",
+      "resposta_padrao": "Falha do canal remanescente.",
+      "por_que_nao": "A indisponibilidade simultânea segue o ponto comum, não um defeito independente do segundo canal.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "existe redundância independente"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a comunicação entre instrumentos de campo e o Controlador Lógico Programável (PLC)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em FPSOs, múltiplas indisponibilidades pequenas podem interagir e reduzir a efetividade global das barreiras."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efetividade de compensação depende de independência do caminho de medição do elemento degradado.",
+      "pergunta": "A chave de alta pressão ficou indisponível, e o contingenciamento passou a usar um alarme alto do mesmo transmissor no mesmo cartão de entrada. Quando o cartão oscila, somem juntos alarme e proteção substituta. Qual causa primária torna essa compensação ineficaz?",
+      "resposta": "Compensação sem independência no mesmo caminho de medição.",
+      "explicacao": "Se a medida compensatória compartilha o mesmo sinal e cartão, um único defeito remove a barreira degradada e o contingenciamento ao mesmo tempo.",
+      "resposta_padrao": "Apenas a chave de alta pressão defeituosa.",
+      "por_que_nao": "A falha inicial explica a indisponibilidade da barreira, mas não por que a compensação também desaparece no mesmo evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário avaliar se o risco residual pode ser controlado por compensações operacionais, contingenciamento ou retirada de operação do sistema afetado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a compensação reduz probabilidade, consequência ou apenas aumenta vigilância"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "existe redundância independente"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

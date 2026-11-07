@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 1,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar recomendação analítica de comando de controle ao diagnosticar perturbações operacionais.",
+      "pergunta": "Logs mostram mudanças digitadas de setpoint segundos após cada pop-up do otimizador; o aplicativo só publica recomendações e não tem canal de escrita para o controle, e o controlador já estava em manual com saída estável. Qual a causa primária das oscilações observadas?",
+      "resposta": "Confusão entre recomendação analítica e comando de controle.",
+      "explicacao": "Sem caminho de escrita do aplicativo para o controle, a perturbação nasce das mudanças manuais feitas após o pop-up. O sinal decisivo é não distinguir advisory de comando de automação.",
+      "resposta_padrao": "Malha mal sintonizada.",
+      "por_que_nao": "A saída do controlador estava estável em manual; a oscilação começa após digitação humana, não por ação autônoma da malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "É capacitar a interpretar qualidade de dados, diferenciar recomendação analítica de comando de controle, reconhecer permissões e procedimentos aplicáveis e evitar ações precipitadas diante de alarmes, tendências ou acessos digitais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interpretar qualidade e atualidade do dado antes de concluir por falha de instrumento.",
+      "pergunta": "No dashboard remoto, uma vazão ficou 90 minutos exatamente no mesmo valor e gerou alerta; no DCS, o tag estava com timestamp antigo e qualidade ruim, e em campo o transmissor respondeu normal ao calibrador. Qual causa primária levou à troca desnecessária do instrumento?",
+      "resposta": "Leitura do valor congelado sem considerar a qualidade do tag.",
+      "explicacao": "O instrumento respondeu em campo; o indício decisivo é o timestamp antigo com qualidade ruim no DCS. O erro foi tratar o último valor válido como medição confiável.",
+      "resposta_padrao": "Falha do transmissor de vazão.",
+      "por_que_nao": "A calibração em campo foi normal; o problema indicado é perda de validade do dado, não defeito físico do transmissor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "É capacitar a interpretar qualidade de dados, diferenciar recomendação analítica de comando de controle, reconhecer permissões e procedimentos aplicáveis e evitar ações precipitadas diante de alarmes, tendências ou acessos digitais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer limites da automação e condições de uso de modelos analíticos.",
+      "pergunta": "O alerta de degradação de uma bomba aparece apenas na partida e some depois da estabilização; vibração, temperatura e corrente ficam normais em regime, e o equipamento mantém desempenho por semanas. Qual a causa primária desse alerta recorrente?",
+      "resposta": "Modelo analítico aplicado fora da condição de uso prevista.",
+      "explicacao": "A coincidência exclusiva com transientes de partida, sem confirmação pelos sinais de condição em regime, indica uso do modelo fora do domínio operacional para o qual ele é confiável.",
+      "resposta_padrao": "Falha mecânica incipiente na bomba.",
+      "por_que_nao": "Se houvesse degradação real, vibração, temperatura ou desempenho tenderiam a corroborar o alerta também em regime estável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contramedidas, ferramentas e conectividade ampliada só funcionam de forma confiável quando operadores, mantenedores e engenheiros sabem reconhecer limites da automação, condições de uso e sinais de comportamento anormal."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar restrição por privilégio de acesso, distinguindo-a de falha de conectividade.",
+      "pergunta": "Durante suporte remoto aprovado, o fornecedor autentica na VPN e chega ao servidor de engenharia, mas o download é rejeitado como sem autorização; o mesmo projeto carrega normalmente quando um técnico local faz login com outro usuário na mesma estação. Qual a causa primária?",
+      "resposta": "Perfil sem privilégio de engenharia para escrita.",
+      "explicacao": "A conectividade chegou ao servidor e a mesma estação aceita gravação com outra conta. O fator decisivo é o conjunto de privilégios do usuário usado na sessão remota.",
+      "resposta_padrao": "Problema na VPN ou no link remoto.",
+      "por_que_nao": "O caminho remoto funcionou até o servidor; a limitação acompanha a conta utilizada, não a rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "É capacitar a interpretar qualidade de dados, diferenciar recomendação analítica de comando de controle, reconhecer permissões e procedimentos aplicáveis e evitar ações precipitadas diante de alarmes, tendências ou acessos digitais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Treinamento eficaz, nesse contexto, não é apenas ensinar a usar telas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

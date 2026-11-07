@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 8,
+  "rodada": 4,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir sessão remota residual de software persistente deixado por ferramenta temporária após suporte.",
+      "pergunta": "Sem VPN ativa, uma estação OT faz em todo reboot conexões TLS para o domínio do fornecedor antes do logon; o tráfego parte de um serviço do sistema e começou logo após um suporte local. Qual a causa primária?",
+      "resposta": "Ferramenta temporária de suporte deixada instalada como serviço.",
+      "explicacao": "Persistência antes do logon e ausência de túnel ativo descartam sessão residual. O quadro é compatível com software introduzido pela ferramenta temporária, sem retorno seguro ao estado normal após a atividade.",
+      "resposta_padrao": "Sessão remota não encerrada ao fim da atividade.",
+      "por_que_nao": "Sem VPN ativa e com execução como serviço antes do logon, não se trata de uma sessão interativa remanescente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "podem introduzir software não autorizado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de retorno seguro ao estado normal após a atividade"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer escrita local fora do fluxo de versionamento como origem de alterações não rastreadas por ferramenta temporária.",
+      "pergunta": "O checksum da lógica permaneceu igual, mas sintonia e relógio do controlador mudaram; a estação residente e o versionamento não registram download, enquanto a auditoria do controlador marca escrita pela porta de serviço no horário do diagnóstico. Qual causa primária?",
+      "resposta": "Escrita direta de parâmetros pela ferramenta de diagnóstico local.",
+      "explicacao": "Sem mudança de lógica e com registro de escrita na porta de serviço, a alteração bypassou o fluxo normal de engenharia. Isso aponta para ferramenta temporária introduzindo alteração não rastreada em parâmetros.",
+      "resposta_padrao": "Falha no servidor de versionamento.",
+      "por_que_nao": "A auditoria do controlador indica escrita local pela porta de serviço, e o checksum da lógica não mudou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ferramentas de diagnóstico, merecem cuidado porque podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar severidade anormal de uma intervenção digital ao momento operacional com resiliência elétrica degradada.",
+      "pergunta": "Uma atualização já homologada reinicia ao mesmo tempo HMI, shutdown e fogo e gás apenas quando coincide com breve afundamento da rede; afundamentos iguais fora do teste não derrubam esses sistemas, e a UPS compartilhada estava sem redundância. Qual causa primária tornou a atividade crítica?",
+      "resposta": "Operação sem redundância da UPS compartilhada.",
+      "explicacao": "O pacote já era conhecido; o gatilho foi a perda de alimentação sob resiliência degradada. Atividades sobre ativos digitais ficam mais sensíveis quando a alimentação ininterrupta está comprometida.",
+      "resposta_padrao": "Atualização defeituosa.",
+      "por_que_nao": "Os registros indicam evento elétrico comum e simultâneo, e afundamentos equivalentes não causavam o problema fora da condição degradada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas em sistemas de alimentação ininterrupta podem afetar simultaneamente sistemas de controle, shutdown de emergência e mitigação de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "qualquer atividade remota ou de manutenção sobre ativos digitais torna-se mais sensível"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

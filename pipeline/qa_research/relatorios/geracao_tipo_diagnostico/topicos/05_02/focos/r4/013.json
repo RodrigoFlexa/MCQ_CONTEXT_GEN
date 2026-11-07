@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 13,
+  "rodada": 4,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar fonte principal não isolada em tentativa de back feeding por bloqueio de sincronismo em barramento supostamente morto.",
+      "pergunta": "Durante a recomposição parcial, o barramento alvo está indicado morto, mas o relé de verificação de sincronismo bloqueia o fechamento do back feeding e surge tensão no lado do gerador principal parado. Qual causa primária?",
+      "resposta": "Disjuntor do gerador principal ainda fechado ao barramento",
+      "explicacao": "Se o barramento estivesse realmente morto e isolado, não haveria condição de sincronismo a verificar. A tensão no lado do gerador parado mostra outra fonte ainda conectada, exatamente o paralelismo indevido que o back feeding deve impedir.",
+      "resposta_padrao": "Desajuste de sincronismo do gerador de emergência.",
+      "por_que_nao": "Em back feeding para barramento morto, não há fonte viva para sincronizar; o bloqueio indica falha de isolamento da fonte principal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa realimentação só podia ocorrer quando os geradores principais estivessem inoperantes, com disjuntores abertos ou em teste"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ela depende de permissivos, isolamento adequado das fontes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O motivo técnico é evitar paralelismo indevido"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer retroalimentação de segmento não previsto por interligação mantida fechada no back feeding.",
+      "pergunta": "Fechado o back feeding, a corrente do gerador de emergência fica acima do previsto; as cargas essenciais cabem na capacidade disponível, mas também aparece tensão em um quadro de utilidades que deveria continuar desenergizado. Qual causa primária?",
+      "resposta": "Disjuntor de interligação com o quadro de utilidades mantido fechado",
+      "explicacao": "A sobrecarga não vem do segmento previsto, que cabe na emergência. A energização de um quadro fora do escopo revela caminho elétrico adicional, caracterizando retroalimentação indevida por interligação não isolada.",
+      "resposta_padrao": "Subestimação da carga conectada ao painel essencial.",
+      "por_que_nao": "Erro de balanço não explicaria tensão surgindo em um quadro que não fazia parte do segmento a recompor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compatibilidade entre o segmento da rede a ser energizado e a capacidade disponível da geração de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O motivo técnico é evitar paralelismo indevido, retroalimentação de partes não previstas e energização de cargas que excedam a finalidade da fonte emergencial."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar falsa redundância de supervisão por alimentação comum de UPS na recomposição pós-blackout.",
+      "pergunta": "Com a falha de um único UPS, somem ao mesmo tempo as duas estações redundantes de supervisão da recomposição; comandos locais nos cubículos e a comunicação de rede continuam disponíveis. Qual causa primária?",
+      "resposta": "Estações redundantes de supervisão alimentadas pelo mesmo UPS",
+      "explicacao": "A perda simultânea dos dois canais com um único UPS, sem colapso da rede nem dos comandos locais, mostra falta de segregação real da alimentação das estações redundantes.",
+      "resposta_padrao": "Falha da rede de comunicação da supervisão.",
+      "por_que_nao": "A rede segue operacional e os cubículos aceitam comandos locais; o evento acompanha a perda de um UPS específico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sua utilidade real depende das cargas efetivamente conectadas ao painel alcançado, da lógica de intertravamento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

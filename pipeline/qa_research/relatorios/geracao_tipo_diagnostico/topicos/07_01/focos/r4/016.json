@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 4,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir perda de comunicação de cobertura parcial quando estados gerais chegam ao supervisório, mas a variável precursora existe só no painel local.",
+      "pergunta": "No supervisório, marcha e falha geral de um pacote continuam atualizando normalmente, mas a variável de qualidade que sobe no painel local não tem tendência nem alarme na sala de controle antes do bloqueio. Qual causa primária explica isso?",
+      "resposta": "Sinal do analisador local não integrado ao PLC.",
+      "explicacao": "Como marcha e falha geral seguem chegando, não há perda global do link. A ausência específica da variável precursora no supervisório indica cobertura parcial, com acompanhamento complementar fora do PLC.",
+      "resposta_padrao": "Falha de comunicação com o pacote.",
+      "por_que_nao": "Marcha e falha geral seguem atualizando; a perda é só da visibilidade dessa variável, compatível com cobertura parcial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "parte da visibilidade do processo depende de observação complementar do operador."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separar falha de rede de travamento da lógica local em módulo especializado usando congelamento simultâneo do relógio interno e das variáveis.",
+      "pergunta": "O relógio interno de um módulo especializado para de avançar ao mesmo tempo em que suas variáveis congelam no PLC; alimentação do rack e link do switch permanecem normais. Qual causa primária explica o sintoma?",
+      "resposta": "CPU do módulo especializado travada.",
+      "explicacao": "Link e alimentação aparentes não bastam. Se o relógio interno do próprio módulo congela junto com suas variáveis, o defeito está na lógica local, não na rede ou na supervisão.",
+      "resposta_padrao": "Falha de comunicação na rede.",
+      "por_que_nao": "Com o relógio interno do próprio módulo congelado, o problema está no processamento local e não apenas no enlace.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

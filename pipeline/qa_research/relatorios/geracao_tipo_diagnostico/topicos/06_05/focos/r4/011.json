@@ -1,0 +1,87 @@
+{
+  "item": "06_05",
+  "foco": 11,
+  "rodada": 4,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da inibição de manutenção sobre a participação do detector na votação e na causa e efeito, mesmo com alarme visível.",
+      "pergunta": "Durante a calibração programada de uma zona 1ooN, o cabeçote passou do limiar e apareceu em alarme na tela, mas a zona não formou voto nem executou causa e efeito. Encerrada a manutenção, o mesmo teste acionou tudo sem mudar lógica ou setpoint. Qual a causa primária?",
+      "resposta": "inibição ativa no canal desse detector",
+      "explicacao": "O cabeçote indicou alarme, porém não participou da lógica enquanto estava em manutenção. Como a mesma malha atuou sem reconfiguração após encerrar esse estado, a causa é a inibição ativa do canal.",
+      "resposta_padrao": "detector sem integração à matriz de causa e efeito",
+      "por_que_nao": "A mesma malha atuou normalmente sem reconfiguração assim que o estado de manutenção foi retirado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "depende também da matriz de causa e efeito, da gestão de inibições"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o detector estiver disponível, corretamente alocado, integrado à lógica de causa e efeito"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando um detector está inibido, falho ou sua indicação é tratada como incerta"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Vinculação do detector à zona correta determina quais ações de causa e efeito serão disparadas.",
+      "pergunta": "Sob teste local com gás no mesmo cabeçote do skid de compressão, fecham os dampers e sai o alarme da área vizinha; os dispositivos do próprio skid não recebem comando. Isso se repete em testes sucessivos. Qual a causa primária?",
+      "resposta": "detector configurado na zona de fogo e gás errada",
+      "explicacao": "O pacote de ações pertence sempre à área vizinha e se repete com teste local no mesmo cabeçote. Isso indica zoneamento lógico incorreto do detector, não falha de um único atuador.",
+      "resposta_padrao": "associação incorreta entre o bit de comando e o canal de saída",
+      "por_que_nao": "Não é um único atuador trocado: dispara o pacote completo de causa e efeito da área vizinha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "corretamente alocado, integrado à lógica de causa e efeito"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a lógica escolhida precisa ser compatível com a quantidade e a locação reais dos detectores"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Critério de resposta humana não deve herdar a mesma votação exigida para atuação automática quando há confirmações independentes.",
+      "pergunta": "Um cabeçote fixo alarmou, a ronda confirmou leitura alta no portátil e havia vazamento visível no flange, mas a equipe aguardou um segundo fixo para iniciar isolamento manual porque aquela zona só derruba automaticamente em 2ooN. Qual a causa primária do atraso?",
+      "resposta": "aplicação indevida da votação 2ooN automática à resposta humana",
+      "explicacao": "Havia detecção fixa, confirmação portátil e evidência visual. Nessa condição, aguardar o segundo fixo aplica indevidamente a votação da automação à decisão humana e posterga medidas de proteção.",
+      "resposta_padrao": "falta de segundo detector confirmado",
+      "por_que_nao": "O segundo fixo é requisito da atuação automática, não da decisão humana diante de confirmações independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capaz de gerar informação utilizável para decisão operacional e atuação automática"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em cenário com múltiplas indicações ou confirmação visual de vazamento, tratar a condição como alarme isolado pode atrasar decisões de proteção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma filosofia conservadora tende a considerar a detecção como real até prova robusta em contrário"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

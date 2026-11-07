@@ -1,0 +1,83 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "rodada": 3,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Selecionar, para RAM, apenas modos de falha que realmente retiram a função do sistema.",
+      "pergunta": "A disponibilidade prevista caiu fortemente quando o RAM passou a importar automaticamente todas as ordens do CMMS. Em campo, multiplicaram-se trocas de indicadores locais e de alarmes redundantes, mas a produção e a função protegida quase nunca foram afetadas. Qual causa primária explica o desvio?",
+      "resposta": "Inclusão, no RAM, de falhas sem perda funcional do sistema.",
+      "explicacao": "RAM deve considerar modos de falha que geram perda ao sistema. Ordens de troca sem retirada de função inflam o banco de eventos, mas não deveriam reduzir a disponibilidade funcional modelada.",
+      "resposta_padrao": "Baixa confiabilidade da instrumentação.",
+      "por_que_nao": "Porque as ocorrências citadas quase nunca retiraram a função nem afetaram a produção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "seu significado depende da criticidade funcional do item no sistema."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Atualizar frequências de falha com o contexto operacional real do equipamento.",
+      "pergunta": "O número de intervenções de um compressor ficou muito acima do RAM herdado de uma aplicação contínua; o tempo de reparo por evento, acesso e logística bateram com o previsto. Aqui, ele parte e para várias vezes ao dia. Qual causa primária?",
+      "resposta": "Frequência de falha de serviço contínuo aplicada ao regime cíclico.",
+      "explicacao": "Frequências de falha variam com o contexto operacional. Como o reparo real aderiu ao previsto, o desvio veio da taxa de eventos usada, inadequada para operação com muitas partidas.",
+      "resposta_padrao": "MTTR subestimado.",
+      "por_que_nao": "Porque o tempo por intervenção aderiu ao previsto; o excesso veio da quantidade de falhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada, porque tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interpretar KPI de disponibilidade com criticidade funcional, não só médias por item.",
+      "pergunta": "Dois itens têm disponibilidades médias parecidas. O primeiro falha mais vezes, mas sempre com contorno local; o segundo falha raramente e, quando para, bloqueia exportação. O painel prioriza o primeiro porque usa apenas contagem e tempo médio por item. Qual causa primária da distorção?",
+      "resposta": "KPI sem ponderação pela criticidade funcional do item.",
+      "explicacao": "Sem contexto funcional, falhas frequentes porém contornáveis pesam mais que uma falha rara que bloqueia exportação. Médias isoladas mascaram o verdadeiro limitante de desempenho.",
+      "resposta_padrao": "O primeiro é o principal problema por falhar mais.",
+      "por_que_nao": "Porque o impacto no desempenho depende da função bloqueada, não da contagem bruta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um elemento com baixa taxa de falha pode ser mais relevante que outro mais problemático se sua indisponibilidade bloquear produção, segurança de processo ou exportação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "monitorar apenas médias sem contexto funcional pode mascarar os verdadeiros limitantes do desempenho."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

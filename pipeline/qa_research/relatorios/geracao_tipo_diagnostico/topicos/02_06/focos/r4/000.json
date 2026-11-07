@@ -1,0 +1,57 @@
+{
+  "item": "02_06",
+  "foco": 0,
+  "rodada": 4,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir divergência entre previsão e campo causada por uso de análise estacionária em manobra transiente.",
+      "pergunta": "A previsão da repartida indicava subida monotônica, mas em campo sempre aparece um pico transitório seguido de acomodação; depois, pressão e vazão finais coincidem com o previsto, sem mudança de hardware. Qual a causa primária da divergência?",
+      "resposta": "Uso de análise estacionária para uma manobra transiente",
+      "explicacao": "O desvio aparece só no comportamento intermediário e é reprodutível; como o regime final coincide, a causa é não representar o transiente da manobra, não defeito de campo.",
+      "resposta_padrao": "Falha de instrumento ou lentidão de válvula.",
+      "por_que_nao": "O comportamento se repete da mesma forma e desaparece no estado estável sem reparo, afastando defeito aleatório como causa primária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O ponto crítico não é apenas o acionamento inicial ou o fechamento final, mas o comportamento intermediário até que as variáveis atinjam condição estável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Por isso, análises puramente estacionárias tendem a ser insuficientes para manobras."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir override de intertravamento de falha do elemento final quando medição e alarme estão corretos.",
+      "pergunta": "Pressão HH aparece igual no campo e na tela, o alarme soa e o histórico registra o evento; logo depois, a válvula de shutdown fecha normalmente no teste funcional, sem reparo. O que explicou a falta de parada automática?",
+      "resposta": "Override do intertravamento HH de pressão",
+      "explicacao": "A medição e o alarme estavam válidos, e o elemento final respondeu no teste sem manutenção. Faltou apenas a atuação automática pela lógica de proteção, típico de intertravamento inibido.",
+      "resposta_padrao": "Falha intermitente da válvula de shutdown.",
+      "por_que_nao": "A válvula atuou normalmente no teste logo após o evento, sem qualquer correção mecânica, então o problema não estava no elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em condições anormais, a operação pode incluir uso de bypass, override ou forcing"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Alarmes e shutdowns fazem a ponte entre detecção de desvio e resposta do sistema."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

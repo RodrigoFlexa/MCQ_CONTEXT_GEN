@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar atraso do primeiro estágio de load shedding quando a quantidade rejeitada é suficiente, mas a atuação não é rápida o bastante para conter a queda de frequência.",
+      "pergunta": "Registros de um evento mostram perda de um gerador, queda contínua de frequência por cerca de 700 ms, nenhum trip adicional nesse intervalo e, quando o primeiro estágio abre, a frequência se recupera sem novo shedding. Qual causa primária torna o esquema ineficaz nesse cenário?",
+      "resposta": "Atraso excessivo do primeiro estágio de load shedding",
+      "explicacao": "A recuperação imediata após a primeira rejeição mostra que a quantidade era suficiente. O problema foi o tempo de atuação, exatamente a condição em que o bloco indica perda de eficácia do esquema.",
+      "resposta_padrao": "Quantidade insuficiente de carga rejeitada.",
+      "por_que_nao": "A primeira abertura sozinha conteve a queda e restaurou a frequência; faltou rapidez, não mais potência rejeitada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Load shedding é a rejeição seletiva de cargas para reduzir rapidamente a demanda elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se o esquema atuar tarde, com prioridades inadequadas ou baseado em análise de carga desatualizada, sua eficácia diminui."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir insuficiência de suporte reativo da geração remanescente de déficit de potência ativa após atuação correta do load shedding.",
+      "pergunta": "Perdido um gerador, o estágio de shedding abre na sequência prevista; a potência ativa cai para abaixo da nominal e a frequência reage, mas a tensão do barramento segue afundando, com excitadores de todos os remanescentes no teto e motores entrando em stall. Qual causa primária?",
+      "resposta": "Suporte reativo insuficiente da geração remanescente",
+      "explicacao": "Como a carga ativa já foi aliviada e a frequência se recupera, a instabilidade remanescente é de tensão. O bloco associa essa deterioração à insuficiência de suporte de tensão.",
+      "resposta_padrao": "Ainda faltou rejeitar potência ativa.",
+      "por_que_nao": "A potência ativa já caiu e a frequência respondeu; o colapso persistiu por limitação de tensão e reativos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se a demanda excede a potência ativa que a geração remanescente consegue sustentar no transitório, a frequência tende a cair"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se o suporte de tensão também fica insuficiente, a estabilidade elétrica se deteriora ainda mais."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer a falta de separação automática de barramentos como mecanismo de load shedding quando o acoplamento mantém o déficit compartilhado entre seções.",
+      "pergunta": "Com um gerador em cada seção e bus tie fechado, a perda do gerador da seção A derruba a frequência das duas seções; nenhum alimentador é rejeitado. Nos registros, se o tie abrisse, a seção B ficaria abaixo da capacidade do seu gerador. Qual causa primária?",
+      "resposta": "Ausência de separação automática dos barramentos no load shedding",
+      "explicacao": "O bloco prevê load shedding também por separação de barramentos. Mantidos acoplados, os dois lados compartilham o déficit da seção A; abrindo o tie, a seção B permaneceria sustentável.",
+      "resposta_padrao": "Gerador remanescente subdimensionado.",
+      "por_que_nao": "A seção B sozinha caberia no gerador disponível; o colapso decorreu do acoplamento persistente entre as seções.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A implementação pode ocorrer pelo descarte de consumidores individuais, de grupos de consumidores ou pela separação apropriada de barramentos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esses recursos ajudam a entender se a configuração instalada mantém margem suficiente diante de partidas de motores, rejeição de cargas, separação de barramentos e falhas em equipamentos sensíveis."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar descoordenação entre load shedding e automação quando uma lógica automática recoloca carga relevante logo após a estabilização inicial.",
+      "pergunta": "A frequência para de cair logo após o shedding, mas 1 s depois volta a despencar quando uma bomba de reserva entra automaticamente por lógica de baixa pressão; com essa partida bloqueada em teste, o sistema permanece estável. Qual causa primária?",
+      "resposta": "Partida automática da bomba de reserva não bloqueada pelo load shedding",
+      "explicacao": "O sistema se estabiliza com o shedding e só volta a instabilizar quando a automação adiciona nova carga. O conhecimento avaliado é a necessidade de coordenação entre shedding e automação.",
+      "resposta_padrao": "Reserva girante insuficiente.",
+      "por_que_nao": "Sem a partida automática da reserva, a geração remanescente sustenta o sistema após o shedding.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção das cargas a rejeitar depende da criticidade para segurança e continuidade operacional, do impacto do desligamento no processo, da corrente de retomada no religamento e da coordenação com proteções e automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ao retirar rapidamente cargas menos prioritárias, o esquema reduz a solicitação sobre os geradores que permaneceram conectados e aumenta a chance de preservar alimentação para funções essenciais."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "06_05",
+  "foco": 19,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "A2": 18,
+    "F": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir bypass da saída automática de uma SDV na matriz de causa e efeito de falha do elemento final.",
+      "pergunta": "Dois detectores da mesma zona cruzam o limiar, a votação é confirmada no controlador e o alarme geral toca, mas a SDV não fecha automaticamente. Pelo próprio sistema, o comando manual fecha a válvula na hora. Qual é a causa primária?",
+      "resposta": "bypass da função automática de fechamento da SDV",
+      "explicacao": "A detecção, a votação e outras respostas ocorreram, então o problema não está no sensor nem na lógica geral. Como a válvula fecha por comando manual, o elemento final está apto; falhou só o ramo automático dessa ação.",
+      "resposta_padrao": "Defeito no atuador ou no solenóide da SDV.",
+      "por_que_nao": "A válvula fecha imediatamente por comando do sistema, então o elemento final responde; o que faltou foi a atuação automática configurada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A indisponibilidade do F&G pode comprometer tanto o alarme quanto as ações automáticas previstas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Limiares, votação e respostas devem estar definidos na matriz de causa e efeito da unidade;"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de integração entre F&G e PA/GA de defeito no próprio sistema de alarme geral.",
+      "pergunta": "Com voto de gás confirmado, ESD e isolamento ocorrem, mas o alarme geral de emergência não soa. Em teste posterior, o PA/GA responde normalmente a um comando próprio. Que causa explica o silêncio no evento?",
+      "resposta": "falha na interface de comando entre F&G e PA/GA",
+      "explicacao": "Como ESD e isolamento atuaram, a lógica de F&G processou o evento. Se o PA/GA funciona em teste próprio, as sirenes estão íntegras; o problema está no caminho de integração que deveria receber o comando do F&G.",
+      "resposta_padrao": "Sirenes do alarme geral avariadas.",
+      "por_que_nao": "O PA/GA funcionou no teste independente; faltou o comando vindo do F&G, não a capacidade de soar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A indisponibilidade do F&G pode comprometer tanto o alarme quanto as ações automáticas previstas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório, e a rastreabilidade temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que uma zona configurada com 2ooN não atua automaticamente com apenas um detector acima do limiar.",
+      "pergunta": "Um detector junto ao flange permanece entre 55% e 65% LIE, com tendência no controlador coerente, enquanto o adjacente não passa de 6% LIE; o isolamento não ocorre. Em testes funcionais, ambos respondem normalmente. Qual causa primária?",
+      "resposta": "votação 2ooN da zona exigindo segundo detector confirmado",
+      "explicacao": "Um detector e seu sinal estão normais, e o outro também responde em teste, então não é falha de sensor nem de comunicação. A ação automática depende da confirmação adicional exigida pela lógica dessa zona.",
+      "resposta_padrao": "Detector adjacente defeituoso.",
+      "por_que_nao": "Ele respondeu normalmente nos testes funcionais; faltou a segunda confirmação requerida pela votação da zona.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Limiares, votação e respostas devem estar definidos na matriz de causa e efeito da unidade;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a suficiência da proteção também depende de cobertura e tempo de resposta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não satisfazer confirmação de evento, lógica de votação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

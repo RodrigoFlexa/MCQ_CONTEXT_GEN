@@ -1,0 +1,117 @@
+{
+  "item": "07_01",
+  "foco": 23,
+  "rodada": 2,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Incoerência entre intertravamento físico implantado em campo e documentação técnica no retorno ao serviço.",
+      "pergunta": "Com todos os permissivos satisfeitos no PLC e na IHM, a partida segue bloqueada; no painel, existe um contato auxiliar instalado na última manutenção em série com a bobina de habilitação, sem correspondente em lógica, causa e efeito ou diagrama. Qual a causa primária?",
+      "resposta": "Intertravamento físico provisório fora da documentação aprovada.",
+      "explicacao": "O bloqueio não está na lógica já satisfeita, mas em um caminho físico adicional criado em campo. O retorno ao serviço ocorreu com prática de campo incoerente com a documentação e fora de sua cobertura.",
+      "resposta_padrao": "Erro na lógica do PLC.",
+      "por_que_nao": "A lógica e a IHM já mostram os permissivos atendidos; o bloqueio persiste por um intertravamento físico extra, não documentado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a documentação aplicável permanece coerente com a prática de campo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não é apenas energizar o equipamento ou retirar uma inibição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a ação necessária estiver em desacordo com a documentação técnica existente, ou fora de sua cobertura, é necessária análise de engenharia"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança temporária compartilhada em lógica de permissivos pode transferir risco para outra etapa operacional.",
+      "pergunta": "Para contornar a indisponibilidade de um equipamento auxiliar, o sinal 'pronto' foi temporariamente substituído na lógica. A operação contínua ficou estável, mas na primeira parada automática outra etapa bloqueou aguardando esse mesmo 'pronto', embora seus instrumentos e atuadores testem corretos. Qual a causa primária?",
+      "resposta": "Substituição temporária compartilhada do sinal de 'pronto' na lógica.",
+      "explicacao": "A alteração provisória atendeu um regime, mas o mesmo sinal era usado por outra etapa na parada. A mudança transferiu o risco para outro momento operacional.",
+      "resposta_padrao": "Falha do equipamento da etapa bloqueada.",
+      "por_que_nao": "Os dispositivos da etapa testam corretos, e o sintoma só apareceu depois da substituição temporária desse sinal comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alterações provisórias e definitivas em intertravamentos, permissivos e lógicas associadas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças mal avaliadas podem transferir risco para outra etapa da operação, especialmente em partidas e paradas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Partidas, paradas, isolamento de sistemas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "validade de premissas temporárias"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Atraso sequencial de testes e manutenções em componentes da mesma barreira eleva a indisponibilidade latente da proteção.",
+      "pergunta": "Mesmo sem alarmes de falha, o transmissor de disparo está com proof test adiado, o solenóide da mesma SIF com manutenção vencida e a ESDV correspondente sem partial stroke no prazo. Qual a causa primária eleva a indisponibilidade latente dessa proteção?",
+      "resposta": "Atraso sequencial de testes e manutenções na mesma barreira.",
+      "explicacao": "Diagnósticos on-line não substituem a comprovação do caminho completo de demanda. O acúmulo de postergações em sensor, comando e elemento final da mesma barreira aumenta sua criticidade.",
+      "resposta_padrao": "Nenhuma, porque os autodiagnósticos estão normais.",
+      "por_que_nao": "Autodiagnóstico não demonstra o desempenho da barreira em demanda, e a postergação acumulada na mesma proteção aumenta a criticidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar impactos do atraso sequencial de manutenções e testes sobre a segurança operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A criticidade cresce quando a postergação se acumula em elementos que compõem a mesma barreira"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Retorno ao serviço de intertravamento deve ser validado em condição de processo representativa do regime operacional.",
+      "pergunta": "A função restaurada passou em simulação e em teste com a linha isolada; na primeira partida sob regime térmico normal, o permissivo cai sem qualquer mudança de lógica e sem defeito novo de instrumento. Qual a causa primária?",
+      "resposta": "Validação do retorno ao serviço fora da condição real de processo.",
+      "explicacao": "O retorno foi aceito em condição não representativa. Intertravamentos e permissivos podem mudar de comportamento com o regime operacional, especialmente na partida.",
+      "resposta_padrao": "Falha intermitente do instrumento.",
+      "por_que_nao": "A ocorrência só aparece no regime operacional não reproduzido no teste; isso aponta para validação inadequada da condição de processo, não para intermitência aleatória.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "verificar se procedimento, lógica operacional, condição do processo e evidência de saneamento estão alinhados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O desempenho de intertravamentos, permissivos e compensações muda com o regime operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Partidas, paradas"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

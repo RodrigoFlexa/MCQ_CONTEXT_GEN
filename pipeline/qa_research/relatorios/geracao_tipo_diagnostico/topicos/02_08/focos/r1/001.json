@@ -1,0 +1,105 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Condições iniciais térmicas governam a temperatura máxima de alívio em cenários operacionais distintos.",
+      "pergunta": "Na partida quente, o pico de temperatura no coletor de alívio supera o do ESD, embora a vazão liberada seja menor. O estudo que inicia todos os equipamentos em condição fria não reproduz isso. Qual causa primária?",
+      "resposta": "temperatura inicial dos volumes representada incorretamente",
+      "explicacao": "A temperatura máxima de alívio pode governar em cenário operacional distinto do de maior vazão. Se o modelo parte de condição térmica fria, perde o inventário de calor da partida quente e desloca o caso crítico.",
+      "resposta_padrao": "Subestimação da vazão de alívio.",
+      "por_que_nao": "O cenário crítico descrito tem vazão menor; o desvio vem do estado térmico inicial, não do pico de fluxo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Volumes comunicantes alteram o transiente de blowdown e a carga ao flare.",
+      "pergunta": "Durante blowdown de dois vasos ligados por equalização normalmente aberta, a vazão real ao flare tem pico menor e cauda mais longa que a simulação, e as pressões dos dois caem quase juntas. Qual causa primária?",
+      "resposta": "volume comunicante da equalização omitido no modelo",
+      "explicacao": "A comunicação entre os vasos redistribui inventário e altera o transiente de descarga, reduzindo o pico e alongando a cauda. Sem esse volume comunicante, a simulação superestima a separação entre as descargas.",
+      "resposta_padrao": "BDV com tempo de abertura excessivo.",
+      "por_que_nao": "O acompanhamento das pressões dos dois vasos indica inventário compartilhado; só a cinemática da BDV não cria esse acoplamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Risco de surge em parada depende do sequenciamento e do tempo de resposta da malha anti-surge.",
+      "pergunta": "Na parada programada o compressor cruza a redução de carga sem surge; no ESD ele entra em surge, embora a capacidade de reciclo em regime seja suficiente e a válvula anti-surge passe no teste de curso. Qual causa primária?",
+      "resposta": "atraso na abertura da válvula anti-surge no ESD",
+      "explicacao": "O problema aparece só no transiente de emergência, não na capacidade estática de reciclo. Isso aponta para dinâmica de controle e sequenciamento, especialmente o tempo de resposta da válvula anti-surge durante o ESD.",
+      "resposta_padrao": "Reciclo subdimensionado.",
+      "por_que_nao": "Se faltasse capacidade, a limitação apareceria também na parada programada e nos testes em regime, não apenas no ESD.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A histerese de reassentamento da PSV precisa ser representada para prever estabilidade de abertura em baixa carga.",
+      "pergunta": "Com duas PSVs em paralelo e contrapressão variável no coletor, o teste mostra ciclagem da menor no caso de baixa carga, mas o modelo previa abertura estável usando o mesmo ponto para abrir e fechar. Qual causa primária?",
+      "resposta": "histerese de reassentamento da PSV não representada",
+      "explicacao": "Fechar a válvula no mesmo ponto de abertura elimina a histerese de reassentamento. Em baixa carga, com contrapressão variável, esse comportamento é decisivo para prever ciclagem ou estabilidade.",
+      "resposta_padrao": "Contrapressão excessiva no coletor.",
+      "por_que_nao": "A contrapressão influencia, mas o erro específico vem de modelar a PSV sem diferença entre abertura e reassentamento.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "passam a ser relevantes a repartição de vazão, a estabilidade de abertura, a contrapressão do sistema receptor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "representar dispositivos, volumes comunicantes e controles."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "09_01",
+  "foco": 8,
+  "rodada": 4,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Janela operacional de recebimento no destino como restrição de programação logística, distinta de erro de ETA.",
+      "pergunta": "Chega-se no ETA previsto, mas a transferência só escorrega para o dia seguinte quando a chegada coincide com a parada regular de recebimento do convés; nas demais escalas, o mesmo roteiro cumpre prazo. Qual é a causa primária?",
+      "resposta": "Janela de atendimento do destino não modelada.",
+      "explicacao": "O trânsito está correto; o atraso nasce da indisponibilidade recorrente para receber carga, exatamente a restrição que um planejamento sem horário de atendimento não captura.",
+      "resposta_padrao": "Tempo de viagem subestimado.",
+      "por_que_nao": "A ETA adere ao previsto; a postergação aparece só quando a chegada coincide com a parada regular de recebimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inexistência de restrições de horário de atendimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "compatibilizar tempo de viagem, capacidade da embarcação e sequência de atendimento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de grade fixa de saídas como causa de atraso em degraus, mesmo com recursos disponíveis para despacho adicional.",
+      "pergunta": "Pedidos liberados logo após a saída matinal passam a ganhar ETA em degraus de 24 horas, mesmo havendo convés, tripulação e carga prontos para uma viagem no fim do dia. O que explica esse padrão?",
+      "resposta": "Programação com partidas diárias rígidas.",
+      "explicacao": "Quando o agendamento só admite saídas em grade diária, perder o slot da manhã empurra o pedido para o próximo ciclo, apesar de haver recursos disponíveis.",
+      "resposta_padrao": "Falta de embarcação disponível.",
+      "por_que_nao": "Os recursos para outra saída existem; o acréscimo em blocos de 24 horas é típico de grade fixa de partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "partidas diárias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "modelo de otimização de roteamento e programação de PSVs"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sequenciamento de escalas como determinante do prazo, mesmo com navegação e capacidade aderentes.",
+      "pergunta": "No mesmo roteiro, a navegação fecha no previsto, mas a folga desaparece toda vez que a primeira escala exige longa permanência para transferência; o item crítico segue na segunda escala e atrasa. Qual a causa primária?",
+      "resposta": "Sequenciamento da rota com a entrega crítica após a escala demorada.",
+      "explicacao": "O atraso decorre da ordem de atendimento: o tempo operacional da primeira escala consome a margem da entrega crítica, embora viagem e capacidade estejam corretas.",
+      "resposta_padrao": "Velocidade insuficiente do PSV.",
+      "por_que_nao": "Os tempos de navegação permanecem aderentes; a perda de prazo nasce da ordem das escalas e do tempo gasto na primeira transferência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sequência de atendimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "compatibilizar tempo de viagem, capacidade da embarcação e sequência de atendimento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "rodada": 2,
+  "contexto": {
+    "A1": 20,
+    "F": 21,
+    "A2": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar erro de unidade de engenharia na integração quando a discrepância aparece só em consumidores externos e por fator fixo.",
+      "pergunta": "A comparação automática entre dois trens passou a indicar uma vazão exatamente 3,6 vezes maior em um deles após integrar um novo controlador; tendências locais e balanço de massa permanecem coerentes. Qual é a causa primária?",
+      "resposta": "Conversão incorreta de unidade de engenharia na integração.",
+      "explicacao": "A divergência surgiu na camada integrada, não no processo. Fator fixo com tendência local e balanço coerentes indica dado tratado com unidade inconsistente no consumo externo.",
+      "resposta_padrao": "Transmissor descalibrado.",
+      "por_que_nao": "Descalibração afetaria a operação e o balanço local; aqui a discrepância aparece só após a integração e por um fator constante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar troca sistemática de atributos entre ativos a erro de identidade ou mapeamento de equipamento na integração.",
+      "pergunta": "No dashboard de confiabilidade, horas de operação, alarmes e vibração aparecem sempre trocados entre a bomba principal e a reserva; nas HMIs locais e no monitoramento dedicado cada uma está correta. Qual é a causa primária?",
+      "resposta": "Mapeamento invertido da identificação dos equipamentos na integração.",
+      "explicacao": "Como as fontes locais identificam corretamente cada bomba e a inversão ocorre só no consumidor integrado, a causa é a associação errada entre tags e equipamento.",
+      "resposta_padrao": "Troca física de cabos ou sensores entre as bombas.",
+      "por_que_nao": "Se fosse erro de campo, a troca apareceria também na HMI local e no sistema dedicado, não apenas no dashboard integrado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O mecanismo físico é simples: sensores e controladores convertem estados do processo em dados; protocolos e brokers distribuem esses dados; aplicações analíticas e modelos os transformam em informação operacional útil."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda de padronização quando um consumidor novo contorna a camada usada para normalizar dados de controladores heterogêneos.",
+      "pergunta": "Dashboards antigos seguem coerentes, mas uma nova aplicação que lê direto de controladores de fornecedores diferentes passou a mostrar nomes, estados e unidades inconsistentes entre áreas. Qual é a causa primária?",
+      "resposta": "Leitura direta dos controladores, contornando a normalização do SCADA.",
+      "explicacao": "Com controladores heterogêneos, a padronização viável estava no SCADA. Ao consumir dados brutos diretamente dos controladores, a nova aplicação reexpôs diferenças de nomenclatura, estados e unidades.",
+      "resposta_padrao": "Erro de configuração da nova aplicação.",
+      "por_que_nao": "O padrão do problema acompanha a heterogeneidade das fontes; os consumidores que passam pelo SCADA continuam consistentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um desafio recorrente no nível de controle é a diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

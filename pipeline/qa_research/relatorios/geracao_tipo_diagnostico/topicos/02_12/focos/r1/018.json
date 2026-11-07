@@ -1,0 +1,99 @@
+{
+  "item": "02_12",
+  "foco": 18,
+  "rodada": 1,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interação entre controle de capacidade por rotação e proteção anti-surge como causa de trips em transientes.",
+      "pergunta": "Quedas rápidas de demanda geram abre-fecha do reciclo junto com correções de rotação; em carga estável o compressor opera longe do surge e sem vibração anormal. Qual causa primária explica os trips nesses transientes?",
+      "resposta": "interação mal ajustada entre controle de capacidade por rotação e anti-surge",
+      "explicacao": "A arquitetura acopla rotação na pressão de sucção e reciclo na vazão. Se o problema aparece só em perturbações e não em regime estável, a causa primária é o acoplamento mal ajustado entre essas malhas, não defeito mecânico isolado.",
+      "resposta_padrao": "Válvula de reciclo com falha mecânica.",
+      "por_que_nao": "Uma falha mecânica tenderia a aparecer também em carga estável; aqui o padrão depende do transiente das malhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "observar a resposta do sistema a perturbações e a eficácia da proteção anti-surge"
+        },
+        {
+          "bloco": "F",
+          "trecho": "simulação dinâmica é útil para estudar partida, parada, ajuste das malhas de capacidade e anti-surge"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a rotação da máquina controla a pressão de sucção, enquanto válvulas de reciclo por estágio ajustam a vazão de sucção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "forte interação entre controle de capacidade e proteção anti-surge"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da formação de condensado entre estágios sobre a atuação frequente da proteção anti-surge.",
+      "pergunta": "No segundo estágio, a válvula anti-surge passou a abrir com frequência depois que a temperatura do resfriador intermediário caiu e o separador interstage começou a acumular mais líquido; vazão externa e composição de entrada não mudaram. O que está causando isso?",
+      "resposta": "formação de condensado entre estágios",
+      "explicacao": "O resfriamento e a separação intermediária alteram densidade, temperatura e condensado. A coincidência com queda de temperatura e aumento de líquido aponta para condensação no interstage afetando o ponto operacional do estágio seguinte, não para simples queda de demanda.",
+      "resposta_padrao": "Baixa vazão global do compressor.",
+      "por_que_nao": "A vazão externa não mudou e o sinal decisivo é o aumento de líquido após o resfriador intermediário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "observar a resposta do sistema a perturbações e a eficácia da proteção anti-surge"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Resfriamento e separação intermediária alteram densidade, temperatura e formação de condensado, afetando tanto desempenho quanto risco operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em trens com múltiplos estágios, a proteção depende também do comportamento conjunto de vasos, compressores e trocadores entre estágios."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limitação da simulação dinâmica sem validação de campo para diagnosticar comportamento de partida e proteção.",
+      "pergunta": "A partida automática foi aprovada na simulação dinâmica, mas no campo entra em oscilação entre capacidade e anti-surge até exigir intervenção manual; instrumentos e válvulas já foram testados. Qual a causa primária da discrepância?",
+      "resposta": "premissas da simulação dinâmica não validadas em campo",
+      "explicacao": "A simulação ajuda a testar esquemas automáticos, mas não substitui a validação operacional. Com hardware testado e falha aparecendo apenas no campo, o indício principal é que a dinâmica real processo-controle não foi validada.",
+      "resposta_padrao": "Erro de operador na partida.",
+      "por_que_nao": "A oscilação surge no modo automático antes da intervenção manual, e aprovação em simulação não garante desempenho em campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como ferramenta de engenharia, a simulação dinâmica é útil para estudar partida, parada, ajuste das malhas de capacidade e anti-surge, teste de esquemas automáticos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não substitui a validação operacional em campo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "nem permite inferir, por si só, desempenho universal de uma filosofia de proteção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "forte interação entre controle de capacidade e proteção anti-surge"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

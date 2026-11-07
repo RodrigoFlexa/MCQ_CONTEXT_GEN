@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 25,
+  "rodada": 2,
+  "contexto": {
+    "A1": 24,
+    "F": 25,
+    "A2": 26
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre testes isolados de dispositivos e teste funcional ponta a ponta da matriz de causa e efeito.",
+      "pergunta": "O histórico mostra iniciador verificado na entrada, saída comandada diretamente e válvula com curso local aprovado; quando o processo realmente cruza o setpoint, o alarme aparece e a parada não ocorre. Que causa primária explica essa aprovação anterior?",
+      "resposta": "Teste segmentado no lugar do teste funcional da matriz de causa e efeito.",
+      "explicacao": "Os itens foram checados isoladamente. Faltou exercitar, no cenário previsto, a cadeia detecção-lógica-saída que comprova a resposta automática esperada.",
+      "resposta_padrao": "Falha do iniciador de processo.",
+      "por_que_nao": "A condição chegou à lógica e gerou alarme; o que não foi validado foi o encadeamento automático completo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Testes funcionais verificam se um cenário previsto produz a resposta automática esperada no sistema de segurança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não apenas do estado isolado de um instrumento ou equipamento."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite de validade do teste funcional ao arranjo disponível no momento do ensaio.",
+      "pergunta": "Com um trem de compressão isolado, a perda de utilidade foi testada e aprovada. Depois da reintegração desse trem, uma demanda real só para o outro. O reintegrado responde aos próprios trips e ao seu shutdown local. Que causa primária explica a aprovação anterior?",
+      "resposta": "Isolamento do trem reintegrado durante o teste funcional.",
+      "explicacao": "O ensaio validou somente o arranjo disponível naquele momento. Após a reintegração, a função automática passou a depender de um cenário que não tinha sido exercitado.",
+      "resposta_padrao": "Defeito do trem reintegrado.",
+      "por_que_nao": "O trem atua por proteções próprias e shutdown local; a aprovação não cobriu o arranjo após a reintegração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vale para os cenários exercitados e para o arranjo disponível naquele momento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não demonstra, por si só, cobertura completa de todos os modos de falha"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Partidas, paradas, isolamento de sistemas, comissionamento, regeneração"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de validar a interface automática entre ESD central e lógica de pacote em testes funcionais.",
+      "pergunta": "Durante uma parada de emergência de área, com o pacote em remoto, os demais consumidores desligam e o evento é registrado no sistema central, mas o compressor continua. O mesmo compressor para por seu intertravamento próprio e por shutdown interno de teste. Qual a causa primária?",
+      "resposta": "Integração do ESD de área ao shutdown automático do pacote ausente.",
+      "explicacao": "O pacote e seu elemento final respondem à lógica interna. A falha está na função automática comum entre a parada de emergência da área e a lógica do pacote.",
+      "resposta_padrao": "Falha do atuador ou do compressor.",
+      "por_que_nao": "O pacote já para por sua própria lógica; o que não atua é apenas a origem de shutdown vinda do ESD de área.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esse tipo de teste pode ser aplicado a sistemas instrumentados de segurança, paradas de emergência e lógicas de pacotes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "as condições de entrada levam aos efeitos definidos para os intertravamentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a proteção depende da coerência entre causa, decisão automática e efeito final"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Propagação em cascata de uma restrição súbita local na descarga e sua distinção de contrapressão geral a jusante.",
+      "pergunta": "Logo depois do alinhamento do ramal de descarga, a pressão do último estágio sobe em degrau, a vazão ao destino cai quase a zero e o reciclo abre totalmente; as pressões interstágio sobem em cascata, mas o coletor comum a jusante permanece normal. Qual causa primária?",
+      "resposta": "Válvula de bloqueio do ramal de descarga fechada no alinhamento.",
+      "explicacao": "Como o coletor comum a jusante não subiu, a restrição não está no sistema externo. O bloqueio é local ao ramal e se propaga para montante, elevando pressões e forçando o reciclo.",
+      "resposta_padrao": "Aumento da contrapressão na exportação.",
+      "por_que_nao": "Se fosse contrapressão do sistema a jusante, o coletor comum também subiria; aqui a obstrução ficou confinada ao ramal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alterando pressões e vazões em cascata"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Uso da realimentação de posição para distinguir limitação dinâmica do elemento final de erro de sintonia na proteção anti-surge.",
+      "pergunta": "Durante degraus rápidos de carga, o comando da válvula anti-surge muda imediatamente, mas a posição real repete o mesmo perfil sempre alguns segundos depois; fora dos transientes, a máquina fica estável. Qual causa primária?",
+      "resposta": "Baixa resposta dinâmica do atuador-posicionador da válvula anti-surge.",
+      "explicacao": "A defasagem fixa entre comando e posição real mostra que a malha pede a ação no tempo certo, mas o elemento final responde tarde, comprometendo a proteção só nos transientes.",
+      "resposta_padrao": "Sintonia agressiva da malha anti-surge.",
+      "por_que_nao": "Erro de sintonia não produz, por si só, um atraso repetitivo entre comando e posição real; isso aponta para limitação dinâmica do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que ajuda a detectar degradação, atraso, histerese ou falha de atuação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto da localização da medição de rateio em trens paralelos sobre a distribuição de carga.",
+      "pergunta": "No rateio automático entre dois trens, a caça desaparece sem mudar ganhos quando a realimentação provisória sai do transmissor de pressão de cada ramal e passa para o do coletor comum. Qual causa primária?",
+      "resposta": "Transmissor de pressão do rateio no ramal, não no coletor comum.",
+      "explicacao": "Se a mesma sintonia estabiliza ao usar a pressão do coletor comum, a causa não é o ajuste da malha, mas a medição local que não representa o estado compartilhado.",
+      "resposta_padrao": "Sintonia excessiva da malha de rateio.",
+      "por_que_nao": "A mesma sintonia deixa de oscilar quando a variável medida passa a representar o coletor comum, logo o problema está na localização da medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia: o sistema de controle precisa repartir carga"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em compressores em paralelo e em sistemas com múltiplos estágios, a seleção e a localização da instrumentação também afetam a qualidade do controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Como consequência, a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da localização da tomada de pressão em múltiplos estágios sobre atraso de controle e interação com o anti-surge do estágio seguinte.",
+      "pergunta": "Na queda de vazão, a pressão usada pelo controle do primeiro estágio repete corretamente, porém vários segundos depois, a variação medida antes do scrubber interstágio; o transmissor foi testado e o segundo estágio já abre reciclo. Qual causa primária?",
+      "resposta": "Tomada de pressão do primeiro estágio após o scrubber interstágio.",
+      "explicacao": "O atraso não vem do transmissor, mas do ponto de medição após um volume que mascara o estado real. Assim, o primeiro estágio reage tarde e o seguinte entra em proteção.",
+      "resposta_padrao": "Sintonia lenta do controle do primeiro estágio.",
+      "por_que_nao": "O sinal decisivo é a mesma variação aparecer antes e depois com atraso espacial consistente, indicando localização inadequada da tomada, não apenas ajuste de controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interação entre múltiplos estágios tornam essa coordenação mais crítica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo, introduzir atrasos ou mascarar interações entre estágios"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Como consequência, a malha pode reagir tarde, oscilar"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

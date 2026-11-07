@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 22,
+  "rodada": 4,
+  "contexto": {
+    "A1": 20,
+    "A2": 21,
+    "F": 22
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Adequação de aplicações com latência para apoio à decisão versus ajuste operacional frequente.",
+      "pergunta": "Depois que a operação passou a ajustar a vazão por um painel web externo, a malha começou a oscilar; no DCS local, PV e saída respondiam bem, mas no painel o mesmo tag chegava cerca de 30 s atrasado e em degraus. Qual a causa primária?",
+      "resposta": "Ajuste operacional guiado por painel web de alta latência.",
+      "explicacao": "O painel externo é adequado a apoio, não a correções frequentes. O atraso e a atualização em degraus induziram intervenções perseguidoras, embora o controle local estivesse estável.",
+      "resposta_padrao": "Malha PID mal sintonizada.",
+      "por_que_nao": "No DCS local a resposta era estável; a oscilação surgiu ao perseguir um valor atrasado e em degraus.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sabem reconhecer limites da automação, condições de uso e sinais de comportamento anormal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evitar ações precipitadas diante de alarmes, tendências ou acessos digitais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Interpretação do estado de qualidade antes de agir sobre dado integrado exibido em dashboards.",
+      "pergunta": "A pressão no dashboard remoto alterna entre valor atual e repetição congelada; a equipe reduz carga por receio de instabilidade. No DCS, o PV segue suave e o indicador de qualidade do dado externo muda para ruim em cada salto. Qual a causa primária dessa decisão?",
+      "resposta": "Desconsideração do indicador de qualidade do dado externo.",
+      "explicacao": "O dado externo já sinalizava baixa confiabilidade. Com o PV local estável, a redução decorreu de tomar o valor exibido como válido sem considerar seu estado de qualidade.",
+      "resposta_padrao": "Falha intermitente do transmissor de pressão.",
+      "por_que_nao": "O PV local no DCS permaneceu suave; os saltos apareceram só no dado externo quando sua qualidade ficou ruim.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "É capacitar a interpretar qualidade de dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evitar ações precipitadas diante de alarmes, tendências ou acessos digitais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

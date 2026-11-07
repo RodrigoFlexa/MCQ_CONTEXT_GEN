@@ -1,0 +1,125 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "rodada": 1,
+  "contexto": {
+    "A1": 3,
+    "F": 4,
+    "A2": 5
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar escrita legítima fora do ativo atendido à concessão excessiva de privilégio de engenharia ao fornecedor.",
+      "pergunta": "Durante coleta remota de dados, surgiram mudanças de setpoint e de lógica em controladores de dois trens. Não houve falhas de autenticação nem tráfego anômalo; os registros mostram a própria conta do fornecedor escrevendo fora do ativo contratado. Qual a causa primária?",
+      "resposta": "Escopo excessivo de privilégio de engenharia na conta do fornecedor.",
+      "explicacao": "As alterações vieram de credencial válida e envolveram lógica e setpoint, capacidades de engenharia. O sinal decisivo é a escrita fora do ativo contratado, evidenciando quebra do menor privilégio.",
+      "resposta_padrao": "Comprometimento externo da rede OT.",
+      "por_que_nao": "Os registros mostram uso de credencial válida, sem sinais de bypass das barreiras; o diferencial é a escrita fora do ativo atendido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Inferir privilégio administrativo indevido quando a mesma sessão desabilita alarmes e remove auditoria.",
+      "pergunta": "Alarmes ficaram desabilitados e, na mesma sessão, o trilho de auditoria local desapareceu. Não houve alteração de lógica; a credencial era de um perfil temporário criado apenas para atualização de telas. Qual causa explica esse padrão?",
+      "resposta": "Concessão indevida de privilégio administrativo ao perfil temporário.",
+      "explicacao": "Desabilitar proteções e apagar rastros são capacidades administrativas. Como o perfil era temporário e destinado só à atualização de telas, o problema é privilégio acima do necessário.",
+      "resposta_padrao": "Erro de configuração na aplicação de alarmes.",
+      "por_que_nao": "Desabilitar proteções e apagar rastros na mesma sessão aponta para privilégio administrativo, não apenas configuração incorreta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desabilitação de alarmes ou comprometimento de funções de segurança"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar falta de segregação de funções quando uma única credencial aprova, implementa e valida mudança.",
+      "pergunta": "Uma lógica de bypass usada na manutenção ficou ativa no retorno ao serviço. O registro mostra a mesma credencial cadastrando a solicitação, carregando a alteração e assinando o teste final. Qual causa primária deve ser apontada?",
+      "resposta": "Mesma credencial com poderes de aprovar, implementar e validar a mudança.",
+      "explicacao": "O sinal decisivo é a concentração das três etapas na mesma credencial. Sem segregação de funções, perde-se a verificação independente que normalmente detectaria o bypass remanescente.",
+      "resposta_padrao": "Falha de teste de retorno ao serviço.",
+      "por_que_nao": "O erro de teste é plausível, mas o padrão decisivo é a ausência de checagem independente pela mesma credencial dominar todo o fluxo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais, competência e efetividade das contramedidas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segregação de funções complementa o menor privilégio."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar escopo indevido de credencial entre domínios críticos do IACS quando fornecedor alcança sistemas não relacionados à tarefa.",
+      "pergunta": "Chamado apenas para diagnóstico de vibração, um fornecedor entrou por acesso já liberado e alcançou também a supervisão elétrica e o SIS; depois ocorreu parada indevida, sem bloqueios ou negações nos firewalls. Qual a causa primária?",
+      "resposta": "Credencial do fornecedor com acesso indevido à supervisão elétrica e ao SIS.",
+      "explicacao": "O acesso ocorreu por caminhos já permitidos, sem evidência de quebra de barreira. O elemento decisivo é a credencial atravessar domínios críticos não necessários à tarefa contratada.",
+      "resposta_padrao": "Falha na segmentação de rede entre os sistemas.",
+      "por_que_nao": "Sem negações ou exploração de firewall, o acesso ocorreu por caminhos autorizados; o erro foi o escopo da credencial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão, funções instrumentadas de segurança, sistemas elétricos de controle e aquisição de dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

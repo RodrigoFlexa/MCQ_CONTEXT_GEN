@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "rodada": 2,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir compensação por pulsos de amplitude fixa de sintonia agressiva quando o desgaste extra se concentra nos pequenos desvios.",
+      "pergunta": "Desde a migração do compensador, o erro máximo da malha permaneceu aceitável, mas o curso acumulado e as reversões quase dobraram sobretudo perto do setpoint; a resposta a degraus maiores ficou praticamente igual. Qual causa primária explica esse padrão?",
+      "resposta": "Compensação por pulsos de amplitude fixa.",
+      "explicacao": "Pulsos de amplitude variável reduzem movimentação sem perder desempenho. Se o excesso de curso aparece principalmente em pequenos desvios e a resposta a degraus maiores não muda, a energia adicional não está sendo reduzida com o erro.",
+      "resposta_padrao": "Sintonia agressiva do controlador.",
+      "por_que_nao": "Sintonia agressiva aumentaria a atividade da válvula em toda a faixa e também alteraria a resposta a degraus maiores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "compromisso entre recuperar desempenho da malha e limitar desgaste adicional do elemento final."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o elemento final executa fisicamente a ação escolhida pelo controlador"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar amplitude de pulso excessiva quando largura e intervalo permanecem e cada atuação extra desloca mais a válvula sem melhorar o erro.",
+      "pergunta": "Com largura e intervalo dos pulsos iguais aos do ajuste anterior, o primeiro pulso já move a haste, cada atuação extra produz deslocamento maior que antes e o erro da malha ficou praticamente igual. Qual é a causa primária?",
+      "resposta": "Amplitude dos pulsos de compensação excessiva.",
+      "explicacao": "Se largura e intervalo não mudaram, o aumento do deslocamento por atuação adicional vem da magnitude do pulso. Isso mantém o desempenho, mas eleva movimentação e desgaste sem benefício adicional.",
+      "resposta_padrao": "Atrito mecânico aumentou.",
+      "por_que_nao": "Atrito maior exigiria mais energia para iniciar o movimento; não explica deslocamento maior com a mesma largura e o mesmo intervalo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O princípio é fornecer energia adicional quando o comando usual não consegue iniciar o movimento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pressão de ar do atuador e deslocamento do obturador."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

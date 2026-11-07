@@ -1,0 +1,89 @@
+{
+  "item": "07_02",
+  "foco": 0,
+  "rodada": 4,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar o historiador do SCADA/HMI como ponto comum da fronteira IT/OT para histórico e consumidores externos.",
+      "pergunta": "Telas e alarmes continuam normais, mas tendências históricas, dashboards corporativos e consultas analíticas congelam ao mesmo tempo; os controladores seguem respondendo e a atualização em tempo real nas HMIs não se perde. Qual causa primária explica esse padrão?",
+      "resposta": "Historiador como ponto único de interconexão externa.",
+      "explicacao": "Os sintomas poupam a aquisição em tempo real para operação e concentram a falha no caminho usado por histórico e consumidores externos, típico do historiador na fronteira IT/OT.",
+      "resposta_padrao": "Falha do SCADA.",
+      "por_que_nao": "Se fosse o SCADA como um todo, HMIs e alarmes tenderiam a degradar junto; aqui o comum afetado é o histórico/extrativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA, historiadores, gestão de alarmes e interfaces homem-máquina"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos"
+        }
+      ],
+      "k": 1,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer consumo corporativo direto da camada de controle como causa de degradação, distinto de falta de banda.",
+      "pergunta": "Nos horários de fechamento, cresce o número de sessões abertas nos controladores e as estações de operação ficam mais lentas; quando os relatórios passam a consultar o historiador, o efeito some sem ampliar a banda. Qual causa primária explica?",
+      "resposta": "Consumo corporativo direto da camada de controle.",
+      "explicacao": "O problema desaparece ao mover a leitura para o historiador, indicando que o ambiente corporativo estava consumindo dados no nível de controle, contrariando a separação funcional da fronteira IT/OT.",
+      "resposta_padrao": "Falta de banda na rede.",
+      "por_que_nao": "A mesma infraestrutura suporta os relatórios quando a fonte vira o historiador; o ponto errado era a camada consultada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "OT prioriza controle determinístico, segurança operacional e disponibilidade do processo; IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que sistemas marítimos e de monitoramento de movimento de helicóptero podem integrar o escopo IACS em offshore.",
+      "pergunta": "Uma manutenção tratada como mudança de baixa criticidade em rede 'administrativa' derrubou o monitoramento de movimento de helicóptero e a supervisão de lastro, enquanto o processo permaneceu controlado localmente. Qual causa primária explica o impacto inesperado?",
+      "resposta": "Exclusão desses sistemas do escopo IACS.",
+      "explicacao": "Em offshore, sistemas marítimos e de monitoramento de movimento de helicóptero podem fazer parte do IACS; tratá-los como rede administrativa explica o enquadramento errado da criticidade.",
+      "resposta_padrao": "Falha da rede administrativa.",
+      "por_que_nao": "O problema relevante não é a rede ser administrativa, e sim esses sistemas terem sido arquiteturalmente tratados como se fossem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em operações offshore, esse escopo pode se estender a sistemas marítimos, de perfuração e de monitoramento de movimento de helicóptero"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Arquitetura IT/OT é a organização dos sistemas, redes e interfaces que conectam tecnologia da informação (IT) e tecnologia operacional (OT)"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma infraestrutura digital pode influenciar continuidade operacional e condições de processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

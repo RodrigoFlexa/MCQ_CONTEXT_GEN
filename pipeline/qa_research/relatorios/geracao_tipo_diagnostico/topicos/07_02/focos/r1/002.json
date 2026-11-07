@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 1,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de camada 2 entre DCS e SIS como causa de propagação cruzada de varredura.",
+      "pergunta": "Uma varredura iniciada na estação de engenharia do DCS elevou, ao mesmo tempo, o atraso de comunicação do DCS e do SIS; fontes e CPUs são independentes, e o mesmo broadcast apareceu nos dois. Qual causa primária explica esse acoplamento?",
+      "resposta": "VLAN comum entre DCS e SIS.",
+      "explicacao": "O mesmo broadcast nos dois sistemas, apesar de fontes e CPUs independentes, indica conectividade compartilhada de camada 2. Com segmentação adequada, a varredura no DCS não alcançaria o SIS.",
+      "resposta_padrao": "Foi apenas uma varredura excessiva na rede do DCS.",
+      "por_que_nao": "A varredura só degradou o SIS porque havia conectividade compartilhada; com segregação, o impacto ficaria contido ao DCS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Host dual-homed em historiador criando caminho fora da barreira IT/OT planejada.",
+      "pergunta": "Com o firewall IT/OT em bloqueio total, um ativo da rede de controle ainda responde a consultas vindas da analítica; o tráfego desaparece quando o historiador é desligado. Qual elemento técnico está criando esse caminho?",
+      "resposta": "Historiador com duas interfaces entre domínios.",
+      "explicacao": "Se o fluxo persiste com o firewall bloqueando tudo e cessa ao desligar o historiador, existe um caminho fora da barreira planejada, criado por um host ligado simultaneamente aos dois domínios.",
+      "resposta_padrao": "Há uma regra permissiva no firewall da fronteira.",
+      "por_que_nao": "O tráfego continuou com o firewall em bloqueio total, então o caminho não passava por essa fronteira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Exposição via conduíte interdomínio, e não a vulnerabilidade em si, como causa do alcance remoto.",
+      "pergunta": "Dois controladores têm a mesma vulnerabilidade conhecida. Horas depois de um scan externo, só o que alimenta telemetria e supervisão recebeu tentativas de escrita vindas de IPs externos; o outro não foi alcançado. Qual causa primária explica isso?",
+      "resposta": "Exposição do controlador pelo conduíte interdomínio.",
+      "explicacao": "A vulnerabilidade é a mesma nos dois. O que muda é a possibilidade de alcance remoto: só o controlador exposto por fluxo entre domínios pôde receber tentativas de escrita externas.",
+      "resposta_padrao": "O problema é simplesmente o firmware vulnerável.",
+      "por_que_nao": "Os dois controladores tinham a mesma vulnerabilidade; só o exposto pelo conduíte interdomínio pôde ser alcançado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Separar domínios não remove a vulnerabilidade de origem, mas dificulta que um problema em uma interface alcance todos os ativos conectados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

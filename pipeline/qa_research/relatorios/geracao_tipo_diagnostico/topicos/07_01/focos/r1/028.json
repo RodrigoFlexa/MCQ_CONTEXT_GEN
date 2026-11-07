@@ -1,0 +1,101 @@
+{
+  "item": "07_01",
+  "foco": 28,
+  "rodada": 1,
+  "contexto": {
+    "A1": 27,
+    "F": 28,
+    "A2": 29
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir válvula comissionada como on/off de problema de posicionamento a partir de resposta só nos batentes.",
+      "pergunta": "A tela aceita 40% e 70%, mas a válvula só responde totalmente aberta ou fechada, e o único retorno disponível é de fim de curso. Qual a causa primária?",
+      "resposta": "Comissionamento da válvula apenas como abre/fecha.",
+      "explicacao": "Comando percentual com resposta apenas nos batentes e sem posição contínua indica implementação discreta da válvula, apesar de ela ter sido prevista para operação remota com controle de posição.",
+      "resposta_padrao": "Posicionador descalibrado.",
+      "por_que_nao": "Descalibração tende a causar erro de posicionamento ou hunting; não transforma uma válvula modulante em atuação apenas nos batentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de integração do tag na IHM de defeito no transmissor quando controle e proteção usam a medida.",
+      "pergunta": "O controlador e o intertravamento reagem à pressão real, as demais telas estão normais, porém esse tag fica ausente ou congelado na IHM. Qual causa primária explica o descompasso?",
+      "resposta": "Tag de campo não integrado à IHM.",
+      "explicacao": "Se a variável alimenta controle e intertravamento, o sinal existe no sistema de automação; o problema está na chegada ou publicação do tag à IHM, não na medição de campo.",
+      "resposta_padrao": "Transmissor com defeito.",
+      "por_que_nao": "Com transmissor defeituoso, o controlador e o intertravamento não reagiriam corretamente à mesma variável real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "correção para que sinais de campo chegassem à IHM"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer P&ID desatualizado quando campo e processo são coerentes e apenas a documentação diverge.",
+      "pergunta": "Durante o teste, a linha que despressuriza e o cabeamento conferem com o campo, mas o P&ID aponta outro ramal. Qual a causa primária?",
+      "resposta": "P&ID não atualizado após a modificação.",
+      "explicacao": "Quando arranjo físico, cabeamento e resposta de processo são coerentes entre si, mas o desenho diverge, a discrepância é documental: a modificação ocorreu sem atualização do P&ID.",
+      "resposta_padrao": "Tag invertida no campo.",
+      "por_que_nao": "Inversão de tag quebraria a coerência entre cabeamento, atuação e resposta do processo; aqui só a documentação diverge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "além de atualização de P&IDs após modificações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "documentos ou telas que podem não representar o comportamento real do campo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar ausência de implementação do trip de emergência da bomba a partir do teste funcional de ESD.",
+      "pergunta": "Ao acionar a parada de emergência, os demais equipamentos do grupo param, a demanda fica registrada, mas essa bomba segue operando e não há canal de trip associado no painel. Qual a causa primária?",
+      "resposta": "Trip de emergência da bomba não instalado.",
+      "explicacao": "A demanda de ESD foi processada, mas a bomba não dispõe de caminho físico de parada associado; isso caracteriza pendência de implementação do trip, não falha simples de componente existente.",
+      "resposta_padrao": "Cartão de saída com defeito.",
+      "por_que_nao": "Falha de cartão pressupõe canal de trip implementado; o indício decisivo é a inexistência do próprio caminho de parada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "instalação de trip de emergência de bombas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "medir, decidir, alarmar, intertravar e comandar atuadores"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

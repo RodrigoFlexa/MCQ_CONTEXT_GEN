@@ -1,0 +1,101 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 1,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O estado do bus tie informado ao PMS altera a estratégia de partida do grande motor conforme a topologia elétrica.",
+      "pergunta": "A sequência desse motor era aceitável nas duas topologias. Agora ela segue estável com bus tie fechado, mas com ele aberto há afundamento excessivo; no evento, o PMS registra a rede como interligada em ambos os casos. Qual causa primária?",
+      "resposta": "Indicação incorreta de bus tie fechado ao PMS.",
+      "explicacao": "A lógica usa configuração da rede e estado do bus tie. Se o PMS enxerga barramentos interligados quando estão seccionados, estima rigidez e reserva maiores que as reais e compensa a partida de forma inadequada.",
+      "resposta_padrao": "Barramento fraco por operar seccionado.",
+      "por_que_nao": "Essa topologia já era aceitável; o sinal decisivo é o PMS registrar a rede interligada mesmo com o bus tie aberto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "usando informações de configuração da rede, estados de bus tie, disjuntores dos geradores, ajustes de droop e parâmetros configuráveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o princípio transferível é que a partida de grande consumidor precisa considerar a rigidez do barramento, a reserva dinâmica das fontes, o compartilhamento de carga e os limites de sobretensão ao final da aceleração."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A compensação temporária de tensão do PMS deve ser retirada no fim da aceleração para evitar sobretensão transitória.",
+      "pergunta": "Só nas partidas assistidas pelo PMS, perto do fim da aceleração de um grande motor, a corrente cai para perto do nominal e a tensão do barramento sobe acima do ajuste normal antes de estabilizar. Qual causa primária?",
+      "resposta": "Retirada tardia da elevação temporária de tensão do PMS.",
+      "explicacao": "O bloco descreve pré-elevação e redução posterior dos ajustes. Se a compensação permanece além do ponto em que a corrente já caiu, sobra excitação no barramento e aparece sobretensão transitória no fim da aceleração.",
+      "resposta_padrao": "AVR desajustado.",
+      "por_que_nao": "O desvio só aparece na janela final da partida assistida; em regime estacionário a tensão fica normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode elevar previamente tensão e ou frequência, aplicar correções rápidas após o fechamento do disjuntor do motor e depois reduzir esses ajustes quando a aceleração se aproxima do fim"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o princípio transferível é que a partida de grande consumidor precisa considerar a rigidez do barramento, a reserva dinâmica das fontes, o compartilhamento de carga e os limites de sobretensão ao final da aceleração."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Partida previsível de grande motor em paralelo requer que todos os geradores participantes contribuam no compartilhamento coordenado de carga.",
+      "pergunta": "Três geradores estão em paralelo durante a partida de um compressor; dois absorvem quase todo o degrau de kW e kvar, e o terceiro permanece quase na mesma carga, embora esteja sincronizado e sem alarmes. Qual causa primária?",
+      "resposta": "Gerador em paralelo fora do compartilhamento coordenado do PMS.",
+      "explicacao": "A partida previsível depende do compartilhamento de carga entre as fontes. Se uma máquina sincronizada quase não reage ao degrau ativo e reativo, ela não está participando da resposta coordenada esperada pelo PMS.",
+      "resposta_padrao": "Reserva girante insuficiente.",
+      "por_que_nao": "Falta de reserva afetaria o conjunto; o sinal decisivo é a assimetria, com um gerador em paralelo praticamente não assumindo carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o princípio transferível é que a partida de grande consumidor precisa considerar a rigidez do barramento, a reserva dinâmica das fontes, o compartilhamento de carga e os limites de sobretensão ao final da aceleração."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando todos os geradores participantes operam em paralelo sob controle do PMS, a resposta coordenada tende a ser mais previsível dentro da filosofia adotada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Afundamento de frequência na partida, com tensão controlada, aponta para limitação de reserva dinâmica das fontes em droop, não para déficit reativo.",
+      "pergunta": "Com tensão mantida em faixa aceitável pelo PMS, a partida de um grande motor ainda leva a frequência quase à proteção de subfrequência; a corrente é a esperada e todos os geradores respondem. Qual causa primária?",
+      "resposta": "Reserva dinâmica insuficiente das fontes em droop.",
+      "explicacao": "Com tensão controlada e corrente dentro do esperado, o sinal remanescente é o desvio de frequência. O bloco associa esse efeito à operação em droop quando a reserva dinâmica das fontes não acompanha o degrau ativo.",
+      "resposta_padrao": "Potência reativa insuficiente na partida.",
+      "por_que_nao": "A tensão permaneceu aceitável; o sintoma decisivo foi a subfrequência, ligada à resposta de potência ativa das fontes em droop.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "impõe corrente elevada e consumo significativo de potência reativa, causando afundamento de tensão e possível desvio de frequência quando a geração opera em droop."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o princípio transferível é que a partida de grande consumidor precisa considerar a rigidez do barramento, a reserva dinâmica das fontes, o compartilhamento de carga e os limites de sobretensão ao final da aceleração."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

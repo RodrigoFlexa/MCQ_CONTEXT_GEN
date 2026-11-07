@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 1,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir oscilação causada por sintonia inicial inadequada do controlador de problema mecânico na válvula durante teste dinâmico com N2.",
+      "pergunta": "Na recirculação fechada com N2, a temperatura oscila com amplitude regular só em automático; em manual ela estabiliza, a válvula acompanha o sinal sem atraso perceptível e o transmissor conferido permanece conforme. Qual a causa primária?",
+      "resposta": "Sintonia inicial inadequada do controlador.",
+      "explicacao": "A oscilação aparece apenas com a malha fechada, enquanto válvula e medição se comportam normalmente. Isso aponta para ajuste inicial do controlador, não para defeito mecânico ou metrológico.",
+      "resposta_padrao": "Stiction da válvula de controle.",
+      "por_que_nao": "A válvula acompanha o comando sem atraso perceptível, e o comportamento some em manual, o que afasta atrito estático como causa primária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajustar instrumentos e controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "revelar problemas de integração, sintonia inicial"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer vazamento induzido por acomodação térmica quando a perda de estanqueidade surge somente após ciclo térmico no circuito fechado com N2.",
+      "pergunta": "A estanqueidade a frio foi aprovada, mas após o primeiro ciclo de aquecimento e resfriamento em malha fechada com N2 passa a ser necessária reposição contínua para manter pressão, com duas indicações independentes concordantes e sem manobras de válvulas. Qual causa primária?",
+      "resposta": "Vazamento por acomodação térmica nas conexões do circuito.",
+      "explicacao": "A perda aparece depois do ciclo térmico, não na verificação a frio, e há confirmação por medições independentes com reposição real de gás. O padrão é compatível com acomodação térmica.",
+      "resposta_padrao": "Descalibração do transmissor de pressão.",
+      "por_que_nao": "As duas indicações concordantes e a reposição efetiva de N2 evidenciam perda real de inventário, não erro de medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica, confirmar desempenho, identificar vazamentos induzidos por acomodação térmica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sem introduzir o mesmo inventário inflamável da operação normal"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar falha de integração do status de equipamento ao permissivo no PLC, distinguindo-a de defeito do equipamento bloqueado.",
+      "pergunta": "O soprador parte localmente, estabelece vazão e seu contato de operação comuta no painel, mas o aquecedor continua bloqueado por permissivo no PLC durante o teste com N2. Qual causa primária?",
+      "resposta": "Feedback de soprador em operação não integrado ao permissivo do aquecedor.",
+      "explicacao": "O soprador e o aquecedor não indicam falha intrínseca; o bloqueio persiste porque a lógica não reconhece a condição exigida para liberar o aquecedor.",
+      "resposta_padrao": "Falha do aquecedor.",
+      "por_que_nao": "O aquecedor permanece bloqueado antes mesmo de atuar; o problema está no reconhecimento do permissivo, não no equipamento aquecido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a comunicação entre instrumentos de campo e o Controlador Lógico Programável (PLC)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "revelar problemas de integração"
+        },
+        {
+          "bloco": "F",
+          "trecho": "atuação de sopradores e aquecedores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "permissivo é a condição que precisa estar satisfeita"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar supressão por bypass/override quando a condição perigosa é detectada, mas a resposta automática não ocorre durante o teste.",
+      "pergunta": "Durante a circulação com N2, a variável protegida ultrapassa o ponto de atuação, o evento aparece na supervisão, mas a parada automática esperada não ocorre; depois, sensor e elemento final passam no teste funcional. Qual causa primária?",
+      "resposta": "Bypass ou override ativo na resposta automática da função.",
+      "explicacao": "A condição foi reconhecida e o caminho físico de atuação mostrou-se íntegro em teste posterior. O que explica a não atuação é a supressão temporária da resposta automática.",
+      "resposta_padrao": "Falha do elemento final de controle.",
+      "por_que_nao": "O elemento final atuou no teste funcional, e a supervisão registrou a condição de disparo; faltou a execução automática da lógica.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "bypass ou override é a supressão temporária de uma entrada, condição ou resposta automática"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "esses estados alteram a função de barreiras"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de comunicação que poderiam comprometer permissivos ou intertravamentos quando a unidade entrar em serviço"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

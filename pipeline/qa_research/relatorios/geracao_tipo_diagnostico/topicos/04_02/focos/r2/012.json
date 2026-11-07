@@ -1,0 +1,99 @@
+{
+  "item": "04_02",
+  "foco": 12,
+  "rodada": 2,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Origem do comando na estação mestra e uso da telemetria íntegra para separar falha de supervisão de falha de campo.",
+      "pergunta": "Telemetria de vários módulos continua íntegra, mas nenhum comando da superfície movimenta qualquer função subsea em diferentes corredores; as alimentações elétrica e hidráulica de superfície permanecem normais. Qual causa primária explica melhor?",
+      "resposta": "falha na estação mestra de controle",
+      "explicacao": "Se vários módulos seguem reportando normalmente, o enlace de campo e as alimentações continuam ativos. Como o comando se origina na estação mestra, a perda global de atuação com telemetria preservada aponta para ela.",
+      "resposta_padrao": "falha no umbilical",
+      "por_que_nao": "Uma falha no umbilical tenderia a comprometer também comunicação dos equipamentos afetados e não deixaria vários módulos reportando normalmente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O comando parte da estação mestra de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o umbilical conduz potência elétrica, potência hidráulica e sinais de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "chega ao módulo de controle submarino, e dali é distribuído para atuadores, válvulas e instrumentos"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de atuação all electric com mola fail-safe a partir do fim da dependência hidráulica e do ganho simultâneo em resposta, precisão e dados de condição.",
+      "pergunta": "Resposta mais rápida, setpoint mais preciso, dados de condição adicionais e nenhum consumo hidráulico passaram a marcar uma mesma função subsea, sem perda do fail-safe. Qual tecnologia de acionamento explica esse conjunto?",
+      "resposta": "atuador elétrico linear com pacote de mola fail safe integrado",
+      "explicacao": "A combinação de maior rapidez, melhor precisão, mais dados de condição e eliminação da hidráulica naquela função corresponde à atuação totalmente elétrica com mola fail-safe integrada.",
+      "resposta_padrao": "unidade eletro-hidráulica descentralizada local",
+      "por_que_nao": "A arquitetura descentralizada reduz linhas, mas preserva potência hidráulica para mover a válvula e não elimina a dependência hidráulica da função.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "movimento da válvula é produzido por atuador elétrico, inclusive em configuração linear com pacote de mola fail safe integrado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor tempo de resposta, maior precisão de controle e maior disponibilidade de dados de condição do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "eliminando a necessidade de umbilical hidráulico naquela função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o umbilical conduz potência elétrica, potência hidráulica e sinais de controle"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre arquitetura eletro-hidráulica descentralizada e suprimento comum no diagnóstico de perda isolada de potência hidráulica.",
+      "pergunta": "Numa arquitetura eletro-hidráulica descentralizada, um comando é aceito, mas só uma válvula não apresenta qualquer mudança nas variáveis hidráulicas locais; as demais seguem normais. Qual causa primária explica melhor?",
+      "resposta": "unidade de suprimento local daquele atuador",
+      "explicacao": "Nessa arquitetura, cada atuador recebe suprimento próprio. Se apenas uma função não gera resposta hidráulica local enquanto as demais permanecem normais, o defeito primário está na unidade de suprimento desse atuador.",
+      "resposta_padrao": "perda do suprimento hidráulico comum do módulo submarino",
+      "por_que_nao": "Se o suprimento fosse comum, mais de uma função degradaria; na arquitetura descentralizada cada atuador tem alimentação própria.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "cada atuador recebe sua própria unidade de suprimento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "reduzindo número de linhas e volume total de fluido hidráulico distribuído pelo sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "preserva o uso de potência hidráulica para mover a válvula"
+        },
+        {
+          "bloco": "F",
+          "trecho": "chega ao módulo de controle submarino, e dali é distribuído para atuadores, válvulas e instrumentos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

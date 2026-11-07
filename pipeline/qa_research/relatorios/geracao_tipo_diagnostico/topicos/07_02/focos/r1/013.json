@@ -1,0 +1,113 @@
+{
+  "item": "07_02",
+  "foco": 13,
+  "rodada": 1,
+  "contexto": {
+    "A1": 12,
+    "F": 13,
+    "A2": 14
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar incompatibilidade introduzida por patch entre software supervisório e firmware/comunicação de controladores.",
+      "pergunta": "Uma atualização de segurança no supervisório foi seguida por perda de comunicação só com PLCs de firmware antigo; switches, endereçamento e regras de firewall não mudaram, e o rollback restaurou tudo. Qual a causa primária?",
+      "resposta": "Incompatibilidade de versão entre o patch do supervisório e o firmware dos PLCs.",
+      "explicacao": "O efeito apareceu logo após a atualização e sumiu no rollback. Em OT, patch sem validação pode quebrar compatibilidade entre firmware e comunicação mesmo sem qualquer mudança de rede.",
+      "resposta_padrao": "Bloqueio de portas no firewall ou falha de rede.",
+      "por_que_nao": "Rede e firewall não mudaram, e a reversão da versão restabeleceu a comunicação, apontando para incompatibilidade de software.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em muitos sistemas de controle, uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo;"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar que a prioridade de tratamento depende da exposição real do serviço vulnerável, não apenas da idade ou versão do ativo.",
+      "pergunta": "Um servidor OT e um controlador receberam alerta para a mesma vulnerabilidade. Ambos têm versões antigas, mas só o servidor expõe o serviço afetado por interface acessível na DMZ; o controlador está em segmento sem rota externa. Qual causa primária torna o primeiro mais exposto?",
+      "resposta": "Exposição real do serviço vulnerável pela interface acessível na DMZ.",
+      "explicacao": "Os dois ativos podem ser antigos, mas só um expõe o serviço vulnerável por caminho alcançável. O foco inicial não é a idade do sistema, e sim a exposição real do componente afetado.",
+      "resposta_padrao": "Sistema mais antigo ou mais desatualizado.",
+      "por_que_nao": "Ambos já são antigos; o sinal decisivo é a alcançabilidade do serviço vulnerável, não a idade da plataforma.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que, em legados, a ausência de remediação compatível suportada pelo fabricante é a causa de permanecer com medidas compensatórias.",
+      "pergunta": "Uma estação de engenharia legada tem vulnerabilidade conhecida. O fornecedor encerrou suporte da versão instalada, e a correção existe apenas para a geração seguinte de hardware; quando tentada parcialmente, a ferramenta de carga de lógica deixa de funcionar. Qual a causa primária de não haver patch compatível?",
+      "resposta": "Ausência de remediação compatível suportada para essa geração do sistema.",
+      "explicacao": "Não existe correção homologada para essa geração. Se a atualização parcial remove a ferramenta de carga de lógica, o problema central é a perda de suporte compatível do fabricante.",
+      "resposta_padrao": "Falta de janela de manutenção.",
+      "por_que_nao": "Mesmo com janela disponível, a correção suportada não existe para essa geração e a tentativa parcial rompe função essencial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas legados, a decisão raramente é apenas “atualizar ou não atualizar”."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis até que exista remediação compatível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar indisponibilidade digital causada por falha comum de alimentação da hipótese de comprometimento cibernético do controle.",
+      "pergunta": "DCS, SIS e F&G caíram quase juntos; houve fumaça local e atuação de proteção na UPS, sem alteração de lógica, setpoints ou comandos remotos antes do evento. Qual a causa primária mais provável?",
+      "resposta": "Falha da seção inversora da UPS compartilhada.",
+      "explicacao": "Perda quase simultânea de sistemas distintos, mais fumaça e proteção atuada na UPS, indicam falha comum de alimentação. Sem alterações não autorizadas de lógica ou setpoints, o cenário não aponta primeiro para intrusão.",
+      "resposta_padrao": "Ataque cibernético ao controle.",
+      "por_que_nao": "Comprometimento do controle exigiria sinais de alteração lógica ou comandos indevidos, ausentes aqui diante de evidências físicas na UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

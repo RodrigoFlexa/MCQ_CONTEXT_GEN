@@ -1,0 +1,91 @@
+{
+  "item": "03_02",
+  "foco": 18,
+  "rodada": 2,
+  "contexto": {
+    "A1": 17,
+    "F": 18,
+    "A2": 19
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Aplicar a premissa de aproamento constante na interpretação de previsões de offset e tensão.",
+      "pergunta": "A previsão de offset e tensão coincide enquanto o aproamento é mantido por controle ativo, mas passa a errar quando a embarcação gira com o ambiente, sem intervenção nas linhas. Qual a causa primária?",
+      "resposta": "uso de previsão calculada com aproamento constante",
+      "explicacao": "O cálculo continua válido com heading fixo, mas falha quando há weathervaning. A1 alerta para formulações com aproamento constante; F distingue sistemas passivos, em que o heading segue o equilíbrio ambiental.",
+      "resposta_padrao": "Perda de rigidez da amarração.",
+      "por_que_nao": "Se a rigidez tivesse mudado, a divergência persistiria também com o aproamento mantido fixo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "em sistemas passivos, a tendência de heading é consequência do equilíbrio ambiental e da geometria da amarração;"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "outras em que se mantém o aproamento constante."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a interpretação do resultado deve respeitar exatamente essas premissas."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar perda do alívio de tensão por thrusters em sistema thruster-assisted.",
+      "pergunta": "Sob metocean semelhante e mesmo setpoint de heading, as tensões das linhas a barlavento subiram após mudança de automação; o offset médio quase não mudou, geração e propulsores seguem disponíveis, mas o empuxo médio aplicado caiu. Qual a causa primária?",
+      "resposta": "modo de limitação de tensão por thrusters desabilitado",
+      "explicacao": "Em sistema thruster-assisted, parte da carga ambiental pode ser tomada pelos thrusters para aliviar as amarras. Com propulsores disponíveis e menor empuxo aplicado, o aumento de tensão vem da perda dessa função.",
+      "resposta_padrao": "Retensionamento excessivo das linhas.",
+      "por_que_nao": "A elevação de tensão apareceu junto da queda do empuxo após a mudança de automação, assinatura incompatível com retensionamento mecânico isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "em sistemas thruster-assisted, os thrusters também podem ser usados para limitar tensões nas amarras."
+        },
+        {
+          "bloco": "F",
+          "trecho": "thrusters mantêm um aproamento escolhido;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Entre as variáveis mais úteis estão posição, offset, heading, excursão, tensão nas linhas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha de um thruster de falha da malha de heading pelo comando e feedback.",
+      "pergunta": "Com heading control ativo, o desvio de aproamento cresce só quando se exige giro para um bordo; a geração permanece normal, o comando de empuxo sobe, mas o feedback de um propulsor fica próximo de zero e as tensões acompanham a correção. Qual a causa primária?",
+      "resposta": "falha de atuação de um thruster",
+      "explicacao": "Há demanda de correção e energia disponível, mas um propulsor não entrega empuxo. Isso isola perda de capacidade de propulsão, não falha da malha de controle nem indisponibilidade elétrica geral.",
+      "resposta_padrao": "Falha na malha de controle de heading.",
+      "por_que_nao": "A malha está emitindo comando; o sinal decisivo é a ausência de resposta de um propulsor com geração normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em FPSOs com heading control ativo, thrusters mantêm um aproamento escolhido;"
+        },
+        {
+          "bloco": "F",
+          "trecho": "em sistemas ativos, desvios de heading também podem indicar perda de capacidade de propulsão, controle ou geração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "variação anômala de heading em unidade com controle ativo pode sugerir problema de thruster ou de controle."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

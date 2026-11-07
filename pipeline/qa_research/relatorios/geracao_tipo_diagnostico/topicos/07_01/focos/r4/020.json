@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 20,
+  "rodada": 4,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite do comissionamento em circuito fechado com N2 para validar funções de combustão.",
+      "pergunta": "Permissivos, intertravamentos, solenóides e detector de chama responderam como esperado na recirculação com N2. Na primeira partida com gás combustível, o aquecedor aborta por ausência de chama. Qual a causa primária que explica por que isso não apareceu antes?",
+      "resposta": "Teste com N2 sem validar a combustão do aquecedor.",
+      "explicacao": "A recirculação com N2 exercita lógica e alguns equipamentos, mas não reproduz combustão. Ter provado detector, solenóides e sequência por teste não confirma formação e sustentação de chama com gás real.",
+      "resposta_padrao": "Detector de chama defeituoso.",
+      "por_que_nao": "A cadeia de detecção e desligamento já respondeu corretamente nos testes; o ponto não exercitado foi a combustão real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica, confirmar desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não reproduz todos os cenários de processo, combustão, composição de gás ou resposta de barreiras associadas ao inventário real."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Override mantido pode suprimir a anunciação sem impedir o intertravamento.",
+      "pergunta": "Na segunda recirculação com N2, a alta-alta de pressão desliga o aquecedor; o bit de trip muda no PLC e o estado parado chega à IHM, mas esse alarme não volta a anunciar desde o bloqueio temporário aplicado no ensaio anterior. Qual a causa primária?",
+      "resposta": "Override mantido na anunciação desse alarme.",
+      "explicacao": "Bypasses e overrides podem afetar a supervisão e os alarmes sem remover toda a lógica de proteção. Como o trip atuou e a IHM recebeu a parada, não é uma falha geral de comunicação.",
+      "resposta_padrao": "Falha de comunicação PLC-supervisório.",
+      "por_que_nao": "A IHM recebe o estado parado e outras atualizações; a anomalia está restrita à anunciação do ponto previamente bloqueado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "bypass ou override é a supressão temporária de uma entrada, condição ou resposta automática."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

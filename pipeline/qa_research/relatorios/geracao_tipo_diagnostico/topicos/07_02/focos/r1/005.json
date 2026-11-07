@@ -1,0 +1,101 @@
+{
+  "item": "07_02",
+  "foco": 5,
+  "rodada": 1,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciação do privilégio administrativo pelos efeitos observados em contas, proteções e rastreabilidade.",
+      "pergunta": "Durante suporte para coleta de diagnóstico, surgem uma nova conta local, desativação de proteção do host e lacunas nos logs; setpoints, lógica e firmware não mudam. Qual causa primária explica esse alcance?",
+      "resposta": "perfil administrativo concedido à conta de suporte",
+      "explicacao": "Criar contas, desabilitar proteções e apagar rastros são capacidades de acesso administrativo; sem alterações de processo, lógica ou firmware, o sinal decisivo é o privilégio elevado da conta usada no suporte.",
+      "resposta_padrao": "Comprometimento por malware no servidor de controle.",
+      "por_que_nao": "O padrão observado é específico de quem já tinha poder para criar contas, desabilitar proteções e apagar rastros.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciação do privilégio de engenharia pelos efeitos em lógica, configuração e firmware.",
+      "pergunta": "Depois da conexão de manutenção, o controlador retorna com sequência alterada, parâmetros diferentes e firmware atualizado; não há criação de contas, desativação de proteção nem lacunas de log. O que explica o ocorrido?",
+      "resposta": "perfil de engenharia concedido à conta de manutenção",
+      "explicacao": "Alteração de sequência, configuração e firmware aponta para capacidade de engenharia. A ausência de indícios administrativos afasta privilégio administrativo como causa primária.",
+      "resposta_padrao": "Acesso administrativo indevido.",
+      "por_que_nao": "Administração atua sobre contas e proteções; o efeito observado está restrito a lógica, configuração e firmware.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciação entre acesso de observação e acesso de operação a partir de mudanças de processo sem alteração de configuração.",
+      "pergunta": "Uma conta aberta para apenas acompanhar tendências consegue mudar setpoints e comandar partidas, mas checksums de lógica, firmware e perfis de usuários permanecem intactos. Qual é a causa mais provável?",
+      "resposta": "perfil de operação concedido à conta de observação",
+      "explicacao": "Setpoints e comandos de partida são ações operacionais sobre o processo. Como lógica, firmware e gestão de usuários não mudaram, o alcance indevido foi de operação, não de engenharia ou administrativo.",
+      "resposta_padrao": "Perfil de engenharia indevido.",
+      "por_que_nao": "Sem mudança de lógica ou firmware, os efeitos se limitam à atuação no processo, típica de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acesso de observação tem potencial de exposição de informações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "acesso de operação permite atuar no processo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre segregação de funções e detecção independente de erros em mudanças no IACS.",
+      "pergunta": "Na correção emergencial de um intertravamento, o mesmo responsável aprova a mudança, carrega a lógica e encerra o teste; a falha só aparece na campanha seguinte. Que causa primária permitiu isso?",
+      "resposta": "ausência de segregação entre aprovação, implementação e validação",
+      "explicacao": "Quando a mesma pessoa aprova, implementa e valida, desaparece a verificação independente que captaria erro de manutenção. O sinal decisivo é a concentração das três funções em um único responsável.",
+      "resposta_padrao": "Erro de programação na correção.",
+      "por_que_nao": "O erro só passou adiante porque faltou separação independente entre quem aprovou, executou e validou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

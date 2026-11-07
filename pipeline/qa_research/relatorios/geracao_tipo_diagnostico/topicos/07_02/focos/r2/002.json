@@ -1,0 +1,65 @@
+{
+  "item": "07_02",
+  "foco": 2,
+  "rodada": 2,
+  "contexto": {
+    "A1": 1,
+    "F": 2,
+    "A2": 3
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de limitar o tráfego interdomínio ao propósito operacional, distinguindo leitura de escrita.",
+      "pergunta": "Uma aplicação analítica externa só deveria ler históricos, mas capturas mostram pacotes do protocolo nativo de controle chegando aos controladores a partir dessa zona; as mudanças de setpoint coincidem com essas sessões, sem uso de estação de engenharia. Qual causa primária explica a interferência?",
+      "resposta": "Liberação de escrita do protocolo de controle no conduíte interdomínio.",
+      "explicacao": "A fronteira precisava permitir apenas leitura. Se o protocolo nativo de controle com escrita cruza a zona analítica, a exposição passa a permitir alteração de setpoints sem envolver estação de engenharia.",
+      "resposta_padrao": "Comprometimento da aplicação analítica.",
+      "por_que_nao": "Mesmo comprometida, ela não alteraria setpoints sem um conduíte autorizando escrita no protocolo de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um atacante remoto pode interferir em funções como atuação de válvulas ou controle de vazão e pressão, se as condições de exposição permitirem."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de regra legada não descomissionada quando um fluxo entre zonas perde sua finalidade.",
+      "pergunta": "Meses após desativar o sistema de relatórios, continua havendo tráfego periódico entre rede corporativa e rede de controle exatamente nas portas que ele usava; não surgiu nova função operacional, e o firewall registra tudo como permitido. Qual causa primária mantém essa exposição?",
+      "resposta": "Regra legada de comunicação interdomínio mantida sem finalidade operacional.",
+      "explicacao": "A segmentação deve ser monitorada para confirmar que os fluxos continuam necessários. Se o sistema saiu e o firewall ainda permite as mesmas portas, a conectividade excedente vem de regra antiga não retirada.",
+      "resposta_padrao": "Falha do firewall.",
+      "por_que_nao": "Os registros mostram passagem autorizada pela configuração atual; o problema é a permissão obsoleta, não mau funcionamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Monitorar a arquitetura segmentada significa verificar se a separação planejada continua compatível com a operação real."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

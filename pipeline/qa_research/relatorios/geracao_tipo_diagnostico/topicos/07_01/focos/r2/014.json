@@ -1,0 +1,65 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir associação errada da PV dentro do controlador de inversão de ação ou defeito no elemento final.",
+      "pergunta": "No faceplate do PID, a PV de nível copia as oscilações da pressão de sucção; o transmissor de nível e a indicação do vaso permanecem coerentes em campo. Em manual, a válvula responde normalmente. Qual causa primária?",
+      "resposta": "PV do controlador associada ao tag de pressão de sucção.",
+      "explicacao": "Se a medição real de nível está coerente e só a PV usada pelo PID replica outra variável, o erro está na associação da entrada do controlador; a resposta normal em manual afasta falha da válvula.",
+      "resposta_padrao": "Ação direta/reversa do controlador invertida.",
+      "por_que_nao": "A inversão de ação altera o sentido da correção, mas não faz a PV do PID copiar a pressão de sucção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional e para ajuste dos controladores."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer retenção do último valor válido na supervisão quando a camada de controle enxerga o evento real.",
+      "pergunta": "No controlador, a pressão sobe e aciona a lógica; no supervisório, a qualidade dessa tag muda, mas o valor numérico e a tendência ficam no último número válido até depois saltarem para o atual. Qual causa primária?",
+      "resposta": "Configuração de retenção do último valor válido na tag supervisória.",
+      "explicacao": "A camada de controle enxerga a elevação real, mas a supervisão mantém número e tendência plausíveis mesmo com qualidade alterada. Isso caracteriza retenção do último valor válido, não representação fiel do estado físico.",
+      "resposta_padrao": "Perda de comunicação da tag.",
+      "por_que_nao": "Perda de comunicação explicaria indisponibilidade ou falha de atualização; aqui o supervisório continua exibindo um número plausível por retenção do último valor válido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

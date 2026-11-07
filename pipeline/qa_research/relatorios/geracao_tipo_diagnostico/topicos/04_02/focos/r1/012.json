@@ -1,0 +1,119 @@
+{
+  "item": "04_02",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda simultânea de comando e telemetria em equipamentos distintos aponta para falha no enlace comum anterior aos módulos locais.",
+      "pergunta": "ANMs de dois poços do mesmo corredor perderam comando e telemetria no mesmo instante; outro corredor segue operável e a estação mestra está saudável. Qual causa primária explica melhor o conjunto?",
+      "resposta": "falha no umbilical comum desse corredor",
+      "explicacao": "A perda simultânea em equipamentos distintos, com estação mestra íntegra, aponta para o elo comum antes da distribuição local. Pela arquitetura, potência e sinais chegam ao leito marinho pelo umbilical.",
+      "resposta_padrao": "Falha simultânea dos módulos de controle submarinos.",
+      "por_que_nao": "Dois módulos distintos falhando ao mesmo tempo, com a estação mestra normal, é menos compatível que a perda do enlace comum anterior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o umbilical conduz potência elétrica, potência hidráulica e sinais de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O comando parte da estação mestra de controle, chega ao módulo de controle submarino, e dali é distribuído"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a operação normal depende do enlace contínuo entre topside, umbilical e módulo submarino"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Resposta lenta e menos precisa apenas em válvulas mais remotas indica limitação da transmissão hidráulica por compressibilidade e perdas em linhas longas.",
+      "pergunta": "A mesma malha controla várias válvulas, mas só as mais remotas apresentam atraso e baixa precisão; pressão de suprimento e eletrônica de comando seguem estáveis. Qual causa primária explica esse padrão?",
+      "resposta": "volumes compressíveis nas linhas hidráulicas extensas do umbilical",
+      "explicacao": "Quando o problema acompanha a remoteness dos atuadores, com comando e suprimento estáveis, o limitante é a transmissão hidráulica. Linhas longas aumentam compressibilidade efetiva e perdas, degradando resposta e precisão.",
+      "resposta_padrao": "Descalibração da malha de controle.",
+      "por_que_nao": "A malha é a mesma; o padrão acompanha a distância hidráulica, não um erro geral de sintonia.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "menor tempo de resposta, maior precisão de controle e maior disponibilidade de dados de condição do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o acionamento elétrico reduz volumes compressíveis, perdas por linhas hidráulicas extensas e dependência de fluido de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o umbilical conduz potência elétrica, potência hidráulica e sinais de controle"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ganho simultâneo de resposta, precisão e monitoramento com eliminação da hidráulica na função caracteriza atuação all electric com fail-safe integrado.",
+      "pergunta": "Depois da troca do acionamento de uma válvula subsea, o tempo de resposta caiu, o posicionamento ficou mais preciso e cessou o consumo hidráulico dessa função, sem perder fail-safe. Qual elemento instalado explica o quadro?",
+      "resposta": "atuador elétrico linear com mola fail safe integrada",
+      "explicacao": "Essa combinação de sinais corresponde à atuação all electric: elimina a hidráulica naquela função e, ao reduzir volumes compressíveis e dependência de fluido, melhora resposta, precisão e dados de condição.",
+      "resposta_padrao": "Recalibração do posicionador da válvula.",
+      "por_que_nao": "Recalibração não elimina a necessidade de hidráulica nem explica o ganho típico de dados de condição do equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "o movimento da válvula é produzido por atuador elétrico, inclusive em configuração linear com pacote de mola fail safe integrado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "eliminando a necessidade de umbilical hidráulico naquela função"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor tempo de resposta, maior precisão de controle e maior disponibilidade de dados de condição do equipamento"
+        }
+      ],
+      "k": 3,
+      "regua": [
+        "nenhum fundamento literal do bloco [F]"
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falha concomitante em funções da ANM e da válvula de segurança no pé do riser pode revelar defeito no conjunto de controle compartilhado.",
+      "pergunta": "Produção do poço e atuação da válvula de segurança no pé do riser deixam de responder juntas, enquanto os demais poços continuam normais. Qual causa primária é mais provável nesse arranjo?",
+      "resposta": "falha no conjunto de controle comum à ANM e ao pé do riser",
+      "explicacao": "Em alguns arranjos, ANM e válvula do pé do riser compartilham o mesmo conjunto de controle. Falha conjunta dessas funções, com os demais poços normais, indica defeito nesse caminho comum.",
+      "resposta_padrao": "Travamento mecânico da válvula de segurança no pé do riser.",
+      "por_que_nao": "Um defeito mecânico local na válvula do riser não explica a perda simultânea das funções da ANM do mesmo poço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em alguns arranjos, o mesmo conjunto também atua sobre válvula de segurança submarina no pé do riser"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O comando parte da estação mestra de controle, chega ao módulo de controle submarino, e dali é distribuído"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "distinguir perda de desempenho causada por restrição de fluxo, falha de comando, limitação de superfície ou mudança de composição do fluido"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

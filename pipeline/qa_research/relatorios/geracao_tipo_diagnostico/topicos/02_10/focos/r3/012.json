@@ -1,0 +1,113 @@
+{
+  "item": "02_10",
+  "foco": 12,
+  "rodada": 3,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Tempo morto excessivo da malha de interface desestabiliza separador tubular mais sensível.",
+      "pergunta": "Num separador tubular, após cada pulso curto de vazão a indicação local da interface já reverteu quando a válvula de água começa a corrigir; surgem ultrapassagem e novo ciclo, sem tocar os limites operacionais. Qual causa primária?",
+      "resposta": "Tempo morto excessivo na malha de interface",
+      "explicacao": "A correção chega depois da inversão real da interface; no tubular, a baixa capacidade de amortecimento reduz a tolerância a atraso e transforma pulsos curtos em ciclo sustentado.",
+      "resposta_padrao": "Sintonia agressiva do controlador.",
+      "por_que_nao": "O sinal decisivo é a correção começar tarde, não apenas forte; o problema é defasagem temporal incompatível com a dinâmica do vaso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o inventário do vaso e a posição da interface passam a variar mais rapidamente, e a malha pode responder com atraso ou excesso de correção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto menor o volume de amortecimento e menor a seção transversal útil, menor tende a ser a tolerância a erros de medição, atraso e atuação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Pequena seção transversal útil aumenta alarmes espúrios por erro de medição sob movimento.",
+      "pergunta": "Com rolamento moderado, alarmes alto e baixo de interface disparam no separador tubular, mas pressão e qualidade das correntes permanecem estáveis; o mesmo arranjo de medição não fazia isso em vaso maior. Qual causa primária?",
+      "resposta": "Pequena seção transversal útil do separador tubular",
+      "explicacao": "No pequeno diâmetro, a mesma perturbação de medição produz excursão aparente maior da interface. Sem piora nas correntes, predomina baixa tolerância ao erro de medição, não remistura real.",
+      "resposta_padrao": "Movimento da embarcação remisturando as fases.",
+      "por_que_nao": "Se houvesse remistura relevante, apareceriam sinais de perda de separação; aqui o traço dominante é alarme espúrio com processo praticamente estável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o movimento da embarcação pode agitar os fluidos dentro dos vasos separadores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode induzir indicações incorretas de nível, inclusive com acionamento indevido de alarmes e possibilidade de shutdown."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto menor o volume de amortecimento e menor a seção transversal útil, menor tende a ser a tolerância a erros de medição, atraso e atuação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Controle PID centrando a interface pode piorar a estabilidade da descarga para hidrociclone.",
+      "pergunta": "A interface fica quase fixa no setpoint, a válvula de água modula o tempo todo e a vazão ao hidrociclone oscila mais que a própria produção, sem travamento da válvula. Qual causa primária?",
+      "resposta": "Controle PID mantendo a interface no setpoint",
+      "explicacao": "Ao perseguir rigidamente o setpoint, o PID transfere variabilidade para a descarga. Para o hidrociclone, vazão mais estável pode ser mais importante que interface rigidamente centrada.",
+      "resposta_padrao": "Mau desempenho do hidrociclone.",
+      "por_que_nao": "O padrão nasce a montante: a válvula gera a oscilação da alimentação mesmo com produção quase estável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a malha pode responder com atraso ou excesso de correção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma filosofia clássica é o controlador PID (proporcional, integral e derivativo) tentando manter a interface próxima de um setpoint."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa abordagem desloca o objetivo principal de “fixar o nível” para “estabilizar a descarga”"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em estudos e simulações do sistema separador-hidrociclone, o controle por bandas foi apresentado como mais eficiente que o PID para estabilizar descargas e melhorar a qualidade da água descartada nas condições avaliadas."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Baixo inventário líquido reduz o amortecimento dinâmico e aumenta a sensibilidade na partida.",
+      "pergunta": "Durante a partida, pequenas oscilações normais de vazão fazem a interface correr e quase atingir os alarmes; depois que o vaso enche, a mesma sintonia e instrumentação voltam a ficar estáveis. Qual causa primária?",
+      "resposta": "Baixo inventário líquido do vaso",
+      "explicacao": "Com pouco inventário, pequenas perturbações mudam a interface mais rapidamente. Quando o vaso enche, o amortecimento aumenta e a mesma malha recupera estabilidade.",
+      "resposta_padrao": "Instrumentação de nível defeituosa.",
+      "por_que_nao": "A estabilidade retorna sem troca de instrumentos; o que mudou foi o inventário disponível para amortecer as perturbações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o inventário do vaso e a posição da interface passam a variar mais rapidamente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto menor o volume de amortecimento e menor a seção transversal útil, menor tende a ser a tolerância a erros de medição, atraso e atuação."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

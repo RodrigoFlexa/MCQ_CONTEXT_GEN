@@ -1,0 +1,65 @@
+{
+  "item": "04_02",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em controle multiplexado, erro sistemático de endereçamento com solenóides íntegras aponta para a eletrônica local de seleção.",
+      "pergunta": "Num módulo multiplexado, os pedidos das funções 2 e 4 são recebidos corretamente, mas sempre acionam 1 e 3; a hidráulica comum está normal, e cada solenóide, quando acionada isoladamente, move sua própria válvula. Qual é a causa primária?",
+      "resposta": "eletrônica submarina de seleção da função",
+      "explicacao": "Se as solenóides e os caminhos hidráulicos funcionam isoladamente, mas o mapeamento dos comandos sai errado, a falha está na etapa local que decide qual função executar.",
+      "resposta_padrao": "Solenóide travada na válvula que acaba se movendo.",
+      "por_que_nao": "O acionamento isolado mostra que as solenóides respondem corretamente; o erro acompanha o endereçamento do comando, não a etapa hidráulica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção da função ocorre localmente no módulo submarino por meio da eletrônica submarina e de válvulas solenóides"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a eletrônica decide qual função deve ser executada, enquanto a hidráulica fornece a força necessária ao movimento do atuador"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Em válvula fail-safe close, despressurização correta com fechamento livre por override e sem retorno automático localiza a falha na mola.",
+      "pergunta": "A válvula abre com curso completo sob pressão. Ao descarregar o controle, há o pequeno descarte esperado, mas ela não retorna ao fechado; pelo override mecânico, o fechamento ocorre livremente. Qual elemento é a causa primária?",
+      "resposta": "mola do atuador fail-safe close",
+      "explicacao": "No fail-safe close, a perda de pressão só libera a força armazenada na mola. Se o alívio funcionou e o fechamento mecânico está livre, falta o elemento que deveria fechar automaticamente.",
+      "resposta_padrao": "Circuito de despressurização rápida do atuador.",
+      "por_que_nao": "O descarte mostra que o alívio atuou; como o fechamento por override está livre, o que falta é a força de retorno da mola.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola"
+        },
+        {
+          "bloco": "F",
+          "trecho": "leva a válvula ao estado seguro fechado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "esse fechamento envolve descarte de pequeno volume de fluido hidráulico à base de água para despressurização rápida do atuador"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

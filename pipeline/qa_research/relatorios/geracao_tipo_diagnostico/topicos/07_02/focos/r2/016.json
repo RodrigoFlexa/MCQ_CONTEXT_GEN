@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 16,
+  "rodada": 2,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Inferir bypass do acesso remoto controlado por túnel reverso iniciado da própria estação OT.",
+      "pergunta": "Com o acesso remoto oficial bloqueado, não há sessões na VPN nem no jump server, mas a estação de engenharia mantém HTTPS de saída e o fornecedor ainda altera parâmetros. Qual causa primária permitiu isso?",
+      "resposta": "Ferramenta de acesso remoto por túnel reverso HTTPS.",
+      "explicacao": "Se o caminho oficial está bloqueado e sem registros, mas a própria estação sustenta a sessão por HTTPS de saída, o acesso ocorreu por método remoto não controlado, típico de túnel reverso.",
+      "resposta_padrao": "Credencial comprometida na VPN corporativa.",
+      "por_que_nao": "Não houve sessão na VPN nem no jump server; o fluxo foi iniciado pela própria estação em HTTPS de saída.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "empregar métodos seguros quando o acesso remoto for necessário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciar falha de gestão de patch da inexistência de correção homologada em revisão legada.",
+      "pergunta": "Mesmo com janela de manutenção, controladores legados continuam na versão vulnerável. O pacote corretivo do fornecedor aborta ao validar a revisão instalada, e a orientação liberada é isolar o segmento e reforçar a supervisão. Qual causa primária?",
+      "resposta": "Ausência de patch homologado para a revisão legada.",
+      "explicacao": "Quando a revisão instalada não é suportada pelo corretivo, sistemas legados ficam sem correção imediata homologada; por isso a contenção passa a depender de isolamento, supervisão reforçada e restrição de conectividade.",
+      "resposta_padrao": "Atraso na gestão de patches.",
+      "por_que_nao": "Havia janela disponível; o decisivo é que o corretivo não suporta a revisão instalada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter patches e estratégias de remediação com fornecedores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar exploração remota à alcançabilidade de rede da pilha vulnerável, não apenas ao CVE.",
+      "pergunta": "Resets surgem só numa célula. Firewall perimetral e firmware são iguais aos demais, mas ali foi criada rota temporária para a VLAN de diagnóstico e os pacotes alcançam o socket afetado. Qual causa primária?",
+      "resposta": "Roteamento temporário até a pilha TCP/IP vulnerável.",
+      "explicacao": "Com firmware e firewall perimetral iguais, o diferencial é a rota temporária que tornou alcançável o serviço vulnerável; a exposição de rede, não o ativo em si, explica os resets.",
+      "resposta_padrao": "Falha do firewall perimetral.",
+      "por_que_nao": "As outras células atrás do mesmo firewall permaneceram íntegras; a mudança decisiva foi a nova rota.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar a exposição potencial dos dispositivos afetados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas medidas reduzem caminhos prováveis de exploração remota"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 16,
+  "rodada": 3,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir cobertura parcial da automação de perda de comunicação pela necessidade habitual de leitura local complementar.",
+      "pergunta": "No painel local de um equipamento, estados e alarmes específicos mudam normalmente; na supervisão há só indicação geral de operação, sem alarme de link, e a rotina já prevê conferência local. Qual a causa primária?",
+      "resposta": "Cobertura parcial da automação desse equipamento",
+      "explicacao": "A ausência estrutural de detalhes na supervisão, combinada com observação local prevista e sem perda de link, caracteriza equipamento acompanhado fora do PLC, não uma falha superveniente de comunicação.",
+      "resposta_padrao": "Falha de comunicação com o sistema de controle.",
+      "por_que_nao": "Perda de comunicação costuma retirar algo antes disponível; aqui a observação complementar local já faz parte da operação normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nesses casos, parte da visibilidade do processo depende de observação complementar do operador."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Isolar a camada de integração de um equipamento com controlador local quando medições e lógica local seguem ativas.",
+      "pergunta": "Leituras e sequência automática de um equipamento com controlador local seguem normais no painel local; no sistema integrado, valores que antes variavam ficam congelados e o comando remoto some só para ele. Qual a causa primária?",
+      "resposta": "Falha no link de integração do equipamento com o sistema de controle",
+      "explicacao": "Como medições e lógica local continuam ativas, alimentação e controlador local não explicam o sintoma. A perda ficou restrita à visibilidade e ao comando no sistema integrado, apontando para a comunicação de integração.",
+      "resposta_padrao": "Travamento da lógica local do equipamento.",
+      "por_que_nao": "Se a lógica local estivesse travada, a sequência e as leituras também deixariam de evoluir no painel local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer perda de redundância específica da função de comando remoto quando a supervisão permanece disponível após failover.",
+      "pergunta": "Na comutação testada para o caminho redundante, alarmes e valores continuam atualizando, mas os botões de comando ficam indisponíveis até o retorno ao principal. Qual a causa primária?",
+      "resposta": "Caminho redundante de comando remoto inexistente",
+      "explicacao": "O caminho alternativo preserva supervisão e atualização, logo não houve perda total do canal redundante. A função que falha no failover é o comando remoto, indicando ausência de redundância efetiva para essa função.",
+      "resposta_padrao": "Falha do canal redundante da rede.",
+      "por_que_nao": "Se o canal redundante estivesse indisponível por completo, valores e alarmes também não permaneceriam disponíveis após a comutação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

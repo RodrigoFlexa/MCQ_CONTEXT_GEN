@@ -1,0 +1,117 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "rodada": 1,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre falha dinâmica da válvula anti-surge e problema de sintonia usando realimentação de posição.",
+      "pergunta": "Durante reduções rápidas de vazão, o sistema comanda 70% de abertura da recirculação, mas a posição real fica perto de 20% e só depois salta; pressão e vazão começam a oscilar. Qual causa primária?",
+      "resposta": "Histerese da válvula de recirculação anti-surge.",
+      "explicacao": "A divergência entre comando e posição real identifica degradação do elemento final. O atraso de abertura impede a proteção de reposicionar a máquina a tempo, levando às oscilações.",
+      "resposta_padrao": "Sintonia inadequada da malha anti-surge.",
+      "por_que_nao": "Se fosse apenas sintonia, comando e posição tenderiam a acompanhar-se; o sinal decisivo é o descolamento persistente entre ambos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ajuda a detectar degradação, atraso, histerese ou falha de atuação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da mudança de composição e temperatura de sucção sobre a margem ao surge em um compressor centrífugo.",
+      "pergunta": "Ao trocar de modo operacional, a rotação e a vazão volumétrica indicada ficaram quase iguais, mas o reciclo anti-surge passou a abrir; o cromatógrafo mostrou gás mais pesado e a temperatura de sucção mudou. Qual causa primária?",
+      "resposta": "Deslocamento do mapa por mudança da composição do gás.",
+      "explicacao": "Peso molecular e temperatura alteram o mapa do compressor e a margem ao surge. O mesmo ponto volumétrico aparente pode ficar mais próximo da instabilidade após a mudança de gás.",
+      "resposta_padrao": "Queda de vazão de entrada do compressor.",
+      "por_que_nao": "A vazão indicada e a rotação ficaram próximas; o que mudou foi o gás, suficiente para deslocar o ponto de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o comportamento do compressor depende de pressões, temperatura de sucção, composição do gás e rotação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças de composição"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudam a composição do gás, o encaminhamento das correntes e as restrições do sistema a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Influência do posicionamento da medição no rateio automático de carga entre compressores em paralelo.",
+      "pergunta": "Na partida do segundo trem em paralelo, o rateio automático alterna carga entre as máquinas; as válvulas anti-surge seguem o comando, mas as pressões medidas em cada trem mudam antes da do coletor comum. Qual causa primária?",
+      "resposta": "Transmissor de rateio mal posicionado em relação ao coletor comum.",
+      "explicacao": "A medição local não representa o estado real compartilhado pelos dois trens. O atraso aparente induz rateio incorreto, sobrecarga localizada e caça entre controladores.",
+      "resposta_padrao": "Diferença de desempenho entre os compressores.",
+      "por_que_nao": "A instabilidade aparece no automático e com válvulas respondendo corretamente; o sinal decisivo é a discrepância temporal entre a medição local e a do coletor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia: o sistema de controle precisa repartir carga, evitar sobrecarga localizada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo, introduzir atrasos ou mascarar interações entre estágios."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de conflito entre malha de capacidade e proteção anti-surge em redução de demanda.",
+      "pergunta": "Com sucção e composição estáveis, uma redução de demanda faz a malha de capacidade fechar o estrangulamento enquanto a anti-surge abre recirculação repetidamente; a posição real da válvula acompanha o comando. Qual causa primária?",
+      "resposta": "Estratégia de capacidade tratada como independente da proteção anti-surge.",
+      "explicacao": "As duas malhas atuam na mesma máquina e no mesmo ponto de operação. Sem coordenação, a de capacidade empurra para baixa vazão enquanto a proteção reage abrindo reciclo, gerando caça.",
+      "resposta_padrao": "Oscilação da demanda do processo.",
+      "por_que_nao": "Sucção e composição permanecem estáveis; a oscilação começa quando uma malha move o compressor e a outra a contradiz.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ambas as malhas atuam sobre a mesma máquina e influenciam o ponto de operação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo, enquanto a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

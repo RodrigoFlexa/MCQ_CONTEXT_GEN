@@ -1,0 +1,113 @@
+{
+  "item": "07_01",
+  "foco": 24,
+  "rodada": 3,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha na transferência entre geradores de perda de autonomia da UPS comum aos sistemas críticos de automação.",
+      "pergunta": "Na troca programada de alimentação CA, DCS, SIS e F&G seguem ativos por cerca de 25 s e então reiniciam juntos; remotas e instrumentos em 24 Vcc independente permanecem íntegros. Qual a causa primária comum?",
+      "resposta": "Bateria degradada da UPS comum aos sistemas de automação.",
+      "explicacao": "A queda coletiva após um tempo de sustentação descarta falha instantânea de transferência e aponta perda de autonomia de uma retaguarda comum. Um elemento periférico de energia degrada várias barreiras ao mesmo tempo.",
+      "resposta_padrao": "Falha na transferência entre geradores.",
+      "por_que_nao": "Se fosse a transferência, a perda ocorreria no instante da comutação; o atraso repetitivo indica autonomia curta da UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "esse efeito é intensificado pela integração entre utilidades, geração elétrica, automação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma falha em elemento aparentemente periférico pode degradar permissivos ou reduzir a capacidade de resposta de várias barreiras."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer temporização provisória mantida na lógica pela diferença entre detecção imediata e saída retardada do trip.",
+      "pergunta": "No bleed-down lento de teste, o trip foi aceito. Em perda rápida de carga, a PV cruza o setpoint e alarma na hora, mas o comando de shutdown sai sempre 5 s depois; a válvula final fecha no tempo usual. Qual a causa primária?",
+      "resposta": "Temporizador provisório mantido na lógica do trip.",
+      "explicacao": "A detecção ocorre sem atraso e o elemento final mantém seu tempo normal. O atraso fixo entre entrada e saída localiza a causa no processamento lógico, compatível com ajuste temporário não revertido.",
+      "resposta_padrao": "Atuador final lento.",
+      "por_que_nao": "O atraso aparece antes do comando de saída; depois dele, a válvula fecha no tempo habitual.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O desempenho de intertravamentos, permissivos e compensações muda com o regime operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esse princípio é importante para alterações provisórias e definitivas em intertravamentos, permissivos e lógicas associadas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa verificação observa o encadeamento entre detecção ou condição de processo, processamento lógico e comando de saída"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar permissivo ainda configurado para arranjo temporário com um trem isolado após retorno à configuração normal.",
+      "pergunta": "Com qualquer trem isolado, a sequência de partida libera. Com os dois alinhados, o permissivo cai, embora todos os status dos dois apareçam corretos no PLC; forçando o permissivo final, a sequência parte. Qual a causa primária?",
+      "resposta": "Critério de trem isolado mantido na lógica do permissivo.",
+      "explicacao": "Os sinais de campo chegam corretamente e o pacote responde quando o permissivo final é forçado. O bloqueio só existir com ambos os trens disponíveis indica lógica ainda ajustada ao arranjo temporário de isolamento.",
+      "resposta_padrao": "Defeito em um contato de posição do segundo trem.",
+      "por_que_nao": "Os estados dos dois trens já aparecem corretos no PLC; o problema surge na combinação lógica da configuração normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Partidas, paradas, isolamento de sistemas, comissionamento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "deve confirmar que a função protegida voltou à configuração pretendida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o comportamento observado no teste, porém, vale para os cenários exercitados e para o arranjo disponível naquele momento"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir falha da chave de campo de caminho de simulação deixado na entrada do SIS após proof test.",
+      "pergunta": "Depois do proof test com simulação no gabinete, a função ainda atua quando o ponto de teste é injetado, mas a continuidade do contato real muda corretamente no borne de campo sem alterar a entrada do SIS. Qual a causa primária?",
+      "resposta": "Jumper de simulação mantido na entrada do SIS.",
+      "explicacao": "A entrada responde ao caminho de teste, mas não ao circuito real que comuta corretamente em campo. Isso caracteriza arranjo temporário de simulação deixado no retorno ao serviço.",
+      "resposta_padrao": "Chave de campo defeituosa.",
+      "por_que_nao": "O contato real já comuta corretamente no borne; a falha está no caminho temporário que continua interceptando a entrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes e compensações não devem ser avaliados como eventos isolados"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária deve confirmar que a função protegida voltou à configuração pretendida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ele não demonstra, por si só, cobertura completa de todos os modos de falha nem substitui a gestão de indisponibilidades temporárias ou alterações provisórias que afetem a função."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

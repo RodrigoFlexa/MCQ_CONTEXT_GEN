@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 3,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Execução programada no modo online: distinguir falha do job da hipótese de integração offline.",
+      "pergunta": "Os dados de medição, SCADA e controle seguem atualizando, mas balanços e estimativas ficam congelados até a aplicação ser executada manualmente; nessa execução, os resultados refletem o estado atual. Qual é a causa primária?",
+      "resposta": "Job de execução programada inativo",
+      "explicacao": "No modo online, a aplicação usa dados correntes por execução programada. Se a execução manual atualiza corretamente, o caminho de dados está íntegro; falhou o disparo automático.",
+      "resposta_padrao": "Integração offline por carga em lote.",
+      "por_que_nao": "Se fosse carga em lote, a reexecução manual no mesmo período não incorporaria imediatamente os dados correntes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação consistente do equipamento nos dados integrados: distinguir mistura de ativos da hipótese de erro temporal.",
+      "pergunta": "Na tela local, duas bombas gêmeas mostram tendências coerentes, mas o histórico de uma única bomba no analytics alterna exatamente quando o duty troca para a reserva; tempos e unidades conferem. Qual causa primária explica essa série costurada?",
+      "resposta": "Identificador inconsistente do equipamento na integração",
+      "explicacao": "Sem identificação consistente do equipamento, dados de ativos distintos são fundidos numa mesma série. Como sincronismo e unidades estão corretos, o problema não é temporal nem de conversão.",
+      "resposta_padrao": "Desalinhamento temporal entre as fontes.",
+      "por_que_nao": "A alternância seguir a troca duty-reserva, com cada fonte local coerente, indica mistura de identidade, não defasagem de tempo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comparação entre ativos sem retrabalho."
+        },
+        {
+          "bloco": "F",
+          "trecho": "protocolos e brokers distribuem esses dados; aplicações analíticas e modelos os transformam em informação operacional útil."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Integração offline multidisciplinar: distinguir método de solução desalinhado da hipótese de termodinâmica divergente.",
+      "pergunta": "As curvas PVT e as propriedades físicas coincidem entre reservatório, poços e facilidades, e cada modelo individual converge; no acoplamento, o mesmo caso gera respostas incompatíveis entre disciplinas. Qual é a causa primária?",
+      "resposta": "Métodos de solução desalinhados entre os modelos",
+      "explicacao": "Na integração offline, a consistência depende também do alinhamento dos métodos de solução. Com PVT e propriedades físicas coincidentes, a divergência remanescente aponta para o acoplamento numérico.",
+      "resposta_padrao": "Termodinâmica desalinhada entre os modelos.",
+      "por_que_nao": "O cenário já fixa PVT e propriedades físicas coincidentes; a incompatibilidade surge do acoplamento por métodos diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "propriedades físicas, termodinâmica e métodos de solução permanecem alinhados entre disciplinas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "No modo offline, uma plataforma unificada de simulação pode reunir reservatório, poços, escoamento, facilidades de produção e cenários de segurança em um mesmo ambiente de modelagem."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

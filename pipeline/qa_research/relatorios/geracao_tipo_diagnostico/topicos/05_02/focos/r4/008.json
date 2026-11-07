@@ -1,0 +1,61 @@
+{
+  "item": "05_02",
+  "foco": 8,
+  "rodada": 4,
+  "contexto": {
+    "A1": 7,
+    "F": 8,
+    "A2": 9
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência ativa entre geradores em paralelo depende da coordenação do droop dos governadores.",
+      "pergunta": "Com qualquer gerador sozinho, a partida é estável. Em paralelo, a corrente do grande motor cai para perto da nominal, mas o kW oscila entre as máquinas e a frequência caça; tensão e kvar ficam estáveis. Qual causa primária?",
+      "resposta": "Droop ativo dos governadores descoordenado entre os geradores",
+      "explicacao": "A instabilidade aparece em frequência e transferência de kW, não em tensão ou kvar, e surge apenas com máquinas em paralelo. Isso caracteriza descoordenação do compartilhamento ativo via governadores em droop.",
+      "resposta_padrao": "AVR ou excitação desajustados.",
+      "por_que_nao": "Desajuste de excitação apareceria em tensão e kvar; aqui a anomalia está na frequência e na repartição de kW.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possível desvio de frequência quando a geração opera em droop"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a partida de grande consumidor precisa considerar a rigidez do barramento, a reserva dinâmica das fontes, o compartilhamento de carga"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A proteção de fase a montante deve ser coordenada com a corrente de partida do motor e com o relé do alimentador.",
+      "pergunta": "Na partida de um grande motor, a corrente repete a curva prevista até a rotação nominal, não há indício de falta, mas abre o disjuntor a montante do transformador enquanto o relé do alimentador do motor não atua. Qual causa primária?",
+      "resposta": "Relé de fase a montante descoordenado com a curva de partida do motor",
+      "explicacao": "A partida impõe corrente alta sem caracterizar falta. Se quem abre é a montante e o alimentador não atua, a coordenação da proteção de fase está inadequada para suportar a curva normal de partida.",
+      "resposta_padrao": "Motor travado ou sobrecarga mecânica na carga acionada.",
+      "por_que_nao": "O perfil de corrente é o esperado e reproduzível; o defeito está na seletividade da proteção, não na carga mecânica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "impõe corrente elevada"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O mesmo princípio vale para relés de fase em relação aos alimentadores a jusante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

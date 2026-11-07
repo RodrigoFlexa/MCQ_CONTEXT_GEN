@@ -1,0 +1,83 @@
+{
+  "item": "02_12",
+  "foco": 14,
+  "rodada": 4,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Instabilidade em compressores em paralelo por falta de coordenação entre as malhas de capacidade.",
+      "pergunta": "Sozinhos, dois compressores mantêm o cabeçalho estável; em paralelo, as rotações caçam em oposição, a pressão comum oscila e as válvulas anti-surge ficam fechadas. Qual causa primária explica a instabilidade?",
+      "resposta": "Estratégia de divisão de carga ausente entre as malhas de capacidade",
+      "explicacao": "Como o problema só aparece em paralelo e o anti-surge não atua, a instabilidade vem da competição entre malhas de capacidade sem coordenação de carga, exigindo ajuste conjunto nessa associação.",
+      "resposta_padrao": "Controlador de pressão do cabeçalho mal sintonizado.",
+      "por_que_nao": "Isoladamente o cabeçalho fica estável; a caça surge da interação entre os compressores em paralelo, não de uma malha única ruim em qualquer condição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "associações em série ou paralelo e ajuste conjunto das malhas de capacidade e anti-surge."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de poço em teste como causa integrada e temporária de aumento de carga na compressão.",
+      "pergunta": "A potência do trem sobe por cerca de uma hora e depois retorna, repetindo o padrão em dias alternados; a sucção fica mais leve, sem líquido adicional relevante, e exportação, recuperação de vapor e gas lift não mudam. Qual causa integrada explica melhor o comportamento?",
+      "resposta": "Poço em teste no separador de teste",
+      "explicacao": "A elevação curta e recorrente da carga, com gás mais leve e sem mudança nos demais consumidores, é compatível com roteamento temporário de poço para teste, não com alteração permanente do sistema.",
+      "resposta_padrao": "Entrada de mais poço de gás em operação.",
+      "por_que_nao": "Isso elevaria a carga de modo sustentado; o aumento curto e recorrente aponta para teste, não para nova condição permanente de produção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "poços em teste"
+        },
+        {
+          "bloco": "F",
+          "trecho": "muitas vezes refletem mudanças legítimas de carga da planta inteira."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças na produção dos poços, no uso de gas lift, na pressão de exportação ou nos modos de tratamento alteram a demanda vista pela compressão."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação do sistema de óleo comum como causa de lentidão simultânea em atuadores auxiliares.",
+      "pergunta": "A válvula de reciclo e outro atuador hidráulico do trem ficam lentos ao mesmo tempo, enquanto a pressão de óleo oscila; transmissores, algoritmos e variáveis mecânicas do compressor seguem coerentes. Qual elemento comum é a causa primária?",
+      "resposta": "Subsistema de óleo de lubrificação e comando",
+      "explicacao": "Lentidão simultânea em atuadores e oscilação da pressão de óleo apontam para o sistema comum que sustenta lubrificação e acionamentos auxiliares, não para sintonia ou falha isolada de um elemento final.",
+      "resposta_padrao": "Falha de sintonia do controle anti-surge.",
+      "por_que_nao": "A anomalia aparece também em outro atuador e acompanha a pressão de óleo, indicando suporte comum e não problema de algoritmo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o de óleo sustenta lubrificação e acionamentos auxiliares."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o desempenho da malha depende do elemento final e não apenas do algoritmo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

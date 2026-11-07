@@ -1,0 +1,65 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "rodada": 4,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Desvio térmico e de fase, com resposta hidráulica validada, aponta para propriedades do fluido mal representadas no modelo dinâmico.",
+      "pergunta": "Comando e curso da BDV, contrapressão medida e massa descarregada coincidem com a simulação; ainda assim, a temperatura mínima real cai muito mais e surge líquido na linha muito antes do previsto. Qual a causa primária?",
+      "resposta": "Propriedades do fluido incorretas no modelo de blowdown",
+      "explicacao": "Como a resposta hidráulica e a massa batem com o previsto, o desvio está no caminho termodinâmico do fluido. Temperatura e aparecimento de fase líquida dependem das propriedades PVT usadas no modelo.",
+      "resposta_padrao": "Mudança de fase durante o blowdown.",
+      "por_que_nao": "Isso descreve o fenômeno observado; aqui o modelo já previa duas fases, e o erro está nas propriedades do fluido usadas para calcular equilíbrio e resfriamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD ou propriedades do fluido estiverem incorretas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ruptura de tubos é transiente rápido; verificar só a capacidade em regime permanente pode não demonstrar proteção suficiente.",
+      "pergunta": "Na ruptura de tubos de um trocador, a PSV do lado de baixa abre no setpoint e sua capacidade em regime permanente atende ao cálculo, mas a pressão do receptor ainda ultrapassa o limite por poucos segundos. Qual a causa primária?",
+      "resposta": "Análise em regime permanente aplicada ao transiente rápido de ruptura de tubos",
+      "explicacao": "O pico breve, apesar da abertura correta e da capacidade estacionária suficiente, mostra que a escala temporal da pressurização não foi representada. Esse cenário exige avaliação compatível com o transiente rápido.",
+      "resposta_padrao": "PSV subdimensionada.",
+      "por_que_nao": "Se a válvula abre no setpoint e a capacidade estacionária atende, o excedente momentâneo vem do método inadequado para o transiente, não da área insuficiente.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A ruptura de tubos de um trocador pode comunicar o lado de alta pressão com o lado de baixa pressão e produzir pressurização rápida."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Transientes rápidos exigem avaliação compatível com sua escala de tempo; a simples existência de uma válvula não demonstra proteção suficiente."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o método pode mudar o resultado quando a transitoriedade do processo é relevante."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

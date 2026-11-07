@@ -1,0 +1,105 @@
+{
+  "item": "05_02",
+  "foco": 16,
+  "rodada": 1,
+  "contexto": {
+    "A1": 15,
+    "F": 16,
+    "A2": 17
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Segregação real de cargas redundantes entre UPS distintos para materializar a redundância funcional.",
+      "pergunta": "Uma falha no UPS A derruba as duas estações redundantes; antes do evento ele operava abaixo da capacidade, e o UPS B permaneceu saudável e pouco carregado. Qual a causa primária?",
+      "resposta": "Concentração das estações redundantes no mesmo UPS.",
+      "explicacao": "Como uma falha simples derrubou ambos os ramos redundantes sem indício de saturação, a independência funcional não existia; as estações foram distribuídas no diagrama, mas não na alimentação real.",
+      "resposta_padrao": "Sobrecarga do UPS A.",
+      "por_que_nao": "Ele operava abaixo da capacidade, e a perda simultânea dos dois ramos revela falta de segregação, não limitação de potência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Função do disjuntor TIE na alimentação cruzada entre conjuntos 24 Vcc redundantes.",
+      "pergunta": "No teste de perda de um conjunto 24 Vcc, metade do quadro desenergiza, embora o outro conjunto mantenha tensão normal e já tenha sustentado sozinho toda a carga em teste anterior. Qual causa explica isso?",
+      "resposta": "Disjuntor TIE da alimentação cruzada indisponível.",
+      "explicacao": "Se o conjunto remanescente manteve tensão normal e já suporta toda a demanda, a perda de metade do quadro indica ausência do caminho de transferência previsto entre os dois ramos.",
+      "resposta_padrao": "Banco de baterias remanescente degradado.",
+      "por_que_nao": "A tensão do conjunto remanescente ficou normal e sua capacidade total já havia sido comprovada; faltou o caminho de alimentação cruzada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias, cada um capaz de suprir integralmente a demanda do quadro, com possibilidade de alimentação cruzada por disjuntor TIE em caso de falha de um conjunto."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da indisponibilidade do bypass quando falha do inversor derruba cargas com entrada CA presente.",
+      "pergunta": "Com rede de entrada presente e dentro da faixa, um defeito no inversor faz o UPS perder a saída instantaneamente; retificador e baterias estão normais. O que causou a perda das cargas?",
+      "resposta": "Bypass do UPS indisponível.",
+      "explicacao": "Com entrada CA disponível e baterias normais, a perda acionada pela falha do inversor indica que a rota alternativa de suprimento não assumiu a carga; o elemento decisivo é o bypass.",
+      "resposta_padrao": "Baterias descarregadas.",
+      "por_que_nao": "A rede de entrada estava disponível e o colapso ocorreu quando o inversor falhou, condição em que o bypass deveria manter a saída.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção correta de cargas de recomposição para UPS essencial com base na consequência da perda de energia.",
+      "pergunta": "O barramento de emergência e o 24 Vcc permanecem energizados após blackout, mas o CLP de recomposição só volta quando retorna o 120 Vca normal. Qual a causa primária?",
+      "resposta": "CLP de recomposição alimentado fora do UPS essencial.",
+      "explicacao": "Como o barramento de emergência e o 24 Vcc seguiram disponíveis, a perda de recomposição aponta para alocação incorreta do CLP em alimentação sem a continuidade exigida para essa função crítica.",
+      "resposta_padrao": "Falha do gerador de emergência.",
+      "por_que_nao": "O barramento de emergência e o 24 Vcc permaneceram energizados; o que não tinha continuidade era o CLP, sinal de carga fora do UPS essencial.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

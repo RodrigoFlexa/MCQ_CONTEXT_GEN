@@ -1,0 +1,57 @@
+{
+  "item": "02_11",
+  "foco": 17,
+  "rodada": 2,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite de aplicabilidade em pressão do pacote termodinâmico usado na modelagem de desidratação com TEG.",
+      "pergunta": "Dois modelos reproduzem a operação em baixa pressão. Quando a pressão sobe, só o modelo dedicado a glicol passa a prever gás muito mais seco que o medido; vazão, pureza do TEG, hidráulica da torre e checagem de umidade permanecem coerentes. Qual causa primária?",
+      "resposta": "pacote termodinâmico fora da faixa validada de pressão",
+      "explicacao": "O desvio aparece apenas na faixa alta de pressão, com operação e medições independentes coerentes; isso isola a limitação de aplicabilidade do pacote de propriedades, não uma mudança real no desempenho da torre.",
+      "resposta_padrao": "Queda da eficiência real da absorvedora.",
+      "por_que_nao": "O erro surge só ao entrar na faixa alta de pressão, enquanto hidráulica e verificações de umidade não sustentam perda real de eficiência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O Glycol Package do HYSYS é descrito como dedicado à desidratação com glicóis, mas com faixa de aplicabilidade limitada pela pressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Fora da faixa validada de um pacote de propriedades, deve-se selecionar e validar outro modelo adequado ao equilíbrio água-glicol e às condições de operação."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Risco de viés ao manter parametrização de pratos na simulação de absorvedora com recheio estruturado.",
+      "pergunta": "Após um revamp que substituiu pratos por recheio estruturado, o gás tratado fica sistematicamente mais seco que o previsto pelo modelo antigo. Pureza do TEG, circulação e amostras de umidade conferem, e não há sinais de inundação. Qual causa primária do viés?",
+      "resposta": "uso de eficiência de pratos para representar recheio estruturado",
+      "explicacao": "A troca dos internos mudou a forma correta de representar a transferência de massa. Manter calibração baseada em pratos gera viés sistemático, mesmo com operação, medições e hidráulica coerentes.",
+      "resposta_padrao": "Eficiência real da absorvedora diferente da assumida.",
+      "por_que_nao": "Aqui a discrepância nasce da mudança de internos sem revisão da representação do contator; não é uma perda ou ganho operacional aleatório de eficiência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em ambiente offshore, a predominância de colunas com recheio estruturado adiciona um desafio quando a literatura disponível ou a experiência de simulação foi construída majoritariamente com pratos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "discrepâncias entre modelo e operação real nem sempre significam erro exclusivo do simulador; podem refletir incerteza na eficiência da torre, nos internos ou nos instrumentos."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

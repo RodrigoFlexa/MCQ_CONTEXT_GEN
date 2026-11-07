@@ -1,0 +1,99 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "rodada": 4,
+  "contexto": {
+    "A1": 11,
+    "F": 12,
+    "A2": 13
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Seleção da variável de pressão prioritária no controle de capacidade conforme o destino do gás.",
+      "pergunta": "Na mudança para reinjeção, a sucção permanece exatamente no valor histórico controlado, a pressão final fica abaixo da requerida e, em manual, elevar a rotação atende a descarga sem aproximar do surge. Qual causa primária?",
+      "resposta": "Malha de capacidade ainda em controle de pressão de sucção",
+      "explicacao": "Se a descarga requerida é atingida em manual sem perda de estabilidade, a máquina tem head disponível. O problema é a malha ter permanecido priorizando sucção quando o novo destino exige resposta pela descarga.",
+      "resposta_padrao": "Capacidade insuficiente do compressor para a pressão de reinjeção.",
+      "por_que_nao": "Ao elevar a rotação em manual, a pressão final sobe normalmente; a limitação está na variável controlada selecionada.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "o controle de capacidade frequentemente se expressa como controle de pressão em pontos-chave da sucção ou da descarga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a pressão de sucção pode ganhar prioridade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o compressor tende a responder à condição exigida na descarga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "depende do arranjo, da malha selecionada e do modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de conflito entre malhas de sucção e descarga atuando simultaneamente sobre a mesma máquina.",
+      "pergunta": "A rotação sobe para segurar a descarga enquanto a válvula de estrangulamento fecha para manter a sucção; a anti-surge abre repetidamente, e as posições reais acompanham os comandos. Qual causa primária?",
+      "resposta": "Seleção simultânea das malhas de sucção e descarga",
+      "explicacao": "Dois controladores de processo estão impondo ações opostas na mesma máquina. Como comando e posição coincidem, o elemento final não é a causa primária; a instabilidade vem da configuração de malhas incompatíveis no mesmo modo.",
+      "resposta_padrao": "Válvula anti-surge lenta ou travando.",
+      "por_que_nao": "A realimentação mostra que as válvulas seguem os comandos; o problema nasce do conflito entre controladores, não do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ambas as malhas atuam sobre a mesma máquina e influenciam o ponto de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "depende do arranjo, da malha selecionada e do modo operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de restrição localizada no ramal de descarga pelo padrão de pressões em cascata e coletor comum inalterado.",
+      "pergunta": "Sem alteração no coletor comum, a pressão do último estágio sobe em degrau, as pressões interstágio sobem em cascata e o reciclo vai para aberto logo após um alinhamento do ramal. Qual causa primária?",
+      "resposta": "Restrição severa no ramal de descarga do trem",
+      "explicacao": "Se o coletor comum a jusante não mudou, a contrapressão global do sistema não é a causa. A elevação em cascata após o alinhamento aponta para bloqueio ou forte restrição local depois do último estágio.",
+      "resposta_padrao": "Aumento da contrapressão no sistema comum de exportação.",
+      "por_que_nao": "Se a contrapressão fosse do sistema comum, a pressão do coletor a jusante também subiria.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema, alterando pressões e vazões em cascata"
+        },
+        {
+          "bloco": "F",
+          "trecho": "levando o compressor a aproximar-se do limite de surge"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

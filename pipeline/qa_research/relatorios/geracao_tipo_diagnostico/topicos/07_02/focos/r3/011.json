@@ -1,0 +1,61 @@
+{
+  "item": "07_02",
+  "foco": 11,
+  "rodada": 3,
+  "contexto": {
+    "A1": 10,
+    "F": 11,
+    "A2": 12
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre hardening documentado e exposição inesperada após substituição por sobressalente.",
+      "pergunta": "Troca emergencial de um roteador industrial por sobressalente restabelece a telemetria, mas a rede corporativa passa a alcançar sua interface web e Telnet; regras do firewall central e endereçamento permaneceram iguais. Qual causa primária?",
+      "resposta": "Sobressalente sem a configuração de hardening documentada.",
+      "explicacao": "Como o firewall central e o endereçamento não mudaram, a nova exposição veio do próprio equipamento substituto. O bloco foco liga hardening à remoção de serviços e restrição de rotas, além de exigir baseline documentada por ativo.",
+      "resposta_padrao": "Falha ou abertura indevida no firewall central.",
+      "por_que_nao": "A exposição surgiu só após a troca e ficou restrita ao equipamento substituído, com regras centrais inalteradas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "remove serviços desnecessários, restringe rotas de acesso"
+        },
+        {
+          "bloco": "F",
+          "trecho": "hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de registro de sessão para rastrear atuação remota de terceiros além da autenticação na VPN.",
+      "pergunta": "Uma mudança indevida ocorreu durante suporte remoto de três fornecedores. O concentrador VPN mostra usuário e horário, mas não o host interno alcançado; não há gravação de sessão, e os controladores preservaram seus logs locais. Qual causa primária impede atribuir a intervenção ao responsável?",
+      "resposta": "Ausência de registro de sessão suficiente no acesso remoto.",
+      "explicacao": "A autenticação da VPN só mostra quem conectou e quando. Pelos blocos, para rastrear intervenção é preciso registro de sessão que reconstrua também em qual ativo houve atuação.",
+      "resposta_padrao": "Uso de conta compartilhada pelos fornecedores.",
+      "por_que_nao": "Os usuários já estão individualizados no concentrador; o que falta é o vínculo técnico entre cada sessão e o ativo acessado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando acesso remoto é necessário, métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    }
+  ]
+}

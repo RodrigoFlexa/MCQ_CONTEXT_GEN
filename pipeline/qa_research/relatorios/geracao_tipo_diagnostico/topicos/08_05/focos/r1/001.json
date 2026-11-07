@@ -1,0 +1,109 @@
+{
+  "item": "08_05",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sensibilidade da modelagem do período de onda quando coexistem swell e mar local em direções distintas.",
+      "pergunta": "Nas janelas com altura significativa, direções de onda e vento bem previstos, as interrupções só aumentam quando swell e mar local chegam de setores distintos; em mar unidirecional, o modelo acerta. O que explica o erro?",
+      "resposta": "Modelagem inadequada do período de onda em mar cruzado",
+      "explicacao": "Com swell e mar local de direções distintas, o período de onda se torna mais sensível. Se Hs, direções e vento batem e o erro aparece só no mar cruzado, o elemento decisivo é a representação do período.",
+      "resposta_padrao": "Subestimação da altura significativa de onda.",
+      "por_que_nao": "O desvio aparece com Hs correta e apenas quando swell e mar local estão cruzados, onde o período é o parâmetro mais sensível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando coexistem swell e mar local com direções distintas, situação em que a modelagem do período de onda tende a ser mais sensível e a resposta operacional pode ficar mais incerta."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o ambiente marinho é variável no tempo, pode combinar agentes com direções e intensidades diferentes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite de aplicabilidade de modelos calibrados originalmente desenvolvidos para estruturas fixas.",
+      "pergunta": "Vento, ondas e correntes reproduzem as medições, e as cargas calculadas coincidem numa estrutura fixa próxima; ainda assim, aproamento e movimentos do sistema flutuante ficam abaixo do observado. O que explica o viés?",
+      "resposta": "Uso de modelo originalmente desenvolvido para unidades fixas",
+      "explicacao": "Se os agentes ambientais já são bem reproduzidos e a aderência aparece em estrutura fixa, a falha principal não é calibração geral, mas a inadequação do modelo ao tipo de sistema e resposta flutuante.",
+      "resposta_padrao": "Falta de calibração do modelo.",
+      "por_que_nao": "As variáveis ambientais já são bem reproduzidas; o erro surge na aderência ao tipo de sistema analisado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "calibração adequada não torna o modelo universalmente válido"
+        },
+        {
+          "bloco": "F",
+          "trecho": "modelos originalmente desenvolvidos para unidades fixas podem não capturar de forma completa aspectos relevantes da resposta de unidades flutuantes."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Domínio de aplicação de bases operacionais versus avaliação de extremos e integridade.",
+      "pergunta": "Uma base montada para alívio rotineiro acerta a disponibilidade diária, mas subestima cargas e movimentos nos eventos raros quando passa a ser usada em verificação de integridade. Qual a causa?",
+      "resposta": "Uso de base operacional sem representar a cauda extrema",
+      "explicacao": "Dados recortados para condições operacionais podem estimar bem disponibilidade usual, mas não representam adequadamente eventos extremos. Por isso funcionam na rotina e falham quando extrapolados para integridade de longo prazo.",
+      "resposta_padrao": "Previsão meteorológica ruim nos eventos raros.",
+      "por_que_nao": "O banco continua acertando a rotina; o viés sistemático só nos extremos indica uso fora do domínio de aplicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "calibração adequada não torna o modelo universalmente válido"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "esse recorte muda o domínio de aplicação do banco de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "ele pode ser útil para estimar disponibilidade e critérios operacionais usuais, mas não basta, por si só, para inferir comportamento em extremos"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de associação temporal e probabilidade conjunta coerente entre vento, onda e corrente.",
+      "pergunta": "Vento, onda e corrente usados nas análises vêm de bases históricas diferentes; cada variável isolada fecha com as medições, mas as combinações geradas parecem improváveis e inflaram a indisponibilidade. De onde vem o problema?",
+      "resposta": "Falta de associação temporal entre os agentes ambientais",
+      "explicacao": "Acertar estatísticas individuais não garante estados ambientais realistas. Sem associação temporal e probabilidade conjunta coerente, surgem combinações raras demais, distorcendo casos dinâmicos e superestimando indisponibilidade.",
+      "resposta_padrao": "O período histórico analisado foi mais severo.",
+      "por_que_nao": "O sinal característico é a geração de combinações raras entre agentes, típica de séries sem probabilidade conjunta coerente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "fornecer os parâmetros de probabilidade conjunta necessários a análises baseadas em resposta."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando a distribuição conjunta dos agentes não está disponível, torna-se difícil escolher cenários representativos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a qualidade do resultado depende não só do volume de dados, mas de como os agentes foram medidos, associados no tempo, calibrados e filtrados para o objetivo técnico específico."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

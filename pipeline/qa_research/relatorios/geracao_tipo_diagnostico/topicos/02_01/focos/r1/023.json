@@ -1,0 +1,101 @@
+{
+  "item": "02_01",
+  "foco": 23,
+  "rodada": 1,
+  "contexto": {
+    "A1": 22,
+    "F": 23,
+    "A2": 24
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Desacoplamento entre produção fiscal e entrega quando a medição usada na comparação está a montante da estocagem.",
+      "pergunta": "O volume bombeado ao navio em 8 horas superou a produção fiscal do mesmo intervalo, mas a queda do inventário dos tanques foi igual à diferença e não houve outras entradas ou saídas. Qual causa primária explica a divergência aparente?",
+      "resposta": "Uso da medição fiscal a montante da estocagem como proxy da transferência",
+      "explicacao": "Com armazenamento intermediário, o volume entregue no alívio pode vir do estoque. Produção fiscal do mesmo intervalo não representa, sozinha, a transferência.",
+      "resposta_padrao": "Erro do medidor de transferência.",
+      "por_que_nao": "A diferença fecha exatamente com a redução do inventário, mostrando retirada de estoque e não erro primário de medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a medição fiscal fica a montante da estocagem, o fechamento do balanço da transferência não pode ser inferido apenas pela produção fiscalizada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o tanque de carga introduz desacoplamento entre produção e entrega"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de condensado do processamento de gás como entrada adicional no balanço de transferência de óleo.",
+      "pergunta": "Nos alívios de dias com maior carga no processamento de gás, o volume entregue supera o esperado pelo inventário de óleo cru e a densidade do produto muda discretamente, sem anomalia nos medidores principais. Qual causa primária explica o desvio?",
+      "resposta": "Encaminhamento de condensado do processamento de gás aos tanques de óleo",
+      "explicacao": "Essa corrente adiciona volume ao estoque transferível e ainda altera a composição do fluido entregue; se não for incluída na fronteira, o balanço abre.",
+      "resposta_padrao": "Erro na densidade usada na conversão de volume.",
+      "por_que_nao": "O desvio acompanha a operação do processamento de gás, sinal de entrada adicional no armazenamento e não de erro isolado de conversão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mudanças operacionais que alteram a composição do fluido entregue"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O encaminhamento de condensado do processamento de gás aos tanques de óleo ou a outra rota modifica as entradas do balanço"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da variação da interface óleo-água no tanque sobre o fechamento do balanço de transferência.",
+      "pergunta": "No fechamento do alívio, o nível total do tanque quase não muda, o volume de água no fundo aumenta e o óleo contabilizado cai além do transferido; o BS&W da linha permanece estável. Qual causa primária?",
+      "resposta": "Subida da interface óleo-água no tanque",
+      "explicacao": "Com total líquido quase constante e BS&W estável na linha, o desvio vem da redistribuição interna entre água e óleo inventariados, não da corrente transferida.",
+      "resposta_padrao": "Água arrastada na linha de offloading.",
+      "por_que_nao": "Se fosse água na corrente transferida, o sinal apareceria na linha; aqui o efeito dominante está no inventário do tanque.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "há retenção de volume nos tanques, variação de interface óleo-água"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto de recirculação interna no volume totalizado versus volume líquido efetivamente entregue.",
+      "pergunta": "Pequenas pausas do recebimento não interrompem a contagem do medidor; nesses intervalos, o nível do tanque quase não varia e não há ganho correspondente no navio. Qual causa primária explica o excesso medido?",
+      "resposta": "Recirculação interna de óleo para o tanque",
+      "explicacao": "O medidor está registrando vazão que não sai efetivamente do sistema de armazenamento; parte do fluxo retorna internamente ao tanque.",
+      "resposta_padrao": "Deriva do medidor de vazão.",
+      "por_que_nao": "O incremento ocorre só nos intervalos sem recebimento pelo navio, padrão típico de fluxo retornando ao armazenamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possíveis correntes internas de recirculação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a vazão medida deixar de representar, sozinha, a transferência líquida de óleo"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

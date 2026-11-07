@@ -1,0 +1,113 @@
+{
+  "item": "07_02",
+  "foco": 3,
+  "rodada": 1,
+  "contexto": {
+    "A1": 2,
+    "F": 3,
+    "A2": 4
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Monitorar se fluxos temporários entre domínios permaneceram indevidamente após perder a necessidade operacional.",
+      "pergunta": "Sem janela de manutenção, estações de operação recebem diariamente varreduras do servidor corporativo de patches; os logs mostram tráfego permitido entre os domínios e nenhuma tentativa de login. Qual a causa primária?",
+      "resposta": "Liberação temporária de tráfego interdomínios mantida em produção",
+      "explicacao": "O tráfego é autorizado, recorrente e parte de um ativo legítimo. Isso aponta para fluxo entre domínios que deixou de ser necessário, não para abuso de credenciais.",
+      "resposta_padrao": "O servidor corporativo de patches foi comprometido.",
+      "por_que_nao": "Mesmo comprometido, ele só alcançaria as estações porque a liberação entre domínios permaneceu ativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "F",
+          "trecho": "monitorar a arquitetura segmentada significa verificar se a separação planejada continua compatível com a operação real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar barreira incompatível com a criticidade quando tráfego do controle básico afeta proteção e sistemas elétricos.",
+      "pergunta": "Capturas mostram broadcasts do controle básico chegando às interfaces do SIS e do sistema elétrico; quando essa carga cresce, a comunicação dos dois também degrada, sem eventos da rede corporativa. Que causa explica isso?",
+      "resposta": "Compartilhamento do mesmo segmento de rede entre BPCS e sistemas críticos",
+      "explicacao": "Se o tráfego do controle básico alcança proteção e elétrico, a barreira entre domínios é incompatível com a criticidade. A propagação só ocorre porque esses conjuntos compartilham conectividade além do necessário.",
+      "resposta_padrao": "É só uma sobrecarga geral da rede.",
+      "por_que_nao": "A sobrecarga é o efeito; o sinal decisivo é atingir funções que deveriam estar contidas por segregação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as barreiras adotadas ainda são compatíveis com a criticidade das funções envolvidas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a infraestrutura IACS pode reunir controle de processo, funções independentes de proteção, sistemas de segurança e sistemas elétricos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir continuidade elétrica de segmentação lógica ao diagnosticar exposição da supervisão a tráfego vindo da rede administrativa.",
+      "pergunta": "Na transferência para energia de contingência, o SCADA não reinicia e a comunicação permanece estável; ainda assim, tráfego anômalo vindo da rede administrativa continua alcançando a supervisão. Qual a causa primária?",
+      "resposta": "Ausência de segmentação lógica entre a rede corporativa e a supervisão",
+      "explicacao": "A energia de supervisão foi mantida, já que não houve reinício nem perda de comunicação. Se o tráfego administrativo continua chegando, o problema é o caminho lógico entre domínios.",
+      "resposta_padrao": "A UPS da supervisão está insuficiente.",
+      "por_que_nao": "Sem reinício do SCADA nem perda dos links, a alimentação foi sustentada; backup elétrico não substitui segmentação lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas SCADA dependem de energia confiável e ininterrupta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer expansão física não gerenciada da rede OT como quebra do escopo coerente dos sistemas conectados.",
+      "pergunta": "Ao energizar um skid novo, aparece uma segunda tabela MAC atrás de uma única porta e PLCs passam a ver endereços antes inexistentes; usuários, senhas e regras liberadas não mudaram. Qual a causa primária?",
+      "resposta": "Switch não gerenciado no skid estendendo indevidamente a rede de controle",
+      "explicacao": "Múltiplos MACs atrás da mesma porta e novos endereços sem mudança de acessos indicam expansão física da rede por ativo não previsto, rompendo o escopo coerente dos sistemas conectados.",
+      "resposta_padrao": "Houve uso indevido de credenciais privilegiadas.",
+      "por_que_nao": "Credenciais não criam novos MACs atrás da mesma porta; o sinal decisivo é a extensão física não gerenciada da rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A avaliação deve verificar gestão de ativos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "confirmar se o escopo dos sistemas conectados permanece coerente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

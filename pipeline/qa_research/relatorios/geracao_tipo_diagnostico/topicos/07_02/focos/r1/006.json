@@ -1,0 +1,97 @@
+{
+  "item": "07_02",
+  "foco": 6,
+  "rodada": 1,
+  "contexto": {
+    "A1": 5,
+    "F": 6,
+    "A2": 7
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência do tempo de exposição à vulnerabilidade da liberação, pelo fornecedor, de patch e versão estável aplicável em software embarcado.",
+      "pergunta": "O inventário do controlador está correto, a janela de manutenção foi aberta e o procedimento interno de atualização está pronto, mas o fabricante só confirmou a vulnerabilidade e ainda não liberou versão substituta para a revisão instalada. Qual é a causa primária da exposição prolongada?",
+      "resposta": "Ausência de versão estável aplicável liberada pelo fornecedor.",
+      "explicacao": "Em software embarcado, a remediação depende do fornecedor informar patch e versão estável aplicável. Com inventário, janela e processo prontos, a permanência da exposição vem dessa dependência externa.",
+      "resposta_padrao": "Atraso da equipe em aplicar o patch.",
+      "por_que_nao": "A manutenção e o processo já estão disponíveis; o que falta é a versão estável compatível para a revisão instalada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o fornecedor passa a influenciar o tempo de exposição do ativo vulnerável."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Limite técnico à remediação local quando o firmware é proprietário e alteração não oficial compromete suporte ou certificação do produto.",
+      "pergunta": "A equipe validou em bancada uma correção funcional para o equipamento, mas ela não é autorizada em campo; o ativo usa firmware proprietário e qualquer mudança fora do pacote oficial muda sua condição perante o fabricante. O que impede a remediação direta a bordo?",
+      "resposta": "Perda de suporte/certificação por alteração não oficial do firmware.",
+      "explicacao": "O operador não pode modificar livremente firmware proprietário sem risco para funcionalidade, suporte ou certificação; por isso uma solução validada localmente ainda depende do pacote oficial do fornecedor.",
+      "resposta_padrao": "Falta de capacidade técnica da equipe local.",
+      "por_que_nao": "A equipe já demonstrou a correção em bancada; o impeditivo vem do vínculo do firmware proprietário ao suporte/certificação do fabricante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa dependência é estrutural: o operador normalmente não controla o ciclo de desenvolvimento do software embarcado, nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Superfície adicional de exposição criada por conexão temporária de terceiro durante diagnóstico ou mitigação de vulnerabilidade em IACS.",
+      "pergunta": "Nos logs da rede de controle, o único tráfego novo aparece só durante a análise de vulnerabilidade de um PLC legado, por uma porta física reservada ao suporte do fabricante; a identidade usada é temporária e tudo cessa no fim da janela autorizada. Qual elemento está introduzindo a nova exposição?",
+      "resposta": "Notebook de manutenção do fornecedor conectado temporariamente.",
+      "explicacao": "A resposta coincide com a janela autorizada, a porta de manutenção e a identidade temporária. Esse padrão caracteriza conexão temporária de terceiro aberta para diagnóstico ou mitigação, não propagação autônoma na rede.",
+      "resposta_padrao": "Malware já disseminado na rede de controle.",
+      "por_que_nao": "O tráfego só existe durante a sessão autorizada e some ao encerramento, o que não condiz com comprometimento persistente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Influência da estratégia de remediação do fornecedor na indisponibilidade operacional introduzida durante a correção de vulnerabilidades.",
+      "pergunta": "Dois sistemas redundantes, com criticidade e janela equivalentes, receberam alerta de vulnerabilidade semelhante. Em um, a correção foi feita sem perda de serviço; no outro, o fornecedor só oferece remediação que derruba toda a função por horas. Qual causa na cadeia de suprimentos explica essa diferença?",
+      "resposta": "Estratégia de remediação do fornecedor com indisponibilidade indevida.",
+      "explicacao": "Com criticidade, redundância e janela equivalentes, a diferença vem da capacidade do fornecedor de executar a correção sem introduzir indisponibilidade indevida em sistema crítico.",
+      "resposta_padrao": "O segundo sistema é mais crítico e não pode ser atualizado.",
+      "por_que_nao": "A criticidade e as condições foram igualadas; o limitante observado é o método de correção disponibilizado pelo fornecedor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva do que ativos apenas consultivos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

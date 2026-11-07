@@ -1,0 +1,93 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir piora real de mantenabilidade de distorção do MTTR por inclusão de tempos de espera.",
+      "pergunta": "O MTTR de um conjunto subiu, mas o tempo de intervenção em campo permaneceu igual; o aumento veio de horas agora apontadas entre diagnóstico, liberação e acesso. Qual causa primária explica o indicador?",
+      "resposta": "inclusão de tempos de espera na apuração do MTTR",
+      "explicacao": "O reparo em si não ficou mais longo. O aumento decorre do registro de esperas por liberação e acesso, que devem ser distinguidas das atividades de reparo.",
+      "resposta_padrao": "Piora da mantenabilidade do equipamento.",
+      "por_que_nao": "A duração da intervenção física não mudou; cresceram apenas tempos de espera que não representam reparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar fila de manutenção por falhas simultâneas quando a capacidade da equipe especializada é o gargalo.",
+      "pergunta": "A indisponibilidade média de malhas de instrumentação cresce só nos dias com várias falhas no mesmo turno; o tempo de cada reparo, os sobressalentes, o acesso e as permissões seguem normais. Qual é a causa primária?",
+      "resposta": "fila por capacidade insuficiente da equipe de instrumentação",
+      "explicacao": "Como o reparo individual não mudou e os demais recursos seguem disponíveis, o aumento da indisponibilidade sob simultaneidade indica espera em fila pela equipe especializada.",
+      "resposta_padrao": "As falhas ficaram mais complexas.",
+      "por_que_nao": "A duração de cada reparo não aumentou; o problema aparece apenas quando há concorrência por equipe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a capacidade das equipes for o gargalo, falhas simultâneas podem criar fila e prolongar a indisponibilidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na prática, o MTTR varia com acessibilidade, diagnóstico, modularização, disponibilidade de sobressalentes, capacitação da equipe e restrições de segurança"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer paradas de produção causadas por demanda verdadeira de proteção, e não por falha do ativo protegido.",
+      "pergunta": "Paradas bruscas coincidem com fechamento automático de isolamento; a variável que aciona a lógica ultrapassa o limite em medição principal e independente, e o retorno é imediato após normalização e reset. Qual causa primária das paradas?",
+      "resposta": "demanda real do intertravamento de segurança",
+      "explicacao": "A condição protegida foi confirmada por medição independente e a retomada ocorreu sem reparo, caracterizando atuação legítima da proteção, não perda de integridade do equipamento.",
+      "resposta_padrao": "Falha do equipamento protegido.",
+      "por_que_nao": "Não houve troca de componente nem degradação residual; a parada cessa ao sair da condição protegida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Intertravamentos e funções de proteção podem interromper a produção para evitar estados perigosos, danos ambientais e consequências maiores."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar uma restrição compartilhada como causa primária da indisponibilidade global de vários subsistemas.",
+      "pergunta": "Dois trens param: um por falha local de compressor e outro pela perda do ar de instrumentos comum. O compressor é reparado primeiro, mas nenhum trem retorna até o ar ser restabelecido. Qual causa primária da indisponibilidade global?",
+      "resposta": "perda do ar de instrumentos comum",
+      "explicacao": "O utilitário compartilhado bloqueia a partida de todos os trens. Recuperar o equipamento local não restabelece produção enquanto a restrição comum permanece.",
+      "resposta_padrao": "Falha do compressor do trem.",
+      "por_que_nao": "Mesmo reparado, o compressor não devolve produção enquanto o utilitário compartilhado segue indisponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

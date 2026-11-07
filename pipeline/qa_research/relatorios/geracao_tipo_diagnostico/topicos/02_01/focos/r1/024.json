@@ -1,0 +1,83 @@
+{
+  "item": "02_01",
+  "foco": 24,
+  "rodada": 1,
+  "contexto": {
+    "A1": 23,
+    "F": 24,
+    "A2": 25
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de algoritmo de compensação para gás natural em custódia quando P, T e composição variam.",
+      "pergunta": "O totalizado de gás a condições de referência ficou sempre na mesma razão do volume medido na linha, apesar de variações relevantes de pressão, temperatura e composição entre transferências. Qual é a causa primária?",
+      "resposta": "Uso de fator fixo sem algoritmo de cálculo do gás",
+      "explicacao": "Se a razão entre volume em linha e volume de referência permanece fixa mesmo com mudanças de estado e composição, o cálculo não está refletindo a dependência termodinâmica do gás.",
+      "resposta_padrao": "Medidor de vazão descalibrado.",
+      "por_que_nao": "A razão constante entre volume em linha e volume de referência, apesar de P, T e composição variarem, aponta para compensação fixa, não para erro do medidor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para gás natural, a necessidade de algoritmo de cálculo decorre justamente da dependência da densidade em relação à pressão, temperatura e composição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pressão e temperatura do escoamento são variáveis relevantes para as conversões de volume e densidade."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na transferência de óleo, passagem de interface durante troca de tanque faz a vazão medida deixar de representar o óleo líquido transferido.",
+      "pergunta": "Na troca de tanque do offloading, a vazão indicada permaneceu contínua, mas o monitor de água subiu por alguns minutos e o recebimento acusou menos óleo líquido que o totalizado. Qual causa primária explica o desvio?",
+      "resposta": "Passagem de interface óleo-água pela linha de offloading",
+      "explicacao": "O desvio aparece na troca de tanque e coincide com pico temporário de água; nessa condição, a vazão medida deixa de representar sozinha a transferência líquida de óleo.",
+      "resposta_padrao": "Descalibração do medidor de vazão.",
+      "por_que_nao": "Se fosse descalibração, o erro não surgiria concentrado na troca de tanque junto com aumento temporário de água.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "variação de interface óleo-água"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Quando a medição fiscal está a montante da estocagem, o volume entregue só é representativo se o balanço considerar o inventário dos tanques.",
+      "pergunta": "Medição fiscal do óleo antes da estocagem: em dois alívios com a mesma produção fiscalizada, o volume entregue mudou junto com níveis e interface dos tanques entre início e fim. Qual causa primária?",
+      "resposta": "Balanço da transferência sem inventário inicial/final dos tanques",
+      "explicacao": "Com medição a montante da estocagem, a produção fiscalizada não basta para inferir a transferência; mudanças no inventário e na interface alteram o volume efetivamente entregue.",
+      "resposta_padrao": "Erro da medição fiscal de produção.",
+      "por_que_nao": "A produção fiscalizada foi a mesma nos dois alívios; o que mudou foi o estado do armazenamento durante a janela da transferência.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Quando a medição fiscal fica a montante da estocagem, o fechamento do balanço da transferência não pode ser inferido apenas pela produção fiscalizada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A medição de transferência de custódia precisa representar não apenas a vazão instantânea, mas o volume transferido em condição tecnicamente rastreável."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "02_12",
+  "foco": 17,
+  "rodada": 1,
+  "contexto": {
+    "A1": 16,
+    "F": 17,
+    "A2": 18
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Arquitetura em que a malha de capacidade usa a rotação para sustentar a pressão de sucção, enquanto o anti-surge protege por reciclo.",
+      "pergunta": "Durante um turndown, a vazão ao destino cai e o reciclo abre, mas a pressão de sucção quase não se move enquanto a rotação da máquina diminui. Qual causa técnica explica essa sucção estável?",
+      "resposta": "Controle de capacidade por rotação na pressão de sucção.",
+      "explicacao": "Nessa arquitetura, a rotação é manipulada para manter a pressão de sucção. Assim, a queda de demanda pode aparecer no reciclo sem provocar grande desvio na sucção.",
+      "resposta_padrao": "Transmissor de pressão de sucção travado.",
+      "por_que_nao": "A variação coerente da rotação junto com a atuação do reciclo indica ação da malha de capacidade, não leitura congelada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rotação da máquina controla a pressão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O efeito é aumentar a vazão interna atravessando a máquina, mesmo quando a demanda externa cai."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência do setpoint de proteção do reciclo em relação à rotação da máquina.",
+      "pergunta": "Sem mudança de composição ou pressões, o transmissor de vazão foi checado sem desvio e, após reduzir a rotação, o reciclo do estágio passa a abrir numa vazão medida antes segura. Qual causa explica o deslocamento?",
+      "resposta": "Setpoint do reciclo dependente da rotação.",
+      "explicacao": "Nesse arranjo, a válvula de reciclo do estágio não atua por limite fixo; o setpoint varia com a rotação. Ao reduzir a velocidade, a abertura pode ocorrer em outra vazão medida.",
+      "resposta_padrao": "Descalibração do transmissor de vazão.",
+      "por_que_nao": "O medidor foi verificado sem desvio e a mudança coincide com a nova rotação, sinal típico de setpoint variável da proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Há descrição de arquitetura em que a rotação da máquina controla a pressão de sucção"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Influência da dinâmica do vaso interstágio sobre a estabilidade da proteção no estágio seguinte.",
+      "pergunta": "Num degrau de carga, comando e posição da válvula de reciclo do segundo estágio oscilam juntos com a pressão do vaso interstágio; rotação, composição e o primeiro estágio ficam estáveis. Qual causa primária comanda essa instabilidade?",
+      "resposta": "Dinâmica do volume do vaso interstágio.",
+      "explicacao": "Se comando e posição acompanham a mesma oscilação da pressão interstágio, o atuador não é a origem. Em trem multistágio, o comportamento do vaso entre estágios pode governar a instabilidade.",
+      "resposta_padrao": "Histerese no atuador da válvula de reciclo.",
+      "por_que_nao": "Comando e posição se movem juntos; a oscilação nasce com a pressão do vaso interstágio, não com descolamento do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens com múltiplos estágios, a proteção depende também do comportamento conjunto de vasos, compressores e trocadores entre estágios."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a confiabilidade da compressão depende da estabilidade do processamento como um todo"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

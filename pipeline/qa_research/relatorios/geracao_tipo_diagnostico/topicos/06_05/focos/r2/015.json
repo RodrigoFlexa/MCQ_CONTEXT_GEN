@@ -1,0 +1,83 @@
+{
+  "item": "06_05",
+  "foco": 15,
+  "rodada": 2,
+  "contexto": {
+    "A1": 14,
+    "F": 15,
+    "A2": 16
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir confirmação automática por votação do critério conservador de resposta operacional a detecção de gás.",
+      "pergunta": "Um detector fixo alarma gás, um portátil confirma leitura no mesmo ponto e a lógica 2ooN não dispara automático. A equipe reseta o alarme e mantém a atividade por considerar “não confirmado”. Qual causa primária desse erro?",
+      "resposta": "confusão entre votação automática 2ooN e critério de resposta operacional",
+      "explicacao": "A votação qualifica disparos automáticos. Sem descarte seguro, qualquer detecção confirmada em campo exige cautela operacional, mesmo sem atingir 2ooN.",
+      "resposta_padrao": "O primeiro detector fixo estava defeituoso.",
+      "por_que_nao": "A confirmação coincidente pelo portátil indica gás real; o erro foi usar a ausência de 2ooN para desconsiderar a resposta.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "A lógica de votação do sistema instrumentado e o procedimento operacional de resposta não têm exatamente a mesma finalidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "qualquer detecção seja tratada com cautela operacional enquanto não for descartada de forma segura."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a comprovação vem do teste funcional da cadeia completa, da detecção à ação prevista na matriz de causa e efeito."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Detectar quando o método de teste não desafia combinações reais de uma votação 2ooN e mascara erro de alocação.",
+      "pergunta": "Nos testes periódicos de uma área 2ooN, sempre se injeta gás no mesmo par de detectores e o disparo ocorre. Numa liberação real, dois vizinhos diferentes alarmaram sem confirmação automática. Qual causa primária de isso ter passado despercebido?",
+      "resposta": "roteiro de teste que não valida a alocação real da votação 2ooN",
+      "explicacao": "Excitar sempre o mesmo par comprova só uma combinação. Como outros dois detectores alarmaram sem confirmar, o teste não desafiava os critérios reais de alocação da votação.",
+      "resposta_padrao": "Um dos detectores vizinhos falhou durante a liberação.",
+      "por_que_nao": "Os dois detectores vizinhos alarmaram; a perda aparece apenas ao mudar a combinação, sinal de teste incapaz de revelar erro de alocação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "auditorias de F&G verificam explicitamente gestão de inibições, lógicas de votação, critérios de alocação, testes de detectores"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "é necessário verificar a cadeia completa entre detecção, confirmação lógica, alarme, intertravamentos e orientação operacional correspondente."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que mudança de processo ou risco exige reavaliação da aderência do F&G, mesmo com a malha existente íntegra.",
+      "pergunta": "Depois que uma área passou a receber correntes com H₂S, a malha fixa existente continua a mesma e passa nos testes previstos; pequenas liberações só são percebidas pelos portáteis da equipe já dentro da nuvem. Qual causa primária?",
+      "resposta": "F&G não reavaliado para incluir detecção fixa de H₂S",
+      "explicacao": "Mudança de processo ou risco pode exigir reavaliação de aderência e estudos complementares. A malha anterior pode seguir íntegra e ainda não ser adequada ao novo cenário tóxico.",
+      "resposta_padrao": "Os detectores fixos instalados falharam.",
+      "por_que_nao": "Eles podem estar saudáveis e aderentes ao risco antigo; o sinal decisivo é a introdução de H₂S sem revisão da malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Onde houver mudanças de layout, ventilação, processo ou risco, pode ser necessária reavaliação da aderência do F&G e de estudos complementares"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a manutenção deve verificar se o detector continua apto a perceber o fenômeno perigoso no ambiente real"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

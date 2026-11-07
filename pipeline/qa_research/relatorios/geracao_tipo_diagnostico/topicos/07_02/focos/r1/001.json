@@ -1,0 +1,109 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 1,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar inconsistência semântica na integração central à heterogeneidade de modelos de dados entre controladores.",
+      "pergunta": "Ao unificar tags equivalentes de duas famílias de controladores, o historiador passa a receber estados e unidades incompatíveis; em cada HMI local, os valores estão corretos. Qual causa primária explica a divergência?",
+      "resposta": "Modelos de dados distintos entre fornecedores.",
+      "explicacao": "Com leitura correta na origem e divergência apenas na consolidação, a limitação está na padronização próxima à fonte; entre famílias diferentes, a integração tende a migrar para a supervisão.",
+      "resposta_padrao": "Falha do historiador.",
+      "por_que_nao": "Um defeito do historiador não explicaria a divergência seletiva entre famílias com leitura local correta na origem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integração frequentemente migra para a camada supervisória"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar a concentração da integração na camada SCADA como causa comum quando supervisão e consumidores externos param sem perda do controle local.",
+      "pergunta": "Alarmes centralizados, histórico e analítica externa congelam juntos, enquanto os controladores seguem operando e visíveis nas estações locais. Qual causa primária explica esse comportamento?",
+      "resposta": "Concentração da integração na camada SCADA.",
+      "explicacao": "Alarmes, histórico e analítica compartilham o ponto agregador. Como o controle local continua visível e estável, a origem comum está na camada supervisória, não nos controladores.",
+      "resposta_padrao": "Perda de comunicação com os controladores.",
+      "por_que_nao": "As estações locais ainda enxergam os controladores; a interrupção conjunta ocorre a jusante, no agregador supervisório.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar a arquitetura híbrida de borda como origem de atraso seletivo associado ao retorno do enlace externo.",
+      "pergunta": "Com o enlace externo restabelecido, só os pontos vindos do controlador de borda passam a atrasar; o SCADA local continua recebendo esses mesmos sinais e surgem sessões MQTT persistentes para nuvem. Qual é a causa primária?",
+      "resposta": "Controlador de borda enviando simultaneamente à nuvem e ao SCADA.",
+      "explicacao": "O sintoma aparece só nos dados do controlador de borda e exatamente quando a nuvem volta. Isso caracteriza envio concorrente para broker MQTT e SCADA local.",
+      "resposta_padrao": "Falta geral de banda na rede.",
+      "por_que_nao": "Se fosse insuficiência geral de banda, outros fluxos locais também degradariam; aqui o efeito fica restrito ao tráfego do controlador de borda para a nuvem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar exposição ampla após nova integração à falta de definição do tráfego autorizado na fronteira entre analítica e controle.",
+      "pergunta": "Depois de integrar uma plataforma analítica, o firewall passa a registrar sessões permitidas do ambiente corporativo para várias sub-redes de controle, embora apenas alguns indicadores de processo precisassem ser exportados. Qual causa primária explica a exposição?",
+      "resposta": "Interface analítica-controle sem tráfego operacional claramente definido.",
+      "explicacao": "A nova interface cruzou a fronteira sem delimitar quais fluxos eram realmente necessários. A regra ampla no firewall é consequência dessa indefinição arquitetural.",
+      "resposta_padrao": "Regra de firewall excessiva.",
+      "por_que_nao": "A ACL permissiva é efeito do desenho da interface sem escopo funcional claro; sozinha, ela não explica a origem da exposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

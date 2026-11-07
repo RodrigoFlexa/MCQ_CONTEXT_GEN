@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "rodada": 2,
+  "contexto": {
+    "A1": 0,
+    "F": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação do controlador de borda como ponto comum de perda simultânea entre SCADA local e broker MQTT em nuvem.",
+      "pergunta": "Os pontos de um único skid somem do SCADA local e do broker MQTT em nuvem ao mesmo tempo, mas o controlador do skid segue regulando e a IHM local do pacote continua atualizada. Qual causa primária?",
+      "resposta": "Controlador de borda desse skid.",
+      "explicacao": "Na arquitetura híbrida, o controlador de borda é o elo comum que publica para a nuvem e alimenta o SCADA local. Se ambos perdem só esse skid, o ponto comum não é o controle nem a telecom externa.",
+      "resposta_padrao": "Falha do broker MQTT em nuvem.",
+      "por_que_nao": "Uma falha do broker afetaria a nuvem, mas não removeria os mesmos pontos do SCADA local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de duplicação de dados por publicação paralela do mesmo sinal via controlador de borda e via SCADA.",
+      "pergunta": "Desde a ativação do envio MQTT, a vazão total calculada no dashboard dobra apenas para um pacote; na série, cada amostra aparece em pares quase idênticos com pequeno defasamento. No SCADA local e na IHM do pacote cada variável segue única. O que causa esse padrão?",
+      "resposta": "Dupla publicação do mesmo sinal pelo controlador de borda e pelo SCADA.",
+      "explicacao": "A arquitetura híbrida permite um caminho pelo controlador de borda e outro pela supervisão. Se o consumidor externo recebe ambos, surgem pares quase idênticos e a soma dobra, embora localmente cada variável permaneça única.",
+      "resposta_padrao": "Erro no cálculo do dashboard.",
+      "por_que_nao": "Um erro de fórmula não produziria pares de amostras quase sobrepostas surgidos exatamente após habilitar um segundo caminho de publicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de interface analítica-OT mal especificada como causa primária de liberação ampla e repetida entre domínios.",
+      "pergunta": "Dois firewalls de fronteira diferentes passam a registrar sessões permitidas da mesma aplicação analítica corporativa para várias sub-redes de controle e múltiplas portas; a solicitação usada na implantação descrevia apenas \"acesso à rede de controle\". Qual causa primária explica essa exposição?",
+      "resposta": "Interface analítica-controle sem tráfego operacional claramente definido.",
+      "explicacao": "O excesso aparece de forma consistente em barreiras distintas e segue a própria solicitação de integração. Isso aponta para definição arquitetural insuficiente do tráfego permitido, não para erro isolado de um firewall.",
+      "resposta_padrao": "Regra de firewall permissiva demais.",
+      "por_que_nao": "Como o mesmo excesso aparece em barreiras distintas e aderente à solicitação de implantação, o problema está na definição da interface, não no equipamento isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

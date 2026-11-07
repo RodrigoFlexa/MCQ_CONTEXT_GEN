@@ -1,0 +1,93 @@
+{
+  "item": "03_02",
+  "foco": 7,
+  "rodada": 3,
+  "contexto": {
+    "A1": 6,
+    "F": 7,
+    "A2": 8
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer saturação do sensor de movimento pelo clipping dos sinais e pelo início coincidente do erro na recuperação direcional.",
+      "pergunta": "Sob mar crescente, roll e pitch medidos passam a mostrar topos achatados no mesmo valor, enquanto a boia segue indicando aumento de energia; a direção estimada só degrada quando esse patamar aparece. Qual é a causa primária?",
+      "resposta": "saturação do sensor de movimento",
+      "explicacao": "Os topos achatados no mesmo valor caracterizam clipping por limite de faixa dinâmica. Quando o sensor satura, a informação de amplitude e fase usada na inferência direcional deixa de representar o movimento real.",
+      "resposta_padrao": "Uso do modelo fora do envelope validado.",
+      "por_que_nao": "Extrapolação de modelo não produz clipping no sinal bruto; o patamar fixo nos picos aponta para limitação instrumental.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças de aproamento, limitações dos sensores e regiões de baixa sensibilidade dos operadores de amplitude de resposta, RAOs, podem prejudicar a recuperação da informação direcional."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar erro direcional em mar evolutivo ao uso de janela temporal longa demais para a condição.",
+      "pergunta": "Durante a passagem de uma frente, a boia mostra rotação contínua da direção em 40 minutos. O estimador devolve uma direção média incoerente no trecho inteiro, mas acerta em segmentos curtos do mesmo evento. Qual a causa primária?",
+      "resposta": "janela temporal longa demais para mar evolutivo",
+      "explicacao": "A direção do mar muda dentro do intervalo analisado. Ao tratar todo o trecho como uma única condição, o processamento mistura estados diferentes e perde coerência direcional, embora o modelo funcione em janelas compatíveis.",
+      "resposta_padrao": "Erro no modelo hidrodinâmico.",
+      "por_que_nao": "Se o modelo acerta nos segmentos curtos do mesmo evento, o problema não é a hidrodinâmica representada, mas a duração da janela usada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Resultados do modelo devem ser interpretados com essas limitações, sem adotar um intervalo de tempo ou variação angular de um ensaio como regra universal."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir erro por faixa angular de processamento excessiva de erro do modelo para variação de heading.",
+      "pergunta": "Mar praticamente estável, mas a embarcação guina amplamente em torno do turret. A direção estimada só fica incoerente quando o processamento reúne todo o arco de heading; em faixas angulares estreitas, coincide com a boia. Que causa explica isso?",
+      "resposta": "faixa angular de processamento ampla demais",
+      "explicacao": "As estimativas permanecem corretas quando o heading varia pouco, então o modelo por faixa angular está coerente. A inconsistência surge ao agregar uma variação de aproamento larga como se fosse uma condição única.",
+      "resposta_padrao": "Variação de aproamento não representada no modelo.",
+      "por_que_nao": "Se em bandas estreitas de heading a estimativa coincide com a boia, a representação por aproamento está funcionando; o erro vem do agrupamento angular excessivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Resultados do modelo devem ser interpretados com essas limitações, sem adotar um intervalo de tempo ou variação angular de um ensaio como regra universal."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Essa liberdade de rotação permite que o navio busque aproamento mais favorável à resultante ambiental, reduzindo carregamentos estáticos transferidos ao casco e, em certas condições, também à ancoragem e aos risers."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar incompatibilidade entre condição de mar bimodal e envelope ambiental de validação do estimador.",
+      "pergunta": "Sensores íntegros e casco sem alteração: o estimador acompanha mares de um único pico espectral, mas em mar cruzado com dois picos passa a indicar uma direção intermediária única, embora Hs e Tp permaneçam na faixa já ensaiada. Qual é a causa primária?",
+      "resposta": "mar bimodal fora do envelope ambiental validado",
+      "explicacao": "Hs e Tp estarem na faixa não basta. A condição direcional/espectral mudou para um estado não representado na validação, e o estimador passa a condensar duas direções físicas em uma solução inadequada.",
+      "resposta_padrao": "Região de baixa sensibilidade dos RAOs.",
+      "por_que_nao": "Baixa sensibilidade dos RAOs tende a aparecer em faixas específicas de período; aqui o erro surge quando a estrutura espectral do mar muda para dois picos direcionais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A validação exige dados compatíveis com a unidade e com o envelope ambiental; desempenho em mar ameno não demonstra a mesma precisão em condições extremas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Estimativas de condições de mar a partir dos movimentos do FPSO dependem da resposta hidrodinâmica representada nos modelos."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

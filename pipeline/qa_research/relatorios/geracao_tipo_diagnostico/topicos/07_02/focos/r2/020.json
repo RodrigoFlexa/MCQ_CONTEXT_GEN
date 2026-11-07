@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 20,
+  "rodada": 2,
+  "contexto": {
+    "A1": 19,
+    "F": 20,
+    "A2": 21
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar interrupção de publicação no controlador de borda quando dois consumidores perdem só aquela origem e o broker segue funcional.",
+      "pergunta": "Só as variáveis de um skid instrumentado por controlador de borda congelaram no SCADA e na nuvem; o painel local do skid continua coerente e os demais dispositivos publicados pelo mesmo broker seguem atualizando. Qual é a causa primária?",
+      "resposta": "Publicação MQTT interrompida no controlador de borda do skid",
+      "explicacao": "O painel local coerente preserva medição e controle locais. Como outras origens pelo mesmo broker continuam chegando, broker e consumidores estão operantes; a falha ficou restrita à publicação daquela origem.",
+      "resposta_padrao": "Falha no broker MQTT",
+      "por_que_nao": "Outras origens publicadas pelo mesmo broker seguem atualizando, então a interrupção está isolada no publicador desse skid.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real"
+        },
+        {
+          "bloco": "F",
+          "trecho": "protocolos e brokers distribuem esses dados"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar incompatibilidade de PVT e envelope de fases entre disciplinas ao desalinhamento termodinâmico em modelos separados.",
+      "pergunta": "Reservatório, poços e facilidades foram atualizados em ambientes separados. Cada modelo reproduz seus próprios dados, mas, ao acoplá-los, o mesmo fluido passa a ter envelope de fases e PVT incompatíveis entre disciplinas. Qual causa primária?",
+      "resposta": "Termodinâmica desalinhada entre os modelos disciplinares",
+      "explicacao": "Se cada disciplina fecha isoladamente, mas o mesmo fluido muda de comportamento ao integrar os modelos, a inconsistência primária está no alinhamento termodinâmico e das propriedades físicas entre eles.",
+      "resposta_padrao": "Dados de campo inconsistentes",
+      "por_que_nao": "Se a aquisição fosse a causa primária, a incoerência apareceria dentro de cada modelo; aqui ela surge na integração entre disciplinas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No modo offline, uma plataforma unificada de simulação pode reunir reservatório, poços, escoamento, facilidades de produção e cenários de segurança em um mesmo ambiente de modelagem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "propriedades físicas, termodinâmica e métodos de solução permanecem alinhados entre disciplinas"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir integração offline por lote de problema de sincronismo quando a aplicação não incorpora mudanças mesmo após reexecução.",
+      "pergunta": "As estimativas de desempenho e alocação só mudam após a atualização noturna; mesmo reexecutando a aplicação durante o dia, os resultados ignoram alterações já visíveis na medição, no SCADA e no controle. Qual causa primária?",
+      "resposta": "Integração offline por carga em lote",
+      "explicacao": "Se a reexecução diurna não incorpora mudanças já presentes nas fontes operacionais, a aplicação não está sendo alimentada com dados correntes; depende de uma carga periódica offline.",
+      "resposta_padrao": "Desalinhamento temporal entre as fontes de dados",
+      "por_que_nao": "Desalinhamento temporal distorce comparações entre fontes no mesmo período; aqui os dados só entram na aplicação após a carga periódica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A integração digital pode ocorrer em arranjos offline e online"
+        },
+        {
+          "bloco": "F",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ativo passa a usar dados correntes para atualizar balanços, estimativas de desempenho, alocação de produção e avaliações operacionais"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

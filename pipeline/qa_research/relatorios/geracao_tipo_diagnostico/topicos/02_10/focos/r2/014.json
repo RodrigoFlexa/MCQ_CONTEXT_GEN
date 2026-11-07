@@ -1,0 +1,79 @@
+{
+  "item": "02_10",
+  "foco": 14,
+  "rodada": 2,
+  "contexto": {
+    "A1": 13,
+    "F": 14,
+    "A2": 15
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relacionar disparo de baixo nível ao uso indevido do sinal de interface na lógica de trip, e não a baixo inventário real.",
+      "pergunta": "O shutdown por nível baixo atua sempre quando a interface cruza 12%, mas o nível total segue em 55% no transmissor independente e no visor local; simular o LT total não reproduz o disparo. Qual causa primária?",
+      "resposta": "Associação incorreta do trip de baixo nível à medição de interface",
+      "explicacao": "O disparo acompanha a interface, não o inventário total. Como o nível total é confirmado por instrumento independente e visor local, e sua simulação não aciona a lógica, o trip está ligado ao sinal errado.",
+      "resposta_padrao": "Transmissor de nível total descalibrado.",
+      "por_que_nao": "A indicação do nível total coincide com o visor local, e a simulação desse sinal não reproduz o shutdown.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "associação incorreta de trip por nível baixo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mascarar riscos em transientes"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar limitação de validade do modelo dinâmico quando espuma domina o comportamento do separador.",
+      "pergunta": "O modelo dinâmico reproduz bem os casos sem espuma. Quando o cru entra espumante, a planta mostra nível aparente alto e carryover para o gás, com mesma vazão e perda de carga do demister normal, mas o modelo segue prevendo operação folgada. Qual causa primária da divergência?",
+      "resposta": "Espuma desconsiderada no modelo dinâmico",
+      "explicacao": "A divergência aparece apenas nos episódios espumantes, sem sinal de sobrecarga hidráulica ou entupimento do demister. Isso indica limitação das hipóteses do modelo, que deixou de representar o fenômeno dominante.",
+      "resposta_padrao": "Sobrecarga do eliminador de névoa.",
+      "por_que_nao": "A vazão não aumentou, a perda de carga do demister permaneceu normal e o erro surge apenas quando a espuma domina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "simplificações que desconsideram espuma"
+        },
+        {
+          "bloco": "F",
+          "trecho": "limitam a validade quando esses fenômenos dominam"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificar o acoplamento entre controle de interface e controle de DPR no hidrociclone pelo balanço de massa comum entre underflow e overflow.",
+      "pergunta": "Com alimentação constante, abrir o underflow para baixar a interface é seguido por fechamento do overflow para sustentar o DPR; as duas válvulas obedecem bem, mas a interface entra em ciclo e para ao colocar apenas o DPR em manual. Qual causa primária?",
+      "resposta": "Acoplamento das malhas pelo balanço de massa do hidrociclone",
+      "explicacao": "Underflow e overflow pertencem ao mesmo equipamento e compartilham a alimentação. A ação de uma malha altera a condição da outra, gerando oscilação mesmo com válvulas e instrumentos funcionando corretamente.",
+      "resposta_padrao": "Sintonia ruim do controlador da interface.",
+      "por_que_nao": "A oscilação depende da atuação simultânea das duas malhas e desaparece quando só a malha de DPR sai do automático.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ajudam a entender o acoplamento entre separador e hidrociclone"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}

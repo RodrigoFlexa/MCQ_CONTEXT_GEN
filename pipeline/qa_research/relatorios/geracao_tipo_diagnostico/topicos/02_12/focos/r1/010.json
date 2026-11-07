@@ -1,0 +1,109 @@
+{
+  "item": "02_12",
+  "foco": 10,
+  "rodada": 1,
+  "contexto": {
+    "A1": 9,
+    "F": 10,
+    "A2": 11
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre destino do gás e seleção da pressão mestre na malha de capacidade.",
+      "pergunta": "Redirecionado o gás de exportação para aliviar a coleta a montante, a descarga continua estável no setpoint antigo, mas a sucção oscila e a montante abre controle para flare; composição, rotação e anti-surge não mudaram. Qual causa primária explica a instabilidade?",
+      "resposta": "Seleção indevida da pressão de descarga como variável mestre de capacidade",
+      "explicacao": "Ao mudar o destino, muda a pressão proxy do processo. Para estabilizar a coleta a montante, a capacidade deve priorizar sucção; manter descarga como mestre deixa a exigência nova sem controle.",
+      "resposta_padrao": "Anti-surge mal ajustado.",
+      "por_que_nao": "A proteção não mudou nem atuou; a instabilidade apareceu só no modo em que a sucção passou a ser a variável crítica.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "o controle de capacidade frequentemente se expressa como controle de pressão em pontos-chave da sucção ou da descarga"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "se precisa estabilizar a coleta de gás de separadores ou proteger a etapa a montante, a pressão de sucção pode ganhar prioridade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade pode atuar diretamente sobre a rotação"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de modulação por estrangulamento associada a acionamento elétrico sem variação de velocidade.",
+      "pergunta": "Com menor demanda, a sucção é controlada pelo fechamento da admissão, a reciclo fica fechada, a rotação segue à frequência da rede e o consumo elétrico quase não cai; temperaturas e vibração seguem normais. Que elemento explica esse padrão?",
+      "resposta": "Motor elétrico sem inversor de frequência",
+      "explicacao": "Sem usar rotação como variável principal, a capacidade é ajustada por estrangulamento, pás-guia ou recirculação. Assim a pressão se mantém, mas a potência não acompanha proporcionalmente a queda de demanda.",
+      "resposta_padrao": "Perda de eficiência do compressor.",
+      "por_que_nao": "A rotação permanece presa à rede e não há sinais térmicos ou dinâmicos de degradação; o padrão é de controle por estrangulamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando o acionamento é elétrico e a rotação não é a variável principal de ajuste, o controle pode atuar por estrangulamento, pás-guia ou recirculação, conforme a configuração da máquina."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o acionador define como o torque e a potência chegam ao compressor"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Influência da utilidade de gás combustível na resposta transitória de compressor acionado por turbina.",
+      "pergunta": "A referência de rotação sobe no degrau de carga, mas o eixo acelera lentamente, a sucção afunda e o anti-surge abre; válvulas respondem bem e o evento coincide com queda na pressão do gás combustível. Qual a causa primária?",
+      "resposta": "Baixa pressão de gás combustível na turbina de acionamento",
+      "explicacao": "A turbina governa a rotação; se falta combustível, o torque não chega no ritmo pedido. Isso reduz a rapidez de resposta e força a abertura do anti-surge no transiente.",
+      "resposta_padrao": "Anti-surge mal sintonizado.",
+      "por_que_nao": "A válvula reage à falta de torque disponível; o sinal decisivo é a coincidência do evento com a queda do combustível da turbina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o acionador define como o torque e a potência chegam ao compressor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "condiciona a rapidez de resposta, a faixa de modulação e a forma de atravessar transientes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele também influencia partidas, paradas e a coordenação com o sistema elétrico e com as utilidades da unidade."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Coordenação entre acionamento elétrico e sistema de geração/distribuição na partida do trem de compressão.",
+      "pergunta": "Com todos os permissivos satisfeitos, o compressor elétrico só falha na partida quando grandes consumidores já estão ligados; ao retirar essas cargas, parte imediatamente, sem qualquer ajuste mecânico. Qual é a causa primária?",
+      "resposta": "Reserva elétrica insuficiente para a partida do motor",
+      "explicacao": "O acionamento elétrico depende da arquitetura energética. Com a rede já carregada, a partida do motor pode exigir potência e corrente acima da margem disponível, impedindo aceleração normal.",
+      "resposta_padrao": "Defeito no motor ou no compressor.",
+      "por_que_nao": "A partida normal depois de aliviar outras cargas aponta para limitação do sistema elétrico, não para falha intrínseca da máquina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha e a operação do acionamento se conectam à arquitetura energética do FPSO."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele também influencia partidas, paradas e a coordenação com o sistema elétrico e com as utilidades da unidade."
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

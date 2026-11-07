@@ -1,0 +1,125 @@
+{
+  "item": "09_01",
+  "foco": 0,
+  "rodada": 1,
+  "contexto": {
+    "F": 0,
+    "A1": 1,
+    "A2": 2
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito do critério de sequenciamento sob restrição logística quando a consequência do atraso difere entre demandas.",
+      "pergunta": "Com a mesma frota, mesmas janelas e mesmo volume semanal, os atrasos passaram a atingir sobressalentes que travam retorno de função, enquanto cargas rotineiras seguem no prazo; o sequenciamento diário passou a obedecer apenas ao carimbo de chegada da requisição. Qual a causa primária do aumento do custo total?",
+      "resposta": "Critério FIFO para demandas de criticidade desigual.",
+      "explicacao": "Com frota, janelas e volume invariáveis, o desvio de custo vem do sequenciamento. Demandas críticas tardias indicam atendimento por chegada em contexto de consequências de atraso diferentes.",
+      "resposta_padrao": "Frota subdimensionada.",
+      "por_que_nao": "Se os recursos e as janelas não mudaram, mas os atrasos migraram para itens críticos após mudar a fila, o problema é o critério de atendimento, não a quantidade de embarcações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a política de prioridade altera o resultado porque muda quais demandas serão atendidas primeiro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "penalidades elevadas por atraso reforçaram o valor de critérios de prioridade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente do que obedecer apenas à ordem de chegada"
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Definição de estoque local para item de baixo consumo considerando impacto da falta e prazo de reposição.",
+      "pergunta": "Um sobressalente consumido uma vez por ano nunca é mantido a bordo; quando falha, a reposição leva semanas e a função só volta após a entrega. Que causa de planejamento explica essa ruptura recorrente?",
+      "resposta": "Política de estoque orientada só por giro.",
+      "explicacao": "Baixa frequência não elimina estoque local quando a reposição é lenta e a falta impede restaurar função. O erro foi tratar giro como único critério.",
+      "resposta_padrao": "Item de baixo giro não precisa de estoque local.",
+      "por_que_nao": "Esse raciocínio só vale quando a falta tem baixa consequência e reposição simples; aqui o impacto operacional e o prazo de reposição exigem outro critério.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando o custo da espera não é uniforme entre demandas, priorizar por consequência operacional tende a ser mais coerente"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "observar pelo menos quatro variáveis: frequência de consumo, impacto da falta, prazo de reposição"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "itens de baixa demanda podem continuar exigindo estoque local se a ruptura tiver consequência alta para segurança ou produção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "itens de baixo consumo podem ainda exigir tratamento prioritário se sua falta comprometer restauração de função ou continuidade operacional"
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da janela operacional como restrição dominante de dimensionamento, mesmo com priorização eficaz.",
+      "pergunta": "Mesmo após priorização por criticidade, as multas por atraso caíram, mas o número mínimo de viagens não mudou; as saídas seguem concentradas nos raros períodos de mar aceitável e cada viagem ainda leva folga de carga. O que está limitando o dimensionamento?",
+      "resposta": "Janela operacional meteoceanográfica restritiva.",
+      "explicacao": "A priorização reduziu penalidades, então ajudou. Como sobra capacidade por viagem e a operação se concentra nos raros períodos operáveis, o gargalo remanescente é a janela de operação.",
+      "resposta_padrao": "Capacidade de carga insuficiente.",
+      "por_que_nao": "Se as viagens partem com folga, aumentar carga por viagem não atacaria a concentração das operações nos poucos períodos operáveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando há restrição de embarcações, janelas operacionais ou capacidade logística"
+        },
+        {
+          "bloco": "F",
+          "trecho": "não implica menor frota em todo cenário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a priorização de tarefas foi associada a redução de custo frente ao FIFO"
+        }
+      ],
+      "k": 3,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de parametrizar reposição e estoques conforme o perfil de demanda do tipo de instalação.",
+      "pergunta": "O mesmo item usa parâmetros idênticos de reposição em uma instalação de perfuração e em uma de produção. Só a primeira gera pedidos de emergência, embora fornecedor, base e lead time sejam iguais. Qual causa de planejamento explica a diferença?",
+      "resposta": "Política única de reposição ignorando o perfil de demanda da instalação.",
+      "explicacao": "Perfuração tende a ter menor armazenagem, maior incerteza e mais emergências que produção. Aplicar parâmetros idênticos de reposição ignora esse perfil e gera ruptura assimétrica.",
+      "resposta_padrao": "Fornecedor inconsistente.",
+      "por_que_nao": "Com mesmo fornecedor, base e lead time, a assimetria decorre do padrão de demanda e da armazenagem, não do supridor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o princípio técnico é transferível: quando o custo da espera não é uniforme entre demandas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Plataformas de perfuração ou sondas tendem a operar com menor capacidade de armazenagem, maior incerteza de consumo e mais pedidos de emergência."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Plataformas de produção, por outro lado, tendem a apresentar padrão de demanda mais previsível"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "decisões de compras e estoques precisam considerar ao menos o padrão de demanda do item, a urgência potencial da reposição"
+        }
+      ],
+      "k": 4,
+      "regua": []
+    }
+  ]
+}

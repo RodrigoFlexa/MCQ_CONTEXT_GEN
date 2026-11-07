@@ -1,0 +1,83 @@
+{
+  "item": "01_01",
+  "foco": 5,
+  "rodada": 4,
+  "contexto": {
+    "A1": 4,
+    "F": 5,
+    "A2": 6
+  },
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade de reserva fria deve refletir prontidão para assumir a função quando demandada, não horas sem operação contínua.",
+      "pergunta": "A bomba em reserva fria passa meses sem girar, mas parte nos testes e sempre assume a carga quando a ativa sai. Mesmo assim, seu indicador de disponibilidade cai para perto de zero nos meses sem demanda. Qual é a causa primária do KPI?",
+      "resposta": "Horas em standby tratadas como indisponibilidade.",
+      "explicacao": "Disponibilidade mede prontidão para cumprir a função quando necessária; em reserva fria, ficar parado não é perda se a partida e a assunção de carga ocorrem quando demandadas.",
+      "resposta_padrao": "Baixa confiabilidade da bomba reserva por permanecer longos períodos parada.",
+      "por_que_nao": "Os testes e as transferências reais mostram que ela cumpre a função quando demandada; o erro está no critério do indicador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade é a capacidade de um dispositivo ou sistema estar apto a cumprir a função requerida quando necessário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        }
+      ],
+      "k": 1,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A aproximação por MTBF/MTTR pode distorcer a disponibilidade quando aplicada a um período transitório, não representativo do comportamento estável observado.",
+      "pergunta": "Várias falhas curtas ocorreram só na primeira semana pós-intervenção; depois veio uma campanha longa sem paradas. No período seguinte, uptime/tempo total ficou alto, mas a disponibilidade por MTBF/(MTBF+MTTR), usando a média desde a intervenção, segue bem menor. Qual causa primária explica essa divergência?",
+      "resposta": "Aproximação MTBF/MTTR aplicada fora do regime estacionário.",
+      "explicacao": "As médias de falha e reparo calculadas sobre um trecho transitório pós-intervenção não representam o intervalo estável seguinte; por isso a aproximação por MTBF/MTTR diverge do uptime/tempo total observado.",
+      "resposta_padrao": "MTTR ainda está alto e derruba a disponibilidade.",
+      "por_que_nao": "As paradas foram curtas e ficaram concentradas no início; a diferença nasce do uso de médias históricas não representativas do período.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em estado estacionário, pode ser representada pela razão entre uptime e tempo total observado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando uptime e downtime não estão diretamente disponíveis, valores médios de falha e reparo podem ser usados como aproximação."
+        }
+      ],
+      "k": 2,
+      "regua": []
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Um gargalo comum de acesso ao reparo pode anular o ganho esperado de disponibilidade em arranjos duplicados, mesmo sem mudar falhas nem reparo ativo.",
+      "pergunta": "O ganho de disponibilidade dos dois trens duplicados desaparece só nas falhas que exigem abrir o mesmo módulo elevado e usar o único sistema de içamento; a taxa de falhas e o tempo de intervenção ativa por trem permanecem iguais. Qual causa primária explica o KPI?",
+      "resposta": "Acesso de reparo compartilhado.",
+      "explicacao": "A duplicação não remove indisponibilidade gerada por um gargalo comum de acesso; a espera pelo único meio de içamento alonga o downtime operacional sem alterar falhas nem reparo ativo.",
+      "resposta_padrao": "Falha de causa comum entre os dois trens.",
+      "por_que_nao": "Os trens não falham juntos nem perdem utilidade comum; o atraso aparece antes do reparo, na espera por acesso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a tempos logísticos e administrativos, como diagnóstico, mobilização de pessoal, espera por sobressalentes, acesso, liberação do equipamento e retorno seguro à operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ],
+      "k": 3,
+      "regua": []
+    }
+  ]
+}
