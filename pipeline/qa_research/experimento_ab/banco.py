@@ -4,17 +4,20 @@ Parte do dataset final v2 (todas as fontes, só gabaritos totalmente sustentados
 palavras e classificado pela rubrica do especialista) e aplica, em ordem:
 
 1. Regras determinísticas (sem API):
-   R1 sem_alcance_com_contexto  nem o GPT-5 nem o GPT-5.4 chegam ao gabarito COM o documento: o gabarito não é
-                                alcançável a partir do próprio contexto (vago, não único ou mal formulado);
+   (R1) suspeita                nem o GPT-5 nem o GPT-5.4 chegam ao gabarito COM o documento. Pode ser a pegadinha
+                                do enunciado funcionando (o modelo cai na resposta padrão mesmo lendo o texto) ou um
+                                gabarito vago ou não único: a questão vai para a revisão (passo 2), que também vê as
+                                respostas com documento. Sem revisão concluída, fica fora (R1);
    R2 resposta_no_enunciado     80% ou mais das palavras de conteúdo do gabarito já estão na pergunta (escolha entre
                                 opções dadas ou atalho);
    R3 forma_por_que_nao_basta   "Por que X não basta/garante...": a forma que o projeto decidiu evitar;
    R4 mesmo_conhecimento        par do mesmo tópico com gabarito e pergunta muito parecidos (TF-IDF): fica o da
                                 fonte de maior prioridade.
-2. Revisão de unicidade (API, só nas questões que o GPT-5 não acerta sem contexto): um juiz especialista vê a
-   pergunta, o gabarito, o documento e as respostas sem contexto de GPT-5, GPT-5 mini e GPT-4.1, e diz se cada
-   resposta é equivalente, alternativa válida ou incorreta; se o gabarito é específico, único e se depende do
-   documento. Saem:
+2. Revisão de unicidade (API, nas questões que o GPT-5 não acerta sem contexto e nas suspeitas R1): um juiz
+   especialista vê a pergunta, o gabarito, a resposta padrão (a pegadinha prevista), o documento e as respostas sem
+   contexto de GPT-5, GPT-5 mini e GPT-4.1 (nas suspeitas, também as de GPT-5 e GPT-5.4 com documento), e diz se
+   cada resposta é equivalente, alternativa válida ou incorreta; se o gabarito é específico, único e se depende do
+   documento. Resposta que cai na pegadinha é incorreta: a questão fica, difícil. Saem:
    R5 gabarito_nao_unico        alguma resposta é alternativa válida, ou o gabarito não é único;
    R6 gabarito_vago             o gabarito não nomeia um elemento técnico concreto;
    R7 depende_documento         a resposta exige algo próprio do documento.
@@ -62,7 +65,7 @@ REGRAS = {
     "R4": "mesmo_conhecimento", "R5": "gabarito_nao_unico", "R6": "gabarito_vago", "R7": "depende_documento",
     "R8": "excedente_topico"}
 DESCRICAO = {
-    "R1": "GPT-5 e GPT-5.4 não chegam ao gabarito nem com o documento",
+    "R1": "GPT-5 e GPT-5.4 erram com o documento e a revisão não foi concluída",
     "R2": "o gabarito já está no enunciado (escolha entre opções dadas ou atalho)",
     "R3": "forma \"por que X não basta/garante\"",
     "R4": "mesmo conhecimento de outra questão do tópico",
@@ -121,12 +124,10 @@ class Banco:
     # ---------------------------------------------------------------- 1. regras determinísticas
     def regras_locais(self) -> dict:
         poda: dict = {}
+        self.suspeitas = {u for u in self.qs if all(self.vs.get(u, {}).get(m, {}).get("veredito_open_book") != "correta"
+                                                    for m in FORTES_COM_CONTEXTO)}
         for u, q in self.qs.items():
-            v = self.vs.get(u, {})
-            if all(v.get(m, {}).get("veredito_open_book") != "correta" for m in FORTES_COM_CONTEXTO):
-                poda[u] = ("R1", "com contexto: " + ", ".join(f"{m} {v.get(m, {}).get('veredito_open_book')}"
-                                                              for m in FORTES_COM_CONTEXTO))
-            elif sobreposicao(q) >= 0.8:
+            if sobreposicao(q) >= 0.8:
                 poda[u] = ("R2", f"sobreposição {sobreposicao(q):.2f}")
             elif q.get("sinalizar") and re.match(r"\s*por que\b", q["pergunta"], re.I):
                 poda[u] = ("R3", q["sinalizar"])
@@ -152,7 +153,8 @@ class Banco:
 
     # ---------------------------------------------------------------- 2. revisão de unicidade
     def alvos_unicidade(self, poda: dict) -> list[str]:
-        return [u for u in self.qs if u not in poda and self.vs[u].get("gpt-5", {}).get("veredito_closed_book") != "correta"]
+        return [u for u in self.qs if u not in poda and (
+            u in self.suspeitas or self.vs[u].get("gpt-5", {}).get("veredito_closed_book") != "correta")]
 
     def _arq_u(self, uid: str) -> Path:
         return self.saida / "unicidade" / f"{_nome_arq(uid)}.json"
@@ -162,13 +164,23 @@ class Banco:
             self._cliente = C.cliente_llm(self.juiz, self.saida, "unicidade")
         return self._cliente
 
-    def entrada_unicidade(self, u: str) -> tuple[str, list[str]]:
+    def entrada_unicidade(self, u: str) -> tuple[str, dict]:
+        """-> payload e {id: [modelo, condição]} das respostas mostradas."""
         q, v = self.qs[u], self.vs[u]
-        resp = [(f"R{k}", v[m]["resposta_closed_book"]) for k, m in enumerate(REVISADOS, 1)
-                if v.get(m, {}).get("resposta_closed_book")]
+        mostrar = [(m, "closed_book") for m in REVISADOS]
+        if u in self.suspeitas:
+            mostrar += [(m, "open_book") for m in FORTES_COM_CONTEXTO]
+        resp, ids = [], {}
+        for m, cond in mostrar:
+            texto = v.get(m, {}).get(f"resposta_{cond}")
+            if texto:
+                i = f"R{len(resp) + 1}"
+                resp.append({"id": i, "com_documento": cond == "open_book", "resposta": texto})
+                ids[i] = [m, cond]
         payload = {"pergunta": q["pergunta"], "gabarito": q["resposta"], "explicacao": q.get("explicacao"),
-                   "documento": q["contexto_tecnico"], "respostas": [{"id": i, "resposta": r} for i, r in resp]}
-        return json.dumps(payload, ensure_ascii=False), [i for i, _ in resp]
+                   "resposta_padrao": q.get("resposta_padrao"), "por_que_nao": q.get("por_que_nao"),
+                   "documento": q["contexto_tecnico"], "respostas": resp}
+        return json.dumps({k: x for k, x in payload.items() if x is not None}, ensure_ascii=False), ids
 
     def unicidade(self, poda: dict) -> int:
         alvos = self.alvos_unicidade(poda)
@@ -190,8 +202,8 @@ class Banco:
                 user, ids = self.entrada_unicidade(u)
                 try:
                     d = self.cliente().json(sistema, user, tag="unicidade", max_tokens=6000, item=self.qs[u]["item"],
-                                            validate=lambda d: validar_unicidade(d, ids))
-                    rec = {"uid": u, "status": "revisada", "ids": dict(zip(ids, REVISADOS)), **d}
+                                            validate=lambda d: validar_unicidade(d, list(ids)))
+                    rec = {"uid": u, "status": "revisada", "ids": ids, **d}
                 except Exception as exc:  # noqa: BLE001
                     if not _filtrado(exc):
                         atomic_json(self.saida / "unicidade" / "falhas" / self._arq_u(u).name,
@@ -210,16 +222,19 @@ class Banco:
             return len(faltam) - ok
 
     def aplicar_unicidade(self, poda: dict) -> tuple[dict, dict, int]:
-        """-> poda ampliada, vereditos corrigidos {uid: {modelo: 'correta'}}, revisões pendentes."""
+        """-> poda ampliada, vereditos corrigidos {uid: {condição: {modelo: 'correta'}}}, revisões pendentes."""
         poda, corr, pend = dict(poda), {}, 0
+        self.suspeitas_mantidas = 0
         for u in self.alvos_unicidade(poda):
             r = read_json(self._arq_u(u))
-            if r is None:
-                pend += 1
+            if r is None or r.get("status") != "revisada":
+                pend += r is None
+                if u in self.suspeitas:
+                    v = self.vs[u]
+                    poda[u] = ("R1", "com documento: " + ", ".join(
+                        f"{m} {v.get(m, {}).get('veredito_open_book')}" for m in FORTES_COM_CONTEXTO))
                 continue
-            if r.get("status") != "revisada":
-                continue
-            aval = {r["ids"][x["id"]]: x["avaliacao"] for x in r["respostas"]}
+            aval = {tuple(r["ids"][x["id"]]): x["avaliacao"] for x in r["respostas"]}
             if any(a == "alternativa_valida" for a in aval.values()) or not r["gabarito_unico"]:
                 poda[u] = ("R5", r["justificativa"])
             elif not r["gabarito_especifico"]:
@@ -227,8 +242,11 @@ class Banco:
             elif r["depende_documento"]:
                 poda[u] = ("R7", r["justificativa"])
             else:
-                eq = {m: "correta" for m, a in aval.items() if a == "equivalente"
-                      and self.vs[u][m]["veredito_closed_book"] != "correta"}
+                self.suspeitas_mantidas += u in self.suspeitas
+                eq: dict = {}
+                for (m, cond), a in aval.items():
+                    if a == "equivalente" and self.vs[u][m][f"veredito_{cond}"] != "correta":
+                        eq.setdefault(cond, {})[m] = "correta"
                 if eq:
                     corr[u] = eq
         return poda, corr, pend
@@ -286,7 +304,7 @@ class Banco:
 
     def _vereditos(self, u: str, corr: dict, cond: str) -> dict:
         v = {m: r[f"veredito_{cond}"] for m, r in self.vs[u].items()}
-        return {**v, **corr.get(u, {})} if cond == "closed_book" else v
+        return {**v, **corr.get(u, {}).get(cond, {})}
 
     def gravar(self, poda: dict, corr: dict, pend: int) -> dict:
         from pipeline.qa_research.piloto_janela.core import tema
@@ -305,7 +323,7 @@ class Banco:
                 "dificuldade": {"estrato": estrato({m: fech.get(m) for m in INDEPENDENTES}),
                                 "rubrica": r.get("nivel"), "criterios_rubrica": r.get("criterios", []),
                                 "sem_contexto": fech, "com_contexto": aberto,
-                                "veredito_corrigido": sorted(corr.get(u, {}))}})
+                                "veredito_corrigido": {c: sorted(ms) for c, ms in corr.get(u, {}).items()}}})
         C.gravar_jsonl(self.saida / "banco.jsonl", banco)
         C.gravar_jsonl(self.saida / "poda.jsonl", [
             {"uid": u, "regra": k, "nome": REGRAS[k], "detalhe": d, "fonte": self.qs[u]["fonte"],
@@ -339,6 +357,7 @@ class Banco:
         return {
             "n": n, "de": len(self.qs), "provisorio": bool(pend) or revisadas == 0, "unicidade_pendente": pend,
             "unicidade_revisadas": revisadas, "vereditos_corrigidos": len(corr), "teto_topico": self.teto,
+            "suspeitas_r1": len(self.suspeitas), "suspeitas_mantidas": getattr(self, "suspeitas_mantidas", 0),
             "similaridade_teto": self.similaridade_teto,
             "poda": {k: sum(1 for r, _ in poda.values() if r == k) for k in REGRAS},
             "poda_por_fonte": {f: dict(Counter(r for u, (r, _) in poda.items() if self.qs[u]["fonte"] == f))
@@ -370,7 +389,9 @@ def _markdown(r: dict) -> str:
     out = [f"# Banco PetroQuest v1{' (PROVISÓRIO: revisão de unicidade pendente)' if r['provisorio'] else ''}", "",
            f"{r['n']} questões em {r['topicos']} tópicos, selecionadas de {r['de']} questões do dataset final v2 "
            f"(todas com gabarito totalmente sustentado pelo documento). Revisão de unicidade: {r['unicidade_revisadas']} "
-           f"questões revisadas, {r['vereditos_corrigidos']} vereditos corrigidos, {r['unicidade_pendente']} pendentes.",
+           f"questões revisadas, {r['vereditos_corrigidos']} com veredito corrigido, {r['unicidade_pendente']} pendentes. "
+           f"Das {r['suspeitas_r1']} que GPT-5 e GPT-5.4 erram mesmo com o documento, {r['suspeitas_mantidas']} ficaram "
+           "(a pegadinha funcionou e o gabarito é único).",
            "", "## Poda", "", "| Regra | Motivo | Removidas |", "|---|---|---|"]
     out += [f"| {k} | {DESCRICAO[k]} | {v} |" for k, v in r["poda"].items()]
     out += ["", "## Composição", "", f"Por tipo: {r['por_tipo']}.", "", f"Por área: {r['por_area']}.", "",

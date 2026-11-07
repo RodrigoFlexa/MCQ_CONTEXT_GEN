@@ -1457,9 +1457,11 @@ class BancoTests(unittest.TestCase):
             def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
                 self.n += 1
                 d = json.loads(user)
-                assert d["documento"] and len(d["respostas"]) == 3 and "unicidade" not in system.lower()[:0]
                 k = int(re.search(r"\d+$", d["respostas"][0]["resposta"]).group())
-                aval = {3: "alternativa_valida", 4: "equivalente", 5: "incorreta"}[k]
+                assert d["documento"] and d["resposta_padrao"] and "armadilha" in system
+                assert len(d["respostas"]) == (5 if k == 0 else 3)              # suspeita: também com documento
+                assert [r["com_documento"] for r in d["respostas"]].count(True) == (2 if k == 0 else 0)
+                aval = {0: "incorreta", 3: "alternativa_valida", 4: "equivalente", 5: "incorreta"}[k]
                 out = {"respostas": [{"id": r["id"], "avaliacao": aval if r["id"] == "R1" else "incorreta"}
                                      for r in d["respostas"]],
                        "gabarito_especifico": True, "gabarito_unico": True, "depende_documento": k == 5,
@@ -1471,9 +1473,9 @@ class BancoTests(unittest.TestCase):
         b = BA.Banco(orig, tmp / "banco", teto=2, cliente=juiz, embedder=Emb(), exp=exp, **SILENCIO)
         self.assertEqual(b.executar(), 0)
         poda = {r["uid"].split(":")[4]: r["regra"] for r in C.linhas(tmp / "banco" / "poda.jsonl")}
-        self.assertEqual({k: v for k, v in poda.items() if v != "R8"},
-                         {"000": "R1", "001": "R2", "002": "R3", "003": "R5", "005": "R7"})
-        self.assertEqual(list(poda.values()).count("R8"), 1)
+        self.assertEqual({k: v for k, v in poda.items() if v != "R8"},     # 000: pegadinha funcionou, fica
+                         {"001": "R2", "002": "R3", "003": "R5", "005": "R7"})
+        self.assertEqual(list(poda.values()).count("R8"), 2)
         banco = C.linhas(tmp / "banco" / "banco.jsonl")
         self.assertEqual(len(banco), 2)
         self.assertEqual([x["id"] for x in banco], ["PQ-0001", "PQ-0002"])
@@ -1481,10 +1483,11 @@ class BancoTests(unittest.TestCase):
         self.assertTrue(q4)
         if q4:                                                           # veredito corrigido pela revisão
             self.assertEqual(q4[0]["dificuldade"]["sem_contexto"]["gpt-5"], "correta")
-            self.assertEqual(q4[0]["dificuldade"]["veredito_corrigido"], ["gpt-5"])
+            self.assertEqual(q4[0]["dificuldade"]["veredito_corrigido"], {"closed_book": ["gpt-5"]})
         res = read_json(tmp / "banco" / "resumo.json")
         self.assertFalse(res["provisorio"])
-        self.assertEqual((res["unicidade_revisadas"], res["vereditos_corrigidos"]), (3, 1))
+        self.assertEqual((res["unicidade_revisadas"], res["vereditos_corrigidos"]), (4, 1))
+        self.assertEqual((res["suspeitas_r1"], res["suspeitas_mantidas"]), (1, 1))
         self.assertIn("| R5 |", (tmp / "banco" / "BANCO.md").read_text(encoding="utf-8"))
         n = juiz.n
         self.assertEqual(BA.Banco(orig, tmp / "banco", teto=2, cliente=juiz, embedder=Emb(), exp=exp,
@@ -1493,3 +1496,5 @@ class BancoTests(unittest.TestCase):
         prov = BA.Banco(orig, tmp / "prov", teto=10, cliente=juiz, embedder=Emb(), exp=exp, **SILENCIO)
         self.assertEqual(prov.executar(revisar=False), 0)
         self.assertTrue(read_json(tmp / "prov" / "resumo.json")["provisorio"])
+        self.assertEqual({r["regra"] for r in C.linhas(tmp / "prov" / "poda.jsonl") if r["uid"].endswith(":000:1")},
+                         {"R1"})                                             # sem revisão, a suspeita fica fora
