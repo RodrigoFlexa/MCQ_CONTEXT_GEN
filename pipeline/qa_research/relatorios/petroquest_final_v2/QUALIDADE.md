@@ -1,18 +1,16 @@
 # PetroQuest: qualidade do dataset final v2
 
-3457 questões em 40 tópicos, todas com gabarito totalmente sustentado pelo contexto (3457 de 4942 candidatas). Por fonte: {'v23': 175, 'v23c': 1211, 'v22': 23, 'antigo': 393, 'conceitos': 702, 'variada': 953}. Por tipo: {'procedimento': 306, 'decisao': 653, 'diagnostico': 454, 'mecanismo': 784, 'consequencia': 215, 'conceito': 1045}.
+4369 questões em 40 tópicos, todas com gabarito totalmente sustentado pelo contexto (4369 de 7387 candidatas). Por fonte: {'v23': 119, 'v23c': 842, 'v22': 14, 'antigo': 315, 'conceitos': 571, 'variada': 766, 'tipo_decisao': 507, 'tipo_diagnostico': 432, 'tipo_procedimento': 803}. Por tipo: {'procedimento': 542, 'mecanismo': 646, 'decisao': 1166, 'diagnostico': 929, 'consequencia': 178, 'conceito': 908}.
 
 ## Modelos (resposta de até 20 palavras)
 
 | Modelo | Sem contexto ↓ | Com parcial ↓ | Com contexto ↑ | Gap | F1 | ROUGE-L | BLEU |
 |---|---|---|---|---|---|---|---|
-| GPT-4.1 Nano | 25.9% | 39.5% | 48.0% | 22.1 | 11.7 | 11.3 | 1.3 |
-| GPT-4.1 Mini | 45.6% | 59.5% | 81.9% | 36.4 | 16.4 | 15.8 | 1.7 |
-| GPT-4.1 | 56.4% | 68.6% | 88.6% | 32.2 | 21.9 | 21.2 | 2.7 |
-| GPT-5 nano | 45.8% | 57.8% | 77.3% | 31.5 | 17.9 | 17.2 | 2.1 |
-| GPT-5 mini | 63.2% | 73.2% | 86.3% | 23.1 | 21.6 | 20.7 | 2.7 |
-| GPT-5 | 75.4% | 82.7% | 94.9% | 19.5 | 29.2 | 28.2 | 4.1 |
-| GPT-5.4 (referência) | 81.5% | 87.3% | 97.5% | 16.1 | 31.2 | 30.1 | 4.2 |
+| GPT-4.1 Mini | 40.0% | 54.1% | 73.8% | 33.8 | 14.9 | 14.4 | 1.6 |
+| GPT-4.1 | 51.1% | 63.9% | 82.4% | 31.3 | 19.7 | 19.1 | 2.3 |
+| GPT-5 mini | 56.9% | 66.9% | 79.5% | 22.6 | 19.2 | 18.4 | 2.4 |
+| GPT-5 | 70.3% | 78.5% | 91.8% | 21.5 | 25.9 | 24.8 | 3.6 |
+| GPT-5.4 (referência) | 77.1% | 84.1% | 95.6% | 18.5 | 28.4 | 27.2 | 4.1 |
 
 F1, ROUGE-L e BLEU (0 a 100) comparam a resposta sem contexto com o gabarito. O veredito do juiz é a métrica principal; as lexicais são complementares. O GPT-5.4 gerou, auditou e julga as questões: fica fora dos estratos e só serve de referência.
 
@@ -20,18 +18,18 @@ F1, ROUGE-L e BLEU (0 a 100) comparam a resposta sem contexto com o gabarito. O 
 
 | Dimensão | Métrica | Melhor | Faixa de referência | Valor |
 |---|---|---|---|---|
-| Dificuldade | Difícil para o GPT-5 (inclui muito difícil) | ↑ | > 15% | 24.6% |
-| Dificuldade | Nenhum modelo independente acerta | ↑ (com questões boas) | 5–15% | 12.3% |
-| Dificuldade | Todos os modelos independentes acertam (fácil) | ↓ | < 40% | 13.3% |
-| Não trivialidade | Max ROUGE-L pergunta ↔ frase do contexto | ↓ | 0,15–0,40 | 0.232 |
-| Não trivialidade | Bigramas novos no gabarito | ↑ | > 30% | 44.3% |
-| Diversidade | Self-BLEU-4 entre perguntas do mesmo tópico | ↓ | < 0,25 | 0.142 |
+| Dificuldade | Difícil para o GPT-5 (inclui muito difícil) | ↑ | > 15% | 29.7% |
+| Dificuldade | Nenhum modelo independente acerta | ↑ (com questões boas) | 5–15% | 17.6% |
+| Dificuldade | Todos os modelos independentes acertam (fácil) | ↓ | < 40% | 25.1% |
+| Não trivialidade | Max ROUGE-L pergunta ↔ frase do contexto | ↓ | 0,15–0,40 | 0.207 |
+| Não trivialidade | Bigramas novos no gabarito | ↑ | > 30% | 48.5% |
+| Diversidade | Self-BLEU-4 entre perguntas do mesmo tópico | ↓ | < 0,25 | 0.143 |
 | Diversidade | Vizinho mais próximo no tópico (cosseno centrado) | ↓ | < 0,50 | 0.494 |
-| Forma | Palavras no gabarito | ↓ | 3–15 | 6.0 |
-| Cobertura | Decisão + procedimento | ↑ | > 30% | 27.7% |
+| Forma | Palavras no gabarito | ↓ | 3–15 | 6.3 |
+| Cobertura | Decisão + procedimento | ↑ | > 30% | 39.1% |
 
-Difícil para o GPT-5 por tipo: {'conceito': 23.2, 'consequencia': 22.3, 'decisao': 30.0, 'diagnostico': 22.2, 'mecanismo': 20.8, 'procedimento': 32.7}.
+Difícil para o GPT-5 por tipo: {'conceito': 24.4, 'consequencia': 23.0, 'decisao': 35.0, 'diagnostico': 29.5, 'mecanismo': 21.1, 'procedimento': 39.7}.
 
-Questões por tópico: {'01_01': 69, '02_01': 103, '02_02': 215, '02_03': 86, '02_04': 136, '02_05': 108, '02_06': 77, '02_07': 112, '02_08': 97, '02_09': 92, '02_10': 122, '02_11': 119, '02_12': 92, '03_01': 90, '03_02': 107, '03_03': 84, '04_01': 80, '04_02': 150, '05_01': 88, '05_02': 86, '06_01': 60, '06_02': 61, '06_03': 53, '06_04': 115, '06_05': 58, '06_06': 43, '06_07': 80, '07_01': 100, '07_02': 53, '07_03': 82, '07_04': 107, '07_05': 52, '08_01': 34, '08_02': 44, '08_03': 89, '08_04': 28, '08_05': 96, '09_01': 67, '09_02': 60, '10_01': 62}.
+Questões por tópico: {'01_01': 87, '02_01': 124, '02_02': 273, '02_03': 101, '02_04': 164, '02_05': 135, '02_06': 102, '02_07': 134, '02_08': 119, '02_09': 123, '02_10': 160, '02_11': 160, '02_12': 112, '03_01': 120, '03_02': 142, '03_03': 102, '04_01': 91, '04_02': 192, '05_01': 119, '05_02': 102, '06_01': 78, '06_02': 77, '06_03': 63, '06_04': 148, '06_05': 72, '06_06': 63, '06_07': 92, '07_01': 133, '07_02': 70, '07_03': 104, '07_04': 139, '07_05': 71, '08_01': 45, '08_02': 46, '08_03': 115, '08_04': 38, '08_05': 127, '09_01': 77, '09_02': 78, '10_01': 71}.
 
 As faixas são referências de trabalho do projeto, não padrões da literatura.
