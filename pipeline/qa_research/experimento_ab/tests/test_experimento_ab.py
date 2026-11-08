@@ -1627,3 +1627,53 @@ class AblacaoTests(unittest.TestCase):
         self.assertTrue(lo < 50 < hi)
         self.assertEqual(mcnemar([True] * 5, [False] * 5)["so_primeiro"], 5)
         self.assertLess(mcnemar([True] * 10, [False] * 10)["p"], 0.01)
+
+
+class ExternosTests(unittest.TestCase):
+    """Respostas do vLLM (Llama) julgadas no servidor pelo motor padrão, só nas questões do banco."""
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp)
+
+    def test_respostas_prontas_julgadas_so_no_banco(self):
+        from pipeline.qa_research import benchmark_gap as G
+        from pipeline.qa_research.experimento_ab import externos as E
+        from pipeline.qa_research.experimento_ab import responder_vllm as R
+        from pipeline.qa_research.tests.test_especialista_finalizacao import Juiz as JuizResp
+        final, banco, resp = self.tmp / "final", self.tmp / "banco", self.tmp / "resp"
+        for p in (final, banco, resp):
+            p.mkdir()
+        ds = [{"uid": f"v23c:{ITEM}:j:r1:00{k}:1", "item": ITEM, "tipo": "mecanismo", "fonte": "v23c", "composicao": "simples",
+               "pergunta": f"Por que ocorre o fenômeno {k}?", "resposta": f"Mecanismo {k}.",
+               "contexto_tecnico": f"Bloco técnico {k}.",
+               "blocos_contexto": [{"id": "B1", "texto": f"Bloco técnico {k}.", "indice_documento": k}]}
+              for k in range(4)]
+        C.gravar_jsonl(final / "dataset.jsonl", ds)
+        C.gravar_jsonl(banco / "banco.jsonl", ds[:3])                      # a 4ª ficou fora do banco
+        # o que o responder_vllm grava: uma resposta por uid, identificada pela mensagem exata do usuário
+        linhas_ = [{"uid": f"{arm}:{q['uid']}", "usuario_sha256": R.sha(R.usuario(
+                    {**q, "contexto_tecnico": q["contexto_tecnico"] if arm == "open_book" else None})),
+                    "resposta": f"Mecanismo {k}." if arm == "open_book" else ""}
+                   for k, q in enumerate(ds[:3]) for arm in G.ARMS]
+        C.gravar_jsonl(resp / "llama-3-1-8b.jsonl", linhas_)
+        (resp / "llama-3-1-8b.meta.json").write_text(json.dumps({
+            "modelo": "llama-3-1-8b", "hf": "meta-llama/Llama-3.1-8B-Instruct", "questoes": 6, "respondidas": 6,
+            "sonda": {"usuario": R.usuario(None), "resposta": "Separa óleo, gás e água."}}), encoding="utf-8")
+        pronto = E.RespostasProntas(resp / "llama-3-1-8b.jsonl", {"usuario": R.usuario(None), "resposta": "x"})
+        st = E.executar(self.tmp / "saida", respostas=resp, final=final, banco=banco, workers=2, judge_workers=1,
+                        clientes={"juiz": JuizResp(), "resp_llama-3-1-8b": pronto}, progress=lambda *a, **k: None)
+        self.assertEqual(st, 0)
+        self.assertEqual(pronto.chamadas, 7)                               # sonda + 3 questões x 2 condições
+        self.assertEqual(len(C.linhas(self.tmp / "saida" / "dataset.jsonl")), 3)
+        cfg = read_json(self.tmp / "saida" / "config.json")
+        self.assertEqual(cfg["modelos"], {"llama-3-1-8b": "vllm/meta-llama/Llama-3.1-8B-Instruct"})
+        self.assertTrue((self.tmp / "saida" / "QUALIDADE.md").exists())
+        with self.assertRaises(KeyError):
+            pronto.json("s", R.usuario({"pergunta": "Outra?", "contexto_tecnico": None}))
+
+    def test_extrair_resposta(self):
+        from pipeline.qa_research.experimento_ab.responder_vllm import extrair
+        self.assertEqual(extrair('{"resposta": "Cavitação."}'), ("Cavitação.", "json"))
+        self.assertEqual(extrair('```json\n{"resposta": "Golpe de aríete"}\n```'), ("Golpe de aríete", "json"))
+        self.assertEqual(extrair('Claro! {"resposta": "Hidrato"} pronto')[1], "extraida")
+        self.assertEqual(extrair("Hidrato de metano"), ("Hidrato de metano", "texto"))

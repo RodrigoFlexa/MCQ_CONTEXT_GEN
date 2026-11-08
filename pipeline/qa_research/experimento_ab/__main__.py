@@ -33,6 +33,8 @@
                         --sem-revisao monta o banco provisório sem chamar a API
   splits                divide o banco final em treino/validação/teste (70/10/20, por grupo, estratificado)
   figuras               figuras do banco e do desempenho dos modelos (petroquest_banco_v1/figuras)
+  avaliar-externos      juiz padrão sobre as respostas dos modelos Llama (vLLM na DL-28, respostas_externas/)
+                        nas questões do banco final -> avaliacao_externos/QUALIDADE.md
   ablacao               ablação da geração: 1000 vagas do banco, braços naive, documento, sem_externos,
                         sem_retro e completo, mesma aceitação (auditor, sustentação, dedup), taxa de aceite e
                         vocabulário -> ablacao_geracao_v1/ABLACAO.md; --bracos e --vagas para recortar
@@ -145,7 +147,7 @@ def main(argv=None) -> int:
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
                                         "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
-                                        "final-v2", "ablacao"])
+                                        "final-v2", "ablacao", "avaliar-externos"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -281,6 +283,16 @@ def main(argv=None) -> int:
         gerar()
         print(f"[figuras] {C.relativo(SAIDA_FIG)}")
         return 0
+    if a.comando == "avaliar-externos":
+        from .externos import SAIDA as SAIDA_EXT, executar as externos
+        with _trava(exp, "externos"):
+            try:
+                st = externos(workers=a.workers, judge_workers=a.judge_workers)
+            except ValueError as exc:
+                raise SystemExit(f"[externos] {exc}") from exc
+        print(f"[externos] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_EXT / 'QUALIDADE.md')}")
+        return st
     if a.comando == "ablacao":
         from .ablacao import SAIDA as SAIDA_ABL, Ablacao
         with _trava(exp, "ablacao"):

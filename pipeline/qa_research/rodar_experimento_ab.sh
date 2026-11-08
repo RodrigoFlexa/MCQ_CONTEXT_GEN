@@ -28,6 +28,7 @@
 #                        (petroquest_banco_v1/BANCO.md e banco.jsonl)
 #   ablacao              ablação da geração: 1000 vagas do banco final, 5 braços (naive, documento, sem datasets
 #                        externos, sem retroalimentação, completo), taxa de aceite e vocabulário (ablacao_geracao_v1)
+#   externos             juiz padrão sobre as respostas dos modelos Llama geradas na DL-28 (rodar_llama_dl28.sh)
 #   rubrica              só a classificação pela rubrica do especialista (petroquest_final_v2/rubrica/RUBRICA.md)
 #   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
 #   limite [N]           experimento do limite de palavras na resposta (padrão 20), amostra de 300 questões
@@ -108,7 +109,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|externos) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -176,6 +177,9 @@ fi
 if [[ "$etapa" == "banco" ]]; then
     rodar "banco final: poda, revisão de unicidade e teto por tópico" banco || fim_erro banco
 fi
+if [[ "$etapa" == "externos" ]]; then
+    rodar "juiz sobre as respostas dos modelos Llama" avaliar-externos || fim_erro externos
+fi
 if [[ "$etapa" == "ablacao" ]]; then
     # chamadas independentes (uma questão por vaga): 24 em paralelo por padrão; um --workers explícito prevalece
     rodar "ablação da geração (5 braços x 1000 questões)" ablacao --workers 24 || fim_erro ablacao
@@ -200,6 +204,9 @@ echo "Enviar ao GitHub (no servidor):"
 if [[ "$etapa" == "limite" ]]; then
     echo "  cat pipeline/qa_research/relatorios/petroquest_final_v1/limite_${braco_sust:-20}/LIMITE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v1 \"Resultados: limite de palavras\""
+elif [[ "$etapa" == "externos" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/avaliacao_externos/QUALIDADE.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/avaliacao_externos \"Resultados: juiz nos modelos Llama\""
 elif [[ "$etapa" == "ablacao" ]]; then
     echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v1/ABLACAO.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v1 \"Resultados: ablação da geração\""
