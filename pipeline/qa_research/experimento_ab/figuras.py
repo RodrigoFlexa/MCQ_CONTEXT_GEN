@@ -299,62 +299,80 @@ def acuracia(teste: list) -> tuple[list[Path], dict]:
     return salvar(fig, "fig4_acuracia_modelos"), res
 
 
-def por_tipo(teste: list) -> list[Path]:
-    M = np.array([[100 * np.mean([x["dificuldade"]["sem_contexto"][m] == "correta" for x in teste if x["tipo"] == t])
-                   for t in TIPOS] for m in MODELOS])
-    nt = Counter(x["tipo"] for x in teste)
-    fig, ax = plt.subplots(figsize=(11, 4.4))
-    from matplotlib.colors import LinearSegmentedColormap
-    cmap = LinearSegmentedColormap.from_list("azul", RAMPA)
-    im = ax.imshow(M, cmap=cmap, vmin=20, vmax=100, aspect="auto")
-    for i in range(M.shape[0]):
-        for j in range(M.shape[1]):
-            ax.text(j, i, f"{M[i, j]:.0f}", ha="center", va="center", fontsize=11,
-                    color="white" if M[i, j] >= 62 else TINTA, fontweight="medium")
-    ax.set_xticks(range(len(TIPOS)), [f"{NOME_TIPO[t]}\n(n = {nt[t]})" for t in TIPOS], fontsize=10, color=TINTA)
-    ax.set_yticks(range(len(MODELOS)), [NOME[m] for m in MODELOS], fontsize=11, color=TINTA)
-    ax.tick_params(length=0)
-    for s in ax.spines.values():
-        s.set_visible(False)
-    ax.set_xticks(np.arange(-.5, len(TIPOS), 1), minor=True)
-    ax.set_yticks(np.arange(-.5, len(MODELOS), 1), minor=True)
-    ax.grid(which="minor", color="white", linewidth=2.5)
-    ax.tick_params(which="minor", length=0)
-    cb = fig.colorbar(im, ax=ax, fraction=0.025, pad=0.02)
-    cb.outline.set_visible(False)
-    cb.set_label("Acurácia sem documento (%)", color=TINTA2)
-    ax.set_title("Acurácia sem documento por tipo de questão (teste)")
-    return salvar(fig, "fig5_acuracia_por_tipo")
+INDEP = ["gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5"]
 
 
-def por_area(teste: list) -> list[Path]:
-    indep = ["gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5"]
-    areas = sorted({AREA_CURTA.get(x["area"], x["area"]) for x in teste})
-    linhas = []
-    for a in areas:
-        xs = [x for x in teste if AREA_CURTA.get(x["area"], x["area"]) == a]
-        sem = 100 * np.mean([x["dificuldade"]["sem_contexto"][m] == "correta" for x in xs for m in indep])
-        com = 100 * np.mean([x["dificuldade"]["com_contexto"][m] == "correta" for x in xs for m in indep])
-        linhas.append((a, sem, com, len(xs)))
-    linhas.sort(key=lambda r: r[1])
-    fig, ax = plt.subplots(figsize=(11, 4.9))
-    for i, (a, sem, com, n) in enumerate(linhas):
-        ax.plot([sem, com], [i, i], color=GRADE, linewidth=3, zorder=1, solid_capstyle="round")
-        ax.scatter([sem], [i], s=70, color=AZUL, zorder=3, edgecolor="white", linewidth=1.5,
-                   label="Sem documento" if i == 0 else None)
-        ax.scatter([com], [i], s=70, color=LARANJA, zorder=3, edgecolor="white", linewidth=1.5,
-                   label="Com documento" if i == 0 else None)
-        ax.text(com + 1.2, i, f"+{com - sem:.0f}", va="center", fontsize=9.5, color=TINTA2)
-    ax.set_yticks(range(len(linhas)), [f"{a}  (n = {n})" for a, _, _, n in linhas], color=TINTA, fontsize=10)
-    ax.set_xlim(30, 100)
-    ax.set_xlabel("Acurácia média dos 4 modelos independentes (%)")
-    ax.xaxis.grid(True)
+def _quebrar(rotulo: str, largura: int = 14) -> str:
+    linhas, atual = [], ""
+    for w in rotulo.split():
+        if atual and len(atual) + 1 + len(w) > largura:
+            linhas.append(atual)
+            atual = w
+        else:
+            atual = f"{atual} {w}".strip()
+    return "\n".join(linhas + [atual])
+
+
+def _colunas_cond(rotulos: list, sem: list, com: list, ylabel: str, ymax: float, figsize=(14.5, 6.6),
+                  xfonte: int = 19, vfonte: int = 18):
+    """Colunas sem x com documento por categoria (média dos 4 modelos independentes), estilo slide e sem título."""
+    fig, ax = plt.subplots(figsize=figsize)
+    x = np.arange(len(rotulos))
+    w = 0.38
+    for k, (vals, cor, rot) in enumerate(((sem, AZUL, "Sem documento"), (com, LARANJA, "Com documento"))):
+        pos = x + (k - 0.5) * w
+        ax.bar(pos, vals, w * 0.92, color=cor, label=rot, edgecolor="white", linewidth=1.5, zorder=2)
+        for pp, v in zip(pos, vals):
+            ax.text(pp, v + ymax * 0.012, f"{v:.0f}", ha="center", va="bottom", fontsize=vfonte,
+                    fontweight="semibold", color=TINTA)
+    ax.set_xticks(x, rotulos, fontsize=xfonte, color=TINTA)
+    ax.set_ylim(0, ymax)
+    ax.tick_params(axis="y", labelsize=19)
+    ax.tick_params(axis="x", length=0, pad=10)
+    ax.set_ylabel(ylabel, fontsize=21)
+    ax.yaxis.grid(True)
     ax.set_axisbelow(True)
-    ax.spines["left"].set_visible(False)
-    ax.tick_params(axis="y", length=0)
-    ax.legend(loc="upper left", ncol=2, bbox_to_anchor=(0, 1.1))
-    ax.set_title("Ganho com o documento por área temática (teste)", pad=30)
-    return salvar(fig, "fig6_ganho_por_area")
+    ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
+    ax.legend(loc="upper left", ncol=2, fontsize=20, bbox_to_anchor=(0, 1.13), handlelength=1.3, columnspacing=1.8)
+    return fig
+
+
+def _medias(grupos: dict, respostas: dict) -> tuple[dict, dict]:
+    """Acurácia e F1 por grupo e condição, na média dos 4 modelos independentes (o GPT-5.4 fica de fora)."""
+    acc, f1 = {}, {}
+    for g, xs in grupos.items():
+        for cond, chave, k in (("sem", "sem_contexto", 0), ("com", "com_contexto", 1)):
+            acc.setdefault(cond, []).append(
+                100 * np.mean([x["dificuldade"][chave][m] == "correta" for x in xs for m in INDEP]))
+            f1.setdefault(cond, []).append(100 * np.mean(
+                [LI.f1(respostas[x["uid"]][m][k], x["resposta"])[0] for x in xs for m in INDEP
+                 if m in respostas.get(x["uid"], {}) and respostas[x["uid"]][m][k]]))
+    return acc, f1
+
+
+def por_tipo(teste: list, respostas: dict) -> tuple[list[Path], dict]:
+    grupos = {t: [x for x in teste if x["tipo"] == t] for t in TIPOS}
+    acc, f1 = _medias(grupos, respostas)
+    rot = [f"{NOME_TIPO[t]}\n(n = {len(grupos[t])})" for t in TIPOS]
+    arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112), "fig5_acuracia_por_tipo")
+    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62), "fig5b_f1_por_tipo")
+    return arqs, {t: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[t])}
+                  for i, t in enumerate(TIPOS)}
+
+
+def por_area(teste: list, respostas: dict) -> tuple[list[Path], dict]:
+    nomes = sorted({AREA_CURTA.get(x["area"], x["area"]) for x in teste})
+    grupos = {a: [x for x in teste if AREA_CURTA.get(x["area"], x["area"]) == a] for a in nomes}
+    acc, _ = _medias(grupos, respostas)
+    ordem = sorted(range(len(nomes)), key=lambda i: acc["sem"][i])       # da mais difícil para a mais fácil
+    nomes = [nomes[i] for i in ordem]
+    acc, f1 = _medias({a: grupos[a] for a in nomes}, respostas)
+    rot = [f"{_quebrar(a, 13)}\n(n = {len(grupos[a])})" for a in nomes]
+    kw = dict(figsize=(25, 8), xfonte=15.5, vfonte=15)
+    arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112, **kw), "fig6_acuracia_por_area")
+    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62, **kw), "fig6b_f1_por_area")
+    return arqs, {a: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[a])}
+                  for i, a in enumerate(nomes)}
 
 
 def lexicais(teste: list, respostas: dict) -> tuple[list[Path], dict]:
@@ -401,10 +419,13 @@ def gerar() -> dict:
     teste = [x for x in banco if x["split"] == "teste"]
     arqs = funil() + composicao(banco) + tipo_e_dificuldade(banco) + divisao(banco)
     a, acc = acuracia(teste)
-    arqs += a + por_tipo(teste) + por_area(teste)
+    t, tipo = por_tipo(teste, respostas)
+    ar, area = por_area(teste, respostas)
+    arqs += a + t + ar
     b, lex = lexicais(teste, respostas)
     arqs += b
-    resumo = {"teste_n": len(teste), "acuracia_teste": acc, "lexicais_teste": lex,
+    resumo = {"teste_n": len(teste), "acuracia_teste": acc, "lexicais_teste": lex, "por_tipo_teste": tipo,
+              "por_area_teste": area,
               "arquivos": [C.relativo(p) for p in arqs]}
     (SAIDA / "numeros.json").write_text(json.dumps(resumo, ensure_ascii=False, indent=1), encoding="utf-8")
     return resumo
