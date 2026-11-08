@@ -1,27 +1,29 @@
-"""Estudo de ablação da geração: quanto cada componente do pipeline rende em questões aceitas e em vocabulário.
+"""Estudo de ablação da geração (v2): quanto cada componente do pipeline rende em questões aceitas e em vocabulário.
 
-Pedido: 1000 questões por braço, a partir de 1000 "vagas" sorteadas do banco final v1 (petroquest_banco_v1), e a
-mesma aceitação para todos os braços. Cada vaga é (documento, bloco foco, tipo) de uma questão do banco gerada por
-janela nos documentos base (v23c, variada, conceitos e as três gerações por tipo), estratificada por tópico x tipo.
+1000 "vagas" sorteadas do banco final v1 (petroquest_banco_v1): (documento, bloco foco, tipo) de questões do banco
+geradas por janela nos documentos base (v23c, variada, conceitos e as três gerações por tipo), estratificadas por
+tópico x tipo. Mesmo gerador (GPT-5.4 high) e a mesma aceitação em todos os braços:
 
-Braços (mesmo gerador, GPT-5.4 high, uma questão por vaga):
-  naive         só o pedido: "gere N questões sobre <tema/escopo do especialista>", sem documento, exemplos,
-                regras ou retroalimentação; uma chamada por tópico com N = vagas do tópico;
-  documento     janela de 3 blocos + regras (prompt ablacao_slot, com as 9 ruins da v23), uma tentativa;
-  sem_externos  documento + retroalimentação (até 3 tentativas; nas novas, as tentativas recusadas com o motivo e os
-                conhecimentos já aceitos no documento), sem exemplos de forma;
-  sem_retro     documento + exemplos de forma (8 de datasets externos ou, em 1/4 das vagas, 6 do dataset de múltipla
-                escolha convertido), uma tentativa;
-  completo      documento + exemplos de forma + retroalimentação.
-A 1ª tentativa de sem_externos é a de documento, e a de completo é a de sem_retro (mesmo prompt, mesmo cache):
-o ganho da retroalimentação é medido nas mesmas vagas.
+  naive              só o pedido "gere N questões sobre <tema/escopo do especialista>", uma chamada por tópico;
+  documentos         naive + a janela de 3 blocos da vaga ("uma questão sobre o bloco [F]"), sem regras nem exemplos;
+  regras             naive + as regras do prompt e os tipos pedidos (por tópico, N questões com a mesma mistura de
+                     tipos das vagas), sem documento e sem exemplos;
+  documentos_regras  janela + regras (prompt ablacao_slot_v2), sem nenhum exemplo de questão, uma tentativa;
+  sem_retro          documentos_regras + exemplos de forma (8 de datasets externos ou, em 1/4 das vagas, 6 do dataset
+                     de múltipla escolha convertido), sem exemplos de questões boas e ruins, uma tentativa;
+  sem_externos       documentos_regras + retroalimentação, sem nenhum exemplo externo nem as convertidas;
+  completo           documentos_regras + exemplos de forma + retroalimentação.
 
-Aceitação (igual para todos): auditor v23 (5 verificações, com os blocos da janela; no naive, os 3 blocos do
-documento do tópico mais parecidos com a questão por TF-IDF) + resposta de até 20 palavras + sustentação total
-(faithfulness) + deduplicação calibrada dentro do braço. A régua determinística só decide novas tentativas.
-Métricas de vocabulário e diversidade: distinct-1/2 e vocabulário rarefeitos, MATTR, MTLD, termos especializados,
-Self-BLEU por tópico, diversidade de embeddings (cosseno médio e Vendi por tópico), aberturas e cópia do documento.
-Saída: relatorios/ablacao_geracao_v1 (ABLACAO.md, resultado.json, questoes_<braço>.jsonl).
+Retroalimentação = exemplos de questões boas e ruins: a semente (boas e ruins da v23, de outros documentos) e as
+geradas pelo próprio pipeline. As vagas de cada documento rodam em ondas de ONDA; cada vaga recebe as aceitas e as
+recusadas (com o motivo) das ondas anteriores do mesmo documento, os conhecimentos já aceitos e, nas novas
+tentativas (até 3, quando a régua ou o auditor recusam), as próprias tentativas recusadas.
+
+Aceitação (igual para todos): auditor v23 (5 verificações, com os blocos da janela; nos braços sem documento, os 3
+blocos do documento do tópico mais parecidos com a questão por TF-IDF) + resposta de até 20 palavras + sustentação
+total (faithfulness) + deduplicação calibrada dentro do braço. A régua determinística só decide novas tentativas.
+O naive é o da v1 (mesmas vagas, mesmo prompt): seus arquivos são copiados de ablacao_geracao_v1.
+Saída: relatorios/ablacao_geracao_v2 (ABLACAO.md, resultado.json, questoes_<braço>.jsonl).
 """
 from __future__ import annotations
 
@@ -30,6 +32,7 @@ import json
 import math
 import random
 import re
+import shutil
 import threading
 import unicodedata
 from collections import Counter, defaultdict
@@ -48,29 +51,36 @@ from . import comum as C
 from .dedup import DedupIncremental, carregar_calibracao, centrar
 from .tipo_unico import CENARIO as CENARIO_TIPO, DEFINICOES as DEFINICOES_TIPO
 from .v22 import validar_auditoria, veredito
-from .v23 import CHAVES_V23, carregar_exemplos, regua_v23
-from .variada import (CONVERTIDAS, bloco_forma, bloco_ruins, carregar_convertidas, carregar_externos,
-                      sortear_convertidas, sortear_externos)
+from .v23 import bloco_exemplos, carregar_exemplos, regua_v23, selecionar_exemplos
+from .variada import (CONVERTIDAS, bloco_forma, carregar_convertidas, carregar_externos, sortear_convertidas,
+                      sortear_externos)
 
-SAIDA = C.QA / "relatorios" / "ablacao_geracao_v1"
+SAIDA = C.QA / "relatorios" / "ablacao_geracao_v2"
+SAIDA_V1 = C.QA / "relatorios" / "ablacao_geracao_v1"
 BANCO = C.QA / "relatorios" / "petroquest_banco_v1" / "banco.jsonl"
 FONTES_BASE = ("v23c", "variada", "conceitos", "tipo_decisao", "tipo_diagnostico", "tipo_procedimento")
 N_VAGAS = 1000
 SEMENTE = 20261108
 TENTATIVAS = 3
+ONDA = 5                   # vagas por documento em cada onda da retroalimentação
 TETO_RESPOSTA = 20
 FRACAO_CONVERTIDAS = 0.25
 GERADOR = "gpt-5-4-petrobras:high"
 AUDITOR = "gpt-5-4-petrobras:high"
 BRACOS = {
-    "naive": {"documento": False, "exemplos": False, "retro": False},
-    "documento": {"documento": True, "exemplos": False, "retro": False},
-    "sem_externos": {"documento": True, "exemplos": False, "retro": True},
-    "sem_retro": {"documento": True, "exemplos": True, "retro": False},
-    "completo": {"documento": True, "exemplos": True, "retro": True},
+    "naive": {"documento": False, "regras": False, "exemplos": False, "retro": False},
+    "documentos": {"documento": True, "regras": False, "exemplos": False, "retro": False},
+    "regras": {"documento": False, "regras": True, "exemplos": False, "retro": False},
+    "documentos_regras": {"documento": True, "regras": True, "exemplos": False, "retro": False},
+    "sem_retro": {"documento": True, "regras": True, "exemplos": True, "retro": False},
+    "sem_externos": {"documento": True, "regras": True, "exemplos": False, "retro": True},
+    "completo": {"documento": True, "regras": True, "exemplos": True, "retro": True},
 }
-NOME_BRACO = {"naive": "Naive (só o tópico)", "documento": "Documento + regras", "sem_externos": "Sem datasets externos",
-              "sem_retro": "Sem retroalimentação", "completo": "Pipeline completo", "banco": "Banco final (referência)"}
+POR_TOPICO = ("naive", "regras")                      # sem documento: N questões por chamada, por tópico
+NOME_BRACO = {"naive": "Naive (só o tópico)", "documentos": "Documentos", "regras": "Regras (sem documento)",
+              "documentos_regras": "Documentos + regras", "sem_retro": "Sem retroalimentação",
+              "sem_externos": "Sem datasets externos", "completo": "Pipeline completo",
+              "banco": "Banco final (referência)"}
 DEFINICOES = {
     **DEFINICOES_TIPO,
     "conceito": ("Pergunta de nomeação: o enunciado descreve a função, a propriedade, o efeito ou o papel de um "
@@ -131,6 +141,31 @@ def validar_slot(d: dict) -> None:
         raise ValueError("Use exatamente as chaves questoes e motivo.")
     if not isinstance(d["questoes"], list) or len(d["questoes"]) != 1 or not isinstance(d["questoes"][0], dict):
         raise ValueError("questoes deve ser uma lista com exatamente 1 objeto.")
+
+
+def validar_documentos(d: dict) -> None:
+    validar_slot(d)
+    q = d["questoes"][0]
+    if set(q) != {"pergunta", "resposta"} or not all(isinstance(q[k], str) and q[k].strip() for k in q):
+        raise ValueError("A questão tem exatamente pergunta e resposta, ambas preenchidas.")
+
+
+CHAVES_REGRAS = {"tipo", "cenario", "conhecimento", "pergunta", "resposta", "explicacao", "resposta_padrao",
+                 "por_que_nao"}
+
+
+def validar_regras(d: dict, pedido: dict) -> None:
+    if not isinstance(d, dict) or set(d) != {"questoes"} or not isinstance(d["questoes"], list):
+        raise ValueError("Use exatamente a chave questoes, com uma lista.")
+    for q in d["questoes"]:
+        if not isinstance(q, dict) or set(q) != CHAVES_REGRAS:
+            raise ValueError("Cada questão tem exatamente as chaves " + ", ".join(sorted(CHAVES_REGRAS)) + ".")
+        if not isinstance(q["cenario"], bool) or not all(
+                isinstance(q[k], str) and q[k].strip() for k in CHAVES_REGRAS - {"cenario"}):
+            raise ValueError("cenario é true ou false; os demais campos são textos preenchidos.")
+    veio = Counter(q["tipo"] for q in d["questoes"])
+    if veio != Counter(pedido):
+        raise ValueError(f"Entregue exatamente {dict(pedido)} por tipo (vieram {dict(veio)}).")
 
 
 def validar_naive(d: dict, n: int) -> None:
@@ -304,7 +339,7 @@ class Ablacao:
         self.pools, self.arq_externos = carregar_externos(externos)
         self.arq_convertidas = Path(convertidas)
         self.convertidas = carregar_convertidas(self.arq_convertidas)
-        self.ruins = carregar_exemplos()["ruins"]
+        self.semente = carregar_exemplos()            # boas e ruins da v23: semente da retroalimentação
         self._clientes, self._embedder = dict(clientes or {}), embedder
         self._trava = threading.Lock()
         self._tfidf: dict = {}
@@ -316,17 +351,25 @@ class Ablacao:
         if len(self.vagas) != self.n:
             raise ValueError(f"{C.relativo(arq)} tem {len(self.vagas)} vagas, não {self.n}; use outra saída")
         self.itens = sorted({v["item"] for v in self.vagas})
+        pos = Counter()
+        self.onda = {}
+        for v in self.vagas:                          # vagas já ordenadas por (documento, foco, tipo)
+            self.onda[v["vaga"]] = pos[v["item"]] // ONDA
+            pos[v["item"]] += 1
+        self._reaproveitar_naive()
         self.docs = {i: blocos(i, self.docs_dir)[1] for i in self.itens}
         self.temas = {i: tema(i) for i in self.itens}
         self._config()
 
     # -------------------------------------------------------------- infraestrutura
     def _config(self) -> None:
-        cfg = {"schema": "ablacao-geracao-v1", "n": self.n, "semente": SEMENTE, "banco_sha256": C.sha(self.banco.read_text(
+        cfg = {"schema": "ablacao-geracao-v2", "onda": ONDA, "n": self.n, "semente": SEMENTE, "banco_sha256": C.sha(self.banco.read_text(
             encoding="utf-8")), "fontes_base": list(FONTES_BASE), "tentativas": TENTATIVAS, "teto_resposta": TETO_RESPOSTA,
             "fracao_convertidas": FRACAO_CONVERTIDAS, "gerador": GERADOR, "auditor": AUDITOR,
             "sustentacao": C.SUSTENTACAO, "dedup": {k: self.cal[k] for k in ("embedding", "limiar_auto", "limiar_juiz", "juiz")},
-            "prompts_sha256": {p: C.sha(C.prompt(p)) for p in ("ablacao_naive", "ablacao_slot", "auditoria_v23")},
+            "prompts_sha256": {p: C.sha(C.prompt(p)) for p in ("ablacao_naive", "ablacao_documentos", "ablacao_regras",
+                                                               "ablacao_slot_v2", "auditoria_v23")},
+            "semente_sha256": C.sha(json.dumps(self.semente, sort_keys=True, ensure_ascii=False)),
             "externos_sha256": C.sha(self.arq_externos.read_text(encoding="utf-8")),
             "convertidas_sha256": C.sha(self.arq_convertidas.read_text(encoding="utf-8")),
             "docs_sha256": {i: C.sha(read_json(self.docs_dir / i / "documento.json")) for i in self.itens}}
@@ -401,7 +444,21 @@ class Ablacao:
         self._ok(nome)
         return True
 
-    # -------------------------------------------------------------- braço naive
+    # -------------------------------------------------------------- braços sem documento (por tópico)
+    def _reaproveitar_naive(self) -> None:
+        """O naive não muda da v1 (mesmas vagas e prompt): copia geração, auditoria, sustentação e deduplicação."""
+        if (self.saida / "naive").exists() or not (SAIDA_V1 / "naive" / "lotes").exists():
+            return
+        if not (SAIDA_V1 / "vagas.jsonl").exists() or C.linhas(SAIDA_V1 / "vagas.jsonl") != self.vagas:
+            return
+        if C.sha(C.prompt("ablacao_naive")) != read_json(SAIDA_V1 / "config.json")["prompts_sha256"]["ablacao_naive"]:
+            return
+        shutil.copytree(SAIDA_V1 / "naive", self.saida / "naive")
+        (self.saida / "sustentacao").mkdir(parents=True, exist_ok=True)
+        for f in (SAIDA_V1 / "sustentacao").glob("naive_*.json"):
+            shutil.copy2(f, self.saida / "sustentacao" / f.name)
+        self.progress("[ablação] naive reaproveitado da v1", flush=True)
+
     def _recuperar(self, item: str, texto: str, k: int = 3) -> list[dict]:
         """Os k blocos do documento do tópico mais parecidos com a questão (TF-IDF), na ordem do documento."""
         from sklearn.feature_extraction.text import TfidfVectorizer
@@ -414,16 +471,30 @@ class Ablacao:
         s = (M @ V.transform([texto]).T).toarray().ravel()
         return [bs[i] for i in sorted(np.argsort(-s, kind="stable")[:k])]
 
-    def _naive_lote(self, item: str) -> bool:
-        arq = self.saida / "naive" / "lotes" / f"{item}.json"
+    def _pedido(self, item: str) -> dict:
+        return dict(sorted(Counter(v["tipo"] for v in self.vagas if v["item"] == item).items()))
+
+    def _sistema_regras(self) -> str:
+        defs = "\n".join(f"- `{t}`: {DEFINICOES[t]} Cenário: {CENARIO[t]}" for t in sorted(DEFINICOES))
+        return C.prompt("ablacao_regras").replace("<<DEFINICOES>>", defs)
+
+    def _lote(self, braco: str, item: str) -> bool:
+        arq = self.saida / braco / "lotes" / f"{item}.json"
         if arq.exists():
             return True
         n = sum(v["item"] == item for v in self.vagas)
-        nome = f"naive_{item}"
+        nome = f"{braco}_{item}"
         try:
-            d = self.cliente("geracao").json(C.prompt("ablacao_naive"), self._tema(item) + f"\n\nQuantidade: {n} questões.",
-                                             tag="ablacao_naive", max_tokens=24000, item=item,
-                                             validate=lambda d: validar_naive(d, n))
+            if braco == "naive":
+                d = self.cliente("geracao").json(C.prompt("ablacao_naive"), self._tema(item) + f"\n\nQuantidade: {n} questões.",
+                                                 tag="ablacao_naive", max_tokens=24000, item=item,
+                                                 validate=lambda d: validar_naive(d, n))
+            else:
+                pedido = self._pedido(item)
+                txt = "; ".join(f"{k} questões do tipo {t}" for t, k in pedido.items())
+                d = self.cliente("geracao").json(self._sistema_regras(), self._tema(item) + f"\n\n<pedido>\n{txt}\n</pedido>",
+                                                 tag="ablacao_regras", max_tokens=32000, item=item,
+                                                 validate=lambda d: validar_regras(d, pedido))
             qs = d["questoes"]
         except Exception as exc:  # noqa: BLE001
             if not _filtrado(exc):
@@ -434,37 +505,37 @@ class Ablacao:
         self._ok(nome)
         return True
 
-    def _naive_questoes(self) -> list[dict]:
+    def _questoes_lote(self, braco: str) -> list[dict]:
         out = []
         for item in self.itens:
-            arq = self.saida / "naive" / "lotes" / f"{item}.json"
+            arq = self.saida / braco / "lotes" / f"{item}.json"
             if not arq.exists():
                 continue
             d = read_json(arq)
             for k in range(d["pedidas"]):
                 q = d["questoes"][k] if k < len(d["questoes"]) else None
-                out.append({"uid": f"naive:{item}:{k + 1:03d}", "braco": "naive", "item": item, "tipo": None,
-                            "tentativa": 1, **({"pergunta": q["pergunta"], "resposta": q["resposta"]} if q else
-                                               {"pergunta": None, "resposta": None})})
+                out.append({"uid": f"{braco}:{item}:{k + 1:03d}", "braco": braco, "item": item,
+                            "tipo": (q or {}).get("tipo"), "tentativa": 1, "conhecimento": (q or {}).get("conhecimento"),
+                            "explicacao": (q or {}).get("explicacao"),
+                            "pergunta": (q or {}).get("pergunta"), "resposta": (q or {}).get("resposta")})
         return out
 
-    def naive(self) -> int:
-        falhas = self._paralelo([i for i in self.itens], self._naive_lote, "naive: geração")
-        qs = [q for q in self._naive_questoes() if q["pergunta"]]
+    def _blocos_recuperados(self, q: dict):
+        sel = self._recuperar(q["item"], q["pergunta"] + " " + q["resposta"])
+        txt = "\n\n".join(f"[B{k}] {b['titulo_capitulo']} / {b['subtitulo']}\n{b['texto']}" for k, b in enumerate(sel, 1))
+        return sel, txt
+
+    def por_topico(self, braco: str) -> int:
+        falhas = self._paralelo(list(self.itens), lambda i: self._lote(braco, i), f"{braco}: geração")
+        qs = [q for q in self._questoes_lote(braco) if q["pergunta"]]
 
         def auditar(q):
-            sel = self._recuperar(q["item"], q["pergunta"] + " " + q["resposta"])
-            txt = "\n\n".join(f"[B{k}] {b['titulo_capitulo']} / {b['subtitulo']}\n{b['texto']}"
-                              for k, b in enumerate(sel, 1))
-            return self._auditar(self.saida / "naive" / "auditoria" / f"{_nome_arq(q['uid'])}.json", q,
-                                 "nao_declarado", txt)
-        return falhas + self._paralelo(qs, auditar, "naive: auditoria")
+            return self._auditar(self.saida / braco / "auditoria" / f"{_nome_arq(q['uid'])}.json", q,
+                                 q["tipo"] or "nao_declarado", self._blocos_recuperados(q)[1])
+        return falhas + self._paralelo(qs, auditar, f"{braco}: auditoria")
 
-    # -------------------------------------------------------------- braços com documento
+    # -------------------------------------------------------------- braços com documento (por vaga)
     def _arq(self, braco: str, vaga: str, t: int, pasta: str = "tentativas") -> Path:
-        # 1ª tentativa compartilhada: sem_externos usa a de documento e completo a de sem_retro
-        if t == 1 and braco in ("sem_externos", "completo"):
-            braco = {"sem_externos": "documento", "completo": "sem_retro"}[braco]
         return self.saida / braco / pasta / f"{vaga}_t{t}.json"
 
     def _janela(self, v: dict):
@@ -477,10 +548,12 @@ class Ablacao:
             return bloco_forma(sortear_convertidas(self.convertidas, v["item"], v["foco"] * 10 + t, (v["tipo"],)))
         return bloco_forma(sortear_externos(self.pools, v["item"], v["foco"], 10 * t + _h(v["tipo"]) % 7))
 
-    def sistema(self, tipo: str, item: str) -> str:
-        s = (C.prompt("ablacao_slot").replace("<<TIPO>>", tipo).replace("<<DEFINICAO>>", DEFINICOES[tipo])
+    def sistema(self, braco: str, tipo: str, item: str) -> str:
+        s = (C.prompt("ablacao_slot_v2").replace("<<TIPO>>", tipo).replace("<<DEFINICAO>>", DEFINICOES[tipo])
              .replace("<<CENARIO>>", CENARIO[tipo]))
-        return s + "\n\n" + bloco_ruins([e for e in self.ruins if e["item"] != item])
+        if BRACOS[braco]["retro"]:            # semente da retroalimentação: boas e ruins da v23, de outros documentos
+            s += "\n\n# Exemplos de referência\n\n" + bloco_exemplos(*selecionar_exemplos(self.semente, item))
+        return s
 
     def _estado(self, braco: str, v: dict, t: int) -> dict | None:
         """Tentativa t da vaga: questão, régua e auditoria (None se ainda não gerada)."""
@@ -503,16 +576,43 @@ class Ablacao:
             return f"recusada pelo auditor ({a['motivo']}): {a['justificativa']}{extra}"
         return None
 
-    def _cobertos(self, braco: str, item: str, ate: int) -> str:
-        linhas = []
-        for v in self.vagas:
-            if v["item"] != item:
+    def _anteriores(self, braco: str, v: dict, t: int) -> list[dict]:
+        """Tentativas de outras vagas do mesmo documento já concluídas antes desta: ondas anteriores (todas as
+        tentativas) e, na mesma onda, as tentativas anteriores a t. Ordem: onda, vaga, tentativa."""
+        out = []
+        w = self.onda[v["vaga"]]
+        for u in self.vagas:
+            if u["item"] != v["item"] or u["vaga"] == v["vaga"] or self.onda[u["vaga"]] > w:
                 continue
-            for t in range(1, ate):
-                d = self._estado(braco, v, t)
-                if d and d.get("questao") and not d["regua"] and d["auditoria"] and d["auditoria"]["aprovada"]:
-                    linhas.append(f"- {d['questao']['conhecimento']} (resposta: {d['questao']['resposta']})")
-        return "\n".join(linhas[:60]) or "Nenhum ainda."
+            for k in range(1, (TENTATIVAS if self.onda[u["vaga"]] < w else t - 1) + 1):
+                d = self._estado(braco, u, k)
+                if d and self._tem_questao(d) and (d["regua"] or d["auditoria"]):
+                    out.append(d)
+        return out
+
+    def _retro(self, braco: str, v: dict, t: int) -> list[str]:
+        partes = []
+        if t > 1:
+            ant = []
+            for k in range(1, t):
+                d = self._estado(braco, v, k)
+                q = d.get("questao") or {}
+                ant.append(f"- {q.get('pergunta', '(sem questão)')} → {q.get('resposta', '-')}\n  {self._recusa(d)}")
+            partes.append("<tentativas_anteriores>\n" + "\n".join(ant) + "\n</tentativas_anteriores>")
+        ds = self._anteriores(braco, v, t)
+        boas = [d for d in ds if self._recusa(d) is None and d["auditoria"] and d["auditoria"]["aprovada"]]
+        ruins = [d for d in ds if self._recusa(d)]
+        cob = "\n".join(f"- {d['questao'].get('conhecimento', '')} (resposta: {d['questao']['resposta']})"
+                         for d in boas[-60:])
+        partes.append(f"<conhecimentos_cobertos>\n{cob or 'Nenhum ainda.'}\n</conhecimentos_cobertos>")
+        if boas or ruins:
+            linhas = ["Aceitas:"] + [f"[{d['questao'].get('tipo', '')}] Pergunta: {d['questao']['pergunta']}\n"
+                                     f"Resposta: {d['questao']['resposta']}" for d in boas[-4:]]
+            linhas += ["", "Recusadas:"] + [f"[{d['questao'].get('tipo', '')}] Pergunta: {d['questao']['pergunta']}\n"
+                                            f"Resposta: {d['questao']['resposta']}\nMotivo: {self._recusa(d)}"
+                                            for d in ruins[-4:]]
+            partes.append("<exemplos_do_pipeline>\n" + "\n".join(linhas) + "\n</exemplos_do_pipeline>")
+        return partes
 
     def _tentar(self, braco: str, v: dict, t: int) -> bool:
         cfg = BRACOS[braco]
@@ -520,22 +620,24 @@ class Ablacao:
         jan, textos, txt = self._janela(v)
         if not arq.exists():
             partes = [self._tema(v["item"])]
-            if t > 1:
-                ant = []
-                for k in range(1, t):
-                    d = self._estado(braco, v, k)
-                    q = d.get("questao") or {}
-                    ant.append(f"- {q.get('pergunta', '(sem questão)')} → {q.get('resposta', '-')}\n  {self._recusa(d)}")
-                partes += ["<tentativas_anteriores>\n" + "\n".join(ant) + "\n</tentativas_anteriores>",
-                           f"<conhecimentos_cobertos>\n{self._cobertos(braco, v['item'], t)}\n</conhecimentos_cobertos>"]
+            if cfg["retro"]:
+                partes += self._retro(braco, v, t)
             if cfg["exemplos"]:
                 partes.append(self._exemplos(v, t))
             partes.append(f"<janela>\n{txt}\n</janela>")
             try:
-                d = self.cliente("geracao").json(self.sistema(v["tipo"], v["item"]), "\n\n".join(partes),
-                                                 tag="ablacao_slot", max_tokens=12000, item=v["item"], validate=validar_slot)
-                q = d["questoes"][0]
-                rec = {"vaga": v["vaga"], "tentativa": t, "questao": q, "regua": regua_v23(q, textos, (v["tipo"],), "F")}
+                if cfg["regras"]:
+                    d = self.cliente("geracao").json(self.sistema(braco, v["tipo"], v["item"]), "\n\n".join(partes),
+                                                     tag="ablacao_slot", max_tokens=12000, item=v["item"],
+                                                     validate=validar_slot)
+                    q = d["questoes"][0]
+                    regua = regua_v23(q, textos, (v["tipo"],), "F")
+                else:                         # só documentos: sem regras, sem régua
+                    d = self.cliente("geracao").json(C.prompt("ablacao_documentos"), "\n\n".join(partes),
+                                                     tag="ablacao_documentos", max_tokens=4000, item=v["item"],
+                                                     validate=validar_documentos)
+                    q, regua = d["questoes"][0], []
+                rec = {"vaga": v["vaga"], "tentativa": t, "questao": q, "regua": regua}
             except Exception as exc:  # noqa: BLE001
                 if not _filtrado(exc):
                     self._falha(nome, exc)
@@ -548,7 +650,8 @@ class Ablacao:
         ultima = t == TENTATIVAS or not cfg["retro"]
         # a régua decide a nova tentativa; a última (ou única) tentativa é sempre auditada, para a aceitação comum
         if self._tem_questao(d) and (not d["regua"] or ultima):
-            return self._auditar(self._arq(braco, v["vaga"], t, "auditoria"), {**q, "item": v["item"]}, v["tipo"], txt)
+            tipo = v["tipo"] if cfg["regras"] else "nao_declarado"
+            return self._auditar(self._arq(braco, v["vaga"], t, "auditoria"), {**q, "item": v["item"]}, tipo, txt)
         return True
 
     @staticmethod
@@ -573,21 +676,28 @@ class Ablacao:
 
     def documento(self, bracos: list[str]) -> int:
         falhas = 0
-        for t in range(1, TENTATIVAS + 1):
-            for b in bracos:              # 1ª tentativa: os braços base primeiro (os com retro reaproveitam)
-                tarefas = [v for v in self.vagas if self._proxima(b, v) == t]
-                falhas += self._paralelo(tarefas, lambda v, b=b, t=t: self._tentar(b, v, t), f"{b}: tentativa {t}")
+        simples = [b for b in bracos if not BRACOS[b]["retro"]]
+        tarefas = [(b, v) for b in simples for v in self.vagas if self._proxima(b, v) == 1]
+        falhas += self._paralelo(tarefas, lambda x: self._tentar(x[0], x[1], 1), "uma tentativa: " + ", ".join(simples))
+        retro = [b for b in bracos if BRACOS[b]["retro"]]
+        for w in range(max(self.onda.values()) + 1 if retro else 0):
+            for t in range(1, TENTATIVAS + 1):
+                tarefas = [(b, v) for b in retro for v in self.vagas
+                           if self.onda[v["vaga"]] == w and self._proxima(b, v) == t]
+                falhas += self._paralelo(tarefas, lambda x, t=t: self._tentar(x[0], x[1], t),
+                                         f"retroalimentação: onda {w + 1}, tentativa {t}")
         return falhas
 
     # -------------------------------------------------------------- questão final de cada vaga
     def finais(self, braco: str) -> list[dict]:
-        if braco == "naive":
+        if braco in POR_TOPICO:
             out = []
-            for q in self._naive_questoes():
-                aud = self.saida / "naive" / "auditoria" / f"{_nome_arq(q['uid'])}.json"
+            for q in self._questoes_lote(braco):
+                aud = self.saida / braco / "auditoria" / f"{_nome_arq(q['uid'])}.json"
                 a = read_json(aud) if aud.exists() and q["pergunta"] else None
-                sel = self._recuperar(q["item"], q["pergunta"] + " " + q["resposta"]) if q["pergunta"] else []
-                out.append({**q, "auditoria": a, "regua": [], "tipo": a["tipo_sugerido"] if a else None,
+                sel = self._blocos_recuperados(q)[0] if q["pergunta"] else []
+                out.append({**q, "auditoria": a, "regua": [],
+                            "tipo": q["tipo"] or (a["tipo_sugerido"] if a else None),
                             "blocos_contexto": [{"id": f"B{k}", "texto": b["texto"], "indice_documento": b["indice"]}
                                                 for k, b in enumerate(sel, 1)],
                             "fonte_texto": "\n".join(b["texto"] for b in sel)})
@@ -601,7 +711,9 @@ class Ablacao:
             q = fim["questao"] or {}
             jan, _, _ = self._janela(v)
             out.append({"uid": f"{braco}:{v['vaga']}", "braco": braco, "vaga": v["vaga"], "item": v["item"],
-                        "tipo": v["tipo"], "tentativa": fim["tentativa"], "tentativas": len(ds),
+                        "tipo": v["tipo"] if BRACOS[braco]["regras"] else (
+                            (fim["auditoria"] or {}).get("tipo_sugerido")),
+                        "tentativa": fim["tentativa"], "tentativas": len(ds), "onda": self.onda[v["vaga"]] + 1,
                         "pergunta": q.get("pergunta"), "resposta": q.get("resposta"), "conhecimento": q.get("conhecimento"),
                         "regua": fim["regua"], "auditoria": fim["auditoria"],
                         "blocos_contexto": [{"id": f"B{k}", "texto": b["texto"], "indice_documento": b["indice"]}
@@ -666,9 +778,10 @@ class Ablacao:
     # -------------------------------------------------------------- execução
     def executar(self) -> int:
         falhas = 0
-        if "naive" in self.bracos:
-            falhas += self.naive()
-        doc = [b for b in ("documento", "sem_retro", "sem_externos", "completo") if b in self.bracos]
+        for b in POR_TOPICO:
+            if b in self.bracos:
+                falhas += self.por_topico(b)
+        doc = [b for b in BRACOS if b not in POR_TOPICO and b in self.bracos]
         falhas += self.documento(doc)
         finais = {b: self.finais(b) for b in self.bracos}
         falhas += self.sustentar([q for b in self.bracos for q in finais[b] if self.aprovada_auditor(q)])
@@ -732,7 +845,7 @@ class Ablacao:
                  "aceitas_por_tipo": dict(sorted(Counter(q["tipo"] or "?" for q in ac).items())),
                  "vocabulario_geradas": vocabulario(ger, m_ger, df, len(todos), emb),
                  "vocabulario_aceitas": vocabulario(ac, m_ac, df, len(todos), emb)}
-            if b == "naive":
+            if b in POR_TOPICO:
                 criterio = ("sem_documento", "alternativa_excluida", "elemento_unico")
                 r["validas_sem_exigir_fonte"] = sum(
                     1 for q in ger if q.get("auditoria") and all(q["auditoria"].get(k) for k in criterio)
@@ -742,8 +855,8 @@ class Ablacao:
             res["bracos"][b] = r
         res["referencia_banco"] = {"vocabulario": vocabulario(ref, m_ger, df, len(todos), emb),
                                    "vocabulario_rarefeito_aceitas": vocabulario(ref, m_ac, df, len(todos), emb)}
-        pares = (("completo", "sem_retro"), ("sem_externos", "documento"), ("completo", "sem_externos"),
-                 ("sem_retro", "documento"))
+        pares = (("documentos_regras", "documentos"), ("sem_retro", "documentos_regras"),
+                 ("sem_externos", "documentos_regras"), ("completo", "sem_retro"), ("completo", "sem_externos"))
         for a, b in pares:
             if a in finais and b in finais:
                 va = {q["vaga"]: bool(q.get("aceita")) for q in finais[a]}
@@ -778,7 +891,7 @@ def markdown(r: dict) -> str:
     bs = list(r["bracos"])
     out = ["# Ablação da geração de questões", "",
            f"{r['n_vagas']} vagas (documento, bloco foco, tipo) sorteadas do banco final v1; cada braço gera uma questão "
-           "por vaga (o naive, o mesmo número por tópico). Aceita = auditor v23 + resposta de até 20 palavras + "
+           "por vaga (os braços sem documento, o mesmo número por tópico). Aceita = auditor v23 + resposta de até 20 palavras + "
            "sustentação total + não redundante dentro do braço.", "",
            "## Taxa de aceite", "", "| Braço | Geradas | Auditor | Sustentadas | Aceitas | Taxa (IC 95%) |",
            "|---|---|---|---|---|---|"]
@@ -786,10 +899,11 @@ def markdown(r: dict) -> str:
         x = r["bracos"][b]
         out.append(f"| {NOME_BRACO[b]} | {x['geradas']} | {x['aprovadas_auditor']} | {x['sustentadas']} | {x['aceitas']} | "
                    f"{_f(x['taxa_aceite'])}% ({_f(x['ic95'][0])}–{_f(x['ic95'][1])}) |")
-    if "naive" in r["bracos"]:
-        out += ["", f"Naive sem exigir a fonte (auditor sem a verificação de sustentação): "
-                    f"{r['bracos']['naive']['validas_sem_exigir_fonte']} válidas."]
-    out += ["", "Aceitas por tentativa (ganho da retroalimentação nas mesmas vagas):", ""]
+    for b in POR_TOPICO:
+        if b in r["bracos"]:
+            out += ["", f"{NOME_BRACO[b]} sem exigir a fonte (auditor sem a verificação de sustentação): "
+                        f"{r['bracos'][b]['validas_sem_exigir_fonte']} válidas."]
+    out += ["", "Aceitas por tentativa (retroalimentação: novas tentativas nas mesmas vagas):", ""]
     for b in bs:
         out.append(f"- {NOME_BRACO[b]}: {r['bracos'][b]['aceitas_por_tentativa']}")
     if r["pareados"]:

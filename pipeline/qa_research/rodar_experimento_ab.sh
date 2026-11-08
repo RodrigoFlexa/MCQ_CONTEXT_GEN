@@ -26,8 +26,9 @@
 #                        rubrica de dificuldade do especialista
 #   banco                banco final: poda, revisão de unicidade das questões que o GPT-5 erra e teto por tópico
 #                        (petroquest_banco_v1/BANCO.md e banco.jsonl)
-#   ablacao              ablação da geração: 1000 vagas do banco final, 5 braços (naive, documento, sem datasets
-#                        externos, sem retroalimentação, completo), taxa de aceite e vocabulário (ablacao_geracao_v1)
+#   ablacao              ablação da geração v2: 1000 vagas do banco final, 7 braços (naive, documentos, regras,
+#                        documentos + regras, sem retroalimentação, sem datasets externos, completo); o naive vem da v1;
+#                        taxa de aceite e vocabulário (ablacao_geracao_v2)
 #   externos             juiz padrão sobre as respostas dos modelos Llama geradas na DL-28 (rodar_llama_dl28.sh)
 #   rubrica              só a classificação pela rubrica do especialista (petroquest_final_v2/rubrica/RUBRICA.md)
 #   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
@@ -182,7 +183,7 @@ if [[ "$etapa" == "externos" ]]; then
 fi
 if [[ "$etapa" == "ablacao" ]]; then
     # chamadas independentes (uma questão por vaga): 24 em paralelo por padrão; um --workers explícito prevalece
-    rodar "ablação da geração (5 braços x 1000 questões)" ablacao --workers 24 || fim_erro ablacao
+    rodar "ablação da geração v2 (7 braços x 1000 questões)" ablacao --workers 24 || fim_erro ablacao
 fi
 if [[ "$etapa" == "antigo" ]]; then
     # 2 chamadas por questão (2156 questões): 16 em paralelo por padrão; um --workers explícito prevalece
@@ -208,8 +209,8 @@ elif [[ "$etapa" == "externos" ]]; then
     echo "  cat pipeline/qa_research/relatorios/avaliacao_externos/QUALIDADE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/avaliacao_externos \"Resultados: juiz nos modelos Llama\""
 elif [[ "$etapa" == "ablacao" ]]; then
-    echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v1/ABLACAO.md"
-    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v1 \"Resultados: ablação da geração\""
+    echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v2/ABLACAO.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v2 \"Resultados: ablação da geração v2\""
 elif [[ "$etapa" == "banco" ]]; then
     echo "  cat pipeline/qa_research/relatorios/petroquest_banco_v1/BANCO.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_banco_v1 \"Resultados: banco final v1\""

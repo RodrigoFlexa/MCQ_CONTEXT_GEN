@@ -1511,20 +1511,32 @@ class SplitsTests(unittest.TestCase):
 
 
 class FalsoAblacao:
-    """Gerador, auditor e sustentação simulados da ablação. Na 1ª tentativa, as vagas pares saem com um defeito que o
+    """Gerador, auditor e sustentação simulados da ablação. Na 1ª tentativa, metade das vagas sai com um defeito que o
     auditor recusa; com <tentativas_anteriores> no prompt, o gerador corrige."""
     def __init__(self):
-        self.chamadas, self.usuarios = Counter(), defaultdict(list)
+        self.chamadas, self.usuarios, self.sistemas = Counter(), defaultdict(list), defaultdict(list)
 
     def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
         self.chamadas[tag] += 1
         self.usuarios[tag].append(user)
+        self.sistemas[tag].append(system)
+        f = None
+        if "<janela>" in user:
+            f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d+\]|\n</janela>)", user, re.S).group(1)
         if tag == "ablacao_naive":
             n = int(re.search(r"Quantidade: (\d+)", user).group(1))
             d = {"questoes": [{"pergunta": f"Qual mecanismo explica o fenômeno {k} no separador?",
                                "resposta": f"Mecanismo {k}."} for k in range(n)]}
+        elif tag == "ablacao_regras":
+            pedido = re.findall(r"(\d+) questões do tipo (\w+)", user)
+            d = {"questoes": [{"tipo": t, "cenario": t in ("decisao", "diagnostico"), "conhecimento": f"c {t} {k}",
+                               "pergunta": f"Qual princípio de {t} explica o caso {k} da planta?",
+                               "resposta": f"Princípio {t} {k}.", "explicacao": "e", "resposta_padrao": "p",
+                               "por_que_nao": "q"} for n, t in pedido for k in range(int(n))]}
+        elif tag == "ablacao_documentos":
+            d = {"motivo": "", "questoes": [{"pergunta": f"O que descreve {' '.join(f.split()[:6])}?",
+                                             "resposta": " ".join(f.split()[:4])}]}
         elif tag == "ablacao_slot":
-            f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d+\]|\n</janela>)", user, re.S).group(1)
             tipo = re.search(r"do tipo `(\w+)`", system).group(1)
             ruim = "DEFEITO " if "<tentativas_anteriores>" not in user and int(hashlib.md5(f.encode()).hexdigest(), 16) % 2 else ""
             d = {"motivo": "", "questoes": [{
@@ -1578,42 +1590,70 @@ class AblacaoTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             selecionar(self.banco, 50)
 
-    def test_bracos_aceitacao_comum_e_retroalimentacao(self):
+    def test_sete_bracos_componentes_isolados(self):
         f = FalsoAblacao()
         ab = self.a(f)
         self.assertEqual(ab.executar(), 0)
         d = self.exp / "ablacao"
-        q = {b: C.linhas(d / f"questoes_{b}.jsonl") for b in ("naive", "documento", "sem_externos", "sem_retro", "completo")}
-        self.assertEqual(f.chamadas["ablacao_naive"], 1)                      # um pedido por tópico
-        self.assertEqual(len(q["naive"]), 8)
-        ruins = sum("DEFEITO" in x["pergunta"] for x in q["documento"])
+        bracos = ("naive", "documentos", "regras", "documentos_regras", "sem_retro", "sem_externos", "completo")
+        q = {b: C.linhas(d / f"questoes_{b}.jsonl") for b in bracos}
+        self.assertEqual((f.chamadas["ablacao_naive"], f.chamadas["ablacao_regras"]), (1, 1))   # uma por tópico
+        self.assertEqual(f.chamadas["ablacao_documentos"], 8)
+        self.assertIn("4 questões do tipo decisao", f.usuarios["ablacao_regras"][0])
+        self.assertNotIn("<janela>", f.usuarios["ablacao_regras"][0])
+        self.assertTrue(all("Critérios" not in s for s in f.sistemas["ablacao_documentos"]))    # sem regras
+        ruins = sum("DEFEITO" in x["pergunta"] for x in q["documentos_regras"])
         self.assertTrue(0 < ruins < 8)
-        # 1ª tentativa compartilhada: 8 (sem exemplos) + 8 (com exemplos); 2ª só nas recusadas dos braços com retro
-        self.assertEqual(f.chamadas["ablacao_slot"], 16 + 2 * ruins)
-        us = f.usuarios["ablacao_slot"]
-        self.assertTrue(all("<tentativas_anteriores>" in u and "<conhecimentos_cobertos>" in u and "DEFEITO" in u
-                            for u in us if "<tentativas_anteriores>" in u))
-        self.assertEqual(sum("<exemplos_de_forma>" in u for u in us), 8 + ruins)
+        # 4 braços x 8 vagas na 1ª tentativa (nada compartilhado) + novas tentativas nos 2 braços com retro
+        self.assertEqual(f.chamadas["ablacao_slot"], 32 + 2 * ruins)
+        us, ss = f.usuarios["ablacao_slot"], f.sistemas["ablacao_slot"]
+        # exemplos de forma só em sem_retro e completo; semente boas/ruins só nos braços com retroalimentação
+        self.assertEqual(sum("<exemplos_de_forma>" in u for u in us), 16 + ruins)
+        com_semente = [u for u, s_ in zip(us, ss) if "# Exemplos de referência" in s_]
+        self.assertEqual(len(com_semente), 16 + 2 * ruins)
+        self.assertTrue(all("<conhecimentos_cobertos>" in u for u in com_semente))
+        self.assertFalse(any("<conhecimentos_cobertos>" in u for u, s_ in zip(us, ss) if "# Exemplos de referência" not in s_))
+        # ondas de 5: as 3 vagas da 2ª onda já veem as aceitas e as recusadas da 1ª
+        self.assertTrue(any("<exemplos_do_pipeline>" in u and "Aceitas:" in u for u in com_semente))
+        self.assertEqual({x["onda"] for x in q["completo"]}, {1, 2})
         ac = {b: sum(x["aceita"] for x in v) for b, v in q.items()}
-        self.assertEqual((ac["documento"], ac["sem_retro"]), (8 - ruins, 8 - ruins))
-        self.assertEqual((ac["sem_externos"], ac["completo"], ac["naive"]), (8, 8, 8))
-        self.assertEqual(Counter(x["tentativa"] for x in q["completo"] if x["aceita"]), Counter({1: 8 - ruins, 2: ruins}))
+        self.assertEqual((ac["documentos_regras"], ac["sem_retro"]), (8 - ruins, 8 - ruins))
+        self.assertEqual((ac["sem_externos"], ac["completo"], ac["naive"], ac["regras"], ac["documentos"]),
+                         (8, 8, 8, 8, 8))
+        self.assertEqual({x["tipo"] for x in q["regras"]}, {"mecanismo", "decisao"})
         r = read_json(d / "resultado.json")
         self.assertEqual(r["pareados"]["completo_vs_sem_retro"]["so_primeiro"], ruins)
-        self.assertEqual(r["bracos"]["completo"]["taxa_aceite"], 100.0)
-        for k in ("distinct_2", "mtld", "self_bleu_por_topico", "vendi_relativo_por_topico", "termos_especializados"):
-            self.assertIn(k, r["bracos"]["completo"]["vocabulario_aceitas"])
+        self.assertIn("documentos_regras_vs_documentos", r["pareados"])
+        self.assertIn("validas_sem_exigir_fonte", r["bracos"]["regras"])
         md = (d / "ABLACAO.md").read_text(encoding="utf-8")
-        self.assertIn("Taxa de aceite", md)
-        self.assertIn("Pipeline completo", md)
+        self.assertIn("Regras (sem documento)", md)
         antes = sum(f.chamadas.values())
         self.assertEqual(self.a(f).executar(), 0)                               # retomada: nada é refeito
         self.assertEqual(sum(f.chamadas.values()), antes)
 
+    def test_naive_reaproveitado_da_v1(self):
+        from pipeline.qa_research.experimento_ab import ablacao as A
+        f = FalsoAblacao()
+        v1 = self.exp / "v1"
+        orig = A.SAIDA_V1
+        try:
+            A.SAIDA_V1 = v1
+            ab = A.Ablacao(v1, banco=self.banco, exp=self.exp, docs=self.exp / "docs" / "antigo", n=8,
+                           bracos=["naive"], externos=self.ext, convertidas=self.conv,
+                           clientes={"geracao": f, "auditoria": f, "sustentacao": f, "dedup_juiz": NuncaRedundante()},
+                           embedder=Emb(), workers=2, **SILENCIO)
+            self.assertEqual(ab.executar(), 0)
+            antes = sum(f.chamadas.values())
+            self.assertEqual(self.a(f, bracos=["naive"]).executar(), 0)
+            self.assertEqual(sum(f.chamadas.values()), antes)                     # nada do naive é refeito
+            self.assertTrue((self.exp / "ablacao" / "naive" / "lotes" / f"{ITEM}.json").exists())
+        finally:
+            A.SAIDA_V1 = orig
+
     def test_um_braco_sozinho_e_config_fixa(self):
         f = FalsoAblacao()
         self.assertEqual(self.a(f, bracos=["completo"]).executar(), 0)
-        self.assertTrue((self.exp / "ablacao" / "sem_retro" / "tentativas").exists())   # 1ª tentativa compartilhada
+        self.assertFalse((self.exp / "ablacao" / "sem_retro").exists())         # nada compartilhado entre braços
         with self.assertRaises(ValueError):
             self.a(f, n=6)
 
