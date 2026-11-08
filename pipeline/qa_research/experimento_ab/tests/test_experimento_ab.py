@@ -6,6 +6,7 @@ import re
 import shutil
 import tempfile
 import unittest
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -1507,3 +1508,122 @@ class SplitsTests(unittest.TestCase):
         self.assertNotEqual(grupo_base("v23:02_02:j:r1:018:1"), grupo_base("variada:02_02:j:r1:018:1"))
         self.assertEqual(grupo_base("antigo:01_01:j:r1:003:2:ref"), "base:01_01:j:3")
         self.assertEqual(grupo_base("v23c:02_02:c:C21:t2:1"), "v23c:02_02:c:C21:t2:1")
+
+
+class FalsoAblacao:
+    """Gerador, auditor e sustentação simulados da ablação. Na 1ª tentativa, as vagas pares saem com um defeito que o
+    auditor recusa; com <tentativas_anteriores> no prompt, o gerador corrige."""
+    def __init__(self):
+        self.chamadas, self.usuarios = Counter(), defaultdict(list)
+
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        self.chamadas[tag] += 1
+        self.usuarios[tag].append(user)
+        if tag == "ablacao_naive":
+            n = int(re.search(r"Quantidade: (\d+)", user).group(1))
+            d = {"questoes": [{"pergunta": f"Qual mecanismo explica o fenômeno {k} no separador?",
+                               "resposta": f"Mecanismo {k}."} for k in range(n)]}
+        elif tag == "ablacao_slot":
+            f = re.search(r"\[F\] [^\n]*\n(.+?)(?:\n\n\[A\d+\]|\n</janela>)", user, re.S).group(1)
+            tipo = re.search(r"do tipo `(\w+)`", system).group(1)
+            ruim = "DEFEITO " if "<tentativas_anteriores>" not in user and int(hashlib.md5(f.encode()).hexdigest(), 16) % 2 else ""
+            d = {"motivo": "", "questoes": [{
+                "tipo": tipo, "cenario": tipo in ("decisao", "diagnostico"), "conhecimento": f"relação {f[:30]}",
+                "pergunta": f"Qual elemento técnico {ruim}explica {' '.join(f.split()[:6])}?",
+                "resposta": " ".join(f.split()[:4]), "explicacao": "Os blocos sustentam.",
+                "resposta_padrao": "Outro elemento qualquer.", "por_que_nao": "O traço X o exclui.",
+                "fundamentos": [{"bloco": "F", "trecho": " ".join(f.split()[:5])}]}]}
+        elif tag == "ablacao_auditoria":
+            ok = "DEFEITO" not in user
+            d = {"sem_documento": True, "resposta_alternativa": "Outra coisa.", "alternativa_excluida": ok,
+                 "atalho": False, "sustentada": True, "elemento_unico": True, "tipo_sugerido": "mecanismo",
+                 "justificativa": "ok" if ok else "há outra resposta"}
+        elif tag == "ablacao_faithfulness":
+            b = json.loads(user)["blocos"][0]
+            d = {"cobertura_completa": True, "observacoes": "",
+                 "afirmacoes": [{"afirmacao": "a", "veredito": "sustentada", "justificativa": "j",
+                                 "evidencias": [{"bloco": b["id"], "trecho": b["texto"][:20]}]}]}
+        else:
+            raise AssertionError(tag)
+        if validate:
+            validate(d)
+        return d
+
+
+class AblacaoTests(unittest.TestCase):
+    def setUp(self):
+        VariadaTests.setUp(self)
+        _, self.bs = blocos(ITEM, self.exp / "docs" / "antigo")
+        tipos = ("mecanismo", "decisao", "conceito")
+        self.banco = self.exp / "banco.jsonl"
+        C.gravar_jsonl(self.banco, [
+            {"id": f"PQ-{k:04d}", "uid": f"{('variada', 'tipo_decisao', 'v22')[k % 3]}:{ITEM}:j:r1:{k % len(self.bs):03d}:1",
+             "item": ITEM, "tipo": tipos[k % 3], "pergunta": f"Pergunta {k}?", "resposta": f"Resposta {k}."}
+            for k in range(30)])
+
+    def a(self, f, **kw):
+        from pipeline.qa_research.experimento_ab.ablacao import Ablacao
+        cl = {"geracao": f, "auditoria": f, "sustentacao": f, "dedup_juiz": NuncaRedundante()}
+        return Ablacao(self.exp / "ablacao", banco=self.banco, exp=self.exp, docs=self.exp / "docs" / "antigo",
+                       n=kw.pop("n", 8), externos=self.ext, convertidas=self.conv, clientes=cl, embedder=Emb(),
+                       workers=4, **{**SILENCIO, **kw})
+
+    def test_vagas_estratificadas_e_distintas(self):
+        from pipeline.qa_research.experimento_ab.ablacao import selecionar
+        v = selecionar(self.banco, 8)
+        self.assertEqual(len(v), 8)
+        self.assertEqual(len({(x["item"], x["foco"], x["tipo"]) for x in v}), 8)
+        self.assertTrue(all(not x["ref_uid"].startswith("v22:") for x in v))   # só documentos base
+        self.assertEqual(Counter(x["tipo"] for x in v), Counter({"mecanismo": 4, "decisao": 4}))
+        with self.assertRaises(ValueError):
+            selecionar(self.banco, 50)
+
+    def test_bracos_aceitacao_comum_e_retroalimentacao(self):
+        f = FalsoAblacao()
+        ab = self.a(f)
+        self.assertEqual(ab.executar(), 0)
+        d = self.exp / "ablacao"
+        q = {b: C.linhas(d / f"questoes_{b}.jsonl") for b in ("naive", "documento", "sem_externos", "sem_retro", "completo")}
+        self.assertEqual(f.chamadas["ablacao_naive"], 1)                      # um pedido por tópico
+        self.assertEqual(len(q["naive"]), 8)
+        ruins = sum("DEFEITO" in x["pergunta"] for x in q["documento"])
+        self.assertTrue(0 < ruins < 8)
+        # 1ª tentativa compartilhada: 8 (sem exemplos) + 8 (com exemplos); 2ª só nas recusadas dos braços com retro
+        self.assertEqual(f.chamadas["ablacao_slot"], 16 + 2 * ruins)
+        us = f.usuarios["ablacao_slot"]
+        self.assertTrue(all("<tentativas_anteriores>" in u and "<conhecimentos_cobertos>" in u and "DEFEITO" in u
+                            for u in us if "<tentativas_anteriores>" in u))
+        self.assertEqual(sum("<exemplos_de_forma>" in u for u in us), 8 + ruins)
+        ac = {b: sum(x["aceita"] for x in v) for b, v in q.items()}
+        self.assertEqual((ac["documento"], ac["sem_retro"]), (8 - ruins, 8 - ruins))
+        self.assertEqual((ac["sem_externos"], ac["completo"], ac["naive"]), (8, 8, 8))
+        self.assertEqual(Counter(x["tentativa"] for x in q["completo"] if x["aceita"]), Counter({1: 8 - ruins, 2: ruins}))
+        r = read_json(d / "resultado.json")
+        self.assertEqual(r["pareados"]["completo_vs_sem_retro"]["so_primeiro"], ruins)
+        self.assertEqual(r["bracos"]["completo"]["taxa_aceite"], 100.0)
+        for k in ("distinct_2", "mtld", "self_bleu_por_topico", "vendi_relativo_por_topico", "termos_especializados"):
+            self.assertIn(k, r["bracos"]["completo"]["vocabulario_aceitas"])
+        md = (d / "ABLACAO.md").read_text(encoding="utf-8")
+        self.assertIn("Taxa de aceite", md)
+        self.assertIn("Pipeline completo", md)
+        antes = sum(f.chamadas.values())
+        self.assertEqual(self.a(f).executar(), 0)                               # retomada: nada é refeito
+        self.assertEqual(sum(f.chamadas.values()), antes)
+
+    def test_um_braco_sozinho_e_config_fixa(self):
+        f = FalsoAblacao()
+        self.assertEqual(self.a(f, bracos=["completo"]).executar(), 0)
+        self.assertTrue((self.exp / "ablacao" / "sem_retro" / "tentativas").exists())   # 1ª tentativa compartilhada
+        with self.assertRaises(ValueError):
+            self.a(f, n=6)
+
+    def test_metricas(self):
+        from pipeline.qa_research.experimento_ab.ablacao import distinct, mattr, mcnemar, mtld, wilson
+        self.assertEqual(distinct(["a b a b"], 1), 0.5)
+        self.assertAlmostEqual(mattr(["a"] * 20, 5), 0.2)
+        self.assertAlmostEqual(mattr(["a"] * 10 + ["b"] * 10, 5), 20 / 80)      # 4 das 16 janelas têm 2 tipos
+        self.assertGreater(mtld([str(k) for k in range(100)]), mtld(["a", "b"] * 50))
+        lo, hi = wilson(50, 100)
+        self.assertTrue(lo < 50 < hi)
+        self.assertEqual(mcnemar([True] * 5, [False] * 5)["so_primeiro"], 5)
+        self.assertLess(mcnemar([True] * 10, [False] * 10)["p"], 0.01)

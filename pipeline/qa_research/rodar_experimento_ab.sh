@@ -26,6 +26,8 @@
 #                        rubrica de dificuldade do especialista
 #   banco                banco final: poda, revisão de unicidade das questões que o GPT-5 erra e teto por tópico
 #                        (petroquest_banco_v1/BANCO.md e banco.jsonl)
+#   ablacao              ablação da geração: 1000 vagas do banco final, 5 braços (naive, documento, sem datasets
+#                        externos, sem retroalimentação, completo), taxa de aceite e vocabulário (ablacao_geracao_v1)
 #   rubrica              só a classificação pela rubrica do especialista (petroquest_final_v2/rubrica/RUBRICA.md)
 #   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
 #   limite [N]           experimento do limite de palavras na resposta (padrão 20), amostra de 300 questões
@@ -106,7 +108,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -174,6 +176,10 @@ fi
 if [[ "$etapa" == "banco" ]]; then
     rodar "banco final: poda, revisão de unicidade e teto por tópico" banco || fim_erro banco
 fi
+if [[ "$etapa" == "ablacao" ]]; then
+    # chamadas independentes (uma questão por vaga): 24 em paralelo por padrão; um --workers explícito prevalece
+    rodar "ablação da geração (5 braços x 1000 questões)" ablacao --workers 24 || fim_erro ablacao
+fi
 if [[ "$etapa" == "antigo" ]]; then
     # 2 chamadas por questão (2156 questões): 16 em paralelo por padrão; um --workers explícito prevalece
     rodar "banco antigo: gabarito curto + auditor v23" antigo --workers 16 || fim_erro antigo
@@ -194,6 +200,9 @@ echo "Enviar ao GitHub (no servidor):"
 if [[ "$etapa" == "limite" ]]; then
     echo "  cat pipeline/qa_research/relatorios/petroquest_final_v1/limite_${braco_sust:-20}/LIMITE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_final_v1 \"Resultados: limite de palavras\""
+elif [[ "$etapa" == "ablacao" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v1/ABLACAO.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v1 \"Resultados: ablação da geração\""
 elif [[ "$etapa" == "banco" ]]; then
     echo "  cat pipeline/qa_research/relatorios/petroquest_banco_v1/BANCO.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_banco_v1 \"Resultados: banco final v1\""

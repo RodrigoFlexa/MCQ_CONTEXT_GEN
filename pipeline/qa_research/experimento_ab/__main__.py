@@ -33,6 +33,9 @@
                         --sem-revisao monta o banco provisório sem chamar a API
   splits                divide o banco final em treino/validação/teste (70/10/20, por grupo, estratificado)
   figuras               figuras do banco e do desempenho dos modelos (petroquest_banco_v1/figuras)
+  ablacao               ablação da geração: 1000 vagas do banco, braços naive, documento, sem_externos,
+                        sem_retro e completo, mesma aceitação (auditor, sustentação, dedup), taxa de aceite e
+                        vocabulário -> ablacao_geracao_v1/ABLACAO.md; --bracos e --vagas para recortar
   final-v2              dataset final v2: v23 + v23 completo + v22 + antigo + conceitos + variada, deduplicado, só gabaritos totalmente
                         sustentados, avaliado com resposta de até --palavras (20) por GPT-4.1 Nano/Mini/4.1,
                         GPT-5 nano/mini/5 e GPT-5.4 (referência), com e sem contexto -> petroquest_final_v2/QUALIDADE.md
@@ -142,7 +145,7 @@ def main(argv=None) -> int:
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
                                         "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
-                                        "final-v2"])
+                                        "final-v2", "ablacao"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -158,6 +161,9 @@ def main(argv=None) -> int:
                     help="tipos: quais gerações por tipo rodar, separados por vírgula")
     ap.add_argument("--sem-revisao", action="store_true", help="banco: sem a revisão de unicidade (provisório)")
     ap.add_argument("--teto-topico", type=int, default=150, help="banco: máximo de questões por tópico")
+    ap.add_argument("--bracos", default="naive,documento,sem_externos,sem_retro,completo",
+                    help="ablacao: braços, separados por vírgula")
+    ap.add_argument("--vagas", type=int, default=1000, help="ablacao: questões pedidas por braço")
     ap.add_argument("--so-relatorio", action="store_true",
                     help="final-v2: só refaz o QUALIDADE.md com o que já foi avaliado, sem montar nem avaliar")
     ap.add_argument("--docs-simultaneos", type=int, default=6, help="v23-completo: documentos gerados ao mesmo tempo")
@@ -275,6 +281,21 @@ def main(argv=None) -> int:
         gerar()
         print(f"[figuras] {C.relativo(SAIDA_FIG)}")
         return 0
+    if a.comando == "ablacao":
+        from .ablacao import SAIDA as SAIDA_ABL, Ablacao
+        with _trava(exp, "ablacao"):
+            try:
+                abl = Ablacao(n=a.vagas, bracos=[b for b in a.bracos.split(",") if b], workers=a.workers, exp=exp)
+                if a.so_relatorio:          # só refaz o ABLACAO.md com o que já foi gravado
+                    abl.relatorio()
+                    st = 0
+                else:
+                    st = abl.executar()
+            except ValueError as exc:
+                raise SystemExit(f"[ablacao] {exc}") from exc
+        print(f"[ablacao] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_ABL / 'ABLACAO.md')}")
+        return st
     if a.comando == "banco":
         from .banco import Banco, SAIDA as SAIDA_BANCO
         with _trava(exp, "banco"):
