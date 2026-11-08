@@ -19,6 +19,9 @@ export NCCL_P2P_DISABLE="${NCCL_P2P_DISABLE:-1}"
 export VLLM_USE_FLASHINFER_SAMPLER=0
 export PYTHONPATH="$PWD/pipeline/qa_research/experimento_ab/vllm_compat${PYTHONPATH:+:$PYTHONPATH}"
 py="${PY:-python}"
+# o FP8 do 70B compila kernels com o NVRTC do CUDA 13 que vem no venv (pip), fora do caminho padrão de bibliotecas
+cu13="$("$py" -c 'import site; print(site.getsitepackages()[0])' 2>/dev/null)/nvidia/cu13/lib"
+[[ -d "$cu13" ]] && export LD_LIBRARY_PATH="$cu13${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 if [[ $# -gt 0 ]]; then modelos=("$@"); else modelos=(llama-3-1-8b llama-3-3-70b); fi
 
 echo "GPUs visíveis: $CUDA_VISIBLE_DEVICES"

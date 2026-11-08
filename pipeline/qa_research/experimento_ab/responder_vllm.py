@@ -165,8 +165,8 @@ def main(argv=None) -> int:
               dtype="auto", seed=0,
               # GPUs ligadas por PCIe (DL-28): o all-reduce customizado travava na iniciação; fica o NCCL
               disable_custom_all_reduce=tp > 1,
-              # 70B em GPUs compartilhadas: sem CUDA graphs, sobra memória para o cache de KV
-              enforce_eager="70b" in a.modelo)
+              # 70B com pouca memória livre: sem CUDA graphs, sobra memória para o cache de KV
+              enforce_eager="70b" in a.modelo and memoria < 0.6)
     s = sistema()
     conv = lambda u: [{"role": "system", "content": s}, {"role": "user", "content": u}]   # noqa: E731
     sonda = llm.chat([conv(usuario(None))], sp, use_tqdm=False)[0].outputs[0].text
