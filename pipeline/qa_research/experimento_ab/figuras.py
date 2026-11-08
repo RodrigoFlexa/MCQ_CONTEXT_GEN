@@ -163,6 +163,52 @@ def composicao(banco: list) -> list[Path]:
     return salvar(fig, "fig2_composicao_tipo_area")
 
 
+def _barras_h(ax, rotulos: list, valores: list, n: int, cores, titulo: str, extra: dict | None = None) -> None:
+    """Barras horizontais no estilo do painel de tipos: rótulo à esquerda, contagem e percentual à direita."""
+    y = np.arange(len(rotulos))[::-1]
+    ax.barh(y, valores, color=cores, height=0.62, edgecolor="white", linewidth=2)
+    for yi, r, v in zip(y, rotulos, valores):
+        txt = f"{v}  ({100 * v / n:.1f}%)".replace(".", ",")
+        if extra and r in extra:
+            txt += extra[r]
+        ax.text(v + n * 0.006, yi, txt, va="center", fontsize=10, color=TINTA2)
+    ax.set_yticks(y, rotulos, color=TINTA)
+    ax.set_xlim(0, max(valores) * 1.38)
+    ax.set_title(titulo)
+    ax.spines["left"].set_visible(False)
+    ax.tick_params(axis="y", length=0)
+    ax.xaxis.grid(True)
+    ax.set_axisbelow(True)
+    ax.set_xlabel("Questões")
+
+
+def tipo_e_dificuldade(banco: list) -> list[Path]:
+    """Tipo de questão e dificuldade empírica lado a lado; também cada painel em arquivo próprio."""
+    n = len(banco)
+    ct = Counter(x["tipo"] for x in banco)
+    tipos = sorted(TIPOS, key=lambda t: -ct[t])
+    ce = Counter(x["dificuldade"]["estrato"] for x in banco)
+    niveis = [("Fácil", ce["facil"]), ("Média", ce["media"]), ("Difícil", ce["dificil"] + ce["muito_dificil"])]
+    nota_dif = {"Difícil": f"\n{ce['muito_dificil']} sem acerto de nenhum modelo"}
+    paineis = [
+        ("tipo", [NOME_TIPO[t] for t in tipos], [ct[t] for t in tipos], AZUL, "(a) Tipo de questão", None),
+        ("dificuldade", [r for r, _ in niveis], [v for _, v in niveis], ORDINAL4[:2] + [ORDINAL4[3]],
+         "(b) Dificuldade", nota_dif)]
+    arqs = []
+    fig, axs = plt.subplots(1, 2, figsize=(12.5, 4.4), gridspec_kw={"width_ratios": [1, 1], "wspace": 0.42})
+    for ax, (_, rot, val, cor, tit, ext) in zip(axs, paineis):
+        _barras_h(ax, rot, val, n, cor, tit, ext)
+    fig.text(0.01, -0.05, "Dificuldade empírica: fácil = os 4 modelos independentes (GPT-4.1 Mini, GPT-4.1, GPT-5 mini, "
+             "GPT-5) acertam sem o documento; difícil = o GPT-5 não acerta; média = o restante.", fontsize=8.5,
+             color=TINTA3)
+    arqs += salvar(fig, "fig2b_tipo_e_dificuldade")
+    for nome, rot, val, cor, tit, ext in paineis:
+        fig, ax = plt.subplots(figsize=(6.2, 4.4 if nome == "tipo" else 3.0))
+        _barras_h(ax, rot, val, n, cor, tit.split(") ", 1)[1], ext)
+        arqs += salvar(fig, f"fig2{'c' if nome == 'tipo' else 'd'}_{nome}")
+    return arqs
+
+
 def divisao(banco: list) -> list[Path]:
     fig, ax = plt.subplots(figsize=(11, 3.6))
     conj = list(CONJ)
@@ -323,7 +369,7 @@ def gerar() -> dict:
     estilo()
     banco, div, respostas = dados()
     teste = [x for x in banco if x["split"] == "teste"]
-    arqs = funil() + composicao(banco) + divisao(banco)
+    arqs = funil() + composicao(banco) + tipo_e_dificuldade(banco) + divisao(banco)
     a, acc = acuracia(teste)
     arqs += a + por_tipo(teste) + por_area(teste)
     b, lex = lexicais(teste, respostas)
