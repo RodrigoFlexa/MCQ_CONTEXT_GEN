@@ -16,6 +16,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.ticker  # noqa: E402,F401
 import numpy as np  # noqa: E402
 from matplotlib import font_manager  # noqa: E402
 
@@ -163,53 +164,62 @@ def composicao(banco: list) -> list[Path]:
     return salvar(fig, "fig2_composicao_tipo_area")
 
 
-def _colunas(ax, rotulos: list, valores: list, n: int, cores, titulo: str, dentro: dict | None = None,
-             xfonte: float = 15) -> None:
-    """Colunas (número de questões no eixo y) com fontes grandes, para slide."""
+def _colunas(ax, rotulos: list, valores: list, n: int, cores, titulo: str, base: dict | None = None,
+             xfonte: float = 22, rot: float = 0) -> None:
+    """Colunas para slide (número de questões no eixo y), com fontes grandes. `base` = {rótulo: (valor, cor)}
+    desenha um segmento inferior destacado dentro da coluna (ex.: questões que nenhum modelo acerta)."""
     x = np.arange(len(rotulos))
-    ax.bar(x, valores, color=cores, width=0.64, edgecolor="white", linewidth=2, zorder=2)
+    ax.bar(x, valores, color=cores, width=0.66, edgecolor="white", linewidth=2, zorder=2)
     topo = max(valores)
-    for xi, r, v, c in zip(x, rotulos, valores, cores if isinstance(cores, list) else [cores] * len(x)):
-        ax.text(xi, v + topo * 0.02, f"{v:,}".replace(",", "."), ha="center", va="bottom", fontsize=17,
-                fontweight="semibold", color=TINTA)
-        ax.text(xi, v + topo * 0.115, f"{100 * v / n:.1f}%".replace(".", ","), ha="center", va="bottom",
-                fontsize=14, color=TINTA2)
-        if dentro and r in dentro:
-            ax.text(xi, v / 2, dentro[r], ha="center", va="center", fontsize=12.5, color="white", linespacing=1.3)
-    ax.set_xticks(x, rotulos, fontsize=xfonte, color=TINTA)
-    ax.set_ylim(0, topo * 1.3)
-    ax.tick_params(axis="y", labelsize=14)
-    ax.tick_params(axis="x", length=0, pad=8)
-    ax.set_title(titulo, fontsize=19, pad=14)
+    for xi, r, v in zip(x, rotulos, valores):
+        ax.text(xi, v + topo * 0.025, f"{v:,}".replace(",", "."), ha="center", va="bottom", fontsize=26,
+                fontweight="bold", color=TINTA)
+        ax.text(xi, v + topo * 0.15, f"{100 * v / n:.1f}%".replace(".", ","), ha="center", va="bottom",
+                fontsize=21, color=TINTA2)
+        if base and r in base:
+            bv, bc = base[r]
+            ax.bar(xi, bv, color=bc, width=0.66, edgecolor="white", linewidth=2, zorder=3)
+            ax.text(xi, bv / 2, f"{bv}", ha="center", va="center", fontsize=22, fontweight="bold", color="white",
+                    zorder=4)
+    ax.set_xticks(x, rotulos, fontsize=xfonte, color=TINTA, rotation=rot, ha="right" if rot else "center",
+                  rotation_mode="anchor" if rot else "default")
+    ax.set_ylim(0, topo * 1.34)
+    ax.tick_params(axis="y", labelsize=19)
+    ax.tick_params(axis="x", length=0, pad=10)
+    ax.set_title(titulo, fontsize=27, pad=16)
     ax.yaxis.grid(True)
     ax.set_axisbelow(True)
-    ax.set_ylabel("Questões", fontsize=15)
+    ax.set_ylabel("Questões", fontsize=21)
+    ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
 
 
 def tipo_e_dificuldade(banco: list) -> list[Path]:
-    """Tipo de questão e dificuldade empírica lado a lado (colunas); também cada painel em arquivo próprio."""
+    """Tipo de questão e dificuldade empírica (colunas, fontes de slide); combinado e cada painel separado."""
     n = len(banco)
     ct = Counter(x["tipo"] for x in banco)
     tipos = sorted(TIPOS, key=lambda t: -ct[t])
     ce = Counter(x["dificuldade"]["estrato"] for x in banco)
     niveis = [("Fácil", ce["facil"]), ("Média", ce["media"]), ("Difícil", ce["dificil"] + ce["muito_dificil"])]
-    dentro = {"Difícil": f"{ce['muito_dificil']}\nsem acerto\nde nenhum\nmodelo"}
-    paineis = [
-        ("tipo", [NOME_TIPO[t] for t in tipos], [ct[t] for t in tipos], AZUL, "(a) Tipo de questão", None),
-        ("dificuldade", [r for r, _ in niveis], [v for _, v in niveis], ORDINAL4[:2] + [ORDINAL4[3]],
-         "(b) Dificuldade", dentro)]
+    base = {"Difícil": (ce["muito_dificil"], "#061f40")}
+    nota = (f"Parte mais escura da coluna Difícil: {ce['muito_dificil']} questões que nenhum modelo acerta. "
+            "Fácil = os 4 modelos independentes acertam sem o documento;\ndifícil = o GPT-5 não acerta; "
+            "média = o restante.")
+    cores_dif = [ORDINAL4[0], ORDINAL4[1], ORDINAL4[2]]
+    paineis = [("tipo", [NOME_TIPO[t] for t in tipos], [ct[t] for t in tipos], AZUL, "Tipo de questão", None),
+               ("dificuldade", [r for r, _ in niveis], [v for _, v in niveis], cores_dif, "Dificuldade", base)]
     arqs = []
-    fig, axs = plt.subplots(1, 2, figsize=(18, 6.4), gridspec_kw={"width_ratios": [2.2, 1.2], "wspace": 0.2})
-    for ax, (nome, rot, val, cor, tit, den) in zip(axs, paineis):
-        _colunas(ax, rot, val, n, cor, tit, den, xfonte=13 if nome == "tipo" else 15)
+    fig, axs = plt.subplots(1, 2, figsize=(14, 6.6), gridspec_kw={"width_ratios": [2.1, 1.15], "wspace": 0.3})
+    for ax, (nome, rot, val, cor, tit, b) in zip(axs, paineis):
+        _colunas(ax, rot, val, n, cor, tit, b, xfonte=19 if nome == "tipo" else 22, rot=30 if nome == "tipo" else 0)
     axs[1].set_ylabel("")
-    fig.text(0.01, -0.06, "Dificuldade empírica: fácil = os 4 modelos independentes (GPT-4.1 Mini, GPT-4.1, GPT-5 mini, "
-             "GPT-5) acertam sem o documento;\ndifícil = o GPT-5 não acerta; média = o restante.", fontsize=12,
-             color=TINTA3)
+    fig.text(0.01, -0.22, nota, fontsize=13, color=TINTA3)
     arqs += salvar(fig, "fig2b_tipo_e_dificuldade")
-    for nome, rot, val, cor, tit, den in paineis:
-        fig, ax = plt.subplots(figsize=(13, 6.2) if nome == "tipo" else (6.5, 6.2))
-        _colunas(ax, rot, val, n, cor, tit.split(") ", 1)[1], den)
+    for nome, rot, val, cor, tit, b in paineis:
+        fig, ax = plt.subplots(figsize=(11.5, 6.4) if nome == "tipo" else (6.8, 6.4))
+        _colunas(ax, rot, val, n, cor, tit, b, xfonte=19 if nome == "tipo" else 22, rot=25 if nome == "tipo" else 0)
+        if nome == "dificuldade":
+            fig.text(0.01, -0.04, f"Parte escura: {ce['muito_dificil']} questões que\nnenhum modelo acerta.",
+                     fontsize=15, color=TINTA3, va="top")
         arqs += salvar(fig, f"fig2{'c' if nome == 'tipo' else 'd'}_{nome}")
     return arqs
 
