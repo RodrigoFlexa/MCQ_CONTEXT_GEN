@@ -368,32 +368,6 @@ def por_tipo(teste: list, respostas: dict) -> tuple[list[Path], dict]:
                   for i, t in enumerate(TIPOS)}
 
 
-def _barras_horizontais(rotulos: list, sem: list, com: list, xlabel: str, xmax: float):
-    """Barras horizontais sem x com documento (categoria no eixo y, nomes legíveis em uma linha), estilo slide."""
-    fig, ax = plt.subplots(figsize=(14, 0.95 * len(rotulos) + 1.6))
-    y = np.arange(len(rotulos))
-    h = 0.4
-    for k, (vals, cor, rot) in enumerate(((sem, AZUL, "Sem documento"), (com, LARANJA, "Com documento"))):
-        pos = y + (k - 0.5) * h
-        ax.barh(pos, vals, h * 0.92, color=cor, label=rot, edgecolor="white", linewidth=1.2, zorder=2)
-        for pp, v in zip(pos, vals):
-            ax.text(v + xmax * 0.008, pp, f"{v:.0f}", va="center", ha="left", fontsize=18, fontweight="semibold",
-                    color=TINTA)
-    ax.set_yticks(y, rotulos, fontsize=21, color=TINTA)
-    ax.invert_yaxis()
-    ax.set_xlim(0, xmax)
-    ax.tick_params(axis="x", labelsize=18)
-    ax.tick_params(axis="y", length=0, pad=10)
-    ax.set_xlabel(xlabel, fontsize=21)
-    ax.xaxis.grid(True)
-    ax.set_axisbelow(True)
-    ax.spines["left"].set_visible(False)
-    ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
-    ax.legend(loc="lower left", ncol=2, fontsize=20, bbox_to_anchor=(0, 1.0), handlelength=1.3, columnspacing=1.8,
-              frameon=False)
-    return fig
-
-
 def por_area(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     nomes = sorted({AREA_CURTA.get(x["area"], x["area"]) for x in teste})
     grupos = {a: [x for x in teste if AREA_CURTA.get(x["area"], x["area"]) == a] for a in nomes}
@@ -405,12 +379,6 @@ def por_area(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     rot = [AREA_SLIDE.get(a, _quebrar(a, 12)) for a in nomes]
     arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112, **kw), "fig6_acuracia_por_area")
     arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62, **kw), "fig6b_f1_por_area")
-    # versão horizontal (nomes das áreas no eixo y, fonte grande), da área mais difícil para a mais fácil
-    for sufixo, rot in (("", nomes), ("_com_n", [f"{a} (n = {len(grupos[a])})" for a in nomes])):
-        arqs += salvar(_barras_horizontais(rot, acc["sem"], acc["com"], "Acurácia (%)", 105),
-                       f"fig6c_acuracia_por_area_horizontal{sufixo}")
-        arqs += salvar(_barras_horizontais(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 58),
-                       f"fig6d_f1_por_area_horizontal{sufixo}")
     return arqs, {a: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[a])}
                   for i, a in enumerate(nomes)}
 
