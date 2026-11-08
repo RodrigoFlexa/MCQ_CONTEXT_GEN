@@ -353,9 +353,11 @@ def _medias(grupos: dict, respostas: dict) -> tuple[dict, dict]:
 def por_tipo(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     grupos = {t: [x for x in teste if x["tipo"] == t] for t in TIPOS}
     acc, f1 = _medias(grupos, respostas)
-    rot = [f"{NOME_TIPO[t]}\n(n = {len(grupos[t])})" for t in TIPOS]
-    arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112), "fig5_acuracia_por_tipo")
-    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62), "fig5b_f1_por_tipo")
+    arqs = []
+    for sufixo, rot in (("", [NOME_TIPO[t] for t in TIPOS]),          # duas versões: sem e com o n no rótulo
+                        ("_com_n", [f"{NOME_TIPO[t]}\n(n = {len(grupos[t])})" for t in TIPOS])):
+        arqs += salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112), f"fig5_acuracia_por_tipo{sufixo}")
+        arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62), f"fig5b_f1_por_tipo{sufixo}")
     return arqs, {t: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[t])}
                   for i, t in enumerate(TIPOS)}
 
@@ -367,10 +369,14 @@ def por_area(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     ordem = sorted(range(len(nomes)), key=lambda i: acc["sem"][i])       # da mais difícil para a mais fácil
     nomes = [nomes[i] for i in ordem]
     acc, f1 = _medias({a: grupos[a] for a in nomes}, respostas)
-    rot = [f"{_quebrar(a, 13)}\n(n = {len(grupos[a])})" for a in nomes]
     kw = dict(figsize=(25, 8), xfonte=15.5, vfonte=15)
-    arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112, **kw), "fig6_acuracia_por_area")
-    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62, **kw), "fig6b_f1_por_area")
+    arqs = []
+    for sufixo, rot in (("", [_quebrar(a, 13) for a in nomes]),
+                        ("_com_n", [f"{_quebrar(a, 13)}\n(n = {len(grupos[a])})" for a in nomes])):
+        arqs += salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112, **kw),
+                       f"fig6_acuracia_por_area{sufixo}")
+        arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62, **kw),
+                       f"fig6b_f1_por_area{sufixo}")
     return arqs, {a: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[a])}
                   for i, a in enumerate(nomes)}
 
