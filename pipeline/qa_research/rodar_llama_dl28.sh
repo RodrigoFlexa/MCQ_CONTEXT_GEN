@@ -13,6 +13,8 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.."
 export CUDA_VISIBLE_DEVICES="${GPUS:-6,7}"
 export PYTHONUTF8=1 VLLM_WORKER_MULTIPROC_METHOD=spawn
 # vLLM 0.28 + flashinfer 0.6 no Python 3.10: desativa flashinfer.comm (ver vllm_compat/sitecustomize.py)
+# NCCL sem P2P entre as GPUs: com P2P, a iniciação do tensor parallel ficou presa na DL-28
+export NCCL_P2P_DISABLE="${NCCL_P2P_DISABLE:-1}"
 export PYTHONPATH="$PWD/pipeline/qa_research/experimento_ab/vllm_compat${PYTHONPATH:+:$PYTHONPATH}"
 py="${PY:-python}"
 if [[ $# -gt 0 ]]; then modelos=("$@"); else modelos=(llama-3-1-8b llama-3-3-70b); fi

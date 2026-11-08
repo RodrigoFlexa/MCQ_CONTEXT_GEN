@@ -162,7 +162,9 @@ def main(argv=None) -> int:
         meta_arq.write_text(json.dumps({**meta, "respondidas": len(feitos)}, ensure_ascii=False, indent=1), encoding="utf-8")
         return 0
     llm = LLM(model=hf, tensor_parallel_size=tp, gpu_memory_utilization=memoria, max_model_len=a.max_model_len,
-              dtype="auto", seed=0)
+              dtype="auto", seed=0,
+              # GPUs ligadas por PCIe (DL-28): o all-reduce customizado travava na iniciação; fica o NCCL
+              disable_custom_all_reduce=tp > 1)
     s = sistema()
     conv = lambda u: [{"role": "system", "content": s}, {"role": "user", "content": u}]   # noqa: E731
     sonda = llm.chat([conv(usuario(None))], sp, use_tqdm=False)[0].outputs[0].text
