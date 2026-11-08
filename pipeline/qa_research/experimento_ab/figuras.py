@@ -163,48 +163,53 @@ def composicao(banco: list) -> list[Path]:
     return salvar(fig, "fig2_composicao_tipo_area")
 
 
-def _barras_h(ax, rotulos: list, valores: list, n: int, cores, titulo: str, extra: dict | None = None) -> None:
-    """Barras horizontais no estilo do painel de tipos: rótulo à esquerda, contagem e percentual à direita."""
-    y = np.arange(len(rotulos))[::-1]
-    ax.barh(y, valores, color=cores, height=0.62, edgecolor="white", linewidth=2)
-    for yi, r, v in zip(y, rotulos, valores):
-        txt = f"{v}  ({100 * v / n:.1f}%)".replace(".", ",")
-        if extra and r in extra:
-            txt += extra[r]
-        ax.text(v + n * 0.006, yi, txt, va="center", fontsize=10, color=TINTA2)
-    ax.set_yticks(y, rotulos, color=TINTA)
-    ax.set_xlim(0, max(valores) * 1.38)
-    ax.set_title(titulo)
-    ax.spines["left"].set_visible(False)
-    ax.tick_params(axis="y", length=0)
-    ax.xaxis.grid(True)
+def _colunas(ax, rotulos: list, valores: list, n: int, cores, titulo: str, dentro: dict | None = None,
+             xfonte: float = 15) -> None:
+    """Colunas (número de questões no eixo y) com fontes grandes, para slide."""
+    x = np.arange(len(rotulos))
+    ax.bar(x, valores, color=cores, width=0.64, edgecolor="white", linewidth=2, zorder=2)
+    topo = max(valores)
+    for xi, r, v, c in zip(x, rotulos, valores, cores if isinstance(cores, list) else [cores] * len(x)):
+        ax.text(xi, v + topo * 0.02, f"{v:,}".replace(",", "."), ha="center", va="bottom", fontsize=17,
+                fontweight="semibold", color=TINTA)
+        ax.text(xi, v + topo * 0.115, f"{100 * v / n:.1f}%".replace(".", ","), ha="center", va="bottom",
+                fontsize=14, color=TINTA2)
+        if dentro and r in dentro:
+            ax.text(xi, v / 2, dentro[r], ha="center", va="center", fontsize=12.5, color="white", linespacing=1.3)
+    ax.set_xticks(x, rotulos, fontsize=xfonte, color=TINTA)
+    ax.set_ylim(0, topo * 1.3)
+    ax.tick_params(axis="y", labelsize=14)
+    ax.tick_params(axis="x", length=0, pad=8)
+    ax.set_title(titulo, fontsize=19, pad=14)
+    ax.yaxis.grid(True)
     ax.set_axisbelow(True)
-    ax.set_xlabel("Questões")
+    ax.set_ylabel("Questões", fontsize=15)
 
 
 def tipo_e_dificuldade(banco: list) -> list[Path]:
-    """Tipo de questão e dificuldade empírica lado a lado; também cada painel em arquivo próprio."""
+    """Tipo de questão e dificuldade empírica lado a lado (colunas); também cada painel em arquivo próprio."""
     n = len(banco)
     ct = Counter(x["tipo"] for x in banco)
     tipos = sorted(TIPOS, key=lambda t: -ct[t])
     ce = Counter(x["dificuldade"]["estrato"] for x in banco)
     niveis = [("Fácil", ce["facil"]), ("Média", ce["media"]), ("Difícil", ce["dificil"] + ce["muito_dificil"])]
-    nota_dif = {"Difícil": f"\n{ce['muito_dificil']} sem acerto de nenhum modelo"}
+    dentro = {"Difícil": f"{ce['muito_dificil']}\nsem acerto\nde nenhum\nmodelo"}
     paineis = [
         ("tipo", [NOME_TIPO[t] for t in tipos], [ct[t] for t in tipos], AZUL, "(a) Tipo de questão", None),
         ("dificuldade", [r for r, _ in niveis], [v for _, v in niveis], ORDINAL4[:2] + [ORDINAL4[3]],
-         "(b) Dificuldade", nota_dif)]
+         "(b) Dificuldade", dentro)]
     arqs = []
-    fig, axs = plt.subplots(1, 2, figsize=(12.5, 4.4), gridspec_kw={"width_ratios": [1, 1], "wspace": 0.42})
-    for ax, (_, rot, val, cor, tit, ext) in zip(axs, paineis):
-        _barras_h(ax, rot, val, n, cor, tit, ext)
-    fig.text(0.01, -0.05, "Dificuldade empírica: fácil = os 4 modelos independentes (GPT-4.1 Mini, GPT-4.1, GPT-5 mini, "
-             "GPT-5) acertam sem o documento; difícil = o GPT-5 não acerta; média = o restante.", fontsize=8.5,
+    fig, axs = plt.subplots(1, 2, figsize=(18, 6.4), gridspec_kw={"width_ratios": [2.2, 1.2], "wspace": 0.2})
+    for ax, (nome, rot, val, cor, tit, den) in zip(axs, paineis):
+        _colunas(ax, rot, val, n, cor, tit, den, xfonte=13 if nome == "tipo" else 15)
+    axs[1].set_ylabel("")
+    fig.text(0.01, -0.06, "Dificuldade empírica: fácil = os 4 modelos independentes (GPT-4.1 Mini, GPT-4.1, GPT-5 mini, "
+             "GPT-5) acertam sem o documento;\ndifícil = o GPT-5 não acerta; média = o restante.", fontsize=12,
              color=TINTA3)
     arqs += salvar(fig, "fig2b_tipo_e_dificuldade")
-    for nome, rot, val, cor, tit, ext in paineis:
-        fig, ax = plt.subplots(figsize=(6.2, 4.4 if nome == "tipo" else 3.0))
-        _barras_h(ax, rot, val, n, cor, tit.split(") ", 1)[1], ext)
+    for nome, rot, val, cor, tit, den in paineis:
+        fig, ax = plt.subplots(figsize=(13, 6.2) if nome == "tipo" else (6.5, 6.2))
+        _colunas(ax, rot, val, n, cor, tit.split(") ", 1)[1], den)
         arqs += salvar(fig, f"fig2{'c' if nome == 'tipo' else 'd'}_{nome}")
     return arqs
 
