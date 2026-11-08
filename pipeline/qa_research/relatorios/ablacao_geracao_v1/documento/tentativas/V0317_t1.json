@@ -1,0 +1,33 @@
+{
+  "vaga": "V0317",
+  "tentativa": 1,
+  "questao": {
+    "tipo": "decisao",
+    "cenario": true,
+    "conhecimento": "Necessidade de anti-windup no controle de interface com Dead Band Assimétrico sob saturação do atuador.",
+    "pergunta": "Na malha da interface água-óleo com Dead Band Assimétrico, a válvula de descarga de água atinge 100% nas golfadas. Quando a alimentação retorna ao normal, a interface ainda cai por alguns segundos e depois demora a voltar, sem emperramento da válvula. Que modificação específica na lógica do controlador deve ser feita?",
+    "resposta": "Implementar anti-windup no termo integral do controlador.",
+    "explicacao": "A saturação do elemento final elimina margem de correção e o integrador continua acumulando erro; isso prolonga a queda da interface e retarda a recuperação. O anti-windup evita essa memória excessiva durante a saturação.",
+    "resposta_padrao": "Retunar os ganhos ou estreitar a banda do controle.",
+    "por_que_nao": "Com a válvula saturada, a malha perdeu margem e o integrador acumulou erro; sem anti-windup, a recuperação segue lenta mesmo com outra sintonia.",
+    "fundamentos": [
+      {
+        "bloco": "F",
+        "trecho": "O desempenho da malha pode ser limitado por saturação ou proximidade do limite dos atuadores."
+      },
+      {
+        "bloco": "F",
+        "trecho": "Também ocorreram falhas de implementação, como associação incorreta de trip por nível baixo, ausência inicial de anti-windup no Dead Band Assimétrico e bugs de lógica."
+      },
+      {
+        "bloco": "F",
+        "trecho": "tais falhas são tecnicamente relevantes porque podem distorcer a resposta integral, retardar recuperação e mascarar riscos em transientes."
+      },
+      {
+        "bloco": "A1",
+        "trecho": "Também foi testado um Dead Band Assimétrico, em que a reação era mais rápida à diminuição do nível de interface"
+      }
+    ]
+  },
+  "regua": []
+}

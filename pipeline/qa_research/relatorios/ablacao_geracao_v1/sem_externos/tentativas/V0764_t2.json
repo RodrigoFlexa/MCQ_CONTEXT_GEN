@@ -1,0 +1,33 @@
+{
+  "vaga": "V0764",
+  "tentativa": 2,
+  "questao": {
+    "tipo": "decisao",
+    "cenario": true,
+    "conhecimento": "Em arquiteturas com múltiplos controladores e consumidores externos, a troca entre domínios deve ser concentrada na camada supervisória agregadora, não em conexões diretas a cada controlador.",
+    "pergunta": "Vários controladores de fornecedores diferentes já alimentam um SCADA que concentra alarmes e histórico. Um novo software corporativo precisa desses mesmos dados, e a proposta é abrir leitura direta para cada controlador. Para conter propagação entre domínios sem multiplicar interconexões, por qual ponto da arquitetura essa troca deve cruzar a fronteira?",
+    "resposta": "Na camada supervisória do SCADA.",
+    "explicacao": "Com controladores heterogêneos, a integração tende a migrar para a supervisão. Concentrar a troca no SCADA reduz caminhos de propagação para os controladores e evita conectividade além do necessário entre domínios de criticidade distinta.",
+    "resposta_padrao": "Abrir acesso somente de leitura do software corporativo a cada controlador.",
+    "por_que_nao": "Mesmo em leitura, isso multiplica caminhos entre domínios; com modelos de dados distintos, a integração deve ficar na camada supervisória agregadora.",
+    "fundamentos": [
+      {
+        "bloco": "F",
+        "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+      },
+      {
+        "bloco": "F",
+        "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+      },
+      {
+        "bloco": "A1",
+        "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+      },
+      {
+        "bloco": "A1",
+        "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+      }
+    ]
+  },
+  "regua": []
+}

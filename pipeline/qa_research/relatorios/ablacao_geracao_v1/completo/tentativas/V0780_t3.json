@@ -1,0 +1,33 @@
+{
+  "vaga": "V0780",
+  "tentativa": 3,
+  "questao": {
+    "tipo": "decisao",
+    "cenario": true,
+    "conhecimento": "Acoplamento da função à infraestrutura define quando uma aplicação online pode apenas apoiar a decisão, sem atuar remotamente no controle.",
+    "pergunta": "Um otimizador na nuvem recebe dados por MQTT e calcula novos setpoints a cada minuto. O enlace externo tem latência variável e perdas curtas; o SCADA local continua em tempo real. Sem trocar a automação existente, como os resultados do modelo devem ser aplicados ao processo?",
+    "resposta": "Em modo consultivo no SCADA local, sem escrita automática pela nuvem.",
+    "explicacao": "Como a função influencia ajustes frequentes, latência variável e perda de conectividade impedem fechamento remoto confiável. Nessas condições, o modelo deve apenas apoiar a decisão, usando o SCADA local em tempo real e preservando a automação existente.",
+    "resposta_padrao": "Aplicá-los automaticamente no controle a partir da nuvem.",
+    "por_que_nao": "Funções que influenciam ajustes frequentes exigem baixo atraso, sincronismo confiável e comportamento seguro na perda de conectividade; esse perfil não é compatível com o enlace externo.",
+    "fundamentos": [
+      {
+        "bloco": "F",
+        "trecho": "controladores de borda transferem dados para a nuvem por Message Queuing Telemetry Transport (MQTT), enquanto um SCADA local consome essas informações em tempo real."
+      },
+      {
+        "bloco": "F",
+        "trecho": "Esse arranjo é mais valioso quando preserva sistemas existentes e adiciona capacidade sem exigir substituição integral da automação instalada."
+      },
+      {
+        "bloco": "A2",
+        "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+      },
+      {
+        "bloco": "A2",
+        "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+      }
+    ]
+  },
+  "regua": []
+}
