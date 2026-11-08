@@ -31,6 +31,8 @@
   banco                 banco final: poda do dataset final v2 (regras R1-R4), revisão de unicidade das questões que
                         o GPT-5 erra (R5-R7, juiz GPT-5.4) e teto por tópico (R8) -> petroquest_banco_v1/BANCO.md;
                         --sem-revisao monta o banco provisório sem chamar a API
+  splits                divide o banco final em treino/validação/teste (70/10/20, por grupo, estratificado)
+  figuras               figuras do banco e do desempenho dos modelos (petroquest_banco_v1/figuras)
   final-v2              dataset final v2: v23 + v23 completo + v22 + antigo + conceitos + variada, deduplicado, só gabaritos totalmente
                         sustentados, avaliado com resposta de até --palavras (20) por GPT-4.1 Nano/Mini/4.1,
                         GPT-5 nano/mini/5 e GPT-5.4 (referência), com e sem contexto -> petroquest_final_v2/QUALIDADE.md
@@ -139,7 +141,7 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
-                                        "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco",
+                                        "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
                                         "final-v2"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
@@ -261,6 +263,17 @@ def main(argv=None) -> int:
                 print(f"[tipos] {t}: {falhas} unidades falharam (isoladas; o resto está salvo). Repita o mesmo comando.")
                 return 2
             print(f"[tipos] {t} concluído: {C.relativo(Path(str(SAIDA_TIPO).format(t)) / 'RELATORIO.md')}")
+        return 0
+    if a.comando == "splits":
+        from .banco import SAIDA as SAIDA_BANCO
+        from .splits import dividir
+        r = dividir(SAIDA_BANCO)
+        print(f"[splits] {r['tamanho']}: {C.relativo(SAIDA_BANCO / 'splits' / 'SPLITS.md')}")
+        return 0
+    if a.comando == "figuras":
+        from .figuras import SAIDA as SAIDA_FIG, gerar
+        gerar()
+        print(f"[figuras] {C.relativo(SAIDA_FIG)}")
         return 0
     if a.comando == "banco":
         from .banco import Banco, SAIDA as SAIDA_BANCO

@@ -1498,3 +1498,12 @@ class BancoTests(unittest.TestCase):
         self.assertTrue(read_json(tmp / "prov" / "resumo.json")["provisorio"])
         self.assertEqual({r["regra"] for r in C.linhas(tmp / "prov" / "poda.jsonl") if r["uid"].endswith(":000:1")},
                          {"R1"})                                             # sem revisão, a suspeita fica fora
+
+
+class SplitsTests(unittest.TestCase):
+    def test_grupo_por_foco_e_documentos(self):
+        from pipeline.qa_research.experimento_ab.splits import grupo_base
+        self.assertEqual(grupo_base("variada:02_02:j:r3:018:2"), grupo_base("tipo_decisao:02_02:j:r1:018:1"))
+        self.assertNotEqual(grupo_base("v23:02_02:j:r1:018:1"), grupo_base("variada:02_02:j:r1:018:1"))
+        self.assertEqual(grupo_base("antigo:01_01:j:r1:003:2:ref"), "base:01_01:j:3")
+        self.assertEqual(grupo_base("v23c:02_02:c:C21:t2:1"), "v23c:02_02:c:C21:t2:1")
