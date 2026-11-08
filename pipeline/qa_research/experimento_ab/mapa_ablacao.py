@@ -121,6 +121,54 @@ def mapa_sobreposto(P: dict, cob: dict):
     return _salvar(fig, "figA5b_mapa_naive_completo")
 
 
+PALETA_AREA = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+               "#bcbd22", "#17becf"]
+
+
+def itens() -> dict:
+    out = {b: [q["item"] for q in C.linhas(ABL / f"questoes_{b}.jsonl") if q.get("pergunta")]
+           for b in CONJ if b != "banco"}
+    out["banco"] = [v["item"] for v in C.linhas(ABL / "vagas.jsonl")]
+    return out
+
+
+def dispersao(P: dict):
+    """Um painel por conjunto no mesmo mapa lexical; cada ponto é uma pergunta, colorida pela área do tópico."""
+    area_item = {q["item"]: q["area"] for q in C.linhas(F.BANCO / "banco.jsonl")}
+    it = itens()
+    r = json.loads((ABL / "resultado.json").read_text(encoding="utf-8"))
+    contagem = {}
+    for b in CONJ:
+        for i in it[b]:
+            contagem[area_item[i]] = contagem.get(area_item[i], 0) + 1
+    areas = sorted(contagem, key=lambda a: -contagem[a])
+    cor = {a: PALETA_AREA[k] for k, a in enumerate(areas)}
+    ext = _limites(P)
+    fig, axs = plt.subplots(2, 3, figsize=(22, 14.5))
+    for ax, b in zip(axs.ravel(), CONJ):
+        voc = r["referencia_banco"]["vocabulario"] if b == "banco" else r["bracos"][b]["vocabulario_geradas"]
+        cs = [cor[area_item[i]] for i in it[b]]
+        ordem = np.random.default_rng(0).permutation(len(cs))      # nenhuma área fica sempre por cima
+        ax.scatter(P[b][ordem, 0], P[b][ordem, 1], s=16, c=np.array(cs)[ordem], alpha=0.85, linewidths=0)
+        ax.set_xlim(ext[0], ext[1])
+        ax.set_ylim(ext[2], ext[3])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_facecolor("#fafafa")
+        for lado in ax.spines.values():
+            lado.set_visible(True)
+            lado.set_color("#9a9994")
+            lado.set_linewidth(1)
+        ax.set_title(f"{NOME[b]}  (vocab.={voc['vocabulario_conteudo']:.0f}, MTLD={voc['mtld']:.0f})",
+                     fontsize=21, fontweight="semibold", loc="center", pad=10, color=F.TINTA)
+    alcas = [plt.Line2D([], [], marker="o", linestyle="", markersize=13, color=cor[a]) for a in areas]
+    nomes = [F.AREA_CURTA.get(a, a) for a in areas]
+    fig.legend(alcas, nomes, loc="lower center", ncol=5, fontsize=19, frameon=False, bbox_to_anchor=(0.5, -0.005),
+               handletextpad=0.3, columnspacing=1.6)
+    fig.tight_layout(rect=(0, 0.08, 1, 1), h_pad=2.5, w_pad=1.2)
+    return _salvar(fig, "figA6_dispersao_vocabulario")
+
+
 def gerar() -> list:
     F.estilo()
     tx = textos()
@@ -128,7 +176,7 @@ def gerar() -> list:
     cob = cobertura(P)
     (SAIDA / "mapa_cobertura.json").write_text(json.dumps({"hexagonos_na_largura": HEX, "cobertura_pct": cob,
                                                            "n": {b: len(tx[b]) for b in CONJ}}, indent=1))
-    return mapa_paineis(P, cob) + mapa_sobreposto(P, cob)
+    return mapa_paineis(P, cob) + mapa_sobreposto(P, cob) + dispersao(P)
 
 
 if __name__ == "__main__":
