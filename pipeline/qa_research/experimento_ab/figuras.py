@@ -51,6 +51,12 @@ AREA_CURTA = {
     "Logística, Suprimentos e Movimentação de Cargas": "Logística e cargas",
     "Gestão do Desempenho Empresarial (KPI)": "Gestão do desempenho (KPI)",
     "Descomissionamento e Gestão do Ciclo de Vida da Unidade": "Descomissionamento"}
+# rótulos curtos para o eixo x dos gráficos por área (fonte grande no slide)
+AREA_SLIDE = {"Produção e processo": "Produção", "Segurança operacional e riscos": "Segurança\noperacional",
+              "Manutenção e integridade": "Manutenção", "SMS ocupacional e ambiental": "SMS",
+              "Lastro, ancoragem e offloading": "Lastro e\nancoragem", "Submarino, poços e risers": "Submarino",
+              "Utilidades e energia": "Utilidades", "Logística e cargas": "Logística", "Gestão do desempenho (KPI)": "KPI",
+              "Descomissionamento": "Descomis-\nsionamento"}
 CONJ = {"treino": "Treino", "validacao": "Validação", "teste": "Teste"}
 
 
@@ -314,7 +320,7 @@ def _quebrar(rotulo: str, largura: int = 14) -> str:
 
 
 def _colunas_cond(rotulos: list, sem: list, com: list, ylabel: str, ymax: float, figsize=(14.5, 6.6),
-                  xfonte: int = 19, vfonte: int = 18):
+                  xfonte: int = 19, vfonte: int = 18, yfonte: int = 19, lfonte: int = 20, justo: bool = False):
     """Colunas sem x com documento por categoria (média dos 4 modelos independentes), estilo slide e sem título."""
     fig, ax = plt.subplots(figsize=figsize)
     x = np.arange(len(rotulos))
@@ -326,14 +332,16 @@ def _colunas_cond(rotulos: list, sem: list, com: list, ylabel: str, ymax: float,
             ax.text(pp, v + ymax * 0.012, f"{v:.0f}", ha="center", va="bottom", fontsize=vfonte,
                     fontweight="semibold", color=TINTA)
     ax.set_xticks(x, rotulos, fontsize=xfonte, color=TINTA)
+    if justo:                                   # menos margem nas pontas: mais espaço para os rótulos
+        ax.set_xlim(-0.55, len(rotulos) - 0.45)
     ax.set_ylim(0, ymax)
-    ax.tick_params(axis="y", labelsize=19)
+    ax.tick_params(axis="y", labelsize=yfonte)
     ax.tick_params(axis="x", length=0, pad=10)
-    ax.set_ylabel(ylabel, fontsize=21)
+    ax.set_ylabel(ylabel, fontsize=yfonte + 2)
     ax.yaxis.grid(True)
     ax.set_axisbelow(True)
     ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
-    ax.legend(loc="upper left", ncol=2, fontsize=20, bbox_to_anchor=(0, 1.13), handlelength=1.3, columnspacing=1.8)
+    ax.legend(loc="upper left", ncol=2, fontsize=lfonte, bbox_to_anchor=(0, 1.13), handlelength=1.3, columnspacing=1.8)
     return fig
 
 
@@ -353,11 +361,9 @@ def _medias(grupos: dict, respostas: dict) -> tuple[dict, dict]:
 def por_tipo(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     grupos = {t: [x for x in teste if x["tipo"] == t] for t in TIPOS}
     acc, f1 = _medias(grupos, respostas)
-    arqs = []
-    for sufixo, rot in (("", [NOME_TIPO[t] for t in TIPOS]),          # duas versões: sem e com o n no rótulo
-                        ("_com_n", [f"{NOME_TIPO[t]}\n(n = {len(grupos[t])})" for t in TIPOS])):
-        arqs += salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112), f"fig5_acuracia_por_tipo{sufixo}")
-        arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62), f"fig5b_f1_por_tipo{sufixo}")
+    rot = [NOME_TIPO[t] for t in TIPOS]
+    arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112), "fig5_acuracia_por_tipo")
+    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62), "fig5b_f1_por_tipo")
     return arqs, {t: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[t])}
                   for i, t in enumerate(TIPOS)}
 
@@ -395,14 +401,10 @@ def por_area(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     ordem = sorted(range(len(nomes)), key=lambda i: acc["sem"][i])       # da mais difícil para a mais fácil
     nomes = [nomes[i] for i in ordem]
     acc, f1 = _medias({a: grupos[a] for a in nomes}, respostas)
-    kw = dict(figsize=(25, 8), xfonte=15.5, vfonte=15)
-    arqs = []
-    for sufixo, rot in (("", [_quebrar(a, 13) for a in nomes]),
-                        ("_com_n", [f"{_quebrar(a, 13)}\n(n = {len(grupos[a])})" for a in nomes])):
-        arqs += salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112, **kw),
-                       f"fig6_acuracia_por_area{sufixo}")
-        arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62, **kw),
-                       f"fig6b_f1_por_area{sufixo}")
+    kw = dict(figsize=(23.5, 8.2), xfonte=22, vfonte=21, yfonte=23, lfonte=24, justo=True)
+    rot = [AREA_SLIDE.get(a, _quebrar(a, 12)) for a in nomes]
+    arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112, **kw), "fig6_acuracia_por_area")
+    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62, **kw), "fig6b_f1_por_area")
     # versão horizontal (nomes das áreas no eixo y, fonte grande), da área mais difícil para a mais fácil
     for sufixo, rot in (("", nomes), ("_com_n", [f"{a} (n = {len(grupos[a])})" for a in nomes])):
         arqs += salvar(_barras_horizontais(rot, acc["sem"], acc["com"], "Acurácia (%)", 105),
