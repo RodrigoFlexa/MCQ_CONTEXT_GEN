@@ -5,7 +5,7 @@
 # Uso (na raiz do repositório MCQ_CONTEXT_GEN, na DL-28):
 #   bash pipeline/qa_research/rodar_llama_dl28.sh                 # 8B e 70B
 #   bash pipeline/qa_research/rodar_llama_dl28.sh llama-3-1-8b    # só um modelo
-#   TESTE=20 bash pipeline/qa_research/rodar_llama_dl28.sh llama-3-1-8b   # teste rápido com 20 questões
+#   TESTE=20 bash pipeline/qa_research/rodar_llama_dl28.sh llama-3-1-8b   # teste rápido (grava em <modelo>_teste.*)
 # Variáveis: GPUS (padrão 6,7), PY (python do ambiente com vLLM), HF_TOKEN (modelos meta-llama exigem licença aceita).
 # Repetir o comando continua de onde parou.
 set -uo pipefail

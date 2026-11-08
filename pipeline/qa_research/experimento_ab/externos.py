@@ -46,6 +46,8 @@ def disponiveis(pasta: Path = RESPOSTAS) -> dict:
     """modelo -> meta, só os que têm respostas para todas as questões pedidas."""
     out = {}
     for meta_arq in sorted(Path(pasta).glob("*.meta.json")):
+        if meta_arq.name.endswith("_teste.meta.json"):     # teste rápido (--limite) não entra na avaliação
+            continue
         meta = read_json(meta_arq)
         arq = meta_arq.with_name(meta["modelo"] + ".jsonl")
         if arq.exists() and meta.get("respondidas") == meta.get("questoes") and len(C.linhas(arq)) == meta["questoes"]:

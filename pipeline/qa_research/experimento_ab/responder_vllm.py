@@ -95,7 +95,18 @@ def parametros(max_tokens: int):
         return SamplingParams(**base), "nenhum"
 
 
-def escolher_hf(nome: str, forcar: str | None) -> str:
+def memoria_livre() -> float:
+    """Fração da memória que o vLLM pode reservar em todas as GPUs visíveis (GPUs compartilhadas: o que está livre
+    agora, com 3% de folga, no máximo 92%)."""
+    import torch
+    fr = []
+    for i in range(torch.cuda.device_count()):
+        livre, total = torch.cuda.mem_get_info(i)
+        fr.append(livre / total)
+    return round(min(0.92, min(fr) - 0.03), 2)
+
+
+def escolher_hf(nome: str, forcar: str | None, memoria: float) -> str:
     if forcar:
         return forcar
     cfg = MODELOS[nome]
@@ -103,9 +114,9 @@ def escolher_hf(nome: str, forcar: str | None) -> str:
         return cfg["hf"]
     import torch
     n = torch.cuda.device_count()
-    mem = min(torch.cuda.get_device_properties(i).total_memory for i in range(n)) / 2 ** 30
-    # pesos bf16 de 70B (~132 GiB) + cache: só com pelo menos 2 x 80 GB
-    return cfg["hf"] if n * mem >= 150 else cfg["hf_fp8"]
+    por_gpu = memoria * min(torch.cuda.get_device_properties(i).total_memory for i in range(n)) / 2 ** 30
+    # pesos bf16 de 70B (~132 GiB, divididos entre as GPUs) + ~8 GiB por GPU de cache e ativações
+    return cfg["hf"] if por_gpu >= 132 / n + 8 else cfg["hf_fp8"]
 
 
 def main(argv=None) -> int:
@@ -113,7 +124,8 @@ def main(argv=None) -> int:
     ap.add_argument("modelo", choices=sorted(MODELOS))
     ap.add_argument("--hf", help="checkpoint do Hugging Face (substitui a escolha automática)")
     ap.add_argument("--tp", type=int, default=0, help="tensor parallel (padrão: todas as GPUs visíveis)")
-    ap.add_argument("--memoria", type=float, default=0.92, help="fração da memória de cada GPU para o vLLM")
+    ap.add_argument("--memoria", type=float, default=0.0,
+                    help="fração da memória de cada GPU para o vLLM (padrão: o que está livre, até 0,92)")
     ap.add_argument("--max-model-len", type=int, default=4096, help="a maior mensagem tem ~2,5 mil tokens")
     ap.add_argument("--max-tokens", type=int, default=200)
     ap.add_argument("--lote", type=int, default=1024, help="questões por chamada ao vLLM (grava a cada lote)")
@@ -127,13 +139,15 @@ def main(argv=None) -> int:
     if a.limite:
         qs = qs[: a.limite]
     SAIDA.mkdir(parents=True, exist_ok=True)
-    arq, meta_arq = SAIDA / f"{a.modelo}.jsonl", SAIDA / f"{a.modelo}.meta.json"
+    nome = a.modelo + ("_teste" if a.limite else "")          # teste rápido não mistura com o resultado
+    arq, meta_arq = SAIDA / f"{nome}.jsonl", SAIDA / f"{nome}.meta.json"
     feitos = {r["uid"] for r in linhas(arq)} if arq.exists() else set()
     pendentes = [q for q in qs if q["uid"] not in feitos]
-    hf = escolher_hf(a.modelo, a.hf)
+    memoria = a.memoria or memoria_livre()
+    hf = escolher_hf(a.modelo, a.hf, memoria)
     tp = a.tp or torch.cuda.device_count()
     sp, guiado = parametros(a.max_tokens)
-    meta = {"modelo": a.modelo, "hf": hf, "vllm": versao_vllm, "tensor_parallel": tp, "gpus": [
+    meta = {"modelo": a.modelo, "hf": hf, "vllm": versao_vllm, "tensor_parallel": tp, "memoria": memoria, "gpus": [
         torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())], "temperatura": 0.0,
         "max_tokens": a.max_tokens, "saida_guiada": guiado, "limite_palavras": LIMITE,
         "prompt_sha256": sha(sistema()), "questoes": len(qs)}
@@ -147,7 +161,7 @@ def main(argv=None) -> int:
     if not pendentes and feitos:
         meta_arq.write_text(json.dumps({**meta, "respondidas": len(feitos)}, ensure_ascii=False, indent=1), encoding="utf-8")
         return 0
-    llm = LLM(model=hf, tensor_parallel_size=tp, gpu_memory_utilization=a.memoria, max_model_len=a.max_model_len,
+    llm = LLM(model=hf, tensor_parallel_size=tp, gpu_memory_utilization=memoria, max_model_len=a.max_model_len,
               dtype="auto", seed=0)
     s = sistema()
     conv = lambda u: [{"role": "system", "content": s}, {"role": "user", "content": u}]   # noqa: E731
