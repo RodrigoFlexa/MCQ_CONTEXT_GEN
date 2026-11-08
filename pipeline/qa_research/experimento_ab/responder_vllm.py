@@ -97,13 +97,13 @@ def parametros(max_tokens: int):
 
 def memoria_livre() -> float:
     """Fração da memória que o vLLM pode reservar em todas as GPUs visíveis (GPUs compartilhadas: o que está livre
-    agora, com 3% de folga, no máximo 92%)."""
+    agora, com 8% de folga porque o uso dos outros oscila, no máximo 92%)."""
     import torch
     fr = []
     for i in range(torch.cuda.device_count()):
         livre, total = torch.cuda.mem_get_info(i)
         fr.append(livre / total)
-    return round(min(0.92, min(fr) - 0.03), 2)
+    return round(min(0.92, min(fr) - 0.08), 2)
 
 
 def escolher_hf(nome: str, forcar: str | None, memoria: float) -> str:
@@ -164,7 +164,9 @@ def main(argv=None) -> int:
     llm = LLM(model=hf, tensor_parallel_size=tp, gpu_memory_utilization=memoria, max_model_len=a.max_model_len,
               dtype="auto", seed=0,
               # GPUs ligadas por PCIe (DL-28): o all-reduce customizado travava na iniciação; fica o NCCL
-              disable_custom_all_reduce=tp > 1)
+              disable_custom_all_reduce=tp > 1,
+              # 70B em GPUs compartilhadas: sem CUDA graphs, sobra memória para o cache de KV
+              enforce_eager="70b" in a.modelo)
     s = sistema()
     conv = lambda u: [{"role": "system", "content": s}, {"role": "user", "content": u}]   # noqa: E731
     sonda = llm.chat([conv(usuario(None))], sp, use_tqdm=False)[0].outputs[0].text
