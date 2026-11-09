@@ -1,4 +1,4 @@
-"""Mapa 2D do vocabulário das questões da ablação (relatorios/ablacao_geracao_v1/figuras/figA5*).
+"""Mapa 2D do vocabulário das questões da ablação (relatorios/ablacao_geracao_v2/figuras/figA5*, figA6).
 
 Cada ponto é uma pergunta. As 1000 geradas por braço e as 1000 do banco final (as das vagas) entram num único
 espaço lexical: TF-IDF das palavras de conteúdo (uni e bigramas), SVD com 100 dimensões e UMAP (cosseno) em 2D.
@@ -20,11 +20,12 @@ from . import figuras as F  # noqa: E402
 from .ablacao import SAIDA as ABL, conteudo  # noqa: E402
 from .figuras_ablacao import SAIDA, _salvar  # noqa: E402
 
-CONJ = ["naive", "documento", "sem_retro", "sem_externos", "completo", "banco"]
-NOME = {"naive": "Naive", "documento": "Documento + regras", "sem_retro": "Sem retroalimentação",
-        "sem_externos": "Sem datasets externos", "completo": "Pipeline completo", "banco": "Banco final"}
-COR = {"naive": "#9c3d8f", "documento": "#6da7ec", "sem_retro": "#3987e5", "sem_externos": "#256abf",
-       "completo": "#0d366b", "banco": F.LARANJA}
+CONJ = ["naive", "documentos", "regras", "documentos_regras", "sem_retro", "sem_externos", "completo", "banco"]
+NOME = {"naive": "Naive", "documentos": "Documentos", "regras": "Regras", "documentos_regras": "Documentos + regras",
+        "sem_retro": "Sem retroalimentação", "sem_externos": "Sem datasets externos", "completo": "Pipeline completo",
+        "banco": "Banco final"}
+COR = {"naive": "#1f77b4", "documentos": "#d62728", "regras": "#ff7f0e", "documentos_regras": "#2ca02c",
+       "sem_retro": "#9467bd", "sem_externos": "#8c564b", "completo": "#111111", "banco": "#5f5e5a"}   # = figA7
 
 
 def textos() -> dict:
@@ -104,9 +105,9 @@ def _painel(ax, P, b, ext, cob, fonte=26):
 
 def mapa_paineis(P: dict, cob: dict):
     ext = _limites(P)
-    fig, axs = plt.subplots(2, 3, figsize=(21, 15))
+    fig, axs = plt.subplots(2, 4, figsize=(28, 15))
     for ax, b in zip(axs.ravel(), CONJ):
-        _painel(ax, P, b, ext, cob)
+        _painel(ax, P, b, ext, cob, fonte=25)
     fig.tight_layout(h_pad=3, w_pad=1.5)
     return _salvar(fig, "figA5_mapa_vocabulario")
 
@@ -144,7 +145,7 @@ def dispersao(P: dict):
     areas = sorted(contagem, key=lambda a: -contagem[a])
     cor = {a: PALETA_AREA[k] for k, a in enumerate(areas)}
     ext = _limites(P)
-    fig, axs = plt.subplots(2, 3, figsize=(22, 14.5))
+    fig, axs = plt.subplots(2, 4, figsize=(28, 14.5))
     for ax, b in zip(axs.ravel(), CONJ):
         voc = r["referencia_banco"]["vocabulario"] if b == "banco" else r["bracos"][b]["vocabulario_geradas"]
         cs = [cor[area_item[i]] for i in it[b]]
@@ -159,7 +160,7 @@ def dispersao(P: dict):
             lado.set_visible(True)
             lado.set_color("#9a9994")
             lado.set_linewidth(1)
-        ax.set_title(f"{NOME[b]}  (vocab.={voc['vocabulario_conteudo']:.0f}, MTLD={voc['mtld']:.0f})",
+        ax.set_title(f"{NOME[b]}\nvocab. {voc['vocabulario_conteudo']:.0f} · MTLD {voc['mtld']:.0f}",
                      fontsize=21, fontweight="semibold", loc="center", pad=10, color=F.TINTA)
     alcas = [plt.Line2D([], [], marker="o", linestyle="", markersize=13, color=cor[a]) for a in areas]
     nomes = [F.AREA_CURTA.get(a, a) for a in areas]

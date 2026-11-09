@@ -106,10 +106,10 @@ def _contorno(ax, pts, cor, ext, nivel=0.5, lw=3.0, preencher=False, alfa=0.12):
     ax.contour(xs, ys, dens, levels=[corte], colors=[cor], linewidths=lw, zorder=4)
 
 
-def _limites(P):
+def _limites(P, corte=2.0, margem=0.06):
     todos = np.vstack(list(P.values()))
-    lo, hi = np.percentile(todos, 2, axis=0), np.percentile(todos, 98, axis=0)
-    m = (hi - lo) * 0.06
+    lo, hi = np.percentile(todos, corte, axis=0), np.percentile(todos, 100 - corte, axis=0)
+    m = (hi - lo) * margem
     return (lo[0] - m[0], hi[0] + m[0], lo[1] - m[1], hi[1] + m[1])
 
 
@@ -124,8 +124,9 @@ def _limpo(ax, ext):
 
 
 def unico(P: dict, saida: Path):
-    """Todos os braços no mesmo gráfico: pontos coloridos por braço, contornos de 50% e centros."""
-    ext = _limites(P)
+    """Todos os braços no mesmo gráfico: pontos coloridos por braço, contornos de 50% e centros.
+    Zoom na massa principal (corta as ilhas pequenas da borda; elas aparecem nos painéis)."""
+    ext = _limites(P, corte=8.0, margem=0.25)
     fig, ax = plt.subplots(figsize=(15, 12.5))
     rng = np.random.default_rng(0)
     amostra = {b: P[b][rng.permutation(len(P[b]))[:AMOSTRA]] for b in P}   # menos pontos: o contorno fala mais
