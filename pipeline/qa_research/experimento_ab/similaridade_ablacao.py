@@ -355,49 +355,133 @@ def figuras(linhas: list[dict], pares: list[dict], resumo: list[dict], saida: Pa
             arqs.append(pasta / f"{nome}.{ext}")
         plt.close(fig)
 
-    def violino(valores: dict, ylabel: str, nome: str, ylim=None):
+    def caixas(valores: dict, ylabel: str, nome: str):
+        """Boxplot por conjunto: caixa = quartis, linha = mediana, hastes = percentis 5 e 95 (sem pontos soltos)."""
         conj = [b for b in CONJUNTOS if len(valores.get(b, []))]
         fig, ax = plt.subplots(figsize=(17, 7))
         x = np.arange(len(conj))
-        partes = ax.violinplot([valores[b] for b in conj], x, widths=0.8, showextrema=False)
-        for pc, b in zip(partes["bodies"], conj):
-            pc.set_facecolor(COR[b])
-            pc.set_edgecolor(COR[b])
-            pc.set_alpha(0.35)
-        for xi, b in zip(x, conj):
-            v = np.asarray(valores[b])
-            q1, md, q3 = np.percentile(v, [25, 50, 75])
-            ax.plot([xi, xi], [q1, q3], color=COR[b], linewidth=7, solid_capstyle="butt", zorder=3)
-            ax.scatter([xi], [md], s=90, color="white", edgecolors=COR[b], linewidths=2.5, zorder=4)
-            ax.text(xi + 0.12, md, f"{md:.2f}".replace(".", ","), va="center", fontsize=17, color=F.TINTA,
-                    fontweight="semibold", zorder=5)
+        bp = ax.boxplot([valores[b] for b in conj], positions=x, widths=0.56, whis=(5, 95), showfliers=False,
+                        patch_artist=True, medianprops={"linewidth": 3.5}, boxprops={"linewidth": 2},
+                        whiskerprops={"linewidth": 2}, capprops={"linewidth": 2})
+        for k, b in enumerate(conj):
+            cor = COR[b]
+            bp["boxes"][k].set(facecolor=matplotlib.colors.to_rgba(cor, 0.22), edgecolor=cor)
+            bp["medians"][k].set_color(cor)
+            for e in bp["whiskers"][2 * k:2 * k + 2] + bp["caps"][2 * k:2 * k + 2]:
+                e.set_color(cor)
+            md = float(np.median(valores[b]))
+            q3 = float(np.percentile(valores[b], 75))
+            ax.text(x[k] + 0.32, md, f"{md:.2f}".replace(".", ","), va="center", ha="left", fontsize=18,
+                    fontweight="semibold", color=F.TINTA)
         ax.set_xticks(x, [CURTO[b] for b in conj], fontsize=20)
         for t, b in zip(ax.get_xticklabels(), conj):
             t.set_color(COR[b] if b != "banco" else F.TINTA2)
+        ax.set_xlim(-0.6, len(conj) - 0.25)
         ax.set_ylabel(ylabel, fontsize=21)
         ax.tick_params(axis="y", labelsize=18)
         ax.tick_params(axis="x", length=0, pad=10)
-        if ylim:
-            ax.set_ylim(*ylim)
         ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda y, _: f"{y:.2f}".replace(".", ",")))
         ax.yaxis.grid(True)
         ax.set_axisbelow(True)
         salvar(fig, nome)
+
+    def _hdr(ax, pts, ext, cor, niveis=(0.8, 0.5, 0.2), preencher=True, lw=2.2, estilo="-"):
+        """Regiões de maior densidade (KDE) que contêm 80%, 50% e 20% das perguntas."""
+        from scipy.stats import gaussian_kde
+        kde = gaussian_kde(pts.T, bw_method=0.3)
+        xs, ys = np.meshgrid(np.linspace(ext[0], ext[1], 200), np.linspace(ext[2], ext[3], 200))
+        d = kde(np.vstack([xs.ravel(), ys.ravel()])).reshape(xs.shape)
+        dp = kde(pts.T)
+        cortes = sorted(np.quantile(dp, 1 - n) for n in niveis)
+        if preencher:
+            for c, a in zip(cortes, (0.16, 0.32, 0.55)):
+                ax.contourf(xs, ys, d, levels=[c, d.max() + 1], colors=[cor], alpha=a, zorder=2)
+        ax.contour(xs, ys, d, levels=[cortes[1]] if not preencher else cortes, colors=[cor],
+                   linewidths=lw, linestyles=estilo, zorder=3)
+
+    def densidade_2d(linhas: list[dict]):
+        """x = redundância lexical (TF-IDF), y = redundância semântica (E5), ambas com a mais parecida do tópico."""
+        cx, cy = "nn_tfidf_topico", "nn_e5_topico"
+        P = {}
+        for b in CONJUNTOS:
+            v = np.array([(l[cx], l[cy]) for l in linhas if l["conjunto"] == b and l.get(cx) is not None
+                          and l.get(cy) is not None and not math.isnan(l[cx]) and not math.isnan(l[cy])])
+            if len(v):
+                v[:, 0] = np.sqrt(np.clip(v[:, 0], 0, 1))     # eixo x em raiz: abre a faixa baixa, onde está quase tudo
+                P[b] = v
+        todos = np.vstack(list(P.values()))
+        lo, hi = np.percentile(todos, 1, axis=0), np.percentile(todos, 99, axis=0)
+        m = (hi - lo) * 0.05
+        ext = (max(0, lo[0] - m[0]), min(1, hi[0] + m[0]), lo[1] - m[1], min(1, hi[1] + m[1]))
+        fmt = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:.2f}".replace(".", ","))
+        marcas = [x for x in (0.02, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0) if ext[0] <= math.sqrt(x) <= ext[1]]
+
+        def eixo_x(ax, fonte):
+            ax.set_xticks([math.sqrt(x) for x in marcas], [f"{x:g}".replace(".", ",") for x in marcas],
+                          fontsize=fonte)
+        rx, ry = "Similaridade lexical com a mais parecida (TF-IDF, eixo em raiz)", "Similaridade semântica (E5)"
+        # painéis
+        conj = list(P)
+        fig, axs = plt.subplots(2, 4, figsize=(26, 13), sharex=True, sharey=True)
+        for ax, b in zip(axs.ravel(), conj):
+            if b != "banco" and "banco" in P:
+                _hdr(ax, P["banco"], ext, "#8a8984", preencher=False, lw=2, estilo="--")
+            _hdr(ax, P[b], ext, COR[b] if b != "banco" else "#6b6a66")
+            md = np.median(P[b], axis=0)
+            ax.scatter(*md, s=170, marker="X", color="white", edgecolors=COR[b], linewidths=2.2, zorder=5)
+            ax.set_title(NOME[b], fontsize=24, fontweight="semibold", color=COR[b] if b != "banco" else F.TINTA2,
+                         loc="center", pad=10)
+            ax.set_xlim(ext[0], ext[1])
+            ax.set_ylim(ext[2], ext[3])
+            ax.yaxis.set_major_formatter(fmt)
+            ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(4))
+            ax.tick_params(labelsize=17)
+            eixo_x(ax, 16)
+            ax.grid(True, color=F.GRADE)
+            ax.set_axisbelow(True)
+        for ax in axs.ravel()[len(conj):]:
+            ax.set_visible(False)
+        fig.supxlabel(rx, fontsize=23, y=0.0)
+        fig.supylabel(ry, fontsize=23, x=0.0)
+        fig.tight_layout(rect=(0.015, 0.03, 1, 1), h_pad=2.5, w_pad=1.5)
+        fig.text(0.5, -0.035, "Regiões: 80%, 50% e 20% das perguntas (do claro ao escuro). Tracejado: região de 50% "
+                 "do banco final. X: mediana.", ha="center", fontsize=17, color=F.TINTA3)
+        salvar(fig, "figS5_densidade_2d_paineis")
+        # todos juntos: só a região de 50% e a mediana
+        fig, ax = plt.subplots(figsize=(15, 11))
+        for b in conj:
+            _hdr(ax, P[b], ext, COR[b], preencher=False, lw=3.2, estilo="--" if b == "banco" else "-")
+            ax.scatter(*np.median(P[b], axis=0), s=300, color=COR[b], edgecolors="white", linewidths=2.2, zorder=6)
+        ax.set_xlim(ext[0], ext[1])
+        ax.set_ylim(ext[2], ext[3])
+        ax.yaxis.set_major_formatter(fmt)
+        ax.tick_params(labelsize=19)
+        eixo_x(ax, 19)
+        ax.set_xlabel(rx, fontsize=22)
+        ax.set_ylabel(ry, fontsize=22)
+        ax.grid(True, color=F.GRADE)
+        ax.set_axisbelow(True)
+        alcas = [plt.Line2D([], [], color=COR[b], linewidth=3.2, linestyle="--" if b == "banco" else "-",
+                            marker="o", markersize=13, markeredgecolor="white") for b in conj]
+        ax.legend(alcas, [NOME[b] for b in conj], loc="upper center", bbox_to_anchor=(0.5, -0.1), ncol=4,
+                  fontsize=19, frameon=False, handlelength=2, columnspacing=1.5)
+        salvar(fig, "figS5b_densidade_2d_todos")
 
     por = defaultdict(lambda: defaultdict(list))
     for l in linhas:
         for c in ("nn_e5_topico", "nn_tfidf_topico", "self_bleu_topico", "dens10_e5_conjunto"):
             if l.get(c) is not None and not (isinstance(l[c], float) and math.isnan(l[c])):
                 por[c][l["conjunto"]].append(l[c])
-    violino(por["nn_e5_topico"], "Similaridade com a mais parecida\ndo mesmo tópico (E5, cosseno)",
-            "figS1_vizinho_mais_proximo_e5")
-    violino(por["nn_tfidf_topico"], "Similaridade com a mais parecida\ndo mesmo tópico (TF-IDF, cosseno)",
-            "figS1b_vizinho_mais_proximo_tfidf", (0, 1))
+    caixas(por["nn_e5_topico"], "Similaridade com a mais parecida\ndo mesmo tópico (E5, cosseno)",
+           "figS1_vizinho_mais_proximo_e5")
+    caixas(por["nn_tfidf_topico"], "Similaridade com a mais parecida\ndo mesmo tópico (TF-IDF, cosseno)",
+           "figS1b_vizinho_mais_proximo_tfidf")
     pp = defaultdict(list)
     for p in pares:
         pp[p["conjunto"]].append(p["cos_e5"])
-    violino(pp, "Similaridade entre pares\ndo mesmo tópico (E5, cosseno)", "figS2_pares_mesmo_topico_e5")
-    violino(por["self_bleu_topico"], "Self-BLEU da pergunta\n(contra o mesmo tópico)", "figS3_self_bleu", (0, 1))
+    caixas(pp, "Similaridade entre pares\ndo mesmo tópico (E5, cosseno)", "figS2_pares_mesmo_topico_e5")
+    caixas(por["self_bleu_topico"], "Self-BLEU da pergunta\n(contra o mesmo tópico)", "figS3_self_bleu")
+    densidade_2d(linhas)
     # matriz entre configurações (E5, vizinho mais próximo no mesmo tópico, média)
     conj = [b for b in CONJUNTOS if any(r["conjunto_a"] == b for r in resumo)]
     M = np.full((len(conj), len(conj)), np.nan)
@@ -477,7 +561,8 @@ conjuntos juntos; `char` = TF-IDF de n-gramas de caracteres 3 a 5; `e5` = embedd
   sorteadas, e por tópico), cosseno médio e vizinho mais próximo médio (conjunto e tópico) e Vendi (E5).
 - `diversidade_por_topico.csv`: as mesmas métricas por conjunto e tópico (geradas).
 - `figuras/`: figS1 (vizinho mais próximo no tópico, E5 e TF-IDF), figS2 (pares do mesmo tópico, E5),
-  figS3 (Self-BLEU), figS4 (matriz entre configurações, E5).
+  figS3 (Self-BLEU), figS4 (matriz entre configurações, E5), figS5 e figS5b (densidade 2D: lexical x semântica).
+  Boxplots: caixa = quartis, hastes = percentis 5 e 95.
 
 ## Leitura
 
