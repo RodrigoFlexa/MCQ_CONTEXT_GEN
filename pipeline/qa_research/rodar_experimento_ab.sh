@@ -26,8 +26,9 @@
 #                        rubrica de dificuldade do especialista
 #   banco                banco final: poda, revisão de unicidade das questões que o GPT-5 erra e teto por tópico
 #                        (petroquest_banco_v1/BANCO.md e banco.jsonl)
-#   ablacao              ablação da geração v2: 1000 vagas do banco final, 7 braços (naive, documentos, regras,
-#                        documentos + regras, sem retroalimentação, sem datasets externos, completo); o naive vem da v1;
+#   ablacao              ablação da geração v2: 1000 vagas do banco final, 7 braços (naive_vaga, documentos, regras_vaga,
+#                        documentos + regras, sem retroalimentação, sem datasets externos, completo); naive e regras
+#                        geram uma questão por chamada (as versões em lote por tópico ficam como referência);
 #                        taxa de aceite e vocabulário (ablacao_geracao_v2)
 #   externos             juiz padrão sobre as respostas dos modelos Llama geradas na DL-28 (rodar_llama_dl28.sh)
 #   rubrica              só a classificação pela rubrica do especialista (petroquest_final_v2/rubrica/RUBRICA.md)
@@ -183,7 +184,7 @@ if [[ "$etapa" == "externos" ]]; then
 fi
 if [[ "$etapa" == "ablacao" ]]; then
     # chamadas independentes (uma questão por vaga): 24 em paralelo por padrão; um --workers explícito prevalece
-    rodar "ablação da geração v2 (7 braços x 1000 questões)" ablacao --workers 24 || fim_erro ablacao
+    rodar "ablação da geração v2 (naive e regras por vaga; os demais braços são retomados)" ablacao --workers 24 || fim_erro ablacao
 fi
 if [[ "$etapa" == "antigo" ]]; then
     # 2 chamadas por questão (2156 questões): 16 em paralelo por padrão; um --workers explícito prevalece

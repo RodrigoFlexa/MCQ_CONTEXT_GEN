@@ -35,8 +35,9 @@
   figuras               figuras do banco e do desempenho dos modelos (petroquest_banco_v1/figuras)
   avaliar-externos      juiz padrão sobre as respostas dos modelos Llama (vLLM na DL-28, respostas_externas/)
                         nas questões do banco final -> avaliacao_externos/QUALIDADE.md
-  ablacao               ablação da geração (v2): 1000 vagas do banco, braços naive, documentos, regras,
-                        documentos_regras, sem_retro, sem_externos e completo, mesma aceitação (auditor,
+  ablacao               ablação da geração (v2): 1000 vagas do banco, braços naive_vaga e regras_vaga (sem documento,
+                        uma questão por chamada), documentos, documentos_regras, sem_retro, sem_externos e completo
+                        (naive e regras em lote ficam como referência), mesma aceitação (auditor,
                         sustentação, dedup), taxa de aceite e vocabulário -> ablacao_geracao_v2/ABLACAO.md
   final-v2              dataset final v2: v23 + v23 completo + v22 + antigo + conceitos + variada, deduplicado, só gabaritos totalmente
                         sustentados, avaliado com resposta de até --palavras (20) por GPT-4.1 Nano/Mini/4.1,
@@ -163,7 +164,7 @@ def main(argv=None) -> int:
                     help="tipos: quais gerações por tipo rodar, separados por vírgula")
     ap.add_argument("--sem-revisao", action="store_true", help="banco: sem a revisão de unicidade (provisório)")
     ap.add_argument("--teto-topico", type=int, default=150, help="banco: máximo de questões por tópico")
-    ap.add_argument("--bracos", default="naive,documentos,regras,documentos_regras,sem_retro,sem_externos,completo",
+    ap.add_argument("--bracos", default="naive_vaga,regras_vaga,documentos,documentos_regras,sem_retro,sem_externos,completo",
                     help="ablacao: braços, separados por vírgula")
     ap.add_argument("--vagas", type=int, default=1000, help="ablacao: questões pedidas por braço")
     ap.add_argument("--so-relatorio", action="store_true",

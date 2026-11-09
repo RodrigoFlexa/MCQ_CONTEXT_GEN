@@ -1527,6 +1527,17 @@ class FalsoAblacao:
             n = int(re.search(r"Quantidade: (\d+)", user).group(1))
             d = {"questoes": [{"pergunta": f"Qual mecanismo explica o fenômeno {k} no separador?",
                                "resposta": f"Mecanismo {k}."} for k in range(n)]}
+        elif tag == "ablacao_naive_vaga":
+            vaga = re.search(r"Pedido: (V\d+)", user).group(1)
+            d = {"questoes": [{"pergunta": f"Qual mecanismo explica o fenômeno da vaga {vaga} no separador?",
+                               "resposta": f"Mecanismo {vaga}."}]}
+        elif tag == "ablacao_regras_vaga":
+            vaga = re.search(r"Pedido: (V\d+)", user).group(1)
+            t = re.search(r"1 questão do tipo (\w+)", user).group(1)
+            d = {"questoes": [{"tipo": t, "cenario": t in ("decisao", "diagnostico"), "conhecimento": f"c {vaga}",
+                               "pergunta": f"Qual princípio de {t} explica o caso da vaga {vaga}?",
+                               "resposta": f"Princípio {vaga}.", "explicacao": "e", "resposta_padrao": "p",
+                               "por_que_nao": "q"}]}
         elif tag == "ablacao_regras":
             pedido = re.findall(r"(\d+) questões do tipo (\w+)", user)
             d = {"questoes": [{"tipo": t, "cenario": t in ("decisao", "diagnostico"), "conhecimento": f"c {t} {k}",
@@ -1595,9 +1606,19 @@ class AblacaoTests(unittest.TestCase):
         ab = self.a(f)
         self.assertEqual(ab.executar(), 0)
         d = self.exp / "ablacao"
-        bracos = ("naive", "documentos", "regras", "documentos_regras", "sem_retro", "sem_externos", "completo")
+        bracos = ("naive_vaga", "regras_vaga", "naive", "documentos", "regras", "documentos_regras", "sem_retro",
+                  "sem_externos", "completo")
         q = {b: C.linhas(d / f"questoes_{b}.jsonl") for b in bracos}
-        self.assertEqual((f.chamadas["ablacao_naive"], f.chamadas["ablacao_regras"]), (1, 1))   # uma por tópico
+        self.assertEqual((f.chamadas["ablacao_naive"], f.chamadas["ablacao_regras"]), (1, 1))   # lote: uma por tópico
+        # por vaga: uma chamada independente por vaga, sem documento, cada uma com o identificador da vaga
+        self.assertEqual((f.chamadas["ablacao_naive_vaga"], f.chamadas["ablacao_regras_vaga"]), (8, 8))
+        for tag in ("ablacao_naive_vaga", "ablacao_regras_vaga"):
+            us_ = f.usuarios[tag]
+            self.assertEqual(len(set(us_)), 8)
+            self.assertTrue(all("<janela>" not in u and "Pedido: V" in u for u in us_))
+        self.assertTrue(all("questão do tipo" in u for u in f.usuarios["ablacao_regras_vaga"]))
+        self.assertEqual({x["vaga"] for x in q["naive_vaga"]}, {x["vaga"] for x in q["documentos"]})
+        self.assertEqual({x["tipo"] for x in q["regras_vaga"]}, {"mecanismo", "decisao"})
         self.assertEqual(f.chamadas["ablacao_documentos"], 8)
         self.assertIn("4 questões do tipo decisao", f.usuarios["ablacao_regras"][0])
         self.assertNotIn("<janela>", f.usuarios["ablacao_regras"][0])
@@ -1618,15 +1639,19 @@ class AblacaoTests(unittest.TestCase):
         self.assertEqual({x["onda"] for x in q["completo"]}, {1, 2})
         ac = {b: sum(x["aceita"] for x in v) for b, v in q.items()}
         self.assertEqual((ac["documentos_regras"], ac["sem_retro"]), (8 - ruins, 8 - ruins))
-        self.assertEqual((ac["sem_externos"], ac["completo"], ac["naive"], ac["regras"], ac["documentos"]),
-                         (8, 8, 8, 8, 8))
+        self.assertEqual((ac["sem_externos"], ac["completo"], ac["naive"], ac["regras"], ac["documentos"],
+                          ac["naive_vaga"], ac["regras_vaga"]), (8, 8, 8, 8, 8, 8, 8))
         self.assertEqual({x["tipo"] for x in q["regras"]}, {"mecanismo", "decisao"})
         r = read_json(d / "resultado.json")
         self.assertEqual(r["pareados"]["completo_vs_sem_retro"]["so_primeiro"], ruins)
         self.assertIn("documentos_regras_vs_documentos", r["pareados"])
+        for k in ("regras_vaga_vs_naive_vaga", "documentos_vs_naive_vaga", "documentos_regras_vs_regras_vaga"):
+            self.assertIn(k, r["pareados"])
+        self.assertIn("validas_sem_exigir_fonte", r["bracos"]["naive_vaga"])
         self.assertIn("validas_sem_exigir_fonte", r["bracos"]["regras"])
         md = (d / "ABLACAO.md").read_text(encoding="utf-8")
-        self.assertIn("Regras (sem documento)", md)
+        self.assertIn("Regras em lote (por tópico)", md)
+        self.assertIn("Naive (uma por chamada)", md)
         antes = sum(f.chamadas.values())
         self.assertEqual(self.a(f).executar(), 0)                               # retomada: nada é refeito
         self.assertEqual(sum(f.chamadas.values()), antes)

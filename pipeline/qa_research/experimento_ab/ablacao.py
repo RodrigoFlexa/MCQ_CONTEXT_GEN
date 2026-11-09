@@ -4,7 +4,11 @@
 geradas por janela nos documentos base (v23c, variada, conceitos e as três gerações por tipo), estratificadas por
 tópico x tipo. Mesmo gerador (GPT-5.4 high) e a mesma aceitação em todos os braços:
 
-  naive              só o pedido "gere N questões sobre <tema/escopo do especialista>", uma chamada por tópico;
+  naive_vaga         só o pedido "gere 1 questão sobre <tema/escopo do especialista>", uma chamada por vaga, sem saber
+                     o que as outras chamadas geraram (como os braços com documento: uma questão por chamada);
+  regras_vaga        naive_vaga + as regras do prompt e o tipo da vaga, sem documento e sem exemplos, uma por vaga;
+  naive, regras      as versões antigas da v2, em lote: N questões numa única chamada por tópico (o modelo vê a
+                     própria lista e evita repetir); ficam só como referência;
   documentos         naive + a janela de 3 blocos da vaga ("uma questão sobre o bloco [F]"), sem regras nem exemplos;
   regras             naive + as regras do prompt e os tipos pedidos (por tópico, N questões com a mesma mistura de
                      tipos das vagas), sem documento e sem exemplos;
@@ -68,6 +72,8 @@ FRACAO_CONVERTIDAS = 0.25
 GERADOR = "gpt-5-4-petrobras:high"
 AUDITOR = "gpt-5-4-petrobras:high"
 BRACOS = {
+    "naive_vaga": {"documento": False, "regras": False, "exemplos": False, "retro": False},
+    "regras_vaga": {"documento": False, "regras": True, "exemplos": False, "retro": False},
     "naive": {"documento": False, "regras": False, "exemplos": False, "retro": False},
     "documentos": {"documento": True, "regras": False, "exemplos": False, "retro": False},
     "regras": {"documento": False, "regras": True, "exemplos": False, "retro": False},
@@ -76,8 +82,10 @@ BRACOS = {
     "sem_externos": {"documento": True, "regras": True, "exemplos": False, "retro": True},
     "completo": {"documento": True, "regras": True, "exemplos": True, "retro": True},
 }
-POR_TOPICO = ("naive", "regras")                      # sem documento: N questões por chamada, por tópico
-NOME_BRACO = {"naive": "Naive (só o tópico)", "documentos": "Documentos", "regras": "Regras (sem documento)",
+POR_TOPICO = ("naive", "regras")                      # sem documento, em lote: N questões numa chamada por tópico
+SEM_DOC_VAGA = ("naive_vaga", "regras_vaga")          # sem documento, uma questão por chamada (por vaga)
+NOME_BRACO = {"naive_vaga": "Naive (uma por chamada)", "regras_vaga": "Regras (uma por chamada, sem documento)",
+              "naive": "Naive em lote (por tópico)", "documentos": "Documentos", "regras": "Regras em lote (por tópico)",
               "documentos_regras": "Documentos + regras", "sem_retro": "Sem retroalimentação",
               "sem_externos": "Sem datasets externos", "completo": "Pipeline completo",
               "banco": "Banco final (referência)"}
@@ -534,6 +542,43 @@ class Ablacao:
                                  q["tipo"] or "nao_declarado", self._blocos_recuperados(q)[1])
         return falhas + self._paralelo(qs, auditar, f"{braco}: auditoria")
 
+    # -------------------------------------------------------------- braços sem documento, uma questão por vaga
+    def _sem_doc(self, braco: str, v: dict) -> bool:
+        """Uma chamada por vaga, só com o tópico (e, em regras_vaga, as regras e o tipo da vaga). O identificador da
+        vaga vai no pedido para que cada chamada seja independente (o cache é por conteúdo); o modelo não vê as outras."""
+        arq, nome = self._arq(braco, v["vaga"], 1), f"{braco}_{v['vaga']}_t1"
+        if not arq.exists():
+            try:
+                if braco == "naive_vaga":
+                    d = self.cliente("geracao").json(
+                        C.prompt("ablacao_naive"), self._tema(v["item"]) + f"\n\nQuantidade: 1 questão.\nPedido: {v['vaga']}",
+                        tag="ablacao_naive_vaga", max_tokens=6000, item=v["item"], validate=lambda d: validar_naive(d, 1))
+                else:
+                    pedido = {v["tipo"]: 1}
+                    d = self.cliente("geracao").json(
+                        self._sistema_regras(),
+                        self._tema(v["item"]) + f"\n\n<pedido>\n1 questão do tipo {v['tipo']}\n</pedido>\nPedido: {v['vaga']}",
+                        tag="ablacao_regras_vaga", max_tokens=12000, item=v["item"],
+                        validate=lambda d: validar_regras(d, pedido))
+                rec = {"vaga": v["vaga"], "tentativa": 1, "questao": d["questoes"][0], "regua": []}
+            except Exception as exc:  # noqa: BLE001
+                if not _filtrado(exc):
+                    self._falha(nome, exc)
+                    return False
+                rec = {"vaga": v["vaga"], "tentativa": 1, "questao": None, "regua": ["bloqueado pelo filtro de conteúdo"]}
+            atomic_json(arq, rec)
+            self._ok(nome)
+        d = read_json(arq)
+        if not self._tem_questao(d):
+            return True
+        q = {**d["questao"], "item": v["item"]}
+        tipo = v["tipo"] if braco == "regras_vaga" else "nao_declarado"
+        return self._auditar(self._arq(braco, v["vaga"], 1, "auditoria"), q, tipo, self._blocos_recuperados(q)[1])
+
+    def sem_doc_por_vaga(self, bracos: list[str]) -> int:
+        tarefas = [(b, v) for b in bracos for v in self.vagas]
+        return self._paralelo(tarefas, lambda x: self._sem_doc(x[0], x[1]), "sem documento, por vaga: " + ", ".join(bracos))
+
     # -------------------------------------------------------------- braços com documento (por vaga)
     def _arq(self, braco: str, vaga: str, t: int, pasta: str = "tentativas") -> Path:
         return self.saida / braco / pasta / f"{vaga}_t{t}.json"
@@ -702,6 +747,24 @@ class Ablacao:
                                                 for k, b in enumerate(sel, 1)],
                             "fonte_texto": "\n".join(b["texto"] for b in sel)})
             return out
+        if braco in SEM_DOC_VAGA:
+            out = []
+            for v in self.vagas:
+                d = self._estado(braco, v, 1)
+                if d is None:
+                    continue
+                q = d["questao"] or {}
+                a = d["auditoria"]
+                sel = self._blocos_recuperados({**q, "item": v["item"]})[0] if self._tem_questao(d) else []
+                out.append({"uid": f"{braco}:{v['vaga']}", "braco": braco, "vaga": v["vaga"], "item": v["item"],
+                            "tipo": v["tipo"] if braco == "regras_vaga" else (a or {}).get("tipo_sugerido"),
+                            "tentativa": 1, "tentativas": 1, "pergunta": q.get("pergunta"), "resposta": q.get("resposta"),
+                            "conhecimento": q.get("conhecimento"), "explicacao": q.get("explicacao"),
+                            "regua": d["regua"], "auditoria": a,
+                            "blocos_contexto": [{"id": f"B{k}", "texto": b["texto"], "indice_documento": b["indice"]}
+                                                for k, b in enumerate(sel, 1)],
+                            "fonte_texto": "\n".join(b["texto"] for b in sel)})
+            return out
         out = []
         for v in self.vagas:
             ds = [d for t in range(1, TENTATIVAS + 1) if (d := self._estado(braco, v, t))]
@@ -781,7 +844,8 @@ class Ablacao:
         for b in POR_TOPICO:
             if b in self.bracos:
                 falhas += self.por_topico(b)
-        doc = [b for b in BRACOS if b not in POR_TOPICO and b in self.bracos]
+        falhas += self.sem_doc_por_vaga([b for b in SEM_DOC_VAGA if b in self.bracos])
+        doc = [b for b in BRACOS if b not in POR_TOPICO and b not in SEM_DOC_VAGA and b in self.bracos]
         falhas += self.documento(doc)
         finais = {b: self.finais(b) for b in self.bracos}
         falhas += self.sustentar([q for b in self.bracos for q in finais[b] if self.aprovada_auditor(q)])
@@ -799,7 +863,7 @@ class Ablacao:
             self.progress(f"[ablação] {falhas} unidades com falha (em {C.relativo(self.saida / 'falhas')}); repita o "
                           "mesmo comando", flush=True)
             return 2
-        self.relatorio(finais)
+        self.relatorio()               # todos os braços já gravados, não só os desta execução
         return 0
 
     # -------------------------------------------------------------- relatório
@@ -812,7 +876,7 @@ class Ablacao:
         return out
 
     def relatorio(self, finais: dict | None = None) -> dict:
-        finais = finais or {b: C.linhas(self.saida / f"questoes_{b}.jsonl") for b in self.bracos
+        finais = finais or {b: C.linhas(self.saida / f"questoes_{b}.jsonl") for b in BRACOS
                             if (self.saida / f"questoes_{b}.jsonl").exists()}
         todos = {i: blocos(i, self.docs_dir)[1] for i in sorted({p.name for p in self.docs_dir.iterdir()
                                                                   if (p / "documento.json").exists()})}
@@ -845,7 +909,7 @@ class Ablacao:
                  "aceitas_por_tipo": dict(sorted(Counter(q["tipo"] or "?" for q in ac).items())),
                  "vocabulario_geradas": vocabulario(ger, m_ger, df, len(todos), emb),
                  "vocabulario_aceitas": vocabulario(ac, m_ac, df, len(todos), emb)}
-            if b in POR_TOPICO:
+            if b in POR_TOPICO or b in SEM_DOC_VAGA:
                 criterio = ("sem_documento", "alternativa_excluida", "elemento_unico")
                 r["validas_sem_exigir_fonte"] = sum(
                     1 for q in ger if q.get("auditoria") and all(q["auditoria"].get(k) for k in criterio)
@@ -855,7 +919,8 @@ class Ablacao:
             res["bracos"][b] = r
         res["referencia_banco"] = {"vocabulario": vocabulario(ref, m_ger, df, len(todos), emb),
                                    "vocabulario_rarefeito_aceitas": vocabulario(ref, m_ac, df, len(todos), emb)}
-        pares = (("documentos_regras", "documentos"), ("sem_retro", "documentos_regras"),
+        pares = (("regras_vaga", "naive_vaga"), ("documentos", "naive_vaga"), ("documentos_regras", "regras_vaga"),
+                 ("documentos_regras", "documentos"), ("sem_retro", "documentos_regras"),
                  ("sem_externos", "documentos_regras"), ("completo", "sem_retro"), ("completo", "sem_externos"))
         for a, b in pares:
             if a in finais and b in finais:
@@ -891,7 +956,7 @@ def markdown(r: dict) -> str:
     bs = list(r["bracos"])
     out = ["# Ablação da geração de questões", "",
            f"{r['n_vagas']} vagas (documento, bloco foco, tipo) sorteadas do banco final v1; cada braço gera uma questão "
-           "por vaga (os braços sem documento, o mesmo número por tópico). Aceita = auditor v23 + resposta de até 20 palavras + "
+           "por vaga e por chamada (naive e regras em lote, só de referência: o mesmo número por tópico, numa chamada). Aceita = auditor v23 + resposta de até 20 palavras + "
            "sustentação total + não redundante dentro do braço.", "",
            "## Taxa de aceite", "", "| Braço | Geradas | Auditor | Sustentadas | Aceitas | Taxa (IC 95%) |",
            "|---|---|---|---|---|---|"]
@@ -899,7 +964,7 @@ def markdown(r: dict) -> str:
         x = r["bracos"][b]
         out.append(f"| {NOME_BRACO[b]} | {x['geradas']} | {x['aprovadas_auditor']} | {x['sustentadas']} | {x['aceitas']} | "
                    f"{_f(x['taxa_aceite'])}% ({_f(x['ic95'][0])}–{_f(x['ic95'][1])}) |")
-    for b in POR_TOPICO:
+    for b in POR_TOPICO + SEM_DOC_VAGA:
         if b in r["bracos"]:
             out += ["", f"{NOME_BRACO[b]} sem exigir a fonte (auditor sem a verificação de sustentação): "
                         f"{r['bracos'][b]['validas_sem_exigir_fonte']} válidas."]
