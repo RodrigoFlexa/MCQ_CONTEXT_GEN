@@ -42,3 +42,18 @@ Similaridade maior = perguntas mais parecidas = menos diversidade. Self-BLEU, co
 Yule K e compressão: menor = mais variado. TTR, MATTR, MTLD, HD-D, entropia, Distinct e Vendi: maior = mais variado.
 TTR bruto depende do tamanho do texto: compare o rarefeito, MATTR, MTLD ou HD-D. Naive e regras têm poucas aceitas
 (23 e 31): as métricas das aceitas desses braços são frágeis.
+
+## Por campo (campos_ablacao.py)
+
+Gerado por `python -m pipeline.qa_research.experimento_ab.campos_ablacao`.
+
+- `distribuicoes_por_campo.csv`: para perguntas e perguntas + respostas, por conjunto e representação (TF-IDF, E5):
+  densidade (histograma normalizado) de todos os pares do conjunto e da similaridade de cada questão com a mais
+  próxima do conjunto (qualquer tópico), com média, mediana e desvio.
+- `mais_proxima_por_campo.csv.gz`: a similaridade de cada questão com a mais próxima, por campo e representação.
+- `diversidade_por_campo.csv`: TTR, MATTR (100 e 50 palavras) em %, para perguntas, respostas e perguntas + respostas.
+  O TTR bruto cai com o tamanho do texto: os conjuntos com perguntas curtas (naive) ficam com TTR maior.
+- Figuras: figS6 e figS6b (pares e mais próxima, TF-IDF e E5, para perguntas e para perguntas + respostas), figS7
+  (mais próxima no E5: perguntas x perguntas + respostas), figS8 (TTR e MATTR por campo).
+- figS1 a figS3 agora são barras com a média e IC de 95% (média ± 1,96·dp/√n). Nas figuras de E5 o eixo y não começa
+  em zero. Pares do mesmo tópico não são independentes: o IC de figS2 é otimista.

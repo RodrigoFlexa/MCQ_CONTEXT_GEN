@@ -562,7 +562,7 @@ conjuntos juntos; `char` = TF-IDF de n-gramas de caracteres 3 a 5; `e5` = embedd
 - `diversidade_por_topico.csv`: as mesmas métricas por conjunto e tópico (geradas).
 - `figuras/`: figS1 (vizinho mais próximo no tópico, E5 e TF-IDF), figS2 (pares do mesmo tópico, E5),
   figS3 (Self-BLEU), figS4 (matriz entre configurações, E5), figS5 e figS5b (densidade 2D: lexical x semântica).
-  Boxplots: caixa = quartis, hastes = percentis 5 e 95.
+  figS1 a figS3: barras com média e IC de 95%.
 
 ## Leitura
 
