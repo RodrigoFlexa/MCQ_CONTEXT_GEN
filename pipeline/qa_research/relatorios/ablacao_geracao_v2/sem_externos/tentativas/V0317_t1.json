@@ -1,0 +1,33 @@
+{
+  "vaga": "V0317",
+  "tentativa": 1,
+  "questao": {
+    "tipo": "decisao",
+    "cenario": true,
+    "conhecimento": "Necessidade de anti-windup no controle de interface com Dead Band Assimétrico quando o elemento final satura.",
+    "pergunta": "Na malha em Dead Band Assimétrico da interface óleo-água que manipula o underflow para hidrociclones, uma golfada leva a válvula a 100%. Quando a alimentação volta ao normal, a interface já retornou à faixa, mas o comando permanece saturado e a recuperação fica lenta, com nova excursão para nível baixo. Que implementação específica deve ser acrescentada ao controlador?",
+    "resposta": "Anti-windup no integrador do controlador de interface.",
+    "explicacao": "A saturação da válvula carrega o integrador e mantém o comando travado após a golfada. O anti-windup limita essa acumulação, acelera a desaturação e evita a recuperação lenta com nova excursão de nível.",
+    "resposta_padrao": "Aumentar o ganho do controlador ou estreitar a banda de atuação.",
+    "por_que_nao": "O problema observado é windup com a válvula no fim de curso; mais agressividade não elimina a integral acumulada e pode agravar o overshoot quando o atuador sair da saturação.",
+    "fundamentos": [
+      {
+        "bloco": "F",
+        "trecho": "ausência inicial de anti-windup no Dead Band Assimétrico"
+      },
+      {
+        "bloco": "F",
+        "trecho": "Quando a bomba ou a válvula se aproxima do limite de capacidade, a malha perde margem para corrigir perturbações"
+      },
+      {
+        "bloco": "F",
+        "trecho": "podem distorcer a resposta integral, retardar recuperação"
+      },
+      {
+        "bloco": "A2",
+        "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+      }
+    ]
+  },
+  "regua": []
+}

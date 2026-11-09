@@ -1,0 +1,186 @@
+{
+  "item": "07_02",
+  "pedidas": 18,
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Método de acesso que combina fatores independentes para autenticar usuários.",
+      "pergunta": "Como se chama o método que exige duas evidências independentes, como senha e token, para liberar acesso?",
+      "resposta": "autenticação multifator",
+      "explicacao": "Exige fatores distintos de prova de identidade, elevando a resistência contra uso indevido de credenciais isoladas.",
+      "resposta_padrao": "senha forte",
+      "por_que_nao": "Complexidade de senha não substitui a exigência de um segundo fator independente."
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Princípio de conceder somente acessos estritamente necessários a cada conta.",
+      "pergunta": "Qual princípio concede a cada conta somente os acessos indispensáveis à função e pelo tempo necessário?",
+      "resposta": "menor privilégio",
+      "explicacao": "Limita permissões ao mínimo requerido para a atividade, reduzindo impacto de erro, abuso ou comprometimento.",
+      "resposta_padrao": "segregação de funções",
+      "por_que_nao": "Segregação separa responsabilidades; não define o nível mínimo de acesso concedido a cada conta."
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Tipo de cópia resistente à alteração maliciosa a partir do ambiente produtivo.",
+      "pergunta": "Como se chama a cópia preservada fora do alcance de escrita do ambiente produtivo, para resistir a criptografia maliciosa?",
+      "resposta": "backup imutável",
+      "explicacao": "Esse tipo de cópia não pode ser alterado ou cifrado por contas e processos comuns do ambiente comprometido.",
+      "resposta_padrao": "backup incremental",
+      "por_que_nao": "Incremental descreve método de cópia, não proteção contra alteração ou criptografia maliciosa."
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Modelo arquitetural que separa ativos por criticidade e controla os caminhos entre grupos.",
+      "pergunta": "Como se chama a abordagem arquitetural que agrupa ativos por criticidade e define caminhos controlados entre esses grupos?",
+      "resposta": "zonas e conduítes",
+      "explicacao": "É o modelo de segmentação que separa ativos em grupos e formaliza os fluxos permitidos entre eles.",
+      "resposta_padrao": "segmentação por VLAN",
+      "por_que_nao": "VLAN é uma técnica de implementação; não é o modelo arquitetural de segurança."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo seguro para acesso remoto temporário a ativo OT sem exposição direta.",
+      "pergunta": "Um fornecedor precisa atuar por poucas horas em um servidor de supervisão. Não é aceitável expor o ativo na internet nem liberar VPN direta até a rede de controle. Qual arranjo de acesso remoto deve ser adotado?",
+      "resposta": "jump server na DMZ",
+      "explicacao": "Centraliza autenticação forte e auditoria da sessão, mantendo o alvo sem exposição direta e limitando o alcance do acesso remoto.",
+      "resposta_padrao": "VPN direta até o servidor",
+      "por_que_nao": "O túnel não substitui o ponto intermediário controlado e auditável, nem evita a exposição direta do alvo."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Estratégia de atualização de servidores redundantes preservando disponibilidade e reduzindo exposição.",
+      "pergunta": "Existe correção crítica para dois servidores redundantes de supervisão. Aplicá-la nos dois ao mesmo tempo elimina a redundância. Qual estratégia de intervenção deve ser usada?",
+      "resposta": "patchamento escalonado com failover",
+      "explicacao": "Atualiza um nó por vez, valida o secundário, transfere a carga e preserva o serviço enquanto reduz a janela de exposição.",
+      "resposta_padrao": "aplicar o patch nos dois simultaneamente",
+      "por_que_nao": "Isso remove a redundância durante a intervenção e aumenta o risco operacional em caso de falha."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Descoberta de ativos OT por observação de tráfego quando sondagem ativa é arriscada.",
+      "pergunta": "É necessário descobrir ativos conectados em uma rede industrial com controladores legados que já perderam comunicação quando receberam sondagens. Qual técnica de levantamento deve ser usada sem provocar respostas dos dispositivos?",
+      "resposta": "inventário passivo por espelhamento",
+      "explicacao": "Observa pacotes já existentes por porta espelho ou TAP, sem enviar consultas que possam travar equipamentos legados.",
+      "resposta_padrao": "varredura ativa de rede",
+      "por_que_nao": "Alguns dispositivos legados falham com consultas não solicitadas; o método precisa ser observacional, não interrogativo."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle para introdução segura de arquivos de terceiros por mídia removível.",
+      "pergunta": "Uma atualização de lógica precisa entrar por mídia removível em estação de engenharia isolada. O arquivo veio de terceiro, e não se pode confiar no notebook de origem. Qual controle aplicar antes da carga?",
+      "resposta": "quiosque de varredura com mídia dedicada",
+      "explicacao": "O arquivo passa por ponto controlado, é inspecionado fora da rede crítica e copiado para mídia confiável de uso restrito.",
+      "resposta_padrao": "escanear no notebook do fornecedor",
+      "por_que_nao": "A origem continua não confiável; a transferência precisa ocorrer por meio controlado e com mídia confiável."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falha de sincronismo de tempo afetando autenticação e validação de certificados.",
+      "pergunta": "Após uma interrupção elétrica, vários servidores têm rede e DNS normais, mas autenticações falham. Em alguns, certificados aparecem 'ainda não válidos'; em outros, 'expirados'. Qual a causa primária?",
+      "resposta": "perda de sincronismo NTP",
+      "explicacao": "Autenticação central e certificados dependem de tempo coerente; relógios divergentes geram janelas de validade impossíveis entre hosts.",
+      "resposta_padrao": "falha no servidor de autenticação",
+      "por_que_nao": "As janelas temporais contraditórias entre hosts apontam para relógios divergentes, não apenas para falha central."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Conflito de endereçamento IP detectado por oscilação ARP entre portas.",
+      "pergunta": "Uma estação de operação perde comunicação de forma intermitente com um controlador. Link físico estável, sem regras novas no firewall, e o switch registra ARP alternando o mesmo IP entre portas diferentes. Qual a causa primária?",
+      "resposta": "endereço IP duplicado",
+      "explicacao": "Dois dispositivos respondem pelo mesmo IP; o ARP muda de porta e a comunicação alterna de destino.",
+      "resposta_padrao": "bloqueio no firewall",
+      "por_que_nao": "A oscilação ARP entre portas indica conflito no endereçamento antes de qualquer política de firewall."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Laço Ethernet causando tempestade de broadcast e flapping de MAC.",
+      "pergunta": "Após religar um painel, várias telas congelam ao mesmo tempo e depois voltam. Controladores seguem executando lógica; os switches mostram MACs saltando entre portas e broadcast disparando. Qual a causa primária?",
+      "resposta": "laço de camada 2",
+      "explicacao": "Um caminho fechado na Ethernet replica quadros indefinidamente, eleva broadcast e faz endereços MAC oscilarem entre portas.",
+      "resposta_padrao": "falha de switch",
+      "por_que_nao": "MAC flapping com aumento brusco de broadcast é assinatura típica de laço, não de falha isolada de hardware."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Software residual de acesso remoto mantendo conexões externas após manutenção.",
+      "pergunta": "Encerrada a manutenção remota, a VPN corporativa é desligada, mas uma estação de engenharia continua abrindo sessões TLS periódicas para um serviço externo desconhecido. O tráfego nasce nela. Qual a causa primária?",
+      "resposta": "agente remoto persistente",
+      "explicacao": "Software de suporte remoto permaneceu instalado e iniciou conexões de saída próprias, independentes do túnel corporativo encerrado.",
+      "resposta_padrao": "VPN ainda ativa",
+      "por_que_nao": "As sessões continuam após o túnel ser encerrado e partem da própria estação, indicando software residente."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ponte de rede criada por notebook com duas interfaces em ambiente industrial.",
+      "pergunta": "Erros de comunicação surgem somente quando um notebook de manutenção é conectado a um switch industrial. Ele está com duas interfaces ativas, e o switch aprende muitas MACs na mesma porta. Qual a causa primária?",
+      "resposta": "ponteamento indevido no notebook",
+      "explicacao": "Bridge ou compartilhamento de conexão no notebook une segmentos ou encaminha tráfego indevido, expondo múltiplas MACs na mesma porta.",
+      "resposta_padrao": "porta defeituosa do switch",
+      "por_que_nao": "O sintoma aparece apenas com o notebook conectado e mostra várias MACs atrás da mesma porta."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Expansão de incidente entre hosts por reutilização de credenciais administrativas.",
+      "pergunta": "Uma mesma conta administrativa é válida em vários servidores e estações de engenharia. Como isso acelera a expansão de um incidente entre hosts?",
+      "resposta": "movimentação lateral por reutilização de credenciais",
+      "explicacao": "A mesma credencial permite autenticar em diversos hosts; o invasor reaproveita privilégios para executar ações e se espalhar.",
+      "resposta_padrao": "aumento do tráfego de rede",
+      "por_que_nao": "A propagação decorre do reaproveitamento de autenticação privilegiada, não do volume de tráfego."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Redução de infecção por bloqueio de execução fora do conjunto autorizado.",
+      "pergunta": "Uma estação crítica configurada para aceitar somente executáveis autorizados recebe um malware novo por mídia removível. Como essa proteção reduz a chance de infecção?",
+      "resposta": "bloqueio da execução fora da lista",
+      "explicacao": "Sem correspondência com o conjunto autorizado, o binário não inicia, independentemente de já existir assinatura de antivírus.",
+      "resposta_padrao": "detecção por assinatura antivírus",
+      "por_que_nao": "Malware novo pode não ter assinatura; aqui a barreira atua impedindo a execução."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Validação prática da recuperabilidade de backups de sistemas críticos.",
+      "pergunta": "Como verificar se um backup de servidor de supervisão é realmente recuperável antes de uma contingência?",
+      "resposta": "restauração de teste em ambiente isolado",
+      "explicacao": "Somente restaurar e inicializar em ambiente segregado comprova integridade, consistência e dependências do backup.",
+      "resposta_padrao": "conferir o sucesso do job de backup",
+      "por_que_nao": "Execução sem erro não prova que o sistema restaura, inicia e fica consistente."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação de que o controlador executa a versão aprovada após mudança.",
+      "pergunta": "Uma alteração autorizada foi carregada em um controlador durante a madrugada. Antes de liberar a operação normal, qual verificação específica confirma que ele executa exatamente a versão aprovada?",
+      "resposta": "comparação online do checksum",
+      "explicacao": "A comparação online confronta o executável residente no controlador com a referência aprovada, não apenas a cópia do projeto.",
+      "resposta_padrao": "revisão visual da lógica na tela",
+      "por_que_nao": "Inspeção visual pode não revelar diferenças binárias ou parâmetros alterados na carga efetiva."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comprovação técnica da remoção efetiva de regra temporária de acesso.",
+      "pergunta": "Uma regra temporária de acesso para fornecedor foi removida após o serviço. Qual verificação técnica comprova que o caminho especial realmente deixou de existir?",
+      "resposta": "teste de bloqueio com log no firewall",
+      "explicacao": "Repetir a conexão antes permitida deve falhar e gerar registro de negação no ponto de controle.",
+      "resposta_padrao": "desabilitar a conta do fornecedor",
+      "por_que_nao": "A conta pode estar desativada e ainda existir regra, rota ou NAT residual permitindo o caminho."
+    }
+  ]
+}
