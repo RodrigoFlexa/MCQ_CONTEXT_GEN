@@ -22,7 +22,16 @@ import numpy as np  # noqa: E402
 
 from . import figuras as F  # noqa: E402
 from .ablacao import SAIDA, mattr, tokens  # noqa: E402
-from .similaridade_ablacao import CONJUNTOS, COR, CURTO, MODELO_E5, NOME, _csv, carregar  # noqa: E402
+from .similaridade_ablacao import CONJUNTOS, MODELO_E5, _csv, carregar  # noqa: E402
+
+# Figuras: só a escada de componentes, cada configuração somando um componente à anterior (os CSV têm todos os braços).
+ESCADA = ["naive", "regras", "documentos_regras", "sem_retro", "completo"]
+NOME = {"naive": "Naive", "regras": "+ Regras", "documentos_regras": "+ Documentos (regras + documentos)",
+        "sem_retro": "+ Datasets externos", "completo": "+ Retroalimentação (configuração do banco final)"}
+CURTO = {"naive": "Naive", "regras": "+ Regras", "documentos_regras": "+ Documentos", "sem_retro": "+ Datasets\nexternos",
+         "completo": "+ Retroali-\nmentação"}
+COR = {"naive": "#1f77b4", "regras": "#ff7f0e", "documentos_regras": "#2ca02c", "sem_retro": "#9467bd",
+       "completo": "#d62728"}
 
 CAMPOS = {"perguntas": "Perguntas", "respostas": "Respostas", "perguntas_respostas": "Perguntas\n+ respostas"}
 VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}".replace(".", ","))
@@ -130,7 +139,7 @@ def _degrau(ax, bordas, dens, cor, lw=2.4, tracejado=False):
     ax.stairs(dens, bordas, color=cor, linewidth=lw, linestyle="--" if tracejado else "-")
 
 
-def _legenda(fig, conj, y=-0.01, ncol=4, fonte=19):
+def _legenda(fig, conj, y=-0.01, ncol=3, fonte=19):
     alcas = [plt.Rectangle((0, 0), 1, 1, facecolor="white", edgecolor=COR[b], linewidth=2.6,
                            linestyle="--" if b == "banco" else "-") for b in conj]
     fig.legend(alcas, [NOME[b] for b in conj], loc="upper center", bbox_to_anchor=(0.5, y), ncol=ncol,
@@ -149,7 +158,7 @@ def _eixo(ax, xlabel, fonte=19):
 def fig_similaridade(hist: list[dict], campo: str, pasta: Path, nome: str):
     """2x2: linhas = pares / questão mais próxima; colunas = TF-IDF (y log nos pares) / E5."""
     H = {(h["conjunto"], h["representacao"], h["medida"]): h for h in hist if h["campo"] == campo}
-    conj = [b for b in CONJUNTOS if (b, "e5", "pares") in H]
+    conj = [b for b in ESCADA if (b, "e5", "pares") in H]
     fig, axs = plt.subplots(2, 2, figsize=(20, 13))
     for j, r in enumerate(("tfidf", "e5")):
         for i, (med, xl) in enumerate((("pares", "Similaridade entre pares"),
@@ -179,7 +188,7 @@ def fig_perguntas_vs_pr(hist: list[dict], pasta: Path):
     for ax, campo, tit in zip(axs, ("perguntas", "perguntas_respostas"), ("Perguntas", "Perguntas + respostas")):
         H = {h["conjunto"]: h for h in hist if h["campo"] == campo and h["representacao"] == "e5"
              and h["medida"] == "mais_proxima"}
-        conj = [b for b in CONJUNTOS if b in H]
+        conj = [b for b in ESCADA if b in H]
         for b in conj:
             _degrau(ax, np.array(json.loads(H[b]["bordas"])), np.array(json.loads(H[b]["densidade"])), COR[b],
                     tracejado=b == "banco")
@@ -193,7 +202,7 @@ def fig_perguntas_vs_pr(hist: list[dict], pasta: Path):
 
 def fig_ttr_mattr(div: list[dict], pasta: Path):
     D = {(d["conjunto"], d["campo"]): d for d in div}
-    conj = [b for b in CONJUNTOS if (b, "perguntas") in D]
+    conj = [b for b in ESCADA if (b, "perguntas") in D]
     fig, axs = plt.subplots(1, 2, figsize=(24, 8.2))
     w = 0.8 / len(conj)
     x = np.arange(len(CAMPOS))
@@ -207,8 +216,8 @@ def fig_ttr_mattr(div: list[dict], pasta: Path):
                    edgecolor="white" if b != "banco" else "#6b6a66", linewidth=0.6)
             topo = max(topo, max(v))
             for p, n in zip(pos, v):
-                ax.text(p, n + topo * 0.012, f"{n:.1f}".replace(".", ","), ha="center", va="bottom", fontsize=13,
-                        rotation=90, color=F.TINTA)
+                ax.text(p, n + topo * 0.012, f"{n:.1f}".replace(".", ","), ha="center", va="bottom", fontsize=15,
+                        color=F.TINTA)
         ax.set_xticks(x, list(CAMPOS.values()), fontsize=20)
         ax.set_ylabel(ylabel, fontsize=20)
         ax.set_ylim(0, topo * 1.18)
@@ -220,7 +229,7 @@ def fig_ttr_mattr(div: list[dict], pasta: Path):
     fig.tight_layout(w_pad=3)
     alcas = [plt.Rectangle((0, 0), 1, 1, facecolor=COR[b], hatch="//" if b == "banco" else None,
                            edgecolor="white" if b != "banco" else "#6b6a66") for b in conj]
-    fig.legend(alcas, [NOME[b] for b in conj], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=4, fontsize=19,
+    fig.legend(alcas, [NOME[b] for b in conj], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=3, fontsize=19,
                frameon=False, handlelength=1.4, columnspacing=1.6)
     return _salvar(fig, pasta, "figS8_ttr_mattr")
 
@@ -233,7 +242,7 @@ def _ic(v):
 
 def barras_ic(valores: dict, ylabel: str, pasta: Path, nome: str, ymin: float = 0.0, casas: int = 2):
     """Média com IC de 95% (média ± 1,96·dp/√n) por conjunto; ymin > 0 corta o eixo (dito no rótulo)."""
-    conj = [b for b in CONJUNTOS if len(valores.get(b, []))]
+    conj = [b for b in ESCADA if len(valores.get(b, []))]
     est = {b: _ic(valores[b]) for b in conj}
     fig, ax = plt.subplots(figsize=(17, 7))
     x = np.arange(len(conj))
@@ -267,13 +276,13 @@ def barras_antigas(saida: Path):
     q = pd.read_csv(saida / "questoes.csv")
     p = pd.read_csv(saida / "pares_mesmo_topico.csv.gz")
     pasta = saida / "figuras"
-    g = lambda df, c: {b: df.loc[df.conjunto == b, c].dropna().tolist() for b in CONJUNTOS}  # noqa: E731
+    g = lambda df, c: {b: df.loc[df.conjunto == b, c].dropna().tolist() for b in ESCADA}  # noqa: E731
     out = barras_ic(g(q, "nn_e5_topico"), "Similaridade com a mais parecida\ndo mesmo tópico (E5, cosseno)",
-                    pasta, "figS1_vizinho_mais_proximo_e5", ymin=0.85)
+                    pasta, "figS1_vizinho_mais_proximo_e5", ymin=0.85, casas=3)
     out += barras_ic(g(q, "nn_tfidf_topico"), "Similaridade com a mais parecida\ndo mesmo tópico (TF-IDF, cosseno)",
                      pasta, "figS1b_vizinho_mais_proximo_tfidf")
     out += barras_ic(g(p, "cos_e5"), "Similaridade entre pares\ndo mesmo tópico (E5, cosseno)", pasta,
-                     "figS2_pares_mesmo_topico_e5", ymin=0.80)
+                     "figS2_pares_mesmo_topico_e5", ymin=0.80, casas=3)
     out += barras_ic(g(q, "self_bleu_topico"), "Self-BLEU da pergunta\n(contra o mesmo tópico)", pasta,
                      "figS3_self_bleu", casas=3)
     return out
