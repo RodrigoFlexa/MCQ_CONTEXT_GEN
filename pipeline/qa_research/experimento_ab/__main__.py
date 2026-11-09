@@ -39,6 +39,9 @@
                         uma questão por chamada), documentos, documentos_regras, sem_retro, sem_externos e completo
                         (naive e regras em lote ficam como referência), mesma aceitação (auditor,
                         sustentação, dedup), taxa de aceite e vocabulário -> ablacao_geracao_v2/ABLACAO.md
+  ablacao-v3            ablação v3: escada cumulativa naive -> + regras -> + documentos -> + datasets externos ->
+                        + retroalimentação, sem poda (0 a 4 questões por chamada, focos x visitas em ondas); auditor,
+                        sustentação, quase-duplicatas, diversidade e dificuldade (amostra) -> ablacao_geracao_v3/ABLACAO.md
   final-v2              dataset final v2: v23 + v23 completo + v22 + antigo + conceitos + variada, deduplicado, só gabaritos totalmente
                         sustentados, avaliado com resposta de até --palavras (20) por GPT-4.1 Nano/Mini/4.1,
                         GPT-5 nano/mini/5 e GPT-5.4 (referência), com e sem contexto -> petroquest_final_v2/QUALIDADE.md
@@ -148,7 +151,7 @@ def main(argv=None) -> int:
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
                                         "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
-                                        "final-v2", "ablacao", "avaliar-externos"])
+                                        "final-v2", "ablacao", "ablacao-v3", "avaliar-externos"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -167,6 +170,9 @@ def main(argv=None) -> int:
     ap.add_argument("--bracos", default="naive_vaga,regras_vaga,documentos,documentos_regras,sem_retro,sem_externos,completo",
                     help="ablacao: braços, separados por vírgula")
     ap.add_argument("--vagas", type=int, default=1000, help="ablacao: questões pedidas por braço")
+    ap.add_argument("--etapas", default="geracao,sustentacao,dedup,dificuldade,relatorio",
+                    help="ablacao-v3: etapas, separadas por vírgula; 'prompts' só grava os prompts para revisão")
+    ap.add_argument("--configs", default="naive,regras,documentos,externos,retro", help="ablacao-v3: configurações")
     ap.add_argument("--so-relatorio", action="store_true",
                     help="final-v2: só refaz o QUALIDADE.md com o que já foi avaliado, sem montar nem avaliar")
     ap.add_argument("--docs-simultaneos", type=int, default=6, help="v23-completo: documentos gerados ao mesmo tempo")
@@ -308,6 +314,22 @@ def main(argv=None) -> int:
                 raise SystemExit(f"[ablacao] {exc}") from exc
         print(f"[ablacao] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
               f"{C.relativo(SAIDA_ABL / 'ABLACAO.md')}")
+        return st
+    if a.comando == "ablacao-v3":
+        from .ablacao_v3 import SAIDA as SAIDA_V3, AblacaoV3, exemplos_prompts
+        etapas = [e for e in a.etapas.split(",") if e]
+        with _trava(exp, "ablacao_v3"):
+            try:
+                abl = AblacaoV3(configs=[c for c in a.configs.split(",") if c], workers=a.workers, exp=exp)
+                if etapas == ["prompts"]:
+                    print(f"[ablacao-v3] prompts em {C.relativo(exemplos_prompts(abl))}")
+                    return 0
+                exemplos_prompts(abl)
+                st = abl.executar(etapas, workers_avaliacao=a.workers, judge_workers=a.judge_workers)
+            except ValueError as exc:
+                raise SystemExit(f"[ablacao-v3] {exc}") from exc
+        print(f"[ablacao-v3] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_V3 / 'ABLACAO.md')}")
         return st
     if a.comando == "banco":
         from .banco import Banco, SAIDA as SAIDA_BANCO

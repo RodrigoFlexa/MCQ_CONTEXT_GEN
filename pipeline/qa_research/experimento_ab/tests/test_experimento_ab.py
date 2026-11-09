@@ -1694,6 +1694,123 @@ class AblacaoTests(unittest.TestCase):
         self.assertLess(mcnemar([True] * 10, [False] * 10)["p"], 0.01)
 
 
+class FalsoV3:
+    """Gerador, auditor e sustentação simulados da ablação v3: 2 questões por chamada; o auditor reprova as que têm
+    DEFEITO (a 2ª de cada chamada nas visitas ímpares)."""
+    def __init__(self):
+        self.chamadas, self.usuarios, self.sistemas = Counter(), defaultdict(list), defaultdict(list)
+
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        self.chamadas[tag] += 1
+        self.usuarios[tag].append(user)
+        self.sistemas[tag].append(system)
+        if tag.startswith("abl3_") and tag not in ("abl3_auditoria", "abl3_faithfulness"):
+            c = tag[5:]
+            pid = re.search(r"Pedido: (\S+)", user).group(1)
+            v = int(pid.rsplit(":v", 1)[1])
+            qs = []
+            for k in (1, 2):
+                ruim = "DEFEITO " if k == 2 and v % 2 else ""
+                q = {"pergunta": f"Qual {ruim}mecanismo {c} explica o caso {pid} número {k}?", "resposta": f"Mecanismo {k}."}
+                if c != "naive":
+                    q.update(tipo="mecanismo", cenario=False, conhecimento=f"relação {pid} {k}", explicacao="e",
+                             resposta_padrao="p", por_que_nao="q")
+                if c in ("documentos", "externos", "retro"):
+                    q["fundamentos"] = [{"bloco": "F", "trecho": "x"}]
+                qs.append(q)
+            d = {"questoes": qs, "motivo": ""}
+        elif tag == "abl3_auditoria":
+            ok = "DEFEITO" not in user
+            d = {"sem_documento": True, "resposta_alternativa": "Outra coisa.", "alternativa_excluida": ok,
+                 "atalho": False, "sustentada": True, "elemento_unico": True, "tipo_sugerido": "mecanismo",
+                 "justificativa": "ok" if ok else "há outra resposta"}
+        elif tag == "abl3_faithfulness":
+            b = json.loads(user)["blocos"][0]
+            d = {"cobertura_completa": True, "observacoes": "",
+                 "afirmacoes": [{"afirmacao": "a", "veredito": "sustentada", "justificativa": "j",
+                                 "evidencias": [{"bloco": b["id"], "trecho": b["texto"][:20]}]}]}
+        else:
+            raise AssertionError(tag)
+        if validate:
+            validate(d)
+        return d
+
+
+class AblacaoV3Tests(unittest.TestCase):
+    def setUp(self):
+        VariadaTests.setUp(self)
+
+    def a(self, f, **kw):
+        from pipeline.qa_research.experimento_ab.ablacao_v3 import AblacaoV3
+        cl = {"geracao": f, "auditoria": f, "sustentacao": f, "dedup_juiz": NuncaRedundante()}
+        return AblacaoV3(self.exp / "abl3", exp=self.exp, docs=self.exp / "docs" / "antigo", itens=[ITEM],
+                         focos_por_topico=3, visitas=2, externos=self.ext, convertidas=self.conv, clientes=cl,
+                         embedder=Emb(), workers=4, **{**SILENCIO, **kw})
+
+    def test_prompts_da_escada(self):
+        from pipeline.qa_research.experimento_ab.ablacao_v3 import CONFIGS, sistema_base
+        s = {c: sistema_base(cfg) for c, cfg in CONFIGS.items()}
+        self.assertNotIn("Critérios", s["naive"])
+        self.assertIn("# Tipos", s["regras"])                        # tipos entram com as regras
+        self.assertNotIn("[F]", s["regras"])                          # sem documento, nenhuma regra fala do texto
+        self.assertIn("verificável na literatura", s["regras"])
+        self.assertIn("[F]", s["documentos"])
+        self.assertNotIn("exemplos_de_forma", s["documentos"])
+        self.assertIn("exemplos_de_forma", s["externos"])
+        self.assertNotIn("conhecimentos_cobertos", s["externos"])
+        for t in ("conhecimentos_cobertos", "questoes_deste_foco", "boas_ja_avaliadas", "Exemplos de referência"):
+            self.assertIn(t, s["retro"])
+        self.assertTrue(all("{{" not in x for x in s.values()))
+        # cada degrau contém o anterior (exceto a troca das regras sem documento pelas do documento)
+        self.assertTrue(len(s["naive"]) < len(s["regras"]) < len(s["externos"]) < len(s["retro"]))
+
+    def test_escada_sem_poda_e_retro_por_exemplos(self):
+        f = FalsoV3()
+        ab = self.a(f)
+        self.assertEqual(ab.executar(("geracao", "sustentacao", "dedup", "relatorio")), 0)
+        d = self.exp / "abl3"
+        n_unid = len(ab.unidades)
+        self.assertEqual(n_unid, 3 * 2)
+        for c in ("naive", "regras", "documentos", "externos", "retro"):
+            self.assertEqual(f.chamadas[f"abl3_{c}"], n_unid)           # mesmo número de chamadas
+            self.assertEqual(len(C.linhas(d / f"questoes_{c}.jsonl")), 2 * n_unid)   # nada é podado nem refeito
+            self.assertEqual(len(set(f.usuarios[f"abl3_{c}"])), n_unid)  # chamadas independentes (pedido no texto)
+        self.assertEqual(f.chamadas["abl3_auditoria"], 5 * 2 * n_unid)
+        us = dict(zip(["naive", "regras", "documentos", "externos", "retro"],
+                      [f.usuarios[f"abl3_{c}"] for c in ("naive", "regras", "documentos", "externos", "retro")]))
+        self.assertTrue(all("<janela>" not in u for u in us["naive"] + us["regras"]))
+        self.assertTrue(all("<janela>" in u for u in us["documentos"]))
+        self.assertTrue(all("<exemplos_de_forma>" in u for u in us["externos"] + us["retro"]))
+        self.assertFalse(any("<exemplos_de_forma>" in u for u in us["documentos"]))
+        self.assertFalse(any("<questoes_deste_foco>" in u for c in ("naive", "regras", "documentos", "externos")
+                             for u in us[c]))
+        # retroalimentação: a visita 2 vê as questões da visita 1 do mesmo foco, com o julgamento
+        v2 = [u for u in us["retro"] if re.search(r"Pedido: \S+:v2", u)]
+        self.assertTrue(v2 and all("reprovada (varias_respostas" in u and "[aprovada]" in u for u in v2))
+        self.assertTrue(all("questoes_boas" in s_ for s_ in f.sistemas["abl3_retro"]))     # semente fixa
+        r = read_json(d / "resultado.json")
+        x = r["configs"]["retro"]
+        self.assertEqual(x["geradas"], 2 * n_unid)
+        self.assertAlmostEqual(x["aprovadas_auditor"]["pct"], 75.0)    # a 2ª questão das visitas ímpares falha
+        self.assertAlmostEqual(x["validas"]["pct"], 75.0)
+        self.assertIn("retro_vs_externos", r["comparacoes"])
+        self.assertIsNone(r["configs"]["naive"]["cobertura_focos_validos"])
+        # sem documento: auditoria com blocos buscados no corpus
+        q = C.linhas(d / "questoes_naive.jsonl")[0]
+        self.assertEqual([b["id"] for b in q["blocos_contexto"]][:2], ["B1", "B2"])
+        antes = sum(f.chamadas.values())
+        self.assertEqual(self.a(f).executar(("geracao", "sustentacao", "dedup", "relatorio")), 0)
+        self.assertEqual(sum(f.chamadas.values()), antes)                # retomada: nada é refeito
+
+    def test_amostra_dificuldade_estratificada(self):
+        f = FalsoV3()
+        ab = self.a(f)
+        ab.executar(("geracao",))
+        am = ab.amostra_dificuldade(5)
+        self.assertEqual(Counter(q["config"] for q in am), Counter({c: 5 for c in ab.configs}))
+        self.assertEqual(len({q["uid"] for q in am}), len(am))
+
+
 class ExternosTests(unittest.TestCase):
     """Respostas do vLLM (Llama) julgadas no servidor pelo motor padrão, só nas questões do banco."""
     def setUp(self):

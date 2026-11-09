@@ -30,6 +30,8 @@
 #                        documentos + regras, sem retroalimentação, sem datasets externos, completo); naive e regras
 #                        geram uma questão por chamada (as versões em lote por tópico ficam como referência);
 #                        taxa de aceite e vocabulário (ablacao_geracao_v2)
+#   ablacao3             ablação v3: escada cumulativa (naive, + regras, + documentos, + externos, + retro), sem
+#                        poda; validade, quase-duplicatas, diversidade e dificuldade (ablacao_geracao_v3)
 #   externos             juiz padrão sobre as respostas dos modelos Llama geradas na DL-28 (rodar_llama_dl28.sh)
 #   rubrica              só a classificação pela rubrica do especialista (petroquest_final_v2/rubrica/RUBRICA.md)
 #   final                dataset final único (v23 se pronto + v22 + antigo filtrado), avaliado de uma vez
@@ -111,7 +113,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|externos) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|externos) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -186,6 +188,11 @@ if [[ "$etapa" == "ablacao" ]]; then
     # chamadas independentes (uma questão por vaga): 24 em paralelo por padrão; um --workers explícito prevalece
     rodar "ablação da geração v2 (naive e regras por vaga; os demais braços são retomados)" ablacao --workers 24 || fim_erro ablacao
 fi
+if [[ "$etapa" == "ablacao3" ]]; then
+    # escada cumulativa sem poda (naive, + regras, + documentos, + externos, + retroalimentação): 960 chamadas por
+    # configuração em 6 ondas, auditoria e sustentação, quase-duplicatas, dificuldade numa amostra; retomável
+    rodar "ablação v3: escada cumulativa de módulos" ablacao-v3 --workers 24 || fim_erro ablacao3
+fi
 if [[ "$etapa" == "antigo" ]]; then
     # 2 chamadas por questão (2156 questões): 16 em paralelo por padrão; um --workers explícito prevalece
     rodar "banco antigo: gabarito curto + auditor v23" antigo --workers 16 || fim_erro antigo
@@ -209,6 +216,9 @@ if [[ "$etapa" == "limite" ]]; then
 elif [[ "$etapa" == "externos" ]]; then
     echo "  cat pipeline/qa_research/relatorios/avaliacao_externos/QUALIDADE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/avaliacao_externos \"Resultados: juiz nos modelos Llama\""
+elif [[ "$etapa" == "ablacao3" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v3/ABLACAO.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v3 \"Resultados: ablação v3\""
 elif [[ "$etapa" == "ablacao" ]]; then
     echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v2/ABLACAO.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v2 \"Resultados: ablação da geração v2\""
