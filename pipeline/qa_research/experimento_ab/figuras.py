@@ -31,8 +31,11 @@ AZUL, LARANJA = "#2a78d6", "#eb6834"
 RAMPA = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]   # sequencial azul
 ORDINAL4 = ["#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]                                 # fácil -> muito difícil
 TINTA, TINTA2, TINTA3, GRADE = "#0b0b0b", "#52514e", "#8a8984", "#e6e5e1"
-MODELOS = ["gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5", "gpt-5-4"]
-NOME = {"gpt-4-1-mini": "GPT-4.1 Mini", "gpt-4-1": "GPT-4.1", "gpt-5-mini": "GPT-5 mini", "gpt-5": "GPT-5",
+LLAMA = ["llama-3-1-8b", "llama-3-3-70b"]      # respostas na DL-28 (vLLM), julgadas pelo mesmo juiz
+MODELOS = LLAMA + ["gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5", "gpt-5-4"]
+EXTERNOS = C.QA / "relatorios" / "avaliacao_externos"
+NOME = {"llama-3-1-8b": "Llama 3.1\n8B", "llama-3-3-70b": "Llama 3.3\n70B", "gpt-4-1-mini": "GPT-4.1 Mini",
+        "gpt-4-1": "GPT-4.1", "gpt-5-mini": "GPT-5 mini", "gpt-5": "GPT-5",
         "gpt-5-4": "GPT-5.4*"}
 TIPOS = ["conceito", "mecanismo", "consequencia", "diagnostico", "decisao", "procedimento"]
 NOME_TIPO = {"conceito": "Conceito", "mecanismo": "Mecanismo", "consequencia": "Consequência",
@@ -97,7 +100,25 @@ def dados():
     with (FINAL_V2 / "pares.csv").open(encoding="utf-8-sig") as f:
         for r in csv.DictReader(C.sem_nul(f)):
             respostas.setdefault(r["uid"], {})[r["modelo"]] = (r["resposta_closed_book"], r["resposta_open_book"])
+    _externos(banco, respostas)
     return banco, div, respostas
+
+
+def _externos(banco: list, respostas: dict) -> None:
+    """Junta os vereditos e respostas dos Llama (avaliacao_externos) ao banco; bloqueio do juiz fica de fora (None)."""
+    arq = EXTERNOS / "pares.csv"
+    if not arq.exists():
+        return
+    por_uid = {x["uid"]: x for x in banco}
+    with arq.open(encoding="utf-8-sig") as f:
+        for r in csv.DictReader(C.sem_nul(f)):
+            x = por_uid.get(r["uid"])
+            if x is None:
+                continue
+            d = x["dificuldade"]
+            for chave, cond in (("sem_contexto", "closed_book"), ("com_contexto", "open_book")):
+                d[chave][r["modelo"]] = r[f"veredito_{cond}"] if r[f"status_{cond}"] == "julgada" else None
+            respostas.setdefault(r["uid"], {})[r["modelo"]] = (r["resposta_closed_book"], r["resposta_open_book"])
 
 
 # ------------------------------------------------------------------------------ análise das questões
@@ -258,7 +279,7 @@ def divisao(banco: list) -> list[Path]:
 def _grupos_slide(series: dict, ylabel: str, ymax: float, erros: dict | None = None, casas: int = 1,
                   nota: str = ""):
     """Colunas agrupadas por modelo (sem x com documento) para slide: sem título, fontes grandes."""
-    fig, ax = plt.subplots(figsize=(12.5, 6.4))
+    fig, ax = plt.subplots(figsize=(16.5, 6.6))
     x = np.arange(len(MODELOS))
     w = 0.38
     for k, (cond, cor, rot) in enumerate((("sem", AZUL, "Sem documento"), ("com", LARANJA, "Com documento"))):
@@ -292,7 +313,8 @@ def acuracia(teste: list) -> tuple[list[Path], dict]:
     for cond, chave in (("sem", "sem_contexto"), ("com", "com_contexto")):
         vals, lo, hi = [], [], []
         for m in MODELOS:
-            v = np.array([x["dificuldade"][chave][m] == "correta" for x in teste], dtype=float)
+            v = np.array([x["dificuldade"][chave][m] == "correta" for x in teste
+                          if x["dificuldade"][chave].get(m) is not None], dtype=float)
             a, b = _bootstrap(v)
             vals.append(100 * v.mean())
             lo.append(100 * (v.mean() - a))
@@ -305,7 +327,7 @@ def acuracia(teste: list) -> tuple[list[Path], dict]:
     return salvar(fig, "fig4_acuracia_modelos"), res
 
 
-INDEP = ["gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5"]
+INDEP = LLAMA + ["gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5"]
 
 
 def _quebrar(rotulo: str, largura: int = 14) -> str:
@@ -346,12 +368,13 @@ def _colunas_cond(rotulos: list, sem: list, com: list, ylabel: str, ymax: float,
 
 
 def _medias(grupos: dict, respostas: dict) -> tuple[dict, dict]:
-    """Acurácia e F1 por grupo e condição, na média dos 4 modelos independentes (o GPT-5.4 fica de fora)."""
+    """Acurácia e F1 por grupo e condição, na média dos modelos independentes (Llama e GPT; o GPT-5.4 fica de fora)."""
     acc, f1 = {}, {}
     for g, xs in grupos.items():
         for cond, chave, k in (("sem", "sem_contexto", 0), ("com", "com_contexto", 1)):
             acc.setdefault(cond, []).append(
-                100 * np.mean([x["dificuldade"][chave][m] == "correta" for x in xs for m in INDEP]))
+                100 * np.mean([x["dificuldade"][chave][m] == "correta" for x in xs for m in INDEP
+                               if x["dificuldade"][chave].get(m) is not None]))
             f1.setdefault(cond, []).append(100 * np.mean(
                 [LI.f1(respostas[x["uid"]][m][k], x["resposta"])[0] for x in xs for m in INDEP
                  if m in respostas.get(x["uid"], {}) and respostas[x["uid"]][m][k]]))
