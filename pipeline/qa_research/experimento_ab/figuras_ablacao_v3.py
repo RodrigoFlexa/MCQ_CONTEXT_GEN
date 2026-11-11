@@ -21,14 +21,19 @@ from pipeline.inventario.textutil import read_json  # noqa: E402
 
 from . import comum as C  # noqa: E402
 from . import figuras as F  # noqa: E402
-from .ablacao_v3 import CONFIGS, SAIDA  # noqa: E402
+from .ablacao_v3 import BASE, CONFIGS, SAIDA  # noqa: E402
 
-ORDEM = list(CONFIGS)
-COR = {"naive": "#1f77b4", "regras": "#ff7f0e", "documentos": "#2ca02c", "externos": "#9467bd", "retro": "#d62728"}
+# a escada e, quando já rodadas, as variantes da retroalimentação sem memória
+ORDEM = [c for c in CONFIGS if c in BASE or (SAIDA / f"questoes_{c}.jsonl").exists()]
+COR = {"naive": "#1f77b4", "regras": "#ff7f0e", "documentos": "#2ca02c", "externos": "#9467bd", "retro": "#d62728",
+       "retro_sem_memoria": "#e377c2", "retro_sem_memoria_sem_externos": "#8c564b"}
 ROT = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "externos": "+ Datasets\nexternos",
-       "retro": "+ Retroali-\nmentação"}
+       "retro": "+ Retroali-\nmentação", "retro_sem_memoria": "+ Retro\nsem memória",
+       "retro_sem_memoria_sem_externos": "+ Retro sem\nmem. e ext."}
 NOME = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "externos": "+ Datasets externos",
-        "retro": "+ Retroalimentação"}
+        "retro": "+ Retroalimentação", "retro_sem_memoria": "+ Retro sem memória",
+        "retro_sem_memoria_sem_externos": "+ Retro sem memória e sem externos"}
+W = max(1.0, len(ORDEM) / 5)      # largura proporcional ao número de configurações
 FIG = SAIDA / "figuras"
 VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}".replace(".", ","))
 
@@ -102,7 +107,7 @@ def distintos_por_onda(c: str, qs: list[dict]) -> list[int]:
 # ------------------------------------------------------------------ figuras
 def validade(r):
     """% de válidas (auditor + resposta curta + sustentação) com IC 95%, por configuração."""
-    fig, ax = plt.subplots(figsize=(15, 7))
+    fig, ax = plt.subplots(figsize=(15 * W, 7))
     x = np.arange(len(ORDEM))
     v = np.array([r["configs"][c]["validas"]["pct"] for c in ORDEM])
     lo = np.array([r["configs"][c]["validas"]["ic95"][0] for c in ORDEM])
@@ -123,7 +128,7 @@ def funil(r, qs):
               ("Aprovadas pelo auditor", lambda c: r["configs"][c]["aprovadas_auditor"]["n"], F.RAMPA[3]),
               ("Válidas", lambda c: r["configs"][c]["validas"]["n"], F.RAMPA[5]),
               ("Conhecimentos válidos distintos", lambda c: distintos_por_onda(c, qs[c])[-1], F.LARANJA)]
-    fig, ax = plt.subplots(figsize=(19, 7.6))
+    fig, ax = plt.subplots(figsize=(19 * W, 7.6))
     x = np.arange(len(ORDEM))
     w = 0.2
     for k, (nome, f, cor) in enumerate(etapas):
@@ -164,7 +169,7 @@ def acumulado(qs):
     ax.set_xlabel("Visita ao bloco foco", fontsize=21)
     _eixo(ax, "Questões válidas (%)")
     alcas = [plt.Line2D([], [], color=COR[c], linewidth=3.4, marker="o", markersize=10) for c in ORDEM]
-    fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=5, fontsize=19,
+    fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=min(len(ORDEM), 4), fontsize=19,
                frameon=False, handlelength=1.8, columnspacing=1.6)
     fig.tight_layout(w_pad=4)
     return _salvar(fig, "figV3_acumulado_e_visitas")
@@ -176,7 +181,7 @@ def diversidade(r):
             ("self_bleu_por_topico", "vocabulario_geradas", "Self-BLEU por tópico\n(menor = mais variado)", 2),
             ("mtld", "vocabulario_geradas", "MTLD\n(maior = mais variado)", 0),
             ("vendi_relativo_por_topico", "vocabulario_geradas", "Vendi relativo por tópico\n(maior = mais variado)", 2))
-    fig, axs = plt.subplots(1, 4, figsize=(28, 7.4))
+    fig, axs = plt.subplots(1, 4, figsize=(28 * W, 7.4))
     x = np.arange(len(ORDEM))
     for ax, (k, bloco, ylabel, casas) in zip(axs, metr):
         v = [(r["configs"][c][bloco][k] if bloco else r["configs"][c][k]) for c in ORDEM]
@@ -196,7 +201,7 @@ def diversidade(r):
 
 def dificuldade(r):
     """Acerto médio do painel sem e com contexto, na amostra de 500 por configuração (válidas e inválidas)."""
-    fig, ax = plt.subplots(figsize=(16, 7.2))
+    fig, ax = plt.subplots(figsize=(16 * W, 7.2))
     x = np.arange(len(ORDEM))
     w = 0.36
     for k, (cond, nome, cor) in enumerate((("acerto_sem_contexto", "Sem documento", F.AZUL),
@@ -219,7 +224,7 @@ def motivos(r, qs):
                ("varias", ("varias_respostas", "nao_unico"), F.RAMPA[4], "Mais de uma resposta válida"),
                ("fonte", ("fora_da_fonte",), F.RAMPA[2], "Fora da fonte"),
                ("doc", ("depende_do_documento",), "#c9c8c3", "Depende do documento"))
-    fig, axs = plt.subplots(1, 4, figsize=(28, 7.4), sharey=True)
+    fig, axs = plt.subplots(1, 4, figsize=(28 * W, 7.4), sharey=True)
     x = np.arange(len(ORDEM))
     for ax, (_, ks, cor, nome) in zip(axs, grupos_):
         v = [100 * sum(any(f in ks for f in q["auditoria"].get("falhas", [])) for q in qs[c]) / len(qs[c]) for c in ORDEM]

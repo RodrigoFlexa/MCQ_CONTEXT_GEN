@@ -172,7 +172,8 @@ def main(argv=None) -> int:
     ap.add_argument("--vagas", type=int, default=1000, help="ablacao: questões pedidas por braço")
     ap.add_argument("--etapas", default="geracao,sustentacao,dedup,dificuldade,relatorio",
                     help="ablacao-v3: etapas, separadas por vírgula; 'prompts' só grava os prompts para revisão")
-    ap.add_argument("--configs", default="naive,regras,documentos,externos,retro", help="ablacao-v3: configurações")
+    ap.add_argument("--configs", default="naive,regras,documentos,externos,retro", help="ablacao-v3: configurações (variantes: retro_sem_memoria, "
+                         "retro_sem_memoria_sem_externos)")
     ap.add_argument("--so-relatorio", action="store_true",
                     help="final-v2: só refaz o QUALIDADE.md com o que já foi avaliado, sem montar nem avaliar")
     ap.add_argument("--docs-simultaneos", type=int, default=6, help="v23-completo: documentos gerados ao mesmo tempo")

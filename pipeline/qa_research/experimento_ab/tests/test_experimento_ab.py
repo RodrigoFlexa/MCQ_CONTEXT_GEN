@@ -1715,7 +1715,7 @@ class FalsoV3:
                 if c != "naive":
                     q.update(tipo="mecanismo", cenario=False, conhecimento=f"relação {pid} {k}", explicacao="e",
                              resposta_padrao="p", por_que_nao="q")
-                if c in ("documentos", "externos", "retro"):
+                if c not in ("naive", "regras"):
                     q["fundamentos"] = [{"bloco": "F", "trecho": "x"}]
                 qs.append(q)
             d = {"questoes": qs, "motivo": ""}
@@ -1809,6 +1809,70 @@ class AblacaoV3Tests(unittest.TestCase):
         am = ab.amostra_dificuldade(5)
         self.assertEqual(Counter(q["config"] for q in am), Counter({c: 5 for c in ab.configs}))
         self.assertEqual(len({q["uid"] for q in am}), len(am))
+
+
+class RetroV2Tests(unittest.TestCase):
+    """Variantes da retroalimentação sem memória: só exemplos julgados de outros documentos."""
+    def setUp(self):
+        VariadaTests.setUp(self)
+        (self.exp / "docs" / "manifesto.json").unlink()
+        C.preparar_documentos(self.exp, itens=[ITEM, "07_01"])
+
+    def a(self, f, configs, **kw):
+        from pipeline.qa_research.experimento_ab.ablacao_v3 import AblacaoV3
+        cl = {"geracao": f, "auditoria": f, "sustentacao": f, "dedup_juiz": NuncaRedundante()}
+        return AblacaoV3(self.exp / "abl3", exp=self.exp, docs=self.exp / "docs" / "antigo", itens=[ITEM, "07_01"],
+                         configs=configs, focos_por_topico=2, visitas=2, externos=self.ext, convertidas=self.conv,
+                         clientes=cl, embedder=Emb(), workers=4, **{**SILENCIO, **kw})
+
+    def test_sem_memoria_exemplos_de_outros_documentos(self):
+        from pipeline.qa_research.experimento_ab.ablacao_v3 import BASE, sistema_base, CONFIGS
+        f = FalsoV3()
+        self.assertEqual(self.a(f, ["externos"]).executar(("geracao",)), 0)       # escada já rodada
+        vs = ["retro_sem_memoria", "retro_sem_memoria_sem_externos"]
+        ab = self.a(f, vs)
+        self.assertEqual(ab.executar(("geracao",)), 0)
+        d = self.exp / "abl3"
+        self.assertEqual(read_json(d / "config.json")["configs"], BASE)          # a pasta da escada não muda
+        self.assertEqual(set(read_json(d / "config_variantes.json")), set(vs))
+        for c in vs:
+            us, ss = f.usuarios[f"abl3_{c}"], f.sistemas[f"abl3_{c}"]
+            self.assertEqual(len(us), len(ab.unidades))
+            self.assertFalse(any("<conhecimentos_cobertos>" in u or "<questoes_deste_foco>" in u for u in us))
+            self.assertTrue(all("<defeitos_frequentes>" in u and "<boas_ja_avaliadas>" in u for u in us))
+            base = sistema_base(CONFIGS["externos" if c == "retro_sem_memoria" else "documentos"])
+            self.assertTrue(all(s.startswith(base) and "Verificação antes de entregar" in s and "<questoes_boas>" in s
+                                for s in ss))
+            # sem memória: nada do próprio documento; as julgadas vêm do outro documento
+            tardias = [u for u in us if re.search(r"Pedido: \S+:v2", u)]
+            for u in tardias:
+                item = re.search(r"Pedido: (\S+?):", u).group(1)
+                outro = "07_01" if item == ITEM else ITEM
+                ex = u.split("<defeitos_frequentes>")[1].split("</ruins_ja_avaliadas>")[0]
+                self.assertNotIn(f"caso {item}:", ex)
+                self.assertIn(f"caso {outro}:", ex)
+                self.assertIn("Várias respostas (", ex)                      # defeito por extenso
+                self.assertIn("Questões já julgadas em outros documentos", ex)
+        self.assertTrue(all("<exemplos_de_forma>" in u for u in f.usuarios["abl3_retro_sem_memoria"]))
+        self.assertFalse(any("<exemplos_de_forma>" in u for u in f.usuarios["abl3_retro_sem_memoria_sem_externos"]))
+        # a sustentação das aprovadas roda a cada onda (as boas são só as totalmente válidas)
+        aprov = [q for c in vs for q in ab.finais(c) if q["aprovada_auditor"]]
+        self.assertTrue(aprov and all(q["sustentacao"] == "totalmente_sustentado" for q in aprov))
+        antes = sum(f.chamadas.values())
+        self.assertEqual(self.a(f, vs).executar(("geracao", "sustentacao")), 0)
+        self.assertEqual(sum(f.chamadas.values()), antes)                # retomada: nada é refeito
+
+    def test_sorteio_estratificado_e_defeitos_da_semente(self):
+        import random as _r
+        from pipeline.qa_research.experimento_ab.ablacao_v3 import codigo_semente, estratificado
+        pool = [{"t": t, "a": a} for t in "xyz" for a in (0, 1) for _ in range(5)]
+        out = estratificado(pool, 6, _r.Random(1), lambda e: e["t"], lambda e: e["a"] == 1)
+        self.assertEqual(Counter(e["t"] for e in out), Counter({"x": 2, "y": 2, "z": 2}))
+        self.assertEqual(Counter(e["a"] for e in out), Counter({0: 3, 1: 3}))
+        self.assertEqual(len(estratificado(pool[:3], 10, _r.Random(1), lambda e: e["t"], lambda e: True)), 3)
+        self.assertEqual(codigo_semente("Várias respostas: outra coisa."), "varias_respostas")
+        self.assertEqual(codigo_semente("Eliminação: o enunciado iguala tudo."), "atalho")
+        self.assertEqual(codigo_semente("Gabarito em lista: cobra itens."), "nao_unico")
 
 
 class ExternosTests(unittest.TestCase):

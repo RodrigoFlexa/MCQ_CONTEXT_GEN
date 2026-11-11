@@ -12,6 +12,14 @@ retroalimentação), com o mesmo prompt montado por blocos (prompts/abl3_gerador
               a própria configuração já gerou e o auditor julgou (de outros documentos), conhecimentos já aprovados no
               documento e as questões já propostas para o foco. Nenhuma questão é refeita: só o prompt seguinte muda.
 
+Variantes da retroalimentação sem memória (nada do que já foi gerado no mesmo documento entra no prompt), rodadas à
+parte com --configs (config_variantes.json):
+  retro_sem_memoria               externos + exemplos julgados de outros documentos (retroalimentação v2);
+  retro_sem_memoria_sem_externos  documentos + exemplos julgados de outros documentos (retroalimentação v2).
+Retroalimentação v2: boas só as totalmente válidas (auditor + resposta curta + sustentação, verificada a cada onda);
+ruins com cotas por defeito e o defeito por extenso; metade dos exemplos da mesma área, tipos variados; proporção de
+cada defeito entre as julgadas; teste de cada defeito antes de entregar (prompts/abl3_retro_v2.md).
+
 Mesma unidade do pipeline em todas: FOCOS_POR_TOPICO blocos foco por documento, VISITAS visitas por foco, de 0 a
 POR_CHAMADA questões por chamada, em ondas (visita 1 dos focos pares, visita 1 dos ímpares, visita 2...). Nas
 configurações sem documento a chamada é só sobre o tópico, com o mesmo número de chamadas por tópico. Toda questão
@@ -55,15 +63,25 @@ from .v23 import carregar_exemplos, selecionar_exemplos
 from .variada import CONVERTIDAS, bloco_forma, carregar_convertidas, carregar_externos
 
 SAIDA = C.QA / "relatorios" / "ablacao_geracao_v3"
-CONFIGS = {
+BASE = {
     "naive": {"regras": False, "documento": False, "externos": False, "retro": False},
     "regras": {"regras": True, "documento": False, "externos": False, "retro": False},
     "documentos": {"regras": True, "documento": True, "externos": False, "retro": False},
     "externos": {"regras": True, "documento": True, "externos": True, "retro": False},
     "retro": {"regras": True, "documento": True, "externos": True, "retro": True},
 }
+VARIANTES = {   # retroalimentação v2, sem memória do documento; config_variantes.json
+    "retro_sem_memoria": {"regras": True, "documento": True, "externos": True, "retro": False, "exemplos": True},
+    "retro_sem_memoria_sem_externos": {"regras": True, "documento": True, "externos": False, "retro": False,
+                                       "exemplos": True},
+}
+CONFIGS = {**BASE, **VARIANTES}
 NOME = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "externos": "+ Datasets externos",
-        "retro": "+ Retroalimentação"}
+        "retro": "+ Retroalimentação", "retro_sem_memoria": "+ Retroalimentação sem memória",
+        "retro_sem_memoria_sem_externos": "+ Retroalimentação sem memória e sem externos"}
+COMPARACOES_VARIANTES = (("retro_sem_memoria", "externos"), ("retro_sem_memoria", "retro"),
+                         ("retro_sem_memoria_sem_externos", "documentos"),
+                         ("retro_sem_memoria_sem_externos", "retro_sem_memoria"))
 FOCOS_POR_TOPICO = 8
 VISITAS = 3
 ONDAS_POR_VISITA = 2
@@ -72,8 +90,18 @@ MISTURA_EXTERNOS = {"pira_ptbr": 2, "mmmlu_ptbr": 2, "arc_challenge": 1, "qasc":
 N_CONVERTIDAS = 2
 FIXAS = (4, 4)            # boas e ruins da semente sempre no prompt de sistema (retro)
 SORTEIO = (10, 8)         # boas e ruins sorteadas por chamada do conjunto já julgado (retro)
+SORTEIO_V2 = (10, 8)      # idem na retroalimentação v2
+COTAS_RUINS = {"atalho": 4, "varias_respostas": 2, "nao_sustentada": 1, "outros": 1}   # v2; falta -> resto
 K_BUSCA = 5
 TETO_RESPOSTA = 20
+DEFEITO = {   # v2: código -> (nome curto, descrição mostrada ao gerador)
+    "atalho": ("Atalho", "a resposta sai do próprio enunciado"),
+    "varias_respostas": ("Várias respostas", "outra resposta também correta não é excluída pelo enunciado"),
+    "nao_sustentada": ("Não sustentada", "a resposta afirma o que os blocos não sustentam"),
+    "depende_do_documento": ("Depende do documento", "só quem leu o texto conhece o que é cobrado"),
+    "nao_unico": ("Resposta vaga ou em lista", "a resposta não nomeia um elemento técnico único"),
+    "resposta_longa": ("Resposta longa demais", f"o gabarito passa de {TETO_RESPOSTA} palavras"),
+}
 AMOSTRA_DIFICULDADE = 500
 GERADOR = "gpt-5-4-petrobras:high"
 AUDITOR = "gpt-5-4-petrobras:high"
@@ -88,6 +116,51 @@ SEMENTE = 20261109
 
 def _rng(*p) -> random.Random:
     return random.Random(C.sha("|".join(map(str, p)))[:16])
+
+
+def com_retro(cfg: dict) -> bool:
+    """A configuração usa o que já foi julgado (retroalimentação v1 ou v2): as ondas dependem das anteriores."""
+    return bool(cfg["retro"] or cfg.get("exemplos"))
+
+
+def categoria(codigo: str) -> str:
+    """Cota de sorteio das ruins na retroalimentação v2."""
+    return codigo if codigo in ("atalho", "varias_respostas", "nao_sustentada") else "outros"
+
+
+def codigo_semente(defeito: str) -> str:
+    """Código do defeito de uma ruim da semente (texto livre do especialista)."""
+    d = defeito.lower()
+    if d.startswith("várias respostas"):
+        return "varias_respostas"
+    if d.startswith("depende do documento"):
+        return "depende_do_documento"
+    if re.match(r"(gabarito em lista|procedimento vago|decisão genérica)", d):
+        return "nao_unico"
+    return "atalho"
+
+
+def estratificado(pool: list, n: int, rng: random.Random, chave, mesma_area) -> list:
+    """n elementos alternando os estratos de `chave` (ordem sorteada) e, a cada escolha, a mesma área e as demais."""
+    grupos = defaultdict(lambda: ([], []))
+    for e in pool:
+        grupos[chave(e)][0 if mesma_area(e) else 1].append(e)
+    for a, b in grupos.values():
+        rng.shuffle(a)
+        rng.shuffle(b)
+    ordem = sorted(grupos)
+    rng.shuffle(ordem)
+    out, k, alvo = [], 0, min(n, len(pool))
+    while len(out) < alvo:
+        for s in ordem:
+            if len(out) >= alvo:
+                break
+            a, b = grupos[s]
+            prim, seg = (a, b) if k % 2 == 0 else (b, a)
+            if prim or seg:
+                out.append((prim or seg).pop())
+                k += 1
+    return out
 
 
 # ------------------------------------------------------------------ prompts
@@ -171,7 +244,7 @@ class AblacaoV3:
                  clientes: dict | None = None, embedder=None, progress=print):
         self.saida, self.docs_dir = Path(saida), Path(docs)
         self.workers, self.progress = max(1, int(workers)), progress
-        self.configs = list(configs or CONFIGS)
+        self.configs = list(configs or BASE)
         if any(c not in CONFIGS for c in self.configs):
             raise ValueError(f"configurações válidas: {', '.join(CONFIGS)}")
         cal_arq = Path(exp) / "calibracao" / "calibracao.json"
@@ -193,6 +266,7 @@ class AblacaoV3:
         self.n_focos, self.visitas = int(focos_por_topico), int(visitas)
         self.unidades = self._unidades()
         self._busca = None
+        self._areas: dict = {}
         self.saida.mkdir(parents=True, exist_ok=True)
         self._config()
 
@@ -210,7 +284,7 @@ class AblacaoV3:
         return out
 
     def _config(self) -> None:
-        cfg = {"schema": "ablacao-geracao-v3", "configs": CONFIGS, "itens": self.itens, "focos_por_topico": self.n_focos,
+        cfg = {"schema": "ablacao-geracao-v3", "configs": BASE, "itens": self.itens, "focos_por_topico": self.n_focos,
                "visitas": self.visitas, "ondas_por_visita": ONDAS_POR_VISITA, "por_chamada": POR_CHAMADA,
                "mistura_externos": MISTURA_EXTERNOS, "n_convertidas": N_CONVERTIDAS, "fixas": FIXAS, "sorteio": SORTEIO,
                "k_busca": K_BUSCA, "teto_resposta": TETO_RESPOSTA, "gerador": GERADOR, "auditor": AUDITOR,
@@ -228,8 +302,27 @@ class AblacaoV3:
                 diff = sorted(k for k in set(antigo) | set(cfg)
                               if json.dumps(antigo.get(k), sort_keys=True) != json.dumps(cfg.get(k), sort_keys=True))
                 raise ValueError(f"Configuração diferente da pasta existente ({', '.join(diff)}); use outra saída")
+        else:
+            atomic_json(arq, {**cfg, "criado_em": datetime.now(timezone.utc).isoformat()})
+        self._config_variantes()
+
+    def _config_variantes(self) -> None:
+        """Cada variante registra o que a define; as já gravadas precisam continuar iguais, novas são acrescentadas."""
+        sel = [c for c in self.configs if c in VARIANTES]
+        if not sel:
             return
-        atomic_json(arq, {**cfg, "criado_em": datetime.now(timezone.utc).isoformat()})
+        arq = self.saida / "config_variantes.json"
+        reg = read_json(arq) if arq.exists() else {}
+        for c in sel:
+            cfg = {"config": VARIANTES[c], "sorteio": SORTEIO_V2, "cotas_ruins": COTAS_RUINS, "fixas": FIXAS,
+                   "defeitos": DEFEITO, "prompt_sha256": C.sha(C.prompt("abl3_retro_v2"))}
+            if c in reg:
+                antigo = {k: v for k, v in reg[c].items() if k != "criado_em"}
+                if json.loads(json.dumps(antigo)) != json.loads(json.dumps(cfg)):
+                    raise ValueError(f"A variante {c} mudou em relação à pasta existente; use outra saída")
+            else:
+                reg[c] = {**cfg, "criado_em": datetime.now(timezone.utc).isoformat()}
+        atomic_json(arq, reg)
 
     # -------------------------------------------------------------- infraestrutura
     def cliente(self, papel: str):
@@ -336,15 +429,46 @@ class AblacaoV3:
         extra = f" Resposta alternativa apontada: {a['resposta_alternativa']}" if "varias_respostas" in a["falhas"] else ""
         return False, f"{a['motivo']}: {a['justificativa']}{extra}"
 
+    def _julgamento_v2(self, q: dict) -> tuple[bool | None, str, str]:
+        """(boa, código, defeito por extenso): boa só se totalmente válida (auditor, resposta curta e sustentação)."""
+        a = q.get("auditoria")
+        if not a or a.get("motivo") == "bloqueio":
+            return None, "", ""
+        n = len(str(q["resposta"]).split())
+        if n > TETO_RESPOSTA:
+            return False, "resposta_longa", f"{DEFEITO['resposta_longa'][0]}: {n} palavras no gabarito."
+        if not a["aprovada"]:
+            cod = "nao_sustentada" if a["motivo"] == "fora_da_fonte" else a["motivo"]
+            extra = (f" Resposta alternativa que o enunciado não exclui: {a['resposta_alternativa']}"
+                     if cod == "varias_respostas" else "")
+            nome, desc = DEFEITO.get(cod, (cod, ""))
+            return False, cod, f"{nome} ({desc}). {a['justificativa']}{extra}"
+        arq = self._arq_sust(q["uid"])
+        if not arq.exists():
+            return None, "", ""
+        s = read_json(arq)
+        if s["status"] == "totalmente_sustentado":
+            return True, "", ""
+        if s["status"] not in ("suporte_insuficiente", "contradicao"):
+            return None, "", ""
+        sem = int(s.get("insuficiente") or 0) + int(s.get("contradita") or 0)
+        nome, desc = DEFEITO["nao_sustentada"]
+        return False, "nao_sustentada", (f"{nome} ({desc}). A verificação afirmação por afirmação não encontrou apoio "
+                                         f"nos blocos para {sem} de {s.get('afirmacoes')} afirmações do gabarito.")
+
     def _julgadas(self, c: str, ate_onda: int) -> list[dict]:
+        v2 = bool(CONFIGS[c].get("exemplos"))
         out = []
         for u in self.unidades:
             if u["onda"] < ate_onda:
                 for q in self._questoes_unidade(c, u):
-                    ok, motivo = self._julgamento(q)
+                    if v2:
+                        ok, cod, motivo = self._julgamento_v2(q)
+                    else:
+                        (ok, motivo), cod = self._julgamento(q), ""
                     if ok is not None:
                         out.append({**q, "item": u["item"], "foco": u["foco"], "visita": u["visita"], "boa": ok,
-                                    "defeito": motivo})
+                                    "defeito": motivo, "codigo": cod})
         return out
 
     def _semente(self, item: str) -> tuple[list, list, list, list]:
@@ -355,10 +479,53 @@ class AblacaoV3:
 
     def sistema(self, c: str, item: str) -> str:
         s = sistema_base(CONFIGS[c])
-        if CONFIGS[c]["retro"]:
+        if CONFIGS[c].get("exemplos"):
+            s += "\n\n" + C.prompt("abl3_retro_v2")
+        if com_retro(CONFIGS[c]):
             fb, fr, _, _ = self._semente(item)
             s += "\n\n" + bloco_fixas(fb, fr)
         return s
+
+    def _area(self, item: str):
+        if item not in self._areas:
+            try:
+                self._areas[item] = (self.temas.get(item) or tema(item))["area"]
+            except Exception:  # noqa: BLE001
+                self._areas[item] = None
+        return self._areas[item]
+
+    def _exemplos(self, c: str, u: dict, julgadas: list[dict]) -> list[str]:
+        """Retroalimentação v2, sem memória do documento: só questões julgadas de outros documentos."""
+        area = self._area(u["item"])
+        mesma = lambda e: area is not None and self._area(e["item"]) == area  # noqa: E731
+        tipo = lambda e: e.get("tipo") or "?"  # noqa: E731
+        _, _, sb, sr = self._semente(u["item"])
+        outras = [q for q in julgadas if q["item"] != u["item"]]
+        rng = _rng("exemplos_v2", c, u["id"])
+        boas = estratificado(list(sb) + [q for q in outras if q["boa"]], SORTEIO_V2[0], rng, tipo, mesma)
+        pool_r = [{**e, "codigo": codigo_semente(e["defeito"])} for e in sr] + [q for q in outras if not q["boa"]]
+        ruins = []
+        for cat, n in COTAS_RUINS.items():
+            ruins += estratificado([e for e in pool_r if categoria(e["codigo"]) == cat], n, rng, tipo, mesma)
+        if len(ruins) < SORTEIO_V2[1]:
+            usadas = {id(e) for e in ruins}
+            ruins += estratificado([e for e in pool_r if id(e) not in usadas], SORTEIO_V2[1] - len(ruins), rng,
+                                   lambda e: categoria(e["codigo"]), mesma)
+        rng.shuffle(boas)
+        rng.shuffle(ruins)
+        if outras:
+            cont = Counter(q["codigo"] for q in outras if not q["boa"])
+            linhas = [f"Questões já julgadas em outros documentos: {len(outras)}; aprovadas: "
+                      f"{100 * sum(q['boa'] for q in outras) / len(outras):.0f}%. Reprovadas por defeito:"]
+            linhas += [f"- {DEFEITO.get(k, (k,))[0]}: {100 * v / len(outras):.0f}%" for k, v in cont.most_common()
+                       if 100 * v / len(outras) >= 0.5]
+            freq = "\n".join(linhas)
+        else:
+            freq = "Nenhuma questão julgada ainda."
+        return [f"<defeitos_frequentes>\n{freq}\n</defeitos_frequentes>",
+                "<boas_ja_avaliadas>\n" + ("\n\n".join(_boa(e) for e in boas) or "Nenhuma ainda.") + "\n</boas_ja_avaliadas>",
+                "<ruins_ja_avaliadas>\n" + ("\n\n".join(_ruim(e) for e in ruins) or "Nenhuma ainda.")
+                + "\n</ruins_ja_avaliadas>"]
 
     def _retro(self, c: str, u: dict, julgadas: list[dict]) -> list[str]:
         doc = [q for q in julgadas if q["item"] == u["item"]]
@@ -392,8 +559,9 @@ class AblacaoV3:
     def usuario(self, c: str, u: dict, julgadas: list[dict] | None = None) -> str:
         cfg = CONFIGS[c]
         partes = [self._tema(u["item"])]
-        if cfg["retro"]:
-            partes += self._retro(c, u, julgadas if julgadas is not None else self._julgadas(c, u["onda"]))
+        if com_retro(cfg):
+            julgadas = julgadas if julgadas is not None else self._julgadas(c, u["onda"])
+            partes += self._retro(c, u, julgadas) if cfg["retro"] else self._exemplos(c, u, julgadas)
         if cfg["externos"]:
             partes.append(self._forma(u))
         if cfg["documento"]:
@@ -448,20 +616,26 @@ class AblacaoV3:
         falhas = 0
         for w in range(self.visitas * ONDAS_POR_VISITA):
             us = [u for u in self.unidades if u["onda"] == w]
-            julg = {c: self._julgadas(c, w) for c in self.configs if CONFIGS[c]["retro"]}
+            julg = {c: self._julgadas(c, w) for c in self.configs if com_retro(CONFIGS[c])}
             falhas += self._paralelo([(c, u) for c in self.configs for u in us if not self._arq_ger(c, u).exists()],
                                      lambda x: self._gerar(x[0], x[1], julg.get(x[0])), f"onda {w + 1}: geração")
             tarefas = [(c, u, q) for c in self.configs for u in us for q in self._questoes_unidade(c, u)
                        if q["auditoria"] is None]
             falhas += self._paralelo(tarefas, lambda x: self._auditar(*x), f"onda {w + 1}: auditoria")
-            if falhas and any(CONFIGS[c]["retro"] for c in self.configs):
+            # retroalimentação v2: só é boa a questão totalmente válida, então a sustentação entra a cada onda
+            v2 = [c for c in self.configs if CONFIGS[c].get("exemplos")]
+            if v2 and not falhas:
+                qs = [q for c in v2 for q in self.finais(c, us) if q["aprovada_auditor"] and q["resposta_curta"]
+                      and not self._arq_sust(q["uid"]).exists()]
+                falhas += self._paralelo(qs, self._sustentar_um, f"onda {w + 1}: sustentação")
+            if falhas and any(com_retro(CONFIGS[c]) for c in self.configs):
                 return falhas         # a próxima onda depende desta estar completa
         return falhas
 
     # -------------------------------------------------------------- questões finais (todas contam)
-    def finais(self, c: str) -> list[dict]:
+    def finais(self, c: str, unidades: list[dict] | None = None) -> list[dict]:
         out = []
-        for u in self.unidades:
+        for u in (self.unidades if unidades is None else unidades):
             for q in self._questoes_unidade(c, u):
                 a = q["auditoria"] or {}
                 sust = self._arq_sust(q["uid"])
@@ -487,27 +661,27 @@ class AblacaoV3:
     def sustentar(self) -> int:
         qs = [q for c in self.configs for q in self.finais(c) if q["aprovada_auditor"] and q["resposta_curta"]
               and not self._arq_sust(q["uid"]).exists()]
+        return self._paralelo(qs, self._sustentar_um, "sustentação")
 
-        def um(q):
-            arq, nome = self._arq_sust(q["uid"]), "sustentacao_" + _nome_arq(q["uid"])
-            blocos_ = [{"id": b["id"], "texto": b["texto"]} for b in q["blocos_contexto"]]
-            bmap = {b["id"]: b["texto"] for b in blocos_}
-            try:
-                d = self.cliente("sustentacao").json(
-                    C.prompt_gap("faithfulness"), json.dumps(dict(pergunta=q["pergunta"], gabarito=q["resposta"],
-                                                                 blocos=blocos_), ensure_ascii=False),
-                    tag="abl3_faithfulness", max_tokens=12000, item=q["item"],
-                    validate=lambda d: validar_faithfulness(d, bmap))
-                rec = {"uid": q["uid"], **resumo_faithfulness(d)}
-            except Exception as exc:  # noqa: BLE001
-                if not _filtrado(exc):
-                    self._falha(nome, exc)
-                    return False
-                rec = {"uid": q["uid"], "status": "bloqueio_provedor"}
-            atomic_json(arq, rec)
-            self._ok(nome)
-            return True
-        return self._paralelo(qs, um, "sustentação")
+    def _sustentar_um(self, q: dict) -> bool:
+        arq, nome = self._arq_sust(q["uid"]), "sustentacao_" + _nome_arq(q["uid"])
+        blocos_ = [{"id": b["id"], "texto": b["texto"]} for b in q["blocos_contexto"]]
+        bmap = {b["id"]: b["texto"] for b in blocos_}
+        try:
+            d = self.cliente("sustentacao").json(
+                C.prompt_gap("faithfulness"), json.dumps(dict(pergunta=q["pergunta"], gabarito=q["resposta"],
+                                                             blocos=blocos_), ensure_ascii=False),
+                tag="abl3_faithfulness", max_tokens=12000, item=q["item"],
+                validate=lambda d: validar_faithfulness(d, bmap))
+            rec = {"uid": q["uid"], **resumo_faithfulness(d)}
+        except Exception as exc:  # noqa: BLE001
+            if not _filtrado(exc):
+                self._falha(nome, exc)
+                return False
+            rec = {"uid": q["uid"], "status": "bloqueio_provedor"}
+        atomic_json(arq, rec)
+        self._ok(nome)
+        return True
 
     # -------------------------------------------------------------- quase-duplicatas (medida, não filtro)
     def _dedup(self, c: str) -> DedupIncremental:
@@ -538,7 +712,8 @@ class AblacaoV3:
     # -------------------------------------------------------------- dificuldade (amostra, válidas e inválidas)
     def amostra_dificuldade(self, n: int = AMOSTRA_DIFICULDADE) -> list[dict]:
         out = []
-        for c in self.configs:
+        presentes = [c for c in CONFIGS if c in self.configs or (self.saida / c / "geracao").exists()]
+        for c in presentes:
             qs = self.finais(c)
             por_item = defaultdict(list)
             for q in qs:
@@ -659,8 +834,9 @@ class AblacaoV3:
                                                                      + custo.get(c, {}).get("tokens_saida", 0)) / max(1, len(val))},
                  "dificuldade": _dificuldade(qs, ver)}
             res["configs"][c] = r
-        ordem = [c for c in CONFIGS if c in finais]
-        for a, b in zip(ordem, ordem[1:]):
+        ordem = [c for c in BASE if c in finais]
+        pares = list(zip(ordem[1:], ordem)) + [(b, a) for b, a in COMPARACOES_VARIANTES if a in finais and b in finais]
+        for b, a in pares:
             res["comparacoes"][f"{b}_vs_{a}"] = {k: _diferenca(finais[b], finais[a], k)
                                                  for k in ("valida", "aprovada_auditor", "valida_intrinseca")}
         atomic_json(self.saida / "resultado.json", res)
@@ -795,6 +971,6 @@ def exemplos_prompts(ab: AblacaoV3, pasta: Path | None = None) -> Path:
     for c in ab.configs:
         (pasta / f"{c}_sistema.md").write_text(ab.sistema(c, u["item"]) + "\n", encoding="utf-8")
         (pasta / f"{c}_usuario_onda1.md").write_text(ab.usuario(c, u, []) + "\n", encoding="utf-8")
-        if CONFIGS[c]["retro"]:
+        if com_retro(CONFIGS[c]):
             (pasta / f"{c}_usuario_visita2.md").write_text(ab.usuario(c, u2) + "\n", encoding="utf-8")
     return pasta
