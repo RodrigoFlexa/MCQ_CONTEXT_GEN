@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:017:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de cargas essenciais por consequência da perda, não por potência instalada.",
+      "pergunta": "Com autonomia limitada de UPS, qual carga deve ter prioridade: um ventilador auxiliar de alta potência ou o CLP que executa shutdown e comanda válvulas críticas?",
+      "resposta": "O CLP de shutdown.",
+      "explicacao": "A seleção deve considerar a consequência da perda de energia; comando, shutdown e atuação de válvulas exigem maior continuidade que uma carga auxiliar mais potente.",
+      "resposta_padrao": "O ventilador auxiliar, por consumir mais potência.",
+      "por_que_nao": "Potência consumida não define essencialidade quando a perda afeta comando, shutdown e mitigação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de segregação funcional das cargas entre ramos redundantes de UPS e barramentos.",
+      "pergunta": "Durante o teste de perda do UPS A, a tensão permanece nos barramentos, mas as duas estações redundantes de um mesmo sistema saem juntas. Que verificação específica faltou?",
+      "resposta": "Distribuição correta entre ramos redundantes.",
+      "explicacao": "Presença de tensão não comprova redundância real; se ambas as estações estão no mesmo ramo, uma falha simples elimina a independência funcional.",
+      "resposta_padrao": "Capacidade nominal do UPS.",
+      "por_que_nao": "Mesmo com capacidade adequada, a redundância falha se as estações redundantes não estiverem segregadas entre ramos independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Função do bypass do UPS na continuidade da alimentação CA crítica diante de falha do inversor.",
+      "pergunta": "Na simulação de falha do inversor de um UPS, as cargas críticas em 120 Vca precisam continuar alimentadas. Que disponibilidade deve ser confirmada no equipamento?",
+      "resposta": "Bypass do UPS.",
+      "explicacao": "Se o inversor falha, a continuidade depende do caminho alternativo de suprimento CA; por isso a disponibilidade do bypass é verificação decisiva.",
+      "resposta_padrao": "Retificador do UPS.",
+      "por_que_nao": "O retificador sustenta o barramento CC, mas não substitui o caminho de alimentação CA quando o inversor fica indisponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação das lógicas de reboot e trip após modificações acumuladas em sistemas essenciais.",
+      "pergunta": "Pequenas modificações acumuladas fizeram controladores reiniciarem fora de sequência após uma queda curta, mantendo trip do processo apesar de UPS e baterias saudáveis. Que aspecto específico deve ser verificado?",
+      "resposta": "Coerência das lógicas de reboot e de trip.",
+      "explicacao": "Com alimentação preservada, a indisponibilidade funcional pode vir de lógica alterada; reboot e trip incoerentes impedem retorno ordenado após perturbações.",
+      "resposta_padrao": "Tempo de retaguarda das baterias.",
+      "por_que_nao": "Autonomia suficiente não evita trip persistente quando a sequência lógica de reinicialização e disparo está incoerente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ]
+    }
+  ]
+}

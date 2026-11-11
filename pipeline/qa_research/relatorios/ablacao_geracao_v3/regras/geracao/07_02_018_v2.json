@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:018:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto seguro a redes OT por mediação em DMZ industrial.",
+      "pergunta": "Fornecedor precisa acesso temporário à estação de engenharia para suporte, sem rota direta da rede externa à rede de controle e com registro da sessão. Que arranjo técnico deve ser usado?",
+      "resposta": "Jump server na DMZ industrial.",
+      "explicacao": "A mediação na DMZ industrial remove a conectividade direta, concentra autenticação e registro e libera apenas a sessão necessária ao suporte.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "A VPN cria caminho roteável até a rede de controle e reduz a segregação exigida em OT."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da integridade da lógica residente em controladores sem parada.",
+      "pergunta": "Controlador permanece em RUN após manutenção, mas há dúvida se a lógica carregada coincide com o projeto aprovado. Como verificar a integridade sem parar o processo?",
+      "resposta": "Online compare da lógica residente com o baseline aprovado.",
+      "explicacao": "A comparação online do programa ou CRC carregado no controlador com a versão mestre revela alterações efetivamente residentes no equipamento.",
+      "resposta_padrao": "Revisar o arquivo de backup do projeto.",
+      "por_que_nao": "O arquivo mestre não comprova que a mesma lógica está residente no controlador em execução."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação entre SIS e DCS com fluxo apenas de leitura.",
+      "pergunta": "Status e causas de trip do SIS precisam aparecer no DCS, mas a arquitetura não pode permitir comandos ou alterações vindos do controle básico. Que arranjo de comunicação é o mais adequado?",
+      "resposta": "Gateway unidirecional do SIS para o DCS.",
+      "explicacao": "O fluxo unidirecional entrega informações de leitura ao controle básico sem manter canal reverso que permita comando, escrita ou exploração remota do sistema de segurança.",
+      "resposta_padrao": "Firewall bidirecional com portas restritas.",
+      "por_que_nao": "A filtragem reduz, mas não elimina o canal reverso nem a superfície de ataque até o SIS."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comprovação de recuperabilidade de backups de sistemas críticos.",
+      "pergunta": "Backups automáticos de servidor de historiador e estação de engenharia terminam sem erro há meses. Antes de uma parada longa, que verificação técnica realmente comprova que eles recuperarão o serviço?",
+      "resposta": "Teste de restauração em ambiente isolado representativo.",
+      "explicacao": "Só a restauração em ambiente isolado confirma consistência dos arquivos, dependências, inicialização e tempo de recuperação do sistema.",
+      "resposta_padrao": "Conferir logs de sucesso do software de backup.",
+      "por_que_nao": "Log de execução não valida que a imagem seja íntegra, inicializável e compatível com a recuperação."
+    }
+  ]
+}

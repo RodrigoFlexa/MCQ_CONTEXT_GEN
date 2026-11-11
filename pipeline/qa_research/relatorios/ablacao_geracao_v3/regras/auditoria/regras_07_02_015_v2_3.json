@@ -1,0 +1,52 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Fazer a atualização em rolling, um servidor por vez: primeiro o secundário/standby, validar, comutar para ele e então atualizar o primário.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "procedimento",
+  "justificativa": "A sequência de atualizar primeiro o nó em espera, comutar de forma controlada e só depois atualizar o outro é prática padrão de redundância ativo-standby e decorre diretamente dos blocos sobre preservar a função por caminho alternativo durante mudanças.",
+  "aprovada": true,
+  "motivo": "nenhum",
+  "falhas": [],
+  "referencia_valida": true,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "01_01",
+      "texto": "Redundância é o uso de caminhos, equipamentos ou funções adicionais para manter o serviço quando ocorre falha em parte do arranjo. Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas. Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo. Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação. No conjunto, a redundância pode elevar a confiabilidade e a disponibilidade no início da missão, mas esse benefício não é ilimitado: em tempos mais longos, a degradação dos equipamentos ativos pode deixar de ser compensada pelo reserva. Além disso, redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento. Em compressão, geração e tratamento em FPSO, a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado. Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo.",
+      "titulo": "Disponibilidade e confiabilidade / Redundância, standby e efeitos sobre o comportamento do sistema",
+      "indice_documento": 6
+    },
+    {
+      "id": "B2",
+      "item": "07_02",
+      "texto": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real. Quando o componente instalado estiver afetado, a correção deve ser avaliada com as equipes de TI/OT e o fornecedor, considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno. Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle. Essa ação não deve ser generalizada para outros produtos fora desse contexto. Em sistemas legados, a decisão raramente é apenas “atualizar ou não atualizar”. A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança. Em muitos sistemas de controle, uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo; por isso, quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis até que exista remediação compatível. O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança.",
+      "titulo": "Vulnerabilidades, patches e legados / Patches, remediação e tratamento de sistemas legados",
+      "indice_documento": 13
+    },
+    {
+      "id": "B3",
+      "item": "07_02",
+      "texto": "Em dispositivos embarcados e componentes de IACS, a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação. Essa dependência é estrutural: o operador normalmente não controla o ciclo de desenvolvimento do software embarcado, nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto.\n\nIsso altera a gestão de acesso e de terceiros de duas formas. Primeiro, o fornecedor passa a influenciar o tempo de exposição do ativo vulnerável. Segundo, a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa.\n\nA seleção e o acompanhamento de fornecedores, portanto, não devem considerar apenas preço e prazo. Também importam capacidade de notificação, clareza sobre ativos afetados, orientação de mitigação, qualidade do suporte e possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos.",
+      "titulo": "Acessos e cadeia de suprimentos / Dependência da cadeia de suprimentos em vulnerabilidades e remediação",
+      "indice_documento": 6
+    },
+    {
+      "id": "B4",
+      "item": "07_01",
+      "texto": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal. A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço. O princípio técnico mais geral é que redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função e quando a perda dessa condição pode ser percebida. Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva. O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo. Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico.",
+      "titulo": "DCS, PLC, redes e diagnóstico / Redundância e diagnóstico por camadas",
+      "indice_documento": 17
+    },
+    {
+      "id": "B5",
+      "item": "05_02",
+      "texto": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida. Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação. O tempo de retaguarda pode variar de minutos a algumas horas conforme porte e essencialidade da aplicação, mas valores específicos dependem da filosofia da unidade e não podem ser assumidos sem dado de projeto. O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional. Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível. Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada.",
+      "titulo": "UPS, baterias e sistemas essenciais / Seleção e monitoramento das cargas essenciais",
+      "indice_documento": 17
+    }
+  ]
+}

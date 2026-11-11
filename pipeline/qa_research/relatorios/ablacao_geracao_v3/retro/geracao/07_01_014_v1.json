@@ -1,0 +1,71 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_01:014:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de ação direta/reversa incorreta do controlador a partir do sentido da resposta da malha.",
+      "pergunta": "Com a malha em automático e a válvula de saída já confirmada ar-para-abrir, um aumento do nível acima do setpoint faz o controlador reduzir a sua saída; a válvula fecha e o nível continua subindo. Que ajuste específico está incorreto?",
+      "resposta": "A ação direta/reversa do controlador.",
+      "explicacao": "Com válvula de saída ar-para-abrir, nível alto deveria levar a mais abertura. Se o controlador reduz a saída e fecha a válvula, o sentido da ação configurada está invertido.",
+      "resposta_padrao": "A sintonia do PID está agressiva.",
+      "por_que_nao": "Ganho alto pode amplificar a resposta, mas não troca o sentido corretivo; aqui a malha fecha em realimentação positiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sentido incorreto de atuação"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Separação entre caminho de supervisão e caminho de atuação na arquitetura de automação.",
+      "pergunta": "As medições aparecem normalmente na supervisão, o operador altera o setpoint e a mudança é aceita, mas a válvula permanece parada e o processo não reage. Que ponto da arquitetura deve ser priorizado no diagnóstico?",
+      "resposta": "A saída do controlador para o atuador.",
+      "explicacao": "A medição chega à supervisão e o ajuste do operador entra no sistema. Sem movimento do elemento final, o trecho decisivo é o comando emitido pelo controlador ao atuador.",
+      "resposta_padrao": "O transmissor da variável de processo.",
+      "por_que_nao": "Se a variável é lida normalmente na supervisão, o caminho de medição está funcional; a falha está no caminho de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Atuadores, como válvulas, motores e bombas, exercem ação direta sobre o processo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validade de tendências e inferências do historian depende da coerência temporal dos sinais.",
+      "pergunta": "No historian, a tendência passa a mostrar a pressão respondendo antes do comando de abertura da válvula; no campo, a sequência observada é a esperada e os valores instantâneos parecem plausíveis. Que critério do dado deve ser verificado antes de culpar a lógica?",
+      "resposta": "Coerência temporal dos sinais.",
+      "explicacao": "Tendências, comparações e inferências operacionais só fazem sentido quando os sinais mantêm alinhamento temporal confiável. Valores plausíveis, porém desalinhados no tempo, distorcem causa e efeito.",
+      "resposta_padrao": "Exatidão dos transmissores.",
+      "por_que_nao": "Um valor pode estar corretamente calibrado e ainda assim chegar fora de ordem ou com atraso; o problema descrito é temporal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        }
+      ]
+    }
+  ]
+}

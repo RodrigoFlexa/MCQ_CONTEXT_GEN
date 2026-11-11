@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:010:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de gateway unidirecional para transferência apenas de leitura entre sistemas OT de criticidade diferente.",
+      "pergunta": "O sistema de segurança deve enviar apenas estados e alarmes ao supervisório, sem qualquer possibilidade de escrita de volta, inclusive por sessão iniciada do outro lado. Qual arranjo de comunicação deve ser adotado?",
+      "resposta": "Gateway unidirecional",
+      "explicacao": "Impõe fluxo físico em um só sentido, permitindo leitura sem criar canal de retorno para comandos ou alterações.",
+      "resposta_padrao": "Firewall industrial com regra só de saída.",
+      "por_que_nao": "Firewall continua sendo bidirecional e depende de configuração; não elimina fisicamente o caminho de retorno."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle de mídias removíveis por estação dedicada de inspeção antes da entrada em redes OT.",
+      "pergunta": "Fornecedor precisa levar arquivos de atualização por pendrive até uma estação de engenharia isolada. Qual controle técnico deve intermediar obrigatoriamente essa mídia antes do uso?",
+      "resposta": "Estação dedicada de varredura de mídias",
+      "explicacao": "Cria um ponto controlado de inspeção e transferência entre domínios, reduzindo a entrada de malware por mídia removível.",
+      "resposta_padrao": "Antivírus atualizado no notebook do fornecedor.",
+      "por_que_nao": "O notebook do fornecedor não estabelece uma fronteira confiável nem controla a mídia na entrada do domínio OT."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de allowlisting em estações OT legadas sem possibilidade imediata de patch.",
+      "pergunta": "Uma HMI em Windows legado, sem patch disponível do fornecedor, precisa continuar operando e recebe arquivos de receita periodicamente. Que controle reduz mais a execução de malware sem alterar a aplicação aprovada?",
+      "resposta": "Allowlisting de aplicações",
+      "explicacao": "Em ambiente estático, só executa binários e scripts aprovados, bloqueando por padrão o desconhecido.",
+      "resposta_padrao": "Antivírus por assinatura.",
+      "por_que_nao": "Assinaturas não cobrem bem malware desconhecido em sistemas legados; allowlisting bloqueia qualquer execução não autorizada."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade da lógica de controladores por comparação com baseline confiável.",
+      "pergunta": "Login fora de horário apareceu na estação de engenharia, mas o processo segue estável. Como verificar a integridade da aplicação nos controladores antes de restaurar a estação ou baixar lógica?",
+      "resposta": "Upload/compare da lógica com baseline confiável",
+      "explicacao": "A comparação da aplicação em execução com uma referência confiável revela alterações no controlador sem sobrescrever evidências.",
+      "resposta_padrao": "Recarregar imediatamente o último backup de lógica.",
+      "por_que_nao": "Recarregar altera o estado do controlador, pode apagar evidências e não comprova a integridade da lógica em execução."
+    }
+  ]
+}

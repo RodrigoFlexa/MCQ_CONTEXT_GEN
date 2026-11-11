@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:012:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando só há necessidade de fluxo OT→IT, o conduíte correto é unidirecional, não apenas filtrado.",
+      "pergunta": "Só é necessário enviar dados do historiador de processo para analytics corporativo, sem comando, consulta interativa nem tráfego de retorno. Que arranjo de conduíte deve ser adotado nesse enlace?",
+      "resposta": "gateway unidirecional",
+      "explicacao": "Esse arranjo impõe fluxo físico em um só sentido e elimina sessões iniciadas do ambiente corporativo para o de controle.",
+      "resposta_padrao": "firewall stateful entre as redes",
+      "por_que_nao": "Firewall ainda mantém pilha bidirecional e depende de regras, podendo permitir ou sofrer tráfego de retorno."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em estações OT de função fixa e poucas mudanças, o controle mais eficaz contra execução indevida é whitelisting.",
+      "pergunta": "Estações de operação executam poucas aplicações fixas, as janelas de mudança são raras e a atualização frequente de assinaturas é difícil. Que técnica de proteção é mais adequada para impedir execução de código não autorizado?",
+      "resposta": "whitelisting de aplicações",
+      "explicacao": "Com base estável de software, a técnica bloqueia binários e scripts fora da lista aprovada, reduzindo impacto de malware desconhecido.",
+      "resposta_padrao": "antivírus por assinatura",
+      "por_que_nao": "Antivírus depende de assinaturas atualizadas e não impede de forma robusta a execução de código ainda não catalogado."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Recuperação fiel de estação de engenharia validada requer imagem bare-metal, não só reinstalação e projeto.",
+      "pergunta": "Falha de disco tirou de serviço uma estação de engenharia com sistema legado, drivers específicos e licenças locais já validadas. Que backup restabelece mais rápido a plataforma exatamente como homologada?",
+      "resposta": "imagem bare-metal do sistema",
+      "explicacao": "A imagem preserva sistema operacional, drivers, patches, hardening, configurações e licenças, permitindo retorno fiel ao estado validado.",
+      "resposta_padrao": "reinstalar o software e restaurar o projeto",
+      "por_que_nao": "Reinstalação recompõe função, mas não garante a mesma pilha validada com drivers, patches, hardening e licenças locais."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Integridade de lógica carregada se confirma por comparação de checksum com a linha de base aprovada.",
+      "pergunta": "Permissivos e intertravamentos responderam normalmente após uma alteração autorizada, mas é preciso confirmar que a aplicação ativa no solucionador não difere da linha de base aprovada. Como verificar isso?",
+      "resposta": "comparação online do checksum da lógica",
+      "explicacao": "A comparação do checksum da aplicação em execução confirma equivalência exata com a versão aprovada, inclusive para diferenças não observadas em teste funcional.",
+      "resposta_padrao": "repetir os testes funcionais dos intertravamentos",
+      "por_que_nao": "Testes funcionais cobrem o comportamento observado, não a equivalência binária da lógica efetivamente carregada."
+    }
+  ]
+}

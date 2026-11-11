@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:019:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de bypass, e não forcing, para liberar temporariamente um permissivo preservando a observabilidade do ponto real.",
+      "pergunta": "Um switch de nível com defeito entra só no permissivo de partida de uma bomba. É preciso liberar a partida temporariamente, mas manter o estado bruto do ponto visível para diagnóstico. Que intervenção deve ser aplicada na automação?",
+      "resposta": "Bypass do permissivo de partida.",
+      "explicacao": "O bypass contorna apenas a condição lógica de partida. O forcing substituiria o estado real do ponto e prejudicaria a supervisão necessária para acompanhar o defeito.",
+      "resposta_padrao": "Forçar o switch em condição normal.",
+      "por_que_nao": "O forcing mascara o estado real do ponto; aqui é preciso remover só a condição lógica, preservando a observação do sinal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de forcing quando o sinal físico chega ao I/O, mas o valor consumido pela lógica permanece imposto.",
+      "pergunta": "Durante aferição, a corrente do transmissor varia corretamente no borne do cartão, mas o valor usado pelos permissivos permanece fixo na tela, sem falha de comunicação. Que intervenção temporária explica melhor esse desacoplamento?",
+      "resposta": "Forcing do ponto de entrada na automação.",
+      "explicacao": "Se o sinal elétrico chega ao cartão e a lógica continua usando um valor fixo, o ponto foi imposto internamente, desconectando a supervisão da variação real de campo.",
+      "resposta_padrao": "Transmissor descalibrado.",
+      "por_que_nao": "Descalibração altera a correspondência entre variável e sinal, mas não congela o valor lógico quando o mA no cartão acompanha o teste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de override para impor um comando alternativo ao elemento final sem retirar o controlador de automático nem escrever valor fixo no I/O.",
+      "pergunta": "Durante um teste funcional, a válvula deve seguir um comando alternativo fixo de 40%, enquanto o controlador permanece em automático para observar sua saída calculada, sem gravar valor diretamente no ponto de I/O. Que intervenção temporária deve dominar a atuação?",
+      "resposta": "Override do comando da válvula.",
+      "explicacao": "O override faz um comando alternativo assumir precedência no caminho de atuação, mantendo a lógica normal observável. Manual mudaria o modo do controlador; forcing escreveria valor no ponto.",
+      "resposta_padrao": "Colocar o controlador em manual a 40%.",
+      "por_que_nao": "Manual retira o controlador do seu modo normal e impede observar a resposta calculada sob a mesma condição de teste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        }
+      ]
+    }
+  ]
+}

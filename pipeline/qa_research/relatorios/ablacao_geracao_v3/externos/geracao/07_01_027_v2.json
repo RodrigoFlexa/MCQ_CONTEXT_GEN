@@ -1,0 +1,103 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:027:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reclassificação entre alarme e evento altera a annunciação sem mudar a medição nem o limiar.",
+      "pergunta": "Uma variável cruza o mesmo limiar de sempre e, sem supressão ativa, a ocorrência aparece apenas no registro cronológico, sem banner, som ou reconhecimento. Qual alteração de configuração explica isso?",
+      "resposta": "Reclassificação de alarme para evento.",
+      "explicacao": "Evento pode permanecer registrado sem annunciação nem reconhecimento. Mudar sensor ou limiar alteraria a detecção, não o tratamento operacional da mesma ocorrência.",
+      "resposta_padrao": "Mudança no setpoint de alarme.",
+      "por_que_nao": "Setpoint altera quando a condição dispara; não converte uma ocorrência anunciada em apenas registro cronológico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "classificação entre alarme e evento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma alteração aparentemente pequena pode mudar o comportamento real da planta"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "O modo local/remoto define qual origem de comando o elemento final aceita.",
+      "pergunta": "Com permissivos atendidos e sem trip ativo, o comando sai da IHM mas o atuador só obedece pela estação local. Qual definição de configuração está incompatível?",
+      "resposta": "Modo de operação local/remoto.",
+      "explicacao": "A seleção local/remoto determina a autoridade de comando aceita pelo elemento final. Permissivos e trips normais não explicam rejeição exclusiva da IHM.",
+      "resposta_padrao": "Intertravamento de processo.",
+      "por_que_nao": "Intertravamento bloqueia a ação por condição de processo; não transfere a origem válida do comando para o posto local.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que comandos da IHM fossem executados pelos atuadores"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A forma de atuação do elemento final distingue válvula modulante de válvula abre/fecha.",
+      "pergunta": "A estratégia exige ajuste contínuo de vazão, porém a válvula em campo só assume totalmente aberta ou totalmente fechada. Qual característica implementada diverge tecnicamente do projeto?",
+      "resposta": "Atuação abre/fecha em vez de controle contínuo.",
+      "explicacao": "Controle contínuo exige elemento final modulante. Se a válvula foi implementada como on-off, o comportamento real da malha deixa de seguir a estratégia prevista.",
+      "resposta_padrao": "Faixa de calibração do posicionador.",
+      "por_que_nao": "Calibração altera a correspondência do curso; não transforma uma válvula modulante em somente aberta ou fechada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forma de atuação dos elementos finais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comissionada apenas como totalmente aberta ou fechada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste funcional ponta a ponta confirma a coerência implantada entre supervisão, lógica, I/O e elemento final.",
+      "pergunta": "Depois de modificar lógica, I/O e telas, como confirmar que o comando emitido na IHM percorre toda a cadeia e efetivamente aciona o elemento final?",
+      "resposta": "Teste funcional ponta a ponta IHM-atuador.",
+      "explicacao": "Só o teste end-to-end comprova, na configuração implantada, supervisório, controlador, mapeamento de I/O, saída e atuação em campo como uma cadeia única.",
+      "resposta_padrao": "Simulação da lógica no controlador.",
+      "por_que_nao": "Simular a lógica valida a decisão interna, mas não prova comunicação, mapeamento de saída nem atuação real no campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que comandos da IHM fossem executados pelos atuadores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comissionamento incompleto de controles"
+        }
+      ]
+    }
+  ]
+}

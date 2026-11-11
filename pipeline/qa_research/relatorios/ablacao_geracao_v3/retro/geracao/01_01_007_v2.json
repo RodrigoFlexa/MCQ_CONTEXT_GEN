@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "01_01:007:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Disponibilidade observada exige registrar os marcos funcionais de perda e recuperação do serviço.",
+      "pergunta": "Os registros fecham ordens de serviço, mas não mostram quando a função foi perdida nem quando voltou. Para calcular a disponibilidade observada, que marcos temporais precisam ser capturados?",
+      "resposta": "Início da falha e retorno ao estado operacional.",
+      "explicacao": "A disponibilidade observada e o MTTR dependem do período real de indisponibilidade funcional, não dos tempos administrativos da manutenção.",
+      "resposta_padrao": "Abertura e fechamento da ordem de manutenção.",
+      "por_que_nao": "Marcos administrativos podem não coincidir com a perda e a recuperação da função, distorcendo o downtime.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A base de eventos da RAM deve incluir apenas os modos de falha que retiram a função do sistema.",
+      "pergunta": "Uma equipe vai estruturar a base de eventos de um pacote com alarmes, degradações locais e paradas. Em parte dos registros, a função requerida continuou atendida. Para a análise RAM, que conjunto de eventos deve entrar no levantamento inicial?",
+      "resposta": "Modos de falha que geram perda ao sistema.",
+      "explicacao": "A análise RAM precisa relacionar falhas à perda da função do sistema; eventos sem perda de serviço não representam indisponibilidade funcional.",
+      "resposta_padrao": "Todos os alarmes, defeitos e intervenções do equipamento.",
+      "por_que_nao": "Nem todo desvio local afeta a função do sistema; incluir tudo mistura eventos irrelevantes à indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em RAM detalhada, a priorização técnica vem dos contribuintes dominantes de falha, não do índice global isolado.",
+      "pergunta": "Duas alternativas já detalhadas têm disponibilidade global muito próxima, mas a equipe precisa decidir onde atuar para reduzir perda futura e distinguir os efeitos do modo operacional. Que saída da análise deve orientar essa decisão?",
+      "resposta": "Maiores contribuintes de falha.",
+      "explicacao": "Modelos completos servem para mostrar quais elementos dominam a perda e como o modo operacional altera essa contribuição, além do valor global.",
+      "resposta_padrao": "A disponibilidade global prevista.",
+      "por_que_nao": "O índice global não revela quais itens dominam a indisponibilidade nem orienta a intervenção mais efetiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelos mais completos permitem identificar os maiores contribuintes de falha, comparar modos operacionais e refinar previsões de disponibilidade e confiabilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "monitorar apenas médias sem contexto funcional pode mascarar os verdadeiros limitantes do desempenho."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparações de disponibilidade entre estratégias com o mesmo hardware exigem modelar explicitamente o modo operacional.",
+      "pergunta": "Estratégias com o mesmo conjunto de equipamentos alternam entre revezamento duty/standby e operação em paralelo com carga dividida. Para comparar corretamente a disponibilidade prevista, que aspecto deve ser representado explicitamente no modelo?",
+      "resposta": "Modos de operação.",
+      "explicacao": "Mesmo com o mesmo hardware, o regime de uso muda exposição à falha, lógica funcional e impacto da perda no serviço.",
+      "resposta_padrao": "Quantidade de equipamentos duplicados.",
+      "por_que_nao": "A duplicidade física não captura como cada estratégia usa os equipamentos nem como isso afeta a função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outros métodos capazes de representar dependências e modos de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas."
+        }
+      ]
+    }
+  ]
+}

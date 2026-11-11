@@ -1,0 +1,52 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Teste funcional periódico da função de shutdown/trip, tipo proof test, incluindo a solenóide e o elemento final.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "procedimento",
+  "justificativa": "A resposta é conhecimento corrente de funções de segurança de baixa demanda: calibração não comprova a atuação da cadeia de trip parada, e os blocos sustentam a necessidade de testes periódicos/operacionais para revelar falhas que não aparecem em verificações estáticas.",
+  "aprovada": true,
+  "motivo": "nenhum",
+  "falhas": [],
+  "referencia_valida": true,
+  "tipo_confere": false,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    },
+    {
+      "id": "B2",
+      "item": "05_02",
+      "texto": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida. Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação. O tempo de retaguarda pode variar de minutos a algumas horas conforme porte e essencialidade da aplicação, mas valores específicos dependem da filosofia da unidade e não podem ser assumidos sem dado de projeto. O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional. Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível. Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada.",
+      "titulo": "UPS, baterias e sistemas essenciais / Seleção e monitoramento das cargas essenciais",
+      "indice_documento": 17
+    },
+    {
+      "id": "B3",
+      "item": "07_01",
+      "texto": "No comissionamento, a arquitetura de automação precisa ser verificada como sistema integrado, não apenas como coleção de equipamentos energizados. Em um circuito de regeneração, foram descritos testes preliminares da lógica de automação, procedimentos de limpeza e inertização, verificação e calibração de instrumentos e confirmação da comunicação entre equipamentos de campo e PLC antes da entrada de gás natural. A operação em circuito fechado com nitrogênio (N2) foi usada para confirmar desempenho, testar antecipadamente a lógica de regeneração e permitir ajustes antes do primeiro gás. Em altas temperaturas, a circulação de N2 também favoreceu a identificação de vazamentos associados à acomodação térmica e apoiou ajuste de instrumentos, em especial medição de nível e sintonia inicial de controladores. O princípio técnico transferível é que testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados e instabilidade inicial de controle. O alcance dessa conclusão permanece ligado ao sistema e ao regime de teste efetivamente aplicados.",
+      "titulo": "DCS, PLC, redes e diagnóstico / Comissionamento e testes para provar comunicação e comportamento",
+      "indice_documento": 13
+    },
+    {
+      "id": "B4",
+      "item": "05_02",
+      "texto": "A confiabilidade da distribuição elétrica não depende só do projeto inicial; depende de inspeção, teste, manutenção e controle de mudanças. Para relés eletrônicos e sistemas associados, pode ser necessário equipamento especializado para identificar erros internos, e as instruções do fabricante influenciam a forma de verificação. Ensaios operacionais sob carga aplicável são relevantes porque parte das falhas só se manifesta com esforço elétrico real, interação entre controles ou aquecimento. A documentação técnica útil à operação e à manutenção inclui diagrama unifilar, filosofia de operação da geração e da distribuição, estudo de seletividade, estudo de arco elétrico, planilha mestra de ajustes de proteção e históricos operacionais do switchgear, como atuações, falhas e calibrações. Em monitoramento de condição, técnicas como medição de tensão transitória à terra e métodos acústicos para descargas parciais em switchgear, termografia em painéis de baixa tensão e monitoramento de vibração em equipamentos rotativos ajudam a antecipar degradação. Avaliações baseadas em risco complementam recomendações de fabricante e histórico de falhas, especialmente quando envelhecimento, obsolescência, mudança de regime operacional ou alteração de carga modificam probabilidade e consequência das falhas.",
+      "titulo": "Distribuição e proteções / Inspeção, testes, documentação e integridade ao longo da vida",
+      "indice_documento": 9
+    },
+    {
+      "id": "B5",
+      "item": "07_01",
+      "texto": "Comissionamento inclui verificar se instrumentos, lógica, comunicação e equipamentos respondem de modo coerente com a função esperada, e não apenas energizar o sistema. No circuito de regeneração descrito, isso inclui testes da matriz de causa e efeito e dos cenários de atuação dos intertravamentos para confirmar a atuação do sistema de segurança. Também inclui verificação e calibração de instrumentos e confirmação da comunicação entre equipamentos de campo e o Controlador Lógico Programável (PLC). Antes da disponibilidade de gás natural, sopradores, aquecedores e leitos foram operados em circuito fechado com nitrogênio (N2). Nesse arranjo, a operação antecipada permite testar a lógica de regeneração, identificar vazamentos associados à acomodação térmica, observar problemas de equipamentos, ajustar instrumentos e realizar sintonia inicial de controladores. O princípio técnico transferível é que uma condição transitória de comissionamento, quando compatível com o fluido, a energia envolvida e os riscos do sistema, pode revelar defeitos de integração, estanqueidade, medição e lógica antes da operação normal. Isso antecipa correções e reduz a probabilidade de descobrir incompatibilidades somente na partida com a carga real de processo.",
+      "titulo": "Configurações, Ex e confiabilidade / Comissionamento funcional: verificar lógica, integração e comportamento antes da operação normal",
+      "indice_documento": 32
+    }
+  ]
+}

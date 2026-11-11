@@ -1,0 +1,99 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:012:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmar a aplicabilidade de um alerta de vulnerabilidade por componente afetado, antes de tratar exposição ou remediação.",
+      "pergunta": "Sai um alerta sobre vulnerabilidades na pilha Treck TCP/IP. Antes de discutir patch ou isolamento de um controlador legado, que verificação técnica específica define se o alerta é aplicável a esse ativo?",
+      "resposta": "Presença da pilha Treck TCP/IP no ativo.",
+      "explicacao": "A triagem correta começa confirmando se o ativo realmente usa o componente vulnerável; sem essa pilha, o alerta não se aplica ao equipamento.",
+      "resposta_padrao": "Verificar se o ativo tem acesso à internet.",
+      "por_que_nao": "Acessibilidade à internet muda a exposição, mas não determina se o componente vulnerável existe naquele ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério técnico que determina a relevância operacional do efeito de uma exploração em IACS.",
+      "pergunta": "Dois ativos têm a mesma vulnerabilidade conhecida: um aciona válvulas de processo e outro apenas consolida dados. Qual critério técnico específico distingue a relevância do efeito da exploração entre eles?",
+      "resposta": "Função do sistema atingido.",
+      "explicacao": "No IACS, a consequência relevante da exploração depende do papel operacional do sistema; atuar diretamente no processo muda o impacto.",
+      "resposta_padrao": "Nível de exposição da rede.",
+      "por_que_nao": "Exposição afeta a probabilidade de ataque, não a consequência operacional de uma exploração bem-sucedida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Medida de hardening prioritária para ativo OT remoto vulnerável com exposição direta à internet.",
+      "pergunta": "Um dispositivo remoto com a pilha vulnerável está acessível diretamente pela internet, e a correção ainda não foi qualificada. Qual arranjo técnico específico deve ser adotado de imediato para reduzir a superfície de ataque?",
+      "resposta": "Colocá-lo atrás de firewall, sem acesso direto pela internet.",
+      "explicacao": "Para reduzir a superfície de ataque em OT, deve-se remover a acessibilidade direta e interpor barreira de rede; VPN sozinha não substitui isso.",
+      "resposta_padrao": "Manter o acesso atual e exigir somente VPN atualizada.",
+      "por_que_nao": "VPN reduz exposição, mas não elimina o risco nem substitui o isolamento sem acessibilidade direta à internet.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "evitar acessibilidade direta pela internet, posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "F",
+          "trecho": "muitos dispositivos conectados, inclusive pela internet, quando essa pilha estiver presente."
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Classificação de sistemas de negócios conectados à infraestrutura de rede do IACS dentro do escopo técnico de cibersegurança offshore.",
+      "pergunta": "Que tipo de sistema, mesmo não sendo de controle de processo, permanece no escopo do IACS quando usa sua infraestrutura de rede?",
+      "resposta": "Sistema de informação e negócios conectado pela infraestrutura do IACS.",
+      "explicacao": "No recorte offshore descrito, o escopo do IACS inclui também sistemas de informação e negócios quando conectados pela sua infraestrutura de rede.",
+      "resposta_padrao": "Nenhum sistema de negócios integra o IACS.",
+      "por_que_nao": "A conexão pela infraestrutura de rede do IACS o traz para o escopo técnico considerado, mesmo sem função direta de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo de IACS abrange"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        }
+      ]
+    }
+  ]
+}

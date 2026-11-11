@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:007:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura de acesso remoto seguro entre IT e OT com intermediação em DMZ.",
+      "pergunta": "Fornecedor precisa acessar temporariamente a estação de engenharia para suporte, e a política impede rota direta da rede corporativa para a rede de controle. Qual ponto de terminação deve receber essa conexão remota?",
+      "resposta": "servidor de salto na DMZ industrial",
+      "explicacao": "O acesso remoto deve terminar em zona intermediária controlada, com autenticação, registro e mediação antes de qualquer sessão para ativos OT críticos.",
+      "resposta_padrao": "VPN diretamente na estação de engenharia",
+      "por_que_nao": "Isso cria caminho IT-OT sem intermediação por zona e conduíte controlados."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de recuperabilidade real de backups de sistemas críticos de automação.",
+      "pergunta": "Backups do servidor de aplicação do DCS e da estação de engenharia são executados sem erro. Como verificar a recuperabilidade sem tocar no sistema em operação?",
+      "resposta": "restauração completa em ambiente isolado representativo",
+      "explicacao": "Só o teste de restauração valida consistência da imagem, dependências, serviços, drivers e licenças necessários para voltar a operar.",
+      "resposta_padrao": "conferir o log de sucesso e o checksum dos arquivos",
+      "por_que_nao": "Integridade do arquivo não comprova inicialização nem funcionalidade do sistema restaurado."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação de integridade de lógica carregada em PLC por verificação do executável residente.",
+      "pergunta": "Surge divergência entre a lógica aprovada e a lógica que está executando no PLC, sem mudança visível no arquivo offline. Como confirmar tecnicamente se houve alteração não autorizada no controlador?",
+      "resposta": "comparação do checksum online da aplicação com o baseline aprovado",
+      "explicacao": "A assinatura lida do controlador identifica o código realmente carregado; projeto offline, nome ou data do arquivo não garantem equivalência.",
+      "resposta_padrao": "comparar data e versão do projeto na estação de engenharia",
+      "por_que_nao": "Metadados do projeto não refletem necessariamente o binário residente no PLC."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Integração segura de dados OT com bloqueio físico de tráfego de retorno.",
+      "pergunta": "O historiador deve enviar dados operacionais para ambiente externo, mas o requisito proíbe qualquer tráfego de retorno para a rede de controle. Qual técnica de integração atende esse caso?",
+      "resposta": "gateway unidirecional por diodo de dados",
+      "explicacao": "Ele impõe fluxo físico em um único sentido, evitando canais de retorno ou sessões iniciadas do lado externo.",
+      "resposta_padrao": "firewall stateful na DMZ",
+      "por_que_nao": "Firewall filtra, mas não elimina tecnicamente a possibilidade de comunicação bidirecional."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 31,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:031:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de stiction por assinatura da saída do controlador e movimento da haste.",
+      "pergunta": "A saída do controlador sobe em rampa, a haste da válvula fica parada por alguns segundos e depois salta, repetindo o ciclo com a variável oscilando. Qual é a causa primária?",
+      "resposta": "Stiction da válvula de controle",
+      "explicacao": "O padrão de stick-slip, com saída em rampa e movimento aos saltos, caracteriza atrito estático excessivo no conjunto válvula/atuador/posicionador, não uma oscilação puramente dinâmica de controle.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Sintonia agressiva tende a produzir oscilação contínua de saída e posição, não travamento seguido de salto por atrito estático."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda da coluna de referência em perna molhada de transmissor DP de nível.",
+      "pergunta": "No transmissor DP de nível em vaso fechado com perna molhada, a indicação voltou baixa logo após drenagem das linhas de impulso e passou a variar com a temperatura do topo. Qual ação técnica deve preceder qualquer recalibração?",
+      "resposta": "Reencher a perna molhada de referência",
+      "explicacao": "Sem a coluna de referência correta, o desbalanceamento hidrostático muda e o erro reaparece. Recalibrar antes só mascara a perda da perna molhada.",
+      "resposta_padrao": "Ajustar o zero do transmissor.",
+      "por_que_nao": "O problema é a perda da carga hidrostática de referência, não desvio eletrônico de zero do transmissor."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de impedância mínima no loop 4–20 mA para comunicação HART.",
+      "pergunta": "A comunicação HART sumiu depois da troca da fonte do laço, mas a leitura 4–20 mA permanece correta e estável. Que componente específico deve ser inserido no loop para restaurar a comunicação?",
+      "resposta": "Resistência de carga do loop HART",
+      "explicacao": "O sinal HART é FSK sobre a corrente analógica e precisa de impedância mínima no laço. Corrente DC correta não garante caminho adequado para o sinal digital.",
+      "resposta_padrao": "Reaterrar a blindagem do cabo.",
+      "por_que_nao": "Blindagem ajuda contra ruído, mas não fornece a impedância necessária para a modulação HART."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de proof test de válvula de shutdown por medição independente de curso.",
+      "pergunta": "Durante proof test de uma SDV com posicionador inteligente, o comando e o feedback do próprio posicionador estão coerentes, mas há histórico de desacoplamento mecânico entre atuador e haste. Que técnica de verificação confirma o movimento real do elemento final?",
+      "resposta": "Medição independente do curso da haste",
+      "explicacao": "Uma indicação independente do curso revela falhas mecânicas entre atuador, haste e obturador que o feedback interno do posicionador pode não detectar.",
+      "resposta_padrao": "Usar o feedback do posicionador.",
+      "por_que_nao": "Esse feedback pertence à mesma cadeia do atuador e pode aparentar curso normal mesmo com desacoplamento mecânico a jusante."
+    }
+  ]
+}

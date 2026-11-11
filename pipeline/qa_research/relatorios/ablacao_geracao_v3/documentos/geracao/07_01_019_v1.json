@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:019:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre bypass de permissivo e forcing de entrada pelo comportamento normal do sinal de processo.",
+      "pergunta": "O nível cai abaixo da condição de partida, o transmissor e a entrada no controlador acompanham a queda normalmente, mas a liberação da bomba permanece ativa. Qual intervenção temporária sobre a função lógica explica melhor esse comportamento?",
+      "resposta": "bypass do permissivo de partida",
+      "explicacao": "Como o sinal bruto acompanha o campo normalmente, a medição não está congelada. O que foi retirado temporariamente é a lógica que deveria bloquear a partida.",
+      "resposta_padrao": "forcing da entrada de nível",
+      "por_que_nao": "Forcing atua no ponto de I/O e tende a fixar ou substituir seu estado; aqui o sinal segue a condição real de campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso do timestamp de atualização do sinal para diferenciar dado congelado de valor de processo realmente estável.",
+      "pergunta": "O valor de uma variável permanece plausível e estável no supervisório após intervenção de rede, enquanto variáveis correlatas mudam. Para distinguir dado real estável de valor congelado na arquitetura, o que deve ser verificado primeiro?",
+      "resposta": "timestamp de atualização do sinal",
+      "explicacao": "Valor plausível pode estar congelado. A atualização do sinal mostra se o dado continua sendo transportado e processado, evitando interpretar como real um estado apenas aparente.",
+      "resposta_padrao": "comparar apenas o valor instantâneo da variável",
+      "por_que_nao": "Diagnóstico de arquitetura não se resolve pelo valor instantâneo; o critério decisivo é a continuidade da atualização do dado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de operação em circuito fechado com N2 para retirar incertezas de lógica, comunicação e permissivos após longa inatividade.",
+      "pergunta": "Num circuito de regeneração que ficou longo período inativo, há dúvidas sobre lógica, comunicação e permissivos antes da admissão de gás natural. Qual condição de teste é mais adequada para reduzir essas incertezas sem expor o sistema ao mesmo inventário inflamável da operação normal?",
+      "resposta": "operação em circuito fechado com nitrogênio",
+      "explicacao": "Esse arranjo exercita lógica, comunicação e desempenho em condição operacional representativa, mas sem introduzir o mesmo inventário inflamável da operação normal com gás.",
+      "resposta_padrao": "operação a seco, sem circulação",
+      "por_que_nao": "Sem circuito fechado com N2, faltam condição representativa e detecção antecipada de falhas de comunicação, sintonia e vazamentos por acomodação térmica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "podem permanecer incertezas sobre manutenção, condições operacionais e consequências de longos períodos de inatividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica, confirmar desempenho"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mas sem introduzir o mesmo inventário inflamável da operação normal."
+        }
+      ]
+    }
+  ]
+}

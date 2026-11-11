@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:017:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência reativa entre geradores em paralelo é definido pela malha de excitação e seu droop.",
+      "pergunta": "Dois geradores com AVRs em droop operam em paralelo; o kW está equilibrado e a frequência está estável, mas um fornece quase todo o kVAr do barramento. Qual ajuste técnico deve ser corrigido?",
+      "resposta": "droop reativo do AVR",
+      "explicacao": "Em paralelo, o governador distribui potência ativa. O desequilíbrio de kVAr vem da malha de excitação e do ajuste de droop/compartilhamento reativo.",
+      "resposta_padrao": "Ajuste do governador de velocidade.",
+      "por_que_nao": "O governador corrige kW e frequência; a divisão de kVAr depende da excitação."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento de gerador em barramento desenergizado requer permissiva de barramento morto, não verificação de sincronismo.",
+      "pergunta": "No restabelecimento automático do quadro de emergência após blackout, o gerador de emergência já atingiu tensão e frequência nominais e o barramento está desenergizado. Qual permissiva específica deve liberar o fechamento do disjuntor do gerador?",
+      "resposta": "verificação de barramento morto",
+      "explicacao": "Sem tensão no barramento, não existe segunda fonte viva para sincronizar. A lógica correta é confirmar barra morta antes do fechamento.",
+      "resposta_padrao": "Relé de sincronismo 25.",
+      "por_que_nao": "O check de sincronismo compara duas fontes energizadas; em barra morta a permissiva correta é dead-bus."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Primeiro estágio de load shedding em déficit súbito de geração pode usar ROCOF para atuar antes da subfrequência.",
+      "pergunta": "A perda súbita de um gerador faz a frequência cair rapidamente; a tensão quase não muda no primeiro instante e o primeiro estágio de alívio deve atuar antes do 81U. Qual grandeza deve iniciar o load shedding?",
+      "resposta": "taxa de variação da frequência",
+      "explicacao": "A ROCOF detecta imediatamente o desbalanço geração-carga, antes que a frequência cruze o ajuste de subfrequência.",
+      "resposta_padrao": "Subtensão do barramento.",
+      "por_que_nao": "Em perda de geração a frequência se desvia antes; a subtensão inicial pode ser pequena ou tardia."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em redes IT com neutro isolado, a primeira falta à terra é localizada em serviço por técnica de pulsação do monitor de isolamento.",
+      "pergunta": "Rede 440 V com neutro isolado segue operando após alarme de baixa resistência de isolamento, sem atuação de sobrecorrente. Para localizar o alimentador com a primeira falta à terra sem derrubar toda a rede, que técnica deve ser usada?",
+      "resposta": "localização por injeção pulsante",
+      "explicacao": "Na primeira falta à terra em sistema IT, a corrente é pequena para proteção convencional. A pulsação permite rastrear o circuito defeituoso com a rede energizada.",
+      "resposta_padrao": "Medição de isolamento com megôhmetro em todos os circuitos.",
+      "por_que_nao": "O megôhmetro exige desenergização e não localiza online a primeira falta em rede IT."
+    }
+  ]
+}

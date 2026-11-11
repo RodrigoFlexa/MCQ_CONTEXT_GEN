@@ -1,0 +1,67 @@
+{
+  "item": "06_05",
+  "foco": 13,
+  "visita": 2,
+  "onda": 3,
+  "id": "06_05:013:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A evidência de funcionalidade em F&G é definida pelo arranjo instalado, não apenas pelo modelo do detector.",
+      "pergunta": "Dois detectores do mesmo modelo estão calibrados; um só gera alarme, outro participa de votação que aciona isolamento e dilúvio. Ao estabelecer os testes e manutenções requeridos para comprovar funcionalidade, qual critério técnico diferencia os dois casos?",
+      "resposta": "O arranjo da instalação.",
+      "explicacao": "Equipamento igual não implica mesma evidência funcional; os testes e a manutenção requeridos dependem de como cada canal está integrado à proteção da instalação.",
+      "resposta_padrao": "O plano padrão de testes e manutenção do fabricante.",
+      "por_que_nao": "Mesmo com o mesmo detector, a comprovação funcional muda conforme integração em votação, alarmes e ações automáticas do arranjo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a funcionalidade precisa ser sustentada por testes e manutenções requeridos pelo arranjo da instalação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade declarada não equivale a funcionalidade comprovada."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Alarme local no detector sem mudança de estado na lógica caracteriza falha na transmissão do sinal do canal.",
+      "pergunta": "Durante um teste com gás, o detector entra em alarme no campo, mas a entrada correspondente não muda de estado no sistema e nenhum alarme chega à sala. Qual etapa da funcionalidade do canal está falhando?",
+      "resposta": "Transmissão do sinal até a lógica.",
+      "explicacao": "A detecção no cabeçote ocorreu. Sem mudança da entrada no sistema nem alarme remoto, a etapa comprometida está entre o detector e a lógica.",
+      "resposta_padrao": "Sensibilidade do detector.",
+      "por_que_nao": "Se a sensibilidade estivesse inadequada, o alarme local não teria sido gerado na aplicação de gás.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes verificam se o canal detecta, transmite, é interpretado pela lógica e produz a resposta prevista;"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sinal recebido e alarmado individualmente, mas sem crédito para confirmação automática, indica inadequação na interpretação pela lógica de votação.",
+      "pergunta": "Com aplicação de gás, a entrada do detector muda de estado no sistema e há alarme individual, mas esse sinal não conta para a confirmação exigida antes do disparo automático. Que etapa da cadeia está inadequada?",
+      "resposta": "Interpretação do sinal pela lógica de votação.",
+      "explicacao": "Como a entrada mudou de estado e houve alarme individual, detecção e transmissão ocorreram; o problema está em como o sistema usa esse sinal para formar a confirmação automática.",
+      "resposta_padrao": "Saída de intertravamento.",
+      "por_que_nao": "A falha ocorre antes dos atuadores; o sinal não está sendo creditado para a confirmação que precede o disparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "testes verificam se o canal detecta, transmite, é interpretado pela lógica e produz a resposta prevista;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A votação existe para aumentar robustez contra falhas espúrias e para qualificar disparos automáticos conforme a filosofia de segurança."
+        }
+      ]
+    }
+  ]
+}

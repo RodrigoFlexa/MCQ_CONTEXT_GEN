@@ -1,0 +1,71 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:011:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Perda de 24 Vcc de comando pode derrubar geração mesmo com a máquina motriz disponível.",
+      "pergunta": "A máquina motriz segue estável, mas o gerador sai de paralelo e deixa de responder a comando e supervisão, sem falha inicial evidente no barramento de potência. Qual alimentação perdida faz isso acontecer?",
+      "resposta": "24 Vcc do painel de controle do gerador",
+      "explicacao": "Sem alimentação de comando, supervisão e atuação, o gerador pode continuar mecanicamente disponível, mas não permanece conectado nem controlável.",
+      "resposta_padrao": "Subtensão no barramento principal.",
+      "por_que_nao": "Aqui o colapso elétrico é consequência; a causa primária é a perda da alimentação de controle do gerador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância em 24 Vcc e UPS só é efetiva se houver segregação real das rotas de alimentação de controle.",
+      "pergunta": "Dois sistemas 24 Vcc e uma UPS aparecem redundantes no unifilar. Que verificação específica confirma que a perda de um único ramo não desenergiza, ao mesmo tempo, os controles dos geradores e o CLP?",
+      "resposta": "verificação da segregação real das rotas de alimentação",
+      "explicacao": "A prevenção de blackout exige confirmar independência funcional da malha 24 Vcc, das UPS e dos pontos de distribuição das cargas de controle.",
+      "resposta_padrao": "Conferir apenas se cada fonte suporta 100% da demanda.",
+      "por_que_nao": "Capacidade instalada não revela dependência comum em UPS, quadro CC ou ponto de distribuição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de comando de válvulas pode vir da queda da UPS de CA que alimenta o cartão-relé do CLP, não do 24 Vcc geral.",
+      "pergunta": "Com a energia principal perdida, o comando de válvulas via ECOS some porque o cartão-relé do CLP desenergiza, embora exista sistema 24 Vcc de serviços gerais. Qual alimentação específica faltou para sustentar essa função?",
+      "resposta": "UPS de corrente alternada das cargas vitais",
+      "explicacao": "Na sequência descrita, a perda da UPS junto com a energia principal desenergizou o cartão-relé do CLP e inviabilizou o comando das válvulas.",
+      "resposta_padrao": "24 Vcc de serviços gerais.",
+      "por_que_nao": "Nesta função, o elemento que caiu foi o cartão-relé sustentado pela UPS de CA, não a malha CC geral.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Havia também UPS (Uninterruptible Power Supply) para cargas vitais em corrente alternada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP, inviabilizando o comando de válvulas via ECOS."
+        }
+      ]
+    }
+  ]
+}

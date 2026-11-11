@@ -1,0 +1,91 @@
+{
+  "item": "02_12",
+  "foco": 17,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_12:017:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Precedência da proteção anti-surge sobre o controle de capacidade quando o compressor se aproxima do limite instável.",
+      "pergunta": "A demanda de gás a jusante cai, a rotação segue controlando a pressão de sucção e o ponto de operação se aproxima do limite instável do compressor. Qual malha deve assumir a ação imediata?",
+      "resposta": "A malha anti-surge, abrindo o reciclo.",
+      "explicacao": "Perto do surge, a prioridade deixa de ser atender a demanda e passa a ser manter vazão suficiente pela máquina; isso é feito pelo reciclo.",
+      "resposta_padrao": "A malha de capacidade, reduzindo a rotação para seguir a menor demanda.",
+      "por_que_nao": "Reduzir rotação para perseguir carga baixa pode piorar a margem ao surge; a proteção exige manter vazão interna mínima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a malha de capacidade tenta atender a demanda do processo, enquanto a malha anti-surge preserva a máquina ao manter vazão suficiente através do compressor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso normalmente é feito abrindo reciclo para devolver parte do gás da descarga ou de estágios intermediários à sucção"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A referência de proteção do reciclo por estágio deve acompanhar a rotação da máquina, não a pressão de sucção.",
+      "pergunta": "Mudanças de velocidade deslocam a faixa segura mesmo com a mesma pressão de sucção. Para a válvula de reciclo por estágio manter a proteção coerente, de qual variável deve depender seu setpoint?",
+      "resposta": "Da rotação da máquina.",
+      "explicacao": "Na arquitetura descrita, a sucção é controlada pela rotação e o setpoint do reciclo varia com ela; a referência protetiva acompanha a velocidade.",
+      "resposta_padrao": "Da pressão de sucção.",
+      "por_que_nao": "A pressão pode ficar estável enquanto a margem ao surge muda com a velocidade; o setpoint protetivo precisa seguir a rotação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rotação da máquina controla a pressão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de separação intermediária para reter condensado gerado pelo resfriamento entre estágios antes do compressor seguinte.",
+      "pergunta": "No trem multietapas, o resfriamento entre estágios passou a formar condensado e aparece líquido a montante da sucção seguinte. Qual equipamento deve reter esse líquido antes do próximo compressor?",
+      "resposta": "O separador intermediário.",
+      "explicacao": "O resfriamento entre estágios pode gerar condensado; a retenção do líquido é função do vaso separador, protegendo o estágio seguinte.",
+      "resposta_padrao": "O intercooler.",
+      "por_que_nao": "O intercooler remove calor e pode até gerar o condensado; quem separa o líquido antes da sucção é o vaso intermediário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a proteção depende também do comportamento conjunto de vasos, compressores e trocadores entre estágios"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Resfriamento e separação intermediária alteram densidade, temperatura e formação de condensado"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso de simulação dinâmica para estudar transientes e interação entre malhas de capacidade e anti-surge.",
+      "pergunta": "Partida, parada e mudanças de carga precisam ser avaliadas junto com o ajuste das malhas de capacidade e proteção. Que ferramenta de engenharia deve ser usada para esse estudo?",
+      "resposta": "Simulação dinâmica.",
+      "explicacao": "Transientes e interação entre malhas não são capturados por análise estacionária; o estudo apropriado é dinâmico.",
+      "resposta_padrao": "Simulação em regime permanente.",
+      "por_que_nao": "Regime permanente não reproduz transientes nem a resposta temporal das malhas automáticas de capacidade e anti-surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forte interação entre controle de capacidade e proteção anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Como ferramenta de engenharia, a simulação dinâmica é útil para estudar partida, parada, ajuste das malhas de capacidade e anti-surge"
+        }
+      ]
+    }
+  ]
+}

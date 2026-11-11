@@ -1,0 +1,95 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:027:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Diferença entre comando modulante e comando discreto na implementação de um elemento final.",
+      "pergunta": "O controlador varia a saída de 20% a 80%, o posicionador responde no teste local, mas a válvula no automático só vai a 0% ou 100%. Que configuração crítica deve ser corrigida primeiro?",
+      "resposta": "configuração abre/fecha do elemento final",
+      "explicacao": "Os blocos tratam a forma de atuação como configuração crítica; com modulação local normal e resposta 0/100 em automático, a implementação está como abre/fecha, não como controle contínuo.",
+      "resposta_padrao": "Recalibrar o posicionador da válvula.",
+      "por_que_nao": "Com curso local normal, o comportamento 0/100 em automático aponta comando discreto, não erro de calibração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Influência do modo local/remoto na aceitação de comandos pelo sistema supervisor.",
+      "pergunta": "A IHM recebe o status do equipamento e os sinais de campo, mas nenhum comando remoto é aceito; pelo painel local, o atuador responde. Qual configuração crítica deve ser verificada primeiro?",
+      "resposta": "modo local/remoto",
+      "explicacao": "O bloco foco inclui o modo local/remoto como definição crítica. Se a supervisão enxerga o campo, mas o comando só funciona localmente, a seleção da fonte de comando é o primeiro ponto decisivo.",
+      "resposta_padrao": "Falha de comunicação com o campo.",
+      "por_que_nao": "Se o status e os sinais chegam à IHM, a via de retorno existe; o problema é a autorização do comando remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que comandos da IHM fossem executados pelos atuadores"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção técnica entre permissivo e intertravamento em sequências de partida.",
+      "pergunta": "A partida automática é rejeitada antes de qualquer atuação, com hardware íntegro, trip resetado e remoto habilitado; o comando só libera quando as condições habilitadoras ficam verdadeiras. Qual elemento de configuração está bloqueando a sequência?",
+      "resposta": "permissivo de partida não satisfeito",
+      "explicacao": "Os blocos citam permissivos e intertravamentos separadamente. Quando a sequência nem inicia e depende de condições habilitadoras prévias, o bloqueio característico é de permissivo, não de intertravamento.",
+      "resposta_padrao": "Intertravamento atuado.",
+      "por_que_nao": "Intertravamento força parada ou estado seguro; quem impede o início até cumprir pré-condições é o permissivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação ponta a ponta da coerência entre IHM, lógica, comunicação e elemento final após mudança.",
+      "pergunta": "Antes do retorno ao serviço após mudança em lógica ou I/O, como verificar de forma específica que o sinal de campo chega à IHM e que o comando da IHM realmente aciona o atuador?",
+      "resposta": "teste funcional ponta a ponta da malha",
+      "explicacao": "Os blocos destacam perda de coerência entre IHM, supervisor e atuador. A verificação correta é ponta a ponta, pois comprova caminho completo de medição e de comando com execução real no campo.",
+      "resposta_padrao": "Simulação apenas no DCS.",
+      "por_que_nao": "Simular em software não demonstra mapeamento, comunicação nem atuação real do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador; ou uma informação de campo pode não ser recebida pelo sistema supervisor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correção para que sinais de campo chegassem à IHM e para que comandos da IHM fossem executados pelos atuadores"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "retorno à condição regular exige evidência objetiva de saneamento"
+        }
+      ]
+    }
+  ]
+}

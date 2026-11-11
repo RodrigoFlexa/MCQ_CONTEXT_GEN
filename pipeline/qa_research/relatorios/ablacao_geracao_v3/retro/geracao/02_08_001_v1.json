@@ -1,0 +1,71 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_08:001:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A avaliação de surge em paradas de compressores exige simulação dinâmica para capturar trajetória transitória, controles e sequência do shutdown.",
+      "pergunta": "Parada programada e ESD de um trem de compressão usam sequências diferentes de reciclo, fechamento e blowdown. Para verificar se o compressor cruza a linha de surge em alguma delas, qual abordagem deve ser aplicada?",
+      "resposta": "Simulação dinâmica do sistema de compressão.",
+      "explicacao": "O risco de surge na parada depende do transiente, da atuação dos controles e da sequência temporal dos eventos; um ponto estacionário não reproduz a trajetória no mapa.",
+      "resposta_padrao": "Verificação estática do ponto de operação no mapa do compressor.",
+      "por_que_nao": "Surge durante shutdown é definido pela trajetória transitória e pelos atrasos de controle, não por um único ponto estacionário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em modelos dinâmicos de alívio, os volumes comunicantes precisam ser representados corretamente para prever inventário efetivo e resposta de pressão.",
+      "pergunta": "Vasos interligados descarregam para o mesmo header, mas o modelo prevê subida de pressão mais rápida que a observada no evento. Que elemento hidráulico do arranjo deve ser representado corretamente antes de confiar no transiente calculado?",
+      "resposta": "Volumes comunicantes.",
+      "explicacao": "A capacitância efetiva do sistema depende do inventário compartilhado entre recipientes conectados; se os volumes comunicantes forem mal representados, pressão e vazão de alívio saem distorcidas.",
+      "resposta_padrao": "Só o volume geométrico do vaso que tem a PSV.",
+      "por_que_nao": "O transiente de alívio é governado pelo inventário realmente conectado ao ponto pressurizado, não apenas pelo vaso que carrega a válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forma de representar dispositivos, volumes comunicantes e controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A comparação de picos de alívio entre cenários operacionais distintos depende da definição correta das condições iniciais de cada caso.",
+      "pergunta": "A mesma malha de alívio é avaliada para partida, plena carga e redução de carga. Antes de comparar os picos de vazão e temperatura entre esses cenários, qual definição do modelo precisa estar correta em cada caso?",
+      "resposta": "Condições iniciais do processo.",
+      "explicacao": "Os máximos transitórios dependem do estado no instante do evento, incluindo inventário, pressões e estado dos controles; reutilizar um mesmo estado inicial invalida a comparação.",
+      "resposta_padrao": "Usar sempre o inventário do pior caso estacionário.",
+      "por_que_nao": "Picos transitórios não derivam de um único envelope fixo; eles mudam com o estado inicial de cada cenário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:007:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Terminação segura de acesso remoto de terceiros em ambiente OT por zona intermediária controlada.",
+      "pergunta": "Fornecedor precisa acessar temporariamente a estação de engenharia para diagnóstico de PLC, com registro da sessão e sem rota direta da rede externa até a célula de controle. Qual arranjo técnico deve intermediar esse acesso?",
+      "resposta": "Servidor de salto na DMZ industrial",
+      "explicacao": "O acesso remoto deve terminar em um host intermediário controlado, com autenticação e registro, preservando a segregação da zona de controle.",
+      "resposta_padrao": "VPN direta até a estação de engenharia",
+      "por_que_nao": "Em OT, acesso de terceiros deve terminar em zona intermediária; VPN direta rompe a segregação e amplia a superfície de ataque."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Integridade de lógica em controlador é verificada pela comparação da cópia residente com a linha de base autorizada.",
+      "pergunta": "Alarmes e telas permanecem normais, mas houve uso recente da estação de engenharia e suspeita de alteração não autorizada em controlador crítico. Como verificar especificamente a integridade da lógica em execução sem depender do arquivo offline?",
+      "resposta": "Comparação online da lógica residente com a linha de base aprovada",
+      "explicacao": "A verificação correta lê o programa efetivamente carregado no controlador e o confronta com a versão autorizada, detectando divergências reais.",
+      "resposta_padrao": "Revisar os logs de acesso da estação de engenharia",
+      "por_que_nao": "Logs indicam uso e autenticação, mas não comprovam que a lógica em execução permaneceu idêntica."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Proteção de integração entre OT e IT quando o requisito é fluxo de dados sem qualquer retorno possível.",
+      "pergunta": "Dados de processo precisam seguir para analytics corporativo, mas a arquitetura exige impossibilidade física de tráfego ou comando do ambiente corporativo de volta ao controle. Qual elemento técnico atende esse critério?",
+      "resposta": "Gateway unidirecional",
+      "explicacao": "Esse arranjo impõe comunicação física em um único sentido, impedindo sessões ou comandos de retorno ao ambiente de controle.",
+      "resposta_padrao": "Firewall entre as duas redes",
+      "por_que_nao": "Firewall filtra e registra, mas não impõe unidirecionalidade física nem elimina totalmente a possibilidade de retorno."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Controle seguro de mídias removíveis para introdução de arquivos em redes OT isoladas.",
+      "pergunta": "Pacote de atualização precisa entrar em rede isolada por mídia removível, e notebooks externos não podem ser conectados aos ativos de controle. Qual controle técnico específico deve preceder a liberação da mídia?",
+      "resposta": "Estação de sanitização de mídias removíveis",
+      "explicacao": "A mídia deve ser inspecionada e saneada em ponto dedicado e confiável antes de qualquer uso no ambiente isolado.",
+      "resposta_padrao": "Varredura antivírus no notebook do fornecedor",
+      "por_que_nao": "A verificação no endpoint externo não estabelece cadeia confiável de transferência nem neutralização controlada da mídia."
+    }
+  ]
+}

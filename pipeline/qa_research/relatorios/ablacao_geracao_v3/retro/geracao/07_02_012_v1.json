@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:012:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de enquadramento de sistemas de negócios conectados na fronteira de análise do IACS.",
+      "pergunta": "Um servidor de relatórios de produção fica fora do DCS, mas troca dados pela mesma infraestrutura de rede industrial usada pelo controle. Na análise de vulnerabilidades, qual enquadramento técnico deve ser adotado para esse servidor?",
+      "resposta": "Escopo do IACS.",
+      "explicacao": "No offshore, o escopo do IACS inclui sistemas de informação e negócios quando conectados pela infraestrutura de rede do próprio IACS, mesmo fora do núcleo de controle.",
+      "resposta_padrao": "Escopo apenas de TI corporativa.",
+      "por_que_nao": "A conectividade pela infraestrutura de rede do IACS coloca esse servidor dentro da mesma fronteira técnica de exposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo de IACS abrange"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e negócios conectados pela infraestrutura de rede do IACS"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Vulnerabilidades em rede embarcada exigem identificar a implementação afetada, não apenas o uso do protocolo IP.",
+      "pergunta": "Sai um alerta para vulnerabilidades em implementações embarcadas de TCP/IP. Há controladores e remotas IP de fornecedores distintos. Antes de generalizar a remediação, que elemento técnico deve ser confirmado em cada ativo?",
+      "resposta": "A presença da pilha Treck TCP/IP.",
+      "explicacao": "O alerta citado é específico para implementações embarcadas da pilha Treck. Em OT, a triagem começa confirmando se o ativo usa o componente afetado.",
+      "resposta_padrao": "O simples uso de TCP/IP no ativo.",
+      "por_que_nao": "O risco divulgado é da implementação Treck, não de qualquer pilha TCP/IP.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar se o ativo usa o componente afetado"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Patching em OT crítico exige validação de compatibilidade fim a fim antes da aplicação.",
+      "pergunta": "Foi liberado um patch para uma remota que participa do controle e troca dados com outros nós. Antes da janela de aplicação, que verificação técnica distingue uma atualização segura de uma que pode introduzir comportamento inesperado?",
+      "resposta": "Compatibilidade fim a fim entre firmware, comunicação e processo.",
+      "explicacao": "Em sistemas de controle, a mudança pode afetar comunicações e funções de processo. Por isso, a correção precisa de validação prévia de compatibilidade antes da aplicação.",
+      "resposta_padrao": "Instalar a versão mais recente disponível do fornecedor.",
+      "por_que_nao": "Em OT, versão mais nova sem validação pode gerar indisponibilidade ou comportamento não previsto no controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "VPN reduz exposição só quando os endpoints conectados permanecem seguros e sob controle de configuração.",
+      "pergunta": "Fornecedores acessam a estação de engenharia por VPN atualizada, atrás de firewall. Que ponto técnico fora do túnel ainda precisa ser controlado para que esse arranjo realmente reduza a exposição?",
+      "resposta": "A segurança e configuração dos dispositivos conectados à VPN.",
+      "explicacao": "A VPN reduz exposição, mas não elimina o risco. O arranjo continua vulnerável se o dispositivo que entra no túnel estiver comprometido ou mal configurado.",
+      "resposta_padrao": "Apenas a atualização do software da VPN.",
+      "por_que_nao": "O túnel pode estar correto e ainda assim transportar o risco a partir de um endpoint inseguro ou mal configurado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:001:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência ativa entre geradores em paralelo por droop de velocidade.",
+      "pergunta": "Dois geradores já em paralelo, sem controlador mestre de compartilhamento, mantêm tensão estável, mas a potência ativa fica caçando entre eles e um se aproxima de potência reversa. Qual ajuste técnico deve ser aplicado aos governadores?",
+      "resposta": "Operar ambos os governadores em droop de velocidade.",
+      "explicacao": "Sem mestre de load sharing, o compartilhamento de potência ativa entre geradores em paralelo depende do droop dos governadores; tensão e kVAr estáveis afastam problema de AVR.",
+      "resposta_padrao": "Ajustar o droop de tensão do AVR.",
+      "por_que_nao": "O AVR corrige compartilhamento de potência reativa, não a oscilação de potência ativa entre máquinas."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Detecção da primeira falta à terra em rede de média tensão com neutro isolado.",
+      "pergunta": "Rede de média tensão com neutro isolado deve apenas alarmar na primeira falta monofásica à terra. Que grandeza elétrica no barramento identifica essa condição de forma confiável?",
+      "resposta": "Tensão residual 3V0.",
+      "explicacao": "Na primeira falta à terra em neutro isolado, a corrente é baixa e predominantemente capacitiva; o deslocamento do neutro aparece como sobretensão residual medida pelos TPs.",
+      "resposta_padrao": "Corrente residual de neutro.",
+      "por_que_nao": "Com neutro isolado, a primeira falta gera corrente muito baixa para ser o indicador mais confiável."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Discriminação entre inrush de energização e falta interna em proteção diferencial de transformador.",
+      "pergunta": "Ao energizar um transformador, a proteção diferencial vê corrente alta e assimétrica, sem evidência de falta interna. Que critério do relé deve impedir o desligamento indevido nessa condição?",
+      "resposta": "Restrição por segundo harmônico.",
+      "explicacao": "A energização produz corrente de inrush magnetizante rica em segundo harmônico; esse conteúdo diferencia inrush de falta interna para a proteção diferencial.",
+      "resposta_padrao": "Elevar o pickup da diferencial.",
+      "por_que_nao": "Isso reduz a sensibilidade a faltas internas; o bloqueio correto usa a assinatura harmônica do inrush."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de atuação rápida de load shedding por déficit súbito de geração.",
+      "pergunta": "Perdida uma máquina geradora em barramento isolado, a frequência cai rapidamente enquanto a tensão ainda permanece regulada. Para iniciar o primeiro estágio automático de rejeição de carga, qual variável deve ser usada?",
+      "resposta": "Taxa de variação da frequência (df/dt).",
+      "explicacao": "Após perda de geração, o desbalanço de potência ativa aparece primeiro na aceleração da queda de frequência; AVRs podem sustentar a tensão por algum tempo.",
+      "resposta_padrao": "Subtensão de barramento.",
+      "por_que_nao": "Na perda de geração, a tensão pode seguir controlada pelo AVR enquanto a frequência já indica déficit ativo."
+    }
+  ]
+}

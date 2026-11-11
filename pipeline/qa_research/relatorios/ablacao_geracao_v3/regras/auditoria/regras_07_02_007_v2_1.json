@@ -1,0 +1,54 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Um bastion host ou gateway de acesso remoto na DMZ industrial, normalmente acessado por VPN.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": false,
+  "elemento_unico": true,
+  "tipo_sugerido": "decisao",
+  "justificativa": "A ideia de terminar o acesso em uma zona intermediária controlada é prática comum de IACS, mas os blocos fornecidos não afirmam explicitamente DMZ industrial com servidor de salto como ponto de terminação.",
+  "aprovada": false,
+  "motivo": "fora_da_fonte",
+  "falhas": [
+    "fora_da_fonte"
+  ],
+  "referencia_valida": false,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "07_02",
+      "texto": "Em sistemas de Automação e Controle Industrial (IACS), reduzir a exposição de rede diminui a chance de alcançabilidade por agentes externos e, com isso, reduz oportunidades de exploração remota de vulnerabilidades conhecidas. Nesse contexto, recomenda-se evitar acessibilidade direta a partir da internet. Quando o acesso remoto for necessário, recomenda-se usar método seguro, como Rede Privada Virtual (VPN).\n\nEssa medida protege o tráfego em trânsito e cria um ponto de entrada mais controlado, mas sua eficácia continua dependente do estado de segurança dos dispositivos conectados à VPN. A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino. Assim, um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida e ainda assim introduzir risco ao ambiente operacional.\n\nPor isso, o risco do acesso remoto não depende apenas do canal de comunicação. Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão.",
+      "titulo": "Acessos e cadeia de suprimentos / Redução de exposição e acesso remoto em IACS",
+      "indice_documento": 9
+    },
+    {
+      "id": "B2",
+      "item": "07_02",
+      "texto": "Em acesso remoto de fornecedor, contratada ou equipe de suporte, o mesmo princípio técnico se mantém: a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN. Isso é particularmente relevante em IACS porque uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico.\n\nNa aplicação prática, convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada. Também é tecnicamente importante verificar a condição do dispositivo usado na conexão, encerrar o acesso ao fim da atividade e manter registro de sessão suficiente para rastrear a intervenção.\n\nEsse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação. Como consequência, melhora a investigação de desvios, a responsabilização e a contenção caso a atividade introduza falha, alteração indevida ou comportamento inesperado no sistema.",
+      "titulo": "Acessos e cadeia de suprimentos / Aplicação a terceiros e monitoramento da intervenção",
+      "indice_documento": 10
+    },
+    {
+      "id": "B3",
+      "item": "07_02",
+      "texto": "Hardening é o conjunto de medidas para reduzir caminhos de exploração e limitar consequências de falhas ou comprometimentos. Para dispositivos e sistemas de controle com conectividade de rede, medidas centrais incluem minimizar exposição de rede, evitar acessibilidade direta pela internet, posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa. Quando acesso remoto é necessário, métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco: a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações. Em termos físicos e operacionais, hardening funciona porque remove serviços desnecessários, restringe rotas de acesso, reduz a chance de varredura externa e cria barreiras adicionais entre falha em ambiente menos confiável e funções de processo. Em FPSO, a aplicação precisa considerar restrições de disponibilidade, janelas curtas de manutenção, enlaces satelitais ou de rádio, dependência de fornecedores e coexistência com equipamentos embarcados sem suporte pleno a atualizações frequentes. Por isso, hardening eficaz é seletivo, documentado e compatível com o papel operacional de cada ativo digital.",
+      "titulo": "Vulnerabilidades, patches e legados / Hardening e redução de superfície de ataque",
+      "indice_documento": 11
+    },
+    {
+      "id": "B4",
+      "item": "07_02",
+      "texto": "Em dispositivos embarcados e componentes de IACS, a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação. Essa dependência é estrutural: o operador normalmente não controla o ciclo de desenvolvimento do software embarcado, nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto.\n\nIsso altera a gestão de acesso e de terceiros de duas formas. Primeiro, o fornecedor passa a influenciar o tempo de exposição do ativo vulnerável. Segundo, a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa.\n\nA seleção e o acompanhamento de fornecedores, portanto, não devem considerar apenas preço e prazo. Também importam capacidade de notificação, clareza sobre ativos afetados, orientação de mitigação, qualidade do suporte e possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos.",
+      "titulo": "Acessos e cadeia de suprimentos / Dependência da cadeia de suprimentos em vulnerabilidades e remediação",
+      "indice_documento": 6
+    },
+    {
+      "id": "B5",
+      "item": "07_02",
+      "texto": "Em sistemas de Automação e Controle Industrial (IACS), o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão, funções instrumentadas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação conectados à infraestrutura de rede do IACS. Em instalações offshore, esse conjunto pode incluir ainda sistemas marítimos, de perfuração e de monitoramento de movimento, quando conectados ao ambiente operacional.\n\nEsse tema é crítico porque um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança. Em ICS, a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo.\n\nPor isso, a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais, competência e efetividade das contramedidas, e não apenas como um conjunto de controles técnicos isolados.",
+      "titulo": "Acessos e cadeia de suprimentos / Escopo de acesso em IACS e por que ele é crítico",
+      "indice_documento": 4
+    }
+  ]
+}

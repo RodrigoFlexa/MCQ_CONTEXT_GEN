@@ -1,0 +1,103 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 3,
+  "onda": 4,
+  "id": "01_01:007:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização de parâmetros de RAM com dados da própria instalação em vez de bases genéricas.",
+      "pergunta": "Uma análise RAM construída com dados de banco setorial passou a divergir da disponibilidade observada depois de meses de operação estável. Na atualização do modelo, quais parâmetros devem substituir primeiro os valores genéricos?",
+      "resposta": "Parâmetros locais de falha e reparo.",
+      "explicacao": "A previsão só adere ao sistema quando frequências de falha e tempos de reparo refletem arquitetura, acessibilidade, manutenção e contexto operacional da própria instalação.",
+      "resposta_padrao": "Parâmetros médios de um banco setorial.",
+      "por_que_nao": "Bases setoriais ajudam na comparação, mas não representam automaticamente as condições locais que alteram falha e reparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Registro dos marcos temporais corretos para cálculo de MTTR e disponibilidade observada.",
+      "pergunta": "Para calcular MTTR observado e disponibilidade a partir dos registros operacionais de cada evento, quais marcos de tempo devem ser capturados?",
+      "resposta": "Início da falha e retorno ao estado operacional.",
+      "explicacao": "Esses marcos delimitam a perda e a recuperação efetiva da função. Horas de reparo isoladas não capturam atrasos, testes e liberação para voltar a operar.",
+      "resposta_padrao": "Início e fim do reparo de manutenção.",
+      "por_que_nao": "O desempenho observado depende do período real de indisponibilidade da função, não apenas da duração da intervenção de manutenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelagem de dependências comuns que reduzem o ganho real de redundância.",
+      "pergunta": "Dois trens de compressão são duplicados, mas compartilham a mesma utilidade crítica e a mesma linha de descarga. No modelo RAM, que vínculo técnico precisa ser representado para não superestimar a disponibilidade?",
+      "resposta": "Dependência por recurso compartilhado entre os trens.",
+      "explicacao": "A duplicação física não cria redundância funcional plena quando ambos dependem do mesmo gargalo. O modelo precisa refletir essa dependência, não um paralelo ideal.",
+      "resposta_padrao": "Os dois trens em paralelo simples.",
+      "por_que_nao": "Paralelo ideal ignora gargalos comuns que podem indisponibilizar simultaneamente a função preservada pela redundância.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização em RAM pela criticidade funcional, e não pela taxa de falha isolada.",
+      "pergunta": "Um item falha raramente, mas sua indisponibilidade interrompe a exportação; outro falha mais vezes sem efeito de processo. Na priorização de RAM, qual critério técnico define qual pesa mais?",
+      "resposta": "Criticidade funcional no sistema.",
+      "explicacao": "A relevância para disponibilidade vem do efeito da indisponibilidade sobre a função do sistema. Frequência isolada pode apontar o item errado como limitante principal.",
+      "resposta_padrao": "A maior taxa de falha do equipamento.",
+      "por_que_nao": "Um item menos frequente pode dominar o desempenho se sua perda bloquear produção, segurança de processo ou exportação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "seu significado depende da criticidade funcional do item no sistema."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "um elemento com baixa taxa de falha pode ser mais relevante"
+        }
+      ]
+    }
+  ]
+}

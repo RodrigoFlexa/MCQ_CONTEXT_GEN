@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_08:001:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre parada de compressão com atuação de reciclo e ocorrência de surge.",
+      "pergunta": "Durante a parada de emergência de um sistema de compressão, a vazão e a pressão oscilam rapidamente enquanto o compressor desacelera e o reciclo atua. Qual é a causa primária a investigar nesse transiente?",
+      "resposta": "surge do compressor",
+      "explicacao": "Em paradas de compressão, a instabilidade relevante citada para análise dinâmica é o surge. Oscilações de vazão e pressão durante desaceleração e atuação do reciclo são compatíveis com perda de margem ao surge.",
+      "resposta_padrao": "Instabilidade da malha de controle de pressão.",
+      "por_que_nao": "A assinatura crítica é a instabilidade aerodinâmica do compressor ao cruzar a margem de surge, não apenas sintonia inadequada de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de modelar volumes comunicantes para calcular corretamente cargas de alívio transientes.",
+      "pergunta": "Com vasos interligados por linhas abertas durante blowdown, a equalização de pressão altera o pico de vazão para o header. No modelo transiente, o que deve ser representado explicitamente para a carga de alívio sair correta?",
+      "resposta": "volumes comunicantes",
+      "explicacao": "Quando recipientes interligados equalizam pressão, o inventário efetivo que alimenta o alívio não é o de um vaso isolado. A representação dos volumes comunicantes passa a governar a carga transiente calculada.",
+      "resposta_padrao": "Apenas o volume do vaso que descarrega primeiro.",
+      "por_que_nao": "A interligação hidráulica faz a massa e a pressão disponíveis dependerem do conjunto comunicado, não só do primeiro vaso em alívio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Influência das condições iniciais na previsão dinâmica de máximos de vazão e temperatura de alívio.",
+      "pergunta": "Partida, operação estabilizada e parada podem produzir máximos diferentes de vazão e temperatura de alívio. Antes de rodar os cenários transientes, que definição do caso precisa estar correta para que o resultado seja confiável?",
+      "resposta": "condições iniciais do modelo",
+      "explicacao": "Os máximos dinâmicos dependem do estado inicial do sistema. Pressões, temperaturas, inventário e estados de controle de partida ou parada mudam a evolução temporal e os picos de alívio.",
+      "resposta_padrao": "A pressão de ajuste da PSV.",
+      "por_que_nao": "A pressão de abertura sozinha não define o transiente; os picos calculados dependem do estado inicial completo do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "depende da qualidade das hipóteses do modelo, das condições iniciais"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de escolha de simulação dinâmica quando a carga de alívio depende de transientes e controles.",
+      "pergunta": "Sequência temporal dos eventos, atuação de controles e acoplamento entre equipamentos governam a descarga para o flare. Qual abordagem de modelagem é a mais adequada para determinar a máxima vazão e temperatura de alívio?",
+      "resposta": "simulação dinâmica do processo",
+      "explicacao": "Quando a carga de alívio é definida pela evolução temporal, controles e interação entre equipamentos, a abordagem dinâmica capta os máximos que uma análise em regime permanente pode distorcer ou perder.",
+      "resposta_padrao": "Análise estática em regime permanente.",
+      "por_que_nao": "Sem evolução temporal explícita, a análise estática não representa adequadamente sequência de eventos, defasagens e interação entre controles.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento"
+        }
+      ]
+    }
+  ]
+}

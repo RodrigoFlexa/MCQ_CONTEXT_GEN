@@ -1,0 +1,95 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_01:027:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de válvula modulante implementada indevidamente como abre/fecha.",
+      "pergunta": "A saída do controlador varia, mas o curso em campo só vai a 0% ou 100%, sem posições intermediárias, embora a engenharia preveja regulação remota. Qual divergência primária de configuração isso indica?",
+      "resposta": "Implementação abre/fecha da válvula.",
+      "explicacao": "Curso restrito aos extremos, apesar de comando variável e previsão de regulação remota, caracteriza atuação on-off em vez de controle contínuo.",
+      "resposta_padrao": "Falha do indicador de posição.",
+      "por_que_nao": "Ausência de indicação não limita o curso a 0% e 100%; o problema está na forma de atuação comissionada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Etapa de verificação que confirma a execução real do comando da IHM no elemento final.",
+      "pergunta": "Na IHM o comando muda de estado, mas o atuador não responde e o retorno de campo permanece inalterado. Que etapa técnica, se incompleta, deixa essa incoerência passar para a operação?",
+      "resposta": "Comissionamento funcional da malha.",
+      "explicacao": "O problema descrito é o de comando exibido na IHM sem execução no campo; isso deve ser barrado no comissionamento funcional.",
+      "resposta_padrao": "Revisão de lógica em bancada.",
+      "por_que_nao": "Ela não comprova saída física, caminho de sinal e atuação real do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que comandos da IHM fossem executados pelos atuadores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "comissionamento incompleto de controles"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Efeito técnico de mudanças sem fechamento sobre a fidelidade das informações de automação.",
+      "pergunta": "Mudanças são implantadas sem fechamento adequado, e telas passam a divergir do comportamento real de campo. Qual atributo técnico da instalação fica diretamente degradado?",
+      "resposta": "Confiabilidade informacional da planta.",
+      "explicacao": "Quando supervisão e documentação deixam de representar o campo, a perda principal é a confiança técnica na informação usada por operação e manutenção.",
+      "resposta_padrao": "Disponibilidade operacional.",
+      "por_que_nao": "O sistema pode continuar operando; o degradado é a fidelidade da informação ao comportamento real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma informação de campo pode não ser recebida pelo sistema supervisor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças sem fechamento adequado degradam a confiabilidade informacional da planta"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da definição de configuração que estabelece a autoridade de comando entre campo e sala de controle.",
+      "pergunta": "O comando da sala de controle não tem efeito, mas o equipamento responde ao seletor no painel de campo. Qual definição crítica de configuração está incoerente?",
+      "resposta": "Modo de operação local/remoto.",
+      "explicacao": "O sintoma mostra conflito de autoridade de comando entre campo e sala; essa seleção faz parte da configuração crítica.",
+      "resposta_padrao": "Permissivo de operação.",
+      "por_que_nao": "Permissivos habilitam a ação, mas não definem de onde o comando tem autoridade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota"
+        }
+      ]
+    }
+  ]
+}

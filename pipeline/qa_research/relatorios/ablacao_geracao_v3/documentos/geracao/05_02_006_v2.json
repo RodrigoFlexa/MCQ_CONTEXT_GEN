@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:006:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O fechamento de bus tie entre barramentos energizados requer verificação de sincronismo para evitar transitórios severos.",
+      "pergunta": "Dois barramentos já energizados por fontes independentes serão interligados para recomposição. Qual verificação específica deve permissivar o fechamento do bus tie?",
+      "resposta": "checagem de sincronismo",
+      "explicacao": "Entre barramentos energizados, o fechamento sem sincronização pode gerar transitórios severos e perda ampla de cargas; por isso a condição elétrica deve ser rigorosamente controlada antes da manobra.",
+      "resposta_padrao": "mesma tensão nominal nos dois lados",
+      "por_que_nao": "Tensão nominal igual não garante coincidência de frequência e ângulo de fase no instante do fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Fechar o bus tie entre secundários em paralelo cria novos caminhos de contribuição para correntes de falta.",
+      "pergunta": "Com o bus tie fechado entre secundários de transformadores em paralelo, uma mesma falta passa a ser alimentada pelos dois lados. Qual mecanismo elétrico foi introduzido por essa manobra?",
+      "resposta": "caminhos adicionais de corrente de falta",
+      "explicacao": "A interligação cria novas rotas de alimentação da falta, alterando a corrente disponível e, com isso, níveis de curto-circuito, sensibilidades e tempos de atuação das proteções.",
+      "resposta_padrao": "maior compartilhamento de carga entre transformadores",
+      "por_que_nao": "Compartilhamento de carga é efeito de regime normal; o impacto sobre a proteção vem das contribuições adicionais para a corrente de falta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Manter o bus tie aberto reduz propagação de falhas e impacto sistêmico durante manutenção.",
+      "pergunta": "Durante manutenção programada, deseja-se manter cargas no lado saudável e limitar a propagação de uma falta para a outra metade do quadro. Como deve ficar o bus tie?",
+      "resposta": "bus tie aberto",
+      "explicacao": "A operação seccionada reduz a propagação de falhas e facilita manutenção com menor impacto sistêmico do que manter os barramentos interligados.",
+      "resposta_padrao": "bus tie fechado para dar mais flexibilidade",
+      "por_que_nao": "A interligação ajuda transferência e recomposição, mas amplia caminhos de falta e aumenta o impacto potencial sobre o restante do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O barramento seccionado reduz a propagação de falhas e facilita manutenção com menor impacto sistêmico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falta à terra em alimentador de barramento secundário interligado exige coordenação da retaguarda de terra a montante.",
+      "pergunta": "Falta à terra em um alimentador de barramento secundário interligado começou a acionar proteção a montante do transformador. Qual proteção de retaguarda deve ser coordenada com esse alimentador para evitar perda indevida do barramento?",
+      "resposta": "relé de retaguarda de terra",
+      "explicacao": "Na arquitetura descrita, a retaguarda de terra a montante deve ser coordenada com o relé do alimentador para que a falta no alimentador não desligue todo o barramento ou o transformador.",
+      "resposta_padrao": "proteção diferencial de barramento",
+      "por_que_nao": "A diferencial protege a zona do barramento; falta à terra em alimentador deve ser eliminada pelo alimentador, com a retaguarda de terra apenas como backup coordenado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ]
+    }
+  ]
+}

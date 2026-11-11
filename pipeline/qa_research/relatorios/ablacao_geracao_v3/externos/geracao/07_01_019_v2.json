@@ -1,0 +1,95 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:019:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redução de incerteza da automação antes do retorno ao serviço após longa inatividade.",
+      "pergunta": "Tecnologia pouco aplicada ficou longo período inativa; antes de introduzir gás natural, é preciso confirmar lógica, desempenho e vazamentos por acomodação térmica. Que arranjo de teste é mais adequado?",
+      "resposta": "Operação em circuito fechado com nitrogênio.",
+      "explicacao": "Essa condição é representativa sem introduzir o mesmo inventário inflamável, permitindo testar lógica, desempenho, vazamentos térmicos e ajustes iniciais.",
+      "resposta_padrao": "Loop check a frio com ar ambiente.",
+      "por_que_nao": "Esse teste não reproduz a condição operacional representativa nem evidencia bem integração, sintonia e vazamentos induzidos por acomodação térmica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em tecnologias com poucas aplicações na indústria, ainda podem permanecer incertezas sobre manutenção, condições operacionais e consequências de longos períodos de inatividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica, confirmar desempenho, identificar vazamentos induzidos por acomodação térmica e ajustar instrumentos e controladores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "condição energeticamente e operacionalmente representativa, mas sem introduzir o mesmo inventário inflamável da operação normal."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de valor congelado versus estado real da planta em arquitetura com desativações temporárias.",
+      "pergunta": "A pressão mostrada permanece plausível, mas não muda durante uma manobra que deveria alterá-la e o permissivo segue liberado. Para distinguir valor real de valor congelado, que verificação do sinal deve ser feita primeiro?",
+      "resposta": "Atualização do sinal.",
+      "explicacao": "Em diagnóstico de arquitetura, um valor instantâneo pode parecer normal; a atualização confirma se a medição ainda está sendo transportada e processada.",
+      "resposta_padrao": "Recalibrar o transmissor.",
+      "por_que_nao": "Calibração trata exatidão da medição, mas não confirma se o valor continua sendo atualizado pelo caminho de automação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre permissivo de partida e intertravamento diante de desativação temporária na lógica.",
+      "pergunta": "O motor parte mesmo sem confirmação de pressão mínima de óleo, com instrumento e comunicação íntegros. Se houve uma desativação temporária na automação, que elemento lógico foi retirado da partida?",
+      "resposta": "Permissivo de partida.",
+      "explicacao": "A condição descrita é pré-requisito para autorizar o start; sua retirada permite a partida sem implicar, por si só, a supressão da parada protetiva em operação.",
+      "resposta_padrao": "Intertravamento de parada.",
+      "por_que_nao": "Intertravamento atua para levar o equipamento a estado seguro após condição perigosa; aqui o desvio está na autorização inicial de partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença entre supressão de função e fixação de estado de ponto na lógica.",
+      "pergunta": "Uma indicação de fim de curso permanece em \"aberta\" no controlador mesmo com a válvula isolada e sem mudança no campo, permitindo avanço de sequência automática. Que intervenção temporária explica diretamente esse comportamento?",
+      "resposta": "Forcing da entrada digital.",
+      "explicacao": "O estado do ponto foi fixado na lógica sem correspondência no campo, mascarando a condição real e sustentando indevidamente a sequência automática.",
+      "resposta_padrao": "Bypass da válvula.",
+      "por_que_nao": "Bypass remove a atuação ou supervisão de uma função, mas não mantém um sinal específico permanentemente no estado \"aberta\".",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        }
+      ]
+    }
+  ]
+}

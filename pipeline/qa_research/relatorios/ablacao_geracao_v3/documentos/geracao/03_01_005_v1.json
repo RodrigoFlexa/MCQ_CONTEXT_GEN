@@ -1,0 +1,71 @@
+{
+  "item": "03_01",
+  "foco": 5,
+  "visita": 1,
+  "onda": 1,
+  "id": "03_01:005:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em SPM de aproamento variável, o weathervaning da embarcação de produção desloca o referencial relativo do tandem.",
+      "pergunta": "Mudanças bruscas de vento, corrente e ondas no início do offloading em tandem fazem o aliviador em DP perder facilidade para sustentar a posição relativa. Qual mecanismo operacional passa a mover o alvo relativo nesse caso?",
+      "resposta": "giro por weathervaning da embarcação de produção",
+      "explicacao": "Em SPM de aproamento variável, a embarcação de produção gira para alinhar-se à resultante ambiental; esse giro desloca a geometria relativa que o aliviador tenta manter, dificultando o tandem nas transições.",
+      "resposta_padrao": "aumento da deriva do aliviador",
+      "por_que_nao": "Em SPM, a causa primária é a rotação da embarcação de produção que desloca a referência relativa; a deriva do aliviador é efeito secundário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "em algumas locações com FPSO SPM de aproamento variável, o modo tandem pode dificultar a manutenção da posição, sobretudo no início e no fim do offloading e quando há mudanças abruptas da direção dos agentes ambientais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o casco pode girar para buscar alinhamento com a resultante ambiental, comportamento conhecido como weathervaning."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na lógica DP tandem com referências mistas, a malha principal de posição é fechada pela referência absoluta.",
+      "pergunta": "Busca-se evitar correções excessivas do aliviador em tandem com DP, mantendo afastamento e aproamento relativos suaves com referências absolutas e relativas disponíveis. Qual referência deve fechar a malha principal de posição?",
+      "resposta": "referência absoluta",
+      "explicacao": "A lógica descrita usa referências absolutas e relativas ao mesmo tempo, mas atribui à absoluta o controle principal para suavizar o controle relativo e otimizar a demanda de potência.",
+      "resposta_padrao": "referência relativa ao navio de produção",
+      "por_que_nao": "Nessa arquitetura, a relativa é usada para correção fina do erro geométrico no hawser; tomá-la como principal torna o controle mais reativo e menos eficiente em potência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "As medições usam simultaneamente referências absolutas e relativas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle principal da posição é feito pelo sistema absoluto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A estratégia apresentada busca suavizar o controle do afastamento e do aproamento relativos e otimizar a demanda de potência."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "As medições relativas do tandem corrigem o ponto do hawser pela janela geométrica da proa, não a posição global.",
+      "pergunta": "Os sensores absolutos mantêm a posição geral, mas a proa do aliviador se desloca em relação ao ponto de amarração. Qual referência geométrica as medições relativas devem usar para corrigir esse erro no tandem?",
+      "resposta": "retângulo de tolerância da proa",
+      "explicacao": "No modo descrito, as relativas não controlam a posição global; elas corrigem desvios do ponto de conexão do hawser em relação à área de referência na proa.",
+      "resposta_padrao": "estação de alívio da embarcação de produção",
+      "por_que_nao": "A correção fina do DP é vinculada à geometria local do ponto de conexão do hawser na proa; usar a estação de alívio não recentra esse erro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as medições relativas são usadas para corrigir desvios em relação a uma área de referência na proa onde se conecta o hawser, chamada retângulo de tolerância."
+        }
+      ]
+    }
+  ]
+}

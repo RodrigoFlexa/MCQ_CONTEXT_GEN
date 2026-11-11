@@ -1,0 +1,107 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:004:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério técnico que coloca sistemas conectados no escopo de controle de acesso do IACS.",
+      "pergunta": "Na revisão de acessos, um sistema de monitoramento de movimento passou a trocar dados pela rede operacional com controle e supervisão. Que condição técnica o coloca no mesmo escopo de controle de acesso do IACS?",
+      "resposta": "conexão à infraestrutura de rede do IACS",
+      "explicacao": "O escopo de acesso do IACS alcança sistemas conectados à sua infraestrutura de rede; em offshore, isso pode incluir monitoramento de movimento quando ligado ao ambiente operacional.",
+      "resposta_padrao": "a criticidade marítima do sistema",
+      "por_que_nao": "A entrada no escopo é definida pela conectividade ao IACS, não apenas pela função marítima ou pela criticidade isolada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode incluir ainda sistemas marítimos, de perfuração e de monitoramento de movimento, quando conectados ao ambiente operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se o escopo dos sistemas conectados permanece coerente"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio para diferenciar acesso de observação de acesso de operação em IACS.",
+      "pergunta": "Durante diagnóstico remoto, o fornecedor precisa ver variáveis, tendências e alarmes em tempo real, mas qualquer comando sobre o processo ficará com o operador local. Que privilégio específico deve ser concedido?",
+      "resposta": "acesso de observação",
+      "explicacao": "Pelo menor privilégio, quem só precisa visualizar dados não deve receber capacidade de atuar no processo. Isso reduz erro e abuso sem ampliar risco operacional.",
+      "resposta_padrao": "acesso de operação",
+      "por_que_nao": "Acesso de operação permite atuar no processo; para diagnóstico com visualização apenas, isso é privilégio excessivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações; acesso de operação permite atuar no processo"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Controle que separa aprovação, implementação e validação de mudanças em IACS.",
+      "pergunta": "Numa manutenção com suporte remoto, a mesma pessoa aprovou a mudança, aplicou a alteração no sistema e registrou a validação final. Que controle específico faltou no fluxo?",
+      "resposta": "segregação de funções",
+      "explicacao": "Em IACS, o menor privilégio é complementado pela separação entre aprovar, implementar e validar. Isso reduz erros não detectados em manutenção e suporte remoto.",
+      "resposta_padrao": "menor privilégio",
+      "por_que_nao": "Permissões limitadas não substituem a independência entre aprovação, execução e validação da mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segregação de funções complementa o menor privilégio"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo operacional específico pelo qual um acesso legítimo excessivo causa parada indevida em IACS.",
+      "pergunta": "Intertravamentos passaram a atuar em sequência diferente após suporte remoto com credenciais válidas; os setpoints mostrados permaneceram iguais e não houve atualização de firmware. Que mecanismo técnico mais provavelmente gerou a parada indevida?",
+      "resposta": "alteração de lógica",
+      "explicacao": "Se a sequência funcional dos intertravamentos mudou sem mudança de setpoint nem atualização de firmware, o elo mais provável é modificação da lógica de controle.",
+      "resposta_padrao": "mudança de setpoint",
+      "por_que_nao": "Setpoint altera referência de operação, mas não reordena a lógica de atuação dos intertravamentos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "impacto na disponibilidade e no comportamento do processo"
+        }
+      ]
+    }
+  ]
+}

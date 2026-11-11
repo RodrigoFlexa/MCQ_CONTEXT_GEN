@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:010:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da condição do endpoint de terceiros antes de acesso remoto em IACS",
+      "pergunta": "Fornecedor vai diagnosticar uma falha remotamente via VPN; as credenciais estão válidas, mas o estado do computador usado na conexão é desconhecido. Que verificação técnica é decisiva antes de liberar a sessão?",
+      "resposta": "Condição de segurança do dispositivo conectado",
+      "explicacao": "A VPN protege o canal, mas não corrige comprometimento do equipamento. Em IACS, uma sessão autorizada pode alcançar funções operacionais, de configuração ou diagnóstico.",
+      "resposta_padrao": "Confirmar apenas as credenciais e o túnel VPN ativo.",
+      "por_que_nao": "Um endpoint comprometido, desatualizado ou mal configurado pode abrir sessão válida e ainda introduzir risco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compatibilização do alcance funcional do acesso remoto com a tarefa autorizada",
+      "pergunta": "Suporte remoto foi autorizado apenas para diagnóstico de um controlador específico, mas o perfil disponível também permite alterar lógica e parâmetros nesse mesmo ativo. Que alcance técnico deve ser removido?",
+      "resposta": "Permissões de configuração",
+      "explicacao": "Para uma tarefa só de diagnóstico, manter alcance de configuração foge do escopo compatível com a intervenção e expõe funções com impacto operacional.",
+      "resposta_padrao": "Manter o perfil atual para agilizar o suporte.",
+      "por_que_nao": "Capacidade de configuração sem necessidade operacional amplia a chance de alteração indevida durante uma sessão legítima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade da intervenção de terceiros por monitoramento da sessão remota",
+      "pergunta": "Uma alteração indevida apareceu após suporte remoto concluído. Para rastrear a intervenção, que registro técnico deve permitir reconstruir quem acessou, quando e em qual ativo atuou?",
+      "resposta": "Trilha de auditoria da sessão remota",
+      "explicacao": "O registro de sessão deve ser suficiente para rastrear a intervenção, ligando identidade, tempo e ativo alcançado, o que sustenta investigação, responsabilização e contenção.",
+      "resposta_padrao": "Ticket de suporte com descrição manual da atividade.",
+      "por_que_nao": "Ticket não registra os eventos reais da sessão nem a correlação entre usuário, horário e ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação"
+        }
+      ]
+    }
+  ]
+}

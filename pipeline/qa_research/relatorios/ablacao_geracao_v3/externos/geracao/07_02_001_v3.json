@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:001:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Ponto arquitetural em que a fronteira IT/OT emerge quando dados de controle passam a outros consumidores.",
+      "pergunta": "Onde a fronteira IT/OT costuma se formar na prática, em arquiteturas industriais conectadas?",
+      "resposta": "na saída da camada de controle para supervisão e consumidores externos",
+      "explicacao": "A fronteira prática aparece no ponto em que dados deixam a camada de controle e passam a ser usados por supervisão, historiadores, telecomunicações, análises ou sistemas corporativos.",
+      "resposta_padrao": "No firewall perimetral entre a rede industrial e a internet.",
+      "por_que_nao": "A fronteira funcional surge quando os dados de controle passam a atender outros consumidores, mesmo sem acesso à internet.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Camada correta para concentrar integração quando controladores heterogêneos expõem modelos de dados distintos.",
+      "pergunta": "Controladores de fornecedores distintos usam modelos de dados diferentes, e é preciso consolidar alarmes, histórico e telas operacionais. Em que camada a integração deve se concentrar?",
+      "resposta": "na camada supervisória do SCADA",
+      "explicacao": "Quando os modelos de dados diferem entre fornecedores, a padronização próxima à fonte fica limitada; por isso a integração tende a migrar para a camada supervisória, onde o SCADA agrega essas funções.",
+      "resposta_padrao": "Nos próprios controladores, com padronização na origem.",
+      "por_que_nao": "Modelos de dados distintos limitam a padronização próxima à fonte e deslocam a integração para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Componente de mensageria usado na comunicação MQTT entre controladores de borda e nuvem.",
+      "pergunta": "Na comunicação máquina-nuvem via MQTT, qual componente recebe as publicações dos controladores de borda?",
+      "resposta": "broker MQTT",
+      "explicacao": "Na arquitetura híbrida descrita, os controladores de borda enviam dados para um broker MQTT em nuvem, enquanto mantêm alimentação do SCADA local em tempo real.",
+      "resposta_padrao": "Servidor OPC em nuvem.",
+      "por_que_nao": "Em MQTT, o ponto central de recebimento e distribuição das mensagens é o broker, não um servidor OPC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de definição de fluxos em novas interfaces que cruzam fronteiras IT/OT.",
+      "pergunta": "Com a inclusão de IIoT, telemetria e interfaces máquina-nuvem, novas fronteiras passaram a cruzar domínios. Que critério técnico precisa ser definido em cada uma?",
+      "resposta": "tráfego autorizado e finalidade operacional",
+      "explicacao": "Cada nova interface amplia a fronteira IT/OT; o ponto decisivo é definir exatamente quais fluxos podem atravessá-la e com qual propósito operacional.",
+      "resposta_padrao": "A largura de banda do enlace.",
+      "por_que_nao": "Capacidade é relevante, mas não determina que comunicações podem cruzar domínios nem a finalidade permitida de cada fluxo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ]
+    }
+  ]
+}

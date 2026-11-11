@@ -1,0 +1,87 @@
+{
+  "item": "03_01",
+  "foco": 5,
+  "visita": 1,
+  "onda": 1,
+  "id": "03_01:005:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na lógica de tandem com DP, a referência absoluta fecha a malha principal de posição; a relativa apenas corrige o desvio na estação de conexão.",
+      "pergunta": "O FPSO gira com a resultante ambiental e o aliviador opera com DP em tandem, com DGPS e sensor relativo estáveis. Para evitar correções duras de afastamento e aproamento, qual referência deve comandar o controle principal da posição?",
+      "resposta": "A referência absoluta.",
+      "explicacao": "Na lógica descrita, o absoluto fecha a malha principal; o relativo só corrige desvios na área de tolerância da proa, suavizando o controle e a potência.",
+      "resposta_padrao": "A referência relativa no ponto do hawser.",
+      "por_que_nao": "Tomar o ponto relativo como malha principal faz o DP perseguir mais agressivamente a geometria local; no tandem descrito ele serve como correção fina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "As medições usam simultaneamente referências absolutas e relativas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Nesse modo descrito, o controle principal da posição é feito pelo sistema absoluto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "as medições relativas são usadas para corrigir desvios em relação a uma área de referência na proa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A estratégia apresentada busca suavizar o controle do afastamento e do aproamento relativos e otimizar a demanda de potência."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A correção relativa no tandem deve ser referida à área de tolerância na proa, junto ao ponto de conexão do hawser, e não ao centro do navio.",
+      "pergunta": "Com a posição absoluta dentro do alvo, o ponto de conexão do hawser deriva lateralmente na proa. Onde o erro relativo deve ser acompanhado para aplicar a correção correta do DP durante o tandem?",
+      "resposta": "Na área de tolerância da proa, junto ao hawser.",
+      "explicacao": "A lógica relativa não usa o centro do navio como referência; ela corrige o desvio da estação de conexão, onde folgas e esforços são operacionalmente críticos.",
+      "resposta_padrao": "No centro geométrico do navio aliviador.",
+      "por_que_nao": "A geometria crítica do tandem é definida na estação de conexão da proa; um erro no centro do casco pode ocultar desvio relevante no ponto do hawser.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as medições relativas são usadas para corrigir desvios em relação a uma área de referência na proa onde se conecta o hawser"
+        },
+        {
+          "bloco": "F",
+          "trecho": "chamada retângulo de tolerância."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o alvo de posicionamento do aliviador pode ser tratado como uma caixa de reação localizada sobre a estação de alívio do FPSO."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em SPM com aproamento variável, mudanças bruscas de direção ambiental podem criar conflito entre o weather vaning do aliviador e o controle da posição relativa ao FPSO.",
+      "pergunta": "Numa locação com ponto único de amarração e aproamento variável, uma guinada brusca dos agentes ambientais coincide com o início do alívio. O aliviador DP passa a alternar correções de proa e de distância relativa. Que mecanismo operacional explica essa dificuldade?",
+      "resposta": "Conflito entre weather vaning e posição relativa ao FPSO.",
+      "explicacao": "O aliviador tende a alinhar-se à resultante ambiental, enquanto o DP tenta manter a geometria relativa com um FPSO que também muda orientação; o conflito aparece nos transientes e em mudanças abruptas.",
+      "resposta_padrao": "Insuficiência de potência dos thrusters.",
+      "por_que_nao": "A dificuldade decorre de objetivos de controle concorrentes quando a direção ambiental muda, não necessariamente de saturação propulsiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o aliviador mantém weather vaning alinhando-se com a resultante ambiental, enquanto o sistema de posicionamento busca manter o posicionamento relativo em relação ao FPSO."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o modo tandem pode dificultar a manutenção da posição, sobretudo no início e no fim do offloading e quando há mudanças abruptas da direção dos agentes ambientais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o casco pode girar para buscar alinhamento com a resultante ambiental, comportamento conhecido como weathervaning."
+        }
+      ]
+    }
+  ]
+}

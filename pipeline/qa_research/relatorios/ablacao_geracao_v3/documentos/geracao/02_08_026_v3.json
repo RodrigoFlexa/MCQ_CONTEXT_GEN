@@ -1,0 +1,75 @@
+{
+  "item": "02_08",
+  "foco": 26,
+  "visita": 3,
+  "onda": 5,
+  "id": "02_08:026:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de perda de atuação automática causada por forcing em CLP.",
+      "pergunta": "A alta pressão é detectada corretamente, mas a saída do CLP para a válvula final permanece fixa no valor imposto durante manutenção. Que estado sensível explica essa perda de atuação automática?",
+      "resposta": "forcing no CLP",
+      "explicacao": "O sinal de detecção existe, mas a saída fica travada em valor manual, interrompendo a atuação automática. Isso caracteriza forcing aplicado na lógica ou na saída.",
+      "resposta_padrao": "Override do intertravamento.",
+      "por_que_nao": "Override inibe uma função ou condição; o indício decisivo aqui é a saída permanecer fixada manualmente no CLP.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "bypass, override e forcing são estados sensíveis."
+        },
+        {
+          "bloco": "F",
+          "trecho": "inclusive em instrumentos ou em Controlador Lógico Programável"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ação automática para conter baixa pressão de tanque provocada pela recuperação de vapores.",
+      "pergunta": "Durante recuperação de vapores, a pressão do tanque entra em baixa pressão, sem carregamento simultâneo e sem mudança no suprimento de gás inerte. Qual ação automática específica deve conter a causa do desvio?",
+      "resposta": "parada da recuperação de vapores",
+      "explicacao": "Se o desvio ocorre com a extração de vapores em serviço, a contenção correta é interromper essa remoção, atacando a causa primária da baixa pressão.",
+      "resposta_padrao": "Aumentar o suprimento de gás inerte.",
+      "por_que_nao": "Isso recompõe pressão, mas não elimina a causa primária quando a baixa pressão é gerada pela própria extração de vapores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "parada de bombas e de recuperação de vapores, conforme o ponto onde alta ou baixa pressão é detectada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "proteção de pressão depende da coordenação entre contenção da causa do desvio"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de verificação da proteção de pressão quando há override em intertravamento.",
+      "pergunta": "Um shutdown por pressão está em override temporário, com flare, vaso de selagem e tubulações fisicamente disponíveis. O que deve ser verificado para julgar se a proteção contra sobrepressão permanece efetiva?",
+      "resposta": "disponibilidade efetiva das demais camadas de proteção",
+      "explicacao": "Com override, a resposta real das barreiras muda. A avaliação correta exige verificar as camadas de proteção remanescentes, não só a presença física do sistema de flare.",
+      "resposta_padrao": "A integridade mecânica do sistema de flare.",
+      "por_que_nao": "Integridade física não garante função de proteção quando intertravamentos estão desativados ou a capacidade funcional do sistema mudou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "override sem controle adequado pode enfraquecer o encadeamento entre detecção, decisão lógica e ação final."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a condição operacional do flare precisa ser avaliada junto com a disponibilidade efetiva das demais camadas de proteção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "integridade e capacidade funcional precisam ser verificadas separadamente."
+        }
+      ]
+    }
+  ]
+}

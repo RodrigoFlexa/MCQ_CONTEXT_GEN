@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 19,
+  "visita": 1,
+  "onda": 1,
+  "id": "05_02:019:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência reativa entre geradores síncronos em paralelo depende do droop/compensação do AVR.",
+      "pergunta": "Com dois geradores em paralelo, tensão do barramento estável e kW bem divididos, mas um fornece quase todo o kvar. Qual ajuste técnico específico deve ser corrigido para equalizar a carga reativa?",
+      "resposta": "droop de reativo do AVR",
+      "explicacao": "Em paralelo, a divisão de potência reativa é determinada pela excitação. Se kW e tensão do barramento estão adequados, o desbalanceamento aponta para o ajuste de droop/compensação do AVR.",
+      "resposta_padrao": "setpoint de velocidade do governador",
+      "por_que_nao": "O governador redistribui potência ativa; a carga reativa é compartilhada pela excitação."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Corrente de energização de transformador é distinguida de falta interna pelo segundo harmônico na proteção diferencial.",
+      "pergunta": "Ao energizar um transformador em vazio, aparece corrente alta e assimétrica e a proteção diferencial tende a sensibilizar sem indício de defeito externo. Que recurso específico deve impedir o trip nessa condição?",
+      "resposta": "restrição por segundo harmônico da diferencial",
+      "explicacao": "A corrente de inrush na energização contém componente significativa de segundo harmônico, usada pela proteção diferencial para bloquear atuação indevida e diferenciar essa condição de falta interna.",
+      "resposta_padrao": "atraso intencional da proteção",
+      "por_que_nao": "A distinção correta é feita pelo conteúdo harmônico da corrente de inrush, não por uma temporização fixa."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de torque do acionador primário com gerador conectado é detectada pela função de potência reversa.",
+      "pergunta": "A potência ativa de um gerador sincronizado cruza zero e fica negativa logo após perda de torque do acionador primário, com tensão e frequência ainda sustentadas pelo barramento. Que proteção deve retirá-lo?",
+      "resposta": "proteção de potência reversa",
+      "explicacao": "Sem torque motriz suficiente, o gerador passa a ser motorizado pelo barramento. A função 32 detecta fluxo de potência para a máquina motriz e comanda a abertura.",
+      "resposta_padrao": "proteção de subfrequência",
+      "por_que_nao": "A frequência pode permanecer normal quando outros geradores sustentam o barramento; o sinal distintivo é a potência reversa."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em rede isolada, ROCOF antecipa o load shedding após perda súbita de geração.",
+      "pergunta": "Perdida uma máquina geradora em rede isolada, a frequência começa a cair rapidamente antes de atingir o primeiro estágio temporizado de subfrequência. Que grandeza deve iniciar o corte automático mais rápido?",
+      "resposta": "taxa de variação da frequência",
+      "explicacao": "A derivada da frequência revela imediatamente o desequilíbrio entre geração e carga. O ROCOF permite shedding mais rápido que estágios convencionais baseados apenas em frequência absoluta.",
+      "resposta_padrao": "subfrequência do barramento",
+      "por_que_nao": "Na perda súbita de geração, o ROCOF responde antes de a frequência cruzar o limiar temporizado de subfrequência."
+    }
+  ]
+}

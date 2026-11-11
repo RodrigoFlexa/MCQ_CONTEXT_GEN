@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "visita": 1,
+  "onda": 1,
+  "id": "01_01:010:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para saber se aumentar equipe reduz indisponibilidade, é preciso separar tempo de reparo dos tempos de espera no registro do MTTR.",
+      "pergunta": "Paradas corretivas longas levaram à proposta de dobrar a equipe. Antes de concluir que falta mão de obra, como os tempos de indisponibilidade devem ser registrados para verificar se a capacidade de manutenção é o gargalo?",
+      "resposta": "segregação do tempo de reparo dos tempos de espera",
+      "explicacao": "Adicionar equipe só reduz indisponibilidade se o tempo dominante estiver no reparo; por isso, os registros precisam separar reparo de esperas por acesso, sobressalente, liberação ou logística.",
+      "resposta_padrao": "usar o tempo total de indisponibilidade por falha",
+      "por_que_nao": "o tempo total mistura esperas que não caem com mais equipe e distorce o diagnóstico do gargalo",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Quando a capacidade das equipes é o gargalo, falhas simultâneas aumentam a indisponibilidade por formação de fila antes do reparo.",
+      "pergunta": "Três falhas corretivas independentes ocorrem quase juntas, há sobressalentes e acesso liberado, mas só uma equipe atende os ativos. Qual mecanismo prolonga a indisponibilidade total?",
+      "resposta": "fila de reparo por capacidade de equipe",
+      "explicacao": "Com acesso e sobressalentes disponíveis, o atraso adicional surge antes do início do reparo: a equipe única vira recurso limitante e as ordens entram em fila.",
+      "resposta_padrao": "aumento do MTTR de cada reparo",
+      "por_que_nao": "o tempo intrínseco de cada reparo pode permanecer igual; o acréscimo vem da espera para começar",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a capacidade das equipes for o gargalo, falhas simultâneas podem criar fila e prolongar a indisponibilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na priorização de falhas com recurso compartilhado, a criticidade funcional prevalece; perda de capacidade da água produzida pode limitar a vazão total.",
+      "pergunta": "A capacidade de tratamento ou reinjeção de água produzida caiu e a vazão total precisou ser reduzida; no mesmo turno falhou um utilitário sem impacto imediato. Com equipe única, qual subsistema deve ser priorizado?",
+      "resposta": "a malha de água produzida",
+      "explicacao": "A perda de capacidade na água produzida pode limitar a vazão total; pela criticidade funcional e pelo recurso compartilhado, esse subsistema deve vir antes do utilitário sem impacto imediato.",
+      "resposta_padrao": "o utilitário do processo principal",
+      "por_que_nao": "a restrição de água produzida pode travar a produção total mesmo com os demais equipamentos disponíveis",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a malha de água produzida perde capacidade, a limitação não afeta apenas esse sistema; ela pode impor redução de vazão total do campo"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Trips de proteção devem ser interpretados como atuação de barreira de segurança, não automaticamente como perda de disponibilidade evitável por manutenção.",
+      "pergunta": "O fechamento automático da alimentação por nível alto-alto em um separador tem gerado perda de produção, evitando arraste para jusante e descarte fora de condição. Que mecanismo operacional liga essa parada à preservação da integridade?",
+      "resposta": "intertravamento de proteção por nível alto-alto",
+      "explicacao": "A parada não é mera indisponibilidade evitável: a função de proteção atua para impedir estado perigoso, dano ambiental ou consequências maiores, devendo ser avaliada junto com disponibilidade.",
+      "resposta_padrao": "falha de confiabilidade do separador",
+      "por_que_nao": "o desligamento pode ser a atuação correta de uma camada de proteção, e não a causa primária da perda",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Intertravamentos e funções de proteção podem interromper a produção para evitar estados perigosos, danos ambientais e consequências maiores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Disponibilidade e segurança precisam ser avaliadas conjuntamente."
+        }
+      ]
+    }
+  ]
+}

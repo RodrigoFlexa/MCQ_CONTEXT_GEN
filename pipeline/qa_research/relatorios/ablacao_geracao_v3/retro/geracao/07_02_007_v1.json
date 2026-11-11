@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:007:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação do princípio do menor privilégio para acesso de diagnóstico sem necessidade de escrita.",
+      "pergunta": "Para diagnosticar falha de comunicação, o fornecedor só precisa consultar eventos, versões e variáveis do controlador, sem editar lógica nem escrever parâmetros. Que princípio deve impedir a concessão de permissões de escrita?",
+      "resposta": "Privilégio mínimo.",
+      "explicacao": "Como a atividade é apenas consultiva, o perfil deve ter somente as permissões estritamente necessárias ao diagnóstico, sem poderes de alteração.",
+      "resposta_padrao": "Perfil de administrador temporário para evitar bloqueios.",
+      "por_que_nao": "Diagnóstico somente leitura não requer escrita; conceder administração amplia poderes além da função necessária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "perfil compatível com a função, privilégio mínimo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de identidade individual verificável para rastreabilidade e revogação seletiva em alterações críticas.",
+      "pergunta": "Uma intervenção remota pode alterar parâmetros críticos em estação de engenharia, e os registros devem associar cada mudança a uma pessoa e permitir revogar só um técnico da equipe. Que forma de identificação de acesso é indispensável?",
+      "resposta": "Identidade individual verificável.",
+      "explicacao": "Quando a ação permitida pode alterar parâmetros críticos, a autenticação precisa individualizar o executor para garantir rastreabilidade e revogação seletiva.",
+      "resposta_padrao": "Conta compartilhada da equipe com MFA.",
+      "por_que_nao": "MFA reforça a autenticação, mas uma conta coletiva não individualiza quem executou cada alteração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "identidade individual verificável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de validade temporal para eliminar privilégios residuais de terceiros entre intervenções.",
+      "pergunta": "Chamados de manutenção externa são esporádicos, mas as credenciais ficam ativas entre atendimentos e às vezes ninguém lembra de desabilitá-las. Que controle deve eliminar esse privilégio residual?",
+      "resposta": "Validade temporal do acesso.",
+      "explicacao": "A expiração automática vinculada ao período autorizado remove o acesso residual entre chamados, sem depender de ação manual posterior.",
+      "resposta_padrao": "Revisão mensal de contas.",
+      "por_que_nao": "A revisão periódica pode detectar depois; aqui o necessário é expiração automática ao fim do uso autorizado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de aderência ao escopo de acesso de terceiros por meio de evidência das ações executadas.",
+      "pergunta": "O fornecedor entrou no horário aprovado, porém há dúvida se atuou só no ativo liberado ou alcançou outros ativos. Que evidência deve ser examinada para validar aderência ao escopo?",
+      "resposta": "Registro de sessão.",
+      "explicacao": "Para terceiros, a conformidade depende não só da janela de acesso, mas também das ações executadas e dos ativos alcançados durante a sessão.",
+      "resposta_padrao": "Log de autenticação.",
+      "por_que_nao": "O log de autenticação mostra quem entrou e quando, mas não o que foi feito nem em quais ativos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto"
+        }
+      ]
+    }
+  ]
+}

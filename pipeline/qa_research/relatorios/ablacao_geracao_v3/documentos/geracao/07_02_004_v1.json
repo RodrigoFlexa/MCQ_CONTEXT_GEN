@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:004:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O escopo de controle de acesso em IACS inclui ativos capazes de alterar lógica, parâmetros e firmware, não só contas.",
+      "pergunta": "A revisão de acessos cobriu só contas nominais, mas um computador permite carregar lógica, parâmetros e firmware em controladores e SIS. Que elemento também deve entrar no escopo de controle de acesso do IACS?",
+      "resposta": "estação de engenharia",
+      "explicacao": "Em IACS, o controle de acesso alcança estações de engenharia, que são caminho direto para alterar configuração, lógica e firmware de sistemas críticos.",
+      "resposta_padrao": "servidor de autenticação central",
+      "por_que_nao": "Ele gerencia credenciais, mas o ativo com caminho técnico direto para mudar lógica e firmware é a estação de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não se limita a contas de usuário. Ele alcança estações de engenharia"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O menor privilégio em IACS exige conceder apenas o nível de acesso compatível com a tarefa definida.",
+      "pergunta": "Para diagnóstico remoto, o fornecedor precisa apenas ver tendências e estados dos equipamentos, sem atuar no processo nem mudar configuração. Qual privilégio específico deve ser concedido?",
+      "resposta": "acesso de observação",
+      "explicacao": "Esse nível permite somente visualização de informações. Conceder operação ou engenharia ampliaria desnecessariamente a capacidade de atuar ou modificar ativos.",
+      "resposta_padrao": "acesso de operação",
+      "por_que_nao": "Operação permite atuar no processo, privilégio desnecessário para mera coleta de tendências e estados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Acesso autenticado sobreprivilegiado ou mal protegido pode causar os mesmos efeitos operacionais de um ataque externo.",
+      "pergunta": "Sem indício de intrusão externa, uma conta autenticada de suporte remoto mudou setpoint e desabilitou alarmes durante manutenção. Qual mecanismo primário explica a criticidade desse evento?",
+      "resposta": "acesso legítimo excessivo ou mal protegido",
+      "explicacao": "No IACS, um acesso autenticado além do necessário pode produzir alterações operacionais críticas sem que exista invasão externa propriamente dita.",
+      "resposta_padrao": "ataque externo à rede",
+      "por_que_nao": "O elo decisivo é o nível e a proteção do acesso autenticado; não é necessária invasão externa para produzir esse efeito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes"
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Em IACS, a criticidade de falhas de acesso é orientada principalmente pelo impacto operacional, não apenas pela exposição de dados.",
+      "pergunta": "Na avaliação de falhas de acesso em IACS, qual consequência principal orienta a criticidade acima da confidencialidade?",
+      "resposta": "impacto na disponibilidade e no comportamento do processo",
+      "explicacao": "Em ambientes industriais, o efeito dominante é perturbar operação, visibilidade e funções críticas do processo, mais do que expor informação.",
+      "resposta_padrao": "perda de confidencialidade dos dados",
+      "por_que_nao": "Em IACS, o risco principal é indisponibilidade ou alteração do comportamento do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mas impacto na disponibilidade e no comportamento do processo"
+        }
+      ]
+    }
+  ]
+}

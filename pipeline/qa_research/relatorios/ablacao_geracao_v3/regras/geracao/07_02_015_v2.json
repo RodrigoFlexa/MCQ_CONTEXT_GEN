@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:015:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de escolha de elemento de fronteira quando é necessário fluxo OT→IT sem possibilidade técnica de retorno.",
+      "pergunta": "A produção só precisa enviar dados do historiador para terra, e qualquer tráfego de retorno ao processo deve ser fisicamente impossível. Que elemento de arquitetura deve ficar no limite entre as redes?",
+      "resposta": "Diodo de dados",
+      "explicacao": "O diodo de dados impõe fluxo unidirecional em hardware, permitindo exportar dados sem aceitar comandos ou sessões de retorno.",
+      "resposta_padrao": "Firewall industrial com regras restritivas.",
+      "por_que_nao": "Firewall ainda depende de configuração e software; não elimina o caminho lógico de retorno."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade de PLC pela comparação do conteúdo realmente em execução, não do projeto offline.",
+      "pergunta": "Uma malha segue controlando, mas há suspeita de alteração não autorizada na lógica de um PLC após acesso remoto à estação de engenharia. Sem parar o processo, o que deve ser comparado para verificar a integridade real do controlador?",
+      "resposta": "Checksum da lógica carregada no controlador",
+      "explicacao": "A integridade relevante é a da lógica efetivamente executada; o checksum da aplicação no controlador revela mudança não refletida no projeto offline.",
+      "resposta_padrao": "O último backup do projeto na estação de engenharia.",
+      "por_que_nao": "Arquivo de engenharia pode estar desatualizado; só o conteúdo carregado no PLC confirma a lógica ativa."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sequência correta de patching em arquitetura redundante ativo-standby para preservar disponibilidade.",
+      "pergunta": "Servidores supervisórios redundantes em arranjo ativo-em-espera receberão patch validado e a supervisão não pode ficar indisponível. Como executar a atualização para preservar a disponibilidade?",
+      "resposta": "Atualizar o standby, fazer failover controlado, depois atualizar o antigo ativo",
+      "explicacao": "O nó em espera absorve o risco inicial; após validação e failover controlado, o segundo nó pode ser atualizado sem interromper a supervisão.",
+      "resposta_padrao": "Atualizar primeiro o servidor ativo para manter o standby intacto.",
+      "por_que_nao": "Patch no ativo expõe a operação a perda imediata; a prática correta usa o nó em espera e failover testado."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto correto de terminação de acesso remoto de terceiros em arquitetura segmentada IT/OT.",
+      "pergunta": "Fornecedor precisa acesso temporário à estação de engenharia da rede de controle, com autenticação centralizada e gravação de sessão, sem VPN direta para essa rede. Em que ponto a sessão deve terminar antes do acesso final?",
+      "resposta": "Servidor de salto na DMZ industrial",
+      "explicacao": "O jump server na DMZ industrial intermedeia autenticação, registro e controle da sessão antes do acesso à estação alvo.",
+      "resposta_padrao": "Na própria estação de engenharia via VPN.",
+      "por_que_nao": "Terminar a VPN no ativo OT rompe a segregação e elimina o controle intermediário de acesso."
+    }
+  ]
+}

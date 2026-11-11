@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:017:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de seleção de cargas essenciais por consequência da perda de energia.",
+      "pergunta": "Uma lógica de shutdown consome poucos watts, enquanto outra carga maior só afeta conforto operacional. Qual critério técnico define qual delas deve ir para 24 Vcc, UPS ou geração de emergência?",
+      "resposta": "Consequência da perda de energia",
+      "explicacao": "A seleção de cargas essenciais deve ser feita pelo impacto técnico da perda de alimentação na operação, controle, shutdown e mitigação, não pela potência demandada.",
+      "resposta_padrao": "A potência consumida pela carga.",
+      "por_que_nao": "Potência é critério de dimensionamento; cargas de baixa potência podem exigir maior continuidade por sua função crítica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância funcional depende de segregação real das cargas entre ramos independentes.",
+      "pergunta": "Dois UPS suportam integralmente as cargas e ambos têm tensão presente, mas uma modificação concentrou estações redundantes no barramento A. Que verificação específica deve reprovar a redundância funcional?",
+      "resposta": "Segregação real das cargas entre ramos independentes",
+      "explicacao": "Tensão presente e capacidade instalada não bastam; se cargas redundantes ficam no mesmo ramo, permanece um ponto único de falha e a redundância funcional se perde.",
+      "resposta_padrao": "A capacidade nominal de cada UPS.",
+      "por_que_nao": "Capacidade plena não garante independência; a falha do ramo comum derruba simultaneamente as estações concentradas nele.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Lógicas de reboot e trip podem bloquear recomposição após blackout mesmo com fonte disponível.",
+      "pergunta": "No retorno após blackout, CLP e supervisão permaneceram energizados por bateria e já existe fonte pronta para recompor, mas a sequência não avança. Que aspecto específico da lógica deve ser verificado?",
+      "resposta": "Coerência das lógicas de reboot e de trip",
+      "explicacao": "Com controles mantidos energizados e fonte disponível, uma inconsistência entre reboot e permissivos/trips pode impedir a recomposição do sistema no black start.",
+      "resposta_padrao": "O estado de carga das baterias.",
+      "por_que_nao": "As baterias já sustentaram CLP e supervisão; neste caso, a recomposição pode falhar por bloqueio lógico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Continuidade do UPS diante de falha do inversor exige bypass disponível.",
+      "pergunta": "A saída do UPS está normal e as baterias passaram no teste. Para manter alimentação crítica se o inversor falhar internamente, que disponibilidade específica ainda precisa ser confirmada?",
+      "resposta": "Disponibilidade do bypass do UPS",
+      "explicacao": "Baterias e retificador saudáveis não substituem o caminho AC quando o inversor falha; a continuidade depende da transferência possível pelo bypass.",
+      "resposta_padrao": "A saúde do retificador/carregador.",
+      "por_que_nao": "O retificador mantém o barramento DC e a carga das baterias, mas não assume a saída AC na falha interna do inversor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "01_01:007:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do nível de detalhe da modelagem RAM conforme a etapa de projeto.",
+      "pergunta": "Com apenas o arranjo preliminar definido e a necessidade de comparar quantidade de equipamentos e alternativas de redundância, que tipo de modelo RAM é o mais adequado nessa etapa?",
+      "resposta": "diagrama de blocos de confiabilidade simplificado",
+      "explicacao": "Na fase preliminar, o objetivo é validar arranjo, quantidade de equipamentos e redundância; modelos simples já atendem antes do detalhamento de dependências e modos operacionais.",
+      "resposta_padrao": "Uma simulação RAM detalhada desde o início.",
+      "por_que_nao": "Sem detalhamento confiável, o refinamento cria precisão aparente; para comparar arranjo e redundância, o modelo simplificado é o adequado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em etapas preliminares de projeto, modelos mais simples podem servir para validar arranjo, quantidade de equipamentos e alternativas de redundância."
+        },
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de representar dependências e gargalos compartilhados ao modelar redundância.",
+      "pergunta": "Dois trens duplicados compartilham utilidades e a mesma descarga; a modelagem série-paralelo prevê grande ganho de disponibilidade. Que elemento técnico deve entrar no RAM para não superestimar esse ganho?",
+      "resposta": "dependências por recursos compartilhados",
+      "explicacao": "Redundância só aumenta desempenho se a função relevante for preservada. Utilidades, descarga, controle ou acesso compartilhados criam dependências que invalidam a suposição de paralelismo independente.",
+      "resposta_padrao": "Modelar os trens como redundância paralela independente.",
+      "por_que_nao": "Recursos e gargalos compartilhados introduzem dependências e causas comuns que reduzem o ganho previsto pela lógica paralela simples.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outros métodos capazes de representar dependências e modos de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização do RAM com parâmetros locais em vez de dados setoriais genéricos.",
+      "pergunta": "Já existe histórico próprio de falhas e reparos após o comissionamento, mas há também banco setorial consolidado. Ao atualizar o RAM para representar o desempenho local, qual base de parâmetros deve prevalecer?",
+      "resposta": "dados característicos do sistema analisado",
+      "explicacao": "Frequências de falha e tempos de reparo variam com arquitetura, acessibilidade, manutenção e contexto operacional; bancos setoriais apoiam comparação, mas não representam automaticamente a condição local.",
+      "resposta_padrao": "Os parâmetros do banco setorial consolidado.",
+      "por_que_nao": "Esses bancos padronizam e comparam, mas a atualização do RAM deve refletir arquitetura, acessibilidade e manutenção locais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não substituem dados da unidade quando o objetivo é representar condições locais"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Definição do intervalo operacional usado para MTTR e disponibilidade observada.",
+      "pergunta": "No monitoramento de eventos para alimentar MTTR e disponibilidade observada, qual intervalo deve ser medido em cada falha?",
+      "resposta": "intervalo entre início da falha e retorno operacional",
+      "explicacao": "Esse intervalo captura a perda real e a recuperação funcional do item, permitindo calcular MTTR e disponibilidade observada; tempos administrativos da ordem de serviço podem não coincidir.",
+      "resposta_padrao": "O tempo entre abertura e fechamento da ordem de serviço.",
+      "por_que_nao": "MTTR e disponibilidade observada usam o período de indisponibilidade funcional, não o ciclo administrativo da manutenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada"
+        }
+      ]
+    }
+  ]
+}

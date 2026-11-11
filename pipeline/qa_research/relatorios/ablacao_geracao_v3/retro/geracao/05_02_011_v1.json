@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:011:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda da alimentação de comando em 24 Vcc pode derrubar a geração mesmo com a máquina motriz disponível.",
+      "pergunta": "Gerador em operação sai do paralelo após uma perturbação, a máquina motriz permanece estável e desaparecem comando, supervisão e atuação do canal do gerador. Qual alimentação deve ser restabelecida primeiro para sustentar a geração?",
+      "resposta": "24 Vcc dos painéis de controle do gerador.",
+      "explicacao": "Sem a alimentação de controle, o gerador pode continuar mecanicamente disponível, mas não permanece conectado nem controlável.",
+      "resposta_padrao": "A excitação do AVR.",
+      "por_que_nao": "Perda de excitação altera tensão e reativo; perda simultânea de comando e supervisão indica colapso da alimentação de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância nominal de 24 Vcc e UPS só é válida se houver independência elétrica real até as cargas de controle.",
+      "pergunta": "Dois retificadores/carregadores, dois bancos de baterias e uma UPS aparecem redundantes no diagrama. Como verificar que o controle de geradores e válvulas não depende, na prática, de um único caminho de alimentação?",
+      "resposta": "Rastreamento ponto a ponto até a fonte final, confirmando independência elétrica real.",
+      "explicacao": "A verificação precisa confirmar segregação real, independência dos caminhos e coerência entre projeto, configuração implantada e modificações acumuladas.",
+      "resposta_padrao": "Teste de autonomia das baterias e da UPS.",
+      "por_que_nao": "Autonomia suficiente não elimina causa comum se os canais convergirem para a mesma UPS, quadro CC ou ponto de distribuição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A UPS pode ser o elo entre perda de alimentação e indisponibilidade do estágio de saída do CLP para atuação de válvulas.",
+      "pergunta": "Falha da UPS coincide com perda da energia principal; a supervisão permanece parcial, mas as válvulas deixam de responder aos comandos do sistema de controle. Que elo físico de comando foi perdido?",
+      "resposta": "A energização do cartão-relé do CLP.",
+      "explicacao": "Na sequência descrita, a falha da UPS desenergiza o cartão-relé; sem a etapa de saída energizada, o comando não chega às válvulas.",
+      "resposta_padrao": "A comunicação da rede de controle.",
+      "por_que_nao": "A rede pode continuar operante; sem alimentação do cartão-relé, faltam saídas elétricas para acionar os elementos finais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A lógica de recomposição deve ser testada em modo anormal para excluir trip persistente ao disjuntor do gerador de emergência.",
+      "pergunta": "Na validação da recomposição após blackout, com o controle reiniciando fora da condição normal de bateria, qual condição lógica deve ser comprovadamente removida antes de fechar o disjuntor do gerador de emergência?",
+      "resposta": "Sinal de trip mantido ao disjuntor do gerador de emergência.",
+      "explicacao": "Em modo anormal, um trip persistente do controle pode bloquear a energização do gerador de emergência mesmo com a máquina disponível.",
+      "resposta_padrao": "Permissivo de sincronismo do gerador.",
+      "por_que_nao": "No fechamento sobre barramento morto, sincronismo não é o bloqueio principal; um comando de trip latente impede o fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        }
+      ]
+    }
+  ]
+}

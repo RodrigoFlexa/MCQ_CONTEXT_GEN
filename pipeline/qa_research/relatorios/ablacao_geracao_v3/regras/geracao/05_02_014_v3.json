@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 14,
+  "visita": 3,
+  "onda": 5,
+  "id": "05_02:014:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de seleção entre isócrono e droop no controle primário de frequência.",
+      "pergunta": "Com o barramento isolado por blackout e apenas um gerador alimentando as cargas essenciais, qual modo de controle de velocidade deve ficar ativo para manter a frequência durante degraus de carga?",
+      "resposta": "Modo isócrono do regulador de velocidade.",
+      "explicacao": "Em operação isolada, o gerador precisa corrigir o erro de frequência até a referência. Droop é usado para compartilhamento estável de potência ativa entre máquinas em paralelo.",
+      "resposta_padrao": "Modo droop do regulador de velocidade.",
+      "por_que_nao": "Droop deixa desvio permanente de frequência e é apropriado para divisão de kW entre geradores paralelos."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Diagnóstico do mau compartilhamento de potência reativa entre geradores síncronos em paralelo.",
+      "pergunta": "À medida que a demanda de kVAr aumenta, dois geradores em paralelo passam a dividir mal o reativo, embora em baixa carga o compartilhamento seja aceitável e o kW permaneça correto. Qual ajuste específico deve ser revisto?",
+      "resposta": "Droop reativo do AVR.",
+      "explicacao": "Se o problema cresce com a carga reativa total, a inclinação de compartilhamento de reativo está incorreta. O governador atua no kW, não no balanço de kVAr.",
+      "resposta_padrao": "Setpoint de tensão do AVR.",
+      "por_que_nao": "Desvio de setpoint causa circulação de reativo já em baixa carga; erro dependente da demanda indica a característica de droop."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Discriminação de corrente de inrush na proteção diferencial de transformadores.",
+      "pergunta": "Na energização a vazio de um transformador, qual critério específico a proteção diferencial usa para não interpretar a corrente de magnetização inicial como falta interna?",
+      "resposta": "Bloqueio por segundo harmônico da corrente de inrush.",
+      "explicacao": "A corrente de energização possui conteúdo significativo de segundo harmônico, usado pela proteção para distinguir inrush de uma falta interna verdadeira.",
+      "resposta_padrao": "Temporização fixa da proteção diferencial.",
+      "por_que_nao": "Inrush não é discriminado de forma confiável só por atraso; a distinção clássica é pelo conteúdo harmônico."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Efeito da reaceleração de motores na estabilidade transitória de frequência após subtensão.",
+      "pergunta": "Após uma breve subtensão, a tensão retorna sem novas partidas, mas a frequência do barramento cai em seguida e um gerador se aproxima do limite de carga. Que mecanismo explica essa sequência?",
+      "resposta": "Reaceleração simultânea de motores de indução.",
+      "explicacao": "Motores que permaneceram conectados retomam velocidade ao retorno da tensão e exigem pico transitório de potência e reativo, derrubando a frequência do gerador remanescente.",
+      "resposta_padrao": "Sobrecarga estática das cargas já conectadas.",
+      "por_que_nao": "A queda retardada após a recuperação de tensão é típica de pico transitório de reaceleração, não de demanda estacionária."
+    }
+  ]
+}

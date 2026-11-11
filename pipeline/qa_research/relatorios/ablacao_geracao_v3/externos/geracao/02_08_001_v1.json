@@ -1,0 +1,99 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_08:001:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para escolher simulação dinâmica quando picos de alívio dependem da evolução temporal do evento.",
+      "pergunta": "Bloqueios e atuações de controle fazem a carga de alívio variar ao longo da parada, e o pico de temperatura não coincide com o pico de vazão. Qual abordagem de análise deve ser usada para definir o caso governante de alívio?",
+      "resposta": "Simulação dinâmica do processo.",
+      "explicacao": "Quando os picos dependem da sequência do evento, da atuação de controles e do acoplamento entre equipamentos, é preciso captar a evolução temporal para identificar o caso governante.",
+      "resposta_padrao": "Análise estática conservadora do caso de maior vazão.",
+      "por_que_nao": "Ela pode perder picos em instantes distintos e assumir simultaneidade que o transiente real não sustenta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da instabilidade dominante em shutdown de compressor com queda rápida de vazão e abertura de reciclo.",
+      "pergunta": "Durante a parada programada de um trem de compressão, a válvula de reciclo abre, a vazão através da máquina cai rapidamente e o rotor segue desacelerando. Qual instabilidade específica deve ser investigada nesse transiente?",
+      "resposta": "Surge do compressor.",
+      "explicacao": "Em paradas, a combinação de queda de vazão, desaceleração e resposta transitória do sistema leva à avaliação do limite instável de baixa vazão.",
+      "resposta_padrao": "Stonewall do compressor.",
+      "por_que_nao": "Stonewall é associado à condição de alta vazão, não ao transiente de queda rápida de vazão descrito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de representar volumes comunicantes na simulação dinâmica de alívio de equipamentos conectados.",
+      "pergunta": "Dois vasos permanecem ligados por uma linha aberta durante a despressurização de emergência. Para que a carga calculada no transiente seja representativa, que aspecto do modelo precisa ser incluído explicitamente?",
+      "resposta": "Volumes comunicantes.",
+      "explicacao": "Se os vasos seguem conectados, a redistribuição de massa e a equalização de pressão alteram a carga de alívio ao longo do evento.",
+      "resposta_padrao": "Somar os inventários e usar uma pressão inicial equivalente.",
+      "por_que_nao": "Isso perde o acoplamento temporal entre os volumes e distorce a evolução de pressão e vazão durante o transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação da pressão de reassentamento na modelagem dinâmica de PSV para avaliar comportamento real de abertura e fechamento.",
+      "pergunta": "Ao modelar dinamicamente a atuação de uma PSV em cenário com cargas alta e baixa, qual pressão além da de abertura precisa seguir o comportamento real da válvula?",
+      "resposta": "Pressão de reassentamento.",
+      "explicacao": "A resposta dinâmica da PSV depende não só da abertura, mas também do ponto em que ela volta a fechar conforme seu comportamento real.",
+      "resposta_padrao": "Pressão de operação do sistema.",
+      "por_que_nao": "Ela define a condição inicial, mas não o ponto de fechamento que governa o ciclo dinâmico da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula"
+        }
+      ]
+    }
+  ]
+}

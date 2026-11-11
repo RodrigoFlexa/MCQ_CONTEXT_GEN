@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:004:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O controle de acesso em IACS deve abranger endpoints privilegiados, não apenas contas de usuário.",
+      "pergunta": "As contas do domínio OT seguem RBAC, mas qualquer técnico que obtenha o equipamento usado para download de lógica ainda consegue atuar nos controladores. Que elemento deve entrar explicitamente no controle de acesso?",
+      "resposta": "estação de engenharia",
+      "explicacao": "Em IACS, o escopo de acesso inclui estações de engenharia. Se esse endpoint privilegiado não for controlado, ele permite alterar lógica com efeito operacional direto.",
+      "resposta_padrao": "As contas de usuário do domínio OT.",
+      "por_que_nao": "O risco decisivo está no endpoint confiável que carrega lógica; controlar só contas não cobre o uso da estação privilegiada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Pelo menor privilégio, tarefas de alterar configuração, lógica ou firmware exigem acesso de engenharia.",
+      "pergunta": "Para corrigir uma falha intermitente, o fornecedor precisa ajustar configuração e carregar firmware no controlador, sem criar contas nem mudar proteções do sistema. Qual privilégio mínimo deve ser concedido?",
+      "resposta": "acesso de engenharia",
+      "explicacao": "A tarefa envolve alterar configuração e firmware. Em IACS, esse escopo é de engenharia; conceder privilégio administrativo excede a necessidade da atividade.",
+      "resposta_padrao": "Acesso administrativo.",
+      "por_que_nao": "Privilégio administrativo é voltado a contas e proteções; configuração, lógica e firmware pertencem ao escopo de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em IACS, a resposta cibernética deve priorizar disponibilidade do processo acima de confidencialidade quando há impacto operacional.",
+      "pergunta": "Perda de visibilidade no supervisório e parada indevida ocorreram sem indício de exfiltração. Em IACS, qual atributo deve orientar primeiro a resposta cibernética acima da confidencialidade?",
+      "resposta": "disponibilidade",
+      "explicacao": "Os efeitos descritos comprometem a continuidade operacional e o comportamento do processo. Em IACS, esse impacto prevalece sobre a preocupação primária com sigilo de dados.",
+      "resposta_padrao": "Confidencialidade.",
+      "por_que_nao": "Esse foco é típico de IT; em ICS o efeito principal é sobre disponibilidade e comportamento do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "parada indevida, perda de visibilidade, desabilitação de alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Aprovação, implementação e validação da mesma mudança por uma única pessoa caracterizam falta de segregação de funções.",
+      "pergunta": "Na janela de manutenção, a mesma pessoa aprovou a mudança, carregou a lógica e executou a validação final. Que falha de controle explica esse arranjo?",
+      "resposta": "ausência de segregação de funções",
+      "explicacao": "O problema não é só o nível de privilégio, mas a concentração das etapas críticas da mudança em uma única pessoa, reduzindo a chance de detectar erro.",
+      "resposta_padrao": "Menor privilégio insuficiente.",
+      "por_que_nao": "Menor privilégio trata da amplitude das permissões; aqui a falha é não separar aprovação, implementação e validação.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "incluindo arranjos organizacionais, competência e efetividade das contramedidas"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:017:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A recomposição funcional de cargas essenciais após microinterrupção depende da coerência entre reinicialização e lógica de trip.",
+      "pergunta": "Uma microinterrupção do UPS termina, os controladores reinicializam, mas válvulas e intertravamentos críticos ficam em estado que impede a retomada. Que aspecto específico deve ser verificado para a recuperação ocorrer corretamente?",
+      "resposta": "Coerência das lógicas de reboot e de trip.",
+      "explicacao": "O retorno da energia não garante retomada funcional. Cargas essenciais podem permanecer bloqueadas ou desarmadas se a sequência de reinício e trips não for coerente.",
+      "resposta_padrao": "Disponibilidade do bypass do UPS.",
+      "por_que_nao": "O bypass mantém alimentação na falha do inversor; aqui a indisponibilidade é lógica, após o retorno de energia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Descarga contínua das baterias com CA disponível indica falha do caminho de retificação/carregamento, não apenas perda de capacidade das baterias.",
+      "pergunta": "Barramento de 24 Vcc permanece na tensão nominal com a rede CA disponível, mas a corrente das baterias segue de descarga contínua e a autonomia efetiva cai. Qual é a causa primária?",
+      "resposta": "Falha do retificador/carregador.",
+      "explicacao": "Com CA disponível, o retificador deve sustentar a carga e manter as baterias em flutuação. Descarga contínua indica que o barramento está sendo mantido às custas delas.",
+      "resposta_padrao": "Degradação do banco de baterias.",
+      "por_que_nao": "Bateria degradada reduz capacidade sob demanda, mas não explica descarga contínua com alimentação CA presente no barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "condição de baterias, saúde do inversor e do retificador"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Queda instantânea da saída do UPS na perda da rede, com baterias saudáveis, aponta para indisponibilidade do inversor.",
+      "pergunta": "Na perda da alimentação normal, a saída do UPS cai instantaneamente, embora o bypass esteja disponível e as baterias estejam saudáveis. Que elemento específico estava indisponível?",
+      "resposta": "Inversor do UPS.",
+      "explicacao": "Se as baterias estão aptas, a manutenção da saída na perda da rede depende do caminho de inversão. Colapso imediato indica ausência dessa conversão.",
+      "resposta_padrao": "Banco de baterias sem autonomia.",
+      "por_que_nao": "Autonomia insuficiente derruba a carga após algum tempo; queda instantânea na perda da rede indica inversão indisponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ]
+    }
+  ]
+}

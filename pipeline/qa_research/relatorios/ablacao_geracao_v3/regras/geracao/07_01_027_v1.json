@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:027:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correção de linearização indevida em medição de vazão por diferencial de pressão.",
+      "pergunta": "Durante loop check, a injeção de 25% da faixa de ΔP faz o supervisório indicar cerca de 70% da vazão, com sinal estável. Qual configuração específica deve ser corrigida?",
+      "resposta": "Desabilitar uma das extrações de raiz quadrada.",
+      "explicacao": "Com 25% de ΔP, a vazão correta é 50% da escala. Indicação próxima de 70% caracteriza aplicação adicional de raiz quadrada.",
+      "resposta_padrao": "Recalibrar o span do transmissor.",
+      "por_que_nao": "Erro de calibração altera ganho ou offset; não gera a curva típica de quarta raiz."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Estabilização de válvula pneumática após instalação de volume booster.",
+      "pergunta": "Válvula pneumática de grande porte passou a oscilar após instalação de volume booster; suprimento de ar estável e o sinal do posicionador alterna rapidamente em torno do comando. Qual arranjo específico no booster deve ser ajustado ou instalado?",
+      "resposta": "Bypass restritivo com válvula agulha no volume booster.",
+      "explicacao": "A restrição mantém o posicionador comandando pequenas correções e evita que o booster amplifique a realimentação, provocando hunting.",
+      "resposta_padrao": "Retunar o PID da malha.",
+      "por_que_nao": "A instabilidade nasceu no elemento final; sem bypass restritivo, o booster introduz ganho local que o PID não elimina."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciação entre deriva metrológica e restrição hidráulica em medição de pressão.",
+      "pergunta": "Entre três transmissores no mesmo ponto de pressão, um atinge o mesmo valor final dos outros, mas responde bem mais devagar nas subidas e descidas; a calibração estática em bancada foi aprovada. Qual a causa primária?",
+      "resposta": "Obstrução parcial da linha de impulso.",
+      "explicacao": "A restrição acrescenta constante de tempo hidráulica e retarda a resposta sem alterar o valor final em regime permanente.",
+      "resposta_padrao": "Deriva do sensor do transmissor.",
+      "por_que_nao": "Deriva aparece como erro em regime; atraso transitório com concordância final aponta restrição no caminho de pressão."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação necessária no proof test para cobrir modo de falha não detectado por partial stroke.",
+      "pergunta": "Partial stroke test rotineiro e feedback de posição estão aprovados numa válvula de bloqueio. Como o proof test completo deve verificar a falha que esse ensaio não cobre?",
+      "resposta": "Com teste de estanqueidade da sede após fechamento total.",
+      "explicacao": "O partial stroke confirma deslocamento e atuação do trem de comando, mas não comprova vedação efetiva no assento.",
+      "resposta_padrao": "Repetindo o partial stroke em maior frequência.",
+      "por_que_nao": "Mais repetições não acrescentam verificação de tight shutoff; a limitação é de cobertura do modo de falha."
+    }
+  ]
+}

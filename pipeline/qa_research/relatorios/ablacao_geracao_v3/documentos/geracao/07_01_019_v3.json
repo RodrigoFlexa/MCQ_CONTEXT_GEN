@@ -1,0 +1,95 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_01:019:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Override substitui temporariamente a referência da malha principal por outra lógica automática de maior prioridade.",
+      "pergunta": "Durante aproximação de alta pressão, a válvula deixa de seguir a saída do controlador de vazão e passa automaticamente a obedecer a um limitador, sem fixar a saída. Como se chama esse arranjo lógico?",
+      "resposta": "override",
+      "explicacao": "A atuação automática é mantida, mas a referência da malha principal é substituída por outra lógica prioritária; isso altera o comportamento esperado sem impor um valor fixo.",
+      "resposta_padrao": "forcing da saída",
+      "por_que_nao": "No forcing a saída fica imposta a um valor ou estado; aqui ela continua comandada por outra lógica automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Desativações temporárias por bypass, override ou forcing aparecem como atividades operacionais existentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Intertravamento atua em condição de operação; permissivo atua na autorização de partida.",
+      "pergunta": "Com o equipamento já operando, a variável de proteção atinge condição de trip, o alarme aparece no supervisório e ainda assim não ocorre parada automática. Qual função da lógica foi neutralizada?",
+      "resposta": "intertravamento de parada",
+      "explicacao": "Se o equipamento já estava em operação e a condição de proteção ocorreu sem parada automática, a função suprimida é o intertravamento, não o permissivo de partida.",
+      "resposta_padrao": "permissivo de partida",
+      "por_que_nao": "Permissivo bloqueia a partida; com o equipamento rodando, quem deve atuar para parar é o intertravamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "retiram temporariamente parte da lógica normal de atuação ou de supervisão"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Forcing pode desacoplar a variável interna do controlador do estado físico observado no campo.",
+      "pergunta": "O contato de campo muda de estado, mas a lógica e a indicação associada permanecem inalteradas após intervenção temporária no controlador. Qual mecanismo faz o sistema deixar de refletir o campo?",
+      "resposta": "desacoplamento entre entrada física e variável forçada",
+      "explicacao": "Quando há forcing, a variável interna usada pela lógica deixa de depender do retorno físico; assim, a indicação pode parecer normal mesmo com mudança real no campo.",
+      "resposta_padrao": "falha de comunicação na rede",
+      "por_que_nao": "Falha de rede afeta atualização e qualidade do dado; aqui o estado permanece imposto internamente apesar da mudança física.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Operação em circuito fechado com N2 reduz incertezas de integração e atuação após longos períodos de inatividade.",
+      "pergunta": "Antes de introduzir gás inflamável em um circuito de regeneração parado há longo tempo, qual arranjo de teste reduz melhor as incertezas de integração e atuação mantendo inventário não inflamável?",
+      "resposta": "operação em circuito fechado com N2",
+      "explicacao": "Esse arranjo submete o sistema a condição representativa sem o inventário inflamável normal, revelando integração, sintonia, vazamentos por acomodação térmica e falhas de comunicação.",
+      "resposta_padrao": "teste de malha a frio",
+      "por_que_nao": "Teste a frio não reproduz a condição operacional representativa nem evidencia acomodação térmica, vazamentos e atuação integrada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "podem permanecer incertezas sobre manutenção, condições operacionais e consequências de longos períodos de inatividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica, confirmar desempenho, identificar vazamentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "retirar incertezas antes da condição operacional com gás natural"
+        }
+      ]
+    }
+  ]
+}

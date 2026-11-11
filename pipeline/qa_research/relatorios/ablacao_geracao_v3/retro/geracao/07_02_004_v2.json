@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:004:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Menor privilégio em IACS inclui limitar a vigência do acesso ao menor tempo compatível com a atividade.",
+      "pergunta": "O ativo-alvo e as permissões mínimas já foram definidos para uma intervenção remota única em lógica de controlador. O fornecedor pede que a conta permaneça habilitada após o serviço para agilizar futuras chamadas. Que parâmetro do acesso ainda deve ser restringido?",
+      "resposta": "Vigência temporária mínima compatível com a atividade.",
+      "explicacao": "No menor privilégio, não basta limitar ativo e permissão. O acesso também deve existir só pelo tempo estritamente necessário, evitando que um acesso legítimo se torne excessivo.",
+      "resposta_padrao": "Restringir apenas o IP de origem do fornecedor.",
+      "por_que_nao": "Origem fixa reduz exposição, mas não elimina privilégio excessivo mantido além da tarefa; em IACS, o tempo também integra o menor privilégio.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em IACS, acessos com escrita ao processo devem ser criticados principalmente pelo impacto na disponibilidade e no comportamento do processo.",
+      "pergunta": "Uma conta de fornecedor acessa remotamente o supervisório e pode escrever setpoints de operação. Ao classificar a criticidade desse acesso, que impacto técnico deve orientar a análise?",
+      "resposta": "Impacto na disponibilidade e no comportamento do processo.",
+      "explicacao": "Com escrita de setpoints, o acesso pode alterar diretamente a operação. Em ICS, a consequência dominante é afetar disponibilidade e comportamento do processo, não apenas expor informações.",
+      "resposta_padrao": "Perda de confidencialidade dos dados de produção.",
+      "por_que_nao": "Confidencialidade importa, mas acesso com escrita em IACS pode mudar setpoints e afetar a operação, que é a consequência principal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mudança de setpoint"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em ICS, a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Quando o caminho remoto alcança apenas a camada supervisória sem comando de processo, o efeito direto mais característico é a perda de visibilidade.",
+      "pergunta": "O acesso remoto de um integrador alcança apenas o servidor de supervisão que publica telas e tendências; não há comando de processo, nem alcance a controladores ou SIS. Se esse acesso for mal protegido, que capacidade operacional tende a cair primeiro?",
+      "resposta": "Visibilidade do processo.",
+      "explicacao": "Sem caminho de comando ou engenharia, o efeito direto recai na supervisão. Comprometer telas e tendências reduz a visibilidade operacional, mesmo sem alterar lógica ou setpoints.",
+      "resposta_padrao": "Capacidade de alterar a lógica de controle.",
+      "por_que_nao": "Sem alcance a controladores, SIS ou funções de engenharia, o acesso não modifica diretamente a lógica; o risco imediato é cegar a operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "perda de visibilidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ]
+    }
+  ]
+}

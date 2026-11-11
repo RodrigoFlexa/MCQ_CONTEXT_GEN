@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 14,
+  "visita": 1,
+  "onda": 1,
+  "id": "05_02:014:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em geradores síncronos em paralelo, kW é compartilhado pelo governador e kVAr pela excitação/AVR.",
+      "pergunta": "Dois geradores síncronos operam em paralelo; frequência e compartilhamento de kW estão estáveis, mas uma máquina assume quase todo o kVAr e se aproxima do limite de corrente. Qual variável de controle deve ser ajustada para corrigir o desbalanceamento?",
+      "resposta": "excitação do gerador via AVR",
+      "explicacao": "Com frequência e kW estáveis, o problema não é do governador. A redistribuição de potência reativa entre máquinas em paralelo é feita pela excitação.",
+      "resposta_padrao": "Ajustar o governador de velocidade.",
+      "por_que_nao": "O governador atua em potência ativa e frequência; o desequilíbrio de kVAr é controlado pela excitação."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Importação de potência ativa por gerador sincronizado após perda de combustível indica motorização por insuficiência de potência mecânica.",
+      "pergunta": "Com o gerador ainda sincronizado ao barramento, o medidor passa a indicar importação de MW logo após redução abrupta de combustível do acionador. Qual é a causa primária?",
+      "resposta": "motorização por perda de torque do acionador primário",
+      "explicacao": "A máquina permanece sincronizada, mas sem torque mecânico suficiente passa a absorver potência ativa do barramento, comportando-se como motor.",
+      "resposta_padrao": "Falha do AVR.",
+      "por_que_nao": "Falha de AVR altera tensão e kVAr; importação de MW com sincronismo mantido indica perda de potência mecânica."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na primeira falta à terra em redes com neutro isolado ou aterrado por alta impedância, a detecção mais sensível é por deslocamento do neutro/tensão residual.",
+      "pergunta": "Em rede de média tensão com neutro isolado ou aterrado por alta impedância, surge alarme de terra, as tensões fase-terra se deslocam e não há sobrecorrente relevante. Qual proteção identifica a primeira falta?",
+      "resposta": "sobretensão residual 59N",
+      "explicacao": "Na primeira falta à terra, a corrente é limitada e pode ser baixa. O sinal característico é a elevação da tensão residual por deslocamento do neutro.",
+      "resposta_padrao": "Sobrecorrente de neutro 51N.",
+      "por_que_nao": "Com corrente de falta limitada, 51N pode não sensibilizar; a tensão residual se eleva mesmo sem corrente elevada."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na recomposição após blackout, o comando e a proteção do switchgear dependem primeiro da alimentação CC de controle.",
+      "pergunta": "No restabelecimento após blackout, o gerador de emergência estabilizou, porém as bobinas de fechamento/disparo e os relés do painel de média tensão seguem sem alimentação. Qual barramento precisa estar disponível primeiro?",
+      "resposta": "barramento CC de controle do switchgear",
+      "explicacao": "Relés, lógica de comando e bobinas de fechamento/disparo dependem da alimentação CC. Sem ela, a fonte CA disponível não permite recompor o sistema.",
+      "resposta_padrao": "Barramento CA de emergência.",
+      "por_que_nao": "Mesmo com CA disponível, sem a alimentação CC de controle os disjuntores e relés continuam inoperantes."
+    }
+  ]
+}

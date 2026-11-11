@@ -1,0 +1,107 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_01:006:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Seleção da variável de pressão correta para testar atuação com posicionador.",
+      "pergunta": "Durante o teste de uma válvula pneumática com posicionador, a pressão na alimentação está estável, mas o curso não acompanha o comando. Que pressão deve ser medida para representar a força realmente aplicada ao atuador?",
+      "resposta": "Pressão de carga no atuador",
+      "explicacao": "Com posicionador, a pressão que move diafragma ou pistão é ajustada internamente e pode diferir da pressão de suprimento; ela é que representa a força efetiva de atuação.",
+      "resposta_padrao": "Pressão de suprimento.",
+      "por_que_nao": "Ela só indica o ar disponível na alimentação; a força efetiva resulta da pressão aplicada ao diafragma ou pistão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a pressão de carga é a pressão efetivamente aplicada ao diafragma ou pistão para deslocá-lo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do posicionador para vencer forças de processo e reduzir efeitos de não linearidades.",
+      "pergunta": "Com pressão de suprimento adequada, atuador íntegro e sem posicionador, a válvula tem dificuldade para vencer forças de processo e responde de forma pouco linear ao comando. Qual ação técnica específica no conjunto é a mais adequada?",
+      "resposta": "Instalar posicionador",
+      "explicacao": "O posicionador ajusta a pressão entregue ao atuador para atingir a posição requerida e pode melhorar a capacidade de vencer forças de processo e não linearidades.",
+      "resposta_padrao": "Aumentar a pressão de suprimento.",
+      "por_que_nao": "Com suprimento adequado, o ganho vem da modulação da pressão de carga pelo posicionador, não de mais pressão na alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o posicionador pode melhorar a capacidade de vencer forças de processo e não linearidades"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de stiction pela sequência parada-salto e formação de ciclos limite.",
+      "pergunta": "A saída do controlador varia continuamente, mas a válvula permanece parada por um intervalo e depois salta de posição; a malha entra em ciclos limite. Qual mecanismo primário explica esse padrão?",
+      "resposta": "Stiction",
+      "explicacao": "O padrão de permanência seguida de deslocamento abrupto ocorre quando a força de atuação só supera depois o limiar de atrito estático do conjunto móvel.",
+      "resposta_padrao": "Hunting do controlador.",
+      "por_que_nao": "Hunting é a oscilação observada; aqui o gatilho do comportamento é a liberação após vencer o atrito estático.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Stiction é o comportamento associado ao atrito estático que mantém a válvula parada até que a força de atuação vença a resistência ao movimento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A liberação pode produzir um salto de posição, prejudicando a modulação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse mecanismo degrada o desempenho da malha porque introduz atraso, movimento descontínuo e possibilidade de ciclos limite."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mas também pode introduzir erro de posicionamento ou participar de fenômenos de instabilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Relação entre queda de suprimento e agravamento do stiction pela força de atuação disponível.",
+      "pergunta": "Com atrito estático já presente na válvula, a pressão de suprimento cai. Qual elo físico imediato faz aumentar a permanência sem movimento antes do salto de posição?",
+      "resposta": "Redução da força disponível no atuador",
+      "explicacao": "Menor pressão de suprimento reduz a força que o atuador consegue aplicar; assim, demora mais para superar o limiar de atrito estático e iniciar o movimento.",
+      "resposta_padrao": "Aumento do atrito mecânico.",
+      "por_que_nao": "O limiar de atrito pode permanecer igual; a piora ocorre porque cai a força de atuação capaz de vencê-lo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "O efeito observado depende da interação entre atrito mecânico, força disponível no atuador, pressão de suprimento, presença de posicionador e forças de processo atuando sobre o obturador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a pressão de carga é a pressão efetivamente aplicada ao diafragma ou pistão para deslocá-lo."
+        }
+      ]
+    }
+  ]
+}

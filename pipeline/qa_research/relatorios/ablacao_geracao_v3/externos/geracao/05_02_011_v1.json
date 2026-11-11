@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:011:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dependência da permanência do gerador em paralelo da alimentação CC de comando e supervisão.",
+      "pergunta": "Geradores em carga permanecem mecanicamente disponíveis e o barramento de potência não apresenta falta, mas os painéis de controle se desenergizam e toda a geração cai. Que alimentação deve ser tratada como barreira crítica contra blackout?",
+      "resposta": "24 Vcc dos painéis de controle dos geradores",
+      "explicacao": "Sem a alimentação CC de comando, supervisão e atuação, o gerador pode continuar mecanicamente apto, mas deixa de permanecer conectado ou controlável, iniciando a perda da geração mesmo sem falha no barramento.",
+      "resposta_padrao": "o barramento principal em CA",
+      "por_que_nao": "Aqui a indisponibilidade decisiva é a da alimentação de controle; sem ela, o gerador cai mesmo com o barramento íntegro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de lógica de recomposição em estado degradado, sem o suporte normal de UPS ou bateria.",
+      "pergunta": "Durante a verificação de recomposição após blackout, em que condição de reinicialização a lógica de trips e permissivos do gerador de emergência deve ser testada para revelar bloqueios ocultos?",
+      "resposta": "reboot do controle com UPS ou bateria indisponíveis",
+      "explicacao": "Intertravamentos podem ficar mascarados na partida usual com alimentação mantida por bateria. O teste relevante é no estado anormal de reboot sem esse suporte, quando a lógica ainda pode impedir o fechamento do disjuntor.",
+      "resposta_padrao": "na sequência normal de partida com alimentação de bateria disponível",
+      "por_que_nao": "Esse modo não expõe intertravamentos latentes que só aparecem no estado degradado após blackout.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redundância efetiva de canais de controle depende de segregação elétrica entre UPS e caminhos de alimentação.",
+      "pergunta": "Dois canais de supervisão previstos como redundantes ficaram alimentados pela mesma UPS; a falha desse conjunto derruba ambos. Qual modificação de arquitetura restabelece a redundância efetiva?",
+      "resposta": "alimentação de cada canal por UPS independente e segregada",
+      "explicacao": "Se os dois canais compartilham a mesma UPS, existe falha de causa comum. A redundância só volta a existir quando cada canal passa a ter fonte e caminho de alimentação segregados.",
+      "resposta_padrao": "instalar uma UPS única de maior capacidade",
+      "por_que_nao": "Capacidade maior não elimina o ponto único de falha compartilhado pelos dois canais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        }
+      ]
+    }
+  ]
+}

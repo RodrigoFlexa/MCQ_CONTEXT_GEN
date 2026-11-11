@@ -1,0 +1,107 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_12:012:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade da abertura da recirculação anti-surge sobre o controle de capacidade em perda súbita de vazão.",
+      "pergunta": "Com a vazão do compressor caindo bruscamente após fechamento inadvertido de uma válvula a jusante, a pressão de descarga sobe e o ponto corre para a linha de surge. Numa máquina com linha de recirculação anti-surge, que ação automática deve prevalecer de imediato?",
+      "resposta": "Abertura rápida da válvula de recirculação anti-surge.",
+      "explicacao": "Na perda súbita de vazão, a proteção deve afastar imediatamente o ponto da região de instabilidade. A recirculação recompõe fluxo pela máquina mais rápido que a malha de capacidade.",
+      "resposta_padrao": "Redução de rotação do compressor.",
+      "por_que_nao": "Reduzir rotação altera head e capacidade, mas não recompõe imediatamente a vazão através do compressor durante um bloqueio a jusante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para válvulas críticas de anti-surge, são recomendadas características dinâmicas adequadas"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da pressão de sucção como variável primária do controle de capacidade quando a prioridade é proteger a etapa a montante.",
+      "pergunta": "Quando a prioridade operacional é estabilizar a coleta de gás dos separadores a montante, e não sustentar exportação, que pressão deve ser a variável primária do controle de capacidade do compressor?",
+      "resposta": "Pressão de sucção.",
+      "explicacao": "Se a necessidade do processo é proteger a coleta a montante, a malha de capacidade deve responder ao estado da sucção, não ao requisito de descarga de outro destino.",
+      "resposta_padrao": "Pressão de descarga.",
+      "por_que_nao": "Quando o objetivo é proteger a etapa a montante, a variável proxy da necessidade do processo é a sucção, não a descarga.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "o controle de capacidade frequentemente se expressa como controle de pressão em pontos-chave da sucção ou da descarga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se precisa estabilizar a coleta de gás de separadores ou proteger a etapa a montante, a pressão de sucção pode ganhar prioridade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de malha de repartição de carga em compressores paralelos para evitar sobrecarga localizada durante transferências de trem.",
+      "pergunta": "Dois compressores centrífugos paralelos compartilham o mesmo cabeçalho. Na transferência de carga após a entrada do segundo trem, a pressão global permanece estável, mas um trem aproxima-se do surge e o outro fica folgado. Que função de controle está faltando?",
+      "resposta": "Malha de repartição de carga entre trens paralelos.",
+      "explicacao": "Manter só a pressão do cabeçalho não garante divisão adequada de esforço. Em paralelo, é preciso coordenar a carga para evitar concentração em um único trem.",
+      "resposta_padrao": "Controle independente da pressão de descarga em cada trem.",
+      "por_que_nao": "Com cabeçalho comum, malhas independentes podem manter a pressão total e ainda concentrar carga em um trem, levando-o à sobrecarga ou ao surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema de controle precisa repartir carga, evitar sobrecarga localizada e manter partidas, paradas e transferências de trem com segurança e confiabilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso da realimentação de posição para distinguir degradação dinâmica da válvula anti-surge de problema de sintonia da malha.",
+      "pergunta": "A malha anti-surge ordena aberturas rápidas, mas a resposta do processo chega tarde e a sintonia do controlador não mudou. Como verificar, no sistema de controle, se o atraso está na válvula e não no algoritmo?",
+      "resposta": "Comparação entre comando e posição real da válvula anti-surge.",
+      "explicacao": "Se o comando muda prontamente, mas a posição real atrasa ou não acompanha, o problema está no elemento final. Essa comparação revela atraso, histerese ou falha de atuação.",
+      "resposta_padrao": "Observar apenas o percentual de abertura comandado pelo controlador.",
+      "por_que_nao": "O sinal comandado prova só a demanda do algoritmo; sem feedback de posição, atraso e histerese do atuador ficam invisíveis.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que ajuda a detectar degradação, atraso, histerese ou falha de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção."
+        }
+      ]
+    }
+  ]
+}

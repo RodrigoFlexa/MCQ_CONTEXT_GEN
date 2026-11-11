@@ -1,0 +1,79 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "visita": 1,
+  "onda": 1,
+  "id": "01_01:010:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir indisponibilidade causada por atuação de proteção da indisponibilidade por falha física do equipamento.",
+      "pergunta": "Uma parada automática ocorre por alta pressão no separador; após normalizar a variável, o processo retorna sem troca de componente nem correção mecânica. Qual elemento técnico efetivamente retirou a produção de serviço?",
+      "resposta": "intertravamento de proteção",
+      "explicacao": "A interrupção decorre da atuação deliberada da função de proteção para evitar condição perigosa, não de perda comprovada de integridade do equipamento.",
+      "resposta_padrao": "falha do separador",
+      "por_que_nao": "Sem necessidade de reparo para retomar, a causa primária é o acionamento da lógica de proteção, não uma falha física.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Intertravamentos e funções de proteção podem interromper a produção para evitar estados perigosos, danos ambientais e consequências maiores."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Apurar MTTR separando tempo de reparo das esperas que não são reduzidas por aumento de equipe.",
+      "pergunta": "Um conjunto ficou indisponível das 02:00 às 10:00, mas o reparo físico consumiu 40 minutos e a equipe aguardou a maior parte do tempo por permissão de entrada. Na apuração do MTTR de reparo, que intervalo deve ser excluído?",
+      "resposta": "espera por liberação de trabalho",
+      "explicacao": "O MTTR de reparo contabiliza atividades de reparo e exclui esperas. Quando a demora dominante é liberação, mais equipes não reduzem esse tempo.",
+      "resposta_padrao": "todo o período entre falha e retorno",
+      "por_que_nao": "A definição de MTTR de reparo exige separar a execução física das esperas e demais tempos de indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Reconhecer o efeito de capacidade de equipe como gargalo que gera fila e amplia indisponibilidade em falhas simultâneas.",
+      "pergunta": "Duas bombas idênticas falham na mesma janela; sobressalentes e acesso estão disponíveis, cada reparo leva 1 hora isoladamente, mas a segunda só começa 4 horas depois. Que mecanismo operacional alongou a indisponibilidade?",
+      "resposta": "fila de manutenção",
+      "explicacao": "Com materiais e acesso disponíveis, o atraso adicional vem da espera por equipe quando falhas simultâneas encontram capacidade limitada.",
+      "resposta_padrao": "maior severidade da segunda falha",
+      "por_que_nao": "O tempo adicional aparece antes do início do reparo e decorre da alocação de equipe, não de maior complexidade técnica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a capacidade das equipes for o gargalo, falhas simultâneas podem criar fila e prolongar a indisponibilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar intervenções sob recurso compartilhado combinando criticidade funcional e duração da recuperação.",
+      "pergunta": "Dois reparos concorrem pelo único recurso de içamento: um restabelece um subsistema que derruba toda a exportação em 2 horas; o outro recupera 10% de capacidade em 8 horas. Qual deve ser priorizado?",
+      "resposta": "o reparo que restabelece a exportação total",
+      "explicacao": "Com a mesma restrição compartilhada, a combinação de maior criticidade funcional e menor duração acelera mais o retorno operacional.",
+      "resposta_padrao": "o reparo de 8 horas",
+      "por_que_nao": "Sob recurso comum, não se prioriza pelo maior esforço isolado, e sim pelo impacto funcional e tempo de recuperação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        }
+      ]
+    }
+  ]
+}

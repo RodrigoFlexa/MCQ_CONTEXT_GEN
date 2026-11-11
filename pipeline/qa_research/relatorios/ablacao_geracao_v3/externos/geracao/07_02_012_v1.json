@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:012:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de aplicabilidade de alerta de vulnerabilidade OT baseado no componente afetado, não na conectividade genérica.",
+      "pergunta": "Saiu um alerta sobre múltiplas vulnerabilidades na Treck TCP/IP, e um controlador crítico é acessível por rede, mas o software embarcado ainda não foi confirmado. Qual verificação técnica deve ser feita primeiro para decidir se o alerta se aplica a esse ativo?",
+      "resposta": "Confirmar a presença da pilha Treck TCP/IP embarcada.",
+      "explicacao": "O alerta atinge implementações embarcadas dessa pilha. Conectividade por si só não confirma impacto; a avaliação começa verificando se o ativo usa o componente afetado e depois sua exposição real.",
+      "resposta_padrao": "Verificar apenas se o ativo está exposto à internet.",
+      "por_que_nao": "A vulnerabilidade depende da presença da pilha Treck; internet aumenta exposição, mas não define aplicabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar se o ativo usa o componente afetado"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação prévia necessária antes de aplicar patch em sistema de controle OT.",
+      "pergunta": "A correção de um componente vulnerável já existe para um sistema de controle crítico. Antes de aplicá-la em produção, que compatibilidade precisa ser validada para não introduzir indisponibilidade ou comportamento não previsto?",
+      "resposta": "Compatibilidade entre firmware, comunicação e funções de processo.",
+      "explicacao": "Em controle OT, atualizar sem validação pode afetar a cadeia entre firmware, comunicação e execução das funções de processo. Essa compatibilidade é a verificação técnica que distingue um patch seguro de uma mudança arriscada.",
+      "resposta_padrao": "Compatibilidade apenas do sistema operacional.",
+      "por_que_nao": "O risco operacional da mudança em OT envolve também firmware, interfaces de comunicação e funções de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Medida compensatória preferível quando patch OT não é viável ou seguro.",
+      "pergunta": "A pilha vulnerável foi confirmada em um sistema legado que atua no processo, mas o patch ainda não foi qualificado e não há janela de parada. A conectividade desse ativo pode ser restringida sem afetar a operação. Qual ação técnica é preferível até haver remediação compatível?",
+      "resposta": "Isolamento adicional da rede.",
+      "explicacao": "Quando o patch imediato não é viável ou seguro, o tratamento correto em OT privilegia medidas compensatórias que reduzam exposição. Se a função operacional não é afetada, o isolamento adicional é a barreira temporária preferível.",
+      "resposta_padrao": "Aplicar a versão mais recente imediatamente.",
+      "por_que_nao": "Sem qualificação e testes, a atualização pode causar indisponibilidade ou comportamento não previsto no controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Delimitação correta do escopo IACS offshore para avaliação de vulnerabilidades.",
+      "pergunta": "Um historiador operacional e um servidor de relatórios de produção trocam dados pela mesma infraestrutura de rede do controle. Na avaliação offshore de vulnerabilidades, em que escopo técnico esses ativos devem entrar?",
+      "resposta": "Escopo do IACS.",
+      "explicacao": "Quando sistemas de informação e negócios estão conectados pela infraestrutura de rede do IACS, eles integram o próprio escopo IACS para fins de avaliação de vulnerabilidades offshore.",
+      "resposta_padrao": "Somente TI corporativa.",
+      "por_que_nao": "A conexão pela infraestrutura de rede do IACS os traz para o escopo OT, mesmo sendo informacionais ou de negócios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo de IACS abrange"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e negócios conectados pela infraestrutura de rede do IACS"
+        }
+      ]
+    }
+  ]
+}

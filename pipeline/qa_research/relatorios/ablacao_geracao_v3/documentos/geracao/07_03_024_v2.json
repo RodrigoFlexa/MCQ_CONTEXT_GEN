@@ -1,0 +1,99 @@
+{
+  "item": "07_03",
+  "foco": 24,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_03:024:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Melhoria de disponibilidade por redução do tempo de recuperação, sem atuar no mecanismo de falha.",
+      "pergunta": "Falhas continuam na mesma cadência, mas cada retorno ao serviço atrasa por espera de um componente vindo de terra. Para elevar a disponibilidade sem mexer no mecanismo de falha, qual ação técnica específica é mais adequada?",
+      "resposta": "estoque local de sobressalentes críticos",
+      "explicacao": "A frequência de falhas não mudou; o gargalo está na recuperação após a falha. O bloco liga estoque de peças ao MTTR e à disponibilidade, sem alterar o mecanismo físico de falha.",
+      "resposta_padrao": "reduzir a periodicidade preventiva",
+      "por_que_nao": "A preventiva atua sobre a frequência de falhas; aqui a indisponibilidade cresce pela espera de peça após a falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O tempo de reparo é influenciado por projeto, gestão de recursos, treinamento, estoque de peças, procedimentos e agilidade de deslocamento até a unidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "melhorias em sobressalentes, acessibilidade, recursos de apoio e organização do atendimento podem elevar a disponibilidade sem necessariamente alterar o mecanismo físico de falha do componente."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Definição correta da base do MTTR para comparação técnica entre contextos logísticos diferentes.",
+      "pergunta": "Ao comparar MTTR de dois ativos com apoios logísticos diferentes, o que precisa ser explicitado na base do indicador para a comparação não confundir reparo com indisponibilidade por espera?",
+      "resposta": "as atividades de reparo incluídas no MTTR",
+      "explicacao": "O bloco exige explicitar o que o MTTR inclui. Sem isso, esperas de logística e mobilização podem entrar na conta e distorcer a comparação do reparo.",
+      "resposta_padrao": "usar o tempo total entre falha e retorno",
+      "por_que_nao": "Esse total pode crescer por logística e mobilização sem que o reparo ativo tenha mudado; o escopo do MTTR deve ser definido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A base do MTTR deve explicitar quais atividades de reparo inclui."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A distância da costa e a dependência de apoio em terra podem prolongar o tempo total indisponível por logística e mobilização, mesmo sem alterar o tempo de reparo ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "O intervalo completo entre falha e retorno também pode incluir esperas que precisam ser discriminadas."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Efeito da dependência de apoio em terra sobre indisponibilidade sem mudança do reparo ativo.",
+      "pergunta": "A mesma bomba mantém o mesmo tempo de reparo ativo, mas fica indisponível por mais tempo quando depende de oficina em terra e apoio distante. Qual mecanismo operacional explica esse aumento?",
+      "resposta": "atraso logístico e de mobilização",
+      "explicacao": "O aumento não vem de piora física da bomba nem do reparo ativo. O prolongamento ocorre no acesso aos recursos e no deslocamento necessários para recuperar o item.",
+      "resposta_padrao": "maior envelhecimento do equipamento",
+      "por_que_nao": "A distância ao apoio altera o atendimento pós-falha, não a taxa de degradação que gera a falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A distância da costa e a dependência de apoio em terra podem prolongar o tempo total indisponível por logística e mobilização, mesmo sem alterar o tempo de reparo ativo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já o MTTR muda quando mudam as condições de recuperação do item após a falha."
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Mudanças em projeto, aplicação, ambiente e regime operacional alteram o comportamento de falha, não a recuperação.",
+      "pergunta": "Depois de mudar material, aplicação e regime operacional de um componente, os intervalos entre falhas aumentaram e o reparo por evento permaneceu igual. Qual indicador foi diretamente alterado?",
+      "resposta": "MTBF",
+      "explicacao": "O bloco associa projeto, aplicação, ambiente, regime operacional e envelhecimento aos mecanismos que levam o item a falhar, refletindo-se no intervalo entre falhas observadas.",
+      "resposta_padrao": "disponibilidade",
+      "por_que_nao": "A disponibilidade pode melhorar como efeito derivado, mas o indicador diretamente afetado pelo cenário é o tempo médio entre falhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O MTBF muda quando mudam os mecanismos que levam o item a falhar ao longo do serviço observado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso inclui diferenças de projeto, fabricação, aplicação, ambiente, regime operacional e envelhecimento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "MTBF resume o comportamento de falha observado, enquanto MTTR resume a capacidade de restaurar a função após a falha."
+        }
+      ]
+    }
+  ]
+}

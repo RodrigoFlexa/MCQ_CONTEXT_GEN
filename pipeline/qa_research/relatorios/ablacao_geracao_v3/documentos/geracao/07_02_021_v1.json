@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:021:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da camada de normalização quando controladores heterogêneos impedem padronização na origem.",
+      "pergunta": "PLCs de fornecedores distintos entregam tags e estruturas divergentes; padronizar telas e comparar desempenho entre ativos exige retrabalho contínuo. Sem viabilidade de uniformizar os controladores, onde implementar a primeira normalização comum dos dados?",
+      "resposta": "na camada SCADA",
+      "explicacao": "Com modelos de dados heterogêneos no controle, a normalização viável mais próxima da fonte migra para o SCADA, reduzindo divergências de HMI e retrabalho nas comparações entre ativos.",
+      "resposta_padrao": "No historiador corporativo ou na nuvem.",
+      "por_que_nao": "Normalizar só a jusante mantém inconsistências operacionais e afasta a padronização da fonte dos dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso dificulta convenções de nomenclatura, padronização de interfaces humano-máquina (HMI) e comparação entre ativos sem retrabalho."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Causa de alarmes espúrios em analytics quando regimes operacionais distintos são tratados como iguais.",
+      "pergunta": "Um modelo preditivo alarma repetidamente um compressor durante partida e recirculação, mas em regime estável o diagnóstico é consistente e a instrumentação está íntegra. Que informação técnica está faltando no conjunto de dados?",
+      "resposta": "contexto de modo operacional",
+      "explicacao": "Sem distinguir partida, recirculação e regime estável, o modelo mistura assinaturas normais de estados diferentes e gera alarmes espúrios ou diagnósticos frágeis.",
+      "resposta_padrao": "Recalibrar os sensores ou elevar os limiares do modelo.",
+      "por_que_nao": "O erro nasce da mistura de regimes operacionais distintos, não de desvio metrológico nem de limiar insuficiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "É capacitar a interpretar qualidade de dados, diferenciar recomendação analítica de comando de controle"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação do atraso de comunicação como causa primária de instabilidade em ajustes operacionais frequentes.",
+      "pergunta": "Uma aplicação deixou de ser apenas consultiva e passou a enviar correções frequentes ao processo. Os timestamps estão alinhados, mas, sob congestionamento, a ação chega tarde e o controle passa a oscilar. Qual é a causa primária?",
+      "resposta": "latência de comunicação",
+      "explicacao": "Quando a aplicação influencia ajustes frequentes, o atraso fim a fim passa a limitar o desempenho; dados corretos porém tardios desestabilizam a atuação.",
+      "resposta_padrao": "Falta de largura de banda da rede.",
+      "por_que_nao": "O sintoma decisivo é atraso na chegada da ação; volume de tráfego pode ser suficiente e ainda assim o controle oscilar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de sincronismo temporal entre fontes para uso de aplicações próximas ao controle.",
+      "pergunta": "Pressões, posições de válvula e permissivos chegam rapidamente de fontes diferentes, mas a ordem temporal dos eventos muda entre análises da mesma sequência. Para uso próximo ao controle, qual aspecto técnico deve ser assegurado?",
+      "resposta": "qualidade de sincronismo",
+      "explicacao": "Com múltiplas fontes, o problema não é apenas rapidez de entrega, mas alinhamento temporal consistente entre sinais para preservar a sequência real dos eventos.",
+      "resposta_padrao": "Reduzir a taxa de amostragem dos sinais.",
+      "por_que_nao": "A sequência fica errada por desalinhamento temporal entre fontes, algo que a taxa de amostragem sozinha não corrige.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um SCADA local consome essas informações em tempo real."
+        }
+      ]
+    }
+  ]
+}

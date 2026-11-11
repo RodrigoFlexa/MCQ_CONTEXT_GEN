@@ -1,0 +1,107 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_08:005:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de análise dinâmica quando a transitoriedade do blowdown altera o resultado de projeto.",
+      "pergunta": "Na revisão de blowdown de vários segmentos, há atraso de BDV, esvaziamento progressivo do inventário e contrapressão no flare variando com alívios simultâneos. Que método de análise deve basear o resultado de projeto?",
+      "resposta": "simulação dinâmica de blowdown",
+      "explicacao": "O evento é transiente e o resultado depende de variáveis que mudam no tempo; análise estática tende a não representar adequadamente atraso, inventário, interação entre segmentos e contrapressão no flare.",
+      "resposta_padrao": "Simulação estática conservadora.",
+      "por_que_nao": "Ela não representa a transitoriedade relevante do blowdown nem a contrapressão variável e o sequenciamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o método pode mudar o resultado quando a transitoriedade do processo é relevante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para blowdown, isso é particularmente importante porque pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Configuração de blowdown faseado para limitar pico no flare quando o sistema receptor não suporta descarga simultânea.",
+      "pergunta": "Se o sistema receptor não consegue receber simultaneamente o fluxo de todos os segmentos protegidos e é preciso reduzir o pico de vazão no flare, que arranjo deve ser configurado no ESD?",
+      "resposta": "blowdown faseado no ESD",
+      "explicacao": "Quando a capacidade simultânea do flare é insuficiente, o escalonamento das aberturas distribui a descarga no tempo, reduzindo o pico no flare à custa de manter inventário pressurizado por mais tempo em segmentos ainda fechados.",
+      "resposta_padrao": "Aumentar o tamanho das BDVs.",
+      "por_que_nao": "O limitante é a capacidade simultânea do sistema receptor; faseamento reduz o pico sem depender de válvulas maiores.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Quando o sistema não consegue receber simultaneamente o fluxo de todos os sistemas protegidos, pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa solução tende a reduzir o pico de vazão no flare, mas prolonga a permanência de inventário em segmentos que ainda não foram abertos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da contrapressão variável no flare como causa de despressurização mais lenta sob descargas simultâneas.",
+      "pergunta": "O teste controlado mostra despressurização mais lenta que a prevista apenas quando outros sistemas descarregam no flare ao mesmo tempo; isoladamente, a BDV atende o cálculo. Qual variável do modelo explica primariamente essa diferença?",
+      "resposta": "contrapressão variável no flare",
+      "explicacao": "A diferença aparecer só com descargas simultâneas indica aumento transitório de contrapressão no sistema receptor, reduzindo a vazão efetiva de blowdown e alongando o tempo de despressurização.",
+      "resposta_padrao": "Cv insuficiente da BDV.",
+      "por_que_nao": "Se a BDV atende isoladamente, o desvio condicionado à simultaneidade aponta para o sistema receptor, não para a válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contrapressão variável no flare."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele também é afetado pelo atraso de atuação, pelas perdas de carga nas linhas, pela contrapressão no sistema de flare"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Testes controlados de blowdown são indicados para verificar a efetividade da função, incluindo o tempo para despressurizar"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Impacto de premissa de inventário incorreta na confiabilidade da simulação dinâmica de blowdown.",
+      "pergunta": "No teste, a BDV abre no atraso previsto, a lógica de ESD confere com o modelo e as propriedades do fluido estão corretas, mas a pressão leva mais tempo para cair; verifica-se nível inicial no segmento acima do estimado. Qual premissa do modelo estava errada?",
+      "resposta": "inventário inicial subestimado",
+      "explicacao": "Com atuação, lógica e propriedades coerentes, um inventário real maior aumenta a massa a despressurizar e desloca toda a curva de queda de pressão para tempos mais longos.",
+      "resposta_padrao": "Perdas de carga nas linhas.",
+      "por_que_nao": "O sinal decisivo é o holdup inicial maior que o assumido; isso prolonga o blowdown mesmo com a mesma malha hidráulica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD ou propriedades do fluido estiverem incorretas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tempo real não depende apenas do tamanho da válvula."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse tempo importa porque determina por quanto tempo o equipamento permanece com pressão e inventário relevantes durante a emergência."
+        }
+      ]
+    }
+  ]
+}

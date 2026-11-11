@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:004:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de segregação entre SIS e DCS quando só há necessidade de monitoramento.",
+      "pergunta": "O DCS precisa apenas visualizar estados e alarmes do SIS, sem escrever parâmetros nem enviar comandos. Qual arranjo técnico de comunicação deve ser adotado entre as redes?",
+      "resposta": "gateway unidirecional do SIS para o DCS",
+      "explicacao": "Se não há necessidade de escrita ou comando, o enlace unidirecional elimina o caminho de retorno e reduz a possibilidade de comprometimento cruzado entre controle básico e segurança instrumentada.",
+      "resposta_padrao": "Instalar um firewall entre as duas redes.",
+      "por_que_nao": "Filtragem lógica continua permitindo vias de comunicação configuráveis; quando só leitura é necessária, ela não assegura o bloqueio físico de retorno."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Método de verificação da integridade da aplicação restaurada em controlador.",
+      "pergunta": "Substituído um controlador por falha de hardware e restaurado o backup da aplicação, qual verificação específica confirma que a lógica em execução é exatamente a versão aprovada?",
+      "resposta": "comparação do checksum da aplicação carregada",
+      "explicacao": "O checksum ou assinatura da aplicação residente verifica o executável efetivamente carregado no controlador, não apenas o arquivo salvo no repositório.",
+      "resposta_padrao": "Conferir o nome e a data do arquivo de backup.",
+      "por_que_nao": "Metadados do arquivo não comprovam que o binário compilado em execução no controlador é idêntico ao aprovado."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Recuperação confiável de estação de engenharia OT após suspeita de comprometimento.",
+      "pergunta": "Arquivos desconhecidos apareceram numa estação de engenharia após uso de USB, e ela é usada para carregar lógica em PLCs. Depois da contenção inicial, como recolocá-la em serviço com integridade confiável?",
+      "resposta": "reimagem completa com imagem ouro confiável",
+      "explicacao": "Em estação que altera lógica de controle, a recuperação confiável exige reconstrução a partir de base conhecida íntegra; limpeza por antivírus não restabelece confiança.",
+      "resposta_padrao": "Executar antivírus e remover os arquivos suspeitos.",
+      "por_que_nao": "Remoção de malware detectado não garante eliminação de persistência nem a integridade do ambiente que distribui lógica."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto correto de terminação do acesso remoto de terceiros a redes OT.",
+      "pergunta": "Fornecedor externo precisa acessar temporariamente uma estação de engenharia em rede OT para diagnóstico. Onde a sessão remota deve terminar para manter segregação e rastreabilidade?",
+      "resposta": "servidor de salto na DMZ industrial",
+      "explicacao": "O jump server concentra autenticação, intermedia a sessão e registra atividades sem expor diretamente a estação de engenharia à rede externa.",
+      "resposta_padrao": "Abrir uma VPN direta até a estação de engenharia.",
+      "por_que_nao": "A VPN direta amplia a superfície de ataque e contorna o ponto intermediário de controle e auditoria."
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:010:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mitigação temporária de atrito no elemento final por atuação no sinal de comando.",
+      "pergunta": "A saída do controlador varia, mas a haste permanece parada até ocorrer um salto de posição; a intervenção mecânica só será possível na próxima parada. Qual intervenção temporária no comando é mais adequada?",
+      "resposta": "Compensação por pulsos no sinal de controle.",
+      "explicacao": "O bloco foco descreve a compensação por pulsos como abordagem não baseada em modelo para vencer o atrito e sustentar a operação até a correção mecânica.",
+      "resposta_padrao": "Retunar o PID para deixar a malha mais agressiva.",
+      "por_que_nao": "Sintonia não fornece a ação específica para romper o atrito quando o comando usual não inicia o movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da característica dos pulsos para reduzir movimentação extra sem perda relevante de desempenho.",
+      "pergunta": "Buscando manter a malha operável com menor acréscimo de curso da válvula, que característica específica dos pulsos diferencia a solução proposta?",
+      "resposta": "Pulsos de amplitude variável.",
+      "explicacao": "A solução citada reduz a movimentação adicional sem perda significativa de desempenho ao variar a amplitude dos pulsos.",
+      "resposta_padrao": "Pulsos de amplitude fixa com frequência maior.",
+      "por_que_nao": "A redução de movimentação mencionada está associada à variação da amplitude, não ao simples aumento de frequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de parametrização dos pulsos para equilibrar desempenho da malha e desgaste adicional.",
+      "pergunta": "Na parametrização dessa compensação, além dos dados de operação, qual critério objetivo deve limitar a escolha dos pulsos?",
+      "resposta": "Especificação máxima de erro.",
+      "explicacao": "Os parâmetros devem ser escolhidos com base nos dados operacionais e limitados por uma especificação máxima de erro, não apenas por menor movimentação.",
+      "resposta_padrao": "A menor movimentação possível da válvula.",
+      "por_que_nao": "Minimizar curso sozinho pode sacrificar o controle; o limite técnico informado é o erro máximo admissível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Existe, portanto, um compromisso entre recuperar desempenho da malha e limitar desgaste adicional do elemento final"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Efeito físico que permite à compensação por pulsos iniciar o movimento do atuador com atrito.",
+      "pergunta": "Quando o comando usual não consegue iniciar o movimento e a válvula passa a responder após a injeção de pulsos, qual mecanismo físico torna a compensação eficaz?",
+      "resposta": "Energia adicional para vencer o atrito no atuador.",
+      "explicacao": "O princípio descrito é fornecer energia adicional ao atuador quando o sinal normal não consegue romper o atrito inicial.",
+      "resposta_padrao": "Aumento do ganho efetivo do controlador.",
+      "por_que_nao": "Ganho altera a dinâmica da malha, mas não fornece o impulso extra necessário para romper o atrito do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O princípio é fornecer energia adicional quando o comando usual não consegue iniciar o movimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "vencer o atrito no atuador"
+        }
+      ]
+    }
+  ]
+}

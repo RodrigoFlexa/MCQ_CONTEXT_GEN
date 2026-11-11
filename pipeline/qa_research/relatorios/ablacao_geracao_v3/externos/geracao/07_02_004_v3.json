@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:004:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correspondência entre a necessidade da tarefa e o tipo de privilégio a conceder em IACS.",
+      "pergunta": "Um fornecedor precisa acessar remotamente um sistema conectado ao ambiente operacional apenas para ver tendências e diagnósticos durante uma janela de suporte. Qual privilégio específico deve ser concedido?",
+      "resposta": "acesso de observação",
+      "explicacao": "A tarefa exige apenas visualização. Conceder operação, engenharia ou administração ampliaria desnecessariamente a capacidade de atuar no processo ou modificar configurações.",
+      "resposta_padrao": "Acesso de engenharia temporário.",
+      "por_que_nao": "Tempo limitado não elimina a capacidade indevida de alterar configuração, lógica e firmware.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação da segregação de funções para reduzir erros não detectados em mudanças de IACS.",
+      "pergunta": "Durante uma correção remota, a mesma pessoa aprova, implementa e valida a mudança no sistema de controle. Que arranjo de controle de acesso deve ser exigido?",
+      "resposta": "segregação de funções",
+      "explicacao": "A separação entre aprovar, implementar e validar reduz erro não detectado e abuso, complementando o menor privilégio dentro do sistema de gestão de cibersegurança.",
+      "resposta_padrao": "Menor privilégio.",
+      "por_que_nao": "Permissões mínimas não substituem a independência entre aprovação, execução e validação da mudança.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segregação de funções complementa o menor privilégio."
+        },
+        {
+          "bloco": "F",
+          "trecho": "cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Qual impacto técnico predomina em falhas de controle de acesso em IACS.",
+      "pergunta": "Se um acesso legítimo, porém excessivo, puder alterar setpoint, desabilitar alarmes ou parar o processo, que impacto técnico se torna o principal nesse ambiente?",
+      "resposta": "impacto na disponibilidade do processo",
+      "explicacao": "Em sistemas industriais, o efeito crítico do acesso excessivo é degradar ou interromper a operação e alterar o comportamento do processo, mais do que expor informação.",
+      "resposta_padrao": "Perda de confidencialidade.",
+      "por_que_nao": "No ambiente industrial, o risco dominante é afetar parada, visibilidade e comportamento do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição correta do escopo de controle de acesso em IACS além das contas de usuário.",
+      "pergunta": "Na revisão de acessos, a equipe conferiu contas de usuário e telas de supervisão, mas deixou fora o computador usado para carregar lógica e firmware nos controladores. Qual ativo faltou no escopo?",
+      "resposta": "estação de engenharia",
+      "explicacao": "O escopo de acesso em IACS inclui o ativo a partir do qual se modificam lógica, configuração e firmware; revisar só contas e supervisão deixa esse vetor crítico fora do controle.",
+      "resposta_padrao": "Servidor de supervisão.",
+      "por_que_nao": "Quem carrega lógica e firmware nos controladores é a estação de engenharia, não o servidor de supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ]
+    }
+  ]
+}

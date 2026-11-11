@@ -1,0 +1,91 @@
+{
+  "item": "02_02",
+  "foco": 53,
+  "visita": 1,
+  "onda": 1,
+  "id": "02_02:053:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Representatividade do indicador depende da posição do sensor após a mistura do químico.",
+      "pergunta": "Há um misturador estático na linha; o residual medido antes dele oscila e não acompanha o desempenho do equipamento a jusante. Onde deve ficar o sensor para representar a exposição real ao químico?",
+      "resposta": "A jusante do misturador estático.",
+      "explicacao": "Depois da mistura, a medição reflete a condição realmente imposta ao equipamento. Antes disso, picos locais e má distribuição podem distorcer o indicador.",
+      "resposta_padrao": "Imediatamente após a lança de injeção.",
+      "por_que_nao": "Antes da homogeneização, a leitura capta concentração local e não a condição média aplicada ao sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um sensor a jusante de misturador ou de ponto de injeção tende a captar melhor a condição realmente imposta ao equipamento após mistura do químico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pontos mal representativos podem ocultar transientes, zonas mortas ou má distribuição."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Oscilação sincronizada com cargas elétricas indica ruído metrológico, não mudança real do processo.",
+      "pergunta": "Leitura on-line oscila em alta frequência sempre que grandes motores entram em carga; laboratório e vazão do químico permanecem estáveis. Qual causa primária do dado inconsistente?",
+      "resposta": "Ruído elétrico.",
+      "explicacao": "Oscilações rápidas associadas a eventos elétricos, sem confirmação por processo ou laboratório, caracterizam interferência elétrica no sinal medido.",
+      "resposta_padrao": "Deriva do sensor.",
+      "por_que_nao": "Deriva produz desvio lento ou offset, não oscilação rápida sincronizada com eventos elétricos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta, interferências químicas, falhas de aterramento, ruído elétrico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A automação pode reduzir variabilidade humana, mas não elimina necessidade de validação periódica"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Automação não substitui verificação independente do dado on-line por laboratório.",
+      "pergunta": "Mesmo com manutenção em dia e malha automática estável, qual confrontação independente deve permanecer para confirmar que o indicador on-line continua confiável em serviço?",
+      "resposta": "Reconciliação com análises laboratoriais.",
+      "explicacao": "A automação reduz variabilidade humana, mas não elimina desvios por representatividade, fouling, interferência ou deriva. A checagem independente é a reconciliação com o laboratório.",
+      "resposta_padrao": "Só calibração e manutenção do sensor.",
+      "por_que_nao": "Sensor mantido pode continuar enviesado ou pouco representativo; a reconciliação verifica o desempenho real da medição em serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A automação pode reduzir variabilidade humana, mas não elimina necessidade de validação periódica, manutenção do sensor e reconciliação com análises laboratoriais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Tempo morto entre dosagem e leitura deve entrar explicitamente na lógica de controle da malha química.",
+      "pergunta": "Trecho entre a injeção e o analisador já promove mistura completa, mas a leitura só reage vários minutos depois e a malha entra em caça. Qual variável da lógica de controle precisa ser tratada explicitamente?",
+      "resposta": "Atraso entre injeção e medição.",
+      "explicacao": "Com mistura já assegurada, o problema passa a ser o tempo morto entre a dosagem e a resposta do sensor, que desestabiliza o ajuste automático.",
+      "resposta_padrao": "Aumentar o ganho do controlador.",
+      "por_que_nao": "Quando o problema dominante é tempo morto, maior agressividade tende a ampliar a oscilação da malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Confiabilidade metrológica envolve deriva, incrustação ou sujidade do sensor, tempo de resposta, interferências químicas, falhas de aterramento, ruído elétrico e atraso entre injeção e medição."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seleção de indicador e lógica de controle devem considerar tempo de mistura"
+        }
+      ]
+    }
+  ]
+}

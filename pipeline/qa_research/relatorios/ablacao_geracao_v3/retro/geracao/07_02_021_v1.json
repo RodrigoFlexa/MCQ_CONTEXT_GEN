@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:021:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ausência de contexto de modo operacional gera alarmes espúrios e diagnósticos frágeis em analytics.",
+      "pergunta": "Alarmes de anomalia aparecem nas partidas e paradas, mas desaparecem em regime estável sem mudança de instrumentação. Que elemento de dados falta para que o analytics diferencie corretamente esses períodos?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Modelos analíticos dependem de coerência operacional; sem indicar partida, parada ou regime, sinais normais de transição são tratados como desvios.",
+      "resposta_padrao": "Recalibrar os limiares do modelo.",
+      "por_que_nao": "Limiar único continua misturando transitórios e regime; o discriminante técnico é o modo operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicações próximas ao controle que combinam múltiplas fontes exigem sincronismo temporal confiável entre os dados.",
+      "pergunta": "Oscilações surgem num ajuste automático que combina sinais de fontes diferentes a cada poucos segundos; a latência média é baixa e cada valor isolado parece correto, mas a correlação se perde. Que aspecto deve ser verificado primeiro nos dados?",
+      "resposta": "Qualidade de sincronismo dos carimbos temporais.",
+      "explicacao": "Ajustes frequentes com múltiplas fontes exigem alinhamento temporal; sem sincronismo, sinais corretos chegam fora de fase e a aplicação reage a relações inexistentes.",
+      "resposta_padrao": "Latência média da comunicação.",
+      "por_que_nao": "Latência média baixa não garante alinhamento temporal entre fontes; o ajuste depende da mesma referência de tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações que influenciam ajustes operacionais frequentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicações que influenciam ajustes operacionais frequentes devem executar localmente para reduzir dependência de latência e perda de conectividade.",
+      "pergunta": "Indisponibilidades curtas do enlace externo não afetam leitura de dados, mas a aplicação recalcula ajustes operacionais com alta frequência. Onde ela deve executar para manter esse acoplamento confiável?",
+      "resposta": "Na borda, próxima ao controle do processo.",
+      "explicacao": "Funções que influenciam ajustes frequentes toleram menos latência e indisponibilidade; execução local reduz dependência do enlace e define melhor o comportamento na perda de conectividade.",
+      "resposta_padrao": "Na nuvem, com redundância de comunicação.",
+      "por_que_nao": "Redundância do enlace não elimina a latência nem a necessidade de comportamento seguro quando a conectividade falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "controladores de borda transferem dados para a nuvem"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Comparações confiáveis entre ativos dependem de identificação consistente do equipamento nos dados.",
+      "pergunta": "A degradação estimada de bombas iguais alterna entre equipamentos após cada parada, embora correntes, pressões e vibrações locais permaneçam compatíveis. Que elemento dos dados deve ser corrigido primeiro para comparar esses ativos com confiabilidade?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "Se a degradação 'migra' entre bombas enquanto as medições locais seguem coerentes, o erro está na associação dos sinais à entidade física comparada.",
+      "resposta_padrao": "Recalibrar os sensores comparados.",
+      "por_que_nao": "As medições locais permanecem coerentes; o problema é a identidade da entidade nos dados, não a exatidão do sensor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comparação entre ativos sem retrabalho"
+        }
+      ]
+    }
+  ]
+}

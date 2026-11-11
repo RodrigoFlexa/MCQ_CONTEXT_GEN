@@ -1,0 +1,71 @@
+{
+  "item": "02_10",
+  "foco": 25,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_10:025:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Arquitetura da medição de pressão: o PT é a fonte comum do sinal para controle e registro.",
+      "pergunta": "A indicação de pressão some ao mesmo tempo do controlador e da curva histórica, sem sinais de transiente nas demais correntes. Qual componente comum da cadeia deve ser suspeito primeiro?",
+      "resposta": "Transmissor de pressão (PT).",
+      "explicacao": "No arranjo descrito, o PT mede a pressão e envia o mesmo valor ao controlador e ao registrador; falha nele afeta ambos simultaneamente.",
+      "resposta_padrao": "Controlador e indicador de pressão (PIC).",
+      "por_que_nao": "O PIC está a jusante da medição; perda simultânea no controle e no registro aponta para a fonte comum do sinal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O acompanhamento contínuo das variáveis de processo ajuda a perceber desvios de comportamento"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre camada de controle e camadas de proteção no controle de pressão do separador.",
+      "pergunta": "Durante variação normal de carga, a pressão sai da faixa operacional, sem indicação de vazamento e ainda abaixo das condições de proteção. Que função deve atuar para trazer a variável de volta?",
+      "resposta": "Controlador e indicador de pressão (PIC).",
+      "explicacao": "A malha de controle é a função destinada a manter a pressão na faixa operacional; ESDV e PSV atuam como proteções com outros propósitos.",
+      "resposta_padrao": "Válvula de desligamento de emergência (ESDV).",
+      "por_que_nao": "A ESDV isola parte da planta em desvios indicativos de risco, não faz o ajuste contínuo da pressão em operação normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controlador e indicador de pressão, PIC, compara a pressão medida com a condição normal ou necessária para acionar medidas destinadas a reduzir riscos de alta ou baixa pressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da proteção adequada para perda de contenção: isolamento por ESDV versus alívio por PSV.",
+      "pergunta": "Surge perda de contenção em uma linha ligada ao separador, enquanto a pressão do vaso permanece abaixo do ajuste da PSV. Que dispositivo do arranjo é destinado a responder a esse desvio?",
+      "resposta": "Válvula de desligamento de emergência (ESDV).",
+      "explicacao": "Para vazamento ou descarga de produto, a função prevista é isolar parte da planta. A PSV só atende ao cenário de sobrepressão.",
+      "resposta_padrao": "PSV do separador.",
+      "por_que_nao": "A PSV alivia pressão excessiva, mas não interrompe a comunicação com o trecho que está perdendo contenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A válvula de desligamento de emergência, ESDV, é apresentada como elemento de isolamento de parte da planta quando há desvios de processo indicativos de risco, como descarga de produto, vazamento, alta pressão e outros problemas operacionais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas funções não são equivalentes: a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        }
+      ]
+    }
+  ]
+}

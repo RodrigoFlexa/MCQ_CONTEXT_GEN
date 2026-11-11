@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:004:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mapeamento da necessidade operacional ao nível mínimo de privilégio no IACS.",
+      "pergunta": "Para um fornecedor que só precisa acompanhar tendências e estados para diagnóstico remoto, sem atuar no processo nem alterar configuração, qual privilégio específico deve ser concedido no IACS?",
+      "resposta": "acesso de observação",
+      "explicacao": "O menor privilégio exige liberar apenas o necessário para a tarefa. Se a atividade é somente visualizar dados, o acesso correto é o de observação, não operação nem engenharia.",
+      "resposta_padrao": "acesso de engenharia",
+      "por_que_nao": "Acesso de engenharia permite alterar configuração, lógica e firmware; para visualização apenas, isso excede a necessidade da tarefa.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Acesso de observação tem potencial de exposição de informações"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da falha primária quando um acesso legítimo gera efeito operacional indevido.",
+      "pergunta": "Um usuário autenticado, designado apenas para acompanhar uma partida, consegue mudar setpoint e desabilitar alarmes. Qual é a falha primária de controle de acesso nessa situação?",
+      "resposta": "privilégio excessivo",
+      "explicacao": "Os efeitos descritos podem ocorrer sem invasão externa quando o usuário possui direitos além do necessário. A causa primária é concessão de privilégio acima da necessidade operacional.",
+      "resposta_padrao": "credencial comprometida",
+      "por_que_nao": "Mesmo com autenticação legítima, a capacidade de alterar setpoint e alarmes já indica direitos indevidamente amplos para a função prevista.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de segregação de funções em mudanças e suporte remoto no IACS.",
+      "pergunta": "No suporte remoto a uma correção de lógica, a mesma pessoa aprova a mudança, a implementa e executa a verificação final. Que arranjo específico deve ser aplicado?",
+      "resposta": "segregação de funções",
+      "explicacao": "A separação entre aprovar, implementar e validar reduz erros não detectados e abuso em manutenção, resposta a falhas e suporte remoto no ambiente operacional.",
+      "resposta_padrao": "autenticação multifator",
+      "por_que_nao": "MFA reforça identidade, mas não separa aprovação, implementação e validação da mesma mudança.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa separação ajuda a reduzir erros não detectados durante manutenção, resposta a falhas e suporte remoto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "incluindo arranjos organizacionais, competência e efetividade das contramedidas"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização da disponibilidade sobre confidencialidade na análise de impacto cibernético em IACS.",
+      "pergunta": "Numa avaliação de risco cibernético, a equipe priorizou vazamento de dados acima de perda de visibilidade, parada indevida e impacto no processo. Em IACS, qual atributo deve prevalecer nessa priorização?",
+      "resposta": "disponibilidade",
+      "explicacao": "No ambiente de controle industrial, a consequência principal é manter o processo disponível e sob comportamento esperado; confidencialidade isolada não é o impacto dominante.",
+      "resposta_padrao": "confidencialidade",
+      "por_que_nao": "Em IACS, o efeito mais crítico do comprometimento é sobre disponibilidade e comportamento do processo, não apenas sobre exposição de dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "parada indevida, perda de visibilidade, desabilitação de alarmes"
+        }
+      ]
+    }
+  ]
+}

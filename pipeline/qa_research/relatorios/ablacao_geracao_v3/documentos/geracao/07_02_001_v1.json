@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:001:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Heterogeneidade de modelos de dados desloca a integração para o SCADA na camada supervisória.",
+      "pergunta": "Controladores de campo de fornecedores diferentes expõem variáveis em modelos distintos; alarmes, histórico e operação precisam aparecer de forma unificada. Qual camada costuma concentrar essa integração?",
+      "resposta": "SCADA na camada supervisória.",
+      "explicacao": "Com modelos de dados distintos, a padronização próxima à fonte fica limitada; a integração tende a migrar para a supervisão, onde o SCADA agrega alarmes, histórico e interface operacional.",
+      "resposta_padrao": "Padronização diretamente nos controladores de campo.",
+      "por_que_nao": "Com modelos de dados distintos entre fornecedores, a padronização próxima à fonte fica limitada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "A fronteira IT/OT se forma quando o dado sai da camada de controle para consumo por outros domínios.",
+      "pergunta": "Supervisão, historiadores e sistemas corporativos passam a consumir dados do controle. Qual evento operacional caracteriza aí a fronteira IT/OT?",
+      "resposta": "Saída dos dados da camada de controle para consumo externo.",
+      "explicacao": "Na prática, a fronteira aparece quando o dado deixa a camada de controle e passa a ser consumido por supervisão, historiadores, analytics, telecom ou sistemas corporativos.",
+      "resposta_padrao": "Mudança de switch, VLAN ou protocolo.",
+      "por_que_nao": "A fronteira é funcional; ela surge com o consumo fora do controle, não com a troca física da rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes:"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Pontos de interconexão exigem tratamento arquitetural específico pela concentração de trocas entre domínios distintos.",
+      "pergunta": "Controladores, supervisão e consumidores externos trocam dados pelo mesmo nó. Qual mecanismo faz esse ponto exigir tratamento arquitetural específico?",
+      "resposta": "Concentração de troca de dados entre domínios.",
+      "explicacao": "Esses nós merecem tratamento específico não pelo volume, mas por concentrarem interconexões entre controladores, supervisão e consumidores externos, ampliando os caminhos entre domínios.",
+      "resposta_padrao": "Maior volume de tráfego no nó.",
+      "por_que_nao": "O ponto é crítico por unir domínios distintos, mesmo sem saturação de banda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A liberação de tráfego através da fronteira deve ser definida pela finalidade operacional de cada fluxo.",
+      "pergunta": "Com telemetria, SCADA, analytics e sistemas corporativos atravessando a mesma fronteira, qual critério deve definir os fluxos liberados entre os domínios?",
+      "resposta": "Finalidade operacional de cada fluxo.",
+      "explicacao": "Cada nova interface exige definir explicitamente que tráfego pode cruzar a fronteira e para qual função operacional, base da segmentação entre domínios de criticidade distinta.",
+      "resposta_padrao": "Protocolo utilizado pelo enlace.",
+      "por_que_nao": "Mesmo com protocolo adequado, só devem cruzar fluxos necessários à finalidade operacional definida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ]
+    }
+  ]
+}

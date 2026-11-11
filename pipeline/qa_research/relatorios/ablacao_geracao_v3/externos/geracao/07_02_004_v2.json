@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:004:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre privilégio de engenharia e administrativo para mudança de lógica e configuração em IACS.",
+      "pergunta": "Durante suporte remoto, o fornecedor precisa carregar nova lógica em um controlador e ajustar parâmetros de configuração, sem criar contas nem desabilitar proteções. Qual privilégio mínimo deve ser liberado?",
+      "resposta": "Acesso de engenharia",
+      "explicacao": "No modelo de privilégios de IACS, alterar lógica e configuração é atividade de engenharia. Administrativo excede a necessidade e amplia risco sem requisito técnico para essa tarefa.",
+      "resposta_padrao": "Acesso administrativo",
+      "por_que_nao": "Privilégio administrativo trata contas, proteções e rastros; mudança de lógica e configuração pertence ao escopo de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros."
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Em ICS, o impacto prioritário de acesso excessivo recai sobre disponibilidade e comportamento do processo, não sobre confidencialidade.",
+      "pergunta": "Credenciais válidas foram usadas para desabilitar alarmes e alterar setpoint de um laço crítico. Qual efeito técnico principal torna esse evento mais grave em ICS do que uma simples exposição de dados?",
+      "resposta": "Comprometimento da disponibilidade e do comportamento do processo",
+      "explicacao": "Em ICS, o dano mais crítico de acesso legítimo excessivo é alterar a operação do processo e sua disponibilidade, inclusive com efeitos equivalentes aos de um ataque externo.",
+      "resposta_padrao": "Perda de confidencialidade das informações operacionais",
+      "por_que_nao": "Desabilitar alarmes e mudar setpoint afeta diretamente operação e funções de segurança; o problema central não é sigilo de dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Critério de escopo do controle de acesso em IACS baseado na conectividade à rede operacional.",
+      "pergunta": "Que condição técnica coloca sistemas marítimos ou de monitoramento de movimento no escopo do controle de acesso do IACS?",
+      "resposta": "Conexão à infraestrutura de rede do IACS",
+      "explicacao": "O escopo é definido pela conexão ao ambiente operacional/IACS. A disciplina do sistema, sozinha, não basta para enquadrá-lo no mesmo controle de acesso.",
+      "resposta_padrao": "Ser um sistema marítimo crítico",
+      "por_que_nao": "O que os inclui no escopo é estarem conectados à infraestrutura de rede do IACS, não apenas sua função operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS."
+        },
+        {
+          "bloco": "F",
+          "trecho": "esse conjunto pode incluir ainda sistemas marítimos, de perfuração e de monitoramento de movimento, quando conectados ao ambiente operacional."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação da segregação de funções como complemento ao menor privilégio em mudanças remotas de IACS.",
+      "pergunta": "Numa mudança remota de lógica, a mesma pessoa aprova a intervenção, implementa a alteração e valida o resultado. Qual controle específico está faltando para reduzir erro não detectado?",
+      "resposta": "Segregação de funções",
+      "explicacao": "Separar aprovação, implementação e validação reduz falhas não detectadas em manutenção e suporte remoto. Esse controle complementa o menor privilégio em IACS.",
+      "resposta_padrao": "Autenticação multifator",
+      "por_que_nao": "MFA reforça autenticação, mas não separa os papéis de aprovar, executar e validar a mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segregação de funções complementa o menor privilégio."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        }
+      ]
+    }
+  ]
+}

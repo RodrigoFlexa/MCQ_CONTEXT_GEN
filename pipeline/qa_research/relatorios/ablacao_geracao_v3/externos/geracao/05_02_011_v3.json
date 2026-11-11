@@ -1,0 +1,107 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:011:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificar a alimentação de controle cuja perda derruba geradores mesmo sem falha no barramento de potência.",
+      "pergunta": "Barramento de potência sem falta e máquinas primárias disponíveis, mas a perda do 24 Vcc de serviços gerais derruba os geradores em operação. Qual alimentação deve ser segregada desse sistema para prevenir blackout?",
+      "resposta": "24 Vcc dos painéis de controle dos geradores principais",
+      "explicacao": "A perda desse 24 Vcc remove comando, supervisão e atuação dos grupos; o acionamento mecânico pode permanecer disponível, mas o gerador não segue conectado nem controlável.",
+      "resposta_padrao": "A UPS das cargas vitais em corrente alternada.",
+      "por_que_nao": "Ela sustenta cargas vitais em CA, mas não mantém o comando e a permanência em linha dos geradores quando o 24 Vcc de controle cai.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecer que redundância de supervisão só é efetiva com segregação elétrica entre canais alimentados por UPS distintas.",
+      "pergunta": "Duas estações master de supervisão previstas redundantes caem juntas com a falha de uma única UPS. Qual rearranjo elimina esse modo comum de falha?",
+      "resposta": "alimentação de cada master station por UPS distinta",
+      "explicacao": "A redundância só resiste à perda de uma UPS se cada canal tiver fonte independente; alimentar ambos pelo mesmo conjunto cria perda simultânea de supervisão.",
+      "resposta_padrao": "Aumentar a autonomia da UPS A.",
+      "por_que_nao": "Mais autonomia não elimina a falha de modo comum se os dois canais continuarem dependentes da mesma UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnosticar bloqueio lógico de recomposição quando o gerador de emergência está disponível, mas o fechamento do disjuntor não se sustenta durante reboot.",
+      "pergunta": "Durante a recomposição, o gerador de emergência parte e estabiliza, mas o disjuntor não permanece fechado enquanto o sistema de controle reinicia. Que condição específica deve ser identificada?",
+      "resposta": "sinal de trip do sistema de controle ao disjuntor do gerador de emergência",
+      "explicacao": "Com o gerador disponível e o barramento morto, falha repetida de fechamento durante reboot aponta para trip lógico sustentado pelo sistema de controle, não para limitação elétrica do grupo.",
+      "resposta_padrao": "Falta de sincronismo do gerador de emergência.",
+      "por_que_nao": "Na energização de barramento morto o problema não é sincronismo; o bloqueio vem do trip lógico mantido durante o reboot.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir perda de supervisão de perda da cadeia de atuação quando válvulas deixam de responder após falha de UPS e energia principal.",
+      "pergunta": "Falha simultânea da UPS A e da energia principal deixa válvulas sem comando pela supervisão, embora os atuadores e utilidades permaneçam disponíveis. Qual elemento desenergizado explica a perda da atuação?",
+      "resposta": "módulo de saídas a relé do CLP",
+      "explicacao": "Sem energia no módulo de saída a relé, o CLP perde a interface elétrica de atuação; a supervisão pode existir, mas o comando não chega às válvulas.",
+      "resposta_padrao": "A rede de comunicação da supervisão.",
+      "por_que_nao": "A comunicação pode existir, mas sem a saída a relé energizada o comando não alcança o elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "desenergizou parte do controle associado às válvulas de tanques"
+        }
+      ]
+    }
+  ]
+}

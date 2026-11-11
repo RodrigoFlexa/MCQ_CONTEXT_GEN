@@ -1,0 +1,71 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:010:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre aumento de pressão no atuador sem deslocamento e atrito estático vencido por pulso adicional.",
+      "pergunta": "Pressão de ar no atuador sobe, mas o deslocamento do obturador só começa quando um pulso extra é somado ao comando. Qual é a causa primária desse comportamento?",
+      "resposta": "atrito estático no atuador",
+      "explicacao": "O comando e o ar chegam ao conjunto, porém o movimento só inicia com energia adicional. Esse padrão caracteriza stiction no atuador, não mera falha de sinal.",
+      "resposta_padrao": "falha do posicionador",
+      "por_que_nao": "Se a pressão do atuador aumenta e o pulso inicia o curso, o sinal chegou; faltava vencer a força de atrito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Entre os parâmetros citados estão pressão de ar do atuador e deslocamento do obturador."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de pulsos de amplitude variável para sustentar operação com menor movimentação adicional da válvula sob erro máximo admissível.",
+      "pergunta": "Atrito recorrente impede pequenos reposicionamentos; a malha deve seguir operando até a parada, com erro máximo admissível definido. Que compensação por pulsos é a mais adequada para limitar a movimentação extra sem perda relevante de desempenho?",
+      "resposta": "pulsos de amplitude variável",
+      "explicacao": "O método proposto usa amplitude variável para recuperar o desempenho com menor movimentação da válvula, ajustando os parâmetros com dados operacionais e pelo erro máximo permitido.",
+      "resposta_padrao": "pulsos de amplitude fixa elevada",
+      "por_que_nao": "Amplitudes fixas maiores tendem a aumentar curso e desgaste; a variação da amplitude é justamente o recurso para reduzir movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Compromisso entre melhora de desempenho da malha e degradação mecânica causada pelo aumento deliberado da movimentação da válvula.",
+      "pergunta": "Ao tornar os pulsos mais agressivos para melhorar a resposta de uma válvula com atrito, qual efeito técnico tende a aumentar no elemento final?",
+      "resposta": "desgaste adicional do elemento final",
+      "explicacao": "A compensação vence o atrito aumentando deliberadamente a movimentação. Mais curso e ciclos no conjunto elevam a degradação mecânica, embora a malha possa responder melhor.",
+      "resposta_padrao": "consumo de ar do atuador",
+      "por_que_nao": "Pode ocorrer aumento de consumo, mas o efeito decisivo destacado para o elemento final é a degradação por maior movimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o elemento final executa fisicamente a ação escolhida pelo controlador"
+        }
+      ]
+    }
+  ]
+}

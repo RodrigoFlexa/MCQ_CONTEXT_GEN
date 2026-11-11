@@ -1,0 +1,99 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 3,
+  "onda": 5,
+  "id": "02_08:005:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do método de análise quando o blowdown tem transitoriedade relevante.",
+      "pergunta": "Durante a avaliação de blowdown de segmentos interligados, há atraso de BDV, mudança de fase e contrapressão no flare variando ao longo do evento. Que método de análise deve orientar o projeto?",
+      "resposta": "Simulação dinâmica do blowdown",
+      "explicacao": "Esses efeitos são transitórios; quando a transitoriedade é relevante, o método adotado pode mudar os resultados de projeto.",
+      "resposta_padrao": "Simulação estática, por ser mais conservadora.",
+      "por_que_nao": "Ela pode não representar atraso de atuação, esvaziamento progressivo, mudança de fase e contrapressão variável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o método pode mudar o resultado quando a transitoriedade do processo é relevante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Parametrização do modelo de blowdown pela lógica real de abertura comandada pelo ESD.",
+      "pergunta": "As BDVs abrem por grupos com atrasos definidos no ESD, mas a simulação considera abertura simultânea. Que premissa do modelo precisa ser corrigida para estimar corretamente a carga no flare?",
+      "resposta": "Lógica de ESD de abertura das BDVs",
+      "explicacao": "Se a lógica de ESD estiver incorreta, o modelo dinâmico erra a simultaneidade das descargas e a carga imposta ao flare.",
+      "resposta_padrao": "Inventário inicial dos segmentos.",
+      "por_que_nao": "Mesmo com inventário correto, a carga no flare fica errada se a sequência automática de abertura não for representada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD ou propriedades do fluido estiverem incorretas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da contrapressão no flare como causa de aumento do tempo de despressurização.",
+      "pergunta": "O mesmo segmento despressuriza mais lentamente quando outros segmentos descarregam simultaneamente no header comum, sem mudança de BDV, inventário inicial ou perdas no seu ramal. Que variável do sistema explica esse aumento do tempo?",
+      "resposta": "Contrapressão no sistema de flare",
+      "explicacao": "A descarga simultânea eleva a pressão no sistema receptor, reduzindo a efetividade do blowdown e aumentando o tempo real de despressurização.",
+      "resposta_padrao": "Tamanho insuficiente da BDV.",
+      "por_que_nao": "A válvula não mudou; o agravante é a pressão a jusante variando com a descarga simultânea.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contrapressão variável no flare."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tempo real não depende apenas do tamanho da válvula."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele também é afetado pelo atraso de atuação, pelas perdas de carga nas linhas, pela contrapressão no sistema de flare, pela evolução das propriedades do fluido ao longo do evento e pela forma como a abertura é sequenciada entre segmentos."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de blowdown faseado para limitar pico de vazão quando o flare não suporta descarga simultânea.",
+      "pergunta": "A capacidade do flare não comporta o fluxo simultâneo de todos os sistemas protegidos durante emergência. Que arranjo de despressurização deve ser adotado para reduzir o pico de vazão?",
+      "resposta": "Blowdown faseado por configuração do ESD",
+      "explicacao": "Quando o sistema receptor não suporta a soma simultânea das descargas, o faseamento distribui a abertura no tempo e reduz o pico no flare.",
+      "resposta_padrao": "Abertura simultânea de todas as BDVs.",
+      "por_que_nao": "Isso maximiza a vazão instantânea no flare; o faseamento a reduz ao sequenciar as descargas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interação entre segmentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o sistema não consegue receber simultaneamente o fluxo de todos os sistemas protegidos, pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa solução tende a reduzir o pico de vazão no flare,"
+        }
+      ]
+    }
+  ]
+}

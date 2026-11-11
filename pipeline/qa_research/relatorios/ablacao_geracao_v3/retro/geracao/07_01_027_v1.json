@@ -1,0 +1,79 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:027:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferença funcional entre ponto configurado como evento e ponto configurado como alarme no sistema supervisor.",
+      "pergunta": "Sem supressão aplicada, o ponto entra no estado anormal esperado, fica registrado no histórico e carimbado no tempo, mas não aparece na lista de alarmes nem gera anunciação. Qual configuração específica está incorreta?",
+      "resposta": "Classificação como evento, não como alarme.",
+      "explicacao": "Os blocos tratam a classificação alarme/evento como parte da configuração crítica. Se o sistema registra o ponto, mas não o anuncia nem o lista como alarme, ele foi tratado como evento.",
+      "resposta_padrao": "Falha da estação de operação.",
+      "por_que_nao": "Se o mesmo ponto é recebido e carimbado corretamente, a estação está vendo o dado; o erro está na classificação funcional do ponto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "classificação entre alarme e evento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Influência da seleção local/remoto do elemento final na autoridade efetiva de comando da IHM.",
+      "pergunta": "O atuador movimenta normalmente pelo comando local e a posição retorna à tela, mas o comando da IHM é aceito sem mover o elemento final. Que condição de configuração explica esse bloqueio do comando remoto?",
+      "resposta": "Seleção em local, não em remoto.",
+      "explicacao": "Os blocos destacam o modo local/remoto como configuração crítica. Se o elemento atua localmente e a realimentação chega à IHM, o impedimento está na autoridade de comando selecionada.",
+      "resposta_padrao": "Falha do atuador.",
+      "por_que_nao": "Atuador e elemento final respondem ao comando local e devolvem posição; o desvio é de autoridade de comando, não de capacidade de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correção para que comandos da IHM fossem executados pelos atuadores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação ponta a ponta da coerência entre IHM, lógica implementada e atuação real de campo após mudança de configuração.",
+      "pergunta": "Mudou-se a lógica de permissivos e o modo de atuação de uma válvula antes do retorno ao serviço. Como verificar que a tela, a lógica e o campo ficaram coerentes e que o comando realmente chega ao atuador?",
+      "resposta": "Teste funcional ponta a ponta da malha.",
+      "explicacao": "Os blocos apontam que a IHM pode mostrar o comando sem atuação real e que sinais de campo podem não chegar à tela. Só um teste funcional ponta a ponta confirma a cadeia completa.",
+      "resposta_padrao": "Simulação da lógica no controlador.",
+      "por_que_nao": "A simulação valida a lógica de software, mas não comprova I/O, caminho do comando, atuação do elemento final nem retorno real de campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que sinais de campo chegassem à IHM"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que comandos da IHM fossem executados pelos atuadores"
+        }
+      ]
+    }
+  ]
+}

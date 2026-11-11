@@ -1,0 +1,99 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_01:006:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diferença entre pressão de suprimento e pressão de carga na verificação do atuador com posicionador.",
+      "pergunta": "Com posicionador instalado, o sinal do controlador varia e a alimentação pneumática permanece normal, mas o curso da válvula não acompanha. Qual pressão deve ser medida para verificar a força realmente aplicada ao diafragma ou pistão?",
+      "resposta": "Pressão de carga",
+      "explicacao": "Com posicionador, a pressão que desloca o atuador é a entregue ao diafragma ou pistão. A pressão de suprimento mostra apenas o ar disponível na alimentação do dispositivo.",
+      "resposta_padrao": "Pressão de suprimento.",
+      "por_que_nao": "Com posicionador, a força no atuador depende da pressão modulada na câmara, não da alimentação disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a pressão de carga é a pressão efetivamente aplicada ao diafragma ou pistão para deslocá-lo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação do posicionador para vencer forças de processo e não linearidades em válvulas pneumáticas.",
+      "pergunta": "Pequenas variações do controlador não conseguem reposicionar uma válvula pneumática sob força de processo elevada, embora haja ar disponível. Qual elemento deve ser adotado para ajustar a pressão no atuador conforme a posição requerida?",
+      "resposta": "Posicionador",
+      "explicacao": "O posicionador modula a pressão entregue ao atuador para levar haste ou obturador à posição comandada, melhorando a capacidade de vencer forças de processo e não linearidades.",
+      "resposta_padrao": "Aumentar a pressão de instrumento.",
+      "por_que_nao": "Mais alimentação disponível não substitui o ajuste de pressão no atuador nem corrige a falta de realimentação de posição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o posicionador pode melhorar a capacidade de vencer forças de processo e não linearidades"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de stiction pelo padrão de haste parada seguida de salto de posição.",
+      "pergunta": "O sinal do controlador varia de forma contínua, mas a haste permanece imóvel até se deslocar de uma vez. Qual é a causa primária desse comportamento da válvula?",
+      "resposta": "Stiction",
+      "explicacao": "O padrão de ficar parada até vencer um limiar de força e então saltar é característico do atrito estático no conjunto móvel da válvula.",
+      "resposta_padrao": "Folga mecânica.",
+      "por_que_nao": "Folga gera banda morta associada a reversão; permanecer travada até liberar com salto é assinatura de atrito estático.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "mantém a válvula parada até que a força de atuação vença a resistência ao movimento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A liberação pode produzir um salto de posição"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador, folgas mecânicas, atrito"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Relação entre stiction e ciclos limite na malha de controle.",
+      "pergunta": "A variável controlada oscila continuamente; a haste fica parada por intervalos e depois se desloca abruptamente a cada correção. Qual efeito específico desse comportamento da válvula aparece na malha?",
+      "resposta": "Ciclos limite",
+      "explicacao": "O atrito estático introduz atraso e movimento descontínuo. A correção do controlador acumula esforço até a liberação, produzindo oscilações repetitivas típicas de ciclos limite.",
+      "resposta_padrao": "Sintonia agressiva do controlador.",
+      "por_que_nao": "A oscilação descrita nasce da não linearidade stick-slip; sintonia agressiva pode oscilar, mas não explica a válvula travar e saltar.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "introduz atraso, movimento descontínuo e possibilidade de ciclos limite."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O resultado típico é permanência temporária em uma posição seguida de deslocamento abrupto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o posicionador pode introduzir erro de posicionamento ou participar de fenômenos de instabilidade."
+        }
+      ]
+    }
+  ]
+}

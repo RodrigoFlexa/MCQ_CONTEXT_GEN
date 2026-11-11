@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:007:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de escolha da interligação OT-IT quando o fluxo deve ser estritamente unidirecional.",
+      "pergunta": "Dados do historiador precisam sair para analytics corporativo, e o bloqueio do sentido de volta não pode depender de regra configurável. Qual interligação deve ser usada?",
+      "resposta": "gateway unidirecional",
+      "explicacao": "Somente um enlace unidirecional imposto por hardware elimina o caminho de retorno de sessões e comandos; firewall continua sendo controle configurável.",
+      "resposta_padrao": "Firewall com regras restritivas entre OT e corporativo.",
+      "por_que_nao": "Firewall ainda usa pilha bidirecional e depende de configuração, manutenção e estado das sessões."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da integridade da lógica efetivamente carregada em controlador.",
+      "pergunta": "Intertravamentos passaram a atuar em sequência diferente, mas o projeto salvo na estação permanece inalterado. Como verificar especificamente se a lógica em execução diverge da versão aprovada?",
+      "resposta": "upload da lógica do controlador para comparação com baseline aprovado",
+      "explicacao": "Ler a lógica residente no controlador e compará-la ao baseline detecta edições online ou downloads não refletidos no arquivo da estação.",
+      "resposta_padrao": "Conferir versão e data do projeto salvo na estação de engenharia.",
+      "por_que_nao": "O arquivo offline pode permanecer intacto enquanto a lógica carregada no controlador já foi alterada."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Técnica de coleta de tráfego OT para monitoramento sem impacto operacional.",
+      "pergunta": "Tráfego anômalo precisa ser observado na rede de controle durante operação contínua, sem injetar pacotes e sem depender do processamento do switch. Que ponto de coleta usar?",
+      "resposta": "TAP de rede passivo",
+      "explicacao": "O TAP replica o tráfego passivamente, sem depender do processamento do switch e com menor risco de perda de quadros em carga.",
+      "resposta_padrao": "Porta SPAN do switch industrial.",
+      "por_que_nao": "SPAN pode descartar tráfego espelhado sob carga e depende da configuração do próprio switch."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação criptográfica de integridade de pacote de firmware antes da aplicação.",
+      "pergunta": "Uma atualização de firmware para controlador chegou por mídia removível e será aplicada em rede isolada. Como confirmar especificamente a integridade do pacote antes do uso?",
+      "resposta": "comparação do hash criptográfico com o valor de referência",
+      "explicacao": "Comparar o hash calculado com o valor de referência detecta alteração de conteúdo mesmo em rede isolada e com metadados aparentemente corretos.",
+      "resposta_padrao": "Conferir nome, versão e tamanho do arquivo recebido.",
+      "por_que_nao": "Metadados não comprovam integridade criptográfica do conteúdo transferido."
+    }
+  ]
+}

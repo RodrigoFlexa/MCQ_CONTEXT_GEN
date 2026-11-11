@@ -1,0 +1,99 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:012:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de vulnerabilidades em OT pelo papel operacional do ativo, não pela severidade genérica.",
+      "pergunta": "O mesmo boletim de vulnerabilidade atinge um historiador e um controlador que abre e fecha válvulas e regula vazão e pressão. Qual critério técnico deve comandar a prioridade de tratamento?",
+      "resposta": "a função do sistema atingido",
+      "explicacao": "Nos IACS, a relevância da vulnerabilidade depende do papel operacional do ativo. Quando o sistema atua em válvulas, vazão e pressão, a exploração pode alterar o processo ou retirar funções de serviço.",
+      "resposta_padrao": "o maior score CVSS do boletim",
+      "por_que_nao": "Em OT, a prioridade correta decorre do impacto sobre a função de processo, não apenas da severidade genérica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Primeira verificação técnica diante de boletim sobre Treck TCP/IP em ativos de automação.",
+      "pergunta": "Sai um alerta sobre vulnerabilidades na pilha Treck TCP/IP em dispositivos de controle e energia. Antes de decidir por patch, bloqueio ou teste, o que deve ser confirmado no ativo suspeito?",
+      "resposta": "a presença da pilha Treck TCP/IP no ativo",
+      "explicacao": "O alerta só se aplica quando essa pilha estiver presente. Em OT, o tratamento começa confirmando se o ativo usa o componente afetado antes de qualquer remediação.",
+      "resposta_padrao": "se o equipamento está exposto à internet",
+      "por_que_nao": "Exposição importa depois; primeiro é preciso comprovar que o componente vulnerável existe no ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Medida compensatória imediata quando patch não é viável em ativo OT vulnerável.",
+      "pergunta": "Controlador legado confirmado com componente vulnerável não pode ser atualizado nesta janela, e o acesso remoto não é necessário para operar. Qual ação técnica específica é a melhor compensação imediata?",
+      "resposta": "isolamento adicional atrás de firewall",
+      "explicacao": "Quando o patch imediato não é viável ou seguro, a preferência é reduzir a exposição. Sem necessidade de acesso remoto, o ativo deve ficar isolado e sem acessibilidade direta.",
+      "resposta_padrao": "manter acesso pela VPN atualizada",
+      "por_que_nao": "VPN reduz exposição só quando o acesso remoto é necessário e ainda depende da segurança dos dispositivos conectados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Delimitação correta do escopo de IACS para avaliação de vulnerabilidades em redes integradas.",
+      "pergunta": "Na delimitação de uma avaliação de vulnerabilidades, qual ambiente não deve ser excluído só por ser \"de negócios\", se estiver conectado pela infraestrutura de rede do IACS?",
+      "resposta": "sistemas de informação e negócios conectados ao IACS",
+      "explicacao": "No contexto offshore, o escopo de IACS inclui também ambientes de informação e negócios quando a conexão ocorre pela própria infraestrutura de rede do IACS.",
+      "resposta_padrao": "apenas BPCS, SIS e ESD",
+      "por_que_nao": "O escopo não se limita ao controle de processo e à segurança; inclui sistemas de informação e negócios conectados à rede IACS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo de IACS abrange sistemas básicos de controle de processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "e sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        }
+      ]
+    }
+  ]
+}

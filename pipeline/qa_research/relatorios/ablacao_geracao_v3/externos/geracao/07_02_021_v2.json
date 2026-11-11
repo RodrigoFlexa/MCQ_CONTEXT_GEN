@@ -1,0 +1,71 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:021:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição da camada mais próxima da fonte para normalização de dados em automação com controladores heterogêneos.",
+      "pergunta": "Controladores de fornecedores diferentes expõem tags e estruturas incompatíveis, dificultando padronizar HMI e comparar desempenho entre ativos. Sem reprogramar cada controlador, em que camada a normalização deve ser implementada mais perto da fonte?",
+      "resposta": "Na camada SCADA.",
+      "explicacao": "Se o nível de controle não oferece padronização suficiente, o SCADA passa a ser o ponto viável mais próximo da fonte para normalizar dados e interfaces.",
+      "resposta_padrao": "No historiador de dados.",
+      "por_que_nao": "O historiador fica mais distante da fonte; nesta condição, a normalização viável para operação e HMI precisa ocorrer antes, no SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação do contexto operacional faltante que torna inválidos diagnósticos analíticos com sinais formalmente corretos.",
+      "pergunta": "O modelo preditivo alarma na partida e na recirculação como se houvesse desvio de desempenho, embora unidades, tags e qualidade do sinal estejam corretas. Que informação de dado está faltando para separar essas condições?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Sem identificar o modo operacional, a aplicação compara estados de processo diferentes como equivalentes, enfraquecendo o diagnóstico e gerando alertas indevidos.",
+      "resposta_padrao": "Filtragem adicional de ruído.",
+      "por_que_nao": "Mesmo com sinal limpo, misturar partida, recirculação e regime normal sem contexto operacional produz inferência errada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do critério temporal decisivo para aplicações próximas ao controle que usam múltiplas fontes de dados.",
+      "pergunta": "Uma aplicação faz ajustes operacionais frequentes usando dados de subsistemas distintos. A rede tem baixa latência, mas os carimbos de tempo chegam desalinhados e as correlações ficam instáveis. Qual verificação técnica é decisiva antes de aproximá-la do controle?",
+      "resposta": "Qualidade de sincronismo.",
+      "explicacao": "Perto do controle, dados de diferentes fontes precisam representar o mesmo instante de processo; baixa latência sozinha não evita decisões sobre amostras temporalmente incoerentes.",
+      "resposta_padrao": "Apenas a latência de comunicação.",
+      "por_que_nao": "Atraso baixo não garante alinhamento temporal entre fontes; sem sincronismo adequado, a aplicação combina estados de processo diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        }
+      ]
+    }
+  ]
+}

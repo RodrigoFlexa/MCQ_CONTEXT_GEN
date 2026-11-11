@@ -1,0 +1,99 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_08:001:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação de risco de surge em parada de compressão exige análise transiente com controles e sequência de eventos.",
+      "pergunta": "Durante parada programada ou ESD de um sistema de compressão, recycle, blowdown e inventário de sucção e descarga mudam em segundos. Que técnica deve ser usada para verificar se o compressor cruza a linha de surge?",
+      "resposta": "simulação dinâmica transiente do sistema de compressão",
+      "explicacao": "O risco de surge na parada depende do transiente, dos controles e do acoplamento entre compressor, recycle e blowdown; por isso a verificação correta exige representação temporal explícita do evento.",
+      "resposta_padrao": "análise estática do caso mais severo de vazão",
+      "por_que_nao": "não reproduz a trajetória transiente nem a atuação do anti-surge, recycle e blowdown",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Diferença entre carga estática e dinâmica no flare pode resultar de descargas não simultâneas.",
+      "pergunta": "Novas fontes de alívio foram adicionadas ao header. O estudo estacionário apontou revamp, mas o transitório mostrou pico menor porque as contribuições não chegaram juntas à tocha. Qual elo físico-operacional explica essa diferença?",
+      "resposta": "defasagem temporal das descargas para a tocha",
+      "explicacao": "Quando as fontes não aliviam juntas, o pico no header depende do sequenciamento temporal. A análise dinâmica capta essa defasagem e pode reduzir a carga simultânea que a abordagem estacionária supõe.",
+      "resposta_padrao": "usar um fator global de simultaneidade menor",
+      "por_que_nao": "o sinal decisivo é o desencontro temporal real entre descargas, que um fator fixo não reproduz",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas fontes não aliviavam simultaneamente para a tocha."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Resultados de alívio em simulação dinâmica dependem do estado inicial real do processo no instante do evento.",
+      "pergunta": "A mesma parada foi simulada partindo de 50% e de 100% de carga, e os picos de vazão e temperatura de alívio mudaram bastante. No modelo, o que precisa corresponder ao estado real no instante do trip para o resultado ser útil?",
+      "resposta": "condições iniciais do processo",
+      "explicacao": "Nos transientes de alívio, inventário, pressão e temperatura iniciais definem a energia e a massa disponíveis no instante do trip; sem esse estado inicial correto, o pico calculado fica distorcido.",
+      "resposta_padrao": "curvas nominais dos equipamentos",
+      "por_que_nao": "sem o estado inicial real, inventário e pressões de partida, o pico transiente calculado perde representatividade",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "F",
+          "trecho": "obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo com PSVs de set points diferentes pode separar proteção de cenários de alta e baixa carga.",
+      "pergunta": "Um vaso tem um cenário de alta vazão e outro de baixa vazão. A PSV escolhida pelo caso governante protege a sobrepressão, mas se mostra inadequada no transiente de menor carga. Que arranjo específico pode separar essas duas respostas?",
+      "resposta": "duas PSVs com pressões de ajuste diferentes",
+      "explicacao": "Com set points escalonados, a primeira válvula pode atender o evento de menor vazão sem acionar a válvula superdimensionada, mantendo a cobertura do caso governante quando a carga é maior.",
+      "resposta_padrao": "uma única PSV maior para o caso governante",
+      "por_que_nao": "pode atender a sobrepressão e ainda assim ser dinamicamente inadequada no cenário de menor carga",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula em unidade de coqueamento retardado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma única PSV escolhida para o caso dimensionante pode proteger contra sobrepressão, mas continuar inadequada do ponto de vista dinâmico para a condição de menor carga."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        }
+      ]
+    }
+  ]
+}

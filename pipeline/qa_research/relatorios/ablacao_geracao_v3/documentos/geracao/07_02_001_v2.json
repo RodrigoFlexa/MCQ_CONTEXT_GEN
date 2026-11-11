@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:001:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Localização prática da fronteira IT/OT quando dados do controle passam a ser consumidos fora dele.",
+      "pergunta": "Historiador, aplicações analíticas e telecom passaram a consumir sinais de controladores por rede. Em que ponto arquitetural essa fronteira deve ser tratada explicitamente?",
+      "resposta": "Na interface entre a camada de controle e a camada supervisória/consumidores externos.",
+      "explicacao": "A fronteira prática surge quando os dados deixam o controle para supervisão e outros consumidores; é nesse ponto que a segmentação contém propagação entre domínios distintos.",
+      "resposta_padrao": "No firewall de acesso à rede corporativa.",
+      "por_que_nao": "A fronteira relevante já se forma antes, na saída do controle para supervisão, historiadores, aplicações analíticas ou telecom.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Efeito da incompatibilidade de modelos de dados na localização da integração entre controladores e sistemas superiores.",
+      "pergunta": "Controladores de três fornecedores expõem modelos de dados incompatíveis, e a normalização junto aos equipamentos ficou limitada. Para qual camada a integração tende a migrar?",
+      "resposta": "Para a camada supervisória.",
+      "explicacao": "Com modelos de dados distintos entre fornecedores, a padronização próxima à fonte perde viabilidade; a integração costuma subir para a supervisão.",
+      "resposta_padrao": "Para gateways padronizados junto à fonte.",
+      "por_que_nao": "Modelos de dados incompatíveis limitam a padronização perto dos equipamentos e empurram a integração para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "fornecedores diferentes usam modelos de dados distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de controle de tráfego em fronteiras ampliadas por edge computing, MQTT e nuvem.",
+      "pergunta": "Controladores de borda publicam em broker MQTT na nuvem e também alimentam o SCADA local em tempo real. Qual definição técnica deve governar o que atravessa essa fronteira?",
+      "resposta": "Fluxos permitidos e sua finalidade operacional.",
+      "explicacao": "Em arquitetura híbrida, o ponto decisivo é especificar exatamente quais tráfegos podem cruzar a fronteira e para que função operacional.",
+      "resposta_padrao": "Instalar apenas um firewall entre nuvem e SCADA.",
+      "por_que_nao": "Sem explicitar fluxos autorizados e propósito operacional, o firewall pode manter conectividade excessiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda podem enviar dados para broker MQTT em nuvem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alimentar SCADA local em tempo real"
+        },
+        {
+          "bloco": "F",
+          "trecho": "definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional"
+        }
+      ]
+    }
+  ]
+}

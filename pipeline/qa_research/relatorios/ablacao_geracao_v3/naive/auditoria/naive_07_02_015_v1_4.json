@@ -1,0 +1,56 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Um backup adequado é uma cópia offline ou imutável, segregada do ambiente de produção e validada por testes de restauração que atendam ao RTO/RPO dos ativos críticos.",
+  "alternativa_excluida": true,
+  "atalho": true,
+  "sustentada": false,
+  "elemento_unico": false,
+  "tipo_sugerido": "conceito",
+  "justificativa": "A resposta é uma caracterização genérica de boas práticas de backup em OT, acessível a um profissional experiente sem o documento, mas não está afirmada nos blocos e reúne vários critérios independentes em vez de um único elemento decisivo.",
+  "aprovada": false,
+  "motivo": "atalho",
+  "falhas": [
+    "atalho",
+    "fora_da_fonte",
+    "nao_unico"
+  ],
+  "referencia_valida": false,
+  "tipo_confere": false,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "07_02",
+      "texto": "Segurança funcional é componente-chave do conjunto de medidas para minimizar risco e prevenir eventos perigosos com potencial impacto a pessoas ou ao meio ambiente. Ela se relaciona com temas como gestão de alarmes, overrides, inhibits e avaliação de risco operacional em condições anormais, e o guia de segurança funcional remete ao guia de cibersegurança para IACS, indicando complementaridade entre os dois domínios. Essa interação importa porque indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção. A alimentação de suporte também influencia a capacidade de supervisão e resposta. Em dutos e terminais, sistemas SCADA foram descritos como dependentes de fonte elétrica confiável e ininterrupta, e a gestão do estado de saúde de bancos de baterias foi associada à disponibilidade do backup de energia. Esse vínculo é tecnicamente transferível como princípio de continuidade de supervisão, mas o resultado operacional citado pertence àquele contexto. Já analytics em dispositivos, edge computing e modelos digitais podem ampliar observação e previsão de falhas, porém não substituem monitoramento de segurança nem garantem resposta adequada sem integração com funções críticas e decisão operacional.",
+      "titulo": "Monitoramento e resposta a incidentes / Interações com segurança funcional, energia de suporte e digitalização",
+      "indice_documento": 18
+    },
+    {
+      "id": "B2",
+      "item": "05_02",
+      "texto": "A confiabilidade dos sistemas essenciais aumenta quando a arquitetura evita ponto único de falha. Na unidade descrita, os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias, cada um capaz de suprir integralmente a demanda do quadro, com possibilidade de alimentação cruzada por disjuntor TIE em caso de falha de um conjunto. Para 120 Vca, há dois UPS dimensionados para suprir integralmente as cargas das estações, distribuídos em barramentos “A” e “B”, também com interligação por disjuntor em contingência. O princípio por trás disso é a redundância funcional: dois caminhos capazes de assumir a carga reduzem a probabilidade de perda total por falha simples. Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos. Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional. Em sistemas de controle e segurança, a distribuição correta entre ramos independentes é tão importante quanto a capacidade nominal de cada fonte.",
+      "titulo": "UPS, baterias e sistemas essenciais / Redundância, segregação de barramentos e alimentação cruzada",
+      "indice_documento": 16
+    },
+    {
+      "id": "B3",
+      "item": "06_01",
+      "texto": "Redundância, em sistemas de segurança, significa preservar a função requerida mesmo após falha de elemento relevante; não é apenas duplicar equipamentos. Por isso, a avaliação da rede deve considerar dependências comuns, vulnerabilidade local, isolamento inadvertido, manutenção simultânea e danos que possam atingir mais de um caminho funcional ao mesmo tempo. Em ambiente offshore, degradações em estruturas de sustentação e em tubulações podem comprometer simultaneamente a contenção primária de fluidos perigosos e o sistema de combate a incêndio. Eventos de embarque de água no convés também podem causar danos significativos a estruturas, plataformas e tubulações expostas, o que pode exigir barreiras físicas, reforços locais ou proteções generalizadas quando esse carregamento é relevante para o arranjo da unidade. A consequência prática é que a filosofia de redundância deve ser testada contra falhas localizadas e contra danos de causa comum. Assim, uma rede pode existir fisicamente e ainda não ser confiável se sucção, suportes, linhas e equipamentos compartilharem vulnerabilidades críticas.",
+      "titulo": "Filosofia e rede de incêndio / Redundância e segregação: por que a rede pode existir e ainda não ser confiável",
+      "indice_documento": 3
+    },
+    {
+      "id": "B4",
+      "item": "07_02",
+      "texto": "Em sistemas de Automação e Controle Industrial (IACS), o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia, servidores, controladores, sistemas de supervisão, funções instrumentadas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação conectados à infraestrutura de rede do IACS. Em instalações offshore, esse conjunto pode incluir ainda sistemas marítimos, de perfuração e de monitoramento de movimento, quando conectados ao ambiente operacional.\n\nEsse tema é crítico porque um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo: alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança. Em ICS, a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo.\n\nPor isso, a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais, competência e efetividade das contramedidas, e não apenas como um conjunto de controles técnicos isolados.",
+      "titulo": "Acessos e cadeia de suprimentos / Escopo de acesso em IACS e por que ele é crítico",
+      "indice_documento": 4
+    },
+    {
+      "id": "B5",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    }
+  ]
+}

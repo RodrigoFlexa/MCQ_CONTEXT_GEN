@@ -1,0 +1,99 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:012:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Triagem técnica de aplicabilidade de alerta de vulnerabilidade embarcada em ativo OT.",
+      "pergunta": "Sem exposição direta à internet, um ativo de automação troca dados na rede de controle e sai um alerta para a pilha Treck TCP/IP. Qual verificação técnica deve ser feita primeiro para decidir se ele entra no tratamento?",
+      "resposta": "Presença da pilha Treck TCP/IP no ativo.",
+      "explicacao": "O alerta não implica comprometimento geral. Primeiro confirma-se se o ativo usa o componente afetado; só depois faz sentido avaliar sua exposição real.",
+      "resposta_padrao": "Verificar se o ativo está exposto diretamente à internet.",
+      "por_que_nao": "A vulnerabilidade depende da presença da pilha embarcada; ativos sem internet direta ainda podem estar afetados na rede OT.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há alerta de que múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar sistemas de controle industrial do setor de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Medida compensatória preferível quando patch imediato em OT não é viável ou seguro.",
+      "pergunta": "Controlador legado confirmado com componente vulnerável mantém rotas com a rede corporativa, e o patch ainda não foi validado. Qual intervenção técnica é preferível até existir remediação compatível?",
+      "resposta": "Isolamento adicional por firewall da rede de controle.",
+      "explicacao": "Quando o patch imediato não é seguro, a prioridade é reduzir exposição. Para rotas abertas com a rede corporativa, o isolamento adicional por firewall é a medida compensatória indicada.",
+      "resposta_padrao": "Aplicar imediatamente a versão mais recente do patch.",
+      "por_que_nao": "Em sistemas de controle, atualizar sem qualificação pode causar indisponibilidade ou comportamento não previsto; nesse caso prefere-se reduzir a exposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis até que exista remediação compatível."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação técnica prévia que distingue a aplicação correta de correções em sistemas de controle.",
+      "pergunta": "Fornecedor liberou correção para o componente afetado e a janela de manutenção foi aprovada. Antes de aplicar em um sistema de controle, qual validação técnica deve ser concluída para evitar comportamento não previsto?",
+      "resposta": "Compatibilidade entre firmware, comunicação e funções de processo.",
+      "explicacao": "Em OT, a correção não é aplicada só por existir. É necessário validar a interação com firmware, comunicações e funções de processo para evitar indisponibilidade ou resposta incorreta.",
+      "resposta_padrao": "Homologação apenas da versão de software pelo fornecedor.",
+      "por_que_nao": "A compatibilidade relevante em controle industrial envolve também firmware, comunicações e funções de processo, não só a versão liberada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de enquadramento de sistemas de negócio no escopo de vulnerabilidades do IACS offshore.",
+      "pergunta": "Servidor de relatórios de produção não executa controle, mas está ligado pela mesma infraestrutura de rede dos sistemas de controle. Qual critério técnico o inclui na avaliação de vulnerabilidades offshore?",
+      "resposta": "Conexão pela infraestrutura de rede do IACS.",
+      "explicacao": "No escopo offshore, sistemas de informação e negócios entram na avaliação quando estão conectados pela infraestrutura de rede do IACS, mesmo sem executar controle direto.",
+      "resposta_padrao": "Função administrativa do servidor.",
+      "por_que_nao": "O enquadramento no IACS decorre da integração de rede com os sistemas de controle, não do propósito administrativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o escopo de IACS abrange sistemas básicos de controle de processo, funções de camada independente de proteção, sistemas de segurança, sistemas elétricos de controle e aquisição de dados e sistemas de informação e negócios conectados pela infraestrutura de rede do IACS."
+        }
+      ]
+    }
+  ]
+}

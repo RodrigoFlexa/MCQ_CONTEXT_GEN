@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 31,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_01:031:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Conversão entre vazão e pressão diferencial quando a extração de raiz quadrada está no sistema de controle.",
+      "pergunta": "A medição de vazão por placa de orifício usa transmissor linear em DP e extração de raiz no controlador. Para conferir 50% de vazão indicada, que valor deve ser aplicado no span do transmissor?",
+      "resposta": "25% do span de pressão diferencial",
+      "explicacao": "Com extração de raiz, a vazão é proporcional à raiz quadrada da DP; metade da vazão corresponde a um quarto da DP.",
+      "resposta_padrao": "Aplicar 50% do span do transmissor.",
+      "por_que_nao": "Isso só seria correto se a indicação estivesse linearizada em vazão no próprio transmissor ou sem extração de raiz."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ponto correto de aplicação do estímulo em teste funcional para incluir instrumento, fiação e cartão de entrada.",
+      "pergunta": "Durante teste funcional de um shutdown por alta pressão, é preciso verificar sensor, cabeamento, cartão AI e lógica, com o elemento final bloqueado. Onde aplicar a simulação de processo?",
+      "resposta": "No transmissor em campo",
+      "explicacao": "Estimular o transmissor em campo exercita a cadeia até a lógica sem mascarar falhas de instrumento, fiação ou cartão.",
+      "resposta_padrao": "Forçar a variável no SIS ou no DCS.",
+      "por_que_nao": "A força lógica contorna o transmissor, o cabeamento e o cartão de entrada, deixando a maior parte da função sem prova."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de stiction por relação entre sinal do controlador e movimento descontínuo da haste.",
+      "pergunta": "Com a malha em automático, a saída do controlador varia suavemente, a haste da válvula fica parada por alguns segundos e depois salta, repetindo o ciclo. Qual é a causa primária?",
+      "resposta": "Stiction na válvula de controle",
+      "explicacao": "O padrão stick-slip, com saída contínua e movimento aos saltos, é assinatura de atrito estático excessivo em válvula, atuador ou engaxetamento.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Sintonia ruim produz oscilação contínua do sinal e da posição; não explica a haste travada seguida de salto."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de falha física de camada de comunicação em segmento FOUNDATION Fieldbus H1 por reflexões de sinal.",
+      "pergunta": "Após intervenção em uma caixa de junção, todos os instrumentos de um segmento FOUNDATION Fieldbus H1 ficam intermitentes; a tensão DC segue normal e o sinal mostra reflexões. Qual componente específico está faltando?",
+      "resposta": "O segundo terminador do segmento",
+      "explicacao": "Sem os dois terminadores corretos, a forma de onda sofre reflexões e a comunicação degrada mesmo com alimentação DC aparentemente normal.",
+      "resposta_padrao": "A blindagem do cabo.",
+      "por_que_nao": "Problemas de blindagem aumentam suscetibilidade a ruído, mas reflexões persistentes com tensão normal apontam para terminação incorreta."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 23,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:023:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sinais de stiction em válvula de controle distinguindo falha mecânica de sintonia PID.",
+      "pergunta": "Oscilações regulares de processo persistem; a saída do controlador sobe e desce suavemente, mas o feedback da haste fica parado e depois salta, com ar de instrumento estável. Qual a causa primária?",
+      "resposta": "stiction no conjunto haste-gaxeta da válvula",
+      "explicacao": "O padrão stick-slip com saída contínua, posição travada e salto brusco indica atrito estático dominante no elemento mecânico, não problema de ar nem oscilação gerada apenas pela malha.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Sintonia ruim não produz posição da haste travada seguida de salto com saída variando continuamente."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste funcional necessário para verificar exaustão da solenoide e fechamento real de válvula de shutdown.",
+      "pergunta": "Partial stroke é aprovado, mas no trip real a válvula de shutdown com mola-retorno já fechou lentamente. Que teste funcional específico deve ser executado para verificar a exaustão da solenoide e o fechamento final?",
+      "resposta": "trip por desenergização total da solenoide com medição do tempo de fechamento",
+      "explicacao": "Só a desenergização completa força a ventilação integral do atuador e confirma dinâmica de mola, exaustão da SOV e assentamento na posição segura.",
+      "resposta_padrao": "Repetir o partial stroke test.",
+      "por_que_nao": "Partial stroke não comprova ventilação total do atuador nem o tempo real até a posição segura."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Efeito do aterramento inadequado de blindagem sobre a confiabilidade de comunicação em redes industriais.",
+      "pergunta": "Perdas intermitentes de comunicação surgiram após religar a blindagem do cabo nos dois extremos; as falhas aumentam em partidas de motores, sem queda de alimentação dos nós. Qual mecanismo explica o problema?",
+      "resposta": "corrente de loop de terra na blindagem",
+      "explicacao": "Aterramento bilateral em potenciais diferentes permite corrente na blindagem; transientes elevam o modo comum e degradam a comunicação mesmo com alimentação íntegra.",
+      "resposta_padrao": "Interferência eletromagnética externa.",
+      "por_que_nao": "O sinal distintivo é a circulação de corrente criada pela blindagem aterrada nos dois lados, não apenas o ambiente ruidoso."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de verificação de RTD 3-fios para excluir erro de resistência de cabos.",
+      "pergunta": "Leitura de um Pt100 a 3 fios ficou alguns graus alta após recabeamento e o erro varia com a temperatura ambiente do cabo. Que verificação específica distingue problema de compensação de fios?",
+      "resposta": "igualdade de resistência dos dois condutores de compensação",
+      "explicacao": "Na ligação 3-fios o transmissor assume resistências iguais nos dois condutores de compensação; desequilíbrio gera erro adicional que varia com a temperatura do cabo.",
+      "resposta_padrao": "Recalibrar o transmissor.",
+      "por_que_nao": "Recalibração não elimina erro introduzido por resistências desiguais nos condutores da ligação 3-fios."
+    }
+  ]
+}

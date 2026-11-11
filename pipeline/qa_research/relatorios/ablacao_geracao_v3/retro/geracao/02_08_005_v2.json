@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_08:005:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O atraso de atuação da BDV deve ser parametrizado no modelo dinâmico para reproduzir o início real da despressurização.",
+      "pergunta": "Num teste de blowdown, a pressão do segmento fica quase estável por alguns segundos após o comando de ESD e depois cai com a inclinação prevista. Que parâmetro do modelo dinâmico deve ser ajustado?",
+      "resposta": "Atraso de atuação da BDV.",
+      "explicacao": "Se a inclinação após o início da queda está correta, a capacidade de descarga está bem representada; o erro está no instante em que a válvula efetivamente começa a aliviar.",
+      "resposta_padrao": "Coeficiente de vazão da BDV.",
+      "por_que_nao": "O Cv explica a taxa de despressurização depois da abertura, não o patamar inicial sem queda de pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tempo real não depende apenas do tamanho da válvula. Ele também é afetado pelo atraso de atuação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A lógica de ESD e a sequência de abertura entre segmentos precisam ser representadas para prever corretamente o pico de vazão no header de flare.",
+      "pergunta": "O pico no header ficou menor que o previsto, embora a massa total aliviada e a capacidade individual das BDVs coincidam com o modelo; os registros mostram comandos liberados em instantes diferentes. Que aspecto do modelo precisa ser corrigido?",
+      "resposta": "Lógica de ESD de abertura sequenciada.",
+      "explicacao": "O pico instantâneo depende da sobreposição temporal entre descargas de segmentos diferentes. Abrir tudo junto ou em sequência muda a carga máxima no sistema comum.",
+      "resposta_padrao": "Tempo de curso individual das BDVs.",
+      "por_que_nao": "Mesmo com o mesmo curso de cada válvula, a defasagem entre grupos altera o pico agregado no header.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "As fronteiras do sistema devem ser compatíveis com o objetivo do estudo, incluindo o sistema comum de flare quando a decisão depende dele.",
+      "pergunta": "Para estimar radiação na tocha após novas fontes de alívio, o estudo encerra o modelo na saída de cada BDV e não representa o sistema comum de flare. Que elemento metodológico ficou inconsistente com o objetivo?",
+      "resposta": "Fronteiras do sistema.",
+      "explicacao": "Se a decisão envolve radiação na tocha, o modelo precisa incluir os trechos e equipamentos compartilhados até esse ponto; truncar o sistema remove interações relevantes.",
+      "resposta_padrao": "Pacote termodinâmico do fluido.",
+      "por_que_nao": "Propriedades corretas não compensam uma fronteira truncada que exclui o header e o sistema receptor do problema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a qualidade do resultado depende da coerência entre cenário, modelo, fronteiras do sistema e objetivo da decisão de segurança"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Dispositivos de alívio, linhas e sistema receptor precisam ser avaliados conjuntamente."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A composição do fluido é uma premissa crítica do modelo dinâmico, pois controla as propriedades e o resfriamento ao longo do blowdown.",
+      "pergunta": "A lógica real de ESD e a contrapressão medida no flare já estão no modelo, mas ele usa um fluido genérico de projeto e prevê menos resfriamento que o observado. Que premissa deve ser atualizada?",
+      "resposta": "Composição do fluido.",
+      "explicacao": "Com timing e contrapressão representados, a diferença de temperatura passa a depender principalmente das propriedades termodinâmicas definidas pela composição da corrente.",
+      "resposta_padrao": "Coeficiente de vazão da BDV.",
+      "por_que_nao": "A capacidade da válvula altera a taxa de descarga, mas não corrige o comportamento termodinâmico do fluido representado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD ou propriedades do fluido estiverem incorretas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela evolução das propriedades do fluido ao longo do evento"
+        }
+      ]
+    }
+  ]
+}

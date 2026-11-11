@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:017:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério técnico para selecionar cargas de 24 Vcc, UPS e geração de emergência.",
+      "pergunta": "Uma solenoide de shutdown e um aquecedor local disputam alimentação com maior continuidade; a solenoide consome muito menos. Que critério técnico deve governar a seleção para 24 Vcc, UPS ou geração de emergência?",
+      "resposta": "Consequência da perda de energia.",
+      "explicacao": "A classificação deve considerar o impacto funcional da perda, não a potência. Comando, shutdown e mitigação tendem a exigir maior continuidade ou independência.",
+      "resposta_padrao": "A potência consumida da carga.",
+      "por_que_nao": "Cargas de baixa potência podem ser as mais críticas quando sua perda interrompe comando, shutdown ou mitigação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação que confirma redundância funcional real em sistemas essenciais alimentados por UPS ou 24 Vcc.",
+      "pergunta": "Na ronda, tensão de saída, baterias e inversores estão normais, mas uma falha simples ainda derruba dois trens supostamente redundantes. Que verificação específica faltou no monitoramento?",
+      "resposta": "Distribuição correta entre ramos redundantes.",
+      "explicacao": "Redundância só existe se as cargas estiverem segregadas entre caminhos independentes; medir tensão não revela concentração indevida no mesmo ramo.",
+      "resposta_padrao": "Presença de tensão em cada UPS.",
+      "por_que_nao": "Tensão disponível não comprova independência funcional entre trens redundantes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Elemento de continuidade a verificar quando o caminho normal de conversão do UPS fica indisponível.",
+      "pergunta": "Durante ensaio de contingência, a entrada do UPS permanece energizada; ao indisponibilizar o inversor, as cargas essenciais em 120 Vca caem. Que disponibilidade específica deveria manter o fornecimento?",
+      "resposta": "Bypass do UPS.",
+      "explicacao": "Com a fonte de entrada presente e o inversor indisponível, a continuidade depende da rota de bypass estar apta à transferência.",
+      "resposta_padrao": "Banco de baterias do UPS.",
+      "por_que_nao": "A bateria sustenta o caminho CC-inversor; sem o inversor, a alimentação CA depende do bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação lógica crítica para recomposição após blackout ou black start.",
+      "pergunta": "Com bateria íntegra e fonte potencialmente disponível, CLP e comandos não recompõem automaticamente depois do blackout e permanecem bloqueados. Que verificação específica deve ser priorizada?",
+      "resposta": "Coerência das lógicas de reboot e de trip.",
+      "explicacao": "Na recomposição, inconsistências entre reboot e trip podem impedir retorno mesmo com alimentação disponível e fonte pronta.",
+      "resposta_padrao": "A alimentação por bateria.",
+      "por_que_nao": "Com a alimentação de controle disponível, o impedimento passa a ser lógico, não falta de energia CC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    }
+  ]
+}

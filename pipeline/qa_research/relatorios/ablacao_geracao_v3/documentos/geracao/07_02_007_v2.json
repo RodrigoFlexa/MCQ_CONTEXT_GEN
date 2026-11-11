@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:007:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da restritividade do controle de acesso conforme o efeito operacional da ação permitida no ativo.",
+      "pergunta": "Entre uma estação de engenharia capaz de alterar intertravamentos e uma tela apenas consultiva, qual critério técnico define qual delas deve receber governança de acesso mais restritiva?",
+      "resposta": "efeito potencial da ação permitida",
+      "explicacao": "O critério de seleção não é só a importância do ativo, mas o efeito que a ação autorizada pode produzir. Capacidade de alterar lógica, parâmetros críticos ou energia exige controle mais restritivo.",
+      "resposta_padrao": "criticidade da informação exibida",
+      "por_que_nao": "Visualização de dados não é o fator decisivo; o que eleva a restrição é a capacidade de alterar lógica, permissivos, intertravamentos ou disponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo e ao efeito potencial da ação permitida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva do que ativos apenas consultivos."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade individual de ações em acessos de terceiros a ativos com capacidade de mudança.",
+      "pergunta": "Dois técnicos de fornecedor usarão, por 12 horas, a mesma conta genérica em um ativo que pode alterar lógica. Qual controle específico falta para atribuir cada ação à pessoa correta?",
+      "resposta": "identidade individual verificável",
+      "explicacao": "Conta compartilhada impede vincular a ação ao executante. Para acessos em ativos capazes de alterar lógica ou parâmetros, a identificação precisa ser individual e verificável.",
+      "resposta_padrao": "registro de sessão",
+      "por_que_nao": "Sessão registrada com credencial compartilhada não individualiza a autoria das ações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como regra técnica de seleção, convém distinguir pelo menos: identidade individual verificável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redução de permissões excedentes em contas temporárias de manutenção.",
+      "pergunta": "Um notebook de manutenção foi autorizado apenas a coletar logs, mas a conta liberada também permite alterar parâmetros e carregar arquivos. Qual critério técnico deve remover essas permissões excedentes?",
+      "resposta": "privilégio mínimo",
+      "explicacao": "Se a atividade autorizada é só coleta de logs, permissões de alteração e carga de arquivos excedem o necessário. O critério correto é conceder apenas o estritamente indispensável.",
+      "resposta_padrao": "perfil compatível com a função",
+      "por_que_nao": "Um perfil pode continuar amplo demais; o critério que corta direitos sobrando é o privilégio mínimo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como regra técnica de seleção, convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado porque podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Evidência do que foi executado por terceiro durante acesso autorizado.",
+      "pergunta": "Durante acesso remoto de terceiro, a atividade aprovada era apenas diagnóstico e ocorreu no horário correto. Depois, é preciso comprovar se houve qualquer ação fora do combinado. Que controle específico fornece essa evidência?",
+      "resposta": "registro de sessão",
+      "explicacao": "Para terceiros, o monitoramento deve confirmar aderência ao escopo autorizado. O controle que preserva evidência do que foi feito durante o acesso é o registro de sessão.",
+      "resposta_padrao": "aprovação da atividade",
+      "por_que_nao": "A aprovação define o trabalho autorizado, mas não registra as ações efetivamente executadas na sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como regra técnica de seleção, convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        }
+      ]
+    }
+  ]
+}

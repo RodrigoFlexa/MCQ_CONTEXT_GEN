@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:015:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre perda por infraestrutura de alimentação ininterrupta e comprometimento do controle pelos sinais do evento.",
+      "pergunta": "Fumaça e arco aparecem na seção inversora; proteções atuam e, ao mesmo tempo, caem controle, shutdown de emergência e mitigação alimentados pela mesma UPS. Qual é a origem primária mais provável do evento?",
+      "resposta": "Falha da infraestrutura de alimentação ininterrupta.",
+      "explicacao": "Sinais elétricos locais somados à perda simultânea de sistemas que compartilham a mesma alimentação indicam falha comum na energia, não comprometimento do controle.",
+      "resposta_padrao": "Comprometimento dos controladores por ataque cibernético.",
+      "por_que_nao": "Comprometimento do controle se manifesta por alterações não autorizadas de lógica, setpoints ou comandos; aqui o padrão é de falha elétrica na alimentação comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sequência de resposta segura a falha com fumaça/arco em UPS mantendo cargas críticas alimentadas.",
+      "pergunta": "Com fumaça e arco elétrico na UPS que mantém equipamentos críticos, qual sequência técnica imediata deve anteceder a inspeção do dano para preservar a alimentação dessas cargas?",
+      "resposta": "Isolamento e bloqueio das fontes, seguido de bypass seguro.",
+      "explicacao": "A sequência correta isola com segurança a seção defeituosa e mantém energizadas as cargas críticas por um caminho alternativo previsto para operação segura.",
+      "resposta_padrao": "Desligamento total da UPS para investigação.",
+      "por_que_nao": "Sem o bypass seguro, o desligamento remove a alimentação das cargas críticas; a contenção correta preserva essas cargas enquanto a falha é isolada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contenção preferencial de vulnerabilidade em controlador embarcado sem patch validado, preservando a operação.",
+      "pergunta": "Um controlador embarcado com vulnerabilidade conhecida na pilha TCP/IP precisa continuar trocando dados com a supervisão local; não há patch validado e o tráfego hoje passa pela rede de negócios. Qual contenção deve ser aplicada?",
+      "resposta": "Segregação da rede de controle por firewall, isolada da rede de negócios.",
+      "explicacao": "Sem correção validada e sem parada possível, a redução do vetor remoto deve vir da segmentação e do firewall, preservando a comunicação necessária com a supervisão local.",
+      "resposta_padrao": "Aplicar imediatamente a atualização mais recente.",
+      "por_que_nao": "Sem correção validada pelo fornecedor, a atualização pode reduzir disponibilidade; a contenção inicial recomendada é isolar e restringir conectividade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de severidade de incidente digital baseado nas funções do processo atingidas, não na origem.",
+      "pergunta": "O alerta inicial vem de um servidor, mas os efeitos atingem comandos de válvulas e variáveis de vazão e pressão. Que critério deve guiar a avaliação imediata da severidade?",
+      "resposta": "As funções afetadas.",
+      "explicacao": "Em cenários com potencial de acidente maior, a gravidade decorre do alcance sobre funções de controle do processo, não do ponto onde o evento começou.",
+      "resposta_padrao": "A origem do incidente no ambiente de TI.",
+      "por_que_nao": "A origem não mede o impacto operacional; o decisivo é quais funções do processo foram alcançadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "01_01:007:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da complexidade do modelo RAM conforme maturidade do projeto e qualidade dos dados.",
+      "pergunta": "Com apenas o arranjo preliminar, a quantidade de equipamentos e opções de standby definidas, mas sem histórico local consistente, qual modelagem RAM deve ser usada primeiro para comparar configurações?",
+      "resposta": "modelo RAM simplificado",
+      "explicacao": "Na fase preliminar, ele compara arranjo, quantidade de equipamentos e redundância; detalhamento maior sem dados aderentes só adiciona precisão aparente.",
+      "resposta_padrao": "modelo RAM mais completo possível",
+      "por_que_nao": "Sem detalhamento suficiente e sem dados locais confiáveis, o modelo completo tende a usar parâmetros não sustentados pela instalação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em etapas preliminares de projeto, modelos mais simples podem servir para validar arranjo, quantidade de equipamentos e alternativas de redundância."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em unidades novas ou com protótipos, a ausência de histórico confiável pode introduzir parâmetros inadequados e resultados imprecisos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de dependências funcionais compartilhadas para estimar a redundância real.",
+      "pergunta": "Dois trens idênticos são duplicados, mas compartilham a mesma utilidade crítica e a mesma lógica de intertravamento. Na análise RAM, que elemento deve entrar no modelo para não inflar a disponibilidade?",
+      "resposta": "dependências funcionais entre subsistemas",
+      "explicacao": "Utilidades e intertravamentos compartilhados impedem tratar os trens como paralelos independentes; a lógica RAM precisa capturar essa dependência.",
+      "resposta_padrao": "paralelismo independente dos dois trens",
+      "por_que_nao": "Compartilhamento de utilidades e intertravamentos reduz a redundância útil e quebra a independência entre caminhos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização do parâmetro de reparo do modelo RAM com dados locais de manutenção.",
+      "pergunta": "Na operação, os reparos levam muito mais tempo que o assumido no estudo, por acesso difícil e estratégia de manutenção embarcada diferente. Qual ajuste técnico específico deve ser feito no modelo RAM?",
+      "resposta": "reparametrização do MTTR com dados locais",
+      "explicacao": "Acessibilidade e estratégia de manutenção alteram o tempo de reparo; sem reparametrizar o MTTR local, a disponibilidade prevista fica distorcida.",
+      "resposta_padrao": "manter o MTTR do banco setorial",
+      "por_que_nao": "Banco setorial apoia comparação, mas não substitui dados locais quando a condição de reparo é diferente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada, porque tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Definição do marco temporal correto para calcular MTTR observado.",
+      "pergunta": "A ordem de serviço foi encerrada horas após o processo voltar a operar. Para calcular o MTTR observado, qual marco temporal deve valer como fim do evento?",
+      "resposta": "retorno ao estado operacional",
+      "explicacao": "MTTR observado mede o intervalo até a restauração da operabilidade; fechamento administrativo pode ocorrer depois e não representa recuperação real.",
+      "resposta_padrao": "encerramento da ordem de serviço",
+      "por_que_nao": "A data administrativa pode ocorrer após a recuperação e não representa o tempo real de restauração.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "é necessário levantar modos de falha que geram perda ao sistema, histórico de falhas e tempos de reparo"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 19,
+  "visita": 3,
+  "onda": 5,
+  "id": "05_02:019:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "sincronismo manual de gerador com barramento energizado e compensação do tempo de fechamento do disjuntor",
+      "pergunta": "No sincronismo manual com tensão e sequência de fases já ajustadas, que condição do sincroscópio define o fechamento do disjuntor do gerador para compensar seu tempo de fechamento?",
+      "resposta": "Ponteiro pouco antes de 12h, no lado FAST.",
+      "explicacao": "O gerador deve entrar ligeiramente mais rápido que o barramento para que, durante o tempo mecânico de fechamento, o ângulo de fase chegue ao zero no instante do acoplamento.",
+      "resposta_padrao": "Fechar com a agulha exatamente em 12h e parada.",
+      "por_que_nao": "O disjuntor não fecha instantaneamente; esperar o zero observado faz o acoplamento ocorrer atrasado e fora de fase."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "compartilhamento de potência reativa entre geradores em paralelo por droop do AVR",
+      "pergunta": "Dois geradores em paralelo dividem kW igualmente; a tensão do barramento está no alvo, mas um fornece quase todo o kvar. Que ajuste específico corrige essa divisão sem deslocar a tensão comum?",
+      "resposta": "Ajuste do droop de tensão do AVR.",
+      "explicacao": "Em paralelo, o droop do AVR é o recurso que força o compartilhamento de corrente reativa entre máquinas sem exigir mudança do valor comum de tensão do barramento.",
+      "resposta_padrao": "Ajustar o setpoint de tensão do AVR.",
+      "por_que_nao": "O setpoint desloca a tensão do barramento; o compartilhamento de reativo entre geradores depende do droop ou compensação reativa."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "critério rápido de load shedding por déficit súbito de geração em rede isolada",
+      "pergunta": "Perde-se um gerador numa rede isolada com grandes motores, e partidas normais também causam quedas breves de tensão. Que grandeza o PMS deve usar como disparo rápido do primeiro estágio de alívio de carga?",
+      "resposta": "Taxa de variação da frequência.",
+      "explicacao": "O déficit súbito de potência ativa aparece imediatamente como desaceleração do sistema. A ROCOF reage antes da subfrequência sustentada e distingue melhor esse evento de afundamentos transitórios de tensão.",
+      "resposta_padrao": "Subtensão no barramento.",
+      "por_que_nao": "Queda de tensão também ocorre em partidas de motores e distúrbios reativos, sem necessariamente indicar perda real de geração."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "proteção contra motorização de gerador em paralelo após perda de torque do primário",
+      "pergunta": "Com o gerador já em paralelo, o torque do primário cai; a corrente permanece moderada e a potência ativa medida na máquina passa de exportação para importação. Que proteção deve abrir seu disjuntor?",
+      "resposta": "Relé de potência reversa.",
+      "explicacao": "Quando o primário perde torque, a máquina passa a ser motorizada pelo barramento. A proteção adequada detecta a inversão do fluxo de potência ativa, não um sobrecorrente elevado.",
+      "resposta_padrao": "Sobrecorrente instantânea.",
+      "por_que_nao": "A motorização costuma ocorrer com corrente próxima da nominal, insuficiente para caracterizar falta ou acionar sobrecorrente."
+    }
+  ]
+}

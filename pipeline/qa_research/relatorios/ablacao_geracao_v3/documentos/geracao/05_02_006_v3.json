@@ -1,0 +1,107 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:006:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento de bus tie entre barramentos energizados exige verificação de sincronismo antes da manobra.",
+      "pergunta": "Dois barramentos energizados por fontes independentes serão interligados por bus tie para transferência de carga. Que verificação específica deve liberar o fechamento?",
+      "resposta": "função synch-check entre os barramentos",
+      "explicacao": "A interligação de barramentos energizados requer controle rigoroso da condição elétrica; sem sincronização, o fechamento pode gerar transitórios severos e perda ampla de cargas.",
+      "resposta_padrao": "Igualar apenas a tensão dos dois lados.",
+      "por_que_nao": "Mesma tensão não garante compatibilidade de frequência e ângulo de fase no instante do fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O fechamento do bus tie entre secundários em paralelo altera o nível de curto-circuito e a base de coordenação das proteções.",
+      "pergunta": "Com os secundários de transformadores em paralelo interligados por bus tie fechado, qual variável elétrica deve ser reavaliada antes de manter os mesmos ajustes de proteção?",
+      "resposta": "nível de curto-circuito disponível",
+      "explicacao": "A interligação cria caminhos adicionais de corrente de falta, mudando o nível de curto-circuito disponível e, com isso, sensibilidades e tempos de atuação dos relés.",
+      "resposta_padrao": "Corrente de carga normal do barramento.",
+      "por_que_nao": "Carga normal afeta capacidade térmica e operação, não a base principal de pickup e temporização após a mudança topológica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A escolha entre essas funções depende da zona a proteger, do nível de corrente disponível, da velocidade requerida e da tolerância operacional à perda de carga."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Faltas internas em barramento crítico pedem proteção diferencial para atuação rápida e seletiva na própria zona.",
+      "pergunta": "Barramento que concentra múltiplas fontes e cargas críticas precisa eliminar uma falta interna com alta velocidade e mínima perda fora da zona. Que proteção específica atende melhor esse caso?",
+      "resposta": "proteção diferencial de barramento",
+      "explicacao": "Para falta interna na zona do barramento, a proteção diferencial oferece seletividade por zona e alta velocidade, reduzindo desligamentos desnecessários fora da área defeituosa.",
+      "resposta_padrao": "Relé de sobrecorrente temporizado da entrada.",
+      "por_que_nao": "A sobrecorrente a montante não define com a mesma precisão a zona do barramento e pode desligar fonte ou seção além do necessário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a distribuição costuma ser organizada por barramentos que concentram fontes e cargas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "proteção diferencial de barramento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A escolha entre essas funções depende da zona a proteger, do nível de corrente disponível, da velocidade requerida e da tolerância operacional à perda de carga."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em barramento secundário alimentado por transformador com disjuntor primário, a retaguarda de terra deve ser coordenada com os alimentadores.",
+      "pergunta": "Numa arquitetura com transformador, disjuntor primário e alimentadores no secundário, uma falta monofásica à terra em alimentador não pode abrir a fonte primária. Que proteção a montante precisa ser coordenada com o relé do alimentador?",
+      "resposta": "relé de retaguarda de terra",
+      "explicacao": "Nessa arquitetura, a retaguarda de terra a montante deve ser coordenada com a proteção do alimentador para que a falta seja eliminada sem desligar indevidamente o barramento ou o transformador.",
+      "resposta_padrao": "Proteção diferencial de barramento.",
+      "por_que_nao": "A diferencial protege a zona do barramento; não é a retaguarda seletiva para falta à terra em alimentador a jusante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ]
+    }
+  ]
+}

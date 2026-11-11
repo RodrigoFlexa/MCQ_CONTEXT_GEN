@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_01:014:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Padrão stick-slip identifica atrito estático excessivo no conjunto mecânico da válvula de controle.",
+      "pergunta": "A variável controlada sobe e desce em rampas lentas; a saída do controlador varia quase linearmente e o feedback de posição da válvula fica parado por um intervalo e depois salta. Qual a causa primária?",
+      "resposta": "stiction no conjunto haste-gaxetas",
+      "explicacao": "O comportamento de travar e depois saltar caracteriza stick-slip por atrito estático excessivo; sintonia ruim não produz esse padrão mecânico de movimento.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Sintonia inadequada gera oscilação contínua, não travamento da haste seguido de salto com saída contínua."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Condensação na perna seca adiciona coluna líquida no lado de referência e desloca a indicação de nível por DP.",
+      "pergunta": "A indicação de nível por DP cai gradualmente em vaso pressurizado com perna seca, enquanto o visor local permanece estável após período frio e úmido. Qual a causa primária?",
+      "resposta": "condensação na perna seca",
+      "explicacao": "O líquido acumulado na perna seca eleva a pressão no lado de referência do transmissor e reduz o DP medido, derrubando a indicação.",
+      "resposta_padrao": "Deriva eletrônica do transmissor.",
+      "por_que_nao": "A queda sistemática por formação de coluna líquida na referência é um erro de instalação/processo, não deriva metrológica interna."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O teste de lock-up confirma perda de retenção pneumática no conjunto posicionador-atuador.",
+      "pergunta": "Válvula pneumática alcança a posição pedida, mas, com o suprimento de ar isolado, a haste deriva lentamente e a pressão do atuador cai. Que teste específico confirma perda de retenção pneumática?",
+      "resposta": "teste de lock-up",
+      "explicacao": "Esse ensaio verifica se o conjunto mantém a pressão e a posição sem alimentação contínua, distinguindo vazamento interno de simples erro de calibração.",
+      "resposta_padrao": "Calibração de zero e span.",
+      "por_que_nao": "Zero e span ajustam correspondência sinal-curso, mas não verificam capacidade de reter pressão com o ar isolado."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "SOE e alarmes fora de ordem após restauração indicam perda de sincronização de tempo entre nós de automação.",
+      "pergunta": "Após restauração de servidores, alarmes e SOE aparecem fora de ordem entre estações, embora malhas e comunicação permaneçam normais. Que ajuste técnico específico deve ser restabelecido?",
+      "resposta": "sincronização de tempo NTP/PTP dos nós",
+      "explicacao": "A ordem incorreta de eventos decorre de relógios divergentes entre controladores, servidores e estações, mesmo quando a comunicação continua operante.",
+      "resposta_padrao": "Aumentar a largura de banda da rede.",
+      "por_que_nao": "Latência de tráfego pode atrasar entrega, mas não cria carimbos de tempo persistentemente incoerentes entre nós."
+    }
+  ]
+}

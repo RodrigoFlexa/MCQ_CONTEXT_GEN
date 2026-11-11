@@ -1,0 +1,75 @@
+{
+  "item": "02_01",
+  "foco": 24,
+  "visita": 1,
+  "onda": 1,
+  "id": "02_01:024:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Com medição a montante da estocagem, o fechamento do balanço de transferência exige reconciliar a variação de inventário.",
+      "pergunta": "A medição de produção fica a montante da estocagem, e na janela do alívio não houve outras entradas ou saídas do armazenamento. Com retenção nos tanques, que termo do balanço deve ser reconciliado com o volume transferido?",
+      "resposta": "A variação de inventário nos tanques.",
+      "explicacao": "Quando a medição está antes da estocagem, o volume entregue não é igual ao produzido no período; o fechamento depende do inventário inicial e final.",
+      "resposta_padrao": "A produção medida no período.",
+      "por_que_nao": "Isso só representa a transferência quando não há desacoplamento pela estocagem; com retenção, produção e entrega podem divergir.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "O balanço da transferência serve para reconciliar três grandezas que podem divergir: produção medida, variação de inventário nos tanques e volume efetivamente transferido."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em offloading de óleo, a estabilidade também importa: partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na compensação volumétrica de gás, mudança de composição exige atualizar a composição molar como entrada do cálculo, mesmo com pressão e temperatura estáveis.",
+      "pergunta": "O gás natural passou a vir de outra corrente, com cromatografia diferente, enquanto pressão e temperatura no medidor ficaram estáveis. Que entrada do cálculo deve ser atualizada para manter correto o volume compensado?",
+      "resposta": "Composição molar do gás.",
+      "explicacao": "Para gás, o volume compensado depende da densidade, que varia com pressão, temperatura e composição; manter só P e T não basta.",
+      "resposta_padrao": "O poder calorífico do gás.",
+      "por_que_nao": "Poder calorífico é decisivo para liquidação em energia; o volume compensado depende da composição na densidade e compressibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No caso de fluidos compressíveis, a compressibilidade e a composição influenciam o cálculo do volume compensado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para gás natural, a necessidade de algoritmo de cálculo decorre justamente da dependência da densidade em relação à pressão, temperatura e composição."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Durante offloading de óleo, chegada de água/interface ao escoamento faz a totalização deixar de representar a quantidade líquida de óleo.",
+      "pergunta": "Durante o alívio, a vazão em linha permanece estável, mas a salinidade da amostra sobe após a troca de tanque. O que faz a totalização deixar de representar, sozinha, a quantidade líquida de óleo?",
+      "resposta": "Água arrastada.",
+      "explicacao": "A elevação de salinidade após a troca de tanque indica chegada de interface com água; a vazão pode permanecer estável e ainda assim incluir fase não oleosa.",
+      "resposta_padrao": "Deriva do medidor de vazão.",
+      "por_que_nao": "O sinal decisivo é a mudança de composição da corrente associada à troca de tanque, típica de interface/água, não de erro primário do medidor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em offloading de óleo, a estabilidade também importa: partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "há retenção de volume nos tanques, variação de interface óleo-água, possíveis correntes internas de recirculação"
+        }
+      ]
+    }
+  ]
+}

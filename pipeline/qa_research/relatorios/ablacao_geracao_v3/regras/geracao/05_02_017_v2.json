@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:017:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência reativa entre geradores em paralelo pelo AVR.",
+      "pergunta": "Dois geradores em paralelo dividem igualmente kW, mas um entrega quase todo o kVAr e surge corrente de circulação entre máquinas. Que ajuste de controle deve ser corrigido para equalizar essa carga?",
+      "resposta": "droop de reativo do AVR",
+      "explicacao": "Em paralelo, o compartilhamento de potência reativa é governado pela excitação. Desbalanceamento de kVAr com kW equilibrado aponta para ajuste incorreto do droop ou compensação reativa do AVR.",
+      "resposta_padrao": "droop do governador",
+      "por_que_nao": "O governador compartilha potência ativa e frequência, não corrige circulação por desbalanceamento de reativo."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de atuação rápida de load shedding por ROCOF em sistemas isolados.",
+      "pergunta": "Na perda súbita de um gerador em rede isolada de baixa inércia, a frequência despenca antes que o estágio por subfrequência atue. Que grandeza o PMS deve usar no estágio mais rápido de alívio de carga?",
+      "resposta": "taxa de variação da frequência (ROCOF)",
+      "explicacao": "ROCOF antecipa o déficit de potência ativa logo após a perda de geração, permitindo shedding antes que a frequência atinja patamares que já derrubam cargas sensíveis.",
+      "resposta_padrao": "subtensão do barramento",
+      "por_que_nao": "A tensão depende fortemente do balanço reativo e do AVR; na perda de geração, o sinal primário do desequilíbrio ativo é a dinâmica da frequência."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Detecção da primeira falta à terra em barramento de média tensão com neutro isolado.",
+      "pergunta": "Barramento de média tensão com neutro isolado segue alimentado após uma fase encostar no casco; a corrente de falta é baixa e 51N não atua. Que função deve indicar a primeira falta à terra?",
+      "resposta": "sobretensão residual 59N em delta aberto",
+      "explicacao": "Com neutro isolado, a primeira falta à terra produz pouca corrente, mas desloca o neutro e eleva a tensão residual medida pelos TPs em delta aberto.",
+      "resposta_padrao": "sobrecorrente de terra 51N",
+      "por_que_nao": "Na primeira falta em neutro isolado, a corrente capacitiva costuma ser insuficiente para sensibilizar 51N com seletividade."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de fechamento de bus tie na recomposição com um barramento morto.",
+      "pergunta": "Com um barramento energizado e o outro desenergizado após recomposição parcial, qual supervisão deve liberar o fechamento do bus tie para reenergizar o lado morto?",
+      "resposta": "permissivo live bus/dead bus",
+      "explicacao": "No fechamento sobre barramento morto não há sincronização entre duas fontes ativas. A lógica correta confirma um lado vivo e o outro sem tensão.",
+      "resposta_padrao": "check-synchronism 25",
+      "por_que_nao": "O 25 compara fase, frequência e tensão entre dois lados vivos; com um barramento morto, ele não é o critério correto de liberação."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "02_01",
+  "foco": 24,
+  "visita": 1,
+  "onda": 1,
+  "id": "02_01:024:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento técnico da transferência quando a medição fiscal fica a montante da estocagem.",
+      "pergunta": "Com a medição fiscal a montante da estocagem, o volume descarregado diverge da produção fiscalizada no período. Que base técnica deve ser usada para fechar a transferência durante o alívio?",
+      "resposta": "Balanço da transferência pelo inventário de armazenamento.",
+      "explicacao": "Nessa configuração, a transferência não pode ser inferida só pela produção fiscalizada; é preciso reconciliá-la com o inventário inicial e final e com as entradas e saídas do armazenamento na janela do alívio.",
+      "resposta_padrao": "A produção fiscalizada acumulada no período.",
+      "por_que_nao": "Ela não captura retenção nos tanques, interface óleo-água, recirculação interna e mudanças operacionais no armazenamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A medição de transferência de custódia precisa representar não apenas a vazão instantânea, mas o volume transferido em condição tecnicamente rastreável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando a medição fiscal fica a montante da estocagem, o fechamento do balanço da transferência não pode ser inferido apenas pela produção fiscalizada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário e às entradas e saídas do sistema de armazenamento durante a janela do alívio."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Variáveis de estado necessárias para converter o volume medido à condição de referência em transferência de custódia.",
+      "pergunta": "Na transferência de custódia, que variáveis do escoamento devem acompanhar a vazão para converter volume e densidade à condição de referência?",
+      "resposta": "Pressão e temperatura do escoamento.",
+      "explicacao": "Volume e densidade variam com o estado termodinâmico; por isso a conversão para condições de referência exige medir essas variáveis junto com a vazão.",
+      "resposta_padrao": "Somente a vazão totalizada.",
+      "por_que_nao": "A totalização não informa o estado termodinâmico necessário para corrigir volume e densidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão e temperatura do escoamento são variáveis relevantes para as conversões de volume e densidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a conversão para condições de referência depende de medir o estado do fluido."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Propriedade termodinâmica adicional exigida no cálculo do volume compensado de fluidos compressíveis.",
+      "pergunta": "Na correção do volume de gás para condição de referência, pressão, temperatura e composição já foram obtidas. Que propriedade do fluido compressível ainda precisa entrar no cálculo do volume compensado?",
+      "resposta": "Compressibilidade.",
+      "explicacao": "Para fluidos compressíveis, o volume compensado não depende só de pressão, temperatura e composição; a compressibilidade também entra no cálculo.",
+      "resposta_padrao": "Viscosidade.",
+      "por_que_nao": "Ela afeta escoamento e desempenho de medição, mas não é a propriedade termodinâmica usada nessa correção de volume.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No caso de fluidos compressíveis, a compressibilidade e a composição influenciam o cálculo do volume compensado."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo que faz a vazão medida deixar de bastar como base de custódia em offloading de óleo.",
+      "pergunta": "Troca de tanque e partidas/paradas coincidem com gás livre, água arrastada e interface na linha de offloading de óleo. Qual é o mecanismo que impede usar só a vazão medida como custódia?",
+      "resposta": "Transiente de fase e composição do escoamento.",
+      "explicacao": "Gás livre, água e interface alteram a composição efetivamente entregue; assim, a vazão sozinha deixa de equivaler à transferência líquida de óleo.",
+      "resposta_padrao": "Oscilação de pressão na linha.",
+      "por_que_nao": "O fator decisivo é a mudança de fases e composição, que quebra a correspondência entre vazão e óleo líquido transferido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em offloading de óleo, a estabilidade também importa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudanças operacionais que alteram a composição do fluido entregue."
+        }
+      ]
+    }
+  ]
+}

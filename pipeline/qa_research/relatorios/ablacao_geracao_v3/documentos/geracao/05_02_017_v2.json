@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:017:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de classificação de cargas em 24 Vcc, UPS e geração de emergência pela consequência da perda de energia.",
+      "pergunta": "Um CLP de shutdown e uma estação de supervisão consomem pouca potência, enquanto um motor de utilidades consome muito mais. Qual critério técnico deve definir a alocação em 24 Vcc, UPS ou geração de emergência?",
+      "resposta": "consequência da perda de energia",
+      "explicacao": "A essencialidade da alimentação é definida pelo impacto operacional e de segurança da perda, sobretudo para comando, controle, comunicação crítica e mitigação; potência é usada no dimensionamento, não na seleção inicial.",
+      "resposta_padrao": "potência consumida da carga",
+      "por_que_nao": "Potência serve para dimensionar fonte e autonomia, mas não identifica quais cargas exigem continuidade ou independência de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A redundância funcional só é mantida se houver segregação real e distribuição correta das cargas entre ramos independentes.",
+      "pergunta": "Duas fontes independentes estão saudáveis, mas uma falha simples ainda derruba duas estações de controle que deveriam ser independentes, após várias modificações. Que verificação específica deve entrar no monitoramento periódico além da presença de tensão?",
+      "resposta": "segregação real das cargas entre ramos independentes",
+      "explicacao": "A redundância só se concretiza se as cargas redundantes permanecerem separadas. Mudanças acumuladas podem concentrá-las no mesmo ramo sem alterar a tensão medida.",
+      "resposta_padrao": "medir tensão de saída e autonomia das baterias",
+      "por_que_nao": "Esses parâmetros podem estar normais mesmo quando a independência funcional foi perdida pela concentração de cargas no mesmo ramo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Continuidade de carga essencial na falha do inversor depende da disponibilidade do caminho de bypass do UPS.",
+      "pergunta": "Com alimentação de entrada disponível, uma falha do inversor derruba uma carga essencial que deveria permanecer energizada. Que disponibilidade do UPS deveria ter sido confirmada nas verificações periódicas?",
+      "resposta": "disponibilidade do bypass estático",
+      "explicacao": "Além de baterias, inversor e retificador, o caminho de bypass precisa estar disponível para manter a carga quando o inversor falha com fonte de entrada presente.",
+      "resposta_padrao": "capacidade do banco de baterias",
+      "por_que_nao": "Bateria sustenta a saída na perda da fonte normal; falha do inversor com entrada disponível exige transferência pelo bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A recomposição após blackout pode falhar por indisponibilidade da alimentação por bateria dos circuitos de comando.",
+      "pergunta": "No black start, a máquina motriz está pronta, mas o CLP de partida e as I/Os de campo não energizam, impedindo a sequência automática. Qual a causa primária mais provável da não recomposição?",
+      "resposta": "indisponibilidade do 24 Vcc por bateria dos circuitos de comando",
+      "explicacao": "Sem alimentação DC por bateria nos circuitos de comando e lógica, a recomposição não ocorre mesmo existindo fonte potencialmente disponível para geração.",
+      "resposta_padrao": "indisponibilidade da fonte de geração",
+      "por_que_nao": "A recomposição pode falhar antes da geração assumir se comando, lógica e permissivos dependerem de alimentação por bateria.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    }
+  ]
+}

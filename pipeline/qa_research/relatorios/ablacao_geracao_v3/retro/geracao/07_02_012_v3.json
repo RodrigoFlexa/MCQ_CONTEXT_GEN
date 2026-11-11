@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:012:v3",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Vulnerabilidade transversal a vários fornecedores e protocolos aponta para uma camada comum de comunicação abaixo do protocolo industrial.",
+      "pergunta": "Equipamentos de fornecedores diferentes, com protocolos industriais distintos, aparecem no mesmo boletim de falhas de rede. Que componente técnico comum explica que todos possam ser atingidos pelo mesmo conjunto de CVEs?",
+      "resposta": "A pilha TCP/IP embarcada.",
+      "explicacao": "Quando produtos e protocolos de aplicação diferentes caem no mesmo alerta, o elo comum é a implementação de rede subjacente compartilhada entre eles.",
+      "resposta_padrao": "O protocolo industrial de aplicação.",
+      "por_que_nao": "Produtos com protocolos de aplicação diferentes ainda podem compartilhar a mesma implementação IP vulnerável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar sistemas de controle industrial"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar se o ativo usa o componente afetado"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sem patch seguro, a redução da superfície de ataque pode ser feita no próprio ativo pela remoção de serviços não necessários à função de processo.",
+      "pergunta": "Sem patch validado para a remota legada, ela comunica só pelo protocolo de processo, mas mantém ativo um servidor web de diagnóstico nunca usado na operação. Qual ajuste técnico reduz a superfície de ataque sem mexer na função de controle?",
+      "resposta": "Desabilitar o servidor web embarcado.",
+      "explicacao": "O serviço web ocioso é um caminho de exploração dispensável. Removê-lo reduz a superfície de ataque sem alterar a comunicação usada pelo processo.",
+      "resposta_padrao": "Trocar a senha do acesso web.",
+      "por_que_nao": "Credencial mais forte não elimina o serviço exposto nem uma falha explorável no próprio software.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "remove serviços desnecessários, restringe rotas de acesso"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização em OT crítico exige preparação formal de reversão para recuperar disponibilidade se surgir incompatibilidade durante a intervenção.",
+      "pergunta": "Testes anteriores da atualização de firmware mostraram perda intermitente de comunicação com cartões antigos. Antes da janela operacional, que preparação específica deve existir para restaurar rapidamente o estado estável se o sintoma reaparecer?",
+      "resposta": "Plano de retorno.",
+      "explicacao": "Em sistemas de controle, uma atualização pode introduzir incompatibilidade mesmo após qualificação. A intervenção correta prevê reversão preparada para recuperar o estado operacional.",
+      "resposta_padrao": "Backup da lógica de controle.",
+      "por_que_nao": "Backup da lógica não reverte firmware, drivers e integrações que podem causar a perda de comunicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ]
+    }
+  ]
+}

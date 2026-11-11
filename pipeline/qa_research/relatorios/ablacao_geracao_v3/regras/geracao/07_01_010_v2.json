@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:010:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de stiction por assinatura de tendência da saída do controlador e da posição da válvula.",
+      "pergunta": "A variável controlada oscila em baixa frequência; a saída do controlador faz rampa, a haste fica parada e depois salta em degraus. Qual é a causa primária no elemento final?",
+      "resposta": "Atrito estático excessivo na válvula de controle.",
+      "explicacao": "O padrão rampa-e-salto caracteriza stick-slip, com banda morta aparente e ciclos-limite causados por atrito elevado no conjunto móvel.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Ganho elevado costuma gerar oscilação mais contínua; não produz a assinatura de posição travada seguida de salto."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Correção de offset em medição de nível por DP com referência alterada em vaso fechado.",
+      "pergunta": "Transmissor DP de nível em vaso fechado passou a indicar desvio fixo após intervenção; a resposta ao processo continua proporcional e as linhas não estão obstruídas. Qual intervenção específica corrige a referência?",
+      "resposta": "Restabelecer a coluna líquida da perna molhada.",
+      "explicacao": "Perda parcial da wet leg altera a pressão de referência no lado de baixa, criando offset constante sem alterar a sensibilidade da medição.",
+      "resposta_padrao": "Recalibrar o zero do transmissor.",
+      "por_que_nao": "O desvio vem da referência hidrostática alterada; zerar o transmissor só mascara a falha enquanto a perna continuar fora da condição correta."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ponto correto de aplicação do estímulo em proof test para incluir falhas da linha de impulso.",
+      "pergunta": "Onde deve ser aplicado o estímulo de pressão para que o proof test de uma função de alta pressão também revele obstrução na linha de impulso?",
+      "resposta": "Na tomada de processo, a montante da linha de impulso.",
+      "explicacao": "Aplicar pressão no manifold ou diretamente no transmissor verifica o instrumento, mas contorna a linha de impulso e não detecta bloqueio upstream.",
+      "resposta_padrao": "No manifold do transmissor.",
+      "por_que_nao": "Esse ponto bypassa a tomada e a linha de impulso, reduzindo a cobertura do teste para falhas entre o processo e o sensor."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de erro de medição em RTD Pt100 por ligação a três fios com resistências de condutor desiguais.",
+      "pergunta": "Troca de um Pt100 a três fios deixou a indicação com offset que varia com a temperatura ambiente dos cabos; sensor e transmissor testam bem em bancada. Qual erro específico foi introduzido?",
+      "resposta": "Desequilíbrio das resistências dos condutores na ligação de 3 fios.",
+      "explicacao": "A compensação de três fios pressupõe resistências equivalentes nos condutores compensados; quando elas diferem, surge erro aparente de temperatura dependente do cabo.",
+      "resposta_padrao": "Deriva do Pt100.",
+      "por_que_nao": "Com sensor e transmissor conformes em bancada, o desvio dependente do ambiente aponta para resistência de cabeamento, não para deriva do elemento sensor."
+    }
+  ]
+}

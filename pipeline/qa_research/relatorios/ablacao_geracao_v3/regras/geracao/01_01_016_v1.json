@@ -1,0 +1,51 @@
+{
+  "item": "01_01",
+  "foco": 16,
+  "visita": 1,
+  "onda": 1,
+  "id": "01_01:016:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Aumento da frequência de falhas reduz MTBF, mesmo sem mudança no tempo ativo de reparo.",
+      "pergunta": "Desarmes do compressor em serviço ficaram mais frequentes; o reserva assumiu a carga e o tempo ativo de reparo por falha permaneceu igual. Qual KPI de confiabilidade do equipamento cai nessa condição?",
+      "resposta": "MTBF",
+      "explicacao": "Mais falhas por período encurtam o intervalo médio entre falhas. Como o tempo ativo de reparo não mudou, o indicador afetado é o MTBF, não um KPI de mantenabilidade.",
+      "resposta_padrao": "MTTR",
+      "por_que_nao": "MTTR mede duração média do reparo; sem mudança no tempo ativo de restauro, ele não piora."
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Disponibilidade operacional inclui atrasos logísticos e administrativos que não entram na disponibilidade inerente.",
+      "pergunta": "Falhas e tempo ativo de reparo permaneceram iguais entre dois meses, mas em um deles houve espera por sobressalente e guindaste. Qual KPI de disponibilidade piora por essa diferença?",
+      "resposta": "disponibilidade operacional",
+      "explicacao": "Esse indicador incorpora o efeito de esperas por recursos e suporte. A disponibilidade inerente considera basicamente operação e reparo ativo, sem capturar atrasos logísticos.",
+      "resposta_padrao": "disponibilidade inerente",
+      "por_que_nao": "A disponibilidade inerente exclui atrasos logísticos e administrativos, portanto não reflete espera por peça ou guindaste."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Falha de equipamento coberta por redundância não gera perda de produção se a taxa realizada não cair.",
+      "pergunta": "Uma bomba de exportação falhou, a reserva entrou automaticamente e a taxa de produção permaneceu dentro da capacidade do processo. Como esse evento deve entrar no KPI de perdas de produção?",
+      "resposta": "deferimento zero",
+      "explicacao": "Perda de produção é contabilizada pela redução da produção realizável. Se a redundância manteve a taxa, houve indisponibilidade do equipamento, mas não deferimento produtivo.",
+      "resposta_padrao": "como perda igual ao tempo parado da bomba",
+      "por_que_nao": "Tempo parado de equipamento só vira perda de produção quando reduz a vazão efetivamente realizável."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Carta de controle distingue variação comum de causa especial em séries históricas de KPI.",
+      "pergunta": "O consumo específico de gás combustível vinha estável havia semanas e um ponto diário apareceu além da faixa de três sigmas, sem mudança de regime operacional. Que técnica de acompanhamento sustenta tratar isso como causa especial?",
+      "resposta": "carta de controle",
+      "explicacao": "Essa técnica usa limites estatísticos para separar variação comum do processo de sinais de causa especial, evitando reagir apenas à oscilação normal da série.",
+      "resposta_padrao": "média móvel",
+      "por_que_nao": "Média móvel suaviza a série, mas não estabelece critério estatístico para detectar causa especial."
+    }
+  ]
+}

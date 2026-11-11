@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:015:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Terminação controlada de acesso remoto entre rede corporativa e rede de controle.",
+      "pergunta": "Fornecedor precisa acessar temporariamente a estação de engenharia do DCS a partir da rede corporativa, com auditoria por sessão e sem rota direta ao controle. Em que ponto técnico a sessão remota deve terminar?",
+      "resposta": "servidor de salto na DMZ industrial",
+      "explicacao": "A sessão remota termina na DMZ, onde pode ser autenticada, gravada e liberada adiante por regras específicas, sem conectividade direta da rede corporativa até ativos de controle.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "Acesso direto atravessa a segmentação IT/OT e remove o ponto controlado de autenticação, registro e mediação."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Método seguro de inventário em redes industriais sensíveis a sondagem ativa.",
+      "pergunta": "PLCs legados perdem comunicação quando recebem sondagens de rede. Como levantar inventário de ativos e protocolos desse segmento sem enviar interrogações aos equipamentos?",
+      "resposta": "descoberta passiva via TAP ou SPAN",
+      "explicacao": "A técnica observa o tráfego existente por espelhamento ou TAP, identificando dispositivos e protocolos sem gerar pacotes de descoberta que podem travar ou sobrecarregar equipamentos legados.",
+      "resposta_padrao": "Executar varredura ativa de portas e serviços.",
+      "por_que_nao": "Sondagem ativa injeta tráfego não previsto e pode derrubar ou degradar equipamentos industriais legados."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do arranjo de rede quando o requisito é somente saída de dados do ambiente de controle.",
+      "pergunta": "Só é necessário exportar dados do historiador de processo para analytics corporativo, sem qualquer comando de volta. Qual arranjo de comunicação melhor impõe esse fluxo?",
+      "resposta": "gateway unidirecional (data diode)",
+      "explicacao": "Quando o requisito é somente saída de dados, o hardware unidirecional elimina sessões de retorno e reduz a possibilidade de comando ou propagação reversa do ambiente externo.",
+      "resposta_padrao": "Firewall stateful com portas restritas.",
+      "por_que_nao": "Firewall continua operando pilha bidirecional e não garante impossibilidade física de tráfego de retorno."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade da lógica de segurança após restauração ou recarga de aplicação.",
+      "pergunta": "Depois de recarregar a aplicação do ESD após incidente em estação de engenharia, os testes funcionais passaram. Que verificação específica ainda confirma que a lógica em execução é exatamente a autorizada?",
+      "resposta": "comparação de checksum da lógica com baseline aprovada",
+      "explicacao": "O checksum ou comparação de aplicação prova a identidade da configuração completa carregada; testes funcionais podem não exercer ramos raros, temporizados ou maliciosamente alterados.",
+      "resposta_padrao": "Repetir apenas o teste funcional dos intertravamentos.",
+      "por_que_nao": "Teste funcional não garante identidade da aplicação inteira nem detecta mudanças ocultas fora dos cenários exercitados."
+    }
+  ]
+}

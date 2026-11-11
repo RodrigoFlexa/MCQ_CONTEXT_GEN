@@ -1,0 +1,75 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_08:001:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de simulação dinâmica para avaliar surge em shutdown de compressão.",
+      "pergunta": "Durante a parada programada e a ESD de um sistema de compressão, reciclo, blowdown e controles alteram a vazão de alívio ao longo do tempo. Qual abordagem de análise é a mais adequada para verificar risco de instabilidade do compressor?",
+      "resposta": "simulação dinâmica do processo",
+      "explicacao": "O risco de surge na parada depende do transiente, da atuação dos controles, do acoplamento entre equipamentos e da sequência temporal dos eventos, o que exige representação dinâmica.",
+      "resposta_padrao": "Análise em regime permanente do pior caso de vazão.",
+      "por_que_nao": "Regime permanente não captura a evolução temporal, a atuação do anti-surge, o blowdown e o acoplamento dinâmico do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de modelar volumes comunicantes em transientes de alívio.",
+      "pergunta": "Dois recipientes permanecem interligados por linhas abertas, e a equalização de pressão entre eles altera o pico de vazão no alívio. Na modelagem transiente, que elemento do arranjo precisa ser representado explicitamente?",
+      "resposta": "volumes comunicantes",
+      "explicacao": "Quando recipientes seguem conectados durante o evento, a interação de volumes muda a resposta temporal e o pico de alívio; tratá-los como um volume único pode distorcer o resultado.",
+      "resposta_padrao": "Um único volume equivalente para todos os equipamentos ligados.",
+      "por_que_nao": "A simplificação elimina a equalização de pressão e a interação transitória entre recipientes conectados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo de PSVs para cenários de alta e baixa carga com exigência dinâmica distinta.",
+      "pergunta": "O mesmo vaso tem um cenário de sobrepressão com alta vazão e outro com vazão bem menor; a PSV do caso governante protege a pressão, mas fica inadequada dinamicamente no evento leve. Qual arranjo de proteção é o mais indicado?",
+      "resposta": "duas PSVs com pressões de ajuste diferentes",
+      "explicacao": "Para cargas muito distintas, a válvula dimensionada pelo caso maior pode não operar bem no caso leve; escalonar setpoints permite que só a primeira abra na menor vazão.",
+      "resposta_padrao": "Uma PSV única dimensionada apenas pelo cenário de maior vazão.",
+      "por_que_nao": "Ela pode proteger contra sobrepressão e ainda assim ser dinamicamente inadequada na condição de menor carga.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "uma única PSV escolhida para o caso dimensionante pode proteger contra sobrepressão, mas continuar inadequada do ponto de vista dinâmico para a condição de menor carga."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ela também foi aplicada para obter máxima temperatura e vazão de alívio em cenários operacionais distintos, estudar o comportamento de PSVs"
+        }
+      ]
+    }
+  ]
+}

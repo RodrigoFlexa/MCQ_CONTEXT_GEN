@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:011:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A perda da alimentação de controle dos geradores pode iniciar blackout sem falha no barramento de potência.",
+      "pergunta": "Com as máquinas motrizes disponíveis, os geradores em operação caem da barra quando os painéis de controle perdem tensão. Qual alimentação deve ser priorizada para evitar o blackout?",
+      "resposta": "alimentação 24 Vcc dos painéis de controle dos geradores principais",
+      "explicacao": "Sem 24 Vcc nos painéis de controle, o gerador pode continuar mecanicamente apto, mas perde comando e supervisão para permanecer conectado.",
+      "resposta_padrao": "Restabelecer o barramento principal de potência.",
+      "por_que_nao": "Aqui a perda decisiva é da energia de controle; sem ela, o gerador não se mantém conectado mesmo mecanicamente disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância nominal em 24 Vcc e UPS só vira resiliência quando há segregação real das rotas de alimentação.",
+      "pergunta": "Dois conjuntos 24 Vcc, ambos 100%, com TIE disponível, alimentam comandos críticos. Que verificação técnica define se essa redundância realmente resiste à perda de um canal?",
+      "resposta": "segregação elétrica real das rotas de alimentação de controle",
+      "explicacao": "Capacidade instalada e TIE não bastam se canais supostamente independentes convergirem para a mesma UPS, quadro CC ou caminho de distribuição.",
+      "resposta_padrao": "Confirmar apenas que cada banco e retificador suportam 100% da carga.",
+      "por_que_nao": "Capacidade plena não elimina falha de causa comum quando os caminhos de alimentação não são realmente independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na recomposição pós-blackout, uma lógica de trip durante o reboot pode impedir o fechamento do gerador de emergência.",
+      "pergunta": "No teste de recomposição, o gerador de emergência parte, mas o disjuntor abre nas tentativas de fechamento apenas enquanto o sistema de controle está em reboot e a bateria não sustenta o reinício usual. Que condição lógica específica deve ser verificada?",
+      "resposta": "sinal de trip mantido ao disjuntor do gerador de emergência",
+      "explicacao": "Em estado anormal, a lógica pode continuar ordenando abertura durante o reboot, impedindo a energização mesmo com o gerador disponível.",
+      "resposta_padrao": "Revisar somente os permissivos de fechamento do disjuntor.",
+      "por_que_nao": "O sintoma descrito vem de comando de abertura persistente durante o reboot, não da simples falta de permissivos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o reinício usual ocorria com alimentação de bateria"
+        }
+      ]
+    }
+  ]
+}

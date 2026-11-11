@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "visita": 2,
+  "onda": 3,
+  "id": "01_01:010:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O ganho de disponibilidade com mais recursos de manutenção depende do gargalo real do retorno operacional.",
+      "pergunta": "A equipe de manutenção está disponível, o plano já foi liberado e o sobressalente está a bordo, mas o reparo só pode começar quando abrir janela de acesso por embarcação. Qual ação técnica tende a reduzir mais a indisponibilidade?",
+      "resposta": "Eliminar o gargalo de acesso.",
+      "explicacao": "Com equipe, liberação e peça disponíveis, o tempo parado é dominado pelo acesso. Aumentar mão de obra não desloca o gargalo que controla o retorno operacional.",
+      "resposta_padrao": "Aumentar o número de mantenedores.",
+      "por_que_nao": "Isso só reduz indisponibilidade quando a capacidade das equipes é o gargalo, não quando a espera dominante é de acesso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "em ativos offshore, embarcados ou remotos, também pode ser afetado pela logística de acesso e mobilização."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na apuração de MTTR, tempos de espera operacional ou logística não devem ser lançados como tempo de reparo.",
+      "pergunta": "Ao calcular o MTTR de um equipamento, a pane foi diagnosticada em uma hora, o reparo levou duas, e o retorno só ocorreu no dia seguinte por falta de liberação e embarque. Que intervalo não deve entrar como tempo de reparo?",
+      "resposta": "Espera por liberação e embarque.",
+      "explicacao": "MTTR deve refletir os intervalos das atividades de reparo. Esperas administrativas e logísticas são indisponibilidade, mas não tempo de reparo.",
+      "resposta_padrao": "Todo o tempo entre a falha e o retorno ao serviço.",
+      "por_que_nao": "A definição de MTTR exige separar atividades de reparo de esperas e outros tempos de indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A priorização de recuperação deve refletir a criticidade funcional do subsistema para a capacidade total de produção.",
+      "pergunta": "Falham simultaneamente o sistema de água produzida, que obriga reduzir a vazão total por falta de tratamento, e um subsistema redundante sem impacto imediato. Que critério técnico deve colocar o primeiro reparo na frente?",
+      "resposta": "Criticidade funcional.",
+      "explicacao": "A perda de capacidade da malha de água produzida pode limitar a vazão total. Isso a torna mais crítica funcionalmente do que um subsistema redundante sem impacto imediato.",
+      "resposta_padrao": "O subsistema que atua diretamente na linha de óleo.",
+      "por_que_nao": "A limitação de água produzida pode restringir a produção total mesmo sem atuar diretamente na fase óleo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a malha de água produzida perde capacidade, a limitação não afeta apenas esse sistema; ela pode impor redução de vazão total do campo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A sequência de recuperação deve considerar contenção por recurso comum entre subsistemas, não apenas perda instantânea ou tempo de reparo.",
+      "pergunta": "Dois reparos têm perda instantânea parecida. Um deles consome o único guindaste também necessário para recuperar outros dois subsistemas. Além da criticidade e do tempo de retorno, que critério deve definir a sequência?",
+      "resposta": "Restrições compartilhadas entre subsistemas.",
+      "explicacao": "Quando vários retornos dependem do mesmo recurso, a sequência precisa considerar a contenção causada por essa restrição comum para evitar ampliar a indisponibilidade global.",
+      "resposta_padrao": "Atender primeiro o de maior perda instantânea.",
+      "por_que_nao": "Sem considerar o recurso comum, a sequência pode bloquear outras recuperações e aumentar a indisponibilidade total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        }
+      ]
+    }
+  ]
+}

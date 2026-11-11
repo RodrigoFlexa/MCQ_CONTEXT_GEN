@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:004:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de terceiros em OT deve terminar em uma zona intermediária mediada, não diretamente no nível de controle.",
+      "pergunta": "Fornecedor precisa acesso temporário à estação de engenharia do DCS a partir de terra, com autenticação forte e registro da sessão. Qual arranjo técnico de acesso remoto aplicar?",
+      "resposta": "Jump server na DMZ industrial",
+      "explicacao": "A sessão termina em uma zona intermediária controlada, com mediação, auditoria e sem expor diretamente a estação de engenharia à rede externa.",
+      "resposta_padrao": "VPN direta até a estação de engenharia",
+      "por_que_nao": "Acesso direto cria caminho IP ao nível de controle e elimina a mediação exigida entre zonas IT e OT."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o requisito é apenas exportar dados de OT para IT, o conduíte adequado é unidirecional.",
+      "pergunta": "Dados de produção só precisam sair da rede de controle para relatórios corporativos, sem qualquer necessidade operacional de tráfego de retorno. Qual elemento técnico usar no conduíte entre as zonas?",
+      "resposta": "Gateway unidirecional",
+      "explicacao": "Ele impõe fluxo físico em um único sentido, reduzindo a superfície de ataque e impedindo comandos ou sessões de retorno ao ambiente de controle.",
+      "resposta_padrao": "Firewall stateful com portas restritas",
+      "por_que_nao": "Firewall depende de regras e software; não impõe unidirecionalidade física quando retorno é desnecessário."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicação de patches em servidores OT redundantes deve usar o nó secundário para validação antes da transferência.",
+      "pergunta": "Servidores de supervisão em redundância precisam receber um patch já homologado, mantendo a disponibilidade do processo. Como executar a aplicação para reduzir o risco de perda do serviço?",
+      "resposta": "Patch no nó secundário antes do failover controlado",
+      "explicacao": "Atualiza-se e valida-se o standby primeiro; depois transfere-se a carga e aplica-se o patch no antigo ativo, preservando caminho de retorno.",
+      "resposta_padrao": "Aplicação simultânea nos dois nós na janela",
+      "por_que_nao": "Atualizar ambos remove a validação em redundância e pode indisponibilizar o serviço se houver incompatibilidade."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Integridade de lógica de controle após exposição da estação de engenharia é verificada por comparação com baseline aprovado.",
+      "pergunta": "A estação de engenharia ficou exposta a malware; antes de recolocar um PLC em serviço, qual verificação específica confirma a integridade do programa carregado?",
+      "resposta": "Comparação online/offline da lógica com o baseline aprovado",
+      "explicacao": "A conferência do conteúdo executando no controlador contra a versão autorizada detecta alterações indevidas que testes funcionais podem não revelar.",
+      "resposta_padrao": "Teste funcional dos sinais de campo",
+      "por_que_nao": "Teste funcional cobre só cenários exercitados e não assegura que a imagem lógica permaneceu idêntica à autorizada."
+    }
+  ]
+}

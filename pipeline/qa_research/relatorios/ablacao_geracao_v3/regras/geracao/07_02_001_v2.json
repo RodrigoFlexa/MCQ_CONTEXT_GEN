@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:001:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mediação de acesso remoto a OT por zona intermediária controlada.",
+      "pergunta": "Fornecedor precisa acessar temporariamente a estação de engenharia para diagnóstico, com autenticação individual, gravação de sessão e sem rota direta da rede externa ao controle. Qual arranjo técnico deve intermediar esse acesso?",
+      "resposta": "jump server na DMZ industrial",
+      "explicacao": "O host intermediário encerra a sessão remota em zona controlada, centraliza autenticação e auditoria e evita conectividade ponta a ponta até a rede de controle.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "VPN fim a fim mantém caminho direto ao ambiente de controle e elimina a mediação controlada da DMZ."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Isolamento unidirecional para exportação de dados sem caminho de retorno ao controle.",
+      "pergunta": "Dados de processo precisam ser enviados a analytics externo, e o ambiente de controle não pode ter caminho de retorno mesmo com erro de regra ou comprometimento do lado receptor. Que solução técnica específica deve ser usada?",
+      "resposta": "gateway unidirecional",
+      "explicacao": "Esse arranjo impõe fluxo somente de saída por hardware, eliminando a possibilidade de retorno lógico do ambiente receptor para o controle.",
+      "resposta_padrao": "Firewall com regras restritas.",
+      "por_que_nao": "Firewall depende de configuração e continua pertencendo a uma arquitetura de comunicação bidirecional."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Descoberta segura de ativos em redes industriais com dispositivos frágeis ou legados.",
+      "pergunta": "Há PLCs legados sensíveis a varredura e é necessário levantar ativos e protocolos conectados sem enviar consultas à rede. Qual técnica deve ser adotada?",
+      "resposta": "inventário passivo por escuta de tráfego",
+      "explicacao": "A técnica observa comunicações existentes, normalmente via TAP ou SPAN, identificando ativos e protocolos sem interrogar dispositivos sensíveis.",
+      "resposta_padrao": "Varredura ativa de portas e serviços.",
+      "por_que_nao": "Dispositivos OT legados podem falhar ou degradar quando recebem sondagens ativas fora do perfil normal de comunicação."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicação de patches em servidores redundantes preservando disponibilidade operacional.",
+      "pergunta": "Par redundante de servidores de supervisão precisa receber patch de segurança do sistema operacional sem interromper a operação. Qual sequência técnica deve ser adotada?",
+      "resposta": "rolling upgrade pelo nó em espera",
+      "explicacao": "Atualiza-se primeiro o standby, valida-se seu funcionamento e só então se faz failover controlado para tratar o antigo ativo.",
+      "resposta_padrao": "Aplicar o patch primeiro no nó ativo.",
+      "por_que_nao": "Em redundância, começar pelo nó em espera preserva o serviço e permite validar o patch antes da comutação."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:021:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto seguro a ativos OT exige terminação em bastion na DMZ industrial, não no ativo de controle.",
+      "pergunta": "Para manutenção remota temporária de fornecedor em uma estação de engenharia de PLC, sem conectividade direta entre rede corporativa/Internet e rede de controle, em que ponto a sessão deve terminar antes de alcançar o ativo OT?",
+      "resposta": "servidor de salto na DMZ industrial",
+      "explicacao": "O jump server medeia autenticação e sessão, registra acessos e preserva a segregação entre zonas, evitando término direto no ativo de controle.",
+      "resposta_padrao": "VPN diretamente na estação de engenharia.",
+      "por_que_nao": "Encerrar a VPN no ativo OT remove a mediação da DMZ e amplia a superfície de ataque."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Integridade de lógica em SIS ou PLC se verifica por comparação da aplicação carregada com baseline aprovado, usando checksum ou assinatura.",
+      "pergunta": "Suspeita-se de alteração não autorizada na lógica de um SIS após intervenção, mas setpoints visíveis e tendências permanecem normais. Como verificar tecnicamente se a aplicação carregada é exatamente a versão aprovada?",
+      "resposta": "comparação de checksum da aplicação com baseline aprovada",
+      "explicacao": "Mudanças de lógica podem não aparecer em tendências ou setpoints; a verificação confiável compara a imagem carregada com a versão de referência aprovada.",
+      "resposta_padrao": "Revisar tendências, alarmes e telas do operador.",
+      "por_que_nao": "Esses dados podem permanecer normais mesmo com lógica interna alterada; não comprovam integridade da aplicação."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "MAC flapping e tempestade de broadcast após conexão indevida indicam loop de camada 2 em rede industrial.",
+      "pergunta": "Após a ligação de um pequeno switch não gerenciado na rede de controle, aparecem MAC flapping nos switches, forte aumento de broadcast e perda intermitente de HMIs. Qual é a causa primária?",
+      "resposta": "loop de camada 2",
+      "explicacao": "A alternância de MAC entre portas e a tempestade de broadcast são sinais típicos de caminhos redundantes sem prevenção de loop.",
+      "resposta_padrao": "Falha de uma HMI ou de seu cabo.",
+      "por_que_nao": "Defeitos locais não explicam flapping disseminado de MAC nem o aumento generalizado de broadcast."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando SMBv1 é vulnerável e desnecessário, o hardening correto é desabilitar o protocolo sem afetar OPC DA/DCOM.",
+      "pergunta": "Sai alerta crítico de execução remota em SMBv1 num servidor legado de supervisão. Ele usa OPC DA com as estações e não precisa de compartilhamento de arquivos. Qual ajuste técnico específico reduz a exposição sem afetar essa comunicação?",
+      "resposta": "desabilitar SMBv1",
+      "explicacao": "OPC DA/DCOM não depende de SMBv1; remover o protocolo vulnerável reduz a superfície de ataque preservando a função descrita.",
+      "resposta_padrao": "Confiar apenas no antivírus do servidor.",
+      "por_que_nao": "Antivírus não elimina o serviço vulnerável exposto nem substitui o hardening do protocolo."
+    }
+  ]
+}

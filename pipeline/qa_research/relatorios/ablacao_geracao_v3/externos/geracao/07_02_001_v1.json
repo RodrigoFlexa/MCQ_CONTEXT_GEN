@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:001:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Formação funcional da fronteira IT/OT no ponto em que os dados deixam a camada de controle.",
+      "pergunta": "Em que ponto funcional a fronteira IT/OT costuma se formar numa arquitetura industrial, mesmo sem exposição direta à internet?",
+      "resposta": "Na saída da camada de controle.",
+      "explicacao": "A fronteira surge quando dados deixam o controle e passam a ser consumidos por supervisão, historiadores, analítica, telecom ou sistemas corporativos, não apenas no perímetro externo.",
+      "resposta_padrao": "No firewall com a rede corporativa.",
+      "por_que_nao": "O perímetro corporativo é só um limite de rede; a fronteira IT/OT aparece no primeiro consumo fora da camada de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Heterogeneidade de modelos de dados desloca a integração da fonte para a camada supervisória.",
+      "pergunta": "Controladores de fornecedores distintos expõem modelos de dados incompatíveis, e a padronização perto da fonte ficou limitada. Para que camada a integração tende a migrar?",
+      "resposta": "Para a camada supervisória.",
+      "explicacao": "Quando os modelos de dados divergem entre fornecedores, a normalização próxima aos controladores fica limitada e a integração sobe para a camada supervisória.",
+      "resposta_padrao": "Para os controladores de campo.",
+      "por_que_nao": "A incompatibilidade de modelos reduz a viabilidade de padronização na fonte e desloca a integração para cima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA, historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério para autorizar tráfego em novas interfaces que cruzam a fronteira IT/OT.",
+      "pergunta": "Com um controlador de borda alimentando o SCADA local e um broker MQTT em nuvem, por qual critério deve ser definido o tráfego autorizado a cruzar essa fronteira?",
+      "resposta": "Pela finalidade operacional do tráfego.",
+      "explicacao": "Em arquiteturas híbridas com novas interfaces, o ponto decisivo é definir claramente qual tráfego cruza a fronteira e com que finalidade operacional.",
+      "resposta_padrao": "Pelos pares de origem e destino.",
+      "por_que_nao": "Origem e destino ajudam a implementar regras, mas não determinam se o fluxo precisa cruzar a fronteira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Aplicação de barreiras sucessivas nos pontos de interconexão para conter propagação entre domínios.",
+      "pergunta": "Interconexões entre controle, supervisão e consumidores externos recebem barreiras sucessivas para conter a propagação entre domínios. Qual mecanismo arquitetural isso caracteriza?",
+      "resposta": "Defesa em profundidade.",
+      "explicacao": "Os pontos de interconexão concentram trocas entre domínios; tratá-los com barreiras sucessivas reduz caminhos de propagação. A2 nomeia esse encadeamento como defesa em profundidade.",
+      "resposta_padrao": "Redundância de rede.",
+      "por_que_nao": "Redundância melhora continuidade, mas não cria camadas sucessivas de contenção entre domínios de criticidade distinta.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse encadeamento de barreiras sucessivas corresponde ao princípio de defesa em profundidade."
+        }
+      ]
+    }
+  ]
+}

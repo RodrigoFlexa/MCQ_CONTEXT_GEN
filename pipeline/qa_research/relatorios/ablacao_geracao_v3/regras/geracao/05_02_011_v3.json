@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:011:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda súbita de geração exige load shedding iniciado por evento de geração, não apenas por subfrequência.",
+      "pergunta": "Com barramento isolado, dois geradores dividem a carga e um deles sai por trip. A carga remanescente excede a capacidade da máquina que ficou. Que sinal o PMS deve usar para iniciar o primeiro load shedding antes de a frequência cair demais?",
+      "resposta": "abertura do disjuntor do gerador perdido",
+      "explicacao": "Em sistema isolado de baixa inércia, disparar o corte pela perda confirmada de geração atua antes da subfrequência e evita mergulho acentuado de frequência.",
+      "resposta_padrao": "Subfrequência do barramento.",
+      "por_que_nao": "Esse critério reage depois do desequilíbrio entre geração e carga; pode ser lento demais após perda súbita de máquina."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em paralelismo de geradores, o compartilhamento de kvar é ajustado pelo AVR em droop reativo.",
+      "pergunta": "Dois geradores síncronos em paralelo estão com kW equilibrados pelos governadores, mas um opera com corrente estatórica e kvar bem maiores que o outro. Que ajuste de controle corrige esse compartilhamento sem alterar a potência ativa?",
+      "resposta": "droop reativo do regulador de tensão",
+      "explicacao": "Com máquinas em paralelo, o governador divide potência ativa; o regulador de tensão com droop reativo é o recurso que reparte potência reativa.",
+      "resposta_padrao": "Droop de velocidade do governador.",
+      "por_que_nao": "O governador redistribui potência ativa e frequência; não corrige desequilíbrio de potência reativa entre geradores."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A proteção diferencial de transformador distingue inrush de magnetização pela componente de segundo harmônico.",
+      "pergunta": "Na energização de um transformador sem carga a partir de barramento saudável, a corrente inicial é elevada e assimétrica, sem defeito a jusante. Que critério da proteção diferencial deve bloquear a atuação indevida nessa condição?",
+      "resposta": "restrição por segundo harmônico",
+      "explicacao": "A corrente de inrush de magnetização contém forte segundo harmônico, usado para inibir a proteção diferencial sem perder a sensibilidade às faltas internas.",
+      "resposta_padrao": "Aumentar o pickup da proteção diferencial.",
+      "por_que_nao": "Isso reduz a sensibilidade para faltas internas e não distingue inrush de defeito real."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Corrente de falta medida no resistor de neutro, limitada e com continuidade operacional, caracteriza aterramento por alta resistência.",
+      "pergunta": "Surge alarme de falta à terra em barramento de média tensão; a corrente medida no resistor de neutro sobe, mas permanece limitada, e a operação continua até localização do circuito. Que arranjo de aterramento explica esse comportamento?",
+      "resposta": "aterramento do neutro por alta resistência",
+      "explicacao": "O resistor de aterramento limita a corrente da primeira falta monofásica à terra e permite continuidade temporária com alarme e localização do circuito defeituoso.",
+      "resposta_padrao": "Sistema isolado.",
+      "por_que_nao": "Sistema isolado não conduz a falta por um resistor de neutro monitorado; a corrente fecha principalmente pelas capacitâncias do sistema."
+    }
+  ]
+}

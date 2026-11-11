@@ -1,0 +1,95 @@
+{
+  "item": "04_02",
+  "foco": 14,
+  "visita": 2,
+  "onda": 3,
+  "id": "04_02:014:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Pré-requisito técnico para integrar potência/controle distribuído a sistema subsea existente ao ampliar monitoramento sem reconstrução total.",
+      "pergunta": "Há energia e comunicação disponíveis no sistema existente, e o objetivo é acrescentar sensores e telemetria sem refazer o controle. Antes da integração, que verificação técnica é decisiva para saber se a expansão convive com a lógica já instalada?",
+      "resposta": "Compatibilidade funcional da arquitetura.",
+      "explicacao": "Nos blocos, a integração a instalações já existentes para ampliar instrumentação e comunicação só é admitida quando a arquitetura nova é funcionalmente compatível com a já instalada.",
+      "resposta_padrao": "Compatibilidade física dos conectores e linhas do umbilical.",
+      "por_que_nao": "Interface física disponível não garante coerência de funções, lógica de comando e filosofia fail-safe entre as arquiteturas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sistemas distribuídos de potência e controle podem ser integrados a instalações subsea já existentes para ampliar instrumentação e comunicação, desde que a compatibilidade funcional da arquitetura seja atendida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de expansão é relevante quando se busca adicionar monitoramento sem reconstruir todo o sistema de controle."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Local onde ocorre a seleção da função individual que permite reduzir linhas dedicadas no comando de várias válvulas.",
+      "pergunta": "Poucos condutores de sinal precisam comandar várias válvulas, enquanto a força de atuação continua hidráulica. Onde ocorre o endereçamento da função individual que permite reduzir linhas dedicadas?",
+      "resposta": "No módulo de controle submarino.",
+      "explicacao": "No arranjo multiplexado, a redução de linhas acontece porque a escolha da função é feita localmente no módulo submarino; a hidráulica só fornece a força para mover o atuador.",
+      "resposta_padrao": "Na estação mestra de controle.",
+      "por_que_nao": "No multiplexado, a estação envia o comando combinado; a seleção da função específica é decidida localmente pela eletrônica submarina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas porque a seleção da função ocorre no módulo submarino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo físico pelo qual a atuação totalmente elétrica melhora a resposta temporal frente a longas linhas hidráulicas.",
+      "pergunta": "Linhas hidráulicas longas vinham atrasando a resposta da válvula; o atuador elétrico local passou a comandá-la diretamente. Qual mecanismo físico reduz esse atraso?",
+      "resposta": "Eliminação do volume hidráulico compressível distribuído.",
+      "explicacao": "O ganho de tempo de resposta é associado à retirada da dinâmica hidráulica distribuída, reduzindo compressibilidade e perdas em linhas extensas entre o comando e o movimento da válvula.",
+      "resposta_padrao": "Maior potência do atuador elétrico.",
+      "por_que_nao": "A melhoria temporal decorre de remover compressibilidade e perdas do circuito hidráulico longo, não de simplesmente aumentar força disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "criticidade da resposta temporal"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Os benefícios atribuídos incluem menor tempo de resposta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esses efeitos são tecnicamente coerentes quando o acionamento elétrico reduz volumes compressíveis, perdas por linhas hidráulicas extensas e dependência de fluido de controle."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de incoerência entre comando, pressão e posição no monitoramento do controle de válvula subsea.",
+      "pergunta": "Comando de abertura confirmado no módulo submarino, pressão do atuador sem variação e feedback mudando para \"aberta\". Qual elemento do monitoramento está incoerente nessa sequência?",
+      "resposta": "Indicação de posição da válvula.",
+      "explicacao": "Pela cadeia física descrita, a válvula só se move após pressurização do cilindro. Sem mudança de pressão, o sinal que contraria o funcionamento esperado é o de posição.",
+      "resposta_padrao": "Pressão de controle insuficiente.",
+      "por_que_nao": "Pressão insuficiente impediria o movimento, mas não explicaria uma mudança de posição fisicamente incompatível sem pressurização do cilindro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A unidade hidráulica pressuriza o cilindro, e o deslocamento do cilindro abre ou fecha a válvula gaveta."
+        }
+      ]
+    }
+  ]
+}

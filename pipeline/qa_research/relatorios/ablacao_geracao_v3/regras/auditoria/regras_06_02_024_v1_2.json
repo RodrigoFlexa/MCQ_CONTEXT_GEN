@@ -1,0 +1,52 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Erro sistemático de calibração, com viés comum introduzido pela mesma bancada nos três canais.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "mecanismo",
+  "justificativa": "O ponto decisivo é que o desvio coincidente dos três canais após a mesma bancada indica uma influência compartilhada que elimina a independência da votação 2oo3, e os blocos sustentam explicitamente que recursos ou causas comuns anulam o benefício da redundância.",
+  "aprovada": true,
+  "motivo": "nenhum",
+  "falhas": [],
+  "referencia_valida": true,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    },
+    {
+      "id": "B2",
+      "item": "07_01",
+      "texto": "Testes de redundância verificam se supervisórios, controladores, redes e fontes preservam a função após falha ou comutação de um canal. A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço. O princípio técnico mais geral é que redundância só produz benefício operacional quando existe caminho alternativo efetivo para a função e quando a perda dessa condição pode ser percebida. Sem detecção da degradação, o sistema pode permanecer operando em estado reduzido de resiliência sem resposta tempestiva. O diagnóstico por camadas organiza a análise do sintoma conforme o nível provável em que ele se manifesta, por exemplo supervisão, controlador, rede, interfaces de entrada e saída ou campo. Essa decomposição ajuda a separar perda de visibilidade, perda de medição e perda de comando, reduzindo a chance de atribuir a causa à camada errada logo no primeiro diagnóstico.",
+      "titulo": "DCS, PLC, redes e diagnóstico / Redundância e diagnóstico por camadas",
+      "indice_documento": 17
+    },
+    {
+      "id": "B3",
+      "item": "02_06",
+      "texto": "Alarmes e shutdowns fazem a ponte entre detecção de desvio e resposta do sistema. Em boas práticas de engenharia citadas para instalações offshore, a detecção de gás é associada a duas funções: alertar pessoas e acionar ações automáticas que removam ou isolem fontes de gás e energia. Os níveis de alarme e de shutdown por gás e suas ações devem estar definidos na matriz de causa e efeito da unidade.\n\nA eficácia dessa filosofia depende de a lógica implementada cobrir de fato todas as fontes relevantes de hidrocarboneto na área. A análise precisa abranger bombas de carga, bombas de stripping e outras fontes capazes de manter o vazamento ou a movimentação de hidrocarbonetos. Nessa condição, o shutdown da área ficou incompleto.\n\nTecnicamente, a lógica de causa e efeito deve ser coerente com o inventário de equipamentos capazes de alimentar o cenário perigoso. Se uma fonte potencial de vazamento permanece energizada ou admitida após alarme de gás, a barreira automática perde parte de sua função de mitigação.",
+      "titulo": "Partidas, paradas e alarmes / Alarmes, detecção de gás e lógica de shutdown",
+      "indice_documento": 2
+    },
+    {
+      "id": "B4",
+      "item": "07_02",
+      "texto": "A disponibilidade efetiva de um IACS não depende apenas do software de controle. Ela depende também da cadeia de suporte físico e funcional, incluindo alimentação elétrica, Uninterruptible Power Supply (UPS), bancos de baterias e modos de bypass. A falta de manutenção em UPS pode levar à perda simultânea de energia para sistemas de controle industrial, de shutdown de emergência e de mitigação de emergência, porque esses sistemas podem depender da mesma alimentação ininterrupta; a UPS torna-se, assim, um modo de falha comum para barreiras distintas. Uma falha de componentes da UPS pode levar a shutdown da instalação, acionamento do gerador de emergência e disparo de proteções elétricas, e pode se manifestar com fumaça e arco elétrico na seção inversora; nesse caso, a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro. A UPS também precisa ser vista como parte da cadeia de emergência: se a geração principal for perdida e o gerador de emergência não partir, ela é o meio que resta para manter alimentadas as funções críticas. Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia; alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle. Esses mecanismos mostram que falhas de infraestrutura de suporte podem produzir consequências operacionais tão críticas quanto falhas lógicas ou de comunicação, e por isso a avaliação de indisponibilidade deve considerar também energia e suporte associado.",
+      "titulo": "Vulnerabilidades, patches e legados / Consequências práticas das falhas de suporte para a disponibilidade digital",
+      "indice_documento": 14
+    },
+    {
+      "id": "B5",
+      "item": "01_01",
+      "texto": "Redundância é o uso de caminhos, equipamentos ou funções adicionais para manter o serviço quando ocorre falha em parte do arranjo. Seu efeito depende da lógica funcional do sistema, da forma de acionamento do equipamento reserva e das dependências entre subsistemas. Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo. Isso pode reduzir sua exposição a certos mecanismos de desgaste, mas não elimina falhas em espera nem falhas de partida ou de comutação. No conjunto, a redundância pode elevar a confiabilidade e a disponibilidade no início da missão, mas esse benefício não é ilimitado: em tempos mais longos, a degradação dos equipamentos ativos pode deixar de ser compensada pelo reserva. Além disso, redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento. Em compressão, geração e tratamento em FPSO, a redundância útil é aquela que preserva a função de processo relevante, e não apenas a existência de equipamento duplicado. Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo.",
+      "titulo": "Disponibilidade e confiabilidade / Redundância, standby e efeitos sobre o comportamento do sistema",
+      "indice_documento": 6
+    }
+  ]
+}

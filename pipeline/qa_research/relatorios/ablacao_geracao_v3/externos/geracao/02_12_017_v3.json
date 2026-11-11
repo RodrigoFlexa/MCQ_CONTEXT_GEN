@@ -1,0 +1,71 @@
+{
+  "item": "02_12",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_12:017:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a demanda externa cai, a proteção anti-surge preserva o compressor elevando a vazão interna por reciclo.",
+      "pergunta": "A demanda de gás cai rapidamente e o ponto de operação se aproxima do limite instável, sem desvio relevante na pressão de sucção. Qual ação automática específica deve atuar para proteger o compressor?",
+      "resposta": "Abertura da válvula de reciclo anti-surge.",
+      "explicacao": "Ao devolver gás da descarga ou de estágios intermediários para montante, a proteção aumenta a vazão que atravessa a máquina e afasta o ponto de operação do surge.",
+      "resposta_padrao": "Reduzir a rotação para acompanhar a queda de demanda.",
+      "por_que_nao": "Aqui a máquina precisa de mais vazão interna; baixar rotação tende a reduzir vazão e pode agravar a aproximação do surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a malha anti-surge preserva a máquina ao manter vazão suficiente através do compressor quando o ponto de operação se aproxima do limite instável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O efeito é aumentar a vazão interna atravessando a máquina, mesmo quando a demanda externa cai."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O setpoint de vazão mínima do reciclo por estágio deve ser indexado à rotação em arranjos com controle de pressão de sucção por velocidade.",
+      "pergunta": "O compressor controla a pressão de sucção por variação de velocidade, e o reciclo por estágio passa a abrir cedo demais em baixa carga. Qual referência específica falta no setpoint de vazão mínima?",
+      "resposta": "Rotação da máquina.",
+      "explicacao": "Nesse arranjo, a referência da vazão mínima protegida não é fixa; ela deve variar com a rotação para manter coerência entre mapa da máquina e proteção.",
+      "resposta_padrao": "Pressão de descarga.",
+      "por_que_nao": "A posição da vazão mínima protegida se desloca com a rotação; pressão de descarga não substitui essa referência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rotação da máquina controla a pressão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A interação transitória entre malhas de capacidade e anti-surge deve ser verificada com simulação dinâmica antes da implementação.",
+      "pergunta": "Antes de colocar em serviço uma nova lógica que integra capacidade e anti-surge em um trem multestágio, qual ferramenta de engenharia deve ser usada para testar partidas, paradas e esquemas automáticos?",
+      "resposta": "Simulação dinâmica.",
+      "explicacao": "Ela reproduz transientes e a interação temporal entre processo e malhas, permitindo avaliar partidas, paradas e atuação automática antes da validação em campo.",
+      "resposta_padrao": "Simulação em regime permanente.",
+      "por_que_nao": "Regime permanente não representa transientes nem a interação temporal entre capacidade e anti-surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há referência geral à forte interação entre controle de capacidade e proteção anti-surge."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Como ferramenta de engenharia, a simulação dinâmica é útil para estudar partida, parada, ajuste das malhas de capacidade e anti-surge, teste de esquemas automáticos e avaliação de arranjos."
+        }
+      ]
+    }
+  ]
+}

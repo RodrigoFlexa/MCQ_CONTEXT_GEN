@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_01:019:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Local de aplicação da intervenção temporária quando um mesmo sinal falso afeta simultaneamente supervisão e lógica.",
+      "pergunta": "Um transmissor aparece em condição segura no supervisório, e o alarme alto, o intertravamento e o permissivo ligados a essa mesma medição permanecem coerentes com essa indicação, embora o campo mostre o oposto. Em que ponto da arquitetura a intervenção temporária foi aplicada?",
+      "resposta": "na imagem de entrada do controlador",
+      "explicacao": "Se alarme, permissivo e intertravamento derivados da mesma medição concordam com um estado falso, a intervenção está a montante da lógica, no sinal compartilhado de entrada.",
+      "resposta_padrao": "no ramo do intertravamento",
+      "por_que_nao": "Um bypass apenas na lógica de trip não mantém alarme e permissivo coerentes com o mesmo estado falso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta, embora o alcance concreto dependa da arquitetura e da função afetada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do arranjo de teste integrado que reduz incertezas de automação antes da introdução de hidrocarboneto após longa inatividade.",
+      "pergunta": "Após longa inatividade de um circuito de regeneração com tecnologia pouco aplicada, qual arranjo de teste deve preceder o gás natural para expor falhas de integração, sintonia inicial e permissivos?",
+      "resposta": "operação em circuito fechado com N2",
+      "explicacao": "O circuito fechado com N2 submete lógica, instrumentos, comunicação e controle a condição representativa sem o inventário inflamável do gás natural, expondo falhas integradas após longa inatividade.",
+      "resposta_padrao": "loop checks e calibrações individuais",
+      "por_que_nao": "Esses testes verificam pontos isolados, mas não reproduzem o comportamento integrado da lógica e dos controladores em condição representativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em tecnologias com poucas aplicações na indústria, ainda podem permanecer incertezas sobre manutenção, condições operacionais e consequências de longos períodos de inatividade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica, confirmar desempenho, identificar vazamentos induzidos por acomodação térmica e ajustar instrumentos e controladores."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso ajuda a revelar problemas de integração, sintonia inicial, atuação de sopradores e aquecedores e falhas de comunicação que poderiam comprometer permissivos ou intertravamentos"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de observabilidade para distinguir medição válida de dado congelado quando a arquitetura pode mascarar o estado real.",
+      "pergunta": "A indicação no supervisório continua plausível, mas não acompanha mudanças rápidas de variáveis correlatas após uma intervenção temporária. Para separar valor real de dado congelado, que indicação específica deve ser verificada primeiro?",
+      "resposta": "atualização do sinal",
+      "explicacao": "Valor congelado pode permanecer plausível; a atualização do sinal mostra se a medição continua sendo renovada pelo caminho de automação ou apenas repetida no supervisório.",
+      "resposta_padrao": "o valor instantâneo da variável",
+      "por_que_nao": "Um valor estagnado pode parecer normal; sem checar atualização, não se distingue medição viva de dado antigo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Para diagnóstico de arquitetura, não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e eventuais sinais de indisponibilidade do sistema que o transporta ou processa."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:015:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Resposta imediata a falha elétrica em UPS que alimenta funções críticas: isolamento da falha com manutenção da alimentação por bypass seguro.",
+      "pergunta": "Fumaça e arco elétrico aparecem na UPS que alimenta controle, parada de emergência e mitigação; as cargas críticas ainda precisam permanecer energizadas. Qual ação técnica imediata deve ser executada?",
+      "resposta": "Transferência das cargas críticas para bypass seguro após isolamento da seção com falha.",
+      "explicacao": "Com fumaça e arco na UPS, a resposta correta é isolar a parte com falha e manter as cargas críticas energizadas por bypass seguro enquanto o dano é inspecionado.",
+      "resposta_padrao": "Desligar totalmente a UPS e iniciar a inspeção do dano.",
+      "por_que_nao": "Sem bypass seguro, a retirada total da UPS pode derrubar simultaneamente cargas críticas de controle e proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciação entre comprometimento do controle e falha comum de alimentação pela combinação de sinais elétricos locais e perdas simultâneas.",
+      "pergunta": "Controle, parada de emergência e mitigação perdem alimentação quase ao mesmo tempo; no painel local da UPS há fumaça, arco elétrico e proteções atuadas. Qual é a causa primária mais provável?",
+      "resposta": "Falha da infraestrutura de alimentação ininterrupta da UPS.",
+      "explicacao": "A perda simultânea de barreiras distintas com sinais elétricos locais na UPS caracteriza modo de falha comum na alimentação, não alteração lógica ou comando não autorizado.",
+      "resposta_padrao": "Comprometimento cibernético do sistema de controle.",
+      "por_que_nao": "Sinais físicos de fumaça, arco e atuação de proteções indicam falha elétrica comum na alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de contenção em OT legado vulnerável sem patch homologado: reduzir exposição por segregação de rede em vez de atualizar de imediato.",
+      "pergunta": "Foi divulgada vulnerabilidade na pilha TCP/IP de um controlador legado com função essencial; não há correção homologada e ele está acessível diretamente da rede de negócios. Qual contenção é mais adequada agora?",
+      "resposta": "Isolamento atrás de firewall, removendo a acessibilidade direta da rede de negócios.",
+      "explicacao": "Sem correção homologada para controlador legado, a contenção mais segura reduz a exposição por segregação atrás de firewall em vez de atualização imediata que possa afetar disponibilidade.",
+      "resposta_padrao": "Aplicar imediatamente qualquer atualização disponível no controlador.",
+      "por_que_nao": "Em OT legado, atualização não homologada pode causar indisponibilidade maior que a vulnerabilidade; o isolamento preserva a função essencial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolados da rede de negócios"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para migrar da análise do incidente para a emergência operacional quando a cadeia de energia das salvaguardas se degrada.",
+      "pergunta": "Durante a investigação de um evento digital, perdem-se a geração principal, a partida do gerador de emergência falha e a UPS fica indisponível. Qual foco técnico deve assumir prioridade imediata?",
+      "resposta": "Preservação imediata das funções críticas e do estado seguro da planta.",
+      "explicacao": "A combinação de perda da geração principal, falha do gerador de emergência e UPS indisponível ameaça a energia das funções de segurança; por isso a condução deve priorizar seu suporte imediato.",
+      "resposta_padrao": "Continuar a análise detalhada do incidente para confirmar a origem.",
+      "por_que_nao": "A origem pode esperar; a perda combinada de geração, emergência e UPS ameaça imediatamente as funções de segurança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a perda da geração principal, somada à falha de partida do gerador de emergência e à indisponibilidade da UPS, pode deixar sem energia as funções de segurança"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta."
+        }
+      ]
+    }
+  ]
+}

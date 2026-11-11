@@ -1,0 +1,103 @@
+{
+  "item": "02_12",
+  "foco": 20,
+  "visita": 3,
+  "onda": 5,
+  "id": "02_12:020:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ação prioritária do sistema anti-surge diante de queda abrupta de vazão em compressor centrífugo.",
+      "pergunta": "A vazão de entrada cai bruscamente, a rotação permanece alta e a vazão medida se aproxima do mínimo estável do compressor centrífugo. Qual ação automática específica deve atuar primeiro para afastar o ponto de operação do limite crítico?",
+      "resposta": "abrir a válvula de reciclo anti-surge",
+      "explicacao": "Na baixa vazão, a proteção regulatória usual aumenta a vazão através do compressor por reciclo, afastando a operação da instabilidade antes de medidas mais severas.",
+      "resposta_padrao": "Fechar a válvula de controle de descarga para recuperar a pressão.",
+      "por_que_nao": "Isso aumenta a resistência do sistema e não recompõe a vazão através do compressor, que é o que afasta a máquina do surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "opera com faixa limitada de vazão estável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "controle regulatório que inclua prevenção de surge, com reciclo"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação do surge como causa primária de perda de compressão e paradas frequentes após perturbações de processo.",
+      "pergunta": "Perturbações de produção alteram rapidamente vazão e composição do gás; o compressor deixa de sustentar a compressão requerida e as paradas automáticas se repetem, sem evidência inicial de falha mecânica. Qual fenômeno operacional é a causa primária?",
+      "resposta": "surge",
+      "explicacao": "Mudanças bruscas de vazão e composição podem levar o compressor à instabilidade de baixa vazão; nesse regime, ele perde a compressão requerida e tende a acionar proteção.",
+      "resposta_padrao": "Instabilidade da malha de pressão de descarga.",
+      "por_que_nao": "A combinação de perda de compressão com trips frequentes após perturbações de vazão e composição caracteriza instabilidade aerodinâmica de baixa vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Mudanças bruscas na vazão de entrada e na composição do gás podem favorecer paradas frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a máquina deixa de fornecer a compressão requerida"
+        },
+        {
+          "bloco": "F",
+          "trecho": "surge, descrito como regime operacional instável associado a vazão de gás muito baixa"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "resposta a perturbações do processo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escalonamento da proteção para desligamento quando o reciclo não consegue retirar o compressor da instabilidade.",
+      "pergunta": "A válvula de reciclo já está totalmente aberta, a vazão continua caindo e pressão e vazão passam a oscilar ciclicamente. Qual ação de proteção específica a lógica de segurança deve comandar, quando prevista?",
+      "resposta": "trip do compressor",
+      "explicacao": "Se o reciclo não afasta a máquina do regime instável, a proteção deve parar o compressor para evitar dano permanente.",
+      "resposta_padrao": "Manter o compressor em reciclo total até o processo se recuperar.",
+      "por_que_nao": "Com instabilidade persistente, reciclo máximo não garante estabilidade nem evita dano; a camada de proteção definida passa a ser o desligamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controle regulatório que inclua prevenção de surge, com reciclo e ações de proteção definidas para a máquina"
+        },
+        {
+          "bloco": "F",
+          "trecho": "incluindo trip quando previsto na lógica de segurança."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode sofrer dano permanente."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Deslocamento do ponto de operação por mudanças de sucção, composição e rotação em compressor centrífugo.",
+      "pergunta": "Sem falha de hardware aparente, a temperatura de sucção varia junto com a composição do gás e a rotação muda. Que elemento técnico da máquina essas variáveis deslocam e que define a proximidade dos limites aerodinâmicos?",
+      "resposta": "ponto de operação do compressor",
+      "explicacao": "Vazão, temperatura de sucção, composição e rotação mudam onde a máquina opera no mapa, alterando sua distância em relação aos limites aerodinâmicos.",
+      "resposta_padrao": "Pressão de descarga do compressor.",
+      "por_que_nao": "Pressão de descarga isolada não representa a posição da máquina no mapa nem sua distância aos limites aerodinâmicos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele é sensível a mudanças de vazão, temperatura de sucção, composição do gás e rotação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essas variáveis alteram o ponto de operação da máquina e sua proximidade dos limites aerodinâmicos."
+        }
+      ]
+    }
+  ]
+}

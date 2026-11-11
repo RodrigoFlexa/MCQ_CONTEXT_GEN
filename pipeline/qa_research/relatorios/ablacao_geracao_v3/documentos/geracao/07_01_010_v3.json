@@ -1,0 +1,71 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_01:010:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de compensação temporária para válvula com atrito sem depender de modelagem detalhada.",
+      "pergunta": "Sem modelo confiável da válvula, a saída do controlador se altera, mas o obturador só parte aos saltos e não há janela para correção mecânica imediata. Qual técnica específica deve ser aplicada ao comando?",
+      "resposta": "compensação de atrito por pulsos no sinal de controle",
+      "explicacao": "A abordagem descrita é não baseada em modelo e adiciona pulsos ao sinal para iniciar o movimento quando o comando usual não vence o atrito.",
+      "resposta_padrao": "Retunar o PID da malha.",
+      "por_que_nao": "A limitação é o breakaway no elemento final; sintonia do controlador não fornece o impulso extra para iniciar o movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma abordagem não baseada em modelo para compensar atrito em válvulas de controle consiste em adicionar pulsos ao sinal de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fornecer energia adicional quando o comando usual não consegue iniciar o movimento."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do arranjo de pulsos que reduz movimentação extra sem perda relevante de desempenho.",
+      "pergunta": "Buscando manter a malha operando até a correção mecânica, mas com o mínimo de movimentação adicional da válvula, que configuração de pulsos deve ser adotada?",
+      "resposta": "pulsos de amplitude variável",
+      "explicacao": "O método proposto usa amplitude variável para reduzir a movimentação causada pela compensação sem perda significativa de desempenho.",
+      "resposta_padrao": "Pulsos de amplitude fixa.",
+      "por_que_nao": "Amplitude fixa tende a impor deslocamentos desnecessários; a proposta variável busca o menor movimento compatível com o desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério limitante na parametrização da compensação de atrito por pulsos.",
+      "pergunta": "Na parametrização dessa compensação, deseja-se conter o desgaste extra do elemento final sem degradar a qualidade de controle além do aceitável. Qual critério técnico deve limitar a escolha dos parâmetros?",
+      "resposta": "especificação máxima de erro",
+      "explicacao": "Os parâmetros devem ser escolhidos com base em dados de operação, mas limitados pela especificação máxima de erro para preservar o desempenho admissível.",
+      "resposta_padrao": "O menor número possível de movimentos da válvula.",
+      "por_que_nao": "Minimizar deslocamentos isoladamente pode sacrificar a malha além do permitido; o limite correto é o erro máximo aceitável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Existe, portanto, um compromisso entre recuperar desempenho da malha e limitar desgaste adicional do elemento final."
+        },
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro."
+        }
+      ]
+    }
+  ]
+}

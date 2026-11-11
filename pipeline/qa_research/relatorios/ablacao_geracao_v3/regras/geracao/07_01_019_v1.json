@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:019:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Método de proof test que inclui o transmissor e a entrada analógica de uma SIF",
+      "pergunta": "Numa função de alta pressão com transmissor 4-20 mA no SIS, a saída final está bloqueada para teste. Para verificar o canal do sensor e da entrada analógica, como o estímulo deve ser aplicado?",
+      "resposta": "Pressão calibrada na conexão de processo do transmissor",
+      "explicacao": "Aplicar a variável de processo no transmissor exercita sensor, eletrônica de medição e caminho até a AI; forçamento interno ou de corrente não comprova a cadeia desde o ponto de sensoriamento.",
+      "resposta_padrao": "Forçar o valor da entrada no solver.",
+      "por_que_nao": "Forçamento valida lógica e saída, mas contorna sensor, transmissor e parte do caminho analógico."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de stiction por padrão de tendência de PV, saída do controlador e movimento de haste",
+      "pergunta": "A PV oscila em dente de serra; a saída do controlador muda suavemente, mas a haste fica parada e depois salta. Qual mecanismo no elemento final explica esse padrão?",
+      "resposta": "Stiction no conjunto haste-gaxeta da válvula",
+      "explicacao": "Pequenas mudanças de comando não vencem o atrito estático; o curso ocorre em saltos quando a força acumulada supera a aderência.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Oscilação por PID aparece com elemento final respondendo continuamente; stick-slip revela atrito estático dominante."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de parametrização incorreta de RTD por erro crescente na faixa",
+      "pergunta": "A indicação de um Pt100 coincide perto de 0 °C após troca do transmissor, mas o erro cresce ao aquecer. Qual configuração específica deve ser corrigida no transmissor?",
+      "resposta": "Coeficiente alfa do Pt100",
+      "explicacao": "Erro que aumenta ao longo da faixa, com sensor e cabeamento mantidos, é típico de coeficiente alfa ou tabela RTD incorretos.",
+      "resposta_padrao": "Ajuste de zero do transmissor.",
+      "por_que_nao": "Erro de zero é aproximadamente constante; seleção errada de curva RTD produz erro dependente da temperatura."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de falha física de rede Profibus DP por localização e tipo de erro",
+      "pergunta": "Somente os instrumentos do último trecho Profibus DP apresentam perdas intermitentes após intervenção de campo; diagnósticos mostram retries e CRC altos, com alimentação normal. Qual elemento físico do segmento deve ser corrigido primeiro?",
+      "resposta": "Terminação ativa da extremidade final",
+      "explicacao": "Reflexões e degradação de sinal por terminação ausente ou desenergizada aparecem com mais força nos nós da extremidade, elevando retries e erros de CRC.",
+      "resposta_padrao": "Endereço duplicado de um nó.",
+      "por_que_nao": "Conflito de endereço afeta a comunicação dos nós envolvidos, não principalmente a extremidade com aumento de CRC."
+    }
+  ]
+}

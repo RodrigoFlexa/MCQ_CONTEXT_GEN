@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:001:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de gateway unidirecional quando o requisito é transferência OT→IT sem caminho de retorno.",
+      "pergunta": "A área corporativa precisa receber dados do historiador para analytics, mas nenhum pacote, consulta ou comando pode retornar à rede de controle. Qual arranjo técnico específico deve ser aplicado no conduíte entre as zonas?",
+      "resposta": "gateway unidirecional (data diode)",
+      "explicacao": "Esse arranjo impõe fluxo físico em um só sentido, adequado quando a política exige exportar dados de OT sem qualquer possibilidade de tráfego reverso.",
+      "resposta_padrao": "Firewall com regra liberando somente saída.",
+      "por_que_nao": "Firewall ainda opera em pilha bidirecional e depende de configuração; não garante unidirecionalidade física."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade de imagem ou aplicativo antes de carga em controlador após suspeita na estação de engenharia.",
+      "pergunta": "Antes de carregar o aplicativo em um controlador sobressalente, existe backup válido, mas houve suspeita de comprometimento da estação de engenharia. Que verificação técnica específica deve ser feita no arquivo a ser carregado?",
+      "resposta": "comparação do hash criptográfico com o baseline aprovado",
+      "explicacao": "A comparação do hash do arquivo de carga com a referência aprovada confirma a integridade exata do artefato, independentemente de inspeção visual da lógica.",
+      "resposta_padrao": "Abrir a lógica e revisar visualmente as mudanças.",
+      "por_que_nao": "Revisão visual não comprova a integridade do binário carregado nem detecta alterações discretas no artefato."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto correto de terminação de acesso remoto temporário a ativos OT com segregação IT/OT.",
+      "pergunta": "Fornecedores precisam acessar temporariamente uma estação de engenharia na rede de controle, com conectividade corporativa disponível, mas sem rota direta até essa rede. Em que ponto técnico as sessões remotas devem terminar?",
+      "resposta": "jump server na DMZ industrial",
+      "explicacao": "A terminação em bastion host na DMZ mantém a segregação, centraliza autenticação e registro, e evita exposição direta da estação de engenharia.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "VPN direta cria caminho fim a fim para a zona de controle e contorna o ponto intermediário de inspeção e contenção."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de loop de camada 2 em rede industrial a partir de MAC flapping e perda intermitente de comunicação.",
+      "pergunta": "Vários HMIs passaram a perder comunicação de forma intermitente após a conexão de um switch temporário; a latência oscila fortemente e os logs mostram o mesmo MAC aparecendo em portas diferentes. Qual é a causa primária?",
+      "resposta": "loop de camada 2 com tempestade de broadcast",
+      "explicacao": "MAC flapping após nova interligação é assinatura típica de loop Ethernet, que multiplica broadcasts e degrada a comunicação de toda a rede.",
+      "resposta_padrao": "Congestionamento por excesso de tráfego de processo.",
+      "por_que_nao": "Excesso de tráfego não explica o MAC flapping; esse sintoma aponta especificamente para caminho redundante sem controle de loop."
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 3,
+  "onda": 4,
+  "id": "01_01:007:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do nível de detalhamento da análise RAM conforme a maturidade do projeto.",
+      "pergunta": "Na fase preliminar, há somente arranjo de processo, quantidade de equipamentos e alternativas de redundância definidas, sem dados confiáveis de reparo. Que modelagem RAM é a mais adequada para comparar as opções?",
+      "resposta": "Diagrama de blocos de confiabilidade simplificado",
+      "explicacao": "Nessa etapa, o objetivo é validar arranjo, quantidade e redundância. Um modelo funcional simples atende melhor do que uma modelagem detalhada sem base de dados suficiente.",
+      "resposta_padrao": "Simulação RAM detalhada com todos os modos de falha.",
+      "por_que_nao": "Sem detalhamento e parâmetros confiáveis, a complexidade adicional não melhora a decisão preliminar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em etapas preliminares de projeto, modelos mais simples podem servir para validar arranjo, quantidade de equipamentos e alternativas de redundância."
+        },
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização da análise RAM com parâmetros locais de falha e reparo.",
+      "pergunta": "Após alguns meses de operação, os tempos reais de reparo ficaram acima do benchmark setorial por causa de acessibilidade e estratégia de manutenção locais. Ao revisar a RAM, que base de dados deve prevalecer?",
+      "resposta": "Histórico característico da própria instalação",
+      "explicacao": "Tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, manutenção e contexto operacional. Para representar a condição real, o modelo deve usar dados locais.",
+      "resposta_padrao": "Banco setorial padronizado, por ser mais comparável.",
+      "por_que_nao": "Base setorial ajuda na comparação, mas não representa automaticamente as condições específicas da instalação analisada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de dependências e gargalos compartilhados na lógica funcional da RAM.",
+      "pergunta": "Dois trens idênticos aparecem como redundantes no fluxograma, mas ambos dependem da mesma utilidade crítica e da mesma linha de descarga. Para a RAM refletir a função de processo real, o que precisa entrar explicitamente na lógica do modelo?",
+      "resposta": "Dependências por recursos compartilhados",
+      "explicacao": "A duplicação do equipamento não preserva a função se houver gargalo comum. O modelo precisa representar a dependência funcional desses recursos únicos.",
+      "resposta_padrao": "A redundância dos dois trens em paralelo.",
+      "por_que_nao": "Lógica série-paralelo simples superestima disponibilidade quando há utilidades ou descargas comuns limitando ambos os trens.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Registro operacional necessário para calcular MTTR observado e alimentar a RAM com tempos de reparo reais.",
+      "pergunta": "Nos registros usados para recalibrar a RAM, a falha já tem data e hora de início. Que marco operacional precisa ser registrado para calcular o MTTR observado corretamente?",
+      "resposta": "Tempo de retorno ao estado operacional",
+      "explicacao": "O MTTR observado é medido até a recuperação da função operacional. O fim do reparo físico ou a mobilização da equipe não encerram necessariamente a indisponibilidade.",
+      "resposta_padrao": "Tempo de chegada da equipe de manutenção.",
+      "por_que_nao": "MTTR é definido pelo restabelecimento da função, não pelo início da intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR"
+        }
+      ]
+    }
+  ]
+}

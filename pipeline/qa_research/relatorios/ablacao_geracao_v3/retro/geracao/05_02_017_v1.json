@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:017:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de cargas essenciais pela consequência funcional da perda de energia, e não pela potência demandada.",
+      "pergunta": "Na revisão das cargas de 24 Vcc, UPS e emergência, uma carga pequena atua o shutdown e outra maior atende só a uma utilidade auxiliar. Que critério técnico deve definir qual delas precisa de maior continuidade de alimentação?",
+      "resposta": "A consequência da perda de energia.",
+      "explicacao": "A criticidade elétrica decorre do efeito da perda de alimentação sobre a função. Cargas de comando, shutdown, válvulas e comunicação crítica podem exigir continuidade mesmo com baixa potência.",
+      "resposta_padrao": "A potência consumida da carga.",
+      "por_que_nao": "A seleção de cargas essenciais não segue kW; uma carga pequena de shutdown pode ser mais crítica que uma utilidade maior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação da redundância por segregação real das cargas entre ramos independentes.",
+      "pergunta": "Dois UPS aparecem saudáveis e sem alarme. Depois de modificações sucessivas, que verificação confirma que uma falha simples não derrubará simultaneamente as duas estações redundantes?",
+      "resposta": "Distribuição correta das cargas entre ramos redundantes.",
+      "explicacao": "A redundância funcional só existe se as cargas redundantes estiverem realmente separadas entre ramos independentes; UPS íntegros não evitam perda comum quando os consumidores ficam concentrados no mesmo lado.",
+      "resposta_padrao": "A capacidade nominal individual de cada UPS.",
+      "por_que_nao": "Capacidade suficiente não evita perda simultânea se as duas estações redundantes estiverem alimentadas pelo mesmo ramo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Contudo, a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de bypass disponível para manter a carga em falha interna do inversor.",
+      "pergunta": "Com entrada e saída normais no UPS, baterias testadas e carga crítica online, que caminho ainda deve ser confirmado para manter a alimentação se o inversor falhar?",
+      "resposta": "Disponibilidade do bypass do UPS.",
+      "explicacao": "Baterias e retificador não substituem o caminho alternativo em falha interna ou manutenção do inversor; a continuidade nessa condição depende do bypass estar disponível.",
+      "resposta_padrao": "O banco de baterias em bom estado.",
+      "por_que_nao": "A bateria sustenta perda de entrada; numa falha do inversor, a manutenção da carga depende do caminho de bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dependência da recomposição no black start da alimentação por bateria dos comandos e CLPs.",
+      "pergunta": "Durante o black start, há fonte de geração disponível, mas o comando de disjuntores e os CLPs não permanecem energizados e a recomposição não avança. Que alimentação auxiliar deve ser confirmada primeiro?",
+      "resposta": "A alimentação por bateria dos comandos e CLPs.",
+      "explicacao": "Na recomposição, a fonte pode existir, mas sem alimentação contínua dos circuitos de comando e da lógica automática o sistema não fecha disjuntores nem executa a sequência de retorno.",
+      "resposta_padrao": "A potência ativa disponível do gerador.",
+      "por_que_nao": "Mesmo com geração disponível, a recomposição falha se os comandos e CLPs perderem a alimentação por bateria.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    }
+  ]
+}

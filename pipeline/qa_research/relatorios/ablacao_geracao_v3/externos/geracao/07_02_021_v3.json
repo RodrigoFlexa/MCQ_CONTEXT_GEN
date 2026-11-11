@@ -1,0 +1,87 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:021:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da camada de normalização de dados quando o controle é heterogêneo entre fornecedores.",
+      "pergunta": "Controladores de fornecedores distintos expõem tags em modelos incompatíveis, e a equipe precisa padronizar nomenclatura de telas e comparar ativos sem retrabalho nos controladores. Em que camada a normalização deve ser implantada mais perto da fonte?",
+      "resposta": "No SCADA.",
+      "explicacao": "Quando a camada de controle não oferece padronização suficiente, a normalização viável mais próxima da fonte passa para o SCADA, preservando HMI e comparabilidade sem alterar cada controlador.",
+      "resposta_padrao": "No historiador corporativo.",
+      "por_que_nao": "Normalizar só no historiador ocorre tarde demais para padronizar HMI e interfaces ligadas diretamente ao controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso dificulta convenções de nomenclatura, padronização de interfaces humano-máquina (HMI) e comparação entre ativos sem retrabalho."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de contextualização por modo operacional para analytics e alarmes confiáveis.",
+      "pergunta": "Tendências de processo alimentam analytics com timestamps corretos e tags bem identificadas, mas partidas, reciclo e regime estável entram no mesmo conjunto e surgem alertas falsos. Que dado de contexto está faltando?",
+      "resposta": "Modo operacional.",
+      "explicacao": "Mesmo com identificação e tempo corretos, sem contexto do modo operacional a coerência operacional dos dados se perde e o modelo compara regimes incompatíveis, gerando alarmes espúrios.",
+      "resposta_padrao": "Filtros estatísticos mais agressivos.",
+      "por_que_nao": "Filtragem não separa estados operacionais distintos; o que falta é a contextualização do regime de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de projeto para aplicações críticas que influenciam ajustes frequentes via rede.",
+      "pergunta": "Uma aplicação envia ajustes frequentes a um sistema crítico por uma rede com quedas breves. Além da latência, que condição deve definir o comportamento da aplicação?",
+      "resposta": "Perda de conectividade.",
+      "explicacao": "Quanto mais a aplicação influencia o controle do processo em sistema crítico, mais o projeto precisa prever explicitamente como ela se comporta quando o enlace falha.",
+      "resposta_padrao": "Largura de banda disponível.",
+      "por_que_nao": "Capacidade de tráfego não define a resposta segura quando a comunicação some; o ponto crítico é o comportamento na perda do link.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de sincronismo temporal em aplicações próximas ao controle que combinam múltiplas fontes.",
+      "pergunta": "Dados de várias fontes entram numa aplicação próxima ao controle, e a sequência aparente dos eventos muda entre telas e cálculos. O que deve ser verificado para qualificar essa integração?",
+      "resposta": "Qualidade de sincronismo.",
+      "explicacao": "Perto do controle, decisões dependem da ordem temporal correta dos sinais; sem sincronismo adequado, eventos são correlacionados fora de sequência e a aplicação perde confiabilidade.",
+      "resposta_padrao": "Taxa de atualização das telas.",
+      "por_que_nao": "Tela rápida não corrige desalinhamento de relógios ou carimbos de tempo entre fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ]
+    }
+  ]
+}

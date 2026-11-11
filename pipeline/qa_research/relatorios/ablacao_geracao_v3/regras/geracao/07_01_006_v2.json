@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:006:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da assinatura de stiction em válvula de controle a partir de PV, saída do controlador e movimento da haste.",
+      "pergunta": "A PV oscila em dente de serra; a saída do controlador varia lentamente, mas o curso da válvula fica parado e depois salta alguns pontos. Qual a causa primária desse comportamento?",
+      "resposta": "atrito estático excessivo na válvula",
+      "explicacao": "Travamento do curso seguido de movimento brusco após acúmulo de sinal é a assinatura clássica de breakaway friction. Sintonia inadequada altera o curso de forma contínua, sem esse padrão de agarrar e soltar.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Sintonia ruim pode oscilar a malha, mas não produz histerese com haste parada e salto súbito após acúmulo de saída."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Efeito da exposição térmica desigual em transmissores com selos remotos e capilares preenchidos.",
+      "pergunta": "A indicação de um transmissor de DP com selos remotos varia ao longo do dia sem mudança de processo; um capilar recebe sol direto e o outro fica sombreado. Que mecanismo gera o desvio?",
+      "resposta": "expansão térmica diferencial do fluido de enchimento dos capilares",
+      "explicacao": "O aquecimento desigual altera a pressão transmitida pelo fluido de enchimento em cada lado. Isso cria um diferencial artificial no transmissor, mesmo com pressão real de processo constante.",
+      "resposta_padrao": "Deriva eletrônica do transmissor.",
+      "por_que_nao": "Deriva eletrônica não depende da assimetria térmica entre capilares; o padrão diurno com um lado aquecido aponta para erro do sistema de selos."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecimento de dupla extração de raiz quadrada em medição de vazão por diferencial de pressão.",
+      "pergunta": "Na malha de vazão por placa de orifício, depois da troca do transmissor, a indicação mostra cerca de 50% quando a vazão real é 25%; em carga máxima, coincide. Qual ajuste técnico deve ser corrigido?",
+      "resposta": "eliminar a extração de raiz quadrada duplicada",
+      "explicacao": "Esse erro parcial de faixa é a assinatura de raiz quadrada aplicada duas vezes. Em vazão máxima não aparece, mas em baixa vazão a indicação fica artificialmente elevada.",
+      "resposta_padrao": "Reajustar o span do transmissor.",
+      "por_que_nao": "Erro de span desloca a faixa de modo aproximadamente proporcional; não gera acerto no topo com superindicação típica de dupla linearização em baixa vazão."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de erro de medição em RTD a 3 fios causado por resistência desigual nos condutores.",
+      "pergunta": "Temperatura por Pt100 a 3 fios sobe alguns graus quando o eletroduto aquece; o elemento no sensor confere e o transmissor calibra bem em bancada. Como confirmar a falha em campo?",
+      "resposta": "comparando a resistência dos três condutores do RTD",
+      "explicacao": "No arranjo a 3 fios, a compensação pressupõe resistências iguais nos condutores. Se um fio variar mais, o transmissor interpreta esse desbalanceamento como aumento de temperatura.",
+      "resposta_padrao": "Recalibrar o transmissor.",
+      "por_que_nao": "Com sensor e bancada corretos, o desvio vem do circuito de ligação; recalibração não elimina erro introduzido por resistência desigual dos fios."
+    }
+  ]
+}

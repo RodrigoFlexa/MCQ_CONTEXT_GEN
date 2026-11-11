@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:007:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Responsabilização individual em acessos de alto impacto sobre lógica e intertravamentos.",
+      "pergunta": "Uma estação de engenharia do SIS aceita uma conta única usada por vários técnicos do fornecedor para mudar lógica e intertravamentos. Qual controle de acesso deve substituir esse arranjo?",
+      "resposta": "identidade individual verificável",
+      "explicacao": "Em ativos capazes de alterar lógica e intertravamentos, a governança deve ser mais restritiva e precisa permitir rastrear o executor por indivíduo, não apenas por empresa ou equipe.",
+      "resposta_padrao": "Registro de sessão de uma conta compartilhada do fornecedor.",
+      "por_que_nao": "A gravação mostra o que foi feito, mas não resolve a responsabilização individual quando a credencial é compartilhada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        },
+        {
+          "bloco": "F",
+          "trecho": "identidade individual verificável"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de privilégio mínimo quando a função de manutenção não justifica acesso amplo.",
+      "pergunta": "Durante atualização de um servidor de supervisão, o fornecedor precisa copiar arquivos e reiniciar um serviço, mas solicita permissões administrativas também em controladores e historiador. Que princípio exclui essas permissões adicionais?",
+      "resposta": "privilégio mínimo",
+      "explicacao": "A tarefa é restrita a um ativo e a poucas ações. Permissões sobre controladores e historiador excedem a necessidade operacional e devem ser retiradas pelo princípio do menor conjunto de direitos.",
+      "resposta_padrao": "Perfil compatível com a função de manutenção.",
+      "por_que_nao": "Um perfil funcional pode continuar amplo demais; o critério decisivo é conceder só os direitos estritamente necessários para aquela atividade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo e ao efeito potencial da ação permitida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "privilégio mínimo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "perfil compatível com a função"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de validade temporal para acesso de terceiros em intervenção digital sensível operacionalmente.",
+      "pergunta": "Com a UPS dos sistemas digitais em condição degradada, será feita intervenção remota inevitável de 30 minutos em um PLC. Que característica da credencial do terceiro deve ser aplicada para encerrar a exposição ao fim da tarefa?",
+      "resposta": "validade temporal",
+      "explicacao": "Com maior sensibilidade operacional por degradação da alimentação, o acesso deve expirar automaticamente ao término da intervenção, evitando privilégio residual em momento de barreiras reduzidas.",
+      "resposta_padrao": "Trocar a senha ao final da manutenção.",
+      "por_que_nao": "A troca posterior não limita a existência do acesso durante a janela crítica nem elimina automaticamente privilégio remanescente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "qualquer atividade remota ou de manutenção sobre ativos digitais torna-se mais sensível"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "momento operacional da intervenção"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento de terceiros pela aderência da sessão ao escopo autorizado, além da janela aprovada.",
+      "pergunta": "A sessão remota do fornecedor foi gravada e ocorreu no horário aprovado, porém também abriu arquivos e serviços fora da atividade autorizada. Qual verificação específica de monitoramento falhou?",
+      "resposta": "aderência ao escopo previsto",
+      "explicacao": "Para terceiros, monitorar corretamente não é só confirmar autenticação e janela; é verificar se as ações executadas permaneceram dentro do trabalho previamente autorizado.",
+      "resposta_padrao": "Registrar horário de início e fim da sessão.",
+      "por_que_nao": "A janela autorizada confirma quando o acesso ocorreu, mas não se as ações ficaram limitadas ao trabalho aprovado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto"
+        }
+      ]
+    }
+  ]
+}

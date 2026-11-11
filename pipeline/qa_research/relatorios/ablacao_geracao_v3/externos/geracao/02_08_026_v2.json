@@ -1,0 +1,75 @@
+{
+  "item": "02_08",
+  "foco": 26,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_08:026:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Baixa pressão em tanque com recuperação de vapores ativa exige interromper a sucção que gera o desvio, não apenas compensar a pressão.",
+      "pergunta": "Pressão do tanque entra na faixa de baixa pressão enquanto as bombas de carga estão paradas e apenas a recuperação de vapores opera. Qual ação automática específica deve conter a causa imediata do desvio?",
+      "resposta": "Parada da recuperação de vapores.",
+      "explicacao": "Com a retirada de vapor como causa atuante, a proteção deve cortar essa sucção. A filosofia coordena contenção da causa antes de depender do descarte pelo flare.",
+      "resposta_padrao": "Aumentar o suprimento de gás inerte.",
+      "por_que_nao": "Isso pode recompor pressão, mas não remove a causa imediata, que é a sucção do sistema de recuperação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "parada de bombas e de recuperação de vapores, conforme o ponto onde alta ou baixa pressão é detectada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a proteção de pressão depende da coordenação entre contenção da causa do desvio, isolamento e descarte seguro do inventário liberado."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Forcing no CLP enfraquece a proteção ao interromper a propagação automática do desvio da detecção até o elemento final.",
+      "pergunta": "O trip de alta pressão está forçado no CLP para não atuar durante uma intervenção, embora transmissor e válvula final permaneçam saudáveis. Que mecanismo operacional enfraquece a barreira automática nesse estado?",
+      "resposta": "Interrupção do encadeamento detecção–decisão lógica–ação final.",
+      "explicacao": "O forcing não elimina necessariamente a medição nem o elemento final; ele bloqueia a resposta automática entre eles, reduzindo a efetividade da barreira.",
+      "resposta_padrao": "Perda da medição de pressão.",
+      "por_que_nao": "O transmissor pode continuar medindo normalmente; o problema está na lógica forçada que impede a atuação automática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A operação rotineira pode envolver essas desativações temporárias, inclusive em instrumentos ou em Controlador Lógico Programável, mas sua aplicação altera a resposta real das barreiras."
+        },
+        {
+          "bloco": "F",
+          "trecho": "override sem controle adequado pode enfraquecer o encadeamento entre detecção, decisão lógica e ação final."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudanças de configuração exigem revalidar o estudo de alívio e despressurização; teste lógico isolado não confirma adequação funcional do sistema.",
+      "pergunta": "Depois de integrar um novo pacote de processo, a tocha e as tubulações seguem íntegras e sem alteração física. Que verificação técnica específica deve ser refeita para confirmar a adequação ao pior shutdown/blowdown?",
+      "resposta": "Revisão do estudo de alívio e despressurização.",
+      "explicacao": "Mudanças de configuração podem alterar os casos governantes e a demanda do sistema. A adequação funcional deve ser reavaliada separadamente da integridade física e do teste lógico.",
+      "resposta_padrao": "Teste funcional dos intertravamentos de shutdown.",
+      "por_que_nao": "O teste confirma atuação lógica, mas não demonstra que as novas cargas de alívio continuam dentro da capacidade do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sua função se articula com shutdown de processo, blowdown, dispositivos de alívio, arranjos de pressão e vácuo em tanques e filosofias de segurança associadas a headers e sistemas auxiliares."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudanças de configuração, integração entre pacotes de topside e revisão dos casos governantes podem alterar a adequação do sistema completo às piores condições consideradas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "integridade e capacidade funcional precisam ser verificadas separadamente."
+        }
+      ]
+    }
+  ]
+}

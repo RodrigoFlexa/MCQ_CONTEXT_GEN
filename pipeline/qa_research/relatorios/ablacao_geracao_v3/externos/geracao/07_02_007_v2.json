@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:007:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de aderência de acesso remoto de terceiros ao escopo autorizado exige evidência da sessão, não só da conexão.",
+      "pergunta": "Numa conexão remota de fornecedor à estação de engenharia, o log da VPN mostra horário de entrada e saída, mas não o que foi feito. Como monitorar tecnicamente se a atuação ficou dentro do escopo autorizado?",
+      "resposta": "registro de sessão",
+      "explicacao": "Para terceiros, não basta saber que a conexão existiu; é preciso evidenciar o que ocorreu dentro da sessão para confirmar aderência à janela e ao escopo autorizado.",
+      "resposta_padrao": "Logs da VPN e do firewall.",
+      "por_que_nao": "Esses logs mostram estabelecimento e duração da conexão, não as ações executadas nem mudanças feitas durante a sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso concedido para janela específica deve expirar automaticamente pelo controle de vigência do próprio acesso.",
+      "pergunta": "O acesso de terceiro para ajuste em PLC deve cessar sozinho ao fim da janela aprovada, sem depender de ação manual posterior. Qual controle específico deve ser aplicado na concessão?",
+      "resposta": "validade temporal",
+      "explicacao": "Quando o acesso deve expirar ao fim da janela aprovada, o controle decisivo é limitar sua vigência no próprio provisionamento, sem depender de revogação manual posterior.",
+      "resposta_padrao": "Revogar o acesso manualmente ao final do serviço.",
+      "por_que_nao": "A revogação manual pode falhar ou atrasar; ela não impõe expiração automática da autorização concedida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de ações em ativos capazes de alterar permissivos depende de autenticação atribuída a uma pessoa específica.",
+      "pergunta": "Depois de uma alteração indevida de permissivo, havia só o login compartilhado \"manutencao\" para vários técnicos. Qual falha primária de controle explica a impossibilidade de atribuir a ação a uma pessoa?",
+      "resposta": "identidade individual verificável",
+      "explicacao": "Com login compartilhado, não há autoria rastreável de mudanças em permissivos. Em ativos capazes de alterar lógica, a identidade precisa ser individualmente verificável.",
+      "resposta_padrao": "Autenticação multifator no login compartilhado.",
+      "por_que_nao": "MFA reforça a autenticação da conta, mas não individualiza a autoria quando várias pessoas usam o mesmo identificador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "identidade individual verificável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Concessão de acesso em IACS deve restringir permissões ao estritamente necessário para a atividade autorizada.",
+      "pergunta": "Um fornecedor precisava apenas coletar diagnósticos do controlador, mas a conta liberada também permite alterar lógica e intertravamentos. Qual critério de concessão deveria ter limitado esse acesso?",
+      "resposta": "privilégio mínimo",
+      "explicacao": "Em ativos com impacto sobre lógica e intertravamentos, a permissão deve ser restrita ao estritamente necessário para a atividade autorizada.",
+      "resposta_padrao": "Perfil compatível com a função.",
+      "por_que_nao": "Compatibilidade de função define o papel; aqui o erro é a permissão excedente além do necessário para a atividade específica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "privilégio mínimo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Entrou em potência reversa porque a potência mecânica do acionador caiu abaixo da potência ativa exigida pelo barramento.",
+  "alternativa_excluida": true,
+  "atalho": true,
+  "sustentada": false,
+  "elemento_unico": true,
+  "tipo_sugerido": "diagnostico",
+  "justificativa": "É um diagnóstico clássico de gerador síncrono em paralelo com perda de potência mecânica do acionador, mas os blocos não afirmam explicitamente o mecanismo de motorização/potência reversa.",
+  "aprovada": false,
+  "motivo": "atalho",
+  "falhas": [
+    "atalho",
+    "fora_da_fonte"
+  ],
+  "referencia_valida": false,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "02_12",
+      "texto": "Os arranjos citados mostram coexistência de diferentes combinações de máquina e acionador na mesma unidade, como compressor centrífugo acionado por turbina a gás e outro serviço de compressão com compressor de parafuso acionado por motor elétrico. Também aparecem turbogeradores, turbinas a gás ou diesel e geradores diesel na infraestrutura da planta. Isso evidencia que a escolha e a operação do acionamento se conectam à arquitetura energética do FPSO. Quando o acionador é de velocidade variável ou governado por turbina, o controle de capacidade pode atuar diretamente sobre a rotação; quando o acionamento é elétrico e a rotação não é a variável principal de ajuste, o controle pode atuar por estrangulamento, pás-guia ou recirculação, conforme a configuração da máquina. Em termos físicos, o acionador define como o torque e a potência chegam ao compressor e, por isso, condiciona a rapidez de resposta, a faixa de modulação e a forma de atravessar transientes. Ele também influencia partidas, paradas e a coordenação com o sistema elétrico e com as utilidades da unidade.",
+      "titulo": "Acionamento e controle / Acionadores e interface com geração de energia",
+      "indice_documento": 10
+    },
+    {
+      "id": "B2",
+      "item": "05_02",
+      "texto": "Sincronismo é a condição que permite conectar um gerador a um barramento energizado sem produzir transitórios excessivos de corrente, torque e potência. Para isso, o gerador que entra deve apresentar sequência de fases compatível, tensão próxima à do barramento, frequência muito próxima e ângulo de fase adequado no instante do fechamento do disjuntor. Essas condições são necessárias porque dois sistemas de corrente alternada só podem ser acoplados suavemente quando suas tensões instantâneas são compatíveis. Se houver diferença relevante de frequência, o ângulo de fase escapa rapidamente; se houver diferença de tensão, circulam correntes elevadas, sobretudo reativas; se a sequência de fases estiver incorreta, a conexão é impraticável. Em FPSO e outras plantas com múltiplas unidades geradoras, o sincronismo é a etapa que antecede qualquer compartilhamento de carga em paralelo. Embora a configuração de uma unidade específica possa incluir vários moto-geradores com painéis próprios, isso por si só não define a filosofia de sincronismo, que depende de controles, permissivos, proteções e sequência de fechamento.",
+      "titulo": "Sincronismo e compartilhamento / O que é sincronismo e por que ele é necessário",
+      "indice_documento": 3
+    },
+    {
+      "id": "B3",
+      "item": "05_02",
+      "texto": "Em arranjos offshore, a escolha entre turbinas a gás, motores a diesel e combinações com gerador de emergência depende do combustível disponível, do regime de carga, do desempenho requerido e da confiabilidade dos auxiliares. Em turbinas a gás, a confiabilidade do pacote depende de instrumentação e controle, combustível, lubrificação, resfriamento e qualidade do ar de admissão. No ambiente offshore, sal, partículas e materiais orgânicos favorecem erosão e fouling no compressor, justificando filtragem de ar, além de filtragem de combustível e óleo e seleção adequada de materiais e revestimentos. Para geração elétrica, arranjos de eixo único tendem a oferecer melhor estabilidade transitória de frequência e menor risco de overspeed após perda de carga, enquanto arranjos de dois eixos podem exigir maior cuidado de controle e proteção contra sobrevelocidade da turbina de potência em rejeição de carga. Já a geração de emergência pode, em certas configurações, realimentar parte do painel principal por back feeding, mas isso depende de condições específicas de isolamento e não deve ser generalizado sem verificação do arranjo.",
+      "titulo": "Geração, cargas e redundância / Aplicação e monitoramento de turbinas a gás e geradores de emergência",
+      "indice_documento": 0
+    },
+    {
+      "id": "B4",
+      "item": "05_02",
+      "texto": "A modelagem em regime estacionário permite avaliar balanços de massa e energia da geração integrada ao processo. Em termos físicos, o ciclo Brayton representa a geração por turbina a gás: o combustível reage com o ar, os gases quentes se expandem na turbina e a potência mecânica do eixo pode acionar um gerador elétrico. A comparação de temperatura, pressão e regime de carga permite avaliar alternativas dentro da faixa de operação da turbina. Esse tipo de abordagem é adequado para estimar estados operacionais e balanços de processo em condições estabilizadas. Por outro lado, ela não descreve por si só fenômenos transitórios, como recomposição após blackout, black start, load shedding ou resposta dinâmica ao compartilhamento de carga entre geradores.",
+      "titulo": "Geração, cargas e redundância / Como a geração integrada foi avaliada",
+      "indice_documento": 2
+    },
+    {
+      "id": "B5",
+      "item": "05_02",
+      "texto": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle. Em uma configuração de FPSO, os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais, com dois conjuntos retificador/carregador e banco de baterias, cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE. Havia também UPS (Uninterruptible Power Supply) para cargas vitais em corrente alternada. Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal e à perda de equipamentos importantes. Na mesma sequência funcional, a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS. O mecanismo relevante é que o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida. Assim, a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout, não apenas um detalhe auxiliar.",
+      "titulo": "PMS, transientes e blackout / Interfaces entre alimentação em corrente contínua, UPS e perda de geração",
+      "indice_documento": 11
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "visita": 2,
+  "onda": 3,
+  "id": "01_01:010:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Apuração de MTTR exclui esperas e considera apenas o tempo efetivo de reparo.",
+      "pergunta": "Uma bomba ficou indisponível 14 h: 2 h de diagnóstico, 3 h de reparo, 5 h aguardando liberação e 4 h esperando sobressalente. Na apuração do MTTR, que intervalo deve entrar no indicador?",
+      "resposta": "tempo ativo de diagnóstico e reparo",
+      "explicacao": "MTTR considera apenas os intervalos das atividades de reparo. Esperas por liberação e sobressalente contam como indisponibilidade, mas não como tempo de reparo.",
+      "resposta_padrao": "as 14 horas totais de indisponibilidade",
+      "por_que_nao": "MTTR mede tempo médio de reparo e exige separar o reparo das esperas e de outros tempos de indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Recursos adicionais de manutenção não reduzem indisponibilidade quando o gargalo é liberação, não capacidade de equipe.",
+      "pergunta": "As paradas corretivas seguem com a mesma duração após dobrar o efetivo; os técnicos ficam a maior parte do tempo aguardando autorização de entrada em área controlada. Que gargalo técnico deve ser tratado para reduzir a indisponibilidade?",
+      "resposta": "liberação de trabalho",
+      "explicacao": "Se a espera dominante é a autorização para intervir, aumentar equipes tem efeito limitado. O retorno operacional depende de remover esse gargalo de liberação.",
+      "resposta_padrao": "falta de mão de obra de manutenção",
+      "por_que_nao": "Quando a restrição principal é liberação, mais equipe não reduz o tempo parado; o recurso limitante não é capacidade de reparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na prática, o MTTR varia com acessibilidade, diagnóstico, modularização, disponibilidade de sobressalentes, capacitação da equipe e restrições de segurança"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Falhas simultâneas prolongam a indisponibilidade por fila quando compartilham a mesma equipe especializada.",
+      "pergunta": "Com sobressalentes disponíveis e acesso liberado, duas falhas independentes surgem quase juntas em sistemas atendidos pela mesma equipe especializada. Que mecanismo aumenta a indisponibilidade total?",
+      "resposta": "fila de reparos por capacidade da equipe",
+      "explicacao": "Sem falta de peças ou acesso, o prolongamento vem da espera por um recurso humano compartilhado. Uma falha entra em fila atrás da outra.",
+      "resposta_padrao": "aumento do MTTR intrínseco de cada reparo",
+      "por_que_nao": "O tempo técnico de cada reparo pode permanecer igual; a indisponibilidade cresce pela espera da equipe compartilhada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a capacidade das equipes for o gargalo, falhas simultâneas podem criar fila e prolongar a indisponibilidade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Na prática, o MTTR varia com acessibilidade, diagnóstico, modularização, disponibilidade de sobressalentes, capacitação da equipe"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na priorização de reparos, restrições compartilhadas podem ser o critério decisivo mesmo com criticidade equivalente.",
+      "pergunta": "Dois subsistemas têm a mesma criticidade funcional e impacto de produção. Um depende da única janela de içamento também necessária a outro reparo; o outro não. Na priorização, qual critério técnico decide a sequência?",
+      "resposta": "restrições compartilhadas entre subsistemas",
+      "explicacao": "Com criticidade equivalente, a ordem deve considerar o recurso ou a condição comum que limita múltiplos reparos e condiciona o retorno operacional total.",
+      "resposta_padrao": "ordem de ocorrência da falha",
+      "por_que_nao": "A sequência não deve seguir cronologia quando existe uma restrição comum capaz de travar mais de um subsistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "item": "02_01",
+  "foco": 24,
+  "visita": 3,
+  "onda": 5,
+  "id": "02_01:024:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Estado termodinâmico necessário para converter volume e densidade de óleo à condição de referência.",
+      "pergunta": "Na conversão do volume de óleo para condição de referência, a temperatura do escoamento já é registrada. Qual grandeza adicional deve ser medida no ponto de medição para manter rastreável a conversão de volume e densidade?",
+      "resposta": "pressão do escoamento",
+      "explicacao": "A conversão depende do estado termodinâmico do fluido; medir só a temperatura deixa incompleta a base para compensar volume e densidade de forma rastreável.",
+      "resposta_padrao": "Nenhuma; para óleo basta temperatura.",
+      "por_que_nao": "A compensação rastreável de volume e densidade exige o estado termodinâmico, e a pressão compõe esse estado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão e temperatura do escoamento são variáveis relevantes para as conversões de volume e densidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "volume e densidade variam com as condições termodinâmicas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Cálculo do volume compensado de gás natural quando a composição influencia a densidade.",
+      "pergunta": "O gás natural em medição de custódia mudou de composição, embora a vazão aparente permaneça estável. Que cálculo específico deve ser aplicado para obter o volume compensado corretamente?",
+      "resposta": "cálculo do fator de compressibilidade",
+      "explicacao": "No gás natural, a densidade depende de pressão, temperatura e composição; por isso o volume compensado requer cálculo ligado à compressibilidade.",
+      "resposta_padrao": "Corrigir apenas por pressão e temperatura.",
+      "por_que_nao": "No gás natural, a composição altera a densidade compensada; pressão e temperatura sozinhas não fecham o cálculo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No caso de fluidos compressíveis, a compressibilidade e a composição influenciam o cálculo do volume compensado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para gás natural, a necessidade de algoritmo de cálculo decorre justamente da dependência da densidade em relação à pressão, temperatura e composição."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de transientes de offloading que tornam a vazão não representativa do óleo líquido transferido.",
+      "pergunta": "Durante o offloading, a troca de tanque é seguida por gás livre e passagem de interface óleo-água na linha. Que trecho da operação deve ficar fora da totalização de custódia?",
+      "resposta": "o período transiente com interface e gás livre",
+      "explicacao": "Nessas condições, a vazão medida deixa de representar sozinha a transferência líquida de óleo, então o trecho instável não deve compor a custódia.",
+      "resposta_padrao": "Todo o volume bombeado deve ser totalizado e acertado depois no balanço.",
+      "por_que_nao": "O balanço detecta inconsistências, mas não torna representativa a leitura obtida durante transientes com interface e gás livre.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em offloading de óleo, a estabilidade também importa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "partidas, paradas, troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O balanço detecta inconsistências; a atribuição de causa exige evidências adicionais."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reconciliação da transferência quando a medição fiscal está a montante da estocagem.",
+      "pergunta": "Quando a medição fiscal fica a montante da estocagem, que referência deve ser combinada ao volume transferido para reconciliar tecnicamente a operação de alívio?",
+      "resposta": "o estado inicial e final do inventário nos tanques",
+      "explicacao": "A produção medida a montante não fecha sozinha a transferência, porque retenção, interface, recirculação e mudanças operacionais alteram o que efetivamente sai no alívio.",
+      "resposta_padrao": "A própria produção fiscalizada.",
+      "por_que_nao": "Ela não captura o efeito do armazenamento durante a janela do alívio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A medição de transferência de custódia precisa representar não apenas a vazão instantânea, mas o volume transferido em condição tecnicamente rastreável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando a medição fiscal fica a montante da estocagem, o fechamento do balanço da transferência não pode ser inferido apenas pela produção fiscalizada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:011:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Modo de controle de governadores em paralelo e estabilidade do compartilhamento de potência ativa.",
+      "pergunta": "Dois geradores, estáveis isoladamente, passam a operar em paralelo no mesmo barramento; a tensão fica estável, mas a frequência oscila e o kW de cada máquina caça em sentidos opostos. Qual é a causa primária?",
+      "resposta": "Governadores simultaneamente em isócrono, sem controlador mestre de carga.",
+      "explicacao": "Sem coordenação, mais de um governador em isócrono disputa o controle da frequência do barramento isolado, produzindo oscilação de kW entre máquinas. AVR atua principalmente em tensão e kvar.",
+      "resposta_padrao": "Desajuste do AVR.",
+      "por_que_nao": "AVR afeta tensão e compartilhamento de potência reativa, não a caça de frequência e potência ativa."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de fechamento de bus tie em transferência live-bus/dead-bus.",
+      "pergunta": "Uma seção de barramento perdeu a geração e ficou desenergizada; a seção vizinha segue estável e será conectada pelo bus tie para recomposição automática. Qual permissivo específico deve validar esse fechamento?",
+      "resposta": "Permissivo de barramento morto.",
+      "explicacao": "Com um lado sem tensão, o fechamento correto é live-bus/dead-bus. O intertravamento deve confirmar ausência de tensão no barramento receptor antes do fechamento do tie.",
+      "resposta_padrao": "Verificação de sincronismo.",
+      "por_que_nao": "Sincronismo é exigido para fechamento entre dois barramentos energizados; com um lado morto, o critério correto é dead-bus."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Discriminação entre corrente de energização e falta interna na proteção diferencial de transformadores.",
+      "pergunta": "Na energização a vazio de um transformador recém-isolado, o relé diferencial tende a captar sem evidência de falta interna. Que critério do relé deve impedir a atuação indevida nesse instante?",
+      "resposta": "Restrição de segunda harmônica do diferencial.",
+      "explicacao": "A corrente de inrush de magnetização tem conteúdo significativo de segunda harmônica, usado para bloquear a função diferencial durante a energização sem perder sensibilidade para faltas internas reais.",
+      "resposta_padrao": "Aumentar o pickup do diferencial.",
+      "por_que_nao": "Elevar o pickup reduz a sensibilidade a faltas internas e não distingue inrush da condição de defeito."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Detecção do primeiro defeito fase-terra em sistema de média tensão com neutro isolado.",
+      "pergunta": "Em sistema de média tensão com neutro isolado, surge alarme geral de falta à terra no barramento, sem atuação por sobrecorrente, e os alimentadores continuam operando. Qual grandeza deve ser monitorada para identificar esse primeiro defeito?",
+      "resposta": "Tensão de deslocamento do neutro.",
+      "explicacao": "No primeiro defeito à terra em neutro isolado, a corrente é baixa e predominantemente capacitiva; a indicação mais sensível e estável é o deslocamento do neutro, equivalente à tensão residual.",
+      "resposta_padrao": "Corrente de falta à terra do alimentador.",
+      "por_que_nao": "No primeiro defeito em neutro isolado, a corrente pode ser insuficiente para detecção seletiva; a referência confiável é a tensão residual do sistema."
+    }
+  ]
+}

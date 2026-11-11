@@ -1,0 +1,71 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:010:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mitigação temporária de atrito em válvula por intervenção direta no sinal de controle.",
+      "pergunta": "Pequenas variações da saída do controlador não iniciam o deslocamento da haste, e a correção mecânica ficou para a próxima parada. Qual ação específica no sinal de comando pode manter o controle operando?",
+      "resposta": "Superposição de pulsos ao sinal de controle.",
+      "explicacao": "A técnica adiciona esforço extra ao comando quando a válvula não rompe o atrito com o sinal usual, permitindo sustentar a operação até a intervenção mecânica.",
+      "resposta_padrao": "Retunar o PID para aumentar a agressividade do controlador.",
+      "por_que_nao": "Sintonia muda a dinâmica do controlador, mas não entrega o esforço extra necessário ao rompimento do atrito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Relação entre pulsos de comando e superação do atrito de partida no atuador.",
+      "pergunta": "Oscilações pequenas do comando deixam a haste parada, mas incrementos maiores a fazem saltar de posição. Qual mecanismo físico torna eficaz a compensação por pulsos?",
+      "resposta": "Energia adicional para vencer o atrito estático do atuador.",
+      "explicacao": "Os pulsos elevam temporariamente o esforço aplicado e rompem o atrito de partida que o comando normal não consegue superar.",
+      "resposta_padrao": "Maior sensibilidade do posicionador.",
+      "por_que_nao": "O efeito decisivo é superar a força de breakaway, não melhorar a detecção ou a sensibilidade do posicionamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "fornecer energia adicional quando o comando usual não consegue iniciar o movimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "vencer o atrito no atuador"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da estratégia de pulsos que reduz movimentação mantendo o erro dentro da especificação.",
+      "pergunta": "Buscando conter desgaste adicional da válvula, com erro máximo admissível já definido, que forma de pulsos deve ser escolhida para compensar o atrito?",
+      "resposta": "Pulsos de amplitude variável.",
+      "explicacao": "Essa forma foi proposta para reduzir a movimentação da válvula sem perda significativa de desempenho, respeitando uma especificação máxima de erro.",
+      "resposta_padrao": "Pulsos de amplitude fixa.",
+      "por_que_nao": "Amplitude variável reduz a movimentação necessária para cumprir o erro máximo; fixa tende a ciclar mais a válvula.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        }
+      ]
+    }
+  ]
+}

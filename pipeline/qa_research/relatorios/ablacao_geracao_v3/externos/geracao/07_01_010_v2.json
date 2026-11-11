@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:010:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Stiction que impede o início do movimento é mitigada temporariamente por pulsos no sinal de controle.",
+      "pergunta": "Pequenas variações do controlador chegam ao atuador, mas a haste só se move depois de um salto maior de comando. Qual intervenção temporária no controle é a mais adequada para manter a malha operando até o reparo mecânico?",
+      "resposta": "Compensação de atrito por pulsos no sinal de controle.",
+      "explicacao": "Quando o comando usual não inicia o movimento, os pulsos fornecem energia adicional para vencer o atrito no atuador e sustentar a operação até a correção mecânica.",
+      "resposta_padrao": "Retunagem do PID.",
+      "por_que_nao": "Retunar o controlador não fornece a energia adicional necessária para romper o atrito estático do atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fornecer energia adicional quando o comando usual não consegue iniciar o movimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de compensação pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para reduzir desgaste adicional sem perda relevante de desempenho, a compensação deve usar pulsos de amplitude variável.",
+      "pergunta": "Precisando manter a compensação de atrito ativa, mas com restrição de desgaste adicional e sem perda significativa de desempenho da malha, que característica dos pulsos deve ser adotada?",
+      "resposta": "Amplitude variável.",
+      "explicacao": "O método proposto usa pulsos de amplitude variável para reduzir a movimentação da válvula sem perda significativa de desempenho.",
+      "resposta_padrao": "Amplitude fixa elevada.",
+      "por_que_nao": "Pulsos fixos mais agressivos aumentam a movimentação; a abordagem destacada reduz esse efeito mantendo o desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "A parametrização da compensação por pulsos deve ser limitada por uma especificação máxima de erro.",
+      "pergunta": "Na parametrização da compensação por pulsos, além dos dados de operação, qual critério deve limitar o ajuste para reduzir movimentação sem sacrificar o desempenho da malha?",
+      "resposta": "Especificação máxima de erro.",
+      "explicacao": "Os parâmetros são escolhidos com base em dados operacionais, mas o limite técnico de ajuste é a especificação máxima de erro.",
+      "resposta_padrao": "Menor número possível de movimentos.",
+      "por_que_nao": "Minimizar movimento sozinho pode degradar o controle; o ajuste correto precisa respeitar o erro máximo admissível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduzir a movimentação sem perda significativa de desempenho"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "A tensão residual nos capacitores do link CC, medida entre DC+ e DC-, deve ser verificada antes de tocar internamente.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": false,
+  "elemento_unico": true,
+  "tipo_sugerido": "procedimento",
+  "justificativa": "A verificação do link/barramento CC de inversores é conhecimento técnico padrão de segurança elétrica e não depende do documento, porém esse elemento decisivo não está explicitado nos blocos fornecidos.",
+  "aprovada": false,
+  "motivo": "fora_da_fonte",
+  "falhas": [
+    "fora_da_fonte"
+  ],
+  "referencia_valida": false,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "05_02",
+      "texto": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida. Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação. O tempo de retaguarda pode variar de minutos a algumas horas conforme porte e essencialidade da aplicação, mas valores específicos dependem da filosofia da unidade e não podem ser assumidos sem dado de projeto. O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional. Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível. Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada.",
+      "titulo": "UPS, baterias e sistemas essenciais / Seleção e monitoramento das cargas essenciais",
+      "indice_documento": 17
+    },
+    {
+      "id": "B2",
+      "item": "07_01",
+      "texto": "A função disponível em campo pode diferir da função prevista em projeto quando o comissionamento é incompleto ou incorreto. Isso ocorre porque a capacidade real do elemento final depende não apenas do equipamento instalado, mas também da configuração de comando, da forma de atuação e da correspondência entre projeto, lógica e montagem de campo.\n\nEm um caso investigado, havia pendências de conversão de válvulas para comando automático, de fazer os atuadores de campo respeitarem comandos da Interface Homem-Máquina (IHM) e de comissionamento de controles e transmissores. No mesmo contexto, uma válvula prevista para operação remota foi colocada em serviço apenas como totalmente aberta ou fechada, embora documentação de projeto indicasse controle de posição, e o indicador de posição ainda permanecia pendente.\n\nEsse tipo de descompasso mostra que a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível. A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre modo de atuação pretendido, capacidade de modulação ou de abre-fecha, indicação de posição e resposta observável do atuador em campo.",
+      "titulo": "Válvulas e elementos finais / Comissionamento, configuração efetiva e limites do que a IHM confirma",
+      "indice_documento": 12
+    },
+    {
+      "id": "B3",
+      "item": "05_02",
+      "texto": "A distribuição elétrica interage diretamente com sistemas de controle e segurança por meio de redes em corrente alternada, corrente contínua e UPS, isto é, sistema ininterrupto de energia. Em um caso de acidente, a desenergização dos painéis de controle de geradores em operação levou à perda da geração principal e, junto com falha de UPS, desenergizou parte do controle associado às válvulas de tanques. Em outro ponto do mesmo arranjo, dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente, e a UPS tinha a função de manter alimentação ininterrupta a cargas vitais. A lição técnica transferível é que redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada e efeito das modificações acumuladas ao longo da vida da unidade. Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções que deveriam sobreviver ao evento inicial.",
+      "titulo": "Distribuição e proteções / Falhas de arquitetura e segregação de alimentação: impacto sobre controle e segurança",
+      "indice_documento": 10
+    },
+    {
+      "id": "B4",
+      "item": "05_02",
+      "texto": "Em sistemas elétricos industriais e offshore, a distribuição costuma ser organizada por barramentos que concentram fontes e cargas e podem ser operados seccionados ou interligados por bus tie. O barramento seccionado reduz a propagação de falhas e facilita manutenção com menor impacto sistêmico; a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação. Em arranjos com transformadores em paralelo e secundários conectados por barramento interligado, a configuração é típica de subestações com cargas grandes ou críticas, porque permite alimentar cargas por caminhos alternativos. Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação. Por isso, a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções. Em embarcações e plataformas, manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica; tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas.",
+      "titulo": "Distribuição e proteções / Arquitetura de distribuição: barramentos seccionados, bus tie e continuidade de serviço",
+      "indice_documento": 6
+    },
+    {
+      "id": "B5",
+      "item": "05_02",
+      "texto": "A confiabilidade da distribuição elétrica não depende só do projeto inicial; depende de inspeção, teste, manutenção e controle de mudanças. Para relés eletrônicos e sistemas associados, pode ser necessário equipamento especializado para identificar erros internos, e as instruções do fabricante influenciam a forma de verificação. Ensaios operacionais sob carga aplicável são relevantes porque parte das falhas só se manifesta com esforço elétrico real, interação entre controles ou aquecimento. A documentação técnica útil à operação e à manutenção inclui diagrama unifilar, filosofia de operação da geração e da distribuição, estudo de seletividade, estudo de arco elétrico, planilha mestra de ajustes de proteção e históricos operacionais do switchgear, como atuações, falhas e calibrações. Em monitoramento de condição, técnicas como medição de tensão transitória à terra e métodos acústicos para descargas parciais em switchgear, termografia em painéis de baixa tensão e monitoramento de vibração em equipamentos rotativos ajudam a antecipar degradação. Avaliações baseadas em risco complementam recomendações de fabricante e histórico de falhas, especialmente quando envelhecimento, obsolescência, mudança de regime operacional ou alteração de carga modificam probabilidade e consequência das falhas.",
+      "titulo": "Distribuição e proteções / Inspeção, testes, documentação e integridade ao longo da vida",
+      "indice_documento": 9
+    }
+  ]
+}

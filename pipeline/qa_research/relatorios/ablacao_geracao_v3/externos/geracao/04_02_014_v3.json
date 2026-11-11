@@ -1,0 +1,99 @@
+{
+  "item": "04_02",
+  "foco": 14,
+  "visita": 3,
+  "onda": 5,
+  "id": "04_02:014:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para selecionar controle multiplexado quando várias válvulas precisam ser comandadas com poucos condutores disponíveis.",
+      "pergunta": "Serão acrescentadas várias válvulas a um manifold, mas o umbilical só oferece poucos condutores de comando e já existe suprimento hidráulico submarino. Que arquitetura de controle melhor acomoda essa expansão?",
+      "resposta": "controle multiplexado",
+      "explicacao": "Com muitas válvulas e poucos condutores disponíveis, a seleção local da função no módulo submarino permite comandar várias válvulas sem multiplicar linhas dedicadas.",
+      "resposta_padrao": "Arquitetura eletro-hidráulica descentralizada.",
+      "por_que_nao": "Descentralização reduz inventário hidráulico, mas o ganho decisivo aqui é selecionar localmente muitas funções com poucos condutores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas porque a seleção da função ocorre no módulo submarino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que permite comandar muitas válvulas com poucos condutores de sinal combinados com suprimento hidráulico."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para escolher arquitetura eletro-hidráulica descentralizada quando se quer reduzir inventário hidráulico mantendo atuação hidráulica.",
+      "pergunta": "Os atuadores precisam continuar hidráulicos, porém o projeto quer reduzir o volume de fluido hidráulico espalhado pelo sistema e simplificar as linhas. Qual arranjo de acionamento deve ser escolhido?",
+      "resposta": "arquitetura eletro-hidráulica descentralizada",
+      "explicacao": "Quando a atuação precisa permanecer hidráulica, a unidade local de suprimento em cada atuador é o arranjo que reduz fluido distribuído e linhas no sistema.",
+      "resposta_padrao": "Controle multiplexado.",
+      "por_que_nao": "Multiplexação ataca principalmente as linhas de seleção e comando, não o inventário hidráulico total espalhado pelo campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para reduzir inventário de fluido distribuído e número de linhas, pode ser vantajosa a descentralização eletro-hidráulica."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Há também arquiteturas descentralizadas eletro-hidráulicas, nas quais cada atuador recebe sua própria unidade de suprimento, reduzindo número de linhas e volume total de fluido hidráulico distribuído pelo sistema."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para escolher atuação all electric quando se busca eliminar a dependência de fluido hidráulico do umbilical e melhorar resposta.",
+      "pergunta": "A análise de confiabilidade quer que essa função deixe de depender de fluido de controle vindo do umbilical; a grande distância também torna a resposta temporal crítica. Que solução de atuação é mais adequada?",
+      "resposta": "atuação all electric",
+      "explicacao": "Essa solução elimina a dependência do circuito hidráulico do umbilical nessa função e tende a responder melhor em grandes distâncias.",
+      "resposta_padrao": "Arquitetura eletro-hidráulica descentralizada.",
+      "por_que_nao": "A versão descentralizada ainda usa potência hidráulica no atuador e preserva o risco ligado à função dependente de hidráulica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para eliminar o risco específico associado ao umbilical hidráulico naquela função, a atuação all electric pode ser atrativa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "eliminando a necessidade de umbilical hidráulico naquela função."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esses efeitos são tecnicamente coerentes quando o acionamento elétrico reduz volumes compressíveis, perdas por linhas hidráulicas extensas e dependência de fluido de controle."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Como verificar a atuação de uma válvula com filosofia fail safe close em teste funcional subsea.",
+      "pergunta": "Uma função de isolamento foi definida com filosofia fail safe close. No teste funcional subsea, que condição do atuador deve levá-la ao estado seguro fechado?",
+      "resposta": "perda de pressão de controle",
+      "explicacao": "No fail safe close, a despressurização permite a atuação da mola e leva a válvula ao estado seguro fechado.",
+      "resposta_padrao": "Aplicar pressão hidráulica de fechamento.",
+      "por_que_nao": "No fail safe close, o fechamento seguro acontece com a mola após perda de pressão, não com uma linha de fechamento pressurizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em aplicação prática, a seleção da solução deve considerar pelo menos: função a ser comandada, necessidade de fail-safe"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola e leva a válvula ao estado seguro fechado."
+        }
+      ]
+    }
+  ]
+}

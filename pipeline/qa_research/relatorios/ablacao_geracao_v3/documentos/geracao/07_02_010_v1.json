@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:010:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Delimitação de privilégios de acesso remoto de terceiros pelo escopo operacional da tarefa.",
+      "pergunta": "Um fornecedor precisa acessar remotamente apenas funções de diagnóstico de um controlador já alcançável por VPN. Qual critério técnico deve definir as permissões liberadas nessa sessão?",
+      "resposta": "privilégio mínimo compatível com a tarefa",
+      "explicacao": "Em IACS, uma sessão autorizada pode alcançar funções operacionais, de configuração ou diagnóstico; por isso, o acesso de terceiros deve ser delimitado pela necessidade operacional e pelo escopo da atividade.",
+      "resposta_padrao": "Liberar perfil de engenharia completo durante a janela de suporte.",
+      "por_que_nao": "Acesso amplo expõe funções além do necessário e amplia o alcance operacional da sessão autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permissões disponíveis durante a sessão."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da postura de segurança do dispositivo remoto antes do acesso a sistemas de controle.",
+      "pergunta": "Com VPN válida e credenciais corretas, o notebook da contratada ainda pode introduzir risco ao ambiente de controle. Que verificação técnica deve preceder a conexão?",
+      "resposta": "checagem da postura de segurança do endpoint",
+      "explicacao": "A proteção do canal não elimina comprometimento prévio; um dispositivo desatualizado, infectado ou mal configurado pode abrir sessão válida e ainda assim levar risco ao ambiente.",
+      "resposta_padrao": "Validar apenas a autenticação na VPN.",
+      "por_que_nao": "Criptografar o canal não comprova que o equipamento de origem está íntegro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "verificar a condição do dispositivo usado na conexão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade da intervenção remota por trilha de auditoria associada ao ativo atuado.",
+      "pergunta": "Horas após uma intervenção remota, surge comportamento inesperado em um sistema de controle. Qual registro técnico é decisivo para localizar exatamente onde houve atuação?",
+      "resposta": "trilha de auditoria da sessão vinculada ao ativo",
+      "explicacao": "O registro precisa permitir reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação, apoiando investigação, responsabilização e contenção.",
+      "resposta_padrao": "Basta guardar o usuário e o horário do login.",
+      "por_que_nao": "Sem vínculo da sessão ao ativo atuado, não se rastreia o ponto exato da intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "melhora a investigação de desvios, a responsabilização e a contenção"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Encerramento do acesso remoto de terceiros ao término da atividade aprovada.",
+      "pergunta": "Concluída a atividade do suporte remoto, não há tarefa adicional aprovada, mas a sessão permanece ativa para possível retorno. Qual ação técnica específica deve ser tomada?",
+      "resposta": "encerramento imediato da sessão remota",
+      "explicacao": "Ao término da atividade, uma sessão autorizada ainda mantém alcançáveis funções com impacto operacional, de configuração ou diagnóstico; por isso, o acesso deve ser encerrado.",
+      "resposta_padrao": "Manter a conexão aberta até o fim do turno.",
+      "por_que_nao": "Uma sessão autorizada continua oferecendo caminho técnico para atuação remota sobre funções sensíveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        }
+      ]
+    }
+  ]
+}

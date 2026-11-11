@@ -1,0 +1,107 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_12:012:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Precedência da proteção anti-surge sobre o controle de capacidade em transientes de compressores centrífugos.",
+      "pergunta": "Fechamentos rápidos a jusante fazem a pressão oscilar e a recirculação atuar repetidamente em compressor centrífugo que também controla pressão de processo. Que arranjo de coordenação deve prevalecer no controle?",
+      "resposta": "Seletor de override pela malha anti-surge.",
+      "explicacao": "Como as duas malhas atuam sobre a mesma máquina e o mesmo ponto operacional, a proteção deve sobrepor a demanda do processo durante perturbações rápidas para evitar entrada em surge.",
+      "resposta_padrao": "Retunar apenas o controlador de pressão do processo.",
+      "por_que_nao": "A malha de demanda sozinha não impede a queda de vazão que desloca o ponto operacional para a região de surge em perturbações rápidas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo, enquanto a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso da realimentação de posição para distinguir falha do elemento final de problema de sintonia na proteção anti-surge.",
+      "pergunta": "Diante de abertura comandada da válvula anti-surge sem alívio proporcional da aproximação ao surge, que verificação específica no sistema distingue falha do elemento final de problema de sintonia?",
+      "resposta": "Comparação comando-posição da válvula anti-surge.",
+      "explicacao": "A realimentação de posição permite confrontar o comando do controlador com a posição real da válvula e identificar atraso, histerese ou falha de atuação do elemento final.",
+      "resposta_padrao": "Retunar o controlador anti-surge.",
+      "por_que_nao": "Se houver atraso, histerese ou falha de atuação, o algoritmo pode estar correto e a válvula não seguir o comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "detectar degradação, atraso, histerese ou falha de atuação."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de repartição de carga para compressores centrífugos operando em paralelo durante transferências e transientes.",
+      "pergunta": "Na transferência de carga entre compressores centrífugos em paralelo, um trem aproxima-se do limite de potência enquanto o outro fica aliviado. Que função de controle específica deve atuar para evitar sobrecarga localizada?",
+      "resposta": "Malha de repartição de carga entre trens.",
+      "explicacao": "Em operação paralela, o controle precisa dividir a carga entre máquinas; sem essa função, partidas, paradas e transferências podem concentrar potência ou vazão em um único trem.",
+      "resposta_padrao": "Abrir mais a válvula anti-surge do trem carregado.",
+      "por_que_nao": "O reciclo protege contra baixa vazão, mas não corrige a assimetria de carga nem a sobrecarga localizada entre trens.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia:"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema de controle precisa repartir carga, evitar sobrecarga localizada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "manter partidas, paradas e transferências de trem com segurança e confiabilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Influência do posicionamento das medições na estabilidade do controle em compressores multistágio.",
+      "pergunta": "Mudanças de carga em compressor multistágio geram oscilação entre estágios e resposta tardia da malha, mesmo com válvulas saudáveis e sintonia revista. Qual causa primária ligada à medição deve ser verificada?",
+      "resposta": "Posicionamento inadequado das medições entre estágios.",
+      "explicacao": "Medições mal posicionadas representam mal o estado real, introduzem atraso e mascaram interações entre estágios, produzindo reação tardia, oscilação e distribuição inadequada de carga.",
+      "resposta_padrao": "Reduzir o ganho do PID principal.",
+      "por_que_nao": "Mesmo com ganho adequado, uma medição mal posicionada já introduz atraso e mascara a interação entre estágios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "interação entre múltiplos estágios tornam essa coordenação mais crítica."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "introduzir atrasos ou mascarar interações entre estágios."
+        }
+      ]
+    }
+  ]
+}

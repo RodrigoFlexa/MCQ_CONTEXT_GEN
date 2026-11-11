@@ -1,0 +1,99 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_01:010:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de compensação temporária de stiction por pulsos de amplitude variável em válvula modulante.",
+      "pergunta": "Pequenas mudanças na saída do controlador não iniciam movimento da válvula modulante; a correção mecânica só virá depois, e o desgaste extra deve ser contido. Qual técnica de compensação no sinal é mais adequada?",
+      "resposta": "compensação por pulsos de amplitude variável",
+      "explicacao": "A técnica não baseada em modelo fornece energia adicional para romper o atrito e, com amplitude variável, reduz movimentação extra enquanto mantém desempenho aceitável até o reparo.",
+      "resposta_padrao": "Retunear o PID da malha.",
+      "por_que_nao": "Sintonia atua na dinâmica do controle, não no limiar de stiction que impede o início do movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma abordagem não baseada em modelo para compensar atrito em válvulas de controle consiste em adicionar pulsos ao sinal de controle para vencer o atrito no atuador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Foi proposto um método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de compensação pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de stiction pela relação entre pressão do atuador e deslocamento do obturador.",
+      "pergunta": "A pressão de ar do atuador sobe com pequenos comandos, mas o deslocamento do obturador só acontece após um pulso e em salto. Qual é a causa primária desse padrão?",
+      "resposta": "atrito estático no conjunto atuador-válvula",
+      "explicacao": "A pressão se acumula sem movimento até que energia adicional supere o limiar de stiction; o salto de posição após o pulso é assinatura desse mecanismo.",
+      "resposta_padrao": "Posicionador descalibrado.",
+      "por_que_nao": "Descalibração distorce comando e posição, mas não explica pressão crescente sem deslocamento até ruptura abrupta.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Entre os parâmetros citados estão pressão de ar do atuador e deslocamento do obturador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O princípio é fornecer energia adicional quando o comando usual não consegue iniciar o movimento."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Limite de aplicabilidade da compensação por pulsos a válvulas modulantes, excluindo função ESD.",
+      "pergunta": "Há proposta de aplicar compensação por pulsos a um elemento final usado apenas para isolamento de emergência em lógica abre-fecha. Qual equipamento deve ser excluído desse arranjo?",
+      "resposta": "ESDV",
+      "explicacao": "A compensação discutida se aplica à válvula de controle modulante. A ESDV tem função de segurança e isolamento, não de modulação contínua.",
+      "resposta_padrao": "Qualquer válvula on-off pneumática.",
+      "por_que_nao": "O ponto decisivo é a função de segurança e isolamento da ESDV, não somente o modo abre-fecha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compensar atrito em válvulas de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Já a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "válvula de controle modulante e ESDV podem coexistir no mesmo sistema, mas não devem ser tratadas como a mesma função operacional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de parametrização da compensação por pulsos para minimizar movimento sem sacrificar desempenho.",
+      "pergunta": "Os pulsos já destravam a válvula, mas deseja-se reduzir a movimentação adicional sem perda relevante de controle. Que critério técnico deve balizar a parametrização?",
+      "resposta": "especificação máxima de erro",
+      "explicacao": "O método seleciona parâmetros com base em dados operacionais e no erro máximo admissível, para equilibrar recuperação de desempenho e desgaste adicional.",
+      "resposta_padrao": "A menor amplitude que ainda mova a haste.",
+      "por_que_nao": "O limiar mínimo de movimento não garante desempenho da malha; a escolha deve respeitar o erro máximo admissível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Foi proposto um método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho, escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Existe, portanto, um compromisso entre recuperar desempenho da malha e limitar desgaste adicional do elemento final."
+        }
+      ]
+    }
+  ]
+}

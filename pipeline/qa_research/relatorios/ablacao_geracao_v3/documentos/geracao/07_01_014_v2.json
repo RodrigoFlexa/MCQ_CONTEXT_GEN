@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:014:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do regime de teste integrado que valida comunicação, lógica e atuação antes da introdução do fluido de processo.",
+      "pergunta": "Antes de admitir gás, a lógica já foi energizada, os instrumentos calibrados e a comunicação ponto a ponto validada; ainda falta provar sequência, sentido de atuação e intermitências sob condição representativa e controlada. Que arranjo de teste aplicar?",
+      "resposta": "teste integrado em circuito fechado com nitrogênio",
+      "explicacao": "Esse regime reproduz condições representativas de forma controlada e expõe falhas integradas de comunicação, sequência, sentido de atuação e estabilidade inicial que inspeções estáticas e loop checks isolados não mostram.",
+      "resposta_padrao": "Fazer apenas loop checks e simulação de entradas e saídas.",
+      "por_que_nao": "Esses ensaios validam canais isolados, mas não reproduzem o comportamento integrado que revela intermitências, falhas de sequência e sentido incorreto de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A operação em circuito fechado com nitrogênio (N2) foi usada para confirmar desempenho, testar antecipadamente a lógica de regeneração e permitir ajustes antes do primeiro gás."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de ação direta/reversa invertida do controlador a partir da resposta da PV e da saída.",
+      "pergunta": "Durante teste integrado, numa malha em que maior abertura da válvula reduz a pressão, a PV sobe acima do SP e a saída do controlador também aumenta, agravando o desvio. Que ajuste técnico está invertido?",
+      "resposta": "ação direta/reversa do controlador invertida",
+      "explicacao": "Se a saída cresce exatamente na direção que amplia o erro, a malha está com a direção de atuação invertida; A1 destaca esse tipo de falha como detectável em testes integrados.",
+      "resposta_padrao": "A sintonia do PID está inadequada.",
+      "por_que_nao": "Quando a saída aumenta na direção que amplia o desvio, o erro primário é a ação direta/reversa invertida, não o ajuste dinâmico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da coerência temporal como requisito para tendências, comparações e inferências operacionais em supervisão e historian.",
+      "pergunta": "Historian, HMI e análise recebem valores plausíveis do mesmo processo, mas tendências e comparações entre variáveis deixam de representar o estado físico atual. Que propriedade dos sinais deve ser preservada para essas inferências fazerem sentido?",
+      "resposta": "coerência temporal dos sinais",
+      "explicacao": "Tendências e comparações só representam o processo quando os sinais chegam alinhados no tempo e confiáveis; A2 afirma que a supervisão pode exibir valores plausíveis sem representar o estado físico.",
+      "resposta_padrao": "A calibração dos transmissores está ruim.",
+      "por_que_nao": "Mesmo com valores plausíveis e instrumentos calibrados, tendências e comparações falham se os sinais chegarem defasados ou não alinhados no tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ]
+    }
+  ]
+}

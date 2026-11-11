@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 3,
+  "visita": 1,
+  "onda": 1,
+  "id": "05_02:003:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em geradores síncronos em paralelo, o compartilhamento de potência reativa é corrigido pela excitação, não pelo governador.",
+      "pergunta": "Dois geradores síncronos em paralelo dividem kW de forma estável. Um deles fica com corrente mais alta e fator de potência mais baixo, sem desvio perceptível de frequência. Qual ajuste técnico corrige esse compartilhamento?",
+      "resposta": "Reduzir a referência de tensão do AVR desse gerador.",
+      "explicacao": "Com kW estável e frequência normal, o desbalanceamento está na potência reativa. Em paralelo, a excitação e a referência de tensão redistribuem VAr e corrente entre as máquinas.",
+      "resposta_padrao": "Ajustar o governador para reduzir a carga desse gerador.",
+      "por_que_nao": "O governador redistribui potência ativa e frequência; não corrige excesso de VAr com kW já equilibrado."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em sistemas de média tensão com neutro isolado, a primeira falta à terra é detectada pela tensão residual zero-sequência.",
+      "pergunta": "No barramento de média tensão com neutro isolado, a primeira falta à terra deve gerar alarme sem desligamento imediato. Com transformadores de potencial em delta aberto para supervisão, que grandeza indica essa falta?",
+      "resposta": "Tensão residual 3V0 no delta aberto.",
+      "explicacao": "Na primeira falta à terra, a corrente é pequena e o neutro se desloca. O sinal mais sensível no barramento é a tensão residual de sequência zero medida no delta aberto.",
+      "resposta_padrao": "Corrente de fase pela proteção de sobrecorrente.",
+      "por_que_nao": "Na primeira falta à terra em neutro isolado, a corrente costuma ser insuficiente para a sobrecorrente; o sinal dominante é o deslocamento de tensão."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Após perda súbita de geração, ROCOF é o critério mais rápido para acionar alívio automático de carga em sistemas isolados.",
+      "pergunta": "Perda instantânea de um gerador provoca afundamento rápido de frequência; a subtensão ainda não apareceu e esperar a subfrequência derruba cargas essenciais. Que critério de disparo deve iniciar o load shedding mais rápido?",
+      "resposta": "Taxa de variação da frequência, ROCOF.",
+      "explicacao": "Déficit súbito de potência ativa aparece primeiro na dinâmica da frequência. ROCOF antecipa a queda absoluta de frequência e permite cortar carga antes do colapso do sistema.",
+      "resposta_padrao": "Subtensão no barramento.",
+      "por_que_nao": "A tensão pode permanecer sustentada por excitação e inércia; o déficit ativo se manifesta antes pela variação rápida da frequência."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na energização de transformadores, a proteção diferencial distingue corrente de inrush de falta interna pelo conteúdo harmônico.",
+      "pergunta": "Na energização de um transformador sem carga, a proteção diferencial atua embora não haja defeito externo visível. Que recurso específico da proteção deve distinguir essa condição de um curto interno?",
+      "resposta": "Restrição por segunda harmônica da corrente de inrush.",
+      "explicacao": "A corrente de energização tem forte componente de segunda harmônica. A lógica de restrição ou bloqueio usa esse conteúdo para evitar atuação indevida da diferencial.",
+      "resposta_padrao": "Aumentar o pickup da proteção diferencial.",
+      "por_que_nao": "Elevar o pickup reduz a sensibilidade a faltas internas; inrush é distinguida pelo conteúdo harmônico, não por perda deliberada de sensibilidade."
+    }
+  ]
+}

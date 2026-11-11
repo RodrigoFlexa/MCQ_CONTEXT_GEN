@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_01:006:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Erro de indicação em vazão por DP quando a linearização é aplicada em dois pontos da malha.",
+      "pergunta": "Depois da troca do transmissor de DP de uma placa de orifício, o DP visto por HART segue coerente com o processo, mas a vazão no sistema ficou baixa em toda a faixa. Em bancada, ao quadruplicar o DP aplicado, a corrente apenas dobra o incremento. Qual configuração específica explica o erro?",
+      "resposta": "dupla extração de raiz quadrada",
+      "explicacao": "Em vazão por DP, a raiz quadrada deve ser aplicada uma única vez. Se o transmissor já entrega sinal linearizado e o sistema também lineariza, a vazão fica subindicada.",
+      "resposta_padrao": "transmissor de DP descalibrado",
+      "por_que_nao": "Descalibração não produz a assinatura típica de saída já linearizada combinada com submedição sistemática por raiz aplicada duas vezes."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Local correto de ajuste quando o erro permanece com injeção de corrente diretamente na entrada do sistema.",
+      "pergunta": "Com o loop isolado, um calibrador injeta 4, 12 e 20 mA diretamente nos bornes do cartão, e a indicação no sistema permanece deslocada nos três pontos; o transmissor foi aferido em bancada. Onde deve ser feito o ajuste corretivo?",
+      "resposta": "trim do canal de entrada analógica",
+      "explicacao": "A injeção nos bornes do cartão elimina sensor, transmissor e cabeamento de campo. Se o erro persiste ali, o ajuste correto é no próprio canal de entrada.",
+      "resposta_padrao": "recalibração do transmissor de campo",
+      "por_que_nao": "A injeção direta na entrada isola o transmissor; erro remanescente pertence à cadeia de aquisição, não ao instrumento de campo."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Estabilização de conjunto atuador-posicionador com volume booster e oscilação por ganho pneumático excessivo.",
+      "pergunta": "A posição de uma válvula oscila mesmo com o controlador em manual e saída fixa, logo após instalar volume booster no atuador; suprimento de ar estável e posicionador sem falha. Qual arranjo pneumático específico deve ser aplicado para eliminar a instabilidade?",
+      "resposta": "restritor em by-pass do volume booster",
+      "explicacao": "O booster pode tornar a realimentação pneumática excessivamente agressiva. O by-pass restritivo permite ao posicionador controlar finamente a câmara e suprime o hunting local.",
+      "resposta_padrao": "retunar o PID da malha",
+      "por_que_nao": "Oscilação com controlador em manual e saída fixa indica instabilidade no conjunto pneumático local, não na sintonia do controlador."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Causa primária de fechamento lento em válvula pneumática quando a comutação elétrica da solenoide ocorre no tempo correto.",
+      "pergunta": "No teste de fechamento de uma válvula pneumática de bloqueio, a solenoide desenergiza no instante correto, mas a pressão do atuador alivia devagar e o curso fecha atrasado; suprimento normal. Qual é a causa primária?",
+      "resposta": "silenciador de exaustão da solenoide obstruído",
+      "explicacao": "Se a comutação elétrica ocorre no tempo certo e o atuador demora a despressurizar, a restrição está no caminho de vent da solenoide, tipicamente na exaustão ou silenciador.",
+      "resposta_padrao": "bobina da solenoide com defeito",
+      "por_que_nao": "Defeito de bobina afetaria a comutação elétrica; aqui o atraso aparece depois da desenergização, na descarga pneumática."
+    }
+  ]
+}

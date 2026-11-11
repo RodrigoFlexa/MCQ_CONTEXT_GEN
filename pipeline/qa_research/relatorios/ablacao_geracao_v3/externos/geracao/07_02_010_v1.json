@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:010:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Segurança do acesso remoto em IACS depende do endpoint, não só da VPN.",
+      "pergunta": "Um fornecedor acessará remotamente um sistema de controle por VPN para suporte corretivo. Qual elemento técnico, além da VPN, deve ser verificado antes de liberar a sessão?",
+      "resposta": "a condição do dispositivo usado na conexão",
+      "explicacao": "No acesso remoto em IACS, a VPN protege o canal, mas a segurança também depende do estado do equipamento conectado; um endpoint comprometido ainda pode introduzir risco ao ambiente operacional.",
+      "resposta_padrao": "Basta validar a VPN aprovada e as credenciais do fornecedor.",
+      "por_que_nao": "Canal e autenticação válidos não compensam endpoint comprometido, desatualizado ou mal configurado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de terceiros deve ser encerrado imediatamente após a conclusão da atividade.",
+      "pergunta": "Concluído o diagnóstico remoto do terceiro e sem novas ações previstas, qual ação técnica específica deve ocorrer imediatamente para reduzir a exposição remanescente?",
+      "resposta": "encerrar o acesso remoto ao fim da atividade",
+      "explicacao": "Quando a atividade termina, cessa a necessidade operacional que justificava a sessão; manter o acesso aberto preserva exposição e alcançabilidade desnecessárias em funções com possível impacto operacional ou de configuração.",
+      "resposta_padrao": "Manter a sessão disponível acelera um eventual retorno do suporte.",
+      "por_que_nao": "Sessão autorizada remanescente mantém alcançabilidade desnecessária após cessar a necessidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Registro de sessão em OT precisa vincular a atuação ao ativo impactado.",
+      "pergunta": "Surge comportamento inesperado após suporte remoto de contratada. Para rastrear a intervenção e conter só o equipamento atingido, que vínculo específico o registro de sessão precisa mostrar?",
+      "resposta": "o ativo em que houve atuação",
+      "explicacao": "Para investigar e conter uma intervenção de terceiro, o monitoramento deve permitir reconstruir em qual ativo houve atuação; usuário e horário sozinhos não delimitam o equipamento que pode ter sido alterado.",
+      "resposta_padrao": "Registrar o usuário e o horário da conexão já é suficiente.",
+      "por_que_nao": "Sem associar a sessão ao ativo alcançado, a contenção não se restringe ao equipamento realmente afetado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em estação de engenharia, a criticidade do acesso remoto autorizado decorre do alcance de funções de configuração.",
+      "pergunta": "Mesmo com VPN e credenciais válidas, o acesso remoto de terceiro à estação de engenharia é mais crítico do que a uma aplicação administrativa porque a sessão pode alcançar que função técnica?",
+      "resposta": "funções de configuração",
+      "explicacao": "Em IACS, uma sessão autorizada na estação de engenharia pode alcançar funções de configuração com impacto direto no comportamento do sistema; por isso, VPN e credenciais válidas não eliminam a criticidade do acesso.",
+      "resposta_padrao": "Funções administrativas de TI.",
+      "por_que_nao": "O diferencial crítico é a possibilidade de atuar na configuração do controle, não em tarefas administrativas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação."
+        }
+      ]
+    }
+  ]
+}

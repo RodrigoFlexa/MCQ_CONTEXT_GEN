@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:027:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre erro de calibração do transmissor e erro de escalonamento da entrada analógica no sistema supervisor.",
+      "pergunta": "Manômetro local e transmissor acompanham a pressão, mas a IHM exibe metade do valor esperado em toda a faixa; com 4–20 mA simulados, o erro se repete. Que parâmetro de configuração está incorreto?",
+      "resposta": "Escalonamento LRV/URV da entrada analógica",
+      "explicacao": "Como o 4–20 mA correto já entra no sistema e o erro é proporcional em toda a faixa, o problema está na conversão para unidades de engenharia, não no sensor.",
+      "resposta_padrao": "Calibração do transmissor.",
+      "por_que_nao": "Se a corrente 4–20 mA está correta e o erro permanece só na indicação, a falha está no mapeamento de faixa no sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ou uma informação de campo pode não ser recebida pelo sistema supervisor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correção para que sinais de campo chegassem à IHM"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção funcional entre permissivo de partida e intertravamento de parada.",
+      "pergunta": "Durante a partida de uma bomba, pressão de selo e alinhamento de sucção precisam estar corretos para aceitar o comando; depois de ligada, a perda dessas condições não a desarma automaticamente. Que lógica específica está atuando?",
+      "resposta": "Permissivo de partida",
+      "explicacao": "A lógica descrita apenas habilita o comando inicial quando as condições estão satisfeitas; ela não executa parada automática se a condição se perder depois.",
+      "resposta_padrao": "Intertravamento.",
+      "por_que_nao": "Intertravamento atua retirando ou impedindo a continuidade da operação quando a condição proibida ocorre em serviço; permissivo só habilita a partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas operações dependem de sequências corretas, condições habilitadoras e alinhamento entre documentação, prática de campo e lógica implantada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de realimentação contínua de posição para representar posições intermediárias de válvula remota na automação.",
+      "pergunta": "A válvula foi prevista para operação remota com indicação de posição, mas a supervisão só recebe estados aberto/fechado e não mostra posições intermediárias. Que sinal específico deve ser implantado?",
+      "resposta": "Feedback contínuo de posição",
+      "explicacao": "Operação remota com indicação de posição exige conhecer o curso real entre os extremos; confirmações aberto/fechado informam apenas os fins de curso.",
+      "resposta_padrao": "Fim de curso aberto/fechado.",
+      "por_que_nao": "Chaves de fim de curso só validam posições extremas; indicação de posição requer sinal proporcional ao curso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Esse conjunto inclui arquitetura lógica, parâmetros, classificação entre alarme e evento, permissivos, intertravamentos, modos de operação local/remoto e forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada, com pendência de indicador de posição."
+        }
+      ]
+    }
+  ]
+}

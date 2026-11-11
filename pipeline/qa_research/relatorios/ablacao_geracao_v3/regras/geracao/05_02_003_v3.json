@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 3,
+  "visita": 3,
+  "onda": 5,
+  "id": "05_02:003:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência reativa entre geradores em paralelo é governado pela excitação e pela referência de tensão.",
+      "pergunta": "Dois geradores em paralelo, com droop reativo igual nos dois AVRs, mantêm frequência estável e dividem kW de forma semelhante, mas um fornece quase todo o kVAr. Qual ajuste específico deve ser corrigido?",
+      "resposta": "setpoint de tensão do AVR",
+      "explicacao": "Com kW já equilibrado, o desvio remanescente está no controle de excitação; a referência de tensão determina o compartilhamento de reativo no barramento comum.",
+      "resposta_padrao": "Ajustar o droop do governador do gerador mais carregado.",
+      "por_que_nao": "O governador corrige divisão de potência ativa; desbalanço de kVAr decorre do controle de excitação."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A recomposição do sistema após blackout exige permissivo de barramento morto para fechar a primeira fonte no quadro principal.",
+      "pergunta": "Blackout total deixou o quadro principal morto e o gerador de emergência alimentando apenas o quadro de emergência. Qual verificação ou intertravamento deve liberar o fechamento do primeiro gerador principal sem sincronismo?",
+      "resposta": "função dead-bus check",
+      "explicacao": "O primeiro gerador que recompõe um barramento desenergizado não sincroniza com outra fonte; o fechamento correto depende da confirmação de ausência de tensão no barramento.",
+      "resposta_padrao": "Sincronizar tensão, frequência e fase pelo sincronoscópio.",
+      "por_que_nao": "Com o barramento morto não há referência elétrica para sincronismo; o critério correto é ausência comprovada de tensão."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Na primeira falta à terra em sistema de neutro isolado, o neutro se desloca e altera as tensões fase-terra.",
+      "pergunta": "Surge alarme de isolamento num barramento de média tensão com neutro isolado; uma fase cai quase a zero para terra e as outras duas sobem para perto da tensão de linha. Que mecanismo produz esse padrão?",
+      "resposta": "deslocamento do neutro",
+      "explicacao": "Na primeira falta à terra em neutro isolado, o potencial do neutro se desloca e as fases sãs passam a ver maior tensão para terra, com corrente limitada.",
+      "resposta_padrao": "Desequilíbrio severo de carga entre fases.",
+      "por_que_nao": "Desequilíbrio de carga não eleva as fases sãs à tensão fase-fase para terra como ocorre na primeira falta à terra."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A proteção diferencial de transformadores distingue inrush magnetizante de falta interna pelo conteúdo harmônico da corrente.",
+      "pergunta": "Na energização a vazio de um transformador, aparece corrente alta e assimétrica por poucos ciclos, sem indícios de falta interna. Que recurso específico da proteção diferencial evita disparo indevido nessa condição?",
+      "resposta": "bloqueio por segundo harmônico",
+      "explicacao": "A corrente de inrush magnetizante contém componente de segundo harmônico, usada para bloquear ou restringir a atuação diferencial durante a energização a vazio.",
+      "resposta_padrao": "Elevar o pickup da proteção diferencial.",
+      "por_que_nao": "A inrush se distingue pelo conteúdo harmônico; aumentar o pickup reduz a sensibilidade a faltas internas reais."
+    }
+  ]
+}

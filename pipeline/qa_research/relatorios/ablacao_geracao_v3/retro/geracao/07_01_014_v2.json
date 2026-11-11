@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:014:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separar falha na medição de falha no caminho de leitura para supervisão quando o controle automático continua coerente.",
+      "pergunta": "Com a malha estável em automático e a válvula modulando coerentemente no campo, a variável permanece congelada na HMI e nas tendências. Qual causa primária explica a discrepância?",
+      "resposta": "Falha na comunicação controlador-supervisão.",
+      "explicacao": "O controlador continua recebendo a variável e atuando no elemento final; o congelamento restrito à visualização indica perda no caminho de dados até a supervisão.",
+      "resposta_padrao": "Transmissor de processo com defeito.",
+      "por_que_nao": "Sem medição válida chegando ao controlador, a malha não permaneceria modulando de forma coerente com o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compõem a camada que recebe informações do processo e coordena ações de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em paralelo, sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecer que a execução do controle permanece na camada controladora quando a supervisão/HMI fica indisponível.",
+      "pergunta": "Se a estação de operação reinicia e a visualização some, mas as malhas em automático seguem modulando sem degrau nas saídas, que camada continua executando o controle?",
+      "resposta": "Controladores PLC/DCS.",
+      "explicacao": "A supervisão fornece interface ao operador, mas a lógica configurada e a coordenação das ações de controle permanecem na camada dos controladores.",
+      "resposta_padrao": "Supervisório/HMI.",
+      "por_que_nao": "A HMI permite visualizar e atuar, porém quem executa a lógica de controle são os controladores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a automação executa a lógica configurada"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinguir indisponibilidade do historian de falha na HMI ou no controle pela perda apenas de histórico e tendências longas.",
+      "pergunta": "Os sinóticos seguem atualizando e o operador ainda ajusta malhas, mas desapareceram os gráficos de vários dias e as comparações históricas. Qual sistema específico perdeu a função?",
+      "resposta": "Historian.",
+      "explicacao": "A operação corrente e os comandos continuam pela supervisão; a função perdida é a coleta e o armazenamento temporal usados para tendência e análise histórica.",
+      "resposta_padrao": "HMI.",
+      "por_que_nao": "A HMI mostra o estado atual e recebe comandos; gráficos de vários dias dependem da base histórica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        }
+      ]
+    }
+  ]
+}

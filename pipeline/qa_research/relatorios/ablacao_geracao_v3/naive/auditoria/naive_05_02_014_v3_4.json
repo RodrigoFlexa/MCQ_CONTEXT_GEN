@@ -1,0 +1,52 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Acionar a fonte de black start, tipicamente o gerador de emergência com apoio de baterias/UPS para controles, alimentar o barramento essencial, partir um gerador principal e depois recompor as cargas por etapas conforme prioridade.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "procedimento",
+  "justificativa": "A pergunta cobra uma sequência operacional genérica de black start conhecida no ofício, e os blocos sustentam que a recomposição começa pela disponibilidade de DC/UPS e fonte de emergência para restaurar controles essenciais antes de retomar a geração principal e as cargas prioritárias.",
+  "aprovada": true,
+  "motivo": "nenhum",
+  "falhas": [],
+  "referencia_valida": true,
+  "tipo_confere": false,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "05_02",
+      "texto": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle. Em uma configuração de FPSO, os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais, com dois conjuntos retificador/carregador e banco de baterias, cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE. Havia também UPS (Uninterruptible Power Supply) para cargas vitais em corrente alternada. Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal e à perda de equipamentos importantes. Na mesma sequência funcional, a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS. O mecanismo relevante é que o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida. Assim, a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout, não apenas um detalhe auxiliar.",
+      "titulo": "PMS, transientes e blackout / Interfaces entre alimentação em corrente contínua, UPS e perda de geração",
+      "indice_documento": 11
+    },
+    {
+      "id": "B2",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    },
+    {
+      "id": "B3",
+      "item": "05_02",
+      "texto": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida. Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação. O tempo de retaguarda pode variar de minutos a algumas horas conforme porte e essencialidade da aplicação, mas valores específicos dependem da filosofia da unidade e não podem ser assumidos sem dado de projeto. O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional. Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível. Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada.",
+      "titulo": "UPS, baterias e sistemas essenciais / Seleção e monitoramento das cargas essenciais",
+      "indice_documento": 17
+    },
+    {
+      "id": "B4",
+      "item": "05_02",
+      "texto": "A prevenção e a análise de blackouts exigem mais do que verificar potência instalada. A confiabilidade elétrica se beneficia do uso de análise de qualidade de energia, estudos de harmônicos, monitoramento contínuo, proteção e coordenação, dinâmica de rede e filosofia de power management. Esses recursos ajudam a entender se a configuração instalada mantém margem suficiente diante de partidas de motores, rejeição de cargas, separação de barramentos e falhas em equipamentos sensíveis. Em embarcações com posicionamento dinâmico, a disponibilidade elétrica se relaciona diretamente à capacidade de manter propulsores e controles; por isso, perda de geração pode afetar não só o processo, mas também a manutenção de posição. Já sistemas ancorados ou autoeleváveis foram caracterizados como não vulneráveis ao blackout para manutenção de posição por não dependerem de thrusters, embora isso não elimine outras consequências operacionais do apagão. Na classificação organizacional de resposta a emergências adotada em um FPSO, blackout aparece como exemplo de incidente de nível 2, gerenciável a bordo com possível apoio técnico em terra; se o evento se agrava, como após uma explosão, pode evoluir para mobilização total da resposta. Essa classificação organiza a resposta, mas não substitui critérios de projeto ou operação elétrica.",
+      "titulo": "PMS, transientes e blackout / Monitoramento, estudos e consequências operacionais do blackout",
+      "indice_documento": 14
+    },
+    {
+      "id": "B5",
+      "item": "07_02",
+      "texto": "Em instalações com potencial de acidente maior, o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas. Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão. Já falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência, reduzindo sua confiabilidade e efetividade. Há situações em que a resposta operacional assume prioridade imediata: diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos enquanto o dano é inspecionado. Eventos elétricos, de automação e de segurança podem se encadear rapidamente: a perda da geração principal, somada à falha de partida do gerador de emergência e à indisponibilidade da UPS, pode deixar sem energia as funções de segurança justamente durante a emergência. Em FPSO, a interface entre resposta a incidente e emergência operacional exige reconhecer quando o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta.",
+      "titulo": "Monitoramento e resposta a incidentes / Relação entre incidente digital e emergência operacional",
+      "indice_documento": 15
+    }
+  ]
+}

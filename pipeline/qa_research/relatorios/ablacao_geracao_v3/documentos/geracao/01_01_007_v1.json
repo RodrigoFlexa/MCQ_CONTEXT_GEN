@@ -1,0 +1,99 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "01_01:007:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de dependências comuns na lógica RAM para não superestimar o benefício da redundância.",
+      "pergunta": "Dois trens de processo duplicados compartilham utilidades, descarga e intertravamentos, mas a estimativa série-paralelo indica alta disponibilidade. O que deve ser explicitamente representado na lógica da análise RAM para que esse ganho não fique superestimado?",
+      "resposta": "dependências de utilidades e intertravamentos comuns",
+      "explicacao": "A lógica do modelo precisa capturar dependências e modos de operação. Gargalos e intertravamentos comuns podem derrubar a função mesmo com equipamentos duplicados em paralelo.",
+      "resposta_padrao": "a redundância dos equipamentos em paralelo",
+      "por_que_nao": "Paralelismo físico ignora dependências comuns que limitam a função de processo e reduzem o ganho real de disponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da base paramétrica correta para atualizar frequências de falha e tempos de reparo em RAM.",
+      "pergunta": "Arquitetura, acessibilidade e estratégia de manutenção locais diferem dos dados usados no estudo inicial. Ao atualizar a análise RAM, que fonte deve prevalecer para frequências de falha e tempos de reparo?",
+      "resposta": "dados característicos da própria instalação analisada",
+      "explicacao": "Os parâmetros variam com arquitetura, acessibilidade, manutenção e contexto operacional. Para representar a condição real, a base local deve prevalecer sobre médias externas.",
+      "resposta_padrao": "dados médios de banco setorial",
+      "por_que_nao": "Banco setorial ajuda a comparar e padronizar, mas não representa adequadamente condições locais diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do ranking de contribuintes de falha para priorizar melhorias após o detalhamento do sistema.",
+      "pergunta": "Quando o sistema já está detalhado e dois modos operacionais mostram disponibilidade semelhante, qual resultado específico do modelo RAM deve orientar a prioridade de melhoria?",
+      "resposta": "ranking dos maiores contribuintes de falha",
+      "explicacao": "Modelos mais completos permitem comparar modos operacionais e mostrar quais elementos mais pesam nas perdas. A disponibilidade média sozinha não revela onde agir primeiro.",
+      "resposta_padrao": "a disponibilidade média global",
+      "por_que_nao": "Indicador agregado mascara o elemento dominante da perda e não aponta a intervenção com maior efeito no desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelos mais completos permitem identificar os maiores contribuintes de falha, comparar modos operacionais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "monitorar apenas médias sem contexto funcional pode mascarar os verdadeiros limitantes do desempenho."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Marco correto para encerrar um evento de falha ao medir MTTR observado para atualização do modelo RAM.",
+      "pergunta": "Para atualizar os tempos de reparo do modelo RAM com dados operacionais, qual marco final deve encerrar cada evento de falha no registro?",
+      "resposta": "retorno ao estado operacional",
+      "explicacao": "O tempo de reparo observado termina quando a função é restabelecida. Esse marco alimenta corretamente MTTR e disponibilidade observada para atualização do modelo.",
+      "resposta_padrao": "fechamento administrativo da ordem de serviço",
+      "por_que_nao": "O fechamento administrativo pode ocorrer depois da recuperação funcional e inflar artificialmente o MTTR usado na análise.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ]
+    }
+  ]
+}

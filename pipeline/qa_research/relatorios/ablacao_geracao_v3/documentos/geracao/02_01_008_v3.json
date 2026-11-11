@@ -1,0 +1,75 @@
+{
+  "item": "02_01",
+  "foco": 8,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_01:008:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Conversão fiscal de gás deve incluir Z quando pressão e temperatura variam.",
+      "pergunta": "Oscilações amplas de pressão e temperatura ocorrem na linha, e o computador de vazão corrige o volume como gás ideal. Qual função precisa entrar na compensação automática para manter a medição fiscal comparável?",
+      "resposta": "Coeficiente de compressibilidade do gás (Z).",
+      "explicacao": "Para gás natural real, corrigir só por pressão e temperatura assume idealidade; a conversão fiscal comparável exige recalcular Z com as variações dessas variáveis.",
+      "resposta_padrao": "Aplicar somente correção por pressão e temperatura.",
+      "por_que_nao": "P e T sozinhos tratam o gás como ideal; em gás natural fiscal, a não idealidade entra por Z.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a compensação automática das variações de pressão estática e temperatura deve incluir também as variações do coeficiente de compressibilidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "é necessário converter o resultado para condições definidas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Nova análise cromatográfica deve atualizar o dado de composição usado nas medições seguintes.",
+      "pergunta": "Novos resultados de cromatografia mostram mudança em CO2 e C2+, enquanto o medidor principal segue estável. Qual dado de entrada deve ser atualizado nas medições subsequentes da transferência?",
+      "resposta": "A composição mais recente do gás.",
+      "explicacao": "Quando a composição muda, as propriedades derivadas usadas na conversão deixam de representar o gás; a medição seguinte deve usar a composição válida mais recente.",
+      "resposta_padrao": "Somente a densidade de referência.",
+      "por_que_nao": "Mudança cromatográfica altera o conjunto de propriedades derivadas; usar só densidade não recompõe Z e energia corretamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as variações de composição registradas devem ser compensadas nas medições subsequentes após cada nova análise"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando houver análises periódicas de composição previstas no regulamento"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Temperatura não representativa desloca o volume convertido para a base de referência.",
+      "pergunta": "Transmissor de temperatura lê acima da temperatura real do gás que atravessa o medidor; pressão e vazão primária estão corretas. Na conversão para volume de referência, o resultado tende a ficar como?",
+      "resposta": "Subestimado.",
+      "explicacao": "No volume de referência, a temperatura aparece no denominador do fator de correção; medir T acima da real reduz o volume convertido.",
+      "resposta_padrao": "Superestimado.",
+      "por_que_nao": "Temperatura medida maior reduz o fator de conversão para a base de referência, derrubando o volume corrigido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "As medições de pressão e temperatura precisam ser representativas do fluido que atravessa o medidor."
+        },
+        {
+          "bloco": "F",
+          "trecho": "é necessário converter o resultado para condições definidas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a quantidade transferida depende não apenas do sinal do medidor principal, mas também das correções de propriedades"
+        }
+      ]
+    }
+  ]
+}

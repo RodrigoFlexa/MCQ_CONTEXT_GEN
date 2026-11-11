@@ -1,0 +1,95 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "visita": 2,
+  "onda": 3,
+  "id": "09_01:027:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de tempos de espera exógenos na simulação logística offshore.",
+      "pergunta": "Duas políticas têm o mesmo tempo médio de navegação e transferência; na operação real há fila de berço, bloqueio por meteorologia e janelas ocupadas por outras atividades. Que componente de tempo o modelo precisa representar para comparar as políticas corretamente?",
+      "resposta": "Tempos de espera por fatores exógenos",
+      "explicacao": "Sem esse componente, a simulação ignora bloqueios e incertezas que mudam atendimento, atraso e custo mesmo com navegação e transferência iguais.",
+      "resposta_padrao": "Tempo médio de navegação",
+      "por_que_nao": "A média de trânsito não captura filas, bloqueios e indisponibilidades que governam o desempenho logístico offshore.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "aumentam as esperas, as reprogramações e a variabilidade do tempo de atendimento"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério decisivo de seleção quando há ganho de consumo com risco de ruptura de insumo crítico.",
+      "pergunta": "Uma alternativa reduz o consumo da frota, mas em algumas rodadas o diesel zera antes da entrega seguinte. Qual resultado do modelo passa a ser decisivo para descartar essa alternativa?",
+      "resposta": "Stockout de diesel",
+      "explicacao": "Menor consumo não compensa ruptura de insumo crítico; o modelo é aceitável quando mantém baixo stockout sem degradar o serviço.",
+      "resposta_padrao": "Menor consumo associado à operação",
+      "por_que_nao": "Eficiência de consumo não substitui continuidade de suprimento quando o insumo crítico entra em ruptura.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma política pode reduzir consumo ou frota contratada e ainda assim ser inadequada se aumentar ruptura de suprimento ou atrasos críticos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ferramenta capaz de manter baixo stockout de diesel com menor consumo pela frota total utilizada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de executabilidade física de plano otimizado de carga de convés.",
+      "pergunta": "A otimização reuniu vários skids e contêineres numa única viagem; a área ocupada cabe no layout e o acesso para içamento foi mantido. Que verificação física ainda decide se o arranjo pode ser executado?",
+      "resposta": "Resistência do convés",
+      "explicacao": "Caber por área não basta; a solução programada só é executável se a distribuição e a concentração de carga respeitarem a capacidade estrutural do convés.",
+      "resposta_padrao": "Área útil do convés",
+      "por_que_nao": "A pegada em planta pode ser aceitável e ainda assim exceder a carga distribuída ou concentrada permitida.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A capacidade logística de um PSV depende de área útil, resistência do convés, estabilidade, capacidade dos tanques, acessibilidade e limites dos equipamentos de transferência."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A solução programada deve permanecer executável nas condições reais da embarcação e do FPSO."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inclusão de parada de abastecimento na comparação econômica entre composições de frota.",
+      "pergunta": "Na comparação de duas composições de frota, uma delas cumpre a demanda, mas exige parada para abastecer antes de fechar o circuito. Que elemento operacional precisa entrar no custo total para essa alternativa não parecer artificialmente melhor?",
+      "resposta": "Reabastecimento intermediário",
+      "explicacao": "A alternativa muda de custo e tempo quando precisa parar para reabastecer; ignorar isso distorce a comparação entre frotas.",
+      "resposta_padrao": "Distância total navegada",
+      "por_que_nao": "A autonomia insuficiente cria uma parada adicional que a distância nominal da rota não representa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Custos também podem mudar com a composição da frota, com o uso de cargas múltiplas e com a necessidade de reabastecimento intermediário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "custo total com penalidades"
+        }
+      ]
+    }
+  ]
+}

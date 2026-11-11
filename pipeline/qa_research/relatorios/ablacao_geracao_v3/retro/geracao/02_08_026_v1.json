@@ -1,0 +1,75 @@
+{
+  "item": "02_08",
+  "foco": 26,
+  "visita": 1,
+  "onda": 1,
+  "id": "02_08:026:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Associação entre queda de pressão no espaço de vapor e a parada automática da recuperação de vapores para remover a fonte de sucção.",
+      "pergunta": "Sem movimentação de carga, a pressão do espaço de vapor do tanque cai enquanto a recuperação de vapores permanece em serviço e o arranjo de alívio/vácuo está normal. Qual ação automática deve conter a causa do desvio?",
+      "resposta": "Parada da recuperação de vapores.",
+      "explicacao": "Com baixa pressão nessa condição, a fonte ativa que retira vapor do tanque é a recuperação de vapores; a proteção deve atuar na causa, não apenas compensar o efeito.",
+      "resposta_padrao": "Aumentar o suprimento de gás inerte.",
+      "por_que_nao": "Compensar com gás inerte pode elevar a pressão, mas não remove a sucção que gera o desvio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "parada de bombas e de recuperação de vapores, conforme o ponto onde alta ou baixa pressão é detectada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a proteção de pressão depende da coordenação entre contenção da causa do desvio, isolamento e descarte seguro do inventário liberado."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Forcing em Controlador Lógico Programável preserva indicação, mas enfraquece a decisão lógica automática entre detecção e ação final.",
+      "pergunta": "O transmissor continua indicando pressão, o elemento final está disponível e a entrada de alta pressão foi colocada em forcing no PLC. Que elo da proteção fica enfraquecido nessa condição?",
+      "resposta": "Decisão lógica automática do intertravamento.",
+      "explicacao": "O forcing pode manter medição e hardware presentes, mas interrompe o caminho que converte a detecção em comando automático de shutdown ou blowdown.",
+      "resposta_padrao": "A detecção da alta pressão.",
+      "por_que_nao": "A medição pode continuar válida; o elo degradado é a lógica que deveria agir sobre ela.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "inclusive em instrumentos ou em Controlador Lógico Programável, mas sua aplicação altera a resposta real das barreiras."
+        },
+        {
+          "bloco": "F",
+          "trecho": "override sem controle adequado pode enfraquecer o encadeamento entre detecção, decisão lógica e ação final."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Mudanças de configuração exigem revalidação do estudo de alívio e despressurização, além da integridade mecânica.",
+      "pergunta": "Depois da integração de um novo pacote de processo, PSV, BDV, header e flare seguem íntegros. Que verificação técnica precisa ser refeita antes de assumir que a proteção continua adequada aos cenários mais severos?",
+      "resposta": "Revisão do estudo de alívio e despressurização.",
+      "explicacao": "Mudanças de configuração e integração entre pacotes podem alterar os casos governantes; integridade física não confirma a capacidade funcional do sistema de proteção.",
+      "resposta_padrao": "Inspeção de integridade mecânica do sistema.",
+      "por_que_nao": "Equipamento íntegro pode permanecer inadequado ou subdimensionado após mudanças de configuração e cenários.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sua função se articula com shutdown de processo, blowdown, dispositivos de alívio"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mudanças de configuração, integração entre pacotes de topside e revisão dos casos governantes podem alterar a adequação do sistema completo às piores condições consideradas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "integridade e capacidade funcional precisam ser verificadas separadamente."
+        }
+      ]
+    }
+  ]
+}

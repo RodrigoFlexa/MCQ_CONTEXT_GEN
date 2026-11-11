@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 1,
+  "onda": 1,
+  "id": "02_08:005:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do método de análise compatível com transientes relevantes de blowdown.",
+      "pergunta": "No dimensionamento do blowdown, há atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase e contrapressão do flare que se altera durante o evento. Qual método de análise deve ser adotado para o resultado de projeto?",
+      "resposta": "análise dinâmica transiente",
+      "explicacao": "Esses efeitos são dependentes do tempo e podem alterar o resultado de projeto. Um modelo simplificado pode não representar adequadamente o transiente do sistema.",
+      "resposta_padrao": "simulação estática conservadora",
+      "por_que_nao": "A abordagem estática não captura atraso da BDV, depleção do inventário, mudança de fase nem contrapressão variável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação temporal da contrapressão do flare em modelos de blowdown acoplados.",
+      "pergunta": "Durante o blowdown de vários segmentos no mesmo header, a pressão do sistema receptor sobe e cai ao longo do evento. Qual variável do flare precisa ser representada no tempo para não distorcer o resultado de projeto?",
+      "resposta": "contrapressão variável no flare",
+      "explicacao": "A pressão no receptor muda durante o evento e altera a vazão efetiva e o tempo de despressurização. Tratá-la como fixa perde o acoplamento transiente com o flare.",
+      "resposta_padrao": "perda de carga fixa nas linhas",
+      "por_que_nao": "Uma perda fixa não representa a variação da pressão no sistema receptor ao longo da descarga simultânea.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contrapressão variável no flare."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele também é afetado pelo atraso de atuação, pelas perdas de carga nas linhas, pela contrapressão no sistema de flare, pela evolução das propriedades do fluido ao longo do evento e pela forma como a abertura é sequenciada entre segmentos."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Configuração de ESD para limitar pico de vazão quando o flare não suporta simultaneidade de descargas.",
+      "pergunta": "Se o sistema de flare não consegue receber de uma vez a descarga de todos os sistemas protegidos, qual arranjo específico na lógica de ESD deve ser adotado para reduzir o pico de vazão?",
+      "resposta": "blowdown faseado",
+      "explicacao": "Escalonar a abertura entre segmentos reduz a descarga simultânea no flare, embora prolongue a permanência de inventário nos segmentos ainda fechados.",
+      "resposta_padrao": "abrir todas as BDVs mais lentamente",
+      "por_que_nao": "O problema principal é a simultaneidade entre segmentos; desacelerar todas as aberturas não substitui o escalonamento e pode comprometer o tempo de despressurização.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa solução tende a reduzir o pico de vazão no flare, mas prolonga a permanência de inventário em segmentos que ainda não foram abertos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "interação entre segmentos"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação em campo da efetividade da função de blowdown e do tempo real de despressurização.",
+      "pergunta": "Para comparar o tempo real de despressurização com o previsto e verificar vibração excessiva durante a descarga, qual verificação prática deve ser executada?",
+      "resposta": "teste controlado de blowdown",
+      "explicacao": "Esse teste verifica a efetividade da função com o sistema real, incluindo tempo para despressurizar e ocorrência de vibração excessiva.",
+      "resposta_padrao": "revisão do modelo dinâmico",
+      "por_que_nao": "A revisão do cálculo não comprova o desempenho real nem observa vibração durante o evento.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Testes controlados de blowdown são indicados para verificar a efetividade da função, incluindo o tempo para despressurizar e a ocorrência de vibração excessiva"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a qualidade do resultado depende da coerência entre cenário, modelo, fronteiras do sistema e objetivo da decisão de segurança."
+        }
+      ]
+    }
+  ]
+}

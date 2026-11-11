@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:001:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura de acesso remoto seguro a redes OT com terminação em DMZ industrial.",
+      "pergunta": "Durante uma janela de manutenção, um fornecedor precisa acessar a estação de engenharia do PLC a partir da rede corporativa; o requisito é impedir rota direta até a rede de controle e registrar toda a sessão. Em que ponto técnico esse acesso deve terminar?",
+      "resposta": "jump server na DMZ industrial",
+      "explicacao": "A terminação em jump server na DMZ media autenticação, registro e liberação da sessão sem expor diretamente a estação de engenharia à rede corporativa.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "A arquitetura segura de OT encerra o acesso em zona intermediária controlada; conexão direta remove a mediação e a segregação exigidas."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de mecanismo para transferência unidirecional entre rede de controle e ambiente corporativo.",
+      "pergunta": "Dados do historiador precisam seguir para analytics corporativo, mas nenhum comando ou sessão de retorno pode alcançar a rede de controle, mesmo por erro de configuração. Que solução técnica deve fazer essa transferência?",
+      "resposta": "gateway unidirecional de dados",
+      "explicacao": "O gateway unidirecional impõe fisicamente fluxo em um só sentido, preservando disponibilidade e impedindo retorno de tráfego à rede de controle.",
+      "resposta_padrao": "Firewall entre OT e IT.",
+      "por_que_nao": "Firewall depende de regras lógicas e pode permitir tráfego reverso; o requisito de impossibilidade física exige unidirecionalidade por hardware."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade de lógica de controlador após recarga ou substituição de módulo.",
+      "pergunta": "Um controlador redundante recebeu módulo novo e a aplicação foi recarregada pela estação de engenharia. Antes de liberar o equipamento, qual verificação específica confirma que a lógica executando corresponde exatamente à versão aprovada?",
+      "resposta": "comparação do checksum da aplicação com o baseline aprovado",
+      "explicacao": "A comparação do checksum ou assinatura confirma integridade e identidade da lógica carregada, não apenas seu comportamento aparente.",
+      "resposta_padrao": "Teste funcional das entradas e saídas.",
+      "por_que_nao": "Teste funcional mostra resposta operacional, mas não comprova integridade bit a bit nem autenticidade da aplicação carregada."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de indisponibilidade por laço Ethernet em rede industrial.",
+      "pergunta": "HMIs perdem atualização logo após a conexão de um switch portátil de manutenção; contadores de broadcast sobem rapidamente e tudo normaliza quando o novo enlace é removido. Qual a causa primária?",
+      "resposta": "loop de camada 2",
+      "explicacao": "O enlace adicional criou um caminho circular na Ethernet, gerando tempestade de broadcast e saturando a rede de controle.",
+      "resposta_padrao": "Malware na rede de controle.",
+      "por_que_nao": "Recuperação imediata ao retirar o enlace e explosão de broadcast caracterizam laço Ethernet, não infecção maliciosa."
+    }
+  ]
+}

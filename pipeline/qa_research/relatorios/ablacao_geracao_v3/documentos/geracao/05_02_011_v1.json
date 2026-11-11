@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:011:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Perda da alimentação de controle em 24 Vcc pode derrubar a geração mesmo sem falha inicial no barramento de potência.",
+      "pergunta": "Geradores principais seguem mecanicamente disponíveis, mas a geração cai quando os painéis de controle são desenergizados, sem falta inicial no barramento. Qual elo operacional específico transforma essa perda em blackout?",
+      "resposta": "alimentação 24 Vcc de comando dos painéis de controle dos geradores",
+      "explicacao": "Sem a alimentação de comando, supervisão e atuação, o gerador pode permanecer mecanicamente apto, mas não fica conectado nem controlável.",
+      "resposta_padrao": "subtensão no barramento principal em CA",
+      "por_que_nao": "Aqui o evento começa pela perda de energia de controle; o barramento não é a causa inicial decisiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A perda combinada de UPS e energia principal pode bloquear a atuação de válvulas na interface de saída do CLP.",
+      "pergunta": "Falha da UPS A somada à perda de energia principal deixa as válvulas sem comando via ECOS. Qual elemento desenergizado interrompe diretamente essa atuação?",
+      "resposta": "cartão-relé do CLP",
+      "explicacao": "O bloqueio direto do comando ocorre na interface de saída por relés; sem ela, o ECOS não consegue atuar nas válvulas.",
+      "resposta_padrao": "a UPS A",
+      "por_que_nao": "A UPS é a fonte a montante; o ponto que efetivamente interrompe a atuação é o cartão-relé desenergizado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância de fontes CC só é efetiva se os controles permanecerem segregados por rotas de alimentação independentes.",
+      "pergunta": "Dois retificadores/carregadores com bancos de baterias, cada um capaz de suprir toda a demanda, e TIE entre sistemas de 24 Vcc já existem. Que verificação técnica específica diferencia redundância útil de redundância apenas nominal nos controles dos geradores?",
+      "resposta": "independência real das rotas de alimentação dos painéis de controle",
+      "explicacao": "A capacidade das fontes não basta; se os controles convergirem para a mesma UPS, quadro CC ou ponto de distribuição, uma falha comum derruba ambos.",
+      "resposta_padrao": "confirmar que cada banco suporta 100% da carga",
+      "por_que_nao": "Atender 100% da carga não elimina falha de modo comum quando os canais compartilham a mesma rota elétrica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na recomposição, um comando lógico de trip pode impedir o fechamento sustentado do gerador de emergência durante reboot do controle.",
+      "pergunta": "Durante a recomposição após blackout, o disjuntor do gerador de emergência volta a abrir no reboot do controle. Qual lógica ou sinal específico deve ser verificado primeiro?",
+      "resposta": "sinal de trip do VMS ao disjuntor do gerador de emergência",
+      "explicacao": "Em estado anormal, a própria lógica de controle pode manter o trip ativo durante o reboot e impedir a energização mesmo com o gerador disponível.",
+      "resposta_padrao": "travamento mecânico do disjuntor",
+      "por_que_nao": "A abertura repetida associada ao reboot caracteriza atuação por comando lógico, não defeito mecânico primário.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        }
+      ]
+    }
+  ]
+}

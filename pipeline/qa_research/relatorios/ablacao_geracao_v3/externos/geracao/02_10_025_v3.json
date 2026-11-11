@@ -1,0 +1,95 @@
+{
+  "item": "02_10",
+  "foco": 25,
+  "visita": 3,
+  "onda": 5,
+  "id": "02_10:025:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinguir a atuação da malha de controle de pressão da função de proteção por shutdown.",
+      "pergunta": "A pressão do separador se afasta gradualmente da faixa normal, sem sinais de vazamento, descarga de produto ou outro desvio crítico. Que elemento deve atuar para corrigi-la em operação?",
+      "resposta": "PIC",
+      "explicacao": "Sem indício de evento perigoso, a ação requerida é da malha de controle. O PIC compara a pressão medida com a condição normal e atua para manter a variável na faixa operacional.",
+      "resposta_padrao": "ESDV",
+      "por_que_nao": "A ESDV pertence à função de proteção e isola parte da planta em desvios indicativos de risco, não faz controle contínuo da pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controlador e indicador de pressão, PIC, compara a pressão medida com a condição normal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A válvula de desligamento de emergência, ESDV, é apresentada como elemento de isolamento de parte da planta"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificar o dispositivo de proteção usado para retirar de serviço a seção afetada por desvio de processo com risco.",
+      "pergunta": "Com descarga de produto ou vazamento ligados ao separador, qual dispositivo dedicado do arranjo deve tirar essa seção de serviço?",
+      "resposta": "ESDV",
+      "explicacao": "Na presença de desvio de processo indicativo de risco, a função requerida é isolamento da parte afetada. No arranjo descrito, essa função é executada pela ESDV.",
+      "resposta_padrao": "PSV",
+      "por_que_nao": "A PSV alivia sobrepressão; ela não retira a seção de serviço nem contém vazamento ou descarga de produto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A válvula de desligamento de emergência, ESDV, é apresentada como elemento de isolamento de parte da planta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desvios de processo indicativos de risco, como descarga de produto, vazamento, alta pressão"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Reconhecer a origem da medição de pressão na cadeia que alimenta controle e registro.",
+      "pergunta": "Corrosão no ponto de instrumentação fez a pressão indicada divergir do comportamento do vaso. Qual elemento deve ser verificado primeiro como origem do valor enviado ao controlador e ao registrador?",
+      "resposta": "PT",
+      "explicacao": "No arranjo descrito, o PT mede a pressão e envia o valor ao controlador e ao registrador. Se o ponto de instrumentação degradou a confiabilidade da medição, a origem do sinal é o transmissor.",
+      "resposta_padrao": "PIC",
+      "por_que_nao": "O PIC apenas compara o valor recebido com a condição normal; a medição primária vem do transmissor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pontos de instrumentação pode alterar resposta do processo e confiabilidade da medição."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Definir o ponto correto de instalação da proteção por alívio de pressão do vaso.",
+      "pergunta": "Na proteção contra sobrepressão do separador, onde deve ficar a PSV do vaso?",
+      "resposta": "Na parte superior do equipamento",
+      "explicacao": "O arranjo descrito mostra a PSV instalada no topo do separador, ponto associado ao espaço de gás onde a proteção de sobrepressão do vaso deve atuar.",
+      "resposta_padrao": "No bocal de saída de gás",
+      "por_que_nao": "A proteção do vaso deve aliviar diretamente o espaço de vapor do equipamento; no bocal, fica condicionada ao trecho de linha e a bloqueios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A PSV, válvula de segurança de pressão, é mostrada como dispositivo instalado na parte superior do equipamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "01_01",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "01_01:004:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do atributo de dependabilidade para medir continuidade correta do serviço ao longo de um intervalo.",
+      "pergunta": "O equipamento inicia operando normalmente, e o KPI precisa mostrar a chance de ele seguir prestando o serviço correto durante as próximas 24 horas sob condições definidas. Qual atributo deve ser usado?",
+      "resposta": "Confiabilidade",
+      "explicacao": "Esse atributo mede a continuidade do serviço correto ao longo de um intervalo, assumindo operação no início do período. Disponibilidade descreve aptidão em um dado instante.",
+      "resposta_padrao": "Disponibilidade",
+      "por_que_nao": "Disponibilidade expressa estar operacional quando necessário, não a continuidade correta ao longo do intervalo observado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "confiabilidade expressa a capacidade de continuar prestando o serviço correto ao longo de um intervalo de tempo, sob condições definidas e assumindo operação no início do período"
+        },
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade expressa a probabilidade de o sistema estar operacional em um dado instante"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do atributo que mede a capacidade de restaurar um item defeituoso dentro de um prazo especificado.",
+      "pergunta": "O histórico mostra falhas recorrentes, mas o KPI desejado deve medir somente a chance de restaurar o item defeituoso à condição operacional em até 6 horas. Que atributo corresponde a essa medição?",
+      "resposta": "Mantenabilidade",
+      "explicacao": "Mantenabilidade trata da probabilidade de restaurar um sistema defeituoso ao estado operacional dentro de um tempo especificado. Não mede frequência de falhas nem aptidão instantânea.",
+      "resposta_padrao": "Disponibilidade",
+      "por_que_nao": "Disponibilidade combina ocorrência de falhas e duração da indisponibilidade; aqui o foco é apenas o retorno dentro do prazo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mantenabilidade expressa a probabilidade de restaurar um sistema defeituoso a um estado operacional dentro de um tempo especificado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o desempenho global não depende só de quantas falhas ocorrem, mas também de quão rápido e sob quais condições o sistema retorna à operação aceitável"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Impacto de tempos logísticos e administrativos na disponibilidade operacional, distinto do tempo de reparo ativo.",
+      "pergunta": "Dois equipamentos têm o mesmo MTBF e o mesmo tempo de reparo ativo. Um deles acumula mais espera por acesso, sobressalente e liberação. Qual indicador tende a ficar menor nesse caso?",
+      "resposta": "Disponibilidade operacional",
+      "explicacao": "Com mesma frequência de falha e mesmo reparo ativo, a diferença vem dos tempos logísticos e administrativos incluídos no downtime operacional, reduzindo a fração de tempo disponível.",
+      "resposta_padrao": "Mantenabilidade",
+      "por_que_nao": "A piora decorre do downtime total por logística e administração; isso pode reduzir a disponibilidade operacional sem alterar o reparo ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "reparos consomem recursos logísticos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Na disponibilidade operacional, o tempo total de indisponibilidade (downtime) de cada falha soma o tempo de reparo ativo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "dois equipamentos com a mesma frequência de falha e o mesmo tempo de reparo ativo podem apresentar disponibilidades operacionais muito diferentes se seus tempos logísticos e administrativos forem distintos"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Interação entre proteção, segurança/integridade e perda de continuidade operacional por filosofia fail-safe.",
+      "pergunta": "Uma proteção retira o equipamento de serviço antes de dano maior, interrompendo a produção mesmo sem destruição do item. Que mecanismo de projeto liga essa ação à perda de continuidade operacional?",
+      "resposta": "Falha em modo seguro",
+      "explicacao": "O sistema é levado deliberadamente a uma condição segura para preservar segurança e integridade, mesmo ao custo de reduzir a continuidade do serviço.",
+      "resposta_padrao": "Baixa confiabilidade",
+      "por_que_nao": "A retirada é uma resposta intencional de proteção; confiabilidade trata da capacidade de continuar operando corretamente, não da filosofia de isolamento seguro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um sistema pode ser projetado para falhar de modo seguro mesmo que isso reduza sua continuidade operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Segurança e integridade interagem com esses atributos"
+        }
+      ]
+    }
+  ]
+}

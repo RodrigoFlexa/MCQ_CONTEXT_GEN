@@ -1,0 +1,107 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:012:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A identificação de ativos afetados por uma vulnerabilidade em OT depende da confirmação do componente de comunicação embarcado, não só do modelo ou da função do equipamento.",
+      "pergunta": "Sai um alerta para falhas em implementações embarcadas de TCP/IP. Dois controladores da mesma família executam a mesma lógica, mas usam firmwares diferentes. Além do modelo, o que precisa ser confirmado antes de tratá-los como afetados?",
+      "resposta": "a presença da pilha TCP/IP afetada no ativo",
+      "explicacao": "O alerta só se aplica quando a pilha vulnerável estiver presente; em OT, o tratamento começa confirmando se o ativo usa o componente afetado.",
+      "resposta_padrao": "a versão do software aplicativo do controlador",
+      "por_que_nao": "A exposição pode estar na pilha de comunicação embarcada ou no firmware, independentemente do aplicativo executado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "começa por confirmar se o ativo usa o componente afetado"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A aplicação de patch em sistemas de controle exige validação prévia de compatibilidade entre firmware, comunicação e funções de processo.",
+      "pergunta": "Fornecedor libera versão corretiva para um nó de controle que usa o componente afetado. A janela é curta e a indisponibilidade é crítica. Antes da aplicação, qual validação técnica específica deve ser concluída?",
+      "resposta": "compatibilidade entre firmware, comunicação e funções de processo",
+      "explicacao": "Em sistemas de controle, atualizar sem essa validação pode introduzir indisponibilidade ou comportamento não previsto, mesmo com correção disponível.",
+      "resposta_padrao": "a homologação do fornecedor para a versão",
+      "por_que_nao": "A compatibilidade precisa ser verificada no contexto do ativo e da função de processo, não presumida pela liberação do fornecedor.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o patch imediato não é viável em OT, a medida compensatória prioritária é retirar a exposição direta de rede com isolamento por firewall.",
+      "pergunta": "Controlador remoto com o componente vulnerável não pode receber patch antes da próxima parada e hoje está acessível diretamente pela internet. Qual arranjo de rede específico reduz a exposição de imediato?",
+      "resposta": "isolamento atrás de firewall, sem acesso direto pela internet",
+      "explicacao": "Para hardening em controle, o ganho imediato vem de remover a acessibilidade direta e interpor barreiras de rede até existir remediação compatível.",
+      "resposta_padrao": "manter o acesso remoto por VPN atualizada",
+      "por_que_nao": "A VPN reduz exposição, mas não elimina o risco do dispositivo diretamente exposto nem substitui o isolamento adicional.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "evitar acessibilidade direta pela internet"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "medidas compensatórias como redução de exposição e isolamento adicional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "muitos dispositivos conectados, inclusive pela internet"
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "O escopo de IACS offshore inclui também sistemas de informação e negócios quando conectados pela infraestrutura de rede do IACS.",
+      "pergunta": "Além de controle de processo, proteção independente, segurança e controle elétrico, que sistemas conectados pela infraestrutura de rede do IACS também entram no seu escopo?",
+      "resposta": "sistemas de informação e negócios conectados",
+      "explicacao": "No contexto offshore, o escopo de IACS não se limita aos sistemas de campo e controle; inclui ambientes informacionais conectados pela mesma infraestrutura.",
+      "resposta_padrao": "somente sistemas de automação e segurança industrial",
+      "por_que_nao": "O escopo declarado abrange também sistemas de informação e negócios quando conectados pela infraestrutura de rede do IACS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação e negócios conectados pela infraestrutura de rede do IACS"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o escopo de IACS abrange sistemas básicos de controle de processo"
+        }
+      ]
+    }
+  ]
+}

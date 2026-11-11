@@ -1,0 +1,71 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:021:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da camada de normalização quando controladores heterogêneos impedem padronização na fonte.",
+      "pergunta": "Controladores de fornecedores diferentes expõem tags e estruturas incompatíveis, comprometendo padrões de HMI e comparação entre ativos. Quando a padronização no controle não é viável, em qual camada deve ficar a normalização dos dados?",
+      "resposta": "Na camada SCADA.",
+      "explicacao": "Com diversidade de modelos entre controladores, a normalização mais próxima da fonte que ainda é viável passa a ser o SCADA.",
+      "resposta_padrao": "Nos próprios controladores.",
+      "por_que_nao": "Padronizar na fonte é desejável em outros arranjos, mas a heterogeneidade entre fornecedores pode tornar isso impraticável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de contexto de modo operacional para analytics e modelos preditivos compararem dados corretamente.",
+      "pergunta": "Vibração e potência de bombas idênticas alimentam um modelo, mas ele compara trechos de recirculação com operação em carga e dispara alertas falsos. Qual informação faltante explica o erro?",
+      "resposta": "Contexto do modo operacional.",
+      "explicacao": "Sem o estado operacional associado ao sinal, o modelo compara condições não equivalentes e tende a gerar diagnósticos frágeis e alarmes espúrios.",
+      "resposta_padrao": "Maior frequência de amostragem.",
+      "por_que_nao": "Amostragem mais alta ajuda em transientes, mas não separa estados operacionais incompatíveis para comparação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre latência e sincronismo em aplicações que influenciam ajustes operacionais frequentes.",
+      "pergunta": "Uma aplicação recalcula ajustes frequentes usando pressão, vazão e potência de sistemas diferentes. A rede segue disponível, mas os carimbos de tempo estão desalinhados e a recomendação oscila. Que aspecto técnico deve ser corrigido primeiro?",
+      "resposta": "Qualidade de sincronismo.",
+      "explicacao": "Os sinais estão chegando sem coerência temporal. Mesmo com comunicação disponível, decisões frequentes ficam erradas se as fontes não estiverem sincronizadas.",
+      "resposta_padrao": "Latência de comunicação.",
+      "por_que_nao": "Latência pode ser aceitável; com relógios desalinhados, os dados continuam temporalmente incoerentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        }
+      ]
+    }
+  ]
+}

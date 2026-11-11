@@ -1,0 +1,95 @@
+{
+  "item": "04_02",
+  "foco": 14,
+  "visita": 3,
+  "onda": 5,
+  "id": "04_02:014:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para selecionar controle multiplexado quando muitas válvulas precisam ser comandadas com poucas linhas disponíveis.",
+      "pergunta": "Há muitas válvulas a comandar e o umbilical disponível não comporta uma linha dedicada adicional para cada função. Que arquitetura de controle deve ser escolhida para reduzir as linhas dedicadas?",
+      "resposta": "controle multiplexado",
+      "explicacao": "Com várias válvulas, o multiplexado reduz linhas dedicadas porque a seleção da função ocorre localmente no módulo submarino, usando poucos condutores de sinal com suprimento hidráulico.",
+      "resposta_padrao": "Controle eletro-hidráulico convencional com linhas dedicadas.",
+      "por_que_nao": "Isso mantém a necessidade de uma linha por função; a redução vem da seleção local da função no módulo submarino.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas porque a seleção da função ocorre no módulo submarino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de arquitetura eletro-hidráulica descentralizada para reduzir inventário hidráulico distribuído mantendo atuação hidráulica.",
+      "pergunta": "O arranjo precisa preservar potência hidráulica no atuador, mas deve reduzir o inventário de fluido distribuído e o número de linhas do sistema. Qual solução de controle é a mais adequada?",
+      "resposta": "arquitetura eletro-hidráulica descentralizada",
+      "explicacao": "Na descentralização, cada atuador recebe sua própria unidade de suprimento, reduzindo linhas e volume total de fluido distribuído sem abandonar a força hidráulica no movimento da válvula.",
+      "resposta_padrao": "controle multiplexado",
+      "por_que_nao": "Multiplexação reduz condutores dedicados pela seleção local, mas não é a solução voltada a cortar inventário hidráulico distribuído.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para reduzir inventário de fluido distribuído e número de linhas, pode ser vantajosa a descentralização eletro-hidráulica."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cada atuador recebe sua própria unidade de suprimento, reduzindo número de linhas e volume total de fluido hidráulico distribuído pelo sistema"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de monitoramento para confirmar funcionalidade real do controle submarino.",
+      "pergunta": "No teste funcional, o comando de abertura é enviado, a pressão de atuação aparece, mas a indicação de posição e a condição do processo não mudam. Que critério de monitoramento deve orientar a verificação?",
+      "resposta": "coerência entre comando, pressão, posição e condição do equipamento",
+      "explicacao": "A funcionalidade do controle não se prova por um único sinal. A inconsistência entre comando, pressão, posição e condição do equipamento revela perda de funcionalidade mesmo sem grande evento ambiental.",
+      "resposta_padrao": "Confirmar apenas a pressão de controle.",
+      "por_que_nao": "Pressão pode se desenvolver sem movimento da válvula nem mudança de estado; a falha aparece na incoerência entre os sinais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a perda de funcionalidade do controle pode interromper produção ou injeção mesmo quando a falha não se apresenta como grande evento ambiental"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Elemento necessário em atuador elétrico linear para atender filosofia fail-safe close.",
+      "pergunta": "Pretende-se usar atuador elétrico linear numa válvula que deve ir automaticamente ao fechado seguro na perda de energia de comando. Que elemento precisa estar integrado ao atuador?",
+      "resposta": "pacote de mola fail-safe integrado",
+      "explicacao": "Na atuação elétrica linear, a filosofia fail-safe é atendida pelo pacote de mola integrado, que impõe retorno ao estado seguro sem depender de hidráulica nessa função.",
+      "resposta_padrao": "bateria de emergência no atuador",
+      "por_que_nao": "Bateria mantém atuação ativa; não fornece retorno passivo e automático ao estado seguro na perda de energia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção da solução deve considerar pelo menos: função a ser comandada, necessidade de fail-safe"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "configuração linear com pacote de mola fail safe integrado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola e leva a válvula ao estado seguro fechado."
+        }
+      ]
+    }
+  ]
+}

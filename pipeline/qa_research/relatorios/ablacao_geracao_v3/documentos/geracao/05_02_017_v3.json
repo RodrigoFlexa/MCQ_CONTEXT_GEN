@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:017:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Classificação de cargas essenciais pela consequência da perda de energia, não pela potência consumida.",
+      "pergunta": "Duas cargas têm potências semelhantes: uma mantém atuação de válvula de shutdown e a outra atende um consumidor sem função crítica. Na definição entre 24 Vcc/UPS e alimentação normal, qual critério técnico deve prevalecer?",
+      "resposta": "consequência da perda de energia",
+      "explicacao": "A alocação em 24 Vcc, UPS ou emergência deve ser definida pelo efeito da perda de energia sobre comando, shutdown e mitigação, não pelo kW da carga.",
+      "resposta_padrao": "A potência consumida da carga.",
+      "por_que_nao": "Cargas de comando, shutdown e mitigação podem ter baixa potência e ainda assim exigir continuidade ou independência de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confirmação de redundância funcional por segregação real das cargas entre ramos independentes.",
+      "pergunta": "Depois de modificações acumuladas, uma falha simples derrubou duas estações redundantes embora os dois UPS mostrassem tensão de saída normal. Que verificação específica deveria ter sido feita para revelar essa perda de independência?",
+      "resposta": "distribuição correta entre ramos redundantes",
+      "explicacao": "Tensão presente nos UPS não comprova independência funcional; a redundância só existe se as cargas redundantes estiverem realmente segregadas entre ramos distintos.",
+      "resposta_padrao": "Confirmar tensão disponível nos dois UPS.",
+      "por_que_nao": "Energização não prova segregação; duas estações redundantes podem continuar concentradas no mesmo ramo e cair com uma falha simples.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da coerência entre lógicas de reboot e trip para recomposição pós-blackout.",
+      "pergunta": "No black start, há fonte disponível para recomposição, mas os sistemas de comando reiniciam e voltam a tripar sem nova falha elétrica. Que coerência específica deve ser verificada nas lógicas de controle?",
+      "resposta": "coerência das lógicas de reboot e de trip",
+      "explicacao": "Na recomposição, conflito entre reboot e trip pode derrubar novamente os sistemas mesmo com fonte disponível, bloqueando o restabelecimento.",
+      "resposta_padrao": "A sequência de partida e sincronismo dos geradores.",
+      "por_que_nao": "Mesmo com geração apta, lógicas inconsistentes podem manter o comando em ciclo de reinício e trip, impedindo a recomposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento da condição das baterias como requisito de continuidade na perda de alimentação CA.",
+      "pergunta": "Com o barramento de 24 Vcc normal durante a operação, os sistemas de comando caem quando a CA é perdida. Além da presença de tensão, que condição específica precisava estar sendo monitorada?",
+      "resposta": "condição das baterias",
+      "explicacao": "A presença de tensão em regime normal não garante sustentação na perda de CA; a recomposição depende da capacidade real das baterias.",
+      "resposta_padrao": "A tensão do barramento 24 Vcc.",
+      "por_que_nao": "Com a CA disponível, o barramento pode permanecer normal mesmo com bateria incapaz de sustentar as cargas no blackout.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    }
+  ]
+}

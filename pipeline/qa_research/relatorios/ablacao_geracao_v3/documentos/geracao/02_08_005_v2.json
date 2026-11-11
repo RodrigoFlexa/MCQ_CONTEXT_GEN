@@ -1,0 +1,83 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_08:005:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do método de análise de blowdown quando o comportamento do sistema é transiente.",
+      "pergunta": "A abertura das BDVs é atrasada pelo ESD, o inventário cai durante o evento e a contrapressão no flare varia com outras descargas. Para definir a carga de blowdown, qual método de análise deve ser adotado?",
+      "resposta": "simulação dinâmica transiente",
+      "explicacao": "O cenário depende de variáveis que mudam no tempo; modelo estático pode não captar atraso de atuação, depleção do inventário e contrapressão variável.",
+      "resposta_padrao": "simulação estática conservadora",
+      "por_que_nao": "Em blowdown com transientes relevantes, a hipótese quase estacionária não representa a resposta real do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o método pode mudar o resultado quando a transitoriedade do processo é relevante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da premissa de modelagem crítica quando o blowdown real é faseado pelo sistema de ESD.",
+      "pergunta": "O estudo assume todas as BDVs abrindo ao mesmo tempo, mas o arranjo implementado abre segmentos em degraus para limitar o flare. Qual premissa do modelo está inadequada?",
+      "resposta": "lógica de ESD das BDVs",
+      "explicacao": "O faseamento muda a simultaneidade das descargas, alterando pico no flare e tempo de permanência de inventário; abrir tudo junto representa lógica errada.",
+      "resposta_padrao": "inventário inicial dos segmentos",
+      "por_que_nao": "Mesmo com inventários corretos, uma sequência de abertura incorreta distorce o perfil temporal do blowdown.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Tratamento da contrapressão do flare como condição de contorno variável no tempo em modelos de blowdown.",
+      "pergunta": "Vários segmentos descarregam no mesmo header; quando outros trechos entram em blowdown, a vazão de um segmento cai sem mudança na abertura da BDV. Qual variável de fronteira precisa variar no tempo no modelo?",
+      "resposta": "contrapressão no sistema de flare",
+      "explicacao": "A rede compartilhada responde ao fluxo combinado dos segmentos; a pressão jusante varia e altera a vazão descarregada e o tempo de despressurização.",
+      "resposta_padrao": "pressão jusante fixa",
+      "por_que_nao": "Com interação entre descargas, a condição de saída deixa de ser constante e passa a influenciar diretamente o escoamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contrapressão variável no flare."
+        },
+        {
+          "bloco": "F",
+          "trecho": "interação entre segmentos"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela contrapressão no sistema de flare"
+        }
+      ]
+    }
+  ]
+}

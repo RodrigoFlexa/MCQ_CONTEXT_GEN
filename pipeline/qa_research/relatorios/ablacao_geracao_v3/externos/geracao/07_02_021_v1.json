@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:021:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da camada de normalização quando controladores heterogêneos impedem padronização no nível de controle.",
+      "pergunta": "Controladores de fornecedores diferentes alimentam a mesma supervisão, mas tags e HMIs não seguem um padrão comum e a comparação entre ativos gera retrabalho. Em qual camada é mais viável normalizar os dados mais perto da fonte?",
+      "resposta": "na camada SCADA",
+      "explicacao": "Quando o nível de controle tem modelos de dados heterogêneos, a normalização próxima da fonte deixa de ser viável nos controladores e passa a ser tecnicamente concentrada no SCADA.",
+      "resposta_padrao": "No historiador de dados.",
+      "por_que_nao": "O historiador recebe os dados já heterogêneos; a normalização viável mais próxima da fonte, nesse caso, fica no SCADA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do sincronismo temporal entre fontes para evitar comparações inválidas entre eventos de processo.",
+      "pergunta": "Tendências do historiador, do SCADA e do monitoramento de máquinas mostram o mesmo evento com ordens diferentes entre fontes. O que deve ser verificado primeiro para validar essa comparação?",
+      "resposta": "qualidade de sincronismo dos timestamps",
+      "explicacao": "Se a sequência do mesmo evento muda entre fontes, o primeiro ponto decisivo é o alinhamento temporal. Sem sincronismo confiável, a comparação entre sinais fica tecnicamente inválida.",
+      "resposta_padrao": "A latência média da rede.",
+      "por_que_nao": "Latência pode atrasar dados, mas a divergência de ordem entre fontes aponta primariamente para sincronismo temporal inadequado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "qualidade de sincronismo"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de contexto de modo operacional para interpretar corretamente sinais e alertas analíticos.",
+      "pergunta": "Durante partidas e paradas, o analytics aponta degradação e dispara alarmes; em regime contínuo, as variáveis ficam dentro do padrão e os instrumentos estão calibrados. Que informação faltante explica primariamente esse comportamento?",
+      "resposta": "contexto de modo operacional",
+      "explicacao": "Sem identificar se o equipamento está em partida, parada ou regime, o modelo interpreta transientes como anomalias. Isso fragiliza diagnósticos mesmo com instrumentação correta.",
+      "resposta_padrao": "Recalibração dos instrumentos.",
+      "por_que_nao": "Os sensores podem estar corretos; o erro nasce da ausência do estado operacional necessário para interpretar os dados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Posicionamento local de funções que influenciam o processo quando há sensibilidade a latência e perda de conectividade.",
+      "pergunta": "Uma aplicação de otimização deixará de ser apenas consultiva e passará a influenciar ajustes frequentes, mas o enlace com a nuvem sofre quedas intermitentes. Onde a função decisiva deve permanecer?",
+      "resposta": "na borda, próxima ao controle",
+      "explicacao": "Ao sair de apoio à decisão e passar a influenciar ajustes frequentes, a função fica sensível a latência e perda de conectividade, exigindo execução local próxima ao processo.",
+      "resposta_padrao": "Na nuvem, com cópia local dos dados.",
+      "por_que_nao": "Cópia local não remove a dependência do enlace para influenciar o processo; a lógica decisiva precisa ficar próxima ao controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um SCADA local consome essas informações em tempo real."
+        }
+      ]
+    }
+  ]
+}

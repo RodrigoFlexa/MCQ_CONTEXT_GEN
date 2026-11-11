@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:014:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Isolamento da camada com falha pela diferença entre controle local ativo e supervisão congelada.",
+      "pergunta": "As variáveis de um PLC remoto congelam em duas HMIs e no historian, mas a engenharia conectada localmente ao PLC mostra valores vivos e as malhas seguem controlando. Qual elo técnico está mais provavelmente falho?",
+      "resposta": "comunicação entre o PLC e a supervisão",
+      "explicacao": "Se o PLC continua recebendo medições e mantendo as malhas, campo e controle estão íntegros. O congelamento simultâneo em HMI e historian aponta para a comunicação entre a camada de controle e a supervisão.",
+      "resposta_padrao": "defeito nos transmissores de campo",
+      "por_que_nao": "Com transmissores defeituosos, o PLC não mostraria valores vivos nem manteria as malhas respondendo normalmente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sistemas de supervisão e controle utilizam os mesmos dados para monitoramento operacional"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste integrado dinâmico para expor falhas de sequência, comunicação e atuação antes da entrada de gás.",
+      "pergunta": "Num circuito de regeneração, antes da entrada de gás, lógica, instrumentos e comunicação ponto a ponto já foram verificados. Que ensaio ainda expõe falhas de sequência, atuação invertida e instabilidade inicial de controle?",
+      "resposta": "operação em circuito fechado com N2",
+      "explicacao": "Esse teste exercita a arquitetura integrada em condição representativa porém controlada, revelando erros dinâmicos de configuração, comunicação e atuação que verificações estáticas não mostram.",
+      "resposta_padrao": "loop check estático com equipamentos energizados",
+      "por_que_nao": "Loop checks ponto a ponto não submetem a automação ao comportamento integrado e dinâmico necessário para revelar essas falhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a automação resulta da integração de dispositivos de campo, sistemas controladores e supervisão."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a arquitetura de automação precisa ser verificada como sistema integrado, não apenas como coleção de equipamentos energizados."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A operação em circuito fechado com nitrogênio (N2) foi usada para confirmar desempenho, testar antecipadamente a lógica de regeneração e permitir ajustes antes do primeiro gás."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Reconhecimento da perda de coerência temporal como causa de supervisão aparentemente válida, mas operacionalmente enganosa.",
+      "pergunta": "Tendências continuam desenhadas e os valores parecem plausíveis, mas comparações entre sinais relacionados já não batem com o observado em campo. Que atributo dos dados foi comprometido?",
+      "resposta": "coerência temporal dos sinais",
+      "explicacao": "Tendências, comparações e inferências dependem de sinais sincronizados e temporalmente consistentes. Sem isso, a supervisão pode continuar exibindo valores plausíveis sem representar corretamente o estado físico do processo.",
+      "resposta_padrao": "precisão metrológica",
+      "por_que_nao": "Mesmo medições precisas, se atrasadas ou dessincronizadas, produzem tendências e comparações incompatíveis com o processo real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ]
+    }
+  ]
+}

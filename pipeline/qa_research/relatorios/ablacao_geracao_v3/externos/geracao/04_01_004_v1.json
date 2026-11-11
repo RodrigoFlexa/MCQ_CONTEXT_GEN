@@ -1,0 +1,103 @@
+{
+  "item": "04_01",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "04_01:004:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança do ponto de conexão altera a condição de contorno; em SCR, a posição de hang-off deve entrar na configuração estrutural analisada.",
+      "pergunta": "Na revisão do pull-in de um SCR, o ponto de conexão no casco foi deslocado, mantendo a mesma linha e o mesmo estado de mar. Qual parâmetro da configuração estrutural deve ser atualizado no modelo para representar a nova resposta?",
+      "resposta": "Posição de hang-off.",
+      "explicacao": "Nos modelos com SCR, a posição de hang-off integra a configuração estrutural analisada; mudar esse ponto altera a condição de contorno e a resposta do riser.",
+      "resposta_padrao": "Tração de topo de operação.",
+      "por_que_nao": "Deslocar o ponto de conexão muda a geometria de suporte; a tração não substitui a atualização da localização do hang-off.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A resposta do riser varia com ações ambientais, propriedades da linha e condições de contorno na unidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em modelos de FPSO com SCR, a posição de hang-off faz parte da configuração estrutural analisada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A temperatura deve alimentar a estimativa da rigidez à flexão para recalcular de forma realista a resposta do riser.",
+      "pergunta": "Na revisão do modelo para liberar a conexão final, o perfil térmico considerado para a linha mudou. Que propriedade do tubo precisa ser reestimada antes de recalcular a resposta?",
+      "resposta": "Rigidez à flexão da tubulação.",
+      "explicacao": "Na análise mais realista, a temperatura entra na estimativa da rigidez à flexão; alterar essa propriedade muda a resposta calculada do riser.",
+      "resposta_padrao": "Peso submerso da linha.",
+      "por_que_nao": "Nesta condição, a influência destacada da temperatura é sobre a rigidez à flexão, não sobre o carregamento gravitacional efetivo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a temperatura é relevante porque entra na estimativa da rigidez à flexão da tubulação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "muda a resposta calculada do riser"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a temperatura é usada na estimativa de rigidez à flexão"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Flutuabilidade distribuída altera o balanço gravitacional na água ao modificar o peso submerso efetivo da linha.",
+      "pergunta": "Módulos de flutuabilidade distribuída foram instalados no trecho suspenso antes do pull-in final. Qual parcela do carregamento na água muda diretamente e desloca a forma de equilíbrio da linha?",
+      "resposta": "Peso submerso efetivo.",
+      "explicacao": "A flutuabilidade distribuída rebalanceia o carregamento gravitacional na água; esse peso submerso controla a forma de equilíbrio da linha.",
+      "resposta_padrao": "Amortecimento hidrodinâmico.",
+      "por_que_nao": "Os módulos alteram primeiro o balanço de peso na água; amortecimento não é a parcela gravitacional que define a forma estática.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O peso submerso da linha também influencia sua forma de equilíbrio"
+        },
+        {
+          "bloco": "F",
+          "trecho": "define a parcela de carregamento gravitacional efetiva na água"
+        },
+        {
+          "bloco": "F",
+          "trecho": "se houver flutuabilidade distribuída, esse balanço se altera novamente"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para linha rígida em pull-in, a solução de topo que faz a transição progressiva de rigidez no hang-off é o stress-joint.",
+      "pergunta": "No pull-in de uma linha rígida para hang-off em casco flutuante de produção, o topo precisa fazer transição progressiva de rigidez junto à conexão. Qual componente específico deve cumprir essa função?",
+      "resposta": "Stress-joint.",
+      "explicacao": "Na conexão de linha rígida, o componente indicado para a transição progressiva de rigidez no topo é o stress-joint, compatível com o hang-off analisado.",
+      "resposta_padrao": "Bend stiffener.",
+      "por_que_nao": "Bend stiffener é solução típica para riser flexível; na linha rígida a transição de rigidez é feita pelo stress-joint.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "elementos de acomodação de rotação e de transição de rigidez no hang-off"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A escolha da solução de topo precisa ser compatível com o tipo de riser"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para linha rígida, o stress-joint fornece transição progressiva de rigidez."
+        }
+      ]
+    }
+  ]
+}

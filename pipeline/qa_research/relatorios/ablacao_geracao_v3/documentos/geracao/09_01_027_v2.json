@@ -1,0 +1,99 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "visita": 2,
+  "onda": 3,
+  "id": "09_01:027:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ruptura de insumo crítico invalida política logística mesmo com menor frota, menor consumo e boa pontualidade média.",
+      "pergunta": "Uma política de roteirização diminui frota e consumo. Nas simulações, o nível do tanque de diesel cruza zero antes da chegada seguinte em alguns ciclos, embora o atendimento médio permaneça bom. Qual indicador desqualifica tecnicamente essa política?",
+      "resposta": "stockout de diesel",
+      "explicacao": "Cruzar zero entre atendimentos caracteriza ruptura de suprimento crítico. O bloco foco diz que reduzir consumo ou frota não basta se a política aumentar ruptura ou atrasos críticos.",
+      "resposta_padrao": "atendimento médio no prazo",
+      "por_que_nao": "Pontualidade média pode permanecer aceitável e ainda coexistir com falta de diesel, que é tecnicamente mais crítico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma política pode reduzir consumo ou frota contratada e ainda assim ser inadequada se aumentar ruptura de suprimento ou atrasos críticos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ferramenta capaz de manter baixo stockout de diesel com menor consumo pela frota total utilizada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Comparação econômica de alternativas logísticas deve usar custo total com penalidades, não apenas consumo operacional.",
+      "pergunta": "Dois cenários mantêm nível de serviço semelhante; um usa cargas múltiplas e reabastecimento intermediário, o outro consome mais combustível. Qual métrica econômica deve comparar adequadamente as alternativas?",
+      "resposta": "custo total com penalidades",
+      "explicacao": "O bloco foco destaca essa métrica como tecnicamente útil e ressalta que custos mudam com composição da frota, cargas múltiplas e reabastecimento intermediário, além de impactos de serviço.",
+      "resposta_padrao": "consumo associado à operação",
+      "por_que_nao": "Consumo sozinho não captura efeitos de composição da frota, cargas múltiplas, reabastecimento intermediário e penalidades de desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos, utilização da frota, consumo associado à operação e custo total com penalidades."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Custos também podem mudar com a composição da frota, com o uso de cargas múltiplas e com a necessidade de reabastecimento intermediário."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelos de suprimento marítimo precisam representar tempos de espera exógenos para estimar atrasos de forma realista.",
+      "pergunta": "Ao modelar suprimento marítimo, tempos de navegação, berço e transferência já estão incluídos. Meteorologia e janelas operacionais ainda geram filas e reprogramações. Que componente temporal precisa entrar no modelo para não subestimar atrasos?",
+      "resposta": "espera por fatores exógenos",
+      "explicacao": "O bloco foco manda representar essa espera como incerteza operacional. O apoio mostra que SIMOPS e restrições operacionais aumentam esperas, reprogramações e variabilidade do atendimento.",
+      "resposta_padrao": "buffer fixo no cronograma",
+      "por_que_nao": "Margem fixa não representa a dinâmica de filas e esperas variáveis causada por fatores externos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "aumentam as esperas, as reprogramações e a variabilidade do tempo de atendimento."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Resultado de otimização com cargas múltiplas só pode ser aplicado após confirmar a exequibilidade real da arrumação no PSV.",
+      "pergunta": "O otimizador programou uma viagem com cargas múltiplas e melhor custo. Antes de liberar o plano, qual verificação técnica específica confirma que ele é executável no PSV real?",
+      "resposta": "exequibilidade da arrumação da carga",
+      "explicacao": "A viabilidade observada em modelo depende das hipóteses adotadas. O apoio exige que a solução permaneça executável na embarcação real, com arrumação compatível com acesso, amarração e segregação.",
+      "resposta_padrao": "área livre de convés disponível",
+      "por_que_nao": "Área livre isoladamente não garante arrumação executável sob requisitos de resistência, estabilidade, segregação, amarração e acesso para içamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "viabilidade de cargas múltiplas com potencial de maior eficiência de custo e nível de serviço equivalente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A solução programada deve permanecer executável nas condições reais da embarcação e do FPSO."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Arrumar a carga exige considerar segregação, amarração, sequência de atendimento e acesso para içamento."
+        }
+      ]
+    }
+  ]
+}

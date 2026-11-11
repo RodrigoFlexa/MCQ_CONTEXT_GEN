@@ -1,0 +1,107 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:007:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade individual obrigatória em acesso de terceiros com potencial de alterar lógica e intertravamentos.",
+      "pergunta": "Suporte emergencial de fornecedor quer usar uma única conta remota já compartilhada entre vários especialistas para atuar em uma estação capaz de modificar intertravamentos. Qual controle deve ser exigido antes de liberar o acesso?",
+      "resposta": "identidade individual verificável",
+      "explicacao": "Conta compartilhada impede atribuir ações a uma pessoa. Em ativos com capacidade de alterar lógica ou intertravamentos, a governança deve ser mais restritiva e preservar responsabilização individual.",
+      "resposta_padrao": "MFA na conta compartilhada do fornecedor.",
+      "por_que_nao": "MFA fortalece a autenticação, mas não resolve a ausência de atribuição individual das ações executadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "identidade individual verificável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de expiração automática para permissões temporárias de terceiros em atividades autorizadas por janela.",
+      "pergunta": "Acesso de terceiro foi liberado para um ajuste único em parâmetro crítico, aprovado apenas para uma janela curta na madrugada. Qual atributo do acesso deve fazer a permissão deixar de existir automaticamente ao fim dessa janela?",
+      "resposta": "validade temporal",
+      "explicacao": "Quando a atividade é restrita a uma janela aprovada, a permissão precisa expirar por desenho, sem depender de remoção manual posterior.",
+      "resposta_padrao": "Revogação manual do acesso ao final do serviço.",
+      "por_que_nao": "Revogação manual depende de ação humana após a atividade e pode manter a permissão ativa além do período autorizado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "validade temporal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Evidência adequada para verificar janela autorizada e aderência de escopo em acesso de terceiros.",
+      "pergunta": "Concluída uma intervenção remota de fornecedor em estação de engenharia, é preciso verificar se ele atuou só no período aprovado e apenas no que foi autorizado. Qual evidência de controle deve ser analisada?",
+      "resposta": "registro de sessão",
+      "explicacao": "Para terceiros, não basta saber que houve login. É necessário evidenciar o que foi feito e quando, para confirmar janela autorizada e aderência ao escopo.",
+      "resposta_padrao": "Log de autenticação.",
+      "por_que_nao": "Log de autenticação mostra eventos de entrada e saída, mas não demonstra as ações executadas nem o escopo seguido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "registro de sessão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação periódica para identificar contas e privilégios que permaneceram ativos sem necessidade atual.",
+      "pergunta": "Meses depois de várias manutenções aprovadas, a auditoria encontra contas de terceiros ainda habilitadas sem demanda corrente. Qual verificação de governança deveria ter detectado esse desvio?",
+      "resposta": "revisão periódica dos acessos ativos",
+      "explicacao": "Aprovações antigas não mostram quais contas continuam habilitadas. A revisão periódica identifica credenciais remanescentes e desalinhadas com a necessidade operacional atual.",
+      "resposta_padrao": "Aprovação prévia da atividade.",
+      "por_que_nao": "Aprovar a atividade antes da execução não revela contas que permaneceram ativas depois do término ou mudança de função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "revisão periódica dos acessos ativos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "A eficácia desses controles não é avaliada apenas pela existência de procedimentos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa."
+        }
+      ]
+    }
+  ]
+}

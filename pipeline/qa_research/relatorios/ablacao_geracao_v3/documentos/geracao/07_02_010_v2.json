@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:010:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A segurança do acesso remoto depende do estado do endpoint remoto, não só do túnel VPN.",
+      "pergunta": "Conexão de fornecedor usa VPN atualizada e autenticação válida, mas o notebook remoto está sem evidência recente de atualização e configuração controlada. Qual verificação técnica ainda é decisiva antes de liberar a sessão?",
+      "resposta": "Condição de segurança do dispositivo conectado",
+      "explicacao": "Nos acessos remotos em IACS, o canal protegido não elimina o risco trazido por endpoint desatualizado, infectado ou mal configurado.",
+      "resposta_padrao": "Validar apenas a VPN e as credenciais do usuário.",
+      "por_que_nao": "A VPN protege o tráfego em trânsito, mas não corrige comprometimento pré-existente do equipamento remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O alcance do acesso remoto de terceiros deve ser limitado pela necessidade operacional da tarefa executada.",
+      "pergunta": "Suporte externo foi chamado para diagnosticar um único equipamento, mas solicita alcance remoto amplo à rede de controle para “facilitar”. Qual critério deve definir o alcance liberado?",
+      "resposta": "Escopo compatível com a tarefa executada",
+      "explicacao": "Em IACS, uma sessão autorizada pode alcançar funções operacionais, de configuração ou diagnóstico; por isso o acesso deve ser delimitado à necessidade da atividade.",
+      "resposta_padrao": "Conceder acesso amplo temporário durante a janela de suporte.",
+      "por_que_nao": "Ampliar o alcance expõe funções sem relação com a tarefa e aumenta desnecessariamente a superfície de atuação da sessão autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O acesso remoto de terceiros deve ser encerrado imediatamente ao término da intervenção para reduzir exposição residual.",
+      "pergunta": "O diagnóstico remoto terminou e a falha já foi identificada, embora uma nova chamada possa ocorrer mais tarde. Qual ação técnica imediata reduz a exposição residual nesse momento?",
+      "resposta": "Encerrar o acesso remoto ao fim da atividade",
+      "explicacao": "Mesmo autorizado, o acesso remoto mantém uma via de alcançabilidade para funções sensíveis; após a tarefa, essa exposição deve ser removida.",
+      "resposta_padrao": "Manter a sessão ativa em espera para agilizar eventual retorno.",
+      "por_que_nao": "Sessão ociosa preserva acesso desnecessário a funções operacionais, de configuração ou diagnóstico após o término da necessidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O registro de sessão precisa permitir rastrear autor, momento e ativo da intervenção para investigação e contenção.",
+      "pergunta": "Horas depois de uma intervenção remota, surge alteração indevida de configuração em um controlador. Que característica do registro de sessão permite rastrear a atuação de forma útil para contenção?",
+      "resposta": "Registro rastreável por usuário, horário e ativo",
+      "explicacao": "O monitoramento útil é o que permite reconstruir quem acessou, quando ocorreu a sessão e em qual ativo houve atuação.",
+      "resposta_padrao": "Log genérico de conectividade do túnel VPN.",
+      "por_que_nao": "Conectividade sem correlação com autor e ativo não sustenta investigação de desvio nem contenção direcionada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação"
+        }
+      ]
+    }
+  ]
+}

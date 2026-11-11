@@ -1,0 +1,52 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "A alimentação de bateria/24 Vcc dos circuitos de comando e proteção do switchgear.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "diagnostico",
+  "justificativa": "O ponto decisivo é reconhecer, por conhecimento técnico de switchgear, que relés e bobinas de fechamento/disparo dependem da alimentação CC de controle; os blocos sustentam esse papel crítico da malha CC na recomposição após blackout.",
+  "aprovada": true,
+  "motivo": "nenhum",
+  "falhas": [],
+  "referencia_valida": true,
+  "tipo_confere": false,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "05_02",
+      "texto": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle. Em uma configuração de FPSO, os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais, com dois conjuntos retificador/carregador e banco de baterias, cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE. Havia também UPS (Uninterruptible Power Supply) para cargas vitais em corrente alternada. Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal e à perda de equipamentos importantes. Na mesma sequência funcional, a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS. O mecanismo relevante é que o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida. Assim, a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout, não apenas um detalhe auxiliar.",
+      "titulo": "PMS, transientes e blackout / Interfaces entre alimentação em corrente contínua, UPS e perda de geração",
+      "indice_documento": 11
+    },
+    {
+      "id": "B2",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    },
+    {
+      "id": "B3",
+      "item": "05_02",
+      "texto": "A função da proteção é eliminar a parte defeituosa com a menor perda possível de continuidade. Para isso, a seletividade coordena a atuação entre dispositivos a montante e a jusante, enquanto a retaguarda atua quando a proteção principal falha ou não cobre adequadamente determinada zona. Em arranjos com bancos de transformadores providos de disjuntor primário, a proteção de barramento pode usar transformadores de corrente nas buchas primárias ou proteção diferencial de terra, exigindo abertura da fonte primária. Nessa arquitetura, relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário, para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador. O mesmo princípio vale para relés de fase em relação aos alimentadores a jusante. Em redes offshore, também são citados relés de proteção, fusíveis, proteção diferencial de barramento, detecção de arco e desligamento automático da alimentação como meios de limitar perigo por excesso de corrente, falta ou sobrecarga. A escolha entre essas funções depende da zona a proteger, do nível de corrente disponível, da velocidade requerida e da tolerância operacional à perda de carga.",
+      "titulo": "Distribuição e proteções / Proteção de barramentos, transformadores e alimentadores: seletividade e retaguarda",
+      "indice_documento": 7
+    },
+    {
+      "id": "B4",
+      "item": "05_02",
+      "texto": "A confiabilidade da distribuição elétrica não depende só do projeto inicial; depende de inspeção, teste, manutenção e controle de mudanças. Para relés eletrônicos e sistemas associados, pode ser necessário equipamento especializado para identificar erros internos, e as instruções do fabricante influenciam a forma de verificação. Ensaios operacionais sob carga aplicável são relevantes porque parte das falhas só se manifesta com esforço elétrico real, interação entre controles ou aquecimento. A documentação técnica útil à operação e à manutenção inclui diagrama unifilar, filosofia de operação da geração e da distribuição, estudo de seletividade, estudo de arco elétrico, planilha mestra de ajustes de proteção e históricos operacionais do switchgear, como atuações, falhas e calibrações. Em monitoramento de condição, técnicas como medição de tensão transitória à terra e métodos acústicos para descargas parciais em switchgear, termografia em painéis de baixa tensão e monitoramento de vibração em equipamentos rotativos ajudam a antecipar degradação. Avaliações baseadas em risco complementam recomendações de fabricante e histórico de falhas, especialmente quando envelhecimento, obsolescência, mudança de regime operacional ou alteração de carga modificam probabilidade e consequência das falhas.",
+      "titulo": "Distribuição e proteções / Inspeção, testes, documentação e integridade ao longo da vida",
+      "indice_documento": 9
+    },
+    {
+      "id": "B5",
+      "item": "05_02",
+      "texto": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida. Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação. O tempo de retaguarda pode variar de minutos a algumas horas conforme porte e essencialidade da aplicação, mas valores específicos dependem da filosofia da unidade e não podem ser assumidos sem dado de projeto. O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional. Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível. Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada.",
+      "titulo": "UPS, baterias e sistemas essenciais / Seleção e monitoramento das cargas essenciais",
+      "indice_documento": 17
+    }
+  ]
+}

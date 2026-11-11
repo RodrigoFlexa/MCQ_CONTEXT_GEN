@@ -1,0 +1,95 @@
+{
+  "item": "02_12",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_12:017:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a demanda cai e o compressor se aproxima de surge, a proteção correta é aumentar a vazão interna por reciclo.",
+      "pergunta": "A demanda de gás cai rapidamente, a rotação ainda mantém a pressão de sucção no alvo e o ponto do compressor se aproxima do limite instável. Qual ação automática específica deve atuar para preservar a máquina?",
+      "resposta": "Abertura da válvula de reciclo anti-surge do estágio.",
+      "explicacao": "Perto do surge, a proteção precisa elevar a vazão que atravessa o compressor. Como a rotação está fechada em pressão de sucção, a ação decisiva é abrir o reciclo.",
+      "resposta_padrao": "Reduzir mais a rotação da máquina.",
+      "por_que_nao": "Nesta condição, proteger exige aumentar a vazão interna através do compressor; reduzir rotação não garante recuperar a margem ao surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rotação da máquina controla a pressão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha anti-surge preserva a máquina ao manter vazão suficiente através do compressor"
+        },
+        {
+          "bloco": "F",
+          "trecho": "abrindo reciclo para devolver parte do gás"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em compressores com ampla faixa de rotação, o setpoint da proteção anti-surge deve acompanhar a rotação.",
+      "pergunta": "Com ampla variação de rotação, as válvulas de reciclo por estágio ajustam a vazão de sucção. Como deve ser definido o setpoint de proteção para acompanhar a condição real da máquina?",
+      "resposta": "Setpoint variável dependente da rotação.",
+      "explicacao": "A arquitetura descrita vincula a referência das válvulas de reciclo à rotação, evitando proteção excessiva ou insuficiente fora de um único ponto operacional.",
+      "resposta_padrao": "Setpoint fixo de vazão mínima.",
+      "por_que_nao": "A margem de operação estável se desloca com a rotação; uma referência fixa não acompanha essa mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "forte interação entre controle de capacidade e proteção anti-surge"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A ferramenta adequada para avaliar interação entre capacidade e anti-surge em transientes é a simulação dinâmica.",
+      "pergunta": "Partida, parada e mudanças bruscas de carga precisam ser avaliadas num trem com controle de capacidade e anti-surge fortemente acoplados. Qual ferramenta de engenharia é a mais adequada para testar esses esquemas automáticos?",
+      "resposta": "Simulação dinâmica.",
+      "explicacao": "Ela representa transientes e lógica automática, permitindo estudar partida, parada, ajuste das malhas e teste dos esquemas de proteção antes da validação em campo.",
+      "resposta_padrao": "Simulação em regime permanente.",
+      "por_que_nao": "A interação crítica aparece durante transientes e atuação automática, que não são representados adequadamente por um modelo estacionário.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a simulação dinâmica é útil para estudar partida, parada, ajuste das malhas de capacidade e anti-surge, teste de esquemas automáticos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "forte interação entre controle de capacidade e proteção anti-surge"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "O inter-resfriamento entre estágios, com pressão quase constante, aumenta a densidade do gás na sucção do estágio seguinte.",
+      "pergunta": "Com pressão praticamente constante, o inter-resfriador reduz a temperatura antes do estágio seguinte. Qual propriedade do gás aumenta e desloca o desempenho desse estágio?",
+      "resposta": "Densidade do gás.",
+      "explicacao": "O resfriamento intermediário altera a condição do gás que entra no estágio seguinte; com pressão quase constante, a mudança relevante com aumento é a densidade.",
+      "resposta_padrao": "Pressão de sucção.",
+      "por_que_nao": "Sem mudança relevante de pressão, o efeito do inter-resfriamento sobre desempenho e risco vem da alteração da densidade e da condição de condensação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Resfriamento e separação intermediária alteram densidade, temperatura e formação de condensado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "afetando tanto desempenho quanto risco operacional"
+        }
+      ]
+    }
+  ]
+}

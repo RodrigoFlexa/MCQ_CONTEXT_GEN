@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:027:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação funcional ponta a ponta após modificação de comando remoto e indicação de posição.",
+      "pergunta": "Convertida para comando remoto com indicação de posição, a válvula precisa ser liberada após modificação. Que verificação específica confirma que o comando da IHM chega ao atuador e o retorno de campo volta ao supervisor?",
+      "resposta": "Teste funcional ponta a ponta de comando e realimentação de posição.",
+      "explicacao": "Esse teste confirma simultaneamente que o comando exibido na IHM é executado pelo atuador e que a posição real volta ao supervisor, validando a coerência entre implementação, tela e campo.",
+      "resposta_padrao": "Calibração isolada do posicionador.",
+      "por_que_nao": "Calibração local não comprova a cadeia completa IHM-lógica-saída-retorno exigida para comando remoto confiável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma informação de campo pode não ser recebida pelo sistema supervisor."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "correção para que sinais de campo chegassem à IHM e para que comandos da IHM fossem executados pelos atuadores"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de divergência entre função de controle prevista e forma de atuação realmente implementada no elemento final.",
+      "pergunta": "Tela e P&ID mostram controle remoto de posição, mas em campo a válvula só opera em totalmente aberta ou fechada, sem posições intermediárias. Qual divergência técnica primária existe na implementação?",
+      "resposta": "Atuação abre/fecha no elemento final, não modulante.",
+      "explicacao": "Operação restrita a totalmente aberta ou fechada, apesar da previsão de controle remoto de posição, caracteriza divergência de configuração do elemento final para atuação binária.",
+      "resposta_padrao": "Desajuste de setpoint do controlador.",
+      "por_que_nao": "Setpoint incorreto altera a demanda do controle, mas não transforma uma válvula modulante em binária sem posições intermediárias.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        },
+        {
+          "bloco": "F",
+          "trecho": "forma de atuação dos elementos finais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "prevista para operação remota e com indicação de controle de posição, mas comissionada apenas como totalmente aberta ou fechada"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Efeito técnico da perda de coerência entre documentação, telas e comportamento real de campo após mudanças.",
+      "pergunta": "Após modificações sem atualização de telas e documentos, operação e manutenção passam a se basear em informações que não representam o campo. Qual efeito técnico específico isso produz?",
+      "resposta": "Degradação da confiabilidade informacional da planta.",
+      "explicacao": "Quando telas e documentos deixam de representar o campo, a operação passa a usar informações não confiáveis; isso compromete testes, diagnóstico, retorno ao serviço e avaliação do risco residual.",
+      "resposta_padrao": "Perda de calibração dos instrumentos.",
+      "por_que_nao": "O sinal decisivo é a divergência entre informação apresentada e comportamento real do campo, não erro metrológico do sensor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "perde-se coerência entre projeto, implementação, operação e manutenção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "mudanças sem fechamento adequado degradam a confiabilidade informacional da planta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "documentos ou telas que podem não representar o comportamento real do campo"
+        }
+      ]
+    }
+  ]
+}

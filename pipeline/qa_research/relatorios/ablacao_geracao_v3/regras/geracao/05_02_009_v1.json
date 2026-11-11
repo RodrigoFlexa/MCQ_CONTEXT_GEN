@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 9,
+  "visita": 1,
+  "onda": 1,
+  "id": "05_02:009:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de atuação rápida do load shedding após perda súbita de geração em sistema isolado.",
+      "pergunta": "Com a abertura de um gerador, a frequência cai tão rápido que o primeiro estágio por subfrequência atua tarde e o barramento colapsa. Que critério deve comandar o alívio inicial de carga?",
+      "resposta": "Taxa de variação da frequência (ROCOF)",
+      "explicacao": "ROCOF detecta o desequilíbrio geração-carga pela inclinação da frequência, antes que o valor absoluto atinja o patamar de subfrequência.",
+      "resposta_padrao": "Subfrequência com patamar ajustado mais alto.",
+      "por_que_nao": "Em sistemas de baixa inércia, esperar a frequência cruzar um valor absoluto pode ser lento demais para evitar o colapso."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência reativa entre geradores síncronos operando em paralelo.",
+      "pergunta": "Dois geradores síncronos em paralelo mostram kW quase iguais e setpoints de tensão coincidentes, mas um fornece quase todo o kvar. Que característica do sistema de excitação deve ser ajustada para compartilhar o reativo?",
+      "resposta": "Droop reativo do AVR",
+      "explicacao": "A divisão de kvar entre geradores em paralelo é definida pela característica de droop reativo da excitação, não pelo governador.",
+      "resposta_padrao": "Droop do governador.",
+      "por_que_nao": "O governador corrige o compartilhamento de potência ativa; a potência reativa depende da excitação."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Grandeza usada para detectar a primeira falta à terra em barramento de média tensão aterrado por alta resistência.",
+      "pergunta": "Barramento de média tensão aterrado por alta resistência sofre primeira falta monofásica à terra; a corrente é limitada e as fases sãs elevam a tensão fase-terra. Que grandeza a proteção deve monitorar para anunciar essa condição?",
+      "resposta": "Tensão residual 3V0",
+      "explicacao": "Com corrente de falta intencionalmente limitada, o indicativo mais robusto é o deslocamento do neutro expresso pela tensão residual.",
+      "resposta_padrao": "Corrente de neutro 50/51N.",
+      "por_que_nao": "A medição por sobrecorrente é adequada quando a falta à terra produz corrente suficiente, o que não é o caso com aterramento por alta resistência."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de restrição da proteção diferencial de transformador durante energização a vazio.",
+      "pergunta": "Na energização a vazio de um transformador, a diferencial vê corrente alta e assimétrica sem evidência de falta externa. Que característica do sinal deve bloquear essa atuação?",
+      "resposta": "Componente de segunda harmônica",
+      "explicacao": "A corrente de inrush magnetizante contém segunda harmônica elevada, usada para distinguir energização normal de falta interna na proteção diferencial.",
+      "resposta_padrao": "Componente de quinta harmônica.",
+      "por_que_nao": "Quinta harmônica é associada à sobreexcitação; o inrush magnetizante clássico é identificado pela segunda harmônica."
+    }
+  ]
+}

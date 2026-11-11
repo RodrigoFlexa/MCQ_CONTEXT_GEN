@@ -1,0 +1,55 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Um data diode (diodo de dados) na fronteira entre OT e IT.",
+  "alternativa_excluida": true,
+  "atalho": true,
+  "sustentada": false,
+  "elemento_unico": true,
+  "tipo_sugerido": "decisao",
+  "justificativa": "A condição do enunciado já aponta, quase por definição, para comunicação só de OT para IT, mas os blocos não afirmam explicitamente o uso de gateway unidirecional/data diode como solução decisiva.",
+  "aprovada": false,
+  "motivo": "atalho",
+  "falhas": [
+    "atalho",
+    "fora_da_fonte"
+  ],
+  "referencia_valida": false,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "07_02",
+      "texto": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos. Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional. Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória. Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos. A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem, máquina-on-premise e máquina-máquina amplia ainda mais essas fronteiras. Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real. Em artificial lift, também aparecem integrações entre controle local, unidade terminal remota (RTU), telemetria, SCADA e software analítico. Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional.",
+      "titulo": "Arquitetura e segmentação IT/OT / Como as camadas e fronteiras costumam se formar na prática",
+      "indice_documento": 1
+    },
+    {
+      "id": "B2",
+      "item": "07_02",
+      "texto": "O comportamento dessas soluções depende fortemente da estrutura dos dados. Um desafio recorrente no nível de controle é a diversidade de modelos de dados entre fornecedores de controladores. Isso dificulta convenções de nomenclatura, padronização de interfaces humano-máquina (HMI) e comparação entre ativos sem retrabalho. Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável.\n\nA consequência é direta: analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados. Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas.\n\nOutro condicionante é o acoplamento entre a função e a infraestrutura. Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes. Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade.",
+      "titulo": "Novas tecnologias e competência / Condições que mudam o comportamento: qualidade de dados, padronização e acoplamento entre camadas",
+      "indice_documento": 21
+    },
+    {
+      "id": "B3",
+      "item": "07_01",
+      "texto": "Alarme e evento não têm a mesma finalidade no sistema de supervisão e controle. Alarme é um aviso que requer ação do operador em tempo restrito; evento é uma mudança de estado registrada para análise, sem demanda de ação imediata. Quando ambos são configurados de forma semelhante, informações que deveriam apenas ser registradas passam a competir por atenção com alarmes realmente acionáveis. O resultado é a geração de pseudo-alarmes, que dificulta reconhecer a anormalidade importante, aumenta o tempo de resposta e pode ampliar perdas de produção e risco para pessoas, instalações e meio ambiente. Esse mecanismo é compatível com sobrecarga cognitiva: o operador precisa filtrar anúncios irrelevantes justamente quando o tempo e a atenção são limitados. A racionalização de alarmes deve avaliar causa, consequência, prioridade e resposta esperada, reduzindo avisos sem ação útil sem suprimir informações necessárias à operação. O princípio técnico transferível é que a configuração de alarmes precisa associar cada anúncio a uma ação esperada, enquanto eventos devem permanecer disponíveis para registro, diagnóstico e análise sem anunciar indevidamente.",
+      "titulo": "Configurações, Ex e confiabilidade / Alarmes, eventos e pseudo-alarmes: por que a configuração altera a resposta operacional",
+      "indice_documento": 31
+    },
+    {
+      "id": "B4",
+      "item": "08_04",
+      "texto": "No sistema de transferência de carga analisado, parte das válvulas era comandada pelo sistema supervisório na sala de controle, enquanto outras dependiam de atuação local do bombeador após ordem do operador de marinha. Para parte das válvulas operadas localmente, a posição era informada automaticamente à sala de controle; para outras, isso não ocorria, exigindo inserção manual da posição pelo operador de marinha. Esse arranjo caracteriza uma operação distribuída, na qual comando, execução física e confirmação de estado podem ficar separados entre pessoas e interfaces diferentes. Tecnicamente, o arranjo funciona de modo mais confiável quando há correspondência entre a ordem emitida, a ação executada em campo, a posição real da válvula e o estado apresentado ao operador. O comportamento operacional muda quando o retorno de posição é heterogêneo ou depende de atualização manual, porque cresce a necessidade de reconciliação entre informação verbal, ação de campo e registro no sistema. Nessas condições, a qualidade da comunicação e da confirmação de estado tende a ser mais relevante para a consciência situacional e para a decisão do operador, sem que isso permita, por si só, quantificar o efeito desse arranjo em todos os cenários.",
+      "titulo": "Liderança, desempenho e comunicação / Comunicação entre campo e sala de controle na atualização do estado operacional",
+      "indice_documento": 15
+    },
+    {
+      "id": "B5",
+      "item": "07_01",
+      "texto": "A comunicação entre equipamentos de campo e controlador é uma condição prática para que a arquitetura funcione como sistema integrado. Em atividades de comissionamento de um circuito de regeneração, foram descritas verificação e calibração de instrumentos e confirmação da comunicação entre equipamentos de campo e PLC antes da operação prevista, o que mostra que energização ou presença física do equipamento não bastam para comprovar integração funcional. Também há situações em que equipamentos precisam ser lidos e acompanhados fora do PLC, indicando cobertura parcial da automação. Nesses casos, parte da visibilidade do processo depende de observação complementar do operador. Em termos técnicos gerais, a perda de comunicação pode aparecer como ausência de atualização, valor congelado, perda de comando remoto ou indisponibilidade de informações de estado, conforme a arquitetura adotada. Quando existem módulos remotos ou especializados, o comportamento observado depende não só da rede, mas também da integridade conjunta de alimentação, comunicação e lógica local do equipamento.",
+      "titulo": "DCS, PLC, redes e diagnóstico / Comunicação, rede e cobertura parcial da automação",
+      "indice_documento": 16
+    }
+  ]
+}

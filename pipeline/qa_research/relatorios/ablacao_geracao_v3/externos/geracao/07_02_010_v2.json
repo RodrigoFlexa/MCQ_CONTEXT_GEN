@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:010:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Verificação prévia de acesso remoto deve abranger a postura de segurança do endpoint conectado.",
+      "pergunta": "Fornecedor precisa acessar remotamente uma estação de engenharia via VPN atualizada para suporte urgente. Antes de liberar a sessão, qual verificação técnica específica deve ser priorizada no equipamento de origem?",
+      "resposta": "Condição de segurança do dispositivo remoto conectado.",
+      "explicacao": "A VPN protege o canal, mas um notebook remoto comprometido, desatualizado ou mal configurado pode abrir sessão válida e ainda introduzir risco ao ambiente de controle.",
+      "resposta_padrao": "Basta validar usuário, senha e a VPN.",
+      "por_que_nao": "Canal seguro e credenciais válidas não evidenciam comprometimento, desatualização ou má configuração do endpoint.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de terceiros em IACS deve ser limitado à função necessária da tarefa.",
+      "pergunta": "Durante análise remota de falha intermitente, o suporte externo só precisa ler diagnósticos de um controlador e não deve alterar lógica nem setpoints. Que escopo de acesso é tecnicamente adequado?",
+      "resposta": "Permissão somente de diagnóstico no controlador-alvo.",
+      "explicacao": "Como a sessão autorizada pode alcançar funções operacionais, de configuração ou diagnóstico, o acesso deve ser restrito ao escopo compatível com a tarefa efetivamente executada.",
+      "resposta_padrao": "Acesso de engenharia completo durante a janela de suporte.",
+      "por_que_nao": "Permissões de configuração e operação excedem a necessidade da tarefa e ampliam o impacto possível da sessão autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Encerramento da sessão ao término da atividade reduz exposição residual em acesso remoto autorizado.",
+      "pergunta": "A intervenção remota terminou, mas o fornecedor ficará de prontidão para possível novo chamado no dia seguinte. Qual ação técnica na sessão atual mantém a exposição compatível com a necessidade operacional?",
+      "resposta": "Encerrar a sessão remota ao fim da atividade.",
+      "explicacao": "Sem necessidade operacional ativa, a sessão autorizada continua como caminho de alcance ao sistema; por isso o acesso deve ser encerrado ao término da atividade.",
+      "resposta_padrao": "Manter o acesso aberto até o fim do turno para agilizar eventual retorno.",
+      "por_que_nao": "Uma sessão válida continua oferecendo caminho de alcance às funções do sistema sem necessidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o risco do acesso remoto não depende apenas do canal de comunicação. Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de intervenção remota exige associação entre sessão e ativo-alvo.",
+      "pergunta": "Depois de comportamento inesperado em um controlador, três terceiros tiveram acesso remoto autorizado no mesmo turno. Que vínculo específico o registro de sessão precisa conter para localizar a intervenção e conter no alvo correto?",
+      "resposta": "Associação da sessão ao ativo em que houve atuação.",
+      "explicacao": "Para reconstruir e conter uma intervenção, o registro precisa ligar a sessão ao equipamento efetivamente alcançado; usuário e horário sozinhos não localizam a atuação.",
+      "resposta_padrao": "Registrar apenas usuário e horário de acesso já resolve.",
+      "por_que_nao": "Sem o ativo-alvo, não se identifica tecnicamente onde a ação ocorreu para investigar ou conter.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        }
+      ]
+    }
+  ]
+}

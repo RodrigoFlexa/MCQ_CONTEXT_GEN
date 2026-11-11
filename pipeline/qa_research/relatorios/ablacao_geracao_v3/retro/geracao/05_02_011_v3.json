@@ -1,0 +1,55 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:011:v3",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Redundância de alimentação de controle só é efetiva quando há segregação elétrica real entre as rotas, não apenas capacidade instalada suficiente.",
+      "pergunta": "Em alimentação redundante de controle, que critério distingue redundância real de redundância apenas nominal?",
+      "resposta": "Segregação elétrica real das rotas de alimentação.",
+      "explicacao": "Os blocos mostram que caminhos com capacidade total ainda podem falhar juntos; a resiliência vem da independência elétrica real, evitando ponto comum de falha.",
+      "resposta_padrao": "Capacidade de cada conjunto suprir toda a carga.",
+      "por_que_nao": "Capacidade total não elimina falha de causa comum em UPS, quadro CC ou ponto de distribuição compartilhado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir toda a demanda"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Supervisão parcial com perda de atuação de válvulas após falha de UPS aponta para perda da alimentação das saídas de comando do CLP.",
+      "pergunta": "Alarmes e variáveis continuam chegando ao operador, mas válvulas comandadas pelo CLP não mudam de estado depois da perda da UPS na falta de energia principal. Que alimentação deve ser restabelecida para recuperar a atuação de campo?",
+      "resposta": "Alimentação das saídas de comando do CLP.",
+      "explicacao": "O cenário combina supervisão ainda visível com perda de atuação. Nos blocos, a falha da UPS desenergizou o cartão-relé do CLP, bloqueando os comandos de válvulas via ECOS.",
+      "resposta_padrao": "A comunicação entre a supervisão e o CLP.",
+      "por_que_nao": "A supervisão pode permanecer ativa; sem energia nas saídas de comando, o CLP não aciona os elementos de campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        }
+      ]
+    }
+  ]
+}

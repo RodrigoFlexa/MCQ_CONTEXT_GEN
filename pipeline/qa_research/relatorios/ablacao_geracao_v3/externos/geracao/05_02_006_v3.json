@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:006:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Influência do estado do barramento seccionado na propagação de faltas e na base de coordenação das proteções.",
+      "pergunta": "Duas seções de barramento alimentam cargas críticas e o estudo de proteção foi ajustado para operação separada. Durante manutenção em uma seção, deseja-se manter a outra exposta ao menor impacto possível de uma nova falta. Qual arranjo deve ser mantido?",
+      "resposta": "Barramento seccionado com bus tie aberto.",
+      "explicacao": "Com o barramento separado, a falta tende a ficar confinada à seção afetada e a operação permanece coerente com a coordenação ajustada para esse modo.",
+      "resposta_padrao": "Bus tie fechado para aumentar a flexibilidade de alimentação.",
+      "por_que_nao": "A interligação ajuda na transferência de carga, mas cria caminhos adicionais de falta e muda a coordenação prevista das proteções.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O barramento seccionado reduz a propagação de falhas e facilita manutenção com menor impacto sistêmico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação elétrica indispensável para interligar barramentos energizados por fontes distintas sem provocar transitórios severos.",
+      "pergunta": "Antes de fechar o bus tie entre dois barramentos já energizados por fontes distintas, qual verificação elétrica específica deve liberar a manobra?",
+      "resposta": "Verificação de sincronismo entre os barramentos.",
+      "explicacao": "O fechamento entre barras vivas exige coincidência elétrica adequada; sem isso, podem ocorrer transitórios severos e perda ampla de cargas.",
+      "resposta_padrao": "Conferência de mesma tensão nominal nos dois lados.",
+      "por_que_nao": "Igualdade de tensão, sozinha, não garante coincidência de frequência e ângulo de fase necessária para o fechamento seguro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Efeito da interligação de secundários de transformadores em paralelo sobre a corrente de falta disponível e a seletividade.",
+      "pergunta": "Com o fechamento do bus tie entre secundários de transformadores em paralelo, qual grandeza elétrica tende a aumentar e pode invalidar ajustes antes seletivos?",
+      "resposta": "Nível de curto-circuito disponível.",
+      "explicacao": "A interligação cria contribuições adicionais para a falta, elevando a corrente disponível e alterando sensibilidades e tempos de atuação das proteções.",
+      "resposta_padrao": "Tensão do barramento.",
+      "por_que_nao": "O problema de seletividade decorre do aumento dos caminhos de corrente de falta, não de uma elevação sustentada de tensão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos com transformadores em paralelo e secundários conectados por barramento interligado"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Coordenação da proteção de retaguarda do transformador com alimentadores para preservar seletividade no barramento secundário.",
+      "pergunta": "Numa arquitetura com transformador alimentando barramento secundário por disjuntor primário, que proteção do lado do transformador deve ser coordenada com os relés dos alimentadores para que uma falta em alimentador não desligue todo o barramento?",
+      "resposta": "Relés de retaguarda de fase e de terra.",
+      "explicacao": "São essas funções de retaguarda que precisam ficar seletivas em relação aos alimentadores, evitando desligamento indevido do barramento ou do transformador por falta a jusante.",
+      "resposta_padrao": "Proteção diferencial de barramento.",
+      "por_que_nao": "A diferencial protege a zona interna do barramento; ela não substitui a coordenação seletiva da retaguarda do transformador com os alimentadores.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário, para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        }
+      ]
+    }
+  ]
+}

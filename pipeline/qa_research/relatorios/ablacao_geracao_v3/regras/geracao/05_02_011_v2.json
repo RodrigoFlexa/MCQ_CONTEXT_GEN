@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:011:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Compartilhamento de potência ativa entre geradores em paralelo é ajustado pelo governador, não pelo AVR.",
+      "pergunta": "Ao sincronizar um segundo gerador em barramento isolado, a divisão de kVAr fica correta, mas a máquina recém-fechada permanece perto de zero kW. Qual ajuste específico deve ser elevado para que ela passe a assumir potência ativa?",
+      "resposta": "Setpoint do governador de velocidade.",
+      "explicacao": "Em paralelo, a potência ativa depende do torque mecânico aplicado pelo motor primário via governador. O AVR atua principalmente na tensão e no compartilhamento de potência reativa.",
+      "resposta_padrao": "Referência de tensão do AVR.",
+      "por_que_nao": "Ajustar o AVR altera principalmente kVAr e tensão do barramento, não a divisão de kW entre geradores."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Transferência rápida de barramento com motores em inércia exige sincronismo com a tensão residual.",
+      "pergunta": "Um barramento de motores perde a fonte principal, mas vários motores seguem girando e mantêm tensão residual decaindo. Para recompor pela fonte reserva sem fechamento fora de fase, qual verificação específica deve permissivar o fechamento do disjuntor?",
+      "resposta": "Check-sync com a tensão residual do barramento.",
+      "explicacao": "Motores em inércia retroalimentam o barramento por alguns segundos. Antes de a tensão cair a zero, o fechamento seguro exige sincronismo entre a fonte reserva e a tensão residual.",
+      "resposta_padrao": "Permissivo de barramento morto por subtensão.",
+      "por_que_nao": "Com tensão residual presente, o barramento ainda não está morto; fechar apenas por subtensão pode resultar em fechamento fora de fase."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Primeira falta à terra em sistema aterrado por alta resistência provoca deslocamento do neutro e elevação de tensão fase-terra nas fases sãs.",
+      "pergunta": "Num sistema de média tensão aterrado por alta resistência, aparece uma primeira falta à terra; a corrente é baixa, as tensões fase-fase quase não mudam e as fases sãs sobem em relação à terra. Que fenômeno elétrico específico liga esses sinais?",
+      "resposta": "Deslocamento do neutro.",
+      "explicacao": "Com a corrente de falta limitada pelo aterramento, o ponto neutro se desloca em relação à terra. Isso eleva a tensão fase-terra das fases sãs sem alterar significativamente a tensão fase-fase.",
+      "resposta_padrao": "Aumento da corrente de curto-circuito no barramento.",
+      "por_que_nao": "Nesse arranjo de aterramento, a corrente de falta é intencionalmente limitada; o efeito dominante observado é o deslocamento do neutro."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de torque do motor primário em gerador operando em paralelo deve ser eliminada por proteção de potência reversa.",
+      "pergunta": "Um gerador a diesel operando em paralelo perde combustível; a frequência do barramento se mantém pelos demais geradores e a máquina afetada passa a importar kW. Qual proteção específica deve comandar sua abertura automática?",
+      "resposta": "Proteção de potência reversa.",
+      "explicacao": "Sem torque do acionador, o gerador passa à condição de motorização e absorve potência ativa do barramento. A proteção de potência reversa detecta esse fluxo invertido.",
+      "resposta_padrao": "Proteção de subfrequência.",
+      "por_que_nao": "Com outros geradores sustentando o barramento, a frequência pode permanecer normal enquanto a máquina já está motorizando."
+    }
+  ]
+}

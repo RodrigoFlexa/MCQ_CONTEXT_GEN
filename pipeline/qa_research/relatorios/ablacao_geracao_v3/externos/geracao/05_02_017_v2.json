@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:017:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda simultânea de trens redundantes por falta de segregação elétrica real entre ramos de UPS.",
+      "pergunta": "Dois trens redundantes de controle perdem alimentação quando apenas um UPS sai de serviço, embora o diagrama mostre dois UPS 100%. Qual é a causa primária mais provável?",
+      "resposta": "Concentração dos trens redundantes no mesmo ramo de UPS",
+      "explicacao": "Com dois caminhos capazes de assumir a carga, a perda por falha simples indica ausência de segregação real entre os ramos redundantes.",
+      "resposta_padrao": "Subdimensionamento do UPS remanescente.",
+      "por_que_nao": "Com dois UPS 100%, a perda simultânea por falha simples aponta falta de independência funcional, não insuficiência de capacidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Disponibilidade do bypass como verificação funcional indispensável do UPS além da presença de tensão.",
+      "pergunta": "Durante teste periódico, a saída do UPS está normal e as baterias estão aptas, mas quer-se evitar indisponibilidade oculta se o inversor sair de serviço. Que caminho deve ser confirmado?",
+      "resposta": "Disponibilidade do bypass",
+      "explicacao": "A presença de tensão não basta. Se o inversor falhar ou precisar ser retirado, a continuidade depende do caminho alternativo de bypass.",
+      "resposta_padrao": "Autonomia do banco de baterias.",
+      "por_que_nao": "Autonomia cobre perda da fonte de entrada; se o inversor sair de serviço, a alimentação em CA depende do bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade do bypass"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Bloqueio de cargas essenciais após microinterrupções por inconsistência entre reinicialização e disparo lógico.",
+      "pergunta": "Após uma transferência curta sem perda de tensão no barramento do UPS, alguns consumidores essenciais permanecem bloqueados e só voltam com reset manual. Que coerência deve ser verificada?",
+      "resposta": "Coerência das lógicas de reboot e de trip",
+      "explicacao": "Sem perda de tensão, o problema remanescente não é o suprimento em si, mas a forma como as lógicas reiniciam e liberam os consumidores.",
+      "resposta_padrao": "Tempo de transferência do UPS.",
+      "por_que_nao": "Se a tensão foi mantida, o bloqueio não decorre do transitório elétrico, e sim da sequência lógica de retorno.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Dependência da recomposição pós-blackout da alimentação por bateria dos sistemas de comando, controle e shutdown.",
+      "pergunta": "No blackout total, há fonte pronta para assumir, mas o comando de partida, o CLP e as válvulas de shutdown ficam mortos. Qual indisponibilidade de alimentação impede a recomposição?",
+      "resposta": "24 Vcc por bateria do comando e controle essencial",
+      "explicacao": "Mesmo com fonte potencialmente disponível, a recomposição depende de alimentação contínua dos circuitos de comando, controle e atuação mantidos por bateria.",
+      "resposta_padrao": "Capacidade do gerador de emergência.",
+      "por_que_nao": "Aqui já existe fonte potencialmente disponível; o bloqueio ocorre antes, na ausência de energia para lógica e atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    }
+  ]
+}

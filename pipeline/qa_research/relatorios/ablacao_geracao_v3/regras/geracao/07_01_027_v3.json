@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_01:027:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Medição de vazão por ΔP em elemento primário requer uma única extração de raiz quadrada no caminho do sinal.",
+      "pergunta": "Numa medição de vazão por placa de orifício, a indicação ficou muito baixa em baixas cargas e quase correta perto do máximo após trocar o transmissor DP; a calibração em bancada dele está linear. Que configuração específica deve ser corrigida?",
+      "resposta": "extração de raiz quadrada duplicada",
+      "explicacao": "A vazão é proporcional à raiz de ΔP. Aplicar raiz no transmissor e novamente no sistema comprime a indicação em baixa vazão e converge perto do fundo de escala.",
+      "resposta_padrao": "Recalibrar zero e span do transmissor.",
+      "por_que_nao": "Erro de zero ou span desloca ou escala toda a faixa; não produz a distorção típica de dupla raiz em baixa vazão."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Stiction em válvula de controle se manifesta por stick-slip da haste com saída do controlador variando suavemente.",
+      "pergunta": "A posição da haste permanece parada enquanto a saída do controlador varia suavemente; depois a válvula salta alguns por cento e a variável passa a oscilar, com ar de suprimento estável. Qual a causa primária?",
+      "resposta": "stiction no conjunto haste-gaxeta",
+      "explicacao": "O padrão de stick-slip, com haste travando e depois saltando apesar de comando contínuo, caracteriza atrito estático excessivo no elemento final.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Sintonia ruim pode oscilar a malha, mas não gera o travamento da haste seguido de salto brusco com ar estável."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Selos remotos com capilares sofrem erro aparente de nível quando há aquecimento diferencial do fluido de enchimento.",
+      "pergunta": "Um transmissor de nível com selos remotos deriva para cima durante insolação de um lado do vaso e retorna à noite, com processo estável e calibração eletrônica normal. Qual a causa primária dessa deriva cíclica?",
+      "resposta": "desbalanceamento térmico dos capilares dos selos remotos",
+      "explicacao": "O aquecimento desigual expande diferentemente o fluido de enchimento nos capilares, alterando o ΔP aparente sem mudança real de nível.",
+      "resposta_padrao": "Deriva eletrônica do transmissor.",
+      "por_que_nao": "Deriva eletrônica não acompanha de forma tão característica o ciclo de insolação nem depende do aquecimento diferencial dos capilares."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em RS-485, erros concentrados no último nó e agravados por maior baud rate indicam reflexão por terminação inadequada.",
+      "pergunta": "Somente o último nó de um barramento RS-485 apresenta CRC intermitente, piorando quando a taxa de comunicação aumenta; os demais nós seguem estáveis. Que elemento físico específico deve ser corrigido primeiro?",
+      "resposta": "terminação do fim do barramento",
+      "explicacao": "Reflexões por terminação ausente ou incorreta afetam mais a extremidade da linha e se agravam com o aumento da velocidade de comunicação.",
+      "resposta_padrao": "Blindagem do cabo de comunicação.",
+      "por_que_nao": "Interferência externa tende a afetar vários nós; erro concentrado na extremidade e dependente da taxa aponta para reflexão de linha."
+    }
+  ]
+}

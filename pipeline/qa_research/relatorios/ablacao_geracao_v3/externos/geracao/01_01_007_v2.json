@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "01_01:007:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dependências funcionais compartilhadas devem ser modeladas para não contar redundância inexistente.",
+      "pergunta": "Dois trens 100% de compressão dependem da mesma água de resfriamento e do mesmo permissivo de descarga. Para não superestimar a disponibilidade, que elemento técnico o modelo RAM deve representar explicitamente?",
+      "resposta": "dependências funcionais de utilidades e intertravamentos compartilhados",
+      "explicacao": "Quando há gargalos e permissivos comuns, os trens deixam de ser independentes; um paralelo puro superestima o ganho de redundância.",
+      "resposta_padrao": "Modelar os dois trens como paralelo independente.",
+      "por_que_nao": "Utilidades e permissivos comuns criam dependência funcional e retiram a independência da redundância.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudanças de acessibilidade e estratégia de manutenção exigem revisar MTTR no RAM.",
+      "pergunta": "A arquitetura do sistema não mudou, mas o acesso ao equipamento ficou restrito e a manutenção passou a depender de janela marítima. Para atualizar a disponibilidade prevista, qual parâmetro do modelo deve ser revisto primeiro?",
+      "resposta": "MTTR da unidade",
+      "explicacao": "A condição descrita altera diretamente o tempo de reparo e retorno ao serviço, mesmo sem mudar a arquitetura do item.",
+      "resposta_padrao": "Revisar primeiro a frequência de falha.",
+      "por_que_nao": "A mudança descrita atua sobre acessibilidade e estratégia de manutenção, que deslocam o MTTR.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada, porque tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O cálculo observado de MTTR e disponibilidade exige registrar perda e retorno reais da função.",
+      "pergunta": "Na coleta para recalibrar o RAM com desempenho real, que marcações de tempo devem ser registradas em cada evento para calcular MTTR e disponibilidade observada?",
+      "resposta": "início da falha e retorno ao estado operacional",
+      "explicacao": "Esses dois instantes delimitam a indisponibilidade funcional usada no cálculo observado de reparo e disponibilidade.",
+      "resposta_padrao": "Abertura e fechamento da ordem de serviço.",
+      "por_que_nao": "Esses marcos administrativos não coincidem necessariamente com perda e recuperação da função.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário levantar modos de falha que geram perda ao sistema, histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aderência entre modelo RAM e regime operacional requer estados ou modos de operação explícitos.",
+      "pergunta": "O histórico de falhas e reparos está consistente, mas a previsão não reproduz a diferença entre campanha com um compressor operando e campanha com dois. Que elemento do modelo precisa ser incluído?",
+      "resposta": "modos de operação explícitos",
+      "explicacao": "Estados operacionais diferentes mudam a lógica funcional e a exposição do sistema; uma representação única não captura essa diferença.",
+      "resposta_padrao": "Usar uma taxa média única de falha.",
+      "por_que_nao": "Estados operacionais diferentes mudam a lógica funcional e precisam ser representados separadamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Após maior detalhamento do sistema, modelos mais completos permitem identificar os maiores contribuintes de falha, comparar modos operacionais e refinar previsões de disponibilidade e confiabilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Assim, o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        }
+      ]
+    }
+  ]
+}

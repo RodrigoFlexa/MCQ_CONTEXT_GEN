@@ -1,0 +1,103 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_10:015:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Acoplamento entre as malhas de interface e de DPR pelo balanço de massa do hidrociclone.",
+      "pergunta": "Numa arquitetura em que a interface do separador é ajustada pelo underflow do hidrociclone e o DPR é mantido pelo overflow, que elo operacional faz uma malha perturbar a outra?",
+      "resposta": "Balanço de massa compartilhado entre underflow e overflow do hidrociclone.",
+      "explicacao": "As duas correntes saem do mesmo equipamento; alterar uma redistribui a outra e muda a condição enfrentada pela segunda malha.",
+      "resposta_padrao": "Variação da pressão do separador.",
+      "por_que_nao": "O acoplamento decisivo está na partilha de vazão dentro do hidrociclone, mesmo sem mudança relevante da pressão do vaso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da filosofia de controle da interface quando a regularidade da alimentação ao hidrociclone domina.",
+      "pergunta": "Se a qualidade da água tratada piora com pequenas oscilações de alimentação aos hidrociclones, qual filosofia de controle da interface tende a ser mais adequada que segui-la rigidamente num único setpoint?",
+      "resposta": "Controle por bandas da interface.",
+      "explicacao": "Permitir excursão dentro de uma faixa e agir mais rápido nos limites tende a reduzir oscilações de vazão e de split no hidrociclone.",
+      "resposta_padrao": "Controle rígido da interface em setpoint fixo.",
+      "por_que_nao": "Nesta condição, perseguir um valor único tende a movimentar mais a descarga para o hidrociclone; bandas priorizam regularidade da alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica é coerente com o controle por bandas"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da variável manipulada da interface na presença de camada de emulsão espessa.",
+      "pergunta": "Com a água do separador seguindo para hidrociclones, a camada de emulsão fica espessa e a interface ocupa ampla faixa. Qual corrente do hidrociclone tende a ser a variável manipulada mais favorável?",
+      "resposta": "Overflow do hidrociclone.",
+      "explicacao": "Quando a emulsão engrossa, a estratégia indicada pode mudar do underflow para o overflow como variável manipulada mais favorável.",
+      "resposta_padrao": "Underflow do hidrociclone.",
+      "por_que_nao": "Embora seja comum usá-lo para interface, com emulsão espessa o texto indica melhor adequação do controle pelo overflow.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manipula a vazão de underflow do hidrociclone para controlar a interface no separador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de emulsão se torna muito espessa, a variável manipulada mais adequada pode mudar"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma estratégia de controle de overflow pode ser mais favorável nesse cenário específico"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério dinâmico para tolerar excursões da interface sem perda relevante de desempenho a jusante.",
+      "pergunta": "Antes de aceitar alguma oscilação da interface sem prejuízo relevante ao tratamento de água, que comparação dinâmica deve ser feita entre a perturbação da composição e o hidrociclone?",
+      "resposta": "Variação do óleo na água versus constante de tempo do hidrociclone.",
+      "explicacao": "A tolerância depende de a composição variar mais lentamente que a resposta característica do hidrociclone; sem essa separação de escalas, a jusante pode degradar.",
+      "resposta_padrao": "Basta verificar se a interface permanece dentro da faixa geométrica permitida.",
+      "por_que_nao": "A aceitabilidade depende da dinâmica relativa do sistema acoplado, não só da posição física da interface no vaso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado"
+        }
+      ]
+    }
+  ]
+}

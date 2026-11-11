@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:015:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de priorização do impacto por função afetada em incidente com potencial operacional.",
+      "pergunta": "Durante um evento ainda sem causa definida, a perda atinge sistemas que atuam sobre válvulas, vazão e pressão. Qual critério técnico deve comandar a avaliação imediata do impacto?",
+      "resposta": "as funções afetadas de controle e proteção",
+      "explicacao": "Em instalação de maior risco, a severidade imediata decorre do efeito sobre funções que controlam ou protegem o processo, não da classificação inicial da origem do evento.",
+      "resposta_padrao": "A origem do evento, para decidir se é elétrico ou cibernético.",
+      "por_que_nao": "A origem orienta a investigação, mas a urgência operacional vem da perda de funções que atuam no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diferenciação entre comprometimento cibernético do controle e falha de infraestrutura de energia.",
+      "pergunta": "Perda simultânea de controle, shutdown e mitigação ocorre junto com fumaça e arco elétrico na UPS, sem alteração de lógica ou setpoints. Qual é a causa primária mais provável?",
+      "resposta": "falha da infraestrutura de alimentação ininterrupta",
+      "explicacao": "A perda simultânea em sistemas com alimentação comum, somada a sinais físicos locais na UPS e ausência de mudanças lógicas, aponta para falha elétrica de suporte.",
+      "resposta_padrao": "Comprometimento cibernético do DCS ou dos PLCs.",
+      "por_que_nao": "Sem comandos, lógicas ou setpoints alterados, os sinais físicos e a alimentação comum indicam falha de energia, não ataque ao controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia; alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sequência segura de intervenção em UPS com falha para manter cargas críticas alimentadas.",
+      "pergunta": "Com fumaça e arco elétrico na UPS que alimenta cargas críticas, como executar a transferência sem manter a falha energizada?",
+      "resposta": "isolar e bloquear as fontes da falha antes do bypass seguro",
+      "explicacao": "A parte defeituosa deve sair de serviço e permanecer bloqueada antes da transferência; assim o bypass mantém a alimentação crítica sem sustentar a condição de falha.",
+      "resposta_padrao": "Transferir imediatamente para bypass e inspecionar depois.",
+      "por_que_nao": "Sem isolamento e bloqueio prévios, a seção com arco e fumaça continua energizada e o risco elétrico permanece.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de contenção em OT legado quando atualização imediata aumenta risco de indisponibilidade.",
+      "pergunta": "Controlador legado em malha crítica usa pilha TCP/IP vulnerável; o fornecedor ainda não validou correção e o acesso remoto pode ser suspenso. Qual contenção específica reduz exposição sem elevar o risco operacional?",
+      "resposta": "isolamento de rede com restrição de conectividade remota",
+      "explicacao": "Quando a correção imediata não é validada para sistema crítico, reduzir caminhos de exploração por isolamento e restrição de acesso preserva as funções essenciais de controle.",
+      "resposta_padrao": "Aplicar imediatamente o patch mais recente.",
+      "por_que_nao": "Em OT embarcado ou legado, atualização não validada pode comprometer compatibilidade e disponibilidade; nessa condição, o isolamento é a contenção adequada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma ação tecnicamente correta do ponto de vista de segurança da informação pode ser inadequada se provocar perda de controle do processo"
+        }
+      ]
+    }
+  ]
+}

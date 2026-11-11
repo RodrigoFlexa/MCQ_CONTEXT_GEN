@@ -1,0 +1,52 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Atrito estático ou travamento mecânico no conjunto haste/gaxeta/obturador da válvula, com stick-slip.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "diagnostico",
+  "justificativa": "O traço decisivo é a saída do controlador em rampa enquanto a posição da válvula fica parada e depois salta, assinatura clássica de stiction afirmada em B1 e distinguida de instabilidade/hunting em B2.",
+  "aprovada": true,
+  "motivo": "nenhum",
+  "falhas": [],
+  "referencia_valida": true,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "07_01",
+      "texto": "Stiction é o comportamento associado ao atrito estático que mantém a válvula parada até que a força de atuação vença a resistência ao movimento. A liberação pode produzir um salto de posição, prejudicando a modulação. Em válvulas de controle, isso significa que o conjunto móvel pode resistir ao início do deslocamento e só se mover quando a força aplicada supera um limiar de atrito estático. O resultado típico é permanência temporária em uma posição seguida de deslocamento abrupto.\n\nEsse mecanismo degrada o desempenho da malha porque introduz atraso, movimento descontínuo e possibilidade de ciclos limite. O controlador continua corrigindo o erro, mas parte desse esforço é consumida para vencer o atrito antes que a variável manipulada realmente mude. Em serviços de FPSO com acoplamento entre pressão, nível e vazão, esse comportamento pode ampliar variabilidade e dificultar estabilização do processo.\n\nO efeito observado depende da interação entre atrito mecânico, força disponível no atuador, pressão de suprimento, presença de posicionador e forças de processo atuando sobre o obturador.",
+      "titulo": "Válvulas e elementos finais / Atrito estático, stiction e efeitos no controle",
+      "indice_documento": 7
+    },
+    {
+      "id": "B2",
+      "item": "07_01",
+      "texto": "Hunting é uma oscilação indesejável de magnitude apreciável que persiste após o desaparecimento do estímulo externo, indicando operação no limite ou próximo do limite de estabilidade. Em aplicações com válvulas de controle, esse fenômeno pode aparecer como oscilação da pressão de carga do atuador.\n\nAs causas apontadas incluem instabilidade no sistema de controle ou no posicionador da válvula. Assim, a oscilação pode nascer da sintonia da malha, da dinâmica do processo, da resposta do posicionador ou da interação entre esses elementos. Observar a válvula oscilando não basta para concluir que a origem está apenas no corpo da válvula ou apenas no controlador.\n\nNa operação, hunting tende a aumentar movimentação, desgaste mecânico e variabilidade do processo. Ele se distingue do stiction porque, no hunting, a oscilação é sustentada por instabilidade; no stiction, há travamento e liberação intermitente do movimento.",
+      "titulo": "Válvulas e elementos finais / Hunting e instabilidade do conjunto de atuação",
+      "indice_documento": 8
+    },
+    {
+      "id": "B3",
+      "item": "03_03",
+      "texto": "O alinhamento de válvulas define quais trechos do sistema ficam conectados e, portanto, qual pressão a bomba e a tubulação passam a enxergar. Quando a bomba de stripping permanece operando com a descarga fechada ou muito restringida, a vazão útil tende a cair e a pressão na descarga tende a subir. Em um caso específico, essa elevação permaneceu dentro da pressão de projeto, mas isso não transforma a condição em prática geralmente aceitável, porque o efeito depende da curva da bomba, do tempo nessa condição, da existência de recirculação mínima, das proteções instaladas e da resistência mecânica do sistema. A capacidade de controle também muda quando uma válvula prevista para controle de posição é comissionada apenas como totalmente aberta ou fechada. Nessa situação, perde-se modulação fina de vazão e parte da capacidade de estabilizar a transferência ou ajustar o comportamento do tanque. Se, além disso, informações relevantes da bomba ou da posição de válvulas não chegam adequadamente à interface do operador, a supervisão do alinhamento e da eficiência real da transferência fica parcial.",
+      "titulo": "Tanques, transferências e slop / Válvulas, modulação e pressão durante alinhamentos de transferência",
+      "indice_documento": 5
+    },
+    {
+      "id": "B4",
+      "item": "02_07",
+      "texto": "Uma forma de representar o controle de nível é partir do balanço de massa da fase líquida: a variação do volume armazenado depende da diferença entre vazão de entrada e vazão de saída. Em uma modelagem simplificada, pode-se assumir relação linear entre altura e volume e dinâmica de válvula rápida o bastante para aproximar a abertura pela própria ação de controle; essas hipóteses são úteis para análise, mas não valem automaticamente para todos os vasos reais. No Controle por Bandas, enquanto o nível permanece entre limites predefinidos, a vazão de saída é mantida próxima ao valor médio da vazão de entrada estimada; se o nível ultrapassa a banda, o sistema comuta para ação rápida, que pode ser implementada por PID, para retornar o inventário à faixa permitida. Essa lógica procura reduzir movimentação desnecessária da válvula dentro da faixa normal, preservando estabilidade. Em simulação específica de separador trifásico, um controlador proporcional-integral, PI, foi considerado eficiente quando devidamente ajustado. Em qualificação experimental de outro sistema, a robustez foi avaliada com perturbações como parada de alimentação, bloqueio de saídas, degraus, oscilações, aumento de atraso da malha e golfadas a montante.",
+      "titulo": "Controle e transientes / Estratégias de malha: PID, controle por bandas e robustez em transientes",
+      "indice_documento": 19
+    },
+    {
+      "id": "B5",
+      "item": "02_12",
+      "texto": "Para válvulas críticas de anti-surge, são recomendadas características dinâmicas adequadas, realimentação de posição ao sistema de controle e, quando disponível, teste automático de curso parcial. A realimentação de posição permite comparar o comando emitido com a posição real da válvula, o que ajuda a detectar degradação, atraso, histerese ou falha de atuação. Esse ponto é relevante para o controle de capacidade sempre que a estratégia usa válvulas de estrangulamento ou recirculação, porque o desempenho da malha depende do elemento final e não apenas do algoritmo. Em compressores em paralelo e em sistemas com múltiplos estágios, a seleção e a localização da instrumentação também afetam a qualidade do controle. Medições mal posicionadas podem representar mal o estado real do processo, introduzir atrasos ou mascarar interações entre estágios. Como consequência, a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada. Em máquinas críticas, o monitoramento operacional do conjunto, incluindo vibração, deslocamento axial e temperaturas de mancais, complementa a visão do controle porque revela degradações que podem comprometer resposta, estabilidade ou disponibilidade.",
+      "titulo": "Acionamento e controle / Instrumentação, elementos finais e monitoramento do desempenho de controle",
+      "indice_documento": 13
+    }
+  ]
+}

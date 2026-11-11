@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:006:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de fechamento de gerador sobre barramento desenergizado na recomposição.",
+      "pergunta": "Durante a recomposição após perda total de energia, um gerador já está em tensão e frequência nominais e vai energizar um barramento ainda sem tensão. Qual verificação específica deve liberar o fechamento do disjuntor?",
+      "resposta": "Verificação de barramento morto.",
+      "explicacao": "Quando o barramento está desenergizado, o critério correto é confirmar ausência de tensão nele antes do fechamento; sincronismo é exigido para barra viva.",
+      "resposta_padrao": "Checagem de sincronismo pelo sincronoscópio.",
+      "por_que_nao": "Sincronoscópio e synch-check servem para acoplamento em barramento energizado, não para energização de barramento morto."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Discriminação entre corrente de energização de transformador e falta interna pela proteção diferencial.",
+      "pergunta": "Ao energizar um transformador sem carga, a proteção diferencial enxerga pico elevado de corrente mesmo sem consumidores conectados. Que critério específico deve impedir o disparo indevido?",
+      "resposta": "Bloqueio por segundo harmônico.",
+      "explicacao": "A corrente de inrush magnetizante contém componente significativa de segundo harmônico, usada pela diferencial para distinguir energização normal de falta interna.",
+      "resposta_padrao": "Aumentar a temporização da proteção diferencial.",
+      "por_que_nao": "Atraso não identifica inrush; só reduz sensibilidade e pode retardar a eliminação de faltas reais."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Proteção necessária para evitar motorização de gerador após perda da máquina motriz.",
+      "pergunta": "Com dois geradores em paralelo, um motor diesel perde combustível; tensão e frequência do barramento permanecem normais, mas essa máquina passa a importar potência ativa. Qual proteção deve atuar?",
+      "resposta": "Proteção de potência reversa.",
+      "explicacao": "Sem torque motriz suficiente, o gerador conectado passa a operar como motor, absorvendo kW do barramento; a proteção específica detecta essa condição.",
+      "resposta_padrao": "Relé de subfrequência.",
+      "por_que_nao": "Os demais geradores podem sustentar a frequência; o sinal distintivo aqui é fluxo reverso de potência ativa."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modo de controle do governador para compartilhamento estável de potência ativa em paralelo.",
+      "pergunta": "Dois geradores operam em paralelo num barramento ilhado; a tensão fica estável, porém a potência ativa oscila entre as máquinas após pequenas variações de carga. Qual modo de controle deve ser aplicado aos reguladores de velocidade das máquinas seguidoras?",
+      "resposta": "Droop de velocidade.",
+      "explicacao": "Em paralelo, o droop permite compartilhamento estável de kW entre geradores; múltiplos controles isócronos tendem a competir pela frequência e caçar carga.",
+      "resposta_padrao": "Controle isócrono em todas as máquinas.",
+      "por_que_nao": "Mais de um governador isócrono no mesmo barramento isolado provoca disputa de referência e instabilidade no rateio de potência ativa."
+    }
+  ]
+}

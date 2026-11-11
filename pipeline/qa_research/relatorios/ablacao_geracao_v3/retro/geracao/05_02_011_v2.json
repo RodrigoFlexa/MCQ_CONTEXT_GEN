@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:011:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Blackout pode ser iniciado pela perda da alimentação de controle do gerador, mesmo sem falha primária no barramento de potência.",
+      "pergunta": "Turbina, combustível e rotação seguem estáveis, mas o gerador abre o disjuntor, perde comando remoto e a supervisão do painel desaparece sem indício prévio de falta no barramento principal. Qual perda primária pode ter iniciado o blackout?",
+      "resposta": "Perda da alimentação de controle do gerador.",
+      "explicacao": "Os blocos associam a queda da geração à desenergização dos painéis de controle; a máquina motriz pode seguir disponível, mas o gerador não permanece conectado nem controlável sem essa alimentação.",
+      "resposta_padrao": "Falha no barramento principal.",
+      "por_que_nao": "O evento descrito pode começar sem defeito no barramento; a perda da energia de controle já faz a geração cair.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Bloqueios lógicos de recomposição podem ficar mascarados no reinício usual sustentado por bateria e devem ser testados sem esse suporte.",
+      "pergunta": "Nos testes de recomposição, o reinício do controle sempre ocorre sustentado por bateria e tudo fecha corretamente. Que condição específica deve ser adicionada para expor bloqueios que só aparecem após blackout total, quando esse suporte não existe?",
+      "resposta": "Reinicialização do controle sem alimentação de bateria.",
+      "explicacao": "Os blocos dizem que a condição problemática ficava oculta no reinício usual com bateria; por isso, permissivos e scripts precisam ser verificados também no modo anormal.",
+      "resposta_padrao": "Repetir o black start com todos os auxiliares disponíveis.",
+      "por_que_nao": "Com a bateria sustentando o reboot, o estado degradado que revela o bloqueio lógico não é reproduzido.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Alimentar canais redundantes pela mesma UPS introduz falha por causa comum e elimina a independência real entre eles.",
+      "pergunta": "Duas estações mestre previstas como redundantes perdem supervisão na mesma falha de UPS, embora os canais lógicos sejam distintos. Que mecanismo eliminou a resiliência esperada?",
+      "resposta": "Falha por causa comum na alimentação elétrica.",
+      "explicacao": "A redundância nominal deixou de valer quando ambos os canais passaram a depender do mesmo conjunto UPS; a perda simultânea decorre da alimentação compartilhada.",
+      "resposta_padrao": "Perda de comunicação entre as estações mestre.",
+      "por_que_nao": "Falha de comunicação não explica derrubada simultânea por um único evento elétrico de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Isso reduziu a independência entre canais"
+        }
+      ]
+    }
+  ]
+}

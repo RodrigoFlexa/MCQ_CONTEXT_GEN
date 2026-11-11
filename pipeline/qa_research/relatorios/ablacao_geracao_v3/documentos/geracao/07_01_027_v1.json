@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 27,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:027:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da forma de atuação do elemento final como configuração crítica de automação.",
+      "pergunta": "O controlador varia a saída continuamente, mas a válvula em campo só vai para 0% ou 100%. Qual configuração crítica está incompatível com a função prevista?",
+      "resposta": "forma de atuação do elemento final",
+      "explicacao": "O bloco trata a forma de atuação como configuração crítica; se a saída do controlador é contínua e a válvula só vai a extremos, a divergência é a implementação on/off do elemento final.",
+      "resposta_padrao": "sintonia do controlador",
+      "por_que_nao": "Sintonia altera a dinâmica de controle, não a filosofia on/off ou modulante do elemento final.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forma de atuação dos elementos finais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma válvula prevista para controle contínuo pode ser implementada apenas como abre/fecha"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da seleção de origem de comando por modo local/remoto.",
+      "pergunta": "Os permissivos estão satisfeitos, a lógica comuta a saída, mas o atuador só responde no painel de campo. Que condição de configuração explica o bloqueio do comando remoto?",
+      "resposta": "modo local/remoto em local",
+      "explicacao": "Local/remoto é configuração crítica. Se a lógica muda e o atuador funciona pelo painel de campo, o comando remoto está sendo preterido pela seleção local.",
+      "resposta_padrao": "solenóide defeituosa",
+      "por_que_nao": "O atuador responde localmente; o problema está na origem habilitada do comando, não no elemento de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modos de operação local/remoto"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um comando mostrado na Interface Homem-Máquina (IHM) pode não chegar ao atuador"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Classificação correta entre alarme e evento na configuração do sistema.",
+      "pergunta": "Uma mudança de estado precisa ser apenas registrada no histórico, sem exigir ação do operador nem iniciar proteção. Na configuração do sistema, ela deve ser classificada como quê?",
+      "resposta": "evento",
+      "explicacao": "A classificação alarme/evento faz parte da configuração crítica. Quando a finalidade é apenas registrar o estado, sem demanda de resposta, a classe correta é evento.",
+      "resposta_padrao": "alarme",
+      "por_que_nao": "Alarme pressupõe chamada de atenção operacional; aqui a função é somente registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "classificação entre alarme e evento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "configuração é o conjunto de definições que faz o sistema medir, decidir, alarmar, intertravar e comandar atuadores"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre permissivos e intertravamentos como condições de liberação de comandos.",
+      "pergunta": "A sequência automática não inicia, nenhum trip está ativo e as condições prévias do processo ainda não foram atendidas. Que elemento lógico precisa estar satisfeito para liberar o comando?",
+      "resposta": "permissivos",
+      "explicacao": "Permissivos integram a configuração crítica e representam condições habilitadoras. Sem eles satisfeitos, a sequência não libera, mesmo sem trip ou intertravamento atuado.",
+      "resposta_padrao": "intertravamento",
+      "por_que_nao": "Intertravamento bloqueia ou derruba por proteção; as pré-condições de liberação são permissivos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "permissivos, intertravamentos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "condições habilitadoras"
+        }
+      ]
+    }
+  ]
+}

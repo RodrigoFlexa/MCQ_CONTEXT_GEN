@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:010:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura de segregação OT/IT quando o requisito é fluxo exclusivamente de saída.",
+      "pergunta": "A produção só precisa enviar históricos e alarmes para analytics corporativo; nenhuma consulta ou comando deve voltar ao ambiente de controle. Que arranjo de comunicação é o mais adequado na fronteira?",
+      "resposta": "Gateway unidirecional",
+      "explicacao": "Esse arranjo impõe fluxo de dados apenas de OT para IT e elimina o caminho de retorno, diferentemente de soluções dependentes apenas de regras de firewall.",
+      "resposta_padrao": "DMZ com firewall bidirecional restritivo.",
+      "por_que_nao": "Firewall em DMZ controla por configuração, mas não garante ausência de canal de retorno como um enlace unidirecional."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sequência de aplicação de patches em servidores OT com redundância ativo-standby.",
+      "pergunta": "Servidores de supervisão em redundância ativo-standby estão sincronizados e precisam receber patch de segurança sem parar a operação. Como deve começar a sequência técnica de atualização?",
+      "resposta": "Atualizar primeiro o nó standby",
+      "explicacao": "A sequência correta preserva disponibilidade, permite validar o patch no reserva e só depois comutar a carga para atualizar o antigo ativo.",
+      "resposta_padrao": "Parar o sistema e atualizar os dois nós na mesma janela.",
+      "por_que_nao": "Com redundância ativo-standby saudável, o método técnico correto usa o reserva primeiro para manter serviço e validar compatibilidade."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto de mediação para acesso remoto controlado de terceiros à rede industrial.",
+      "pergunta": "Fornecedor precisa diagnosticar falha em PLCs por acesso remoto temporário; é exigido registro da sessão e vedação de conexão direta da internet à rede de controle. Que ponto técnico deve intermediar esse acesso?",
+      "resposta": "Jump server na DMZ industrial",
+      "explicacao": "Ele centraliza autenticação, registro e controle de sessões, mediando o acesso entre a conexão externa e as zonas de controle sem expor diretamente os ativos.",
+      "resposta_padrao": "VPN direto até a estação de engenharia.",
+      "por_que_nao": "Acesso remoto seguro em OT exige mediação em zona intermediária para limitar alcance e auditar a sessão."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade de lógicas e configurações restauradas antes de reconexão em OT.",
+      "pergunta": "Uma estação de engenharia foi restaurada após ransomware e a rede de controle permanece isolada. Antes de reconectá-la e liberar downloads, que verificação específica confirma que os arquivos de lógica não foram alterados?",
+      "resposta": "Comparação de hash com a baseline aprovada",
+      "explicacao": "A comparação criptográfica com referência confiável confirma integridade dos arquivos restaurados, algo que datas, tamanhos ou presença do backup não demonstram.",
+      "resposta_padrao": "Restaurar o backup mais recente e conferir a data dos arquivos.",
+      "por_que_nao": "Recência de backup não comprova integridade; a validação técnica exige confronto criptográfico com versão confiável."
+    }
+  ]
+}

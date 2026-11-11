@@ -1,0 +1,51 @@
+{
+  "item": "01_01",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "01_01:004:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção entre disponibilidade inerente e operacional conforme os componentes de tempo incluídos no cálculo.",
+      "pergunta": "Para comparar dois pacotes de compressão, o cálculo inclui apenas falhas corretivas e tempo ativo de reparo; exclui manutenção preventiva, espera por pessoal, materiais, permissões e mau tempo. Qual indicador de disponibilidade usar?",
+      "resposta": "disponibilidade inerente",
+      "explicacao": "Ela considera somente falhas corretivas e reparo ativo, isolando efeitos de projeto e mantenabilidade sem contaminar o resultado com atrasos logísticos, administrativos, meteorológicos ou preventivos.",
+      "resposta_padrao": "disponibilidade operacional",
+      "por_que_nao": "Ela incorpora atrasos logísticos, administrativos e manutenção preventiva, que foram explicitamente excluídos do cálculo."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Agregação de disponibilidade funcional em arquitetura redundante 1oo2.",
+      "pergunta": "Duas bombas 100% em duty/standby mantêm a vazão com qualquer uma operando. Uma ficou indisponível o mês inteiro, sem perda de produção. Que critério estrutural deve reger o KPI da função de bombeio?",
+      "resposta": "arranjo 1oo2",
+      "explicacao": "A função continua disponível se pelo menos uma bomba cumprir a demanda; o indicador funcional deve refletir a arquitetura redundante, não penalizar automaticamente a função pela indisponibilidade de um item.",
+      "resposta_padrao": "média das disponibilidades das bombas",
+      "por_que_nao": "Média de equipamentos ignora a redundância e subestima a disponibilidade funcional de um arranjo standby."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Medição de perda de produção por volume deferido em restrição parcial de capacidade.",
+      "pergunta": "Com um trem limitado a 70% por incrustação durante 18 horas, sem shutdown, qual grandeza deve alimentar o KPI de perda para compará-lo corretamente com eventos de parada total?",
+      "resposta": "volume deferido",
+      "explicacao": "A perda deve refletir a diferença integrada entre vazão atingível e vazão real ao longo do tempo; horas paradas não capturam a severidade de restrições parciais.",
+      "resposta_padrao": "horas de indisponibilidade",
+      "por_que_nao": "Tempo parado serve para uptime, mas distorce perdas quando há derating sem parada completa."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Impacto de falha de causa comum na disponibilidade de sistemas redundantes.",
+      "pergunta": "Dois geradores 50% têm bons históricos individuais, mas ambos param quando falha o mesmo sistema auxiliar de resfriamento. Ao estimar a disponibilidade da geração, que mecanismo precisa ser modelado?",
+      "resposta": "falha de causa comum",
+      "explicacao": "A indisponibilidade simultânea nasce de uma dependência compartilhada, que anula a independência aparente entre itens redundantes e reduz a disponibilidade real da função.",
+      "resposta_padrao": "independência entre os geradores",
+      "por_que_nao": "Assumir independência superestima a redundância quando um único suporte pode derrubar os dois trens."
+    }
+  ]
+}

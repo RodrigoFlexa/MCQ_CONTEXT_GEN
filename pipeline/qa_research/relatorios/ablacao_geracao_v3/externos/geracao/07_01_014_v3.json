@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_01:014:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Teste dinâmico integrado em circuito fechado para validar arquitetura de automação antes da introdução de gás.",
+      "pergunta": "Malhas energizadas, instrumentos calibrados e comunicação ponto a ponto confirmada; antes do primeiro gás, ainda é preciso expor falhas de sequência, sentido de atuação e comunicação intermitente. Que teste executar?",
+      "resposta": "operação integrada em circuito fechado com N2",
+      "explicacao": "O circuito fechado com N2 permite validar comunicação, lógica, sequência, sentido de atuação e ajustes sob condição representativa, revelando falhas que inspeções estáticas e checks isolados não mostram.",
+      "resposta_padrao": "loop check ponto a ponto",
+      "por_que_nao": "Checks estáticos não reproduzem a dinâmica do processo nem expõem falhas de sequência, atuação e comunicação intermitente entre camadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a automação resulta da integração de dispositivos de campo, sistemas controladores e supervisão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A operação em circuito fechado com nitrogênio (N2) foi usada para confirmar desempenho, testar antecipadamente a lógica de regeneração e permitir ajustes antes do primeiro gás."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas: erro de configuração, comunicação intermitente, sentido incorreto de atuação, falhas de sequência, alarmes mal associados e instabilidade inicial de controle."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confiabilidade da supervisão e do historian depende da coerência temporal do sinal, não apenas da calibração.",
+      "pergunta": "HMI e historian exibem tendência suave e plausível, mas a indicação local mostra variações mais rápidas e o processo não acompanha o que a tela sugere. Que atributo do dado deve ser verificado primeiro?",
+      "resposta": "coerência temporal do sinal",
+      "explicacao": "Para que tendências e comparações representem o processo real, o dado precisa manter coerência temporal. Sem isso, a supervisão pode exibir valores plausíveis, porém fisicamente incorretos.",
+      "resposta_padrao": "calibração do transmissor",
+      "por_que_nao": "Um sinal pode estar calibrado e ainda assim chegar com atraso, congelamento ou inconsistência temporal, distorcendo a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis para que tendências, comparações e inferências operacionais façam sentido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Localização do elo de falha pela discrepância entre dado correto no controlador e dado incorreto na supervisão.",
+      "pergunta": "Indicador local e variável no controlador acompanham o processo, mas HMI e historian exibem congelamentos intermitentes. Em que ponto da arquitetura o diagnóstico deve começar?",
+      "resposta": "na interface de comunicação controlador-supervisão",
+      "explicacao": "Se o sinal chega corretamente ao controlador e a divergência aparece apenas na camada superior, o problema está no elo de comunicação entre controle e supervisão.",
+      "resposta_padrao": "no transmissor de campo",
+      "por_que_nao": "O transmissor já está coerente com a indicação local e com a entrada do controlador; a perda surge acima dessa camada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        }
+      ]
+    }
+  ]
+}

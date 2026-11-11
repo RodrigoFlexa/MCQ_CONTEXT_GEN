@@ -1,0 +1,99 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:010:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação temporária de compensação por pulsos para manter uma malha operando quando há atrito impedindo o início do movimento da válvula.",
+      "pergunta": "Numa malha de vazão, o comando varia, a válvula só se mexe após correções maiores e a parada para reparo ficou para outra campanha. Que intervenção específica no sinal de controle sustenta a operação nesse intervalo?",
+      "resposta": "Compensação de atrito por pulsos no sinal de controle.",
+      "explicacao": "O método não baseado em modelo adiciona energia extra quando o comando usual não inicia o movimento, permitindo manter a malha operando até a correção mecânica.",
+      "resposta_padrao": "Retunar o PID, elevando o ganho do controlador.",
+      "por_que_nao": "Ganho maior altera a ação de controle, mas não vence diretamente o atrito estático que impede o início do movimento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fornecer energia adicional quando o comando usual não consegue iniciar o movimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da estratégia de pulsos de amplitude variável para reduzir movimentação adicional da válvula sem perda relevante de desempenho.",
+      "pergunta": "Com desgaste já observado no conjunto atuador-válvula, a equipe quer manter a compensação de atrito mas reduzir a movimentação extra sem perda relevante da malha. Que estratégia de pulsos deve ser adotada?",
+      "resposta": "Pulsos de amplitude variável.",
+      "explicacao": "Essa variante foi proposta para diminuir a movimentação adicionada pela compensação, preservando o desempenho da malha sem aumento desnecessário de desgaste.",
+      "resposta_padrao": "Pulsos de amplitude fixa com valor mais baixo.",
+      "por_que_nao": "Amplitude fixa reduzida pode deixar de vencer o atrito em parte das condições; a estratégia variável busca menos movimento sem perder desempenho.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o aumento deliberado da movimentação da válvula pode elevar sua degradação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "método com pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério técnico de parametrização da compensação por pulsos com base no erro máximo admissível da malha.",
+      "pergunta": "Ao parametrizar a compensação por pulsos de amplitude variável, qual critério técnico deve balizar a escolha dos parâmetros para limitar o erro admissível da malha?",
+      "resposta": "Especificação máxima de erro.",
+      "explicacao": "No método descrito, os parâmetros são definidos com base em dados de operação, mas o limitante explícito para a escolha é a especificação máxima de erro.",
+      "resposta_padrao": "A menor amplitude que ainda faça a haste sair do repouso.",
+      "por_que_nao": "Vencer o breakaway não basta; a parametrização correta precisa respeitar o erro máximo aceitável no desempenho da malha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reduzir a movimentação sem perda significativa de desempenho"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificação do elemento correto para receber compensação de atrito quando coexistem válvula modulante e ESDV no mesmo trecho.",
+      "pergunta": "Há uma válvula modulante e uma válvula de desligamento de emergência no mesmo trecho. Surgiu atrito na função de controle contínuo e será usada compensação temporária até a manutenção. Em qual elemento ela deve atuar?",
+      "resposta": "Na válvula de controle modulante.",
+      "explicacao": "A compensação por pulsos é aplicada à válvula que executa a ação contínua da malha. A ESDV tem função de segurança e isolamento, tipicamente abre-fecha.",
+      "resposta_padrao": "Na ESDV do trecho.",
+      "por_que_nao": "A ESDV não é o elemento final de modulação da malha; atuar nela não corrige a perda de desempenho do controle contínuo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "compensar atrito em válvulas de controle consiste em adicionar pulsos ao sinal de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "válvulas modulantes podem atuar, por exemplo, no controle de nível de separadores, de pressão de gás ou na restrição de golfadas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha"
+        }
+      ]
+    }
+  ]
+}

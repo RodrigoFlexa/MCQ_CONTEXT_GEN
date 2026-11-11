@@ -1,0 +1,103 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:011:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Relação entre perda de 24 Vcc de controle dos geradores e queda da geração principal.",
+      "pergunta": "Geradores em serviço caem quase simultaneamente, embora as máquinas motrizes permaneçam disponíveis e não haja indício de falha primária no barramento; os painéis de controle perderam alimentação. Qual subsistema deve ser apontado como causa primária?",
+      "resposta": "alimentação de 24 Vcc dos painéis de controle dos geradores",
+      "explicacao": "Sem 24 Vcc nos painéis de controle, o gerador perde comando e supervisão; pode seguir mecanicamente apto, mas não permanece conectado nem controlável.",
+      "resposta_padrao": "falha no barramento principal de potência",
+      "por_que_nao": "Com máquinas motrizes ainda disponíveis e perda dos painéis de controle, o elo decisivo é a energia de comando, não o barramento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Papel da UPS vital na continuidade do comando de válvulas por CLP durante perda da energia principal.",
+      "pergunta": "Com a perda da energia principal, o cartão de saídas-relé do CLP desenergiza e o comando remoto das válvulas desaparece. Que fonte deve sustentar esse cartão para a função sobreviver ao evento?",
+      "resposta": "UPS de cargas vitais do cartão-relé do CLP",
+      "explicacao": "Se a interface de saída do CLP perde alimentação junto com a rede principal, o comando das válvulas some; ela precisa permanecer em fonte ininterrupta vital.",
+      "resposta_padrao": "24 Vcc de serviços gerais",
+      "por_que_nao": "No caso descrito, a perda relevante ocorreu na alimentação ininterrupta em CA da interface de saída, não na malha geral de 24 Vcc.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a UPS tinha a função de manter alimentação ininterrupta a cargas vitais"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Diferença entre redundância nominal de fontes e segregação real dos caminhos de controle.",
+      "pergunta": "Há dois conjuntos retificador/carregador com baterias, cada um capaz de suprir toda a demanda, e também UPS para cargas vitais; ainda assim, uma única falha derruba o controle da geração. Qual critério de arquitetura deve ser implementado para que a redundância seja real?",
+      "resposta": "segregação independente das rotas de 24 Vcc e UPS dos controles",
+      "explicacao": "Capacidade duplicada não evita falha de modo comum quando comando, supervisão e atuação convergem para a mesma rota elétrica.",
+      "resposta_padrao": "critério N+1 de capacidade das fontes",
+      "por_que_nao": "Capacidade extra não elimina dependência comum entre canais e caminhos de alimentação dos controles.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Influência de lógica de trip residual na recomposição com gerador de emergência.",
+      "pergunta": "Na recomposição, o gerador de emergência parte, mas o disjuntor recebe trip repetidamente enquanto o sistema de controle reinicia sem alimentação de bateria. Que lógica específica deve ser verificada primeiro?",
+      "resposta": "lógica de trip do disjuntor no reboot do controle",
+      "explicacao": "Um trip lógico residual durante a reinicialização pode bloquear o fechamento do disjuntor mesmo com o gerador disponível, impedindo a recomposição.",
+      "resposta_padrao": "intertravamento mecânico do disjuntor",
+      "por_que_nao": "A coincidência com o reboot aponta para bloqueio lógico de comando, não para impedimento mecânico.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle"
+        }
+      ]
+    }
+  ]
+}

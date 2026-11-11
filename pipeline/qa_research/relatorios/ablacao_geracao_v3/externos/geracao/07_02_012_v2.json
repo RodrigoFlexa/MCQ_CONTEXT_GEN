@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:012:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A aplicabilidade de um alerta de vulnerabilidade em OT depende de confirmar a presença do componente afetado, não apenas a conectividade.",
+      "pergunta": "Há alerta para falhas na pilha Treck TCP/IP, e um controlador aparece exposto por roteamento legado. Qual verificação técnica define se esse ativo realmente entra no tratamento desse alerta?",
+      "resposta": "Presença da pilha Treck TCP/IP no ativo.",
+      "explicacao": "O alerta só se aplica aos ativos que efetivamente usam essa pilha; a exposição por rede aumenta o risco, mas não confirma que o componente vulnerável esteja presente.",
+      "resposta_padrao": "Exposição direta à internet.",
+      "por_que_nao": "Conectividade amplia a superfície de ataque, mas não define a aplicabilidade do alerta sem confirmar o componente embarcado afetado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a correção em OT legado não é segura ou viável no momento, o tratamento correto é aplicar medidas compensatórias de contenção da exposição.",
+      "pergunta": "Num PLC legado com o componente vulnerável, o fornecedor ainda não qualificou a correção e a parada disponível não permite validar firmware, comunicação e função de processo. Qual tratamento temporário é o mais adequado?",
+      "resposta": "Redução de exposição com isolamento adicional.",
+      "explicacao": "Sem qualificação e validação suficientes, a própria mudança pode introduzir indisponibilidade ou comportamento anômalo; por isso, medidas compensatórias são preferíveis até existir remediação compatível.",
+      "resposta_padrao": "Atualizar mesmo assim para eliminar a vulnerabilidade.",
+      "por_que_nao": "Em sistemas de controle, aplicar correção sem validação pode criar risco operacional maior que o da exposição temporária.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A priorização de vulnerabilidades em IACS deve considerar a função operacional do ativo afetado.",
+      "pergunta": "Duas falhas divulgadas têm severidade semelhante: uma afeta um historiador e outra um controlador que atua em válvulas de processo. Qual variável técnica deve orientar a priorização do impacto?",
+      "resposta": "Função do sistema atingido.",
+      "explicacao": "Em IACS, a consequência muda conforme o papel do ativo na operação; quem atua diretamente no processo pode alterar comportamento operacional ou retirar funções de serviço.",
+      "resposta_padrao": "Pontuação CVSS do boletim.",
+      "por_que_nao": "Severidade genérica não substitui a avaliação da função exercida pelo ativo no processo controlado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de aplicar correção em controle industrial, deve-se validar a compatibilidade entre a atualização e as funções operacionais afetadas.",
+      "pergunta": "Uma correção do fornecedor modifica firmware e drivers de comunicação do controlador de processo. Antes da instalação em campo, qual compatibilidade específica deve ser validada para não introduzir comportamento não previsto?",
+      "resposta": "Compatibilidade entre firmware, comunicação e funções de processo.",
+      "explicacao": "Em OT, a atualização pode interferir tanto nas trocas de dados quanto na execução das funções de processo; por isso, essa compatibilidade cruzada é o critério decisivo.",
+      "resposta_padrao": "Compatibilidade apenas do sistema operacional.",
+      "por_que_nao": "Mesmo com sistema operacional estável, a mudança pode quebrar comunicação ou afetar a lógica e a resposta do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Atualizar primeiro o servidor passivo/standby, validar seu funcionamento, executar um failover controlado e depois aplicar o patch no antigo ativo.",
+  "alternativa_excluida": true,
+  "atalho": true,
+  "sustentada": false,
+  "elemento_unico": true,
+  "tipo_sugerido": "procedimento",
+  "justificativa": "A resposta descreve um procedimento genérico e conhecido para pares redundantes, mas a sequência decisiva de patchar o standby, validar e só então fazer failover não está afirmada diretamente nos blocos.",
+  "aprovada": false,
+  "motivo": "atalho",
+  "falhas": [
+    "atalho",
+    "fora_da_fonte"
+  ],
+  "referencia_valida": false,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "01_01",
+      "texto": "Disponibilidade e segurança precisam ser avaliadas conjuntamente. Intertravamentos e funções de proteção podem interromper a produção para evitar estados perigosos, danos ambientais e consequências maiores. O aumento da disponibilidade não autoriza reduzir intervenções preventivas sem avaliar risco e integridade. O efeito de recursos adicionais de manutenção depende do gargalo efetivo do retorno operacional: mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística. Se a capacidade das equipes for o gargalo, falhas simultâneas podem criar fila e prolongar a indisponibilidade. A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas.",
+      "titulo": "Disponibilidade e confiabilidade / Interações com segurança, manutenção e recursos de suporte",
+      "indice_documento": 10
+    },
+    {
+      "id": "B2",
+      "item": "07_02",
+      "texto": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real. Quando o componente instalado estiver afetado, a correção deve ser avaliada com as equipes de TI/OT e o fornecedor, considerando versão aplicável, qualificação, testes, janela de manutenção e plano de retorno. Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle. Essa ação não deve ser generalizada para outros produtos fora desse contexto. Em sistemas legados, a decisão raramente é apenas “atualizar ou não atualizar”. A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança. Em muitos sistemas de controle, uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo; por isso, quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis até que exista remediação compatível. O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança.",
+      "titulo": "Vulnerabilidades, patches e legados / Patches, remediação e tratamento de sistemas legados",
+      "indice_documento": 13
+    },
+    {
+      "id": "B3",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    },
+    {
+      "id": "B4",
+      "item": "04_01",
+      "texto": "Se houver indício de travamento, crescimento não explicado do esforço necessário, desalinhamento visível, dano em conector, suspeita de torção, vazamento ou avaria em elemento de tração, a decisão tecnicamente conservadora tende a ser interromper a progressão da operação antes que a carga seja transferida para uma condição não prevista. A interrupção preserva a integridade quando evita que um problema geométrico se transforme em dano estrutural ou perda de vedação. Em abandono temporário ou pausa operacional, o objetivo físico é deixar o sistema em estado estável, com carga sustentada por caminho estrutural conhecido, sem contato indevido com estruturas e sem agravar curvatura, torção ou esmagamento local. A retomada depende de reinspeção dos pontos críticos, confirmação da condição do conector e dos acessórios, e reavaliação do mecanismo que gerou a anomalia. Em sistemas cujo conceito incorpora pull-in móvel, a flexibilidade operacional pode facilitar instalação e substituição de risers, mas não elimina a necessidade de verificar como a nova configuração muda alinhamento, interfaces e resposta a falhas. Em qualquer arranjo, estanqueidade e integridade mecânica devem ser verificadas de forma coerente com o tipo de riser e de conexão presentes.",
+      "titulo": "Falhas e preservação da integridade / Quando interromper, preservar e retomar com segurança",
+      "indice_documento": 21
+    },
+    {
+      "id": "B5",
+      "item": "07_02",
+      "texto": "Em dispositivos embarcados e componentes de IACS, a correção de vulnerabilidades frequentemente depende do fornecedor informar a existência de patch, versão estável aplicável e estratégia de remediação. Essa dependência é estrutural: o operador normalmente não controla o ciclo de desenvolvimento do software embarcado, nem pode modificar livremente firmware proprietário sem risco adicional para funcionalidade, suporte ou certificação do produto.\n\nIsso altera a gestão de acesso e de terceiros de duas formas. Primeiro, o fornecedor passa a influenciar o tempo de exposição do ativo vulnerável. Segundo, a necessidade de diagnóstico, atualização ou mitigação pode abrir demanda por acesso remoto, conexão temporária de notebooks de manutenção ou presença de equipe externa.\n\nA seleção e o acompanhamento de fornecedores, portanto, não devem considerar apenas preço e prazo. Também importam capacidade de notificação, clareza sobre ativos afetados, orientação de mitigação, qualidade do suporte e possibilidade de executar correções sem introduzir indisponibilidade indevida em sistemas críticos.",
+      "titulo": "Acessos e cadeia de suprimentos / Dependência da cadeia de suprimentos em vulnerabilidades e remediação",
+      "indice_documento": 6
+    }
+  ]
+}

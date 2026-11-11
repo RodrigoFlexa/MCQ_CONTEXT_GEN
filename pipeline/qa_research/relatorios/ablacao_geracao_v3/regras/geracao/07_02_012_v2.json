@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:012:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de terceiros à OT deve ser mediado por bastion/jump server em DMZ industrial.",
+      "pergunta": "Fornecedor precisa acessar remotamente uma estação de engenharia para suporte a PLC durante parada programada. Qual elemento técnico da arquitetura deve receber e mediar esse acesso antes de qualquer conexão aos ativos de controle?",
+      "resposta": "Jump server na DMZ industrial",
+      "explicacao": "O bastion centraliza autenticação, registro e mediação da sessão, evitando acesso interativo direto da rede externa ou corporativa aos ativos de controle.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "Acesso remoto a OT deve terminar em zona intermediária controlada; conexão direta elimina a mediação e amplia a superfície de ataque."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Confiabilidade de backups de sistemas OT é comprovada por restauração testada, não pela mera existência dos arquivos.",
+      "pergunta": "Backups do servidor de supervisão existem e os arquivos passam checksum. Como verificar que a recuperação realmente funcionará se o host falhar?",
+      "resposta": "Restauração completa em ambiente isolado",
+      "explicacao": "Só a restauração valida boot, serviços, dependências, consistência da aplicação e recuperabilidade operacional do sistema.",
+      "resposta_padrao": "Conferir data, tamanho e checksum dos arquivos.",
+      "por_que_nao": "Integridade do arquivo não demonstra que a imagem pode ser restaurada e voltar a operar com seus serviços e dependências."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Integridade de lógica em controladores se confirma pela assinatura ou checksum da aplicação efetivamente carregada e executada.",
+      "pergunta": "Terminada a intervenção, o projeto arquivado na estação de engenharia coincide com o baseline, mas há suspeita de alteração indevida no controlador. Qual evidência técnica deve ser conferida no equipamento?",
+      "resposta": "Checksum da lógica em execução no controlador",
+      "explicacao": "A aplicação carregada pode diferir do projeto arquivado; a assinatura da lógica ativa é a evidência de integridade do que realmente está executando.",
+      "resposta_padrao": "O arquivo do projeto salvo na estação de engenharia.",
+      "por_que_nao": "O controlador pode estar rodando versão diferente da arquivada; só a verificação da carga ativa confirma a integridade operacional."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Visibilidade cibernética em redes industriais sensíveis deve usar coleta passiva por TAP, evitando tráfego injetado e dependência do switch.",
+      "pergunta": "PLCs legados apresentam falhas com varreduras ativas, e a visibilidade precisa ser contínua sem injetar tráfego nem depender de configuração do switch. Que técnica de coleta deve ser usada?",
+      "resposta": "Monitoramento passivo por TAP de rede",
+      "explicacao": "O TAP fornece cópia do tráfego sem gerar sondagens nem alterar a carga dos dispositivos industriais sensíveis.",
+      "resposta_padrao": "Varredura ativa periódica de portas e serviços.",
+      "por_que_nao": "Scans ativos introduzem tráfego e podem causar instabilidade ou travamento em equipamentos industriais legados."
+    }
+  ]
+}

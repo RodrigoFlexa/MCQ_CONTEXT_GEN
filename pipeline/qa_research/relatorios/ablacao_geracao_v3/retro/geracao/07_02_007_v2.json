@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:007:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Permissões recorrentes para atividades distintas devem ser estruturadas por função, não definidas pessoa a pessoa.",
+      "pergunta": "Num contrato com várias equipes externas, os técnicos entram e saem, mas as combinações de permissões para diagnóstico, parametrização e carga de lógica permanecem estáveis. Que controle deve estruturar essas permissões sem redesenhar autorização usuário a usuário?",
+      "resposta": "Perfil de acesso compatível com a função.",
+      "explicacao": "Quando os conjuntos de permissões se repetem por atividade e não por pessoa, o controle correto é atribuir direitos por função. Isso separa tecnicamente diagnóstico, parametrização e alteração de lógica.",
+      "resposta_padrao": "Privilégio mínimo.",
+      "por_que_nao": "Privilégio mínimo reduz excesso de permissão, mas não organiza e reaplica conjuntos de direitos conforme a função exercida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "perfil compatível com a função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mesmo com conta nominal e janela válida, ações críticas precisam estar vinculadas à intervenção específica autorizada.",
+      "pergunta": "Uma conta nominal, com perfil correto, segue válida por toda a parada. Só algumas tarefas planejadas podem alterar permissivos e intertravamentos. Que controle deve vincular cada uso dessa conta à intervenção específica?",
+      "resposta": "Aprovação prévia da atividade.",
+      "explicacao": "Conta individual, perfil e janela ativa não autorizam qualquer intervenção. Para ações com potencial de afetar permissivos e intertravamentos, o uso deve estar associado à tarefa previamente autorizada.",
+      "resposta_padrao": "Validade temporal do acesso.",
+      "por_que_nao": "A janela temporal limita quando a conta pode ser usada, mas não qual intervenção específica está autorizada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aprovação da atividade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A necessidade atual de cada privilégio deve ser confirmada por revisão recorrente dos acessos habilitados, não inferida de uso passado.",
+      "pergunta": "Contas nominais de terceiros quase não são usadas; algumas não acessam nada há meses, mas contratos e pessoas mudaram nesse intervalo. Que verificação recorrente deve confrontar privilégios vigentes com a necessidade atual?",
+      "resposta": "Revisão periódica dos acessos ativos.",
+      "explicacao": "Mudanças de contrato ou de função podem deixar privilégios ativos sem necessidade, mesmo sem uso recente. A verificação correta compara periodicamente os acessos habilitados com a necessidade operacional vigente.",
+      "resposta_padrao": "Análise de logs de acesso.",
+      "por_que_nao": "Logs mostram uso passado, mas não determinam se o privilégio ainda é justificável hoje.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "revisão periódica dos acessos ativos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na liberação de acesso de terceiros com dispositivo temporário, a condição técnica do equipamento conectado é decisiva para evitar introdução de software incompatível ou malicioso.",
+      "pergunta": "Notebooks de manutenção reutilizados entre contratos serão conectados localmente a controladores críticos. Além da autenticação do técnico, que condição do recurso conectado precisa ser confirmada antes do uso?",
+      "resposta": "Estado íntegro e atualizado do notebook de manutenção.",
+      "explicacao": "Em dispositivos temporários reutilizados, o risco decisivo é introduzir software não autorizado, versões incompatíveis ou malware. Por isso, além da pessoa, deve-se validar a condição do notebook conectado.",
+      "resposta_padrao": "Identidade individual verificável do técnico.",
+      "por_que_nao": "Atribuição pessoal rastreia quem acessa, mas não evita software não autorizado, incompatibilidades ou malware trazidos pelo notebook.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo e ao efeito potencial da ação permitida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado porque podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "decisões sobre acesso de terceiros devem considerar não só autenticação, mas também condição do equipamento utilizado"
+        }
+      ]
+    }
+  ]
+}

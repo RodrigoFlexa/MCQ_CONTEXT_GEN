@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:012:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para usar gateway unidirecional quando dados precisam sair da rede de controle sem qualquer caminho de retorno.",
+      "pergunta": "Tendências de processo e vibração precisam seguir para analytics corporativo, e o requisito proíbe qualquer sessão iniciada de volta para a rede de controle, mesmo por erro de regra. Que arranjo técnico específico deve ser aplicado nesse conduíte?",
+      "resposta": "Gateway unidirecional (data diode).",
+      "explicacao": "Quando o requisito é impedir fisicamente o tráfego de retorno, a solução correta é um gateway unidirecional, não apenas filtragem lógica.",
+      "resposta_padrao": "Firewall entre as duas redes.",
+      "por_que_nao": "Firewall filtra tráfego, mas mantém caminho reverso possível; aqui a exigência é unidirecionalidade física."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de allowlisting como controle compensatório em hosts OT legados que não podem ser corrigidos nem receber antivírus intrusivo.",
+      "pergunta": "Estação HMI legada não pode receber patch nem varredura antivírus em tempo real sem afetar o software do fornecedor. Para reduzir a execução de malware e utilitários não autorizados, qual controle técnico específico é o mais adequado?",
+      "resposta": "Allowlisting de aplicações.",
+      "explicacao": "Permite executar somente binários, scripts e bibliotecas previamente autorizados, compensando a impossibilidade de patch e a limitação de antivírus convencional.",
+      "resposta_padrao": "Antivírus atualizado por assinaturas.",
+      "por_que_nao": "Detecção por assinatura é reativa e pode ser incompatível ou insuficiente em plataformas legadas críticas."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade de lógica em controladores por checksum ou assinatura comparada à baseline autorizada.",
+      "pergunta": "O controlador permaneceu em RUN, mas houve conexão não autorizada pela estação de engenharia durante alguns minutos. Para confirmar se a lógica executável foi alterada, como verificar a integridade da aplicação de forma conclusiva?",
+      "resposta": "Comparando checksum ou assinatura com a baseline aprovada.",
+      "explicacao": "A correspondência da assinatura binária confirma que a lógica carregada é exatamente a versão autorizada, independentemente de logs ou relatos.",
+      "resposta_padrao": "Revisando o log de acesso do usuário.",
+      "por_que_nao": "Log mostra sessão ou tentativa de acesso, não prova identidade binária da lógica residente no controlador."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Dependência da integridade e execução correta da aplicação em relação à compatibilidade de firmware ou runtime do controlador.",
+      "pergunta": "CPU de reposição aceita o projeto, porém a estação de engenharia acusa incompatibilidade de assinatura e alguns blocos não executam após o boot. Qual elemento técnico específico deve ser alinhado antes de novo download?",
+      "resposta": "Versão de firmware ou runtime da CPU.",
+      "explicacao": "A compatibilidade da aplicação, das bibliotecas e da assinatura dos blocos depende do ambiente de execução do controlador.",
+      "resposta_padrao": "Endereço IP da CPU.",
+      "por_que_nao": "Comunicação pode existir com IP correto, mesmo com runtime incompatível que invalida a aplicação."
+    }
+  ]
+}

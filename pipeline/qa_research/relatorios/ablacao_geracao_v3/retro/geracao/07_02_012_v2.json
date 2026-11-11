@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:012:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Após confirmar o componente vulnerável, a triagem técnica do risco em OT depende da exposição real do ativo.",
+      "pergunta": "Confirmada a presença do componente vulnerável num controlador atrás de firewall e sem acesso direto pela internet, que aspecto técnico deve ser avaliado em seguida para saber se a vulnerabilidade representa risco efetivo?",
+      "resposta": "Exposição real do ativo.",
+      "explicacao": "No tratamento de vulnerabilidades em OT, confirmar o componente afetado não basta; é preciso avaliar a exposição real e a alcançabilidade do ativo caso a caso.",
+      "resposta_padrao": "A criticidade operacional do controlador.",
+      "por_que_nao": "A criticidade afeta a consequência, mas o risco efetivo de exploração depende primeiro da exposição e dos caminhos de acesso realmente existentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A priorização de vulnerabilidades em IACS depende da função operacional do sistema atingido, não só da falha em si.",
+      "pergunta": "A mesma vulnerabilidade foi confirmada num historiador e num controlador que abre válvulas e regula pressão. Para priorizar a resposta, que critério técnico deve pesar primeiro?",
+      "resposta": "Função do sistema atingido.",
+      "explicacao": "Em IACS, a relevância do efeito muda conforme o papel do alvo. Num controlador de válvulas, a exploração pode alterar diretamente o comportamento do processo.",
+      "resposta_padrao": "Pontuação CVSS publicada.",
+      "por_que_nao": "A pontuação da CVE não distingue se o ativo comprometido apenas informa dados ou atua diretamente sobre variáveis de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em sistemas legados de controle, a decisão de aplicar patch deve balancear o risco de exploração com o risco operacional introduzido pela mudança.",
+      "pergunta": "Saiu patch para um sistema legado de controle, mas a versão ainda não foi qualificada e a janela é curta. Que risco técnico precisa ser pesado explicitamente antes de decidir pela aplicação imediata?",
+      "resposta": "Risco de indisponibilidade introduzida pela mudança.",
+      "explicacao": "Em OT, corrigir sem qualificação pode causar parada ou comportamento não previsto. A decisão correta compara o risco da exploração com o risco operacional da própria intervenção.",
+      "resposta_padrao": "Obsolescência do equipamento.",
+      "por_que_nao": "A idade do ativo não decide a aplicação imediata; o ponto decisivo é a possibilidade de a atualização causar indisponibilidade ou efeito inesperado no controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A intervenção precisa considerar o risco da exploração e o risco operacional da própria mudança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tratamento correto depende do papel operacional do ativo, da sua conectividade, do suporte do fabricante e da consequência de uma indisponibilidade introduzida pela mudança."
+        }
+      ]
+    }
+  ]
+}

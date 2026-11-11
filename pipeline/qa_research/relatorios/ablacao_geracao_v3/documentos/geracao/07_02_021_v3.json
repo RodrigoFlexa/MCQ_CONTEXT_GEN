@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:021:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da camada adequada para normalização de dados em arquitetura OT com controladores multivendor.",
+      "pergunta": "Controladores de dois fornecedores expõem tags e objetos em estruturas diferentes. A operação quer telas equivalentes e comparação entre trens sem mexer na lógica de controle. Em que camada a normalização deve ser implementada mais próxima da fonte?",
+      "resposta": "na camada SCADA",
+      "explicacao": "Com controladores multivendor sem padronização suficiente, o SCADA vira o ponto mais próximo da fonte onde a normalização ainda é viável para HMI e comparação entre ativos.",
+      "resposta_padrao": "Padronizar diretamente nos controladores.",
+      "por_que_nao": "A diversidade de modelos de dados entre fornecedores torna a camada de controle o ponto menos viável para essa normalização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação do contexto operacional como atributo decisivo para robustez de analytics e alarmes.",
+      "pergunta": "Durante partidas, um modelo gera alertas de anomalia; em regime permanente, os mesmos valores deixam de indicar problema. Unidades, identificação do equipamento e relógios estão corretos. Que informação específica está faltando no dado?",
+      "resposta": "contexto de modo operacional",
+      "explicacao": "O mesmo valor pode ser normal em partida e anômalo em regime. Sem o modo operacional associado ao dado, analytics e IA geram diagnósticos frágeis e alarmes espúrios.",
+      "resposta_padrao": "Recalibrar os sensores.",
+      "por_que_nao": "Os sinais podem estar corretos; o erro vem da ausência do estado operacional que dá significado ao valor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de sincronismo temporal como critério para uso confiável de sinais combinados próximos ao controle.",
+      "pergunta": "Uma aplicação vai correlacionar vazão, pressão e vibração de subsistemas distintos para sustentar correções frequentes de setpoint. A latência média está aceitável, mas os carimbos de tempo divergem entre fontes. Que critério temporal precisa ser verificado?",
+      "resposta": "qualidade de sincronismo temporal",
+      "explicacao": "Quando a aplicação usa sinais de várias origens para ajustes frequentes, a validade da correlação depende de amostras representarem o mesmo instante, não apenas de baixa latência.",
+      "resposta_padrao": "Aumentar a largura de banda da rede.",
+      "por_que_nao": "Com relógios desalinhados, mais banda não faz amostras de fontes distintas representarem o mesmo instante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações que influenciam ajustes operacionais frequentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "qualidade de sincronismo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Posicionamento arquitetural de aplicações com influência frequente no processo sob restrição de latência e conectividade.",
+      "pergunta": "Com enlace externo sujeito a indisponibilidades curtas recorrentes, uma aplicação analítica passará a influenciar ajustes operacionais a cada poucos segundos. Onde ela deve ficar posicionada para reduzir o risco técnico dominante?",
+      "resposta": "na borda local, próxima ao controle do processo",
+      "explicacao": "Aplicações que influenciam ajustes frequentes toleram pouco atraso e indisponibilidade. Posicioná-las localmente reduz a dependência do enlace externo e o efeito de perda de conectividade.",
+      "resposta_padrao": "Hospedar a lógica na nuvem corporativa.",
+      "por_que_nao": "A dependência do enlace aumenta a exposição à latência e à perda de conectividade em uma função de ajuste frequente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "controladores de borda transferem dados para a nuvem"
+        }
+      ]
+    }
+  ]
+}

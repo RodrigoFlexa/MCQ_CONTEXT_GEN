@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:001:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de df/dt como gatilho mais rápido de load shedding após perda súbita de geração em barramento isolado.",
+      "pergunta": "Perda súbita de um gerador em barramento isolado faz a frequência cair antes de a tensão variar de forma relevante. Que variável o PMS deve usar como gatilho mais rápido do primeiro estágio de rejeição de carga?",
+      "resposta": "taxa de variação da frequência (df/dt)",
+      "explicacao": "Déficit de potência ativa desacelera imediatamente os rotores; o df/dt aparece antes da subfrequência consolidada e independe do balanço reativo que governa a tensão.",
+      "resposta_padrao": "subtensão no barramento",
+      "por_que_nao": "A tensão pode permanecer aceitável se a excitação sustentar o barramento; o sinal primário da perda de geração é a queda de frequência."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação da proteção de potência reversa para detectar motorização de gerador após perda de torque do acionador primário.",
+      "pergunta": "Com dois geradores em paralelo, um motor diesel perde combustível; tensão e frequência do barramento permanecem normais, mas a máquina passa a absorver kW. Que proteção deve retirar esse gerador?",
+      "resposta": "potência reversa (32)",
+      "explicacao": "Sem torque do acionador, o gerador conectado a um barramento saudável passa a motorar, importando potência ativa; a função 32 detecta essa condição seletivamente.",
+      "resposta_padrao": "subfrequência",
+      "por_que_nao": "O outro gerador pode sustentar a frequência do barramento; o fenômeno distintivo é fluxo de potência ativa invertido."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da proteção de terra em rede de média tensão aterrada por resistor, onde a corrente de falta é limitada.",
+      "pergunta": "Numa rede de média tensão aterrada por resistor, a falta monofásica à terra gera corrente limitada e a sobrecorrente de fase não sensibiliza. Que função no alimentador permite desligar seletivamente o circuito faltoso?",
+      "resposta": "sobrecorrente residual de terra sensível (51N)",
+      "explicacao": "Com NGR, a corrente de falta à terra é pequena para 51 de fase, mas suficiente para a medição residual ajustada sensivelmente no alimentador.",
+      "resposta_padrao": "sobrecorrente de fase (51)",
+      "por_que_nao": "O resistor de aterramento limita a corrente de terra abaixo da faixa útil da proteção de fase."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Permissiva correta para fechamento de tie entre barramento energizado e barramento desenergizado sem necessidade de sincronismo entre duas fontes vivas.",
+      "pergunta": "Seção de barramento desenergizada após manutenção, isolada de outras fontes e sem motores em rotação; a seção adjacente está energizada. Que permissiva específica deve autorizar o fechamento do tie sem casar ângulo e frequência?",
+      "resposta": "lógica live-bus/dead-bus",
+      "explicacao": "Com um lado sem tensão, não há sincronismo entre duas fontes ativas a verificar; o essencial é confirmar um lado vivo e o outro efetivamente morto.",
+      "resposta_padrao": "checagem de sincronismo 25",
+      "por_que_nao": "O relé 25 compara tensão, frequência e ângulo entre dois lados energizados; com um barramento morto, a lógica correta é dead-bus/live-bus."
+    }
+  ]
+}

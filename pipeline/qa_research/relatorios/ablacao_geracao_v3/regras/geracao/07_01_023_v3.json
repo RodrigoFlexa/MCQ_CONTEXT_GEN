@@ -1,0 +1,51 @@
+{
+  "item": "07_01",
+  "foco": 23,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_01:023:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A cobertura do teste funcional de um pressostato depende de o ponto de injeção incluir tomada, válvula-raiz e linha de impulso.",
+      "pergunta": "Durante o teste funcional de um pressostato de trip com válvula-raiz e linha de impulso, onde a pressão deve ser aplicada para verificar também entupimento ou bloqueio no caminho do processo?",
+      "resposta": "Na tomada de processo, antes da válvula-raiz.",
+      "explicacao": "Aplicar pressão no manifold ou no instrumento comprova apenas o elemento sensor. Pela tomada de processo, o teste cobre a continuidade hidráulica real até o pressostato.",
+      "resposta_padrao": "No manifold do pressostato.",
+      "por_que_nao": "Esse ponto contorna a tomada, a válvula-raiz e a linha de impulso, deixando sem teste o caminho real do processo."
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A vaporização ou perda parcial da coluna na perna molhada altera a referência hidrostática de nível por DP.",
+      "pergunta": "Nível indicado por DP em vaso pressurizado com perna molhada cai nas horas mais quentes; processo estável, sem mudança de pressão e sem manutenção recente. Qual a causa primária?",
+      "resposta": "Vaporização parcial do fluido na perna molhada.",
+      "explicacao": "O aquecimento reduz ou interrompe a coluna líquida de referência da perna molhada, deslocando o zero do transmissor e derrubando a leitura de nível.",
+      "resposta_padrao": "Deriva térmica do transmissor.",
+      "por_que_nao": "O desvio vem da mudança da cabeça hidrostática de referência, não da sensibilidade térmica do sensor eletrônico."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Oscilação local em válvula com volume booster pode ser causada por bypass do booster mal ajustado, independente da sintonia do PID.",
+      "pergunta": "Válvula pneumática com posicionador e volume booster passou a oscilar após intervenção; ar de suprimento estável e, em manual, pequenos degraus de comando já geram oscilações de posição. Que ajuste específico deve ser feito primeiro?",
+      "resposta": "Ajustar a restrição de bypass do volume booster.",
+      "explicacao": "Sem bypass corretamente ajustado, o booster eleva o ganho pneumático local e pode tornar o conjunto posicionador-atuador instável mesmo sem ação do controlador de processo.",
+      "resposta_padrao": "Reduzir o ganho do controlador PID.",
+      "por_que_nao": "A oscilação em manual mostra que a instabilidade está no conjunto da válvula, não na sintonia da malha de controle."
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Aplicar extração de raiz quadrada duas vezes em medição de vazão por DP distorce a linearização para raiz quarta.",
+      "pergunta": "Um transmissor de vazão por diferencial já entrega 4-20 mA linearizado em vazão, mas a extração de raiz quadrada permanece ativa no DCS. Qual efeito específico aparece na indicação?",
+      "resposta": "Subindicação da vazão por raiz quarta.",
+      "explicacao": "A raiz quadrada deve atuar apenas sobre sinal proporcional ao diferencial de pressão. Aplicá-la novamente sobre uma saída já linearizada deforma a curva de medição.",
+      "resposta_padrao": "A leitura fica apenas mais suave.",
+      "por_que_nao": "Extração de raiz quadrada não é amortecimento; ela altera a relação matemática entre o sinal e a vazão."
+    }
+  ]
+}

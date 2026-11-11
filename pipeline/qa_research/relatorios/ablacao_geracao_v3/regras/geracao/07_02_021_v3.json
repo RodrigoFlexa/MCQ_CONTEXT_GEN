@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:021:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Inventário seguro de ativos em redes OT críticas exige descoberta passiva quando a sondagem pode afetar dispositivos.",
+      "pergunta": "PLCs legados e nós sem suporte precisam ser inventariados numa rede de controle sem gerar pacotes de sondagem. Que técnica deve ser usada para identificar ativos e protocolos?",
+      "resposta": "Descoberta passiva por TAP/SPAN.",
+      "explicacao": "A escuta de tráfego espelhado revela endereços, protocolos e relações sem introduzir comunicações que possam desestabilizar equipamentos industriais sensíveis.",
+      "resposta_padrao": "Fazer varredura ativa de portas e endereços da sub-rede.",
+      "por_que_nao": "Sondagem ativa pode causar timeout, travamento ou comportamento anômalo em dispositivos OT legados."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o fluxo requerido é estritamente de saída da rede de controle, a imposição mais forte é unidirecional.",
+      "pergunta": "O historiador de processo só precisa enviar dados para analytics corporativo, sem qualquer comando ou consulta de retorno. Que elemento de rede melhor impõe esse requisito?",
+      "resposta": "Gateway unidirecional (data diode).",
+      "explicacao": "Ele impõe fisicamente o fluxo em um só sentido, reduzindo a superfície para comandos, pivotamento e retorno de tráfego ao ambiente de controle.",
+      "resposta_padrao": "Firewall stateful com regra apenas de saída.",
+      "por_que_nao": "Firewall continua sendo mecanismo lógico bidirecional e pode permitir retornos de sessão ou erro de configuração."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A restauração correta de aplicações de PLC/DCS exige verificação de integridade por comparação com baseline aprovada.",
+      "pergunta": "Depois de restaurar a aplicação de um PLC a partir de backup, telas e saídas parecem normais. Que verificação confirma que a lógica carregada coincide exatamente com a versão aprovada?",
+      "resposta": "Comparação online/offline com a baseline aprovada.",
+      "explicacao": "A comparação revela diferenças efetivas de lógica, parâmetros e blocos no controlador, inclusive alterações que não aparecem em alarmes ou na operação imediata.",
+      "resposta_padrao": "Colocar o controlador em RUN e observar se não surgem alarmes.",
+      "por_que_nao": "Comportamento aparentemente normal não demonstra identidade da aplicação nem exclui alteração persistente."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de fornecedor a ativos OT críticos deve ser mediado por salto controlado na DMZ industrial.",
+      "pergunta": "Para atualização temporária por fornecedor numa estação de engenharia, sem expor diretamente a rede de controle à conexão externa, em que ponto técnico a sessão remota deve terminar?",
+      "resposta": "Jump server na DMZ industrial.",
+      "explicacao": "O bastion host intermedeia o acesso ao ambiente de controle, permitindo isolamento, credenciais segregadas e registro central da sessão.",
+      "resposta_padrao": "Na própria estação de engenharia via VPN.",
+      "por_que_nao": "Isso cria caminho direto ao host crítico e contorna a mediação do conduíte entre zonas."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:001:v2",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificação funcional da fronteira IT/OT pelo ponto em que os dados saem do controle para outros consumidores.",
+      "pergunta": "Dados de controladores passam a alimentar supervisão, historiador e aplicações corporativas. Ao definir a segmentação, que ponto funcional deve ser tratado como fronteira IT/OT?",
+      "resposta": "saída da camada de controle",
+      "explicacao": "A fronteira surge quando o dado deixa o domínio de controle e passa a ser consumido por supervisão, historiadores, telecomunicações ou sistemas corporativos.",
+      "resposta_padrao": "o firewall entre a rede administrativa e a industrial",
+      "por_que_nao": "A fronteira é funcional; ela nasce na transição do consumo de dados, não na posição física de um equipamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Efeito da heterogeneidade de modelos de dados no posicionamento da integração entre controladores e consumidores externos.",
+      "pergunta": "Controladores de fornecedores diferentes expõem modelos de dados incompatíveis, e a padronização próxima à fonte não se sustenta. Para que camada a integração tende a migrar?",
+      "resposta": "camada supervisória",
+      "explicacao": "Com modelos de dados distintos, a padronização perto da fonte fica limitada; por isso a integração costuma ser concentrada na supervisão.",
+      "resposta_padrao": "camada de controle",
+      "por_que_nao": "A heterogeneidade dos modelos limita a padronização junto aos controladores e desloca a integração para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de definição de fluxos ao liberar novas interfaces que ampliam a fronteira IT/OT.",
+      "pergunta": "A arquitetura passou a incluir edge computing, IIoT e troca máquina-nuvem. Antes de liberar cada nova interface, que critério de fluxo deve ficar explicitamente definido?",
+      "resposta": "tráfego autorizado e sua finalidade operacional",
+      "explicacao": "Cada interface adicional amplia a fronteira; o controle correto é definir exatamente quais comunicações podem cruzá-la e para qual função operacional.",
+      "resposta_padrao": "largura de banda e latência mínimas",
+      "por_que_nao": "Desempenho não delimita exposição entre domínios; o decisivo é restringir fluxos permitidos conforme a finalidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A expansão recente para edge computing, Internet Industrial das Coisas (IIoT) e comunicação máquina-nuvem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Relação entre pontos de interconexão e o mecanismo de risco que a segmentação procura conter entre domínios.",
+      "pergunta": "Uma interface nova concentra troca entre controladores, supervisão e consumidores externos. Se essa interconexão for aberta além do necessário, que mecanismo de risco a segmentação deve conter?",
+      "resposta": "caminhos de propagação entre domínios",
+      "explicacao": "Interconexões concentram fluxos entre funções distintas; a segmentação busca impedir que falha, erro ou ação maliciosa em um domínio alcance os demais.",
+      "resposta_padrao": "aumento de latência de comunicação",
+      "por_que_nao": "O problema arquitetural principal é a propagação entre domínios de criticidade diferente, não o desempenho da rede.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros"
+        }
+      ]
+    }
+  ]
+}

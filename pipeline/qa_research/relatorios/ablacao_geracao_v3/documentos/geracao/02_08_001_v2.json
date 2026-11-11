@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_08:001:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de seleção entre análise estática e simulação dinâmica para cargas de alívio em shutdowns acoplados.",
+      "pergunta": "Parada de emergência de um trem de compressão envolve coastdown, abertura do recycle por controlador, volumes acoplados a montante e jusante e sequências de ESD. Que abordagem deve ser usada para avaliar a carga governante de alívio?",
+      "resposta": "simulação dinâmica do processo",
+      "explicacao": "Com coastdown, recycle e volumes acoplados, a carga de alívio depende do transiente, da atuação de controles e do sequenciamento do ESD; a abordagem dinâmica é a que captura esse comportamento.",
+      "resposta_padrao": "análise estática do pior caso",
+      "por_que_nao": "Hipóteses estáticas de simultaneidade ou estado já estabelecido não capturam defasagens, atuação de controles e acoplamento que governam esse transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "situações em que a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento, permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de surge de compressor em transientes de parada.",
+      "pergunta": "Durante parada programada do compressor, a vazão oscila, a razão de compressão sobe e o ponto operacional cruza repetidamente para a esquerda da curva apesar da abertura do recycle. Qual fenômeno primário a análise deve confirmar?",
+      "resposta": "surge do compressor",
+      "explicacao": "Oscilações globais de vazão e pressão com cruzamento da linha de surge durante a parada caracterizam risco de surge, fenômeno explicitamente associado a shutdowns de compressão.",
+      "resposta_padrao": "stall rotativo",
+      "por_que_nao": "Stall rotativo é instabilidade aerodinâmica local; oscilações sistêmicas de vazão e pressão com interação do recycle caracterizam surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação do reassentamento da PSV em modelos dinâmicos com duas válvulas em paralelo.",
+      "pergunta": "Num arranjo com duas PSVs em paralelo e pressões de ajuste diferentes, o modelo dinâmico precisa prever qual válvula permanece aberta após o pico de pressão em evento de baixa carga. Que comportamento específico da válvula deve ser representado?",
+      "resposta": "pressão de reassentamento",
+      "explicacao": "Em baixa carga, a sequência de fechamento entre PSVs não é definida só pela capacidade; o reassentamento é decisivo para prever qual válvula continua aberta.",
+      "resposta_padrao": "coeficiente de descarga da PSV",
+      "por_que_nao": "O coeficiente de descarga afeta a capacidade, mas não determina a sequência de fechamento após o pico; isso depende do blowdown e do reassentamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Efeito dos volumes comunicantes na previsão dinâmica de picos de alívio.",
+      "pergunta": "Vasos ligados por linhas abertas equalizam pressão na planta, mas o modelo transitório isola seus inventários e superestima o pico no header. Que representação específica deve ser corrigida?",
+      "resposta": "volumes comunicantes",
+      "explicacao": "Quando equipamentos conectados compartilham inventário, a comunicação hidráulica altera a equalização de pressão e a temporização do alívio; isolá-los no modelo inflaciona picos no header.",
+      "resposta_padrao": "fator de simultaneidade",
+      "por_que_nao": "O erro decorre da ausência de inventário compartilhado e equalização entre volumes conectados, não de uma hipótese de coincidência temporal entre fontes independentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ]
+    }
+  ]
+}

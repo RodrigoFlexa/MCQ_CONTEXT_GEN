@@ -1,0 +1,71 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:001:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Heterogeneidade de modelos de dados entre controladores desloca o ponto viável de integração para a camada supervisória.",
+      "pergunta": "Controladores de campo de fornecedores diferentes precisam alimentar supervisão e análise; os modelos de dados não se alinham e a padronização junto à fonte ficou limitada. Em que camada a integração deve ser concentrada?",
+      "resposta": "Na camada supervisória.",
+      "explicacao": "Com modelos de dados distintos, a padronização perto da fonte fica limitada. A integração tende a migrar para a supervisão, que concentra agregação operacional.",
+      "resposta_padrao": "Nos próprios controladores de campo, com integrações ponto a ponto.",
+      "por_que_nao": "Quando os fornecedores usam modelos diferentes, a padronização próxima à fonte deixa de ser o ponto mais adequado de integração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A fronteira prática relevante para segmentação aparece na interconexão da camada supervisória, quando dados deixam o controle para consumidores externos.",
+      "pergunta": "Dados dos controladores já alimentam alarmes, histórico, aplicações analíticas e sistemas corporativos. Que ponto passa a exigir tratamento arquitetural específico na segmentação?",
+      "resposta": "A interconexão da camada supervisória.",
+      "explicacao": "A fronteira prática surge quando os dados saem do controle. Esses pontos concentram a troca entre controladores, supervisão e consumidores externos.",
+      "resposta_padrao": "Os enlaces entre instrumentos e controladores de campo.",
+      "por_que_nao": "Aqui a fronteira IT/OT relevante se forma na saída da camada de controle para supervisão, historiadores, analytics e sistemas corporativos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em arquiteturas híbridas com edge, nuvem e SCADA local, cada fluxo permitido através da fronteira deve ser justificado por finalidade operacional explícita.",
+      "pergunta": "Num arranjo híbrido, o mesmo controlador de borda publica dados em nuvem e alimenta o SCADA local em tempo real. Qual critério técnico deve justificar cada fluxo liberado através dessa fronteira?",
+      "resposta": "Finalidade operacional definida.",
+      "explicacao": "Com edge, IIoT e nuvem, cada interface amplia a fronteira. O tráfego autorizado deve estar vinculado a uma função operacional explícita.",
+      "resposta_padrao": "Origem, destino e protocolo do tráfego.",
+      "por_que_nao": "Esses atributos descrevem o fluxo, mas não definem se ele precisa atravessar a fronteira nem para que função operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        }
+      ]
+    }
+  ]
+}

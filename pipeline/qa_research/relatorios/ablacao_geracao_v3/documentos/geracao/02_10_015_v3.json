@@ -1,0 +1,103 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_10:015:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da filosofia de controle da interface quando a prioridade é estabilizar a alimentação dos hidrociclones.",
+      "pergunta": "A água separada alimenta hidrociclones, e a qualidade do descarte piora quando a vazão de alimentação oscila; ao mesmo tempo, o teor de óleo na água varia mais lentamente que a dinâmica do hidrociclone. Qual filosofia da malha de interface é mais adequada?",
+      "resposta": "controle por bandas da interface",
+      "explicacao": "Nesse caso, limitar a excursão da interface tende a estabilizar vazão e split no hidrociclone; como o teor de óleo varia lentamente, pequena oscilação de interface pode ser aceitável.",
+      "resposta_padrao": "Manter a interface rigidamente em um único setpoint.",
+      "por_que_nao": "Controle rígido pode aumentar a oscilação de vazão e split do hidrociclone, piorando a regularidade da descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        },
+        {
+          "bloco": "F",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica é coerente com o controle por bandas"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da variável manipulada da malha de interface quando há camada de emulsão espessa.",
+      "pergunta": "Com camada de emulsão muito espessa e sensibilidade do tratamento de água a jusante à variabilidade de alimentação, qual corrente do hidrociclone tende a ser a variável manipulada mais favorável para a malha de interface?",
+      "resposta": "overflow do hidrociclone",
+      "explicacao": "Embora underflow seja usado em uma arquitetura comum, o texto de apoio indica que, com emulsão muito espessa, a estratégia de controle via overflow pode ser mais favorável.",
+      "resposta_padrao": "underflow do hidrociclone",
+      "por_que_nao": "A espessura elevada da emulsão é o caso específico em que a variável manipulada adequada pode mudar para overflow.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma arquitetura descrita para esse tipo de sistema manipula a vazão de underflow do hidrociclone para controlar a interface no separador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de emulsão se torna muito espessa, a variável manipulada mais adequada pode mudar, havendo indicação de que uma estratégia de controle de overflow pode ser mais favorável nesse cenário específico."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo de acoplamento entre a malha da interface e a malha de DPR no hidrociclone.",
+      "pergunta": "A interface é corrigida pela vazão de underflow e, logo depois, a malha que mantém o DPR pelo overflow também se desloca. Qual mecanismo operacional conecta diretamente essas duas respostas?",
+      "resposta": "balanço de massa compartilhado da alimentação do hidrociclone",
+      "explicacao": "Underflow e overflow são saídas do mesmo equipamento; alterar uma delas muda a condição disponível para a outra e, portanto, o split enfrentado pela malha de DPR.",
+      "resposta_padrao": "variação da pressão do separador",
+      "por_que_nao": "O acoplamento descrito decorre das correntes do próprio hidrociclone compartilharem a mesma alimentação e o mesmo split.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério dinâmico para aceitar oscilação de interface sem prejuízo relevante ao hidrociclone.",
+      "pergunta": "Oscilações moderadas da interface aparecem durante transientes. Que comparação dinâmica deve ser feita para decidir se isso pode ser tolerado sem perda relevante no desempenho do tratamento de água?",
+      "resposta": "tempo de variação do teor de óleo versus constante de tempo do hidrociclone",
+      "explicacao": "Se a concentração de óleo na água muda lentamente em relação à resposta do hidrociclone, alguma oscilação da interface pode ser tolerada; a decisão depende da dinâmica acoplada.",
+      "resposta_padrao": "A amplitude absoluta da oscilação da interface.",
+      "por_que_nao": "O critério não é só amplitude; é a relação entre a velocidade da perturbação de qualidade e a dinâmica do hidrociclone.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado"
+        }
+      ]
+    }
+  ]
+}

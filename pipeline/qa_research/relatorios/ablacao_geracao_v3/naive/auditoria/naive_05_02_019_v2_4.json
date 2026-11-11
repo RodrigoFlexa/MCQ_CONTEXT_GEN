@@ -1,0 +1,55 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "A UPS mantém vivos os sistemas de controle, instrumentação e proteção, enquanto o gerador de emergência energiza os serviços essenciais e dá suporte ao restabelecimento inicial da planta após o blackout.",
+  "alternativa_excluida": true,
+  "atalho": true,
+  "sustentada": true,
+  "elemento_unico": false,
+  "tipo_sugerido": "conceito",
+  "justificativa": "É uma divisão funcional típica e amplamente conhecida em filosofias de black start, e os blocos sustentam tanto a função da UPS para cargas vitais de controle quanto a do gerador de emergência na alimentação essencial e recomposição.",
+  "aprovada": false,
+  "motivo": "atalho",
+  "falhas": [
+    "atalho",
+    "nao_unico"
+  ],
+  "referencia_valida": false,
+  "tipo_confere": false,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "05_02",
+      "texto": "A seleção de cargas para 24 Vcc, UPS e geração de emergência deve partir da consequência da perda de energia, e não apenas da potência consumida. Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação. O tempo de retaguarda pode variar de minutos a algumas horas conforme porte e essencialidade da aplicação, mas valores específicos dependem da filosofia da unidade e não podem ser assumidos sem dado de projeto. O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass, coerência das lógicas de reboot e de trip, e efeitos de modificações acumuladas ao longo da vida operacional. Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível. Por isso, comissionamento, testes periódicos e gestão de mudanças são decisivos para confirmar a redundância prevista em projeto na configuração realmente instalada.",
+      "titulo": "UPS, baterias e sistemas essenciais / Seleção e monitoramento das cargas essenciais",
+      "indice_documento": 17
+    },
+    {
+      "id": "B2",
+      "item": "05_02",
+      "texto": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle. Em uma configuração de FPSO, os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais, com dois conjuntos retificador/carregador e banco de baterias, cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE. Havia também UPS (Uninterruptible Power Supply) para cargas vitais em corrente alternada. Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal e à perda de equipamentos importantes. Na mesma sequência funcional, a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS. O mecanismo relevante é que o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida. Assim, a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout, não apenas um detalhe auxiliar.",
+      "titulo": "PMS, transientes e blackout / Interfaces entre alimentação em corrente contínua, UPS e perda de geração",
+      "indice_documento": 11
+    },
+    {
+      "id": "B3",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    },
+    {
+      "id": "B4",
+      "item": "07_02",
+      "texto": "Em instalações com potencial de acidente maior, o impacto de um incidente não deve ser avaliado apenas pela origem, mas pelas funções afetadas. Comprometimento de sistemas de controle industrial pode alcançar funções que atuam sobre válvulas, vazão e pressão. Já falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência, reduzindo sua confiabilidade e efetividade. Há situações em que a resposta operacional assume prioridade imediata: diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos enquanto o dano é inspecionado. Eventos elétricos, de automação e de segurança podem se encadear rapidamente: a perda da geração principal, somada à falha de partida do gerador de emergência e à indisponibilidade da UPS, pode deixar sem energia as funções de segurança justamente durante a emergência. Em FPSO, a interface entre resposta a incidente e emergência operacional exige reconhecer quando o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta.",
+      "titulo": "Monitoramento e resposta a incidentes / Relação entre incidente digital e emergência operacional",
+      "indice_documento": 15
+    },
+    {
+      "id": "B5",
+      "item": "07_02",
+      "texto": "Os sistemas UPS podem atender cargas em corrente contínua ou em corrente alternada. Para o contexto descrito, UPS-CC são sistemas simples para cargas em corrente contínua. Já UPS-CA são descritas em topologia de dupla conversão on-line, na qual a energia disponível é retificada para corrente contínua, essa etapa carrega o banco de baterias e alimenta internamente o caminho de conversão que supre a carga. Em termos técnicos, isso tende a reduzir o acoplamento direto entre perturbações instantâneas da entrada e a alimentação entregue ao consumidor, porque a carga passa a depender de um barramento interno condicionado e da etapa eletrônica de saída. Por esse mecanismo, a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte, desde que potência, componentes e manutenção estejam adequados. O benefício não elimina vulnerabilidades do próprio sistema: falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega. Em sistemas digitais críticos, degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado.",
+      "titulo": "Backups, integridade e recuperação / Como a UPS opera e por que a dupla conversão ajuda",
+      "indice_documento": 19
+    }
+  ]
+}

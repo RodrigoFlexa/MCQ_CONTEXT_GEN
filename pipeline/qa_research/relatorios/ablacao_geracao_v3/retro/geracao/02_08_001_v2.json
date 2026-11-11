@@ -1,0 +1,75 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_08:001:v2",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de arranjo com PSVs escalonadas para proteger casos de alta e baixa carga sem instabilidade no evento menor.",
+      "pergunta": "O mesmo vaso tem um cenário de alta vazão e outro de baixa carga. A PSV dimensionada pelo caso governante abre e fecha repetidamente no evento menor. Qual arranjo com mais de uma PSV deve ser adotado?",
+      "resposta": "Duas PSVs em paralelo com pressões de ajuste diferentes.",
+      "explicacao": "Uma única PSV pode proteger o caso dimensionante e ainda ser dinamicamente inadequada na baixa carga; o escalonamento faz só a primeira atuar no evento menor.",
+      "resposta_padrao": "Uma única PSV dimensionada pelo cenário de maior vazão.",
+      "por_que_nao": "Cobrir a sobrepressão máxima não resolve a inadequação dinâmica no evento menor; o escalonamento de set points resolve esse conflito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma única PSV escolhida para o caso dimensionante pode proteger contra sobrepressão, mas continuar inadequada do ponto de vista dinâmico para a condição de menor carga."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação do blowdown da PSV no modelo transiente para prever reassentamento e interação entre válvulas.",
+      "pergunta": "No modelo transiente de duas PSVs em paralelo, a menor abre no evento brando e a pressão recua sem estabilizar. Que parâmetro do comportamento da válvula precisa estar representado para prever corretamente se ela reassenta?",
+      "resposta": "Pressão de reassentamento da PSV.",
+      "explicacao": "O ponto de fechamento não coincide automaticamente com o de abertura; sem o reassentamento, o modelo não reproduz corretamente o ciclo da válvula no transiente.",
+      "resposta_padrao": "Pressão de ajuste da PSV.",
+      "por_que_nao": "A pressão de ajuste define a abertura inicial, não o ponto de fechamento nem a histerese de operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula; simplificações de simulação não definem o funcionamento real da PSV."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso da envoltória dinâmica de máximos por cenário quando os governantes térmico e hidráulico ocorrem em transientes diferentes.",
+      "pergunta": "Na partida, a corrente aliviada chega mais quente; em carga alta, o pico hidráulico é maior. Ambos descarregam para o mesmo header. Que referência deve ser usada na verificação do sistema receptor?",
+      "resposta": "Envoltória dinâmica dos máximos de temperatura e vazão por cenário.",
+      "explicacao": "O máximo térmico e o máximo hidráulico podem ocorrer em cenários distintos; a verificação do receptor deve considerar a envoltória dos picos obtidos dinamicamente.",
+      "resposta_padrao": "O único cenário de maior vazão.",
+      "por_que_nao": "O caso governante para hidráulica pode não ser o governante para temperatura; usar só a maior vazão pode perder o pico térmico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "foi aplicada para obter máxima temperatura e vazão de alívio em cenários operacionais distintos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A abordagem estática e a abordagem dinâmica podem levar a conclusões diferentes sobre a carga de alívio e sobre o sistema receptor."
+        }
+      ]
+    }
+  ]
+}

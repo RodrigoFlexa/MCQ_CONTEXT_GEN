@@ -1,0 +1,99 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 1,
+  "onda": 1,
+  "id": "02_08:005:v1",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para selecionar análise dinâmica quando a carga de blowdown depende de transientes do processo e do flare.",
+      "pergunta": "Na ampliação de um sistema de blowdown, a abertura das BDVs tem atraso, o inventário se esvazia durante o evento e a contrapressão da tocha varia no tempo. Que método de análise deve orientar o projeto?",
+      "resposta": "simulação dinâmica transiente do blowdown e flare",
+      "explicacao": "Como as grandezas do blowdown mudam ao longo do evento, o método precisa representar atraso de BDV, depleção do inventário, mudança de fase e contrapressão variável para definir corretamente a carga ao flare e o projeto.",
+      "resposta_padrao": "simulação estática em regime permanente",
+      "por_que_nao": "Regime permanente não representa a evolução temporal do inventário nem a hidráulica variável que controla o pico e a duração da descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para blowdown, isso é particularmente importante porque pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo de blowdown para limitar pico de vazão ao flare quando não há capacidade para descargas simultâneas.",
+      "pergunta": "O sistema de flare não consegue receber simultaneamente as descargas de todos os segmentos protegidos durante ESD. Qual arranjo técnico deve ser configurado para limitar o pico de vazão recebido?",
+      "resposta": "blowdown faseado pelo sequenciamento do ESD",
+      "explicacao": "Quando o flare não comporta a soma instantânea das descargas, escalonar a abertura por ESD reduz o pico de vazão recebido. O custo é manter inventário pressurizado por mais tempo nos segmentos ainda fechados.",
+      "resposta_padrao": "abertura simultânea de todas as BDVs",
+      "por_que_nao": "Abertura simultânea eleva a carga instantânea ao flare; o problema descrito é de capacidade de recebimento no pico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para blowdown, isso é particularmente importante porque pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o sistema não consegue receber simultaneamente o fluxo de todos os sistemas protegidos, pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa solução tende a reduzir o pico de vazão no flare, mas prolonga a permanência de inventário em segmentos que ainda não foram abertos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação funcional de blowdown por comparação do tempo real de despressurização com o previsto.",
+      "pergunta": "Num teste controlado de blowdown, as BDVs abriram conforme comando e não houve vibração excessiva. Para confirmar a efetividade da função de segurança, qual parâmetro deve ser confrontado com o previsto?",
+      "resposta": "tempo de despressurização até a pressão final definida",
+      "explicacao": "A função de segurança é levar o segmento à condição final requerida. Abertura da BDV, sozinha, não comprova o desempenho, que depende também de perdas de carga, contrapressão e evolução do fluido.",
+      "resposta_padrao": "posição aberta da BDV",
+      "por_que_nao": "Curso da válvula não garante remoção do inventário na velocidade necessária sob as condições hidráulicas reais do evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para blowdown, isso é particularmente importante porque pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Testes controlados de blowdown são indicados para verificar a efetividade da função, incluindo o tempo para despressurizar e a ocorrência de vibração excessiva"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tempo real não depende apenas do tamanho da válvula."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da premissa de modelo que distorce a forma temporal da descarga ao flare em estudos dinâmicos.",
+      "pergunta": "A simulação dinâmica usa inventário e propriedades coerentes, mas o pico de vazão à tocha sai cedo demais e maior que o observado após ESD, com segmentos reais liberados em momentos diferentes. Que premissa do modelo está primariamente errada?",
+      "resposta": "sequenciamento de abertura na lógica de ESD",
+      "explicacao": "Se inventário e propriedades estão coerentes, mas a forma temporal da descarga diverge do observado, o erro primário está na representação de quando cada segmento abre durante o ESD.",
+      "resposta_padrao": "contrapressão do flare",
+      "por_que_nao": "A discrepância principal está no perfil temporal imposto pela ordem de abertura; a contrapressão reage a esse perfil, mas não o define sozinha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Já um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD ou propriedades do fluido estiverem incorretas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos."
+        }
+      ]
+    }
+  ]
+}

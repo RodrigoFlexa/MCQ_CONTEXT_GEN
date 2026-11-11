@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:006:v1",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Interligação de barramentos energizados exige permissivo específico de sincronismo antes do fechamento do bus tie.",
+      "pergunta": "Dois barramentos energizados por fontes independentes serão interligados para transferência de carga. Qual função específica deve liberar o fechamento do disjuntor de bus tie?",
+      "resposta": "relé de verificação de sincronismo (função 25)",
+      "explicacao": "O fechamento entre barramentos vivos só é seguro com compatibilidade de tensão, frequência e ângulo de fase; sem essa verificação, a manobra pode gerar transitórios severos e perda ampla de cargas.",
+      "resposta_padrao": "intertravamento por subtensão no barramento",
+      "por_que_nao": "Subtensão não confirma ângulo de fase nem desvio de frequência entre fontes ativas, portanto não evita fechamento fora de sincronismo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A mudança do estado do bus tie altera a base elétrica usada para validar a coordenação das proteções.",
+      "pergunta": "Ao passar o bus tie de aberto para fechado, com ambas as seções alimentadas, qual grandeza elétrica específica deve ser reavaliada antes de manter os ajustes de proteção?",
+      "resposta": "nível de curto-circuito no barramento",
+      "explicacao": "A interligação cria contribuições adicionais de corrente de falta, modificando sensibilidades e tempos de atuação; por isso, a coordenação não pode ser mantida sem revisar o curto-circuito.",
+      "resposta_padrao": "fluxo de potência entre as seções",
+      "por_que_nao": "Fluxo de carga não define pickup nem temporização dos relés; o que muda com a interligação é a corrente de falta disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em secundários interligados, a retaguarda do transformador deve ser seletiva em relação às proteções dos alimentadores a jusante.",
+      "pergunta": "Secundários interligados por bus tie são alimentados por bancos de transformadores com disjuntor primário. Com quais relés específicos a retaguarda de fase e de terra do transformador deve ser coordenada para não derrubar todo o barramento numa falta de alimentador?",
+      "resposta": "relés dos alimentadores do barramento secundário",
+      "explicacao": "Nessa arquitetura, uma falta em alimentador deve ser eliminada a jusante; a retaguarda do transformador só pode atuar depois, preservando seletividade e continuidade no restante do barramento.",
+      "resposta_padrao": "proteção diferencial do barramento",
+      "por_que_nao": "A diferencial cobre a zona de barramento, mas não estabelece a seletividade temporal necessária para faltas nos alimentadores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos com transformadores em paralelo e secundários conectados por barramento interligado"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador"
+        }
+      ]
+    }
+  ]
+}

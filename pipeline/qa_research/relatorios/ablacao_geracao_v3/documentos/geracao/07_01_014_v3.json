@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_01:014:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação integrada da arquitetura de automação para revelar falhas dinâmicas entre campo, controle e supervisão.",
+      "pergunta": "Antes da entrada do fluido de processo, qual verificação demonstra a automação como sistema integrado e expõe erro de configuração, sentido invertido de atuação, falha de sequência e instabilidade inicial que inspeções estáticas não mostram?",
+      "resposta": "teste funcional integrado sob condições representativas e controladas",
+      "explicacao": "Os blocos associam a arquitetura integrada a testes dinâmicos que comprovam comunicação e comportamento entre camadas, revelando falhas que energização isolada e verificações estáticas não evidenciam.",
+      "resposta_padrao": "loop check individual dos instrumentos",
+      "por_que_nao": "Loop check confirma continuidade e correspondência ponto a ponto, mas não prova sequência, interação entre camadas, sentido de atuação nem estabilidade dinâmica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a automação resulta da integração de dispositivos de campo, sistemas controladores e supervisão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a arquitetura de automação precisa ser verificada como sistema integrado, não apenas como coleção de equipamentos energizados"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "testes integrados, sob condições representativas porém controladas, revelam falhas que não aparecem em inspeções estáticas"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Separação funcional entre a camada de supervisão/HMI e a camada de controle executada por PLC/DCS.",
+      "pergunta": "Bombas e válvulas continuam respondendo automaticamente ao processo, mas o operador perdeu visualização e comando pela HMI. Qual indisponibilidade primária explica esse quadro?",
+      "resposta": "sistema de supervisão/HMI",
+      "explicacao": "Se a resposta automática do processo continua, a lógica de controle ainda está ativa nos controladores; a perda descrita recai sobre a camada que fornece interface e monitoramento ao operador.",
+      "resposta_padrao": "controladores PLC/DCS",
+      "por_que_nao": "A falha dos controladores interromperia ou degradaria a coordenação automática das ações de controle, o que contraria a continuidade observada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo e oferecem interface para que operadores visualizem a situação operacional e atuem sobre o sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando existe HMI (Interface Homem-Máquina), o operador passa a compartilhar a condução do processo com o sistema automatizado"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação da representatividade operacional dos dados por coerência temporal em arquiteturas distribuídas.",
+      "pergunta": "Tendências e telas seguem exibindo valores, porém a sequência entre eventos remotos, alarmes e atuações não fecha causalmente. Que característica do dado deve ser verificada primeiro para validar a supervisão?",
+      "resposta": "coerência temporal dos sinais",
+      "explicacao": "Os blocos ligam supervisão, tendências e inferências operacionais à coerência temporal dos sinais; sem isso, valores podem aparecer na tela sem representar corretamente o estado físico.",
+      "resposta_padrao": "calibração metrológica dos transmissores",
+      "por_que_nao": "Um sinal pode estar calibrado e ainda assim chegar atrasado, desalinhado ou fora de sequência, tornando inválidas tendências e relações de causa e efeito.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação e do diagnóstico entre camadas"
+        }
+      ]
+    }
+  ]
+}

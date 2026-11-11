@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:015:v3",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura de acesso remoto controlado entre IT e OT para estações de engenharia.",
+      "pergunta": "Fornecedor precisa acessar temporariamente uma estação de engenharia a partir da rede corporativa para suporte, sem expor diretamente a rede de controle. Qual arranjo técnico específico deve intermediar esse acesso?",
+      "resposta": "Jump server na DMZ industrial",
+      "explicacao": "O acesso termina na DMZ e é então controlado até OT, com autenticação, registro e sem rota direta da rede corporativa aos ativos de controle.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "Acesso direto rompe a segregação por zonas e reduz o controle granular e a monitoração da sessão."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de seleção de interligação quando o fluxo entre redes deve ser estritamente unidirecional.",
+      "pergunta": "Só é necessário enviar dados do historiador para a rede corporativa, e qualquer tráfego de retorno deve ser fisicamente impossível. Qual solução específica de interligação atende a essa condição?",
+      "resposta": "Diodo de dados",
+      "explicacao": "O diodo impõe fluxo unidirecional por hardware, permitindo exportar dados sem possibilidade física de comandos ou sessões de retorno.",
+      "resposta_padrao": "Firewall na DMZ.",
+      "por_que_nao": "Firewall filtra tráfego, mas não elimina a bidirecionalidade física nem a possibilidade de retorno por configuração ou comprometimento."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade de lógica carregada em PLC ou SIS por fingerprint da aplicação residente.",
+      "pergunta": "Há suspeita de download não autorizado para um PLC ou solver de segurança, embora o número de versão exibido permaneça igual. Como verificar a integridade exata da aplicação carregada?",
+      "resposta": "Checksum da lógica carregada versus baseline aprovado",
+      "explicacao": "O checksum do programa residente detecta qualquer diferença binária da aplicação realmente carregada, mesmo quando o rótulo de versão parece coincidir.",
+      "resposta_padrao": "Comparar o número de versão do projeto.",
+      "por_que_nao": "Versionamento não garante identidade binária da lógica compilada nem revela alteração não autorizada no controlador."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fonte correta de evidência para atribuir alterações de setpoint ou configuração em sistemas de controle.",
+      "pergunta": "Setpoints aparecem alterados sem desvio claro no processo; existe historiador e trilha de auditoria do sistema. Para identificar usuário, horário e origem da mudança, qual registro é o correto?",
+      "resposta": "Audit trail de alterações de configuração/setpoint",
+      "explicacao": "A trilha de auditoria registra quem alterou, quando e por qual interface; a tendência mostra o valor mudando, sem atribuição confiável.",
+      "resposta_padrao": "Tendência do historiador.",
+      "por_que_nao": "O historiador registra valores e timestamps de processo, não a autoria autenticada nem o caminho da alteração."
+    }
+  ]
+}

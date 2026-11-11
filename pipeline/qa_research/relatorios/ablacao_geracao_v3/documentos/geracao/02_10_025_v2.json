@@ -1,0 +1,91 @@
+{
+  "item": "02_10",
+  "foco": 25,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_10:025:v2",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre a malha de controle de pressão e as funções de proteção do separador.",
+      "pergunta": "A carga aumenta gradualmente e a pressão começa a sair do ponto de operação, sem vazamento, sem descarga de produto e sem alarme de alta pressão. Qual instrumento de controle deve comandar a correção antes de qualquer proteção?",
+      "resposta": "PIC",
+      "explicacao": "Na condição operacional normal, quem compara a pressão medida com a condição requerida e comanda a correção é o controlador de pressão. ESDV e PSV pertencem a funções de proteção.",
+      "resposta_padrao": "ESDV",
+      "por_que_nao": "ESDV isola parte da planta em desvios com risco; não é a camada usada para manter a pressão na faixa operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O controlador e indicador de pressão, PIC, compara a pressão medida com a condição normal ou necessária"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função de isolamento de emergência aplicada quando há desvio de processo indicativo de risco.",
+      "pergunta": "Detectado vazamento de produto a jusante do separador, é preciso segregar rapidamente o inventário dessa seção. Qual equipamento de proteção deve fazer o isolamento?",
+      "resposta": "ESDV",
+      "explicacao": "Para desvios indicativos de risco, como vazamento, a função correta é isolar parte da planta por válvula de desligamento de emergência.",
+      "resposta_padrao": "PIC",
+      "por_que_nao": "PIC busca manter a variável de processo na operação normal; vazamento exige isolamento de emergência, não apenas controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A válvula de desligamento de emergência, ESDV, é apresentada como elemento de isolamento de parte da planta quando há desvios de processo indicativos de risco, como descarga de produto, vazamento, alta pressão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas funções não são equivalentes"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Proteção independente contra sobrepressão quando a malha de controle não consegue conter a pressão.",
+      "pergunta": "Com a malha de pressão incapaz de conter a elevação e sem tempo para intervenção manual, qual dispositivo deve limitar a sobrepressão do vaso por alívio?",
+      "resposta": "PSV",
+      "explicacao": "Quando o controle não mantém a pressão, a proteção de sobrepressão é feita pela válvula de segurança, distinta da função de isolamento executada pela ESDV.",
+      "resposta_padrao": "ESDV",
+      "por_que_nao": "ESDV isola a seção, mas não alivia a pressão do volume já confinado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A PSV, válvula de segurança de pressão, é mostrada como dispositivo instalado na parte superior do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a ESDV e a PSV pertencem a funções de proteção com propósitos distintos"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Papel do transmissor de pressão como origem do sinal enviado ao controle e ao registro.",
+      "pergunta": "Depois de intervenção no ponto de tomada de pressão, o valor some ao mesmo tempo do controlador e do registrador, embora o equipamento permaneça pressurizado. Qual instrumento de campo é o primeiro suspeito na malha?",
+      "resposta": "PT",
+      "explicacao": "O transmissor de pressão é quem mede no campo e envia o valor ao controlador e ao registrador; sua perda afeta simultaneamente ambos os caminhos.",
+      "resposta_padrao": "PIC",
+      "por_que_nao": "PIC usa a medição recebida; a perda simultânea do sinal em controle e registro aponta primeiro para o transmissor ou seu ponto de instrumentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "degradação de casco, internos, conexões ou pontos de instrumentação pode alterar resposta do processo e confiabilidade da medição"
+        }
+      ]
+    }
+  ]
+}

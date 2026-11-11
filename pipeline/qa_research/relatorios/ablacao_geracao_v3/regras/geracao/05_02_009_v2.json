@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 9,
+  "visita": 2,
+  "onda": 3,
+  "id": "05_02:009:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda de torque em gerador sincronizado deve ser detectada por potência reversa, não por sobrecorrente.",
+      "pergunta": "Com gerador já em paralelo, perda de torque da máquina motriz faz a potência ativa cruzar zero e ficar negativa, sem sobrecorrente relevante. Qual proteção específica deve abrir o disjuntor?",
+      "resposta": "proteção de potência reversa",
+      "explicacao": "Sem torque primário, o gerador passa a ser motorizado pelo barramento. A condição decisiva é a inversão do fluxo de potência ativa.",
+      "resposta_padrao": "Proteção de sobrecorrente.",
+      "por_que_nao": "A motorização pode ocorrer com corrente próxima da carga normal; o sinal discriminante é o sentido do kW."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Déficit súbito de geração em sistema ilhado é detectado mais cedo por ROCOF para load shedding.",
+      "pergunta": "Perda instantânea de um gerador faz a frequência cair muito rápido, e o primeiro estágio de subfrequência não atua a tempo. Que variável deve iniciar o descarte automático de carga mais cedo?",
+      "resposta": "taxa de variação da frequência",
+      "explicacao": "A derivada da frequência responde imediatamente ao desequilíbrio entre geração e carga, antecipando o shedding antes do cruzamento de patamares absolutos.",
+      "resposta_padrao": "Subtensão do barramento.",
+      "por_que_nao": "No déficit primário de geração, a assinatura inicial é dinâmica de frequência; a tensão pode não cair primeiro nem com boa seletividade."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento de gerador sobre barramento desenergizado requer permissivo de barramento morto em vez de sincronismo.",
+      "pergunta": "Barramento totalmente sem tensão será reenergizado por gerador de emergência após blackout. Que permissivo específico deve ser verificado antes do fechamento do disjuntor?",
+      "resposta": "permissivo de barramento morto",
+      "explicacao": "Com o barramento morto, não há fonte viva para sincronizar. O critério correto é confirmar ausência de tensão residual ou retroalimentação.",
+      "resposta_padrao": "Checagem de sincronismo com a barra.",
+      "por_que_nao": "Sem tensão no barramento, não existe ângulo ou deslizamento a casar; o risco técnico é fechar sobre uma barra não realmente morta."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Energização de transformador a vazio é discriminada de falta interna pelo conteúdo de segunda harmônica na proteção diferencial.",
+      "pergunta": "Corrente alta e assimétrica aparece ao energizar um transformador a vazio, sem defeito interno. Que componente da corrente a proteção diferencial usa para bloquear atuação indevida?",
+      "resposta": "segunda harmônica",
+      "explicacao": "A corrente de inrush magnetizante contém segunda harmônica significativa, usada pela diferencial para restrição ou bloqueio contra disparo indevido.",
+      "resposta_padrao": "Valor eficaz da corrente.",
+      "por_que_nao": "A magnetização de partida pode exceder a nominal; o que a distingue de falta interna é a forma de onda, não só a magnitude."
+    }
+  ]
+}

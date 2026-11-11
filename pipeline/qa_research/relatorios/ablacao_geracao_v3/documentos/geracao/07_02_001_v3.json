@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:001:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Localização da fronteira IT/OT quando os dados saem do controle para a supervisão.",
+      "pergunta": "Controladores de campo enviam dados a um SCADA, e só depois saem fluxos para historiador, telecom e aplicações analíticas. Qual interface da arquitetura marca a fronteira IT/OT nesse arranjo?",
+      "resposta": "a interface entre os controladores e o SCADA",
+      "explicacao": "A fronteira prática surge no ponto em que os dados deixam a camada de controle e passam à supervisão, antes de seguirem para outros consumidores.",
+      "resposta_padrao": "o enlace entre o SCADA e a rede corporativa",
+      "por_que_nao": "A primeira transição crítica já ocorre na saída da camada de controle; tratar só o perímetro corporativo deixa essa fronteira sem definição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os dados deixam a camada de controle e passam a ser consumidos por supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA tende a funcionar como camada agregadora"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificação de nova fronteira em arquitetura híbrida com edge e nuvem.",
+      "pergunta": "Controladores de borda publicam dados para um broker MQTT em nuvem e, simultaneamente, alimentam o SCADA local em tempo real. Qual interface adicional precisa ser tratada como fronteira arquitetural distinta?",
+      "resposta": "a interface controlador de borda–broker MQTT em nuvem",
+      "explicacao": "O envio simultâneo ao SCADA local e à nuvem cria uma fronteira máquina-nuvem separada do caminho supervisório local.",
+      "resposta_padrao": "a interface entre o SCADA local e a nuvem",
+      "por_que_nao": "Nesse arranjo, a nova exposição nasce no caminho edge–nuvem; focar SCADA–nuvem não cobre a interface que realmente cruza a fronteira.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controladores de borda podem enviar dados para broker MQTT em nuvem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alimentar SCADA local em tempo real"
+        },
+        {
+          "bloco": "F",
+          "trecho": "amplia ainda mais essas fronteiras"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Efeito da heterogeneidade de modelos de dados na localização da integração.",
+      "pergunta": "Controladores de fornecedores diferentes expõem modelos de dados incompatíveis, e consumidores externos precisam de visão unificada. Em qual camada a integração tende a se concentrar?",
+      "resposta": "na camada supervisória",
+      "explicacao": "Quando a padronização próxima à fonte fica limitada por modelos de dados distintos, a integração sobe para a supervisão.",
+      "resposta_padrao": "nos próprios controladores de campo",
+      "por_que_nao": "A incompatibilidade de modelos reduz a viabilidade de padronizar junto à fonte, deslocando a integração para cima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério para liberar tráfego que cruza a fronteira entre controle e consumidores externos.",
+      "pergunta": "IIoT, telemetria e comunicação máquina-máquina foram adicionados, e um novo fluxo quer cruzar a separação entre controle e consumidores externos. Qual critério técnico deve ser definido antes de liberar esse fluxo?",
+      "resposta": "a finalidade operacional do tráfego",
+      "explicacao": "Com cada nova interface, o ponto decisivo é explicitar qual tráfego atravessa a fronteira e para que função operacional.",
+      "resposta_padrao": "a origem e o destino IP do fluxo",
+      "por_que_nao": "Endereços implementam a regra, mas não definem se o cruzamento é tecnicamente necessário; isso vem da finalidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira"
+        },
+        {
+          "bloco": "F",
+          "trecho": "com qual finalidade operacional"
+        }
+      ]
+    }
+  ]
+}

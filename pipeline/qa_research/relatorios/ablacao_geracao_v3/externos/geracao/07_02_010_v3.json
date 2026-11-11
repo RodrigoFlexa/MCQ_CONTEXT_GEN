@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:010:v3",
+  "config": "externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A segurança do acesso remoto em IACS depende da postura do endpoint, não só da VPN.",
+      "pergunta": "Fornecedor vai acessar remotamente um PLC por VPN válida para suporte emergencial. Antes de liberar a sessão, que verificação técnica específica reduz o risco que o túnel seguro não elimina?",
+      "resposta": "Verificação da postura de segurança do dispositivo conectado.",
+      "explicacao": "A VPN protege o canal, mas não corrige comprometimento, desatualização ou má configuração do equipamento que inicia a sessão; em IACS, isso pode levar risco a funções operacionais.",
+      "resposta_padrao": "Basta validar a VPN e a autenticação do fornecedor.",
+      "por_que_nao": "Canal seguro não impede que um endpoint comprometido estabeleça sessão válida e leve risco ao ambiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de terceiros deve ser temporário e encerrado ao fim da intervenção.",
+      "pergunta": "Uma conta de suporte de fornecedor permanece habilitada entre chamados para agilizar intervenções em rede de controle. Qual medida técnica específica do ciclo de acesso deve substituir esse arranjo?",
+      "resposta": "Encerramento do acesso ao fim de cada atividade.",
+      "explicacao": "Acesso remoto de terceiros deve existir somente enquanto houver necessidade operacional; manter conta habilitada entre chamados prolonga exposição e contraria o controle temporal da intervenção.",
+      "resposta_padrao": "Manter a conta habilitada e apenas monitorar os logins.",
+      "por_que_nao": "A exposição remota deve terminar com a necessidade operacional; permanência indevida amplia a superfície de ataque.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "encerrar o acesso ao fim da atividade"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade útil de sessão remota exige identificar o ativo efetivamente manipulado.",
+      "pergunta": "Horas depois de um suporte remoto autorizado, uma lógica foi alterada em apenas um controlador de uma rede com vários ativos. Para conter o desvio sem isolar tudo, que identificação técnica o registro da sessão precisa trazer?",
+      "resposta": "Identificação do ativo em que houve atuação.",
+      "explicacao": "Para rastrear a intervenção e conter desvios, o registro deve permitir reconstruir não só quem e quando, mas também em qual ativo ocorreu atuação.",
+      "resposta_padrao": "O endereço IP de origem da conexão.",
+      "por_que_nao": "A origem da sessão não identifica qual ativo recebeu a intervenção nem direciona a contenção ao alvo correto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "em qual ativo houve atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "melhora a investigação de desvios, a responsabilização e a contenção"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O escopo do acesso remoto deve ser limitado às funções compatíveis com a tarefa.",
+      "pergunta": "Suporte externo foi chamado apenas para coletar diagnóstico em um DCS. Que alcance de acesso é tecnicamente compatível com essa tarefa?",
+      "resposta": "Acesso restrito às funções de diagnóstico do ativo.",
+      "explicacao": "Em suporte exclusivamente diagnóstico, o escopo compatível limita a sessão às funções necessárias e evita alcance a funções operacionais ou de configuração.",
+      "resposta_padrao": "Conceder acesso administrativo temporário ao sistema.",
+      "por_que_nao": "Escopo além do diagnóstico expõe funções com impacto operacional ou de configuração incompatíveis com a tarefa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        }
+      ]
+    }
+  ]
+}

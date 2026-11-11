@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:004:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Garantia de fluxo somente OT→IT por meio de gateway unidirecional quando o retorno deve ser fisicamente impossível.",
+      "pergunta": "Analytics corporativo precisa receber dados em quase tempo real, e o requisito é impedir fisicamente qualquer tráfego iniciado do lado corporativo para a rede de controle. Qual arranjo de comunicação deve interligar esses ambientes?",
+      "resposta": "Gateway unidirecional de dados",
+      "explicacao": "Esse arranjo permite a saída dos dados e elimina o caminho de retorno em nível físico, diferentemente de controles apenas lógicos.",
+      "resposta_padrao": "Firewall com regras liberando só tráfego de saída.",
+      "por_que_nao": "Firewall continua operando com pilha bidirecional e não impõe unidirecionalidade física do enlace."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto de terceiros à OT deve terminar em servidor de salto na DMZ industrial, não diretamente na rede de controle.",
+      "pergunta": "Fornecedor precisa acessar temporariamente a estação de engenharia para suporte, e sessões externas diretas na rede de controle são vedadas. Onde a conexão remota deve terminar antes do acesso ao ambiente OT?",
+      "resposta": "Servidor de salto na DMZ industrial",
+      "explicacao": "A sessão externa é encerrada em uma zona intermediária controlada, com mediação, registro e segregação antes do acesso ao ambiente de controle.",
+      "resposta_padrao": "VPN direta até a estação de engenharia.",
+      "por_que_nao": "Encerrar a sessão dentro da rede de controle elimina a barreira intermediária usada para segregar e controlar o acesso remoto."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Integridade de lógica em controlador é verificada por checksum ou assinatura da aplicação online contra o baseline aprovado.",
+      "pergunta": "Controlador permanece em RUN e o processo está estável, mas houve conexão de programação não planejada. Como verificar especificamente se a lógica carregada hoje é exatamente a versão aprovada?",
+      "resposta": "Comparando o checksum da lógica online com o baseline aprovado",
+      "explicacao": "Checksum ou assinatura da aplicação identifica a lógica realmente residente no controlador, independentemente de nome de arquivo, comentário ou data.",
+      "resposta_padrao": "Conferindo a data do arquivo no servidor de engenharia.",
+      "por_que_nao": "Timestamp de arquivo não comprova identidade da aplicação que está executando no controlador."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Backups acessíveis em rede contra ransomware exigem imutabilidade, não apenas redundância de armazenamento.",
+      "pergunta": "Servidores de supervisão foram cifrados por ransomware, e o repositório de backup montado na mesma rede também ficou ilegível. Como a replicação automática precisa continuar em rede, qual característica específica a cópia de recuperação deve ter?",
+      "resposta": "Imutabilidade do backup",
+      "explicacao": "A cópia permanece restaurável porque não pode ser alterada ou apagada pelas mesmas credenciais ou pelo sistema comprometido.",
+      "resposta_padrao": "Redundância RAID no storage de backup.",
+      "por_que_nao": "RAID cobre falha física de disco, não criptografia ou exclusão lógica causada por malware."
+    }
+  ]
+}

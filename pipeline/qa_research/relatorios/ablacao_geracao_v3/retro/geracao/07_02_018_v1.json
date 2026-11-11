@@ -1,0 +1,111 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:018:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Sintomas simultâneos de reinício, perda de comunicação e lacunas de dados apontam para degradação da alimentação de suporte.",
+      "pergunta": "Afundamentos breves na alimentação coincidem com reinício de IHMs, perda de comunicação com controladores e lacunas no historiador, sem evidência de comandos indevidos. Qual causa primária explica melhor esse conjunto?",
+      "resposta": "Degradação da alimentação de suporte dos sistemas digitais.",
+      "explicacao": "O bloco foco liga energia de suporte à supervisão e resposta, e o apoio descreve que sua degradação em sistemas digitais críticos provoca reinicializações, perda de comunicação e comportamento temporal anômalo.",
+      "resposta_padrao": "Comprometimento cibernético da rede OT.",
+      "por_que_nao": "O padrão é típico de distúrbio elétrico em modo comum; ataque digital não explica, por si, a coincidência com afundamentos e reboots múltiplos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas digitais críticos, degradação de energia pode provocar reinicializações, travamentos, perda de comunicação e comportamento temporal indesejado."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para desacoplar cargas digitais críticas de afundamentos e interrupções curtas, a topologia correta é UPS-CA on-line de dupla conversão.",
+      "pergunta": "Servidores e estações críticas precisam manter a supervisão durante afundamentos e interrupções curtas da fonte. Que topologia de alimentação deve ser aplicada para reduzir o acoplamento dessas perturbações à carga?",
+      "resposta": "UPS-CA on-line de dupla conversão.",
+      "explicacao": "Na dupla conversão, a carga é alimentada por barramento interno condicionado e pela etapa eletrônica de saída, reduzindo o acoplamento direto com distúrbios instantâneos da entrada.",
+      "resposta_padrao": "UPS line-interactive.",
+      "por_que_nao": "A line-interactive não condiciona continuamente por retificação e inversão permanentes, portanto desacopla menos afundamentos e variações rápidas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "UPS-CA são descritas em topologia de dupla conversão on-line"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "isso tende a reduzir o acoplamento direto entre perturbações instantâneas da entrada e a alimentação entregue ao consumidor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de considerar uma função instrumentada disponível após bypass e suspeita de intervenção indevida, deve-se confirmar que o disparo não está inibido.",
+      "pergunta": "Durante uma manutenção, uma causa de trip do SIS foi colocada em bypass. Depois ocorreu acesso remoto não previsto à estação de engenharia e a operação seguiu normal. Que estado específico deve ser confirmado antes de declarar a função disponível?",
+      "resposta": "Disparo sem inhibit ativo.",
+      "explicacao": "O foco relaciona segurança funcional com overrides e inhibits; a operação pode parecer normal e ainda assim a função permanecer indisponível se o inhibit não foi removido.",
+      "resposta_padrao": "Controlador do SIS em RUN.",
+      "por_que_nao": "RUN indica execução da lógica, mas não prova que a causa de trip voltou a atuar; o inhibit pode manter o disparo bloqueado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ela se relaciona com temas como gestão de alarmes, overrides, inhibits e avaliação de risco operacional em condições anormais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "quem autoriza isolamento ou bypass"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A disponibilidade do backup de energia para supervisão depende do estado de saúde dos bancos de baterias, não apenas da carga momentânea.",
+      "pergunta": "Na rede de supervisão que deve continuar operando quando a alimentação principal falha, qual condição do sistema de backup precisa ser acompanhada rotineiramente para sustentar essa disponibilidade?",
+      "resposta": "Estado de saúde dos bancos de baterias.",
+      "explicacao": "O foco associa a gestão do estado de saúde dos bancos de baterias à disponibilidade do backup de energia, que sustenta a capacidade de supervisão e resposta.",
+      "resposta_padrao": "Nível de carga das baterias.",
+      "por_que_nao": "Carga momentânea não revela envelhecimento, perda de capacidade e incapacidade de sustentar a carga durante a falha da fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a gestão do estado de saúde de bancos de baterias foi associada à disponibilidade do backup de energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega."
+        }
+      ]
+    }
+  ]
+}

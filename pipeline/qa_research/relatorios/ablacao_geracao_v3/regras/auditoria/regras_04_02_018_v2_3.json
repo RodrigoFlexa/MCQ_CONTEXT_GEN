@@ -1,0 +1,54 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Chave fim de curso da válvula, isto é, o próprio sensor/realimentação de posição.",
+  "alternativa_excluida": true,
+  "atalho": true,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "diagnostico",
+  "justificativa": "Se a válvula responde aos comandos no processo e no hidráulico, mas apenas a indicação de posição fica travada, o defeito recai no circuito de feedback de posição; os blocos sustentam isso ao separar atuador, hidráulica e chave fim de curso.",
+  "aprovada": false,
+  "motivo": "atalho",
+  "falhas": [
+    "atalho"
+  ],
+  "referencia_valida": true,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "B1",
+      "item": "04_02",
+      "texto": "Em arquiteturas eletro-hidráulicas subsea, a estação mestra de controle envia comandos ao módulo de controle submarino. Esse módulo processa a informação recebida e a converte em sinais elétricos que acionam a unidade hidráulica associada ao atuador. A unidade hidráulica pressuriza o cilindro, e o deslocamento do cilindro abre ou fecha a válvula gaveta. Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino por meio da eletrônica submarina e de válvulas solenóides, o que permite comandar muitas válvulas com poucos condutores de sinal combinados com suprimento hidráulico. O princípio funciona porque a eletrônica decide qual função deve ser executada, enquanto a hidráulica fornece a força necessária ao movimento do atuador. Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola e leva a válvula ao estado seguro fechado. Em algumas arquiteturas, esse fechamento envolve descarte de pequeno volume de fluido hidráulico à base de água para despressurização rápida do atuador.",
+      "titulo": "Controle subsea e diagnóstico / Como o comando é convertido em movimento da válvula",
+      "indice_documento": 15
+    },
+    {
+      "id": "B2",
+      "item": "07_01",
+      "texto": "Na malha de controle, o elemento final executa fisicamente a ação escolhida pelo controlador para reduzir o desvio da variável de processo. A válvula de controle é o elemento final mais comum nas indústrias de processo porque manipula a vazão de fluidos e, assim, influencia variáveis como pressão, nível e vazão.\n\nO conjunto de válvula de controle normalmente reúne corpo, internos, atuador e acessórios. Entre os acessórios citados estão posicionador, transdutor, regulador de pressão de suprimento, operador manual, snubber e chave fim de curso. Essa decomposição ajuda a entender onde uma falha pode surgir: no caminho do sinal, no suprimento pneumático, no atuador, no posicionamento ou nas partes internas.\n\nEm arranjos de produção, válvulas modulantes podem atuar, por exemplo, no controle de nível de separadores, de pressão de gás ou na restrição de golfadas. Já a Válvula de Desligamento de Emergência (ESDV) exerce função de segurança e isolamento, tipicamente em lógica abre-fecha. Portanto, válvula de controle modulante e ESDV podem coexistir no mesmo sistema, mas não devem ser tratadas como a mesma função operacional.",
+      "titulo": "Válvulas e elementos finais / Função do elemento final, conjunto da válvula e diferença entre modulação e isolamento",
+      "indice_documento": 11
+    },
+    {
+      "id": "B3",
+      "item": "03_03",
+      "texto": "O alinhamento de válvulas define quais trechos do sistema ficam conectados e, portanto, qual pressão a bomba e a tubulação passam a enxergar. Quando a bomba de stripping permanece operando com a descarga fechada ou muito restringida, a vazão útil tende a cair e a pressão na descarga tende a subir. Em um caso específico, essa elevação permaneceu dentro da pressão de projeto, mas isso não transforma a condição em prática geralmente aceitável, porque o efeito depende da curva da bomba, do tempo nessa condição, da existência de recirculação mínima, das proteções instaladas e da resistência mecânica do sistema. A capacidade de controle também muda quando uma válvula prevista para controle de posição é comissionada apenas como totalmente aberta ou fechada. Nessa situação, perde-se modulação fina de vazão e parte da capacidade de estabilizar a transferência ou ajustar o comportamento do tanque. Se, além disso, informações relevantes da bomba ou da posição de válvulas não chegam adequadamente à interface do operador, a supervisão do alinhamento e da eficiência real da transferência fica parcial.",
+      "titulo": "Tanques, transferências e slop / Válvulas, modulação e pressão durante alinhamentos de transferência",
+      "indice_documento": 5
+    },
+    {
+      "id": "B4",
+      "item": "07_01",
+      "texto": "A função disponível em campo pode diferir da função prevista em projeto quando o comissionamento é incompleto ou incorreto. Isso ocorre porque a capacidade real do elemento final depende não apenas do equipamento instalado, mas também da configuração de comando, da forma de atuação e da correspondência entre projeto, lógica e montagem de campo.\n\nEm um caso investigado, havia pendências de conversão de válvulas para comando automático, de fazer os atuadores de campo respeitarem comandos da Interface Homem-Máquina (IHM) e de comissionamento de controles e transmissores. No mesmo contexto, uma válvula prevista para operação remota foi colocada em serviço apenas como totalmente aberta ou fechada, embora documentação de projeto indicasse controle de posição, e o indicador de posição ainda permanecia pendente.\n\nEsse tipo de descompasso mostra que a presença de sinais na IHM, por si só, não demonstra que a função de controle esteja integralmente disponível. A avaliação da disponibilidade real deve considerar, no mínimo, a coerência entre modo de atuação pretendido, capacidade de modulação ou de abre-fecha, indicação de posição e resposta observável do atuador em campo.",
+      "titulo": "Válvulas e elementos finais / Comissionamento, configuração efetiva e limites do que a IHM confirma",
+      "indice_documento": 12
+    },
+    {
+      "id": "B5",
+      "item": "07_01",
+      "texto": "O diagnóstico de válvulas de controle pode ser realizado por técnica não invasiva a partir de variáveis medidas na própria válvula e interpretadas por regras de lógica fuzzy. Na implementação descrita, os sinais são recebidos de um posicionador inteligente instalado junto à válvula e transformados em informação para inferência. Entre os parâmetros citados estão pressão de ar do atuador e deslocamento do obturador.\n\nA lógica fuzzy aplica regras escritas por especialistas para transformar essas entradas em indicações de estado e sintomas, incluindo falha, vazamento, atrito, fricção e danos. A utilidade operacional desse arranjo é permitir identificação de defeitos durante a operação normal, sem necessidade de intervenção invasiva imediata.\n\nA interpretação depende das medidas de base da válvula e do conjunto de regras adotado. Sinais do posicionador orientam a investigação, mas a localização da falha exige distinguir corpo e internos da válvula, atuador, posicionador e instrumentação associada.",
+      "titulo": "Válvulas e elementos finais / Diagnóstico não invasivo com posicionador inteligente",
+      "indice_documento": 9
+    }
+  ]
+}

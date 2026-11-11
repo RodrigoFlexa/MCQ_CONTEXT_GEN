@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:021:v3",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Divergência entre estados exibidos por sistemas integrados de fornecedores distintos exige normalização semântica dos estados discretos, não correção temporal.",
+      "pergunta": "Para o mesmo evento físico, o SCADA mostra uma bomba em operação enquanto a HMI do skid a indica indisponível; os instantes de transição coincidem entre as telas. Que elemento da integração deve ser corrigido primeiro?",
+      "resposta": "Mapeamento semântico dos estados discretos.",
+      "explicacao": "As transições ocorrem no tempo certo; a inconsistência vem do significado atribuído aos bits ou códigos de estado entre fontes e telas.",
+      "resposta_padrao": "Sincronismo dos timestamps.",
+      "por_que_nao": "Com transições coincidentes, o problema não é temporal; é a interpretação diferente do mesmo estado digital.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um desafio recorrente no nível de controle é a diversidade de modelos de dados entre fornecedores de controladores. Isso dificulta convenções de nomenclatura, padronização de interfaces humano-máquina (HMI)..."
+        },
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dados plausíveis e com timestamp atual devem ser excluídos do analytics quando o ponto estiver substituído ou inválido, usando o status de qualidade.",
+      "pergunta": "Durante calibração, um transmissor fica em simulação e continua enviando valores plausíveis, com timestamp atual e unidade correta. Que informação do ponto deve bloquear essas amostras no analytics?",
+      "resposta": "Status de qualidade do sinal.",
+      "explicacao": "Valor plausível e atualizado ainda pode não representar o processo real; o status de qualidade identifica dado simulado, substituído ou inválido.",
+      "resposta_padrao": "Filtro por faixa plausível do valor.",
+      "por_que_nao": "Um valor simulado pode permanecer dentro da faixa esperada e com horário corrente; isso não garante validade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "É capacitar a interpretar qualidade de dados, diferenciar recomendação analítica de comando de controle, reconhecer permissões e procedimentos aplicáveis e evitar ações precipitadas diante de alarmes, tendências ou acessos digitais."
+        }
+      ]
+    }
+  ]
+}

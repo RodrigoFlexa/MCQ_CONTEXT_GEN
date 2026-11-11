@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:018:v1",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquitetura de conduítes OT-IT para fluxo unidirecional de dados sem caminho de retorno.",
+      "pergunta": "Dados do historiador precisam alimentar analytics corporativo continuamente, e a exigência é impossibilitar fisicamente qualquer tráfego de retorno ao ambiente de controle. Que equipamento deve ser aplicado no conduíte entre as redes?",
+      "resposta": "gateway unidirecional (data diode)",
+      "explicacao": "Esse equipamento impõe fluxo físico em um só sentido, eliminando o caminho reverso e reduzindo a superfície de ataque entre OT e IT.",
+      "resposta_padrao": "Firewall com regra só de saída.",
+      "por_que_nao": "Firewall filtra por configuração, mas não elimina fisicamente o caminho de retorno."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Terminação de acesso remoto em DMZ industrial para evitar conectividade direta com a rede de controle.",
+      "pergunta": "Fornecedor precisa acessar temporariamente a estação de engenharia de um PLC, e não pode existir rota direta da rede externa ao controle. Onde a sessão remota deve terminar antes do acesso?",
+      "resposta": "jump server na DMZ industrial",
+      "explicacao": "A sessão remota termina em um ponto intermediário controlado, permitindo mediação, registro e segregação sem expor diretamente a célula de controle.",
+      "resposta_padrao": "VPN direta até a sub-rede de controle.",
+      "por_que_nao": "Cria conectividade roteável direta para OT, em vez de manter o acesso mediado e segregado."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação de integridade de lógica carregada por comparação de CRC online com a revisão aprovada.",
+      "pergunta": "Concluído o download de uma lógica de segurança, todas as malhas e E/S aparentam normais. Como confirmar que a aplicação em execução é exatamente a revisão aprovada?",
+      "resposta": "comparação do CRC online com a revisão aprovada",
+      "explicacao": "O CRC ou assinatura da aplicação em execução confirma identidade da lógica carregada, não apenas comportamento observado em testes parciais.",
+      "resposta_padrao": "Executar um teste funcional dos intertravamentos.",
+      "por_que_nao": "Teste funcional comprova respostas observadas, mas não a identidade binária da lógica carregada."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Hardening de estações legadas por whitelisting quando patching frequente não é viável.",
+      "pergunta": "Estação de engenharia legada não pode receber patches frequentes, e o conjunto de executáveis autorizados é estável. Que controle específico deve ser aplicado para impedir execução de binários não aprovados?",
+      "resposta": "whitelisting de aplicações",
+      "explicacao": "Esse controle permite executar somente arquivos previamente autorizados, reduzindo a exposição a malware e alterações não aprovadas em sistemas estáveis.",
+      "resposta_padrao": "Antivírus por assinatura.",
+      "por_que_nao": "Depende de atualizações frequentes e não bloqueia de forma confiável binários desconhecidos ou modificados."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:004:v1",
+  "config": "retro",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O escopo de controle de acesso em IACS inclui também a estação de engenharia, não apenas contas de usuário.",
+      "pergunta": "Na recertificação de acessos, revisaram-se perfis nominais, mas o computador usado para carregar aplicações nos controladores ficou fora da análise. Que elemento do escopo de acesso foi omitido?",
+      "resposta": "Estação de engenharia.",
+      "explicacao": "Em IACS, o controle de acesso alcança o endpoint de engenharia, que é um caminho direto para programar e alterar controladores, não só as credenciais pessoais.",
+      "resposta_padrao": "As contas dos técnicos de manutenção.",
+      "por_que_nao": "As contas já foram revisadas; o ponto crítico omitido é o endpoint com capacidade de programação sobre o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "servidores, controladores, sistemas de supervisão"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Capacidades de criar contas, desabilitar proteções e apagar rastros caracterizam privilégio administrativo em IACS.",
+      "pergunta": "Um fornecedor foi chamado para coletar diagnósticos em um servidor de supervisão, mas a conta solicitada também permite criar usuários, desativar proteções e apagar registros. Que privilégio específico está além da necessidade da tarefa?",
+      "resposta": "Acesso administrativo.",
+      "explicacao": "Essas capacidades correspondem a privilégio administrativo; pelo menor privilégio, elas não devem acompanhar uma atividade apenas de diagnóstico.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Engenharia altera configuração, lógica e firmware; criar contas, desabilitar proteções e apagar rastros caracteriza privilégio administrativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mudança persistente na sequência de permissivos com setpoints intactos aponta para alteração de lógica, não para ajuste operacional.",
+      "pergunta": "Depois de um suporte remoto autorizado, os permissivos de partida passaram a atuar em sequência diferente e o padrão persiste após reinício; os setpoints históricos ficaram inalterados. Qual a causa primária mais provável?",
+      "resposta": "Alteração de lógica.",
+      "explicacao": "A sequência dos permissivos depende da lógica de controle. Como os setpoints não mudaram e o desvio persiste, o sinal técnico aponta para modificação lógica.",
+      "resposta_padrao": "Mudança de setpoint.",
+      "por_que_nao": "Setpoint altera referência operacional, mas não reordena de forma persistente a sequência dos permissivos quando os registros permanecem inalterados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na segregação de funções em IACS, a validação deve permanecer independente da implementação da mudança.",
+      "pergunta": "Uma correção de lógica já foi aprovada por outro responsável e será carregada remotamente pelo especialista que a preparou. Antes do retorno ao serviço, que função deve caber a outra pessoa por segregação de funções?",
+      "resposta": "Validação da mudança.",
+      "explicacao": "Com a aprovação já separada, a independência que ainda evita erro não detectado é a validação por alguém diferente do implementador.",
+      "resposta_padrao": "Aprovação da mudança.",
+      "por_que_nao": "A aprovação já ocorreu; a segregação citada em IACS separa especialmente quem implementa de quem valida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cibersegurança de IACS é tratada como parte de um sistema de gestão, incluindo arranjos organizacionais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        }
+      ]
+    }
+  ]
+}

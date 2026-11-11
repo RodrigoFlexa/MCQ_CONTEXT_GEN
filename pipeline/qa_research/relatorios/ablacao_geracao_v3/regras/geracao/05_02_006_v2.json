@@ -1,0 +1,51 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:006:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modo de controle de velocidade adequado para paralelismo de geradores sem load-sharing isócrono dedicado.",
+      "pergunta": "Barramentos independentes, cada um alimentado por um gerador com governador em isócrono, serão interligados temporariamente sem controlador mestre de load sharing. Que modo de controle deve ser aplicado aos governadores antes do fechamento?",
+      "resposta": "modo droop de velocidade",
+      "explicacao": "Governadores independentes em isócrono disputam o controle de frequência quando entram em paralelo. O droop estabiliza o compartilhamento de potência ativa entre máquinas sem controlador mestre.",
+      "resposta_padrao": "Manter ambos em isócrono.",
+      "por_que_nao": "Dois controles isócronos independentes em paralelo provocam caça e circulação de potência ativa sem esquema dedicado de load sharing."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Relação entre excitação/AVR e compartilhamento de potência reativa entre geradores em paralelo.",
+      "pergunta": "Dois geradores em paralelo compartilham kW de forma equilibrada, mas um opera com kvar e corrente bem maiores que o outro. Qual variável de controle deve ser ajustada para corrigir esse compartilhamento?",
+      "resposta": "setpoint de tensão do AVR",
+      "explicacao": "Em barramento comum, o compartilhamento de reativo depende da excitação. Alterar o setpoint do AVR desloca kvar e fator de potência sem atuar primariamente sobre a potência ativa.",
+      "resposta_padrao": "Setpoint de velocidade do governador.",
+      "por_que_nao": "O governador corrige compartilhamento de potência ativa e frequência; a divisão de potência reativa é comandada pela excitação."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Discriminação entre corrente de inrush e falta interna em proteção diferencial de transformador.",
+      "pergunta": "Ao energizar um transformador de potência isolado para manutenção, o relé diferencial enxerga corrente elevada instantânea sem outros indícios de defeito. Que critério do esquema diferencial deve impedir a atuação nessa condição?",
+      "resposta": "bloqueio por segundo harmônico",
+      "explicacao": "A energização inicial produz corrente de inrush rica em segundo harmônico. O diferencial usa essa assinatura para restringir a atuação sem perder sensibilidade a faltas internas.",
+      "resposta_padrao": "Temporização fixa da função diferencial.",
+      "por_que_nao": "Atraso não distingue inrush de falta interna real e reduz a rapidez de atuação da proteção principal."
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Caminho da corrente na primeira falta à terra em sistemas de neutro isolado.",
+      "pergunta": "Surge alarme de falta à terra em rede de baixa tensão com neutro isolado, sem atuação de sobrecorrente e com cargas mantidas. Por qual caminho principal fecha a corrente da primeira falta?",
+      "resposta": "capacitâncias fase-terra distribuídas da rede",
+      "explicacao": "Com neutro isolado, a primeira falta à terra não tem retorno por aterramento sólido. A corrente circula principalmente pelas capacitâncias fase-terra dos demais circuitos.",
+      "resposta_padrao": "Aterramento do neutro.",
+      "por_que_nao": "Sem referência sólida do neutro à terra, o retorno não ocorre por aterramento intencional, mas pelas capacitâncias da rede."
+    }
+  ]
+}

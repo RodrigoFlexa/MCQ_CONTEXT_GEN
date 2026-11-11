@@ -1,0 +1,87 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "visita": 3,
+  "onda": 5,
+  "id": "01_01:010:v3",
+  "config": "documentos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorizar reparos simultâneos pela restrição que efetivamente limita a vazão total.",
+      "pergunta": "Com uma única equipe disponível, falham a bomba de alimentação do tratamento de água produzida e a bomba reserva de exportação de óleo. Há armazenamento para 24 h sem offloading, mas a vazão já foi reduzida por falta de capacidade de tratar/descartar água. Qual reparo deve ser priorizado para recuperar produção?",
+      "resposta": "bomba de alimentação do tratamento de água produzida",
+      "explicacao": "A limitação ativa é a malha de água produzida, que reduz a vazão total. A bomba reserva de exportação não recupera produção imediata nas condições descritas.",
+      "resposta_padrao": "A bomba reserva de exportação de óleo.",
+      "por_que_nao": "Com armazenamento disponível e sem offloading iminente, exportação não é o gargalo funcional; a água produzida é.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a malha de água produzida perde capacidade, a limitação não afeta apenas esse sistema; ela pode impor redução de vazão total do campo por falta de capacidade de separar, tratar, reinjetar ou descartar a fase aquosa gerada junto com os hidrocarbonetos."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Capacidade limitada de equipe transforma falhas simultâneas em espera antes do reparo.",
+      "pergunta": "Peças, acesso e liberação já estão disponíveis, mas duas falhas críticas da mesma disciplina ocorrem ao mesmo tempo e só há uma equipe apta. O tempo ativo de reparo de cada uma não mudou. Que mecanismo prolonga a indisponibilidade total?",
+      "resposta": "fila de manutenção",
+      "explicacao": "Quando a equipe é o gargalo, a segunda falha espera para iniciar o reparo. O aumento da indisponibilidade vem dessa fila, não de reparos mais longos.",
+      "resposta_padrao": "Aumento do MTTR intrínseco de cada reparo.",
+      "por_que_nao": "O tempo ativo de reparo permaneceu igual; o acréscimo vem da espera criada pela capacidade limitada da equipe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a capacidade das equipes for o gargalo, falhas simultâneas podem criar fila e prolongar a indisponibilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Apuração correta de MTTR exige separar tempo de reparo de tempos de espera.",
+      "pergunta": "Num histórico de paradas, cada evento teve cerca de 2 h de intervenção e 14 h aguardando liberação de trabalho. Para calcular o MTTR usado na análise de mantenabilidade, qual intervalo deve ficar fora do indicador?",
+      "resposta": "tempo de espera por liberação de trabalho",
+      "explicacao": "MTTR mede o tempo de reparo segundo a definição adotada. Aguardar liberação não é atividade de reparo e deve ser segregado para não distorcer a análise.",
+      "resposta_padrao": "Todo o tempo em que o sistema ficou indisponível.",
+      "por_que_nao": "Indisponibilidade inclui esperas; o MTTR exige registrar o reparo e distingui-lo desses tempos.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade não melhora com mais equipe quando o retorno depende de suporte logístico.",
+      "pergunta": "O reparo em campo leva menos de 1 h, porém a indisponibilidade média supera 30 h porque o componente só chega no próximo voo. Dobrar o número de mantenedores quase não muda o resultado. Qual é o gargalo efetivo do retorno operacional?",
+      "resposta": "logística de sobressalente",
+      "explicacao": "O tempo dominante está na chegada do componente ao local. Enquanto o item não chega, ampliar a equipe não reduz a indisponibilidade.",
+      "resposta_padrao": "Capacidade da equipe de manutenção.",
+      "por_que_nao": "A equipe não limita o retorno; ela só atua depois que o sobressalente chega.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "em ativos offshore, embarcados ou remotos, também pode ser afetado pela logística de acesso e mobilização."
+        }
+      ]
+    }
+  ]
+}

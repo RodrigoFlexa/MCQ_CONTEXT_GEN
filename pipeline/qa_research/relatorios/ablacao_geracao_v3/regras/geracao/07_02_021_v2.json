@@ -1,0 +1,51 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:021:v2",
+  "config": "regras",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Acesso remoto temporário a ativos OT com intermediação por zona desmilitarizada industrial.",
+      "pergunta": "Fornecedor precisa acessar temporariamente a estação de engenharia de um PLC a partir da rede corporativa, sem abrir conectividade direta até a célula de controle. Em que ponto técnico a sessão deve terminar?",
+      "resposta": "servidor de salto na DMZ industrial",
+      "explicacao": "O jump server intermedeia o acesso entre zonas, concentra autenticação, registro e controle de privilégio, evitando sessão direta da rede corporativa ao ativo de controle.",
+      "resposta_padrao": "VPN direta para a estação de engenharia.",
+      "por_que_nao": "Acesso direto atravessa a segregação entre zonas e elimina a intermediação controlada exigida para OT."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Coleta de tráfego em rede OT crítica sem introduzir carga nem distorcer a captura.",
+      "pergunta": "Capturar tráfego de uma rede de controle já carregada para analisar anomalias, sem consumir recursos da chave nem perder quadros sob pico, requer qual técnica de coleta no enlace?",
+      "resposta": "TAP passivo de rede",
+      "explicacao": "O TAP replica o tráfego fisicamente no enlace sem depender do processamento da chave, preservando fidelidade da captura e minimizando impacto operacional.",
+      "resposta_padrao": "Configurar uma porta SPAN no switch.",
+      "por_que_nao": "SPAN depende dos recursos da chave e pode descartar quadros espelhados ou degradar a observabilidade em picos."
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Hardening compensatório para estações OT legadas sem possibilidade de patch.",
+      "pergunta": "Uma estação de operação legada, sem suporte do fabricante e sem possibilidade de patch, executa apenas dois aplicativos validados e não precisa receber software novo. Qual controle de hardening é mais adequado para impedir execução indevida?",
+      "resposta": "allowlisting de aplicações",
+      "explicacao": "Em host de função fixa, a lista de permissão bloqueia qualquer executável fora do conjunto validado, reduzindo a superfície de ataque mesmo sem patches.",
+      "resposta_padrao": "Instalar antivírus com assinaturas atualizadas.",
+      "por_que_nao": "Antivírus não impõe execução exclusiva de software autorizado e, em sistemas legados, pode ser insuficiente ou até incompatível."
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de recuperabilidade de backups de servidores OT além da integridade do arquivo.",
+      "pergunta": "Backups do historiador e do servidor de supervisão executam sem erro há meses, mas nunca foram usados. Como verificar se a recuperação realmente preserva sistema, serviços e configurações?",
+      "resposta": "teste de restauração em ambiente segregado representativo",
+      "explicacao": "Só a restauração controlada comprova boot, dependências, serviços, licenças e consistência operacional do backup recuperado.",
+      "resposta_padrao": "Revisar os logs e checksums do backup.",
+      "por_que_nao": "Integridade do arquivo não demonstra que a imagem restaura corretamente nem que os serviços voltam a operar."
+    }
+  ]
+}
