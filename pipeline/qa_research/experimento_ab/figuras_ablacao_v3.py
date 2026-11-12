@@ -33,6 +33,8 @@ ROT = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "ex
 NOME = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "externos": "+ Datasets externos",
         "retro": "+ Retroalimentação", "retro_sem_memoria": "+ Retro sem memória",
         "retro_sem_memoria_sem_externos": "+ Retro sem memória e sem externos"}
+CURTO = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Docs.", "externos": "+ Ext.", "retro": "+ Retro",
+         "retro_sem_memoria": "+ Retro\ns/ mem.", "retro_sem_memoria_sem_externos": "+ Retro\ns/ mem.\ns/ ext."}
 W = max(1.0, len(ORDEM) / 5)      # largura proporcional ao número de configurações
 FIG = SAIDA / "figuras"
 VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}".replace(".", ","))
@@ -190,7 +192,7 @@ def diversidade(r):
         for xi, n in zip(x, v):
             ax.text(xi, n + topo * 0.015, _n(n, casas), ha="center", va="bottom", fontsize=17, fontweight="semibold",
                     color=F.TINTA)
-        ax.set_xticks(x, ["Naive", "+ Regras", "+ Docs.", "+ Ext.", "+ Retro"], fontsize=17, rotation=0)
+        ax.set_xticks(x, [CURTO[c] for c in ORDEM], fontsize=17, rotation=0)
         for t, c in zip(ax.get_xticklabels(), ORDEM):
             t.set_color(COR[c])
         _eixo(ax, ylabel, fonte=19)
@@ -231,7 +233,7 @@ def motivos(r, qs):
         ax.bar(x, v, 0.68, color=[COR[c] for c in ORDEM], zorder=2)
         for xi, n in zip(x, v):
             ax.text(xi, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=18, fontweight="semibold", color=F.TINTA)
-        ax.set_xticks(x, ["Naive", "+ Regras", "+ Docs.", "+ Ext.", "+ Retro"], fontsize=17)
+        ax.set_xticks(x, [CURTO[c] for c in ORDEM], fontsize=17)
         for t, c in zip(ax.get_xticklabels(), ORDEM):
             t.set_color(COR[c])
         ax.set_xlabel(nome, fontsize=20, labelpad=12)
