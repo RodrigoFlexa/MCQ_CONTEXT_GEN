@@ -49,7 +49,7 @@ NOMES_EN = {"naive": "Naive", "regras": "Fine Tuned Prompt", "documentos": "Doma
 ROT_EN = {"naive": "Naive", "regras": "Fine Tuned\nPrompt", "documentos": "Domain\nDataset",
           "externos": "+ External\nDatasets", "retro_sem_memoria": "Example\nBank"}
 TRAD = {
-    "Questões válidas (%)": "Valid questions (%)",
+    "Questões válidas (%)": "Acceptance Ratio (%)",
     "Questões (960 chamadas)": "Questions (960 calls)",
     "Geradas": "Generated", "Aprovadas pelo auditor": "Approved by the auditor", "Válidas": "Valid",
     "Conhecimentos válidos distintos": "Unique valid items",
