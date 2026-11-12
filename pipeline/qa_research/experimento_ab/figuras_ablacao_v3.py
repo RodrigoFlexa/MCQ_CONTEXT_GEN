@@ -10,7 +10,8 @@ centrados pela média; cache em .local/.
 Conhecimentos válidos distintos: as questões redundantes apontam para a que ficou (deduplicação calibrada, só medida);
 cada grupo de questões equivalentes conta uma vez se tiver ao menos uma questão válida.
 
-python -m pipeline.qa_research.experimento_ab.figuras_ablacao_v3
+python -m pipeline.qa_research.experimento_ab.figuras_ablacao_v3          (português, figuras/)
+python -m pipeline.qa_research.experimento_ab.figuras_ablacao_v3 --en     (inglês, nomes do artigo, figuras_en/)
 """
 from __future__ import annotations
 
@@ -41,6 +42,49 @@ NOME = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "e
 CURTO = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Docs.", "externos": "+ Ext.",
          "retro_sem_memoria": "+ Retro"}
 CHAMADAS = 160                    # chamadas de geração por onda (40 documentos x 4 focos)
+# versão em inglês (artigo): nomes das configurações e rótulos traduzidos, ponto decimal, pasta figuras_en/
+EN = False
+NOMES_EN = {"naive": "Naive", "regras": "Fine Tuned Prompt", "documentos": "Domain Dataset",
+            "externos": "+ External Datasets", "retro_sem_memoria": "Example Bank"}
+ROT_EN = {"naive": "Naive", "regras": "Fine Tuned\nPrompt", "documentos": "Domain\nDataset",
+          "externos": "+ External\nDatasets", "retro_sem_memoria": "Example\nBank"}
+TRAD = {
+    "Questões válidas (%)": "Valid questions (%)",
+    "Questões (960 chamadas)": "Questions (960 calls)",
+    "Geradas": "Generated", "Aprovadas pelo auditor": "Approved by the auditor", "Válidas": "Valid",
+    "Conhecimentos válidos distintos": "Unique valid items",
+    "Conhecimentos válidos distintos\n(acumulado)": "Unique valid items\n(cumulative)",
+    "Visita ao bloco foco": "Pass over the focal passage",
+    "Chamadas de geração": "Generation calls",
+    "Taxa de novidade (%)": "Novelty rate (%)",
+    "Vendi Score das válidas\n(acumulado)": "Vendi Score of valid items\n(cumulative)",
+    "Quase-duplicatas (%)": "Near-duplicates (%)",
+    "Self-BLEU por tópico\n(menor = mais variado)": "Self-BLEU\n(lower = more varied)",
+    "MTLD\n(maior = mais variado)": "MTLD\n(higher = more varied)",
+    "Vendi relativo por tópico\n(maior = mais variado)": "Relative Vendi per topic\n(higher = more varied)",
+    "Sem documento": "Closed-book", "Com documento": "With evidence",
+    "Acurácia do painel (%)": "Panel accuracy (%)",
+    "Atalho (resposta sai do enunciado)": "Shortcut (answer follows from the question)",
+    "Mais de uma resposta válida": "More than one valid answer",
+    "Fora da fonte": "Not grounded in the source",
+    "Depende do documento": "Depends on the document",
+    "Reprovadas pelo auditor (% das geradas)": "Rejected by the auditor (% of generated)",
+}
+
+
+def T(s: str) -> str:
+    return TRAD.get(s, s) if EN else s
+
+
+def usar_ingles() -> None:
+    global EN, FIG, VIRG
+    EN = True
+    for d, novo in ((ROT, ROT_EN), (NOME, NOMES_EN), (CURTO, ROT_EN)):
+        d.update(novo)
+    FIG = SAIDA / "figuras_en"
+    VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}")
+
+
 W = max(1.0, len(ORDEM) / 5)      # largura proporcional ao número de configurações
 FIG = SAIDA / "figuras"
 VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}".replace(".", ","))
@@ -56,11 +100,12 @@ def _salvar(fig, nome):
 
 
 def _n(x, casas=1):
-    return f"{x:.{casas}f}".replace(".", ",")
+    s = f"{x:.{casas}f}"
+    return s if EN else s.replace(".", ",")
 
 
 def _eixo(ax, ylabel, fonte=21):
-    ax.set_ylabel(ylabel, fontsize=fonte)
+    ax.set_ylabel(T(ylabel), fontsize=fonte)
     ax.tick_params(axis="y", labelsize=fonte - 3)
     ax.tick_params(axis="x", length=0, pad=10)
     ax.yaxis.set_major_formatter(VIRG)
@@ -156,7 +201,7 @@ def funil(r, qs):
     for k, (nome, f, cor) in enumerate(etapas):
         vals = [f(c) for c in ORDEM]
         pos = x + (k - 1.5) * w
-        ax.bar(pos, vals, w * 0.94, color=cor, label=nome, zorder=2)
+        ax.bar(pos, vals, w * 0.94, color=cor, label=T(nome), zorder=2)
         for p, n in zip(pos, vals):
             ax.text(p, n + 40, str(n), ha="center", va="bottom", fontsize=15, color=F.TINTA, rotation=0)
     _xt(ax, x)
@@ -186,7 +231,7 @@ def acumulado(qs):
         ax.plot(sorted(v), y, color=COR[c], linewidth=3.4, marker="o", markersize=10)
     ax.set_xticks([1, 2, 3], ["1", "2", "3"], fontsize=19)
     ax.set_xlim(0.8, 3.2)
-    ax.set_xlabel("Visita ao bloco foco", fontsize=21)
+    ax.set_xlabel(T("Visita ao bloco foco"), fontsize=21)
     _eixo(ax, "Questões válidas (%)")
     alcas = [plt.Line2D([], [], color=COR[c], linewidth=3.4, marker="o", markersize=10) for c in ORDEM]
     fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=min(len(ORDEM), 4), fontsize=19,
@@ -198,7 +243,7 @@ def acumulado(qs):
 def _x_chamadas(ax, ondas=6, fonte=19):
     ax.set_xticks(range(1, ondas + 1), [str(CHAMADAS * w) for w in range(1, ondas + 1)], fontsize=fonte)
     ax.set_xlim(0.7, ondas + 0.8)
-    ax.set_xlabel("Chamadas de geração", fontsize=21)
+    ax.set_xlabel(T("Chamadas de geração"), fontsize=21)
 
 
 def _linhas(ax, series, casas=0, sufixo="", folga=0.055):
@@ -339,7 +384,7 @@ def dificuldade(r):
                                             ("acerto_com_contexto", "Com documento", F.LARANJA))):
         v = [r["configs"][c]["dificuldade"]["todas"][cond] for c in ORDEM]
         pos = x + (k - 0.5) * w
-        ax.bar(pos, v, w * 0.94, color=cor, label=nome, zorder=2)
+        ax.bar(pos, v, w * 0.94, color=cor, label=T(nome), zorder=2)
         for p, n in zip(pos, v):
             ax.text(p, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=20, fontweight="semibold", color=F.TINTA)
     _xt(ax, x)
@@ -365,7 +410,7 @@ def motivos(r, qs):
         ax.set_xticks(x, [CURTO[c] for c in ORDEM], fontsize=17)
         for t, c in zip(ax.get_xticklabels(), ORDEM):
             t.set_color(COR[c])
-        ax.set_xlabel(nome, fontsize=20, labelpad=12)
+        ax.set_xlabel(T(nome), fontsize=20, labelpad=12)
         _eixo(ax, "Reprovadas pelo auditor (% das geradas)" if ax is axs[0] else "", fonte=19)
     axs[0].set_ylim(0, 100)
     fig.tight_layout(w_pad=2)
@@ -383,5 +428,8 @@ def gerar() -> list:
 
 
 if __name__ == "__main__":
+    import sys
+    if "--en" in sys.argv[1:]:
+        usar_ingles()
     for p in gerar():
         print(p)
