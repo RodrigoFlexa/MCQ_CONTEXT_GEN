@@ -57,12 +57,10 @@ TRAD = {
     "Visita ao bloco foco": "Pass over the focal passage",
     "Chamadas de geração": "Generation calls",
     "Taxa de novidade (%)": "Novelty rate (%)",
-    "Vendi Score das válidas\n(acumulado)": "Vendi Score of valid items\n(cumulative)",
     "Quase-duplicatas (%)": "Near-duplicates (%)",
     "Self-BLEU por tópico\n(menor = mais variado)": "Self-BLEU\n(lower = more varied)",
     "MTLD\n(maior = mais variado)": "MTLD\n(higher = more varied)",
     "Vendi relativo por tópico\n(maior = mais variado)": "Relative Vendi per topic\n(higher = more varied)",
-    "Sem documento": "Closed-book", "Com documento": "With evidence",
     "Acurácia do painel (%)": "Panel accuracy (%)",
     "Atalho\n(resposta sai do enunciado)": "Shortcut\n(answer follows from the question)",
     "Mais de uma resposta válida": "More than one valid answer",
@@ -360,7 +358,7 @@ def vendi_curva(qs):
     fig, ax = plt.subplots(figsize=(14, 7.6))
     _linhas(ax, {c: vendi_por_onda(c, qs[c], E, media) for c in ORDEM})
     _x_chamadas(ax)
-    _eixo(ax, "Vendi Score das válidas\n(acumulado)")
+    _eixo(ax, "Vendi Score")
     _legenda(fig, ncol=3)
     fig.tight_layout()
     return _salvar(fig, "figV8_vendi")
@@ -395,8 +393,8 @@ def dificuldade(r):
     fig, ax = plt.subplots(figsize=(16 * W, 7.2))
     x = np.arange(len(ORDEM))
     w = 0.36
-    for k, (cond, nome, cor) in enumerate((("acerto_sem_contexto", "Sem documento", F.AZUL),
-                                            ("acerto_com_contexto", "Com documento", F.LARANJA))):
+    for k, (cond, nome, cor) in enumerate((("acerto_sem_contexto", "Closed Book", F.AZUL),
+                                            ("acerto_com_contexto", "Open Book", F.LARANJA))):
         v = [r["configs"][c]["dificuldade"]["todas"][cond] for c in ORDEM]
         pos = x + (k - 0.5) * w
         ax.bar(pos, v, w * 0.94, color=cor, label=T(nome), zorder=2)

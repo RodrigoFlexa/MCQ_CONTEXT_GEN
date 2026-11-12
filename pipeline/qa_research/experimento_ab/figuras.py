@@ -61,6 +61,28 @@ AREA_SLIDE = {"Produção e processo": "Produção", "Segurança operacional e r
               "Utilidades e energia": "Utilidades", "Logística e cargas": "Logística", "Gestão do desempenho (KPI)": "KPI",
               "Descomissionamento": "Descomis-\nsionamento"}
 CONJ = {"treino": "Treino", "validacao": "Validação", "teste": "Teste"}
+ROT_SEM, ROT_COM = "Closed Book", "Open Book"      # condições de avaliação (sem e com o documento)
+# versão em inglês (artigo): figuras de desempenho dos modelos em figuras_en/, ponto decimal, sem notas de rodapé
+EN = False
+TRAD = {"Acurácia (%)": "Accuracy (%)"}
+NOME_TIPO_EN = {"conceito": "Concept", "mecanismo": "Mechanism", "consequencia": "Consequence",
+                "diagnostico": "Diagnosis", "decisao": "Decision", "procedimento": "Procedure"}
+
+
+def T(s: str) -> str:
+    return TRAD.get(s, s) if EN else s
+
+
+def _dec(v: float, casas: int) -> str:
+    s = f"{v:.{casas}f}"
+    return s if EN else s.replace(".", ",")
+
+
+def usar_ingles() -> None:
+    global EN, SAIDA
+    EN = True
+    SAIDA = BANCO / "figuras_en"
+    NOME_TIPO.update(NOME_TIPO_EN)
 
 
 def estilo() -> None:
@@ -282,7 +304,7 @@ def _grupos_slide(series: dict, ylabel: str, ymax: float, erros: dict | None = N
     fig, ax = plt.subplots(figsize=(16.5, 6.6))
     x = np.arange(len(MODELOS))
     w = 0.38
-    for k, (cond, cor, rot) in enumerate((("sem", AZUL, "Sem documento"), ("com", LARANJA, "Com documento"))):
+    for k, (cond, cor, rot) in enumerate((("sem", AZUL, ROT_SEM), ("com", LARANJA, ROT_COM))):
         vals = series[cond]
         pos = x + (k - 0.5) * w
         bars = ax.bar(pos, vals, w * 0.92, color=cor, label=rot, edgecolor="white", linewidth=1.5, zorder=2)
@@ -292,18 +314,18 @@ def _grupos_slide(series: dict, ylabel: str, ymax: float, erros: dict | None = N
             lo, hi = erros[cond]
             ax.errorbar(pos, vals, yerr=[lo, hi], fmt="none", ecolor=TINTA2, elinewidth=1.4, capsize=4, zorder=3)
         for pp, v, h in zip(pos, vals, hi):
-            ax.text(pp, v + h + ymax * 0.012, f"{v:.{casas}f}".replace(".", ","), ha="center", va="bottom",
+            ax.text(pp, v + h + ymax * 0.012, _dec(v, casas), ha="center", va="bottom",
                     fontsize=19, fontweight="semibold", color=TINTA)
     ax.set_xticks(x, [NOME[m] for m in MODELOS], fontsize=21, color=TINTA)
     ax.set_ylim(0, ymax)
     ax.tick_params(axis="y", labelsize=19)
     ax.tick_params(axis="x", length=0, pad=10)
-    ax.set_ylabel(ylabel, fontsize=21)
+    ax.set_ylabel(T(ylabel), fontsize=21)
     ax.yaxis.grid(True)
     ax.set_axisbelow(True)
     ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
     ax.legend(loc="upper left", ncol=2, fontsize=20, bbox_to_anchor=(0, 1.13), handlelength=1.3, columnspacing=1.8)
-    if nota:
+    if nota and not EN:
         fig.text(0.01, -0.06, nota, fontsize=14, color=TINTA3)
     return fig
 
@@ -347,7 +369,7 @@ def _colunas_cond(rotulos: list, sem: list, com: list, ylabel: str, ymax: float,
     fig, ax = plt.subplots(figsize=figsize)
     x = np.arange(len(rotulos))
     w = 0.38
-    for k, (vals, cor, rot) in enumerate(((sem, AZUL, "Sem documento"), (com, LARANJA, "Com documento"))):
+    for k, (vals, cor, rot) in enumerate(((sem, AZUL, ROT_SEM), (com, LARANJA, ROT_COM))):
         pos = x + (k - 0.5) * w
         ax.bar(pos, vals, w * 0.92, color=cor, label=rot, edgecolor="white", linewidth=1.5, zorder=2)
         for pp, v in zip(pos, vals):
@@ -359,7 +381,7 @@ def _colunas_cond(rotulos: list, sem: list, com: list, ylabel: str, ymax: float,
     ax.set_ylim(0, ymax)
     ax.tick_params(axis="y", labelsize=yfonte)
     ax.tick_params(axis="x", length=0, pad=10)
-    ax.set_ylabel(ylabel, fontsize=yfonte + 2)
+    ax.set_ylabel(T(ylabel), fontsize=yfonte + 2)
     ax.yaxis.grid(True)
     ax.set_axisbelow(True)
     ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
@@ -386,7 +408,7 @@ def por_tipo(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     acc, f1 = _medias(grupos, respostas)
     rot = [NOME_TIPO[t] for t in TIPOS]
     arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112), "fig5_acuracia_por_tipo")
-    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62), "fig5b_f1_por_tipo")
+    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1", 62), "fig5b_f1_por_tipo")
     return arqs, {t: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[t])}
                   for i, t in enumerate(TIPOS)}
 
@@ -401,7 +423,7 @@ def por_area(teste: list, respostas: dict) -> tuple[list[Path], dict]:
     kw = dict(figsize=(23.5, 8.2), xfonte=22, vfonte=21, yfonte=23, lfonte=24, justo=True)
     rot = [AREA_SLIDE.get(a, _quebrar(a, 12)) for a in nomes]
     arqs = salvar(_colunas_cond(rot, acc["sem"], acc["com"], "Acurácia (%)", 112, **kw), "fig6_acuracia_por_area")
-    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1 de tokens (0–100)", 62, **kw), "fig6b_f1_por_area")
+    arqs += salvar(_colunas_cond(rot, f1["sem"], f1["com"], "F1", 62, **kw), "fig6b_f1_por_area")
     return arqs, {a: {"acuracia": {c: acc[c][i] for c in acc}, "f1": {c: f1[c][i] for c in f1}, "n": len(grupos[a])}
                   for i, a in enumerate(nomes)}
 
@@ -415,15 +437,17 @@ def lexicais(teste: list, respostas: dict) -> tuple[list[Path], dict]:
             res.setdefault(m, {})[cond] = {"f1": 100 * np.mean([LI.f1(a, g)[0] for a, g in pares]),
                                            "rouge_l": 100 * np.mean([LI.rouge_l(a, g) for a, g in pares]),
                                            "bleu": LI.bleu([a for a, _ in pares], [g for _, g in pares])}
-    f1 = _grupos_slide({c: [res[m][c]["f1"] for m in MODELOS] for c in ("sem", "com")}, "F1 de tokens (0–100)",
+    f1 = _grupos_slide({c: [res[m][c]["f1"] for m in MODELOS] for c in ("sem", "com")}, "F1",
                        62, casas=0, nota=f"Conjunto de teste (n = {len(teste)}). Sobreposição de palavras entre a "
                                          "resposta e o gabarito. *GPT-5.4: só referência (hachurado).")
     extra = salvar(f1, "fig7b_f1")
+    if EN:
+        return extra, res
     fig, axs = plt.subplots(1, 2, figsize=(12, 4.2), sharey=True, gridspec_kw={"wspace": 0.12})
     x = np.arange(len(MODELOS))
     w = 0.36
     for ax, (met, rot) in zip(axs, (("f1", "(a) F1 de tokens"), ("rouge_l", "(b) ROUGE-L"))):
-        for k, (cond, cor, nome) in enumerate((("sem", AZUL, "Sem documento"), ("com", LARANJA, "Com documento"))):
+        for k, (cond, cor, nome) in enumerate((("sem", AZUL, ROT_SEM), ("com", LARANJA, ROT_COM))):
             vals = [res[m][cond][met] for m in MODELOS]
             bars = ax.bar(x + (k - 0.5) * w, vals, w * 0.92, color=cor, label=nome, edgecolor="white", linewidth=1.5)
             bars[-1].set_hatch("////")
@@ -462,5 +486,21 @@ def gerar() -> dict:
     return resumo
 
 
+def gerar_en() -> list[Path]:
+    """Desempenho dos modelos em inglês (acurácia por modelo e por tipo, F1 por modelo e por tipo), figuras_en/."""
+    usar_ingles()
+    estilo()
+    banco, _, respostas = dados()
+    teste = [x for x in banco if x["split"] == "teste"]
+    a, _ = acuracia(teste)
+    t, _ = por_tipo(teste, respostas)
+    b, _ = lexicais(teste, respostas)
+    return a + t + b
+
+
 if __name__ == "__main__":
-    print(json.dumps(gerar(), ensure_ascii=False, indent=1)[:3000])
+    import sys
+    if "--en" in sys.argv[1:]:
+        print("\n".join(map(str, gerar_en())))
+    else:
+        print(json.dumps(gerar(), ensure_ascii=False, indent=1)[:3000])
