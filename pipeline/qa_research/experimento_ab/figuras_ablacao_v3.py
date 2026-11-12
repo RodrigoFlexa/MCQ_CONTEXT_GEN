@@ -23,18 +23,17 @@ from . import comum as C  # noqa: E402
 from . import figuras as F  # noqa: E402
 from .ablacao_v3 import BASE, CONFIGS, SAIDA  # noqa: E402
 
-# a escada e, quando já rodadas, as variantes da retroalimentação sem memória
-ORDEM = [c for c in CONFIGS if c in BASE or (SAIDA / f"questoes_{c}.jsonl").exists()]
-COR = {"naive": "#1f77b4", "regras": "#ff7f0e", "documentos": "#2ca02c", "externos": "#9467bd", "retro": "#d62728",
-       "retro_sem_memoria": "#e377c2", "retro_sem_memoria_sem_externos": "#8c564b"}
+# escada do artigo: a retroalimentação é a versão sem memória (retro_sem_memoria); a v1 com memória e a variante
+# sem externos ficam só no relatório
+ORDEM = ["naive", "regras", "documentos", "externos", "retro_sem_memoria"]
+COR = {"naive": "#1f77b4", "regras": "#ff7f0e", "documentos": "#2ca02c", "externos": "#9467bd",
+       "retro_sem_memoria": "#d62728"}
 ROT = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "externos": "+ Datasets\nexternos",
-       "retro": "+ Retroali-\nmentação", "retro_sem_memoria": "+ Retro\nsem memória",
-       "retro_sem_memoria_sem_externos": "+ Retro sem\nmem. e ext."}
+       "retro_sem_memoria": "+ Retroali-\nmentação"}
 NOME = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "externos": "+ Datasets externos",
-        "retro": "+ Retroalimentação", "retro_sem_memoria": "+ Retro sem memória",
-        "retro_sem_memoria_sem_externos": "+ Retro sem memória e sem externos"}
-CURTO = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Docs.", "externos": "+ Ext.", "retro": "+ Retro",
-         "retro_sem_memoria": "+ Retro\ns/ mem.", "retro_sem_memoria_sem_externos": "+ Retro\ns/ mem.\ns/ ext."}
+        "retro_sem_memoria": "+ Retroalimentação"}
+CURTO = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Docs.", "externos": "+ Ext.",
+         "retro_sem_memoria": "+ Retro"}
 W = max(1.0, len(ORDEM) / 5)      # largura proporcional ao número de configurações
 FIG = SAIDA / "figuras"
 VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}".replace(".", ","))
