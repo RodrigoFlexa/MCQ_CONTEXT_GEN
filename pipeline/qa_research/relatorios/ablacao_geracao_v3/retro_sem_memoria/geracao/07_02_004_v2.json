@@ -1,0 +1,99 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:004:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Revisão de arquitetura segmentada deve revalidar a necessidade atual dos fluxos entre domínios para acessos de suporte ao IACS.",
+      "pergunta": "Meses após o comissionamento, conexões criadas para suporte remoto entre a DMZ corporativa e o ambiente de controle permaneceram ativas, embora a rotina de intervenção tenha mudado. Na revisão da arquitetura segmentada, que verificação técnica vem primeiro para julgar se esse acesso ainda é aceitável?",
+      "resposta": "Se os fluxos entre domínios continuam necessários.",
+      "explicacao": "A revisão da arquitetura deve confirmar se os fluxos entre domínios ainda são necessários e coerentes com o escopo conectado; energia de backup mantém supervisão, mas não substitui segmentação lógica.",
+      "resposta_padrao": "Confirmar apenas o backup de energia dos servidores SCADA.",
+      "por_que_nao": "Backup elétrico sustenta supervisão e comunicação, mas não verifica se a separação lógica e os fluxos entre domínios ainda são tecnicamente justificáveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação do menor privilégio para distinguir acesso de engenharia de acesso administrativo em manutenção remota.",
+      "pergunta": "Usando uma estação já preparada, o fornecedor vai restaurar a aplicação liberada no PLC e colocar o controlador na revisão de firmware aprovada, sem gerir contas nem desativar proteções. Que privilégio mínimo deve receber?",
+      "resposta": "Acesso de engenharia temporário.",
+      "explicacao": "Restaurar aplicação e atualizar firmware se enquadram no privilégio de engenharia; pelo menor privilégio, a permissão deve ser limitada ao necessário e só pelo tempo da atividade.",
+      "resposta_padrao": "Acesso administrativo.",
+      "por_que_nao": "Privilégio administrativo é voltado a criar contas, desabilitar proteções e apagar rastros, excedendo a necessidade de atuar na aplicação e no firmware do controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "apenas as permissões estritamente necessárias para executar uma tarefa definida, pelo menor tempo compatível com a atividade"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O escopo de controle de acesso em IACS inclui ativos capazes de alterar controladores, não apenas identidades de usuários.",
+      "pergunta": "As contas do ambiente de controle estão inventariadas, mas há um computador dedicado ligado à rede de automação, usado para diagnóstico e carregamento de aplicações nos controladores. No controle de acesso do IACS, que elemento também precisa entrar no escopo?",
+      "resposta": "Estação de engenharia.",
+      "explicacao": "Em IACS, o controle de acesso abrange também as estações de engenharia conectadas à rede operacional, porque elas podem alcançar e modificar controladores.",
+      "resposta_padrao": "Somente as contas de usuário.",
+      "por_que_nao": "No ambiente de automação, a superfície de acesso inclui ativos como estações de engenharia, não apenas identidades cadastradas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        }
+      ]
+    },
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Na análise de risco de acessos em IACS, a priorização deve ser guiada pelo efeito sobre disponibilidade e comportamento do processo.",
+      "pergunta": "Uma matriz herdada de TI classifica acessos ao ambiente de controle principalmente pelo potencial de leitura de dados. Quando a mesma credencial também pode atuar sobre o processo, que consequência deve comandar a priorização?",
+      "resposta": "Impacto na disponibilidade e no comportamento do processo.",
+      "explicacao": "No ambiente de controle, o efeito mais crítico do acesso não é só expor dados, mas interferir na continuidade operacional e no modo como o processo se comporta.",
+      "resposta_padrao": "Perda de confidencialidade.",
+      "por_que_nao": "Em ICS, o risco decisivo do acesso é poder alterar setpoints, lógica, alarmes e operação, afetando produção e funções de segurança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes ou comprometimento de funções de segurança"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em ICS, a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo."
+        }
+      ]
+    }
+  ]
+}

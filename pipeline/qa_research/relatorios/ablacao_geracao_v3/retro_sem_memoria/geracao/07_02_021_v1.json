@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:021:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da camada mais próxima da fonte para normalizar dados em arquitetura com controladores heterogêneos.",
+      "pergunta": "Controladores de fornecedores diferentes alimentam a mesma supervisão local; tags, estados e telas divergentes impedem comparação entre trens, e mexer nos controladores foi descartado. Em que camada a normalização deve ser concentrada mais perto da fonte?",
+      "resposta": "Camada SCADA.",
+      "explicacao": "A diversidade entre controladores dificulta padronização de nomenclatura e HMI; quando essa normalização não é viável no controle, o SCADA é a camada mais próxima da fonte para fazê-la.",
+      "resposta_padrao": "No historiador corporativo.",
+      "por_que_nao": "Normalizar só no historiador não resolve a padronização da supervisão e da HMI que operam em tempo real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso dificulta convenções de nomenclatura, padronização de interfaces humano-máquina (HMI)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de contexto de modo operacional para analytics e alarmes não espúrios.",
+      "pergunta": "Alarmes analíticos aparecem sobretudo em partida, parada e recirculação, mas em regime estável o modelo se comporta bem; unidades e identificação dos equipamentos estão corretas. Que elemento de dados falta para evitar esse diagnóstico frágil?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "As medições podem estar corretas, mas transições mudam o significado operacional dos sinais; sem esse contexto, o analytics gera diagnóstico frágil e alarmes espúrios.",
+      "resposta_padrao": "Recalibração dos sensores.",
+      "por_que_nao": "O padrão ligado a partidas e paradas aponta ausência de contexto operacional, não erro sistemático de medição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação de sincronismo temporal em aplicações próximas ao controle que ajustam o processo com frequência.",
+      "pergunta": "Uma aplicação consolida dados de vários controladores para ajustar setpoints com frequência. A rede mantém baixa latência, mas a correção sai fora de fase entre variáveis que deveriam representar o mesmo transiente. O que deve ser validado primeiro?",
+      "resposta": "Qualidade de sincronismo entre as fontes.",
+      "explicacao": "Aplicações que ajustam frequentemente o processo exigem alinhamento temporal entre fontes; com baixa latência e ainda assim correções fora de fase, o problema remanescente é o sincronismo.",
+      "resposta_padrao": "Reduzir a latência da rede.",
+      "por_que_nao": "Se a latência já é baixa, o erro de fase entre fontes aponta desalinhamento temporal, não lentidão de comunicação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Importância da identidade estável do ativo nos dados para séries analíticas e comparação correta.",
+      "pergunta": "Na alternância automática entre dois equipamentos redundantes, o analytics acumula horas, partidas e alarmes em uma única série e passa a prever falha inexistente, embora as medições individuais estejam corretas. Que elemento de dados está faltando?",
+      "resposta": "Identificação consistente do equipamento.",
+      "explicacao": "Se eventos de máquinas redundantes entram numa mesma série, a tendência fica enganosa mesmo com medições válidas; a falha é de identidade do ativo nos dados.",
+      "resposta_padrao": "Refazer o modelo preditivo.",
+      "por_que_nao": "Qualquer modelo continuará errado se a base misturar eventos de equipamentos diferentes como se fossem do mesmo ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem identificação consistente do equipamento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "comparações enganosas"
+        }
+      ]
+    }
+  ]
+}

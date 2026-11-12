@@ -1,0 +1,99 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_08:005:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de simulação dinâmica quando o blowdown tem atrasos, interação entre segmentos e contrapressão variável.",
+      "pergunta": "Com BDVs abrindo por etapas pelo ESD, contrapressão do flare mudando durante o evento e segmentos influenciando-se pelo header comum, que método de análise deve ser usado para estimar pico de vazão e tempo de despressurização?",
+      "resposta": "Simulação dinâmica de blowdown.",
+      "explicacao": "A carga e o tempo dependem da evolução temporal da abertura, do inventário e da contrapressão. Esses efeitos transientes podem alterar o resultado de projeto e não são bem capturados por modelo simplificado.",
+      "resposta_padrao": "Simulação estática conservativa do sistema.",
+      "por_que_nao": "Ela não representa adequadamente o sequenciamento de abertura, a interação entre segmentos nem a contrapressão variável que governam esse evento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o método pode mudar o resultado quando a transitoriedade do processo é relevante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tempo real não depende apenas do tamanho da válvula. Ele também é afetado pelo atraso de atuação, pelas perdas de carga nas linhas, pela contrapressão no sistema de flare, pela evolução das propriedades do fluido ao longo do evento e pela forma como a abertura é sequenciada entre segmentos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelagem correta da contrapressão do sistema receptor ao longo do blowdown.",
+      "pergunta": "No cálculo do blowdown de um segmento descarregando para header compartilhado com outras descargas, que condição do sistema receptor não deve ser tratada como fixa ao longo do evento?",
+      "resposta": "Contrapressão variável no flare.",
+      "explicacao": "A força motriz de despressurização muda com a contrapressão do sistema receptor. Assumi-la constante pode distorcer vazão e tempo de blowdown.",
+      "resposta_padrao": "Contrapressão constante de projeto no flare.",
+      "por_que_nao": "Num header compartilhado, a contrapressão evolui com as demais descargas e altera a descarga do segmento ao longo do tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "contrapressão variável no flare."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela contrapressão no sistema de flare"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação funcional de blowdown em teste controlado além do atingimento da pressão final.",
+      "pergunta": "Durante um teste controlado de blowdown, o segmento já atinge a pressão final no tempo previsto. Que ocorrência específica ainda deve ser monitorada para confirmar a efetividade da função?",
+      "resposta": "Vibração excessiva.",
+      "explicacao": "A verificação funcional não se limita ao tempo de despressurização; o teste também deve confirmar que o evento não produz resposta vibratória excessiva.",
+      "resposta_padrao": "Apenas a estabilidade da chama na tocha.",
+      "por_que_nao": "O critério citado para a efetividade do blowdown inclui também o comportamento mecânico durante a descarga, não só a queima na tocha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para blowdown, isso é particularmente importante porque pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Testes controlados de blowdown são indicados para verificar a efetividade da função, incluindo o tempo para despressurizar e a ocorrência de vibração excessiva"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de premissa de modelo incorreta quando o padrão real de despressurização segue liberação por grupos.",
+      "pergunta": "O histórico mostra que alguns segmentos só começam a cair de pressão depois da liberação do grupo anterior, sem evidência de lentidão mecânica das válvulas. Que premissa do modelo está errada?",
+      "resposta": "Lógica de ESD com abertura faseada das BDVs.",
+      "explicacao": "O início tardio por grupos indica sequenciamento de comando. Isso aponta para representação incorreta da lógica de ESD, não para atraso mecânico individual das válvulas.",
+      "resposta_padrao": "Atraso de atuação individual das BDVs.",
+      "por_que_nao": "Atraso individual não explica o padrão coordenado por grupos; esse comportamento decorre do faseamento definido na lógica de ESD.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um modelo dinâmico mal parametrizado também pode induzir erro se as premissas de inventário, lógica de ESD ou propriedades do fluido estiverem incorretas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pela forma como a abertura é sequenciada entre segmentos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        }
+      ]
+    }
+  ]
+}

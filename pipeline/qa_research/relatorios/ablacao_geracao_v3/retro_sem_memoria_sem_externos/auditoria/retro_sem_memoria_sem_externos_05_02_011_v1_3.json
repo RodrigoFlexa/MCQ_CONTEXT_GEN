@@ -1,0 +1,38 @@
+{
+  "sem_documento": true,
+  "resposta_alternativa": "Simular o black start/reboot em condição degradada, com perda das alimentações auxiliares de controle (24 Vcc/UPS), em vez do reinício normal assistido por bateria.",
+  "alternativa_excluida": true,
+  "atalho": false,
+  "sustentada": true,
+  "elemento_unico": true,
+  "tipo_sugerido": "procedimento",
+  "justificativa": "O ponto decisivo é que a lógica de trip só aparece no cenário anormal de recomposição sem apoio das fontes auxiliares de controle, condição explicitada nos blocos como antes mascarada pelo reboot normal com bateria.",
+  "aprovada": true,
+  "motivo": "nenhum",
+  "falhas": [],
+  "referencia_valida": true,
+  "tipo_confere": true,
+  "contexto": [
+    {
+      "id": "A1",
+      "item": "05_02",
+      "texto": "A distribuição elétrica interage diretamente com sistemas de controle e segurança por meio de redes em corrente alternada, corrente contínua e UPS, isto é, sistema ininterrupto de energia. Em um caso de acidente, a desenergização dos painéis de controle de geradores em operação levou à perda da geração principal e, junto com falha de UPS, desenergizou parte do controle associado às válvulas de tanques. Em outro ponto do mesmo arranjo, dois sistemas de 24 Vcc com retificadores, baterias e interligação por TIE podiam alimentar integralmente a demanda do quadro correspondente, e a UPS tinha a função de manter alimentação ininterrupta a cargas vitais. A lição técnica transferível é que redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação, coerência entre projeto e configuração implantada e efeito das modificações acumuladas ao longo da vida da unidade. Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções que deveriam sobreviver ao evento inicial.",
+      "titulo": "Distribuição e proteções / Falhas de arquitetura e segregação de alimentação: impacto sobre controle e segurança",
+      "indice_documento": 10
+    },
+    {
+      "id": "F",
+      "item": "05_02",
+      "texto": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle. Em uma configuração de FPSO, os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais, com dois conjuntos retificador/carregador e banco de baterias, cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE. Havia também UPS (Uninterruptible Power Supply) para cargas vitais em corrente alternada. Apesar dessa redundância nominal, a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal e à perda de equipamentos importantes. Na mesma sequência funcional, a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP (Controlador Lógico Programável), inviabilizando o comando de válvulas via ECOS. O mecanismo relevante é que o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida. Assim, a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout, não apenas um detalhe auxiliar.",
+      "titulo": "PMS, transientes e blackout / Interfaces entre alimentação em corrente contínua, UPS e perda de geração",
+      "indice_documento": 11
+    },
+    {
+      "id": "A2",
+      "item": "05_02",
+      "texto": "A recomposição após blackout depende de a arquitetura redundante continuar válida no estado degradado e de a lógica de controle não bloquear a própria retomada de energia. Em uma ocorrência de FPSO, duas estações master da ECOS estavam alimentadas pelo mesmo conjunto UPS A, diferentemente do arranjo previsto em projeto. Isso reduziu a independência entre canais e agravou a perda de supervisão quando esse conjunto falhou. Em outro evento, a unidade entrou em blackout total e várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle; essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria, indisponível naquele estado anormal. O princípio geral é que redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando. Além disso, sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle. Caso contrário, o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível.",
+      "titulo": "PMS, transientes e blackout / Redundância real, segregação e armadilhas de lógica na recomposição",
+      "indice_documento": 12
+    }
+  ]
+}

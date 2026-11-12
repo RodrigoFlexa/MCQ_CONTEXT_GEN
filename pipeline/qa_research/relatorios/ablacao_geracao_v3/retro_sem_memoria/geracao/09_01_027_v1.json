@@ -1,0 +1,75 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "visita": 1,
+  "onda": 1,
+  "id": "09_01:027:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelagem de esperas geradas por SIMOPS como incerteza operacional na simulação logística.",
+      "pergunta": "Na calibração de uma simulação de abastecimento, rotas, velocidades e tempos de transferência estão estáveis, mas os maiores desvios surgem quando offloading e pousos coincidem com a janela do PSV. Que incerteza operacional deve entrar explicitamente no modelo?",
+      "resposta": "Espera por fatores exógenos.",
+      "explicacao": "O bloco F manda representar espera por fatores exógenos. O bloco A1 liga SIMOPS a esperas, reprogramações e maior variabilidade do tempo de atendimento.",
+      "resposta_padrao": "Tempo de navegação.",
+      "por_que_nao": "Com percurso e velocidade estáveis, a dispersão vem da liberação operacional imposta pelas SIMOPS, não do trânsito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incertezas operacionais como tempos de berço, navegação, espera por fatores exógenos e transferência de carga"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando SIMOPS são mal coordenadas, aumentam as esperas, as reprogramações e a variabilidade do tempo de atendimento."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação da restrição estrutural do PSV que pode invalidar uma solução otimizada de cargas múltiplas.",
+      "pergunta": "O plano otimizado concentrou dois skids pesados na mesma faixa do convés. Área disponível, peso total, estabilidade e tanques seguem dentro dos limites. Qual restrição física do PSV explica a inviabilidade dessa programação?",
+      "resposta": "Resistência do convés.",
+      "explicacao": "A2 trata a resistência do convés como limitação própria, distinta de área útil, estabilidade e capacidade total. F ressalta que a viabilidade modelada depende das hipóteses adotadas.",
+      "resposta_padrao": "Capacidade total de carga do PSV.",
+      "por_que_nao": "A limitação global já foi satisfeita; aqui o fator governante é a restrição estrutural do convés.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "observou-se viabilidade de cargas múltiplas com potencial de maior eficiência de custo e nível de serviço equivalente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essas conclusões dependem das hipóteses de modelagem adotadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A capacidade logística de um PSV depende de área útil, resistência do convés, estabilidade, capacidade dos tanques, acessibilidade e limites dos equipamentos de transferência."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Inclusão do rebunkering no custo total quando composição da frota e cargas múltiplas pressionam a autonomia.",
+      "pergunta": "Na alternativa com barcos menores e cargas múltiplas, o circuito alongado só fecha preservando a reserva usual de combustível. Que necessidade operacional deve entrar no modelo de custo para não superestimar a economia?",
+      "resposta": "Reabastecimento intermediário.",
+      "explicacao": "F afirma que o custo muda com composição da frota, cargas múltiplas e reabastecimento intermediário. Com autonomia pressionada, essa parada precisa entrar na comparação econômica.",
+      "resposta_padrao": "Apenas consumo associado à operação.",
+      "por_que_nao": "O consumo não incorpora o custo nem o efeito operacional da parada extra para recompor autonomia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Custos também podem mudar com a composição da frota, com o uso de cargas múltiplas e com a necessidade de reabastecimento intermediário."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "capacidade dos tanques"
+        }
+      ]
+    }
+  ]
+}

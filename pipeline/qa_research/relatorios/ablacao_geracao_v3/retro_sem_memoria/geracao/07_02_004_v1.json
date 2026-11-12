@@ -1,0 +1,71 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:004:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escopo do controle de acesso em IACS inclui estações de engenharia, não só contas de usuário.",
+      "pergunta": "Controladores já estão inventariados e as contas do domínio foram auditadas, mas um host com software de programação segue ligado à rede operacional. Que ativo ainda precisa entrar explicitamente no escopo do controle de acesso?",
+      "resposta": "Estação de engenharia",
+      "explicacao": "Em IACS, o controle de acesso alcança estações de engenharia. Esse host é a via direta para carregar lógica nos controladores, algo que a revisão apenas de contas não cobre.",
+      "resposta_padrao": "Servidor de supervisão",
+      "por_que_nao": "O supervisório é relevante, mas o host de programação é o ponto capaz de alterar lógica; é esse caminho que fica descoberto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do privilégio mínimo adequado para alterar lógica e firmware em IACS.",
+      "pergunta": "Será necessário modificar firmware e lógica de um controlador no suporte remoto, sem permitir criação de contas nem desabilitação de proteções. Que classe de privilégio é suficiente para a sessão?",
+      "resposta": "Acesso de engenharia",
+      "explicacao": "No IACS, o privilégio de engenharia cobre alteração de configuração, lógica e firmware. O administrativo acrescenta poderes como criar contas e desabilitar proteções, que o cenário exclui.",
+      "resposta_padrao": "Acesso administrativo",
+      "por_que_nao": "O administrativo excede a necessidade técnica e amplia o risco com capacidades adicionais que não são requeridas para essa tarefa.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Na avaliação cibernética de IACS, a disponibilidade prevalece sobre a confidencialidade como consequência operacional.",
+      "pergunta": "Na tríade CIA aplicada a IACS, qual atributo tende a dominar a consequência operacional de um acesso legítimo mal protegido?",
+      "resposta": "Disponibilidade",
+      "explicacao": "Em sistemas de controle industrial, o dano principal recai sobre indisponibilidade e perturbação do processo; por isso, a disponibilidade pesa mais que a confidencialidade.",
+      "resposta_padrao": "Confidencialidade",
+      "por_que_nao": "Essa prioridade é típica de TI corporativa; em IACS, o efeito crítico é parar ou degradar o comportamento do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a consequência principal não é apenas perda de confidencialidade, mas impacto na disponibilidade e no comportamento do processo"
+        }
+      ]
+    }
+  ]
+}

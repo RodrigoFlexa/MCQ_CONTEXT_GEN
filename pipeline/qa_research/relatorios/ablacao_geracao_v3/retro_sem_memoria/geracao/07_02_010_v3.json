@@ -1,0 +1,59 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:010:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Risco residual de acesso remoto em IACS mesmo com VPN, devido ao estado do endpoint conectado.",
+      "pergunta": "Mesmo com VPN atualizada, credenciais válidas e escopo aprovado, um acesso remoto de terceiro ainda é tratado como risco em IACS. Que mecanismo técnico mantém essa exposição?",
+      "resposta": "Comprometimento do dispositivo conectado.",
+      "explicacao": "Os blocos afirmam que a VPN protege o tráfego, mas não corrige comprometimento já existente no equipamento; um endpoint comprometido ainda estabelece sessão válida e leva risco ao ambiente operacional.",
+      "resposta_padrao": "Interceptação do tráfego no túnel VPN.",
+      "por_que_nao": "O canal protegido reduz o risco em trânsito; aqui a exposição remanescente vem do endpoint que inicia ou recebe a sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Rastreabilidade de intervenção remota por meio do registro do ativo alvo.",
+      "pergunta": "Os logs do gateway remoto já mostram quem conectou e quando. Após uma mudança indevida, qual dado do registro da sessão é decisivo para direcionar a contenção ao equipamento correto?",
+      "resposta": "Identificação do ativo em que houve atuação.",
+      "explicacao": "Se usuário e horário já estão registrados, falta o vínculo com o ativo atuado. Esse dado permite rastrear a intervenção e orientar investigação e contenção.",
+      "resposta_padrao": "Endereço IP público de origem da sessão.",
+      "por_que_nao": "A origem identifica a ponta externa, não o equipamento de controle sobre o qual a sessão efetivamente atuou.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "melhora a investigação de desvios, a responsabilização e a contenção"
+        }
+      ]
+    }
+  ]
+}

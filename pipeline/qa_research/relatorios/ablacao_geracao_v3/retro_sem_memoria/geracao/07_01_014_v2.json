@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:014:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo de teste integrado com fluido inerte para provar automação e instrumentação antes do primeiro gás.",
+      "pergunta": "Antes do primeiro gás, é preciso aquecer um circuito gasoso, comprovar comunicação campo-PLC, ajustar nível e sintonia inicial dos controladores e ainda evidenciar vazamentos por acomodação térmica. Que arranjo de teste deve ser adotado?",
+      "resposta": "Operação em circuito fechado com nitrogênio.",
+      "explicacao": "Esse arranjo permite provar comunicação e lógica como sistema integrado, ajustar instrumentos e controladores e, com circulação aquecida, revelar vazamentos por acomodação térmica antes da admissão de gás.",
+      "resposta_padrao": "Inertização estática com nitrogênio.",
+      "por_que_nao": "A inertização só torna o circuito seguro; a circulação em malha fechada reproduz a dinâmica e a temperatura necessárias para testar lógica, instrumentos e vazamentos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a automação resulta da integração de dispositivos de campo, sistemas controladores e supervisão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A operação em circuito fechado com nitrogênio (N2) foi usada para confirmar desempenho, testar antecipadamente a lógica de regeneração e permitir ajustes antes do primeiro gás."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em altas temperaturas, a circulação de N2 também favoreceu a identificação de vazamentos associados à acomodação térmica e apoiou ajuste de instrumentos"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da coerência temporal dos sinais para uso confiável em supervisão, histórico e análise.",
+      "pergunta": "Uma mesma perturbação aparece em ordens incompatíveis nas tendências do controle e do histórico, embora os valores continuem sendo exibidos na supervisão. O que deve ser verificado primeiro para confiar nessas comparações?",
+      "resposta": "Coerência temporal dos sinais.",
+      "explicacao": "Tendências, comparações e inferências só fazem sentido quando as fontes mantêm alinhamento temporal; sem isso, a supervisão ainda pode mostrar valores plausíveis sem refletir corretamente o processo.",
+      "resposta_padrao": "Latência média da rede.",
+      "por_que_nao": "Mesmo com baixa latência média, sinais de fontes diferentes podem ficar desalinhados no tempo; a comparação exige coerência temporal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essa distribuição física pode aumentar distâncias entre equipamentos e pontos de interface, o que amplia a importância prática da comunicação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Identificação do historian como camada de dados temporais distinta do controlador.",
+      "pergunta": "Como se chama o sistema que coleta periodicamente sinais validados para formar tendências e apoiar análise de desempenho, sem executar a lógica principal de controle?",
+      "resposta": "Historian.",
+      "explicacao": "No historian, a base de sinais é coletada periodicamente, checada e validada para tendências, análise de desempenho e apoio à decisão; ele não substitui a execução da lógica no controlador.",
+      "resposta_padrao": "DCS.",
+      "por_que_nao": "O DCS coordena ações de controle; o historian consolida dados temporais para análise, visualização e apoio à decisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Acima dela, sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em arquiteturas com historian, coleta periódica de dados, checagem de normalidade e validação das medições"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a mesma base de sinais pode alimentar análise de desempenho, visualização e camadas superiores de apoio à decisão."
+        }
+      ]
+    }
+  ]
+}

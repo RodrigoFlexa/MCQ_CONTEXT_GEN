@@ -1,0 +1,83 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_12:012:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Precedência da proteção anti-surge sobre o controle de capacidade em queda brusca de vazão.",
+      "pergunta": "Num centrífugo protegido por recirculação anti-surge, uma válvula a jusante fecha inadvertidamente, a vazão despenca e as pressões se alteram em cascata; o controle de capacidade ainda busca a meta do processo. Que atuação específica deve prevalecer imediatamente?",
+      "resposta": "Abertura da válvula de recirculação anti-surge.",
+      "explicacao": "A perturbação empurra o ponto de operação para baixa vazão. Como as duas malhas atuam na mesma máquina, a proteção deve assumir para afastá-la da região instável.",
+      "resposta_padrao": "Reduzir o setpoint de pressão de descarga.",
+      "por_que_nao": "Mexer só na meta do processo não garante aumento imediato de vazão; a recirculação desloca o ponto de operação para longe da instabilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para válvulas críticas de anti-surge"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de load sharing dedicado em compressores centrífugos operando em paralelo.",
+      "pergunta": "Após transferência de carga entre dois compressores em paralelo, a pressão comum do coletor permanece na meta, mas um trem se aproxima do limite operacional e o outro segue folgado, sem falha mecânica local. Que função de controle deve coordenar essa condição?",
+      "resposta": "Malha de repartição de carga entre trens.",
+      "explicacao": "Em operação paralela, manter apenas a pressão comum não evita sobrecarga localizada. A coordenação precisa distribuir a carga para preservar operação e transferências seguras.",
+      "resposta_padrao": "Controle individual da pressão de descarga.",
+      "por_que_nao": "A pressão do coletor pode ficar correta com distribuição desigual; só a repartição de carga evita sobrecarga em um trem.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema de controle precisa repartir carga, evitar sobrecarga localizada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "manter partidas, paradas e transferências de trem com segurança e confiabilidade"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso da realimentação de posição para distinguir problema de sintonia de falha no elemento final da proteção anti-surge.",
+      "pergunta": "Durante distúrbios rápidos, a proteção anti-surge parece lenta embora o algoritmo já sature a saída. Sem mudar a lógica, que recurso de instrumentação da válvula ajuda a decidir se o atraso está no atuador?",
+      "resposta": "Realimentação de posição da válvula anti-surge.",
+      "explicacao": "Comparar o comando com a posição real mostra se a válvula acompanha ou se há atraso, histerese ou falha de atuação.",
+      "resposta_padrao": "Aumentar o ganho do controlador.",
+      "por_que_nao": "Ganho maior só intensifica o comando; sem posição real, não se distingue sintonia de problema no atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "detectar degradação, atraso, histerese ou falha de atuação"
+        }
+      ]
+    }
+  ]
+}

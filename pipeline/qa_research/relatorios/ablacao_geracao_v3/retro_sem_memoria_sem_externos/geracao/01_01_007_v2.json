@@ -1,0 +1,79 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "01_01:007:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de reserva fria como modo de operação distinto em modelos RAM.",
+      "pergunta": "O equipamento reserva não opera sob a mesma carga do ativo e só assume após a comutação. Na modelagem RAM, que modo de operação deve ser representado para não atribuir ao reserva o mesmo comportamento do titular?",
+      "resposta": "Reserva fria",
+      "explicacao": "Nesse arranjo, o reserva não fica submetido à mesma carga do ativo. O modelo precisa distinguir esse modo operacional para representar corretamente exposição, espera e comutação.",
+      "resposta_padrao": "Paralelo ativo-ativo.",
+      "por_que_nao": "Paralelo ativo-ativo supõe ambos operando sob carga, o que distorce desgaste, falhas em espera e falhas de partida/comutação do reserva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar dependências e modos de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Efeito de lógica compartilhada como causa comum em arranjos redundantes na análise RAM.",
+      "pergunta": "Dois compressores 100% duplicados têm skids separados, mas a mesma lógica de intertravamento pode retirar ambos de serviço. Na análise RAM, que mecanismo de indisponibilidade precisa ser modelado explicitamente?",
+      "resposta": "Falha de causa comum",
+      "explicacao": "A duplicação dos compressores não garante independência quando uma mesma lógica pode derrubar os dois. O modelo precisa captar essa causa comum para não superestimar a disponibilidade.",
+      "resposta_padrao": "Paralelismo independente entre os compressores.",
+      "por_que_nao": "Modelar como independentes ignora que o mesmo intertravamento pode indisponibilizar ambos ao mesmo tempo, reduzindo o ganho real da redundância.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar dependências e modos de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização de parâmetros de falha e reparo com dados da própria instalação em estudos RAM.",
+      "pergunta": "Uma análise RAM começou com dados setoriais, mas a instalação real tem arquitetura, acessibilidade e estratégia de manutenção diferentes. Que grupo de parâmetros deve ser atualizado com dados da própria instalação para refinar a disponibilidade prevista?",
+      "resposta": "Parâmetros locais de falha e reparo",
+      "explicacao": "Frequências de falha e tempos de reparo mudam com arquitetura, acessibilidade, manutenção e contexto operacional. Usar dados locais melhora a aderência do modelo à instalação analisada.",
+      "resposta_padrao": "Médias de banco setorial.",
+      "por_que_nao": "Bancos setoriais ajudam padronização e comparação, mas não substituem dados locais quando os parâmetros de falha e reparo variam com a instalação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    }
+  ]
+}

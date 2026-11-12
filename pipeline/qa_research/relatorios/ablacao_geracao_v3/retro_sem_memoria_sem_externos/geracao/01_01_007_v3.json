@@ -1,0 +1,99 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 3,
+  "onda": 4,
+  "id": "01_01:007:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelagem RAM de reserva fria exige representar falha de partida/comutação além das falhas em espera.",
+      "pergunta": "Na RAM de uma bomba com reserva fria, o modelo já considera falhas em espera da reserva, mas assume transferência instantânea e sucesso certo quando ela é demandada. Que modo de falha ainda falta representar?",
+      "resposta": "Falha de partida/comutação da reserva fria.",
+      "explicacao": "Reserva fria não opera sob a mesma carga do ativo, mas continua sujeita a falhar ao partir ou ao transferir carga; esse modo precisa entrar no modelo.",
+      "resposta_padrao": "Desgaste contínuo da reserva em standby.",
+      "por_que_nao": "Na reserva fria o item não trabalha sob a mesma carga do ativo; o modo omitido aqui é a falha ao partir ou comutar.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar dependências e modos de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Cálculo de MTTR e disponibilidade observada usa como marco final o retorno ao estado operacional.",
+      "pergunta": "Os registros trazem abertura e fechamento da ordem de serviço, mas a equipe quer calcular MTTR e disponibilidade observada. Que marco final do evento precisa ser registrado?",
+      "resposta": "Retorno ao estado operacional.",
+      "explicacao": "MTTR e disponibilidade observada terminam quando a função é restabelecida, não no encerramento administrativo nem no fim isolado do reparo.",
+      "resposta_padrao": "Fechamento administrativo da ordem de serviço.",
+      "por_que_nao": "O fechamento da OS não coincide necessariamente com a restauração da função; o indicador depende do retorno efetivo à operação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização de RAM e priorização corretiva exigem codificação de falhas por modos de falha distinguíveis.",
+      "pergunta": "Um histórico de indisponibilidade agrupa ocorrências apenas como \"mecânica\" ou \"elétrica\", e a equipe quer usá-lo para priorizar correções e atualizar a RAM. Como as falhas devem estar classificadas quanto à causa?",
+      "resposta": "Em modos de falha distinguíveis.",
+      "explicacao": "A RAM precisa de modos de falha que geram perda ao sistema; classes amplas por disciplina não separam mecanismos nem sustentam priorização útil.",
+      "resposta_padrao": "Por disciplina de manutenção.",
+      "por_que_nao": "Agrupar por disciplina esconde a causa técnica da perda e impede usar os dados para parametrizar e priorizar por modo de falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "é necessário levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis e úteis à priorização de ações corretivas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelos RAM não podem assumir independência entre trens que compartilham utilidades ou descarga.",
+      "pergunta": "Dois trens duplicados foram tratados como paralelo simples na RAM, embora dependam da mesma utilidade crítica e da mesma descarga. Que hipótese do modelo está incorreta?",
+      "resposta": "Independência funcional entre os trens.",
+      "explicacao": "Quando existe gargalo compartilhado, um único evento pode indisponibilizar ambos; o paralelo simples superestima o ganho de disponibilidade.",
+      "resposta_padrao": "Taxas de falha idênticas nos dois trens.",
+      "por_que_nao": "Mesmo com taxas corretas, a perda do recurso comum remove os dois trens; o erro está na suposição de independência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capazes de representar dependências e modos de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo"
+        }
+      ]
+    }
+  ]
+}

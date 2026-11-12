@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:001:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Ponto em que a fronteira IT/OT passa a existir na prática quando dados deixam o controle para outros consumidores.",
+      "pergunta": "Dados de processo passaram a alimentar historiador e aplicações analíticas além da supervisão local. Em que ponto essa passagem deve ser tratada arquiteturalmente como fronteira IT/OT?",
+      "resposta": "Na transição da camada de controle para supervisão e demais consumidores.",
+      "explicacao": "As fronteiras práticas surgem quando o dado sai do controle e passa a ser consumido por supervisão, historiadores, analytics, telecomunicações ou sistemas corporativos.",
+      "resposta_padrao": "No enlace com a rede corporativa.",
+      "por_que_nao": "A fronteira já se forma antes disso, quando o dado deixa a camada de controle para outros consumidores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Na prática, as fronteiras IT/OT aparecem onde os dados deixam a camada de controle e passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A fronteira IT/OT surge justamente porque esses ambientes têm objetivos diferentes: OT prioriza controle determinístico, segurança operacional e disponibilidade do processo; IT prioriza processamento de informação, integração de negócio e flexibilidade administrativa."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Camada em que a integração tende a se concentrar quando controladores heterogêneos usam modelos de dados distintos.",
+      "pergunta": "Modelos de dados incompatíveis entre controladores de diferentes fornecedores limitam a padronização próxima à fonte. Em qual camada a integração tende a se concentrar para operação, alarmes e histórico?",
+      "resposta": "Camada supervisória (SCADA).",
+      "explicacao": "Com modelos distintos, a padronização na origem fica limitada; por isso a integração migra para a camada supervisória, onde o SCADA agrega alarmes, histórico e interface operacional.",
+      "resposta_padrao": "Nos controladores de campo, com padronização direta na fonte.",
+      "por_que_nao": "A heterogeneidade dos modelos reduz a viabilidade de padronizar perto da origem e desloca a integração para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função da segmentação para conter propagação entre domínios digitais com criticidades diferentes.",
+      "pergunta": "Controle de processo, proteção independente e sistemas elétricos passaram a compartilhar conectividade além do necessário por uma nova interface. Que medida arquitetural específica deve ser aplicada para reduzir caminhos de propagação entre esses domínios?",
+      "resposta": "Segmentação entre domínios.",
+      "explicacao": "A segmentação é a medida que reduz caminhos de propagação entre domínios com funções e consequências diferentes, especialmente quando novas interfaces criam interconexões adicionais.",
+      "resposta_padrao": "Redundância de comunicação.",
+      "por_que_nao": "Redundância melhora disponibilidade, mas não separa domínios nem contém a propagação lateral de falhas ou ações maliciosas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se esses conjuntos compartilham conectividade além do necessário, uma falha, erro de configuração ou ação maliciosa em um domínio pode ampliar suas consequências para outros."
+        }
+      ]
+    }
+  ]
+}

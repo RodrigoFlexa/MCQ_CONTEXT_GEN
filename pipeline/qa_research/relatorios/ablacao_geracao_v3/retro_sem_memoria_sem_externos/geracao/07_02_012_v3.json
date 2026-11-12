@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:012:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Triagem inicial de um alerta de vulnerabilidade em OT depende de confirmar a presença do componente afetado no ativo.",
+      "pergunta": "Gateways e controladores com Ethernet ativa receberam um alerta sobre falhas na pilha Treck TCP/IP usada só em parte da linha de produtos. Antes de marcar um ativo como atingido, o que precisa ser confirmado nele?",
+      "resposta": "Presença da pilha Treck TCP/IP afetada.",
+      "explicacao": "Em OT, o alerta só se aplica ao ativo que realmente usa o componente vulnerável; conectividade ou fabricante, sozinhos, não bastam para classificá-lo como afetado.",
+      "resposta_padrao": "Acessibilidade direta à internet do ativo.",
+      "por_que_nao": "Exposição à internet aumenta o risco de exploração, mas o alerta específico só se aplica se a pilha vulnerável estiver presente no ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicação de patch em sistemas de controle exige validar compatibilidade técnica específica antes da instalação em produção.",
+      "pergunta": "O fornecedor liberou correção para um sistema de controle onde o componente vulnerável já foi confirmado. Antes da instalação em produção, que compatibilidade precisa ser validada para evitar indisponibilidade ou comportamento não previsto?",
+      "resposta": "Compatibilidade entre firmware, comunicação e funções de processo.",
+      "explicacao": "Em sistemas de controle, a atualização pode interferir na comunicação e no comportamento do processo; por isso, essa compatibilidade deve ser validada previamente.",
+      "resposta_padrao": "Backup completo com plano de retorno.",
+      "por_que_nao": "Backup e retorno mitigam a recuperação, mas não demonstram que a atualização é compatível com a comunicação e com as funções de processo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "pode introduzir indisponibilidade ou comportamento não previsto no controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando patch imediato não é seguro em OT legado, a medida compensatória preferível é reforçar a segregação da rede.",
+      "pergunta": "Com a pilha vulnerável confirmada num sistema legado, a correção ainda não foi qualificada e a mudança pode retirar o controle de serviço. Até existir remediação compatível, qual ação temporária na arquitetura de rede é a mais adequada?",
+      "resposta": "Isolamento adicional da rede.",
+      "explicacao": "Se o patch imediato não é viável ou seguro, a resposta temporária preferível é reduzir a exposição com mais isolamento entre o sistema e ambientes menos confiáveis.",
+      "resposta_padrao": "Aplicar imediatamente a versão mais recente disponível.",
+      "por_que_nao": "Em controle legado, atualizar sem validação pode causar indisponibilidade ou comportamento imprevisto; o isolamento reduz a superfície de exploração sem introduzir essa mudança.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso"
+        }
+      ]
+    }
+  ]
+}

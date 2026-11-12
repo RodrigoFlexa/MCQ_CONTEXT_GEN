@@ -1,0 +1,83 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "visita": 3,
+  "onda": 5,
+  "id": "01_01:010:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Quando a capacidade da equipe é o gargalo, falhas simultâneas serializam os reparos e ampliam a indisponibilidade.",
+      "pergunta": "Três falhas corretivas chegam quase juntas para a mesma especialidade; acesso, liberação e sobressalentes já existem, e cada reparo individual mantém a duração usual. Mesmo assim, a última função retorna muito depois das demais. Que mecanismo prolongou a indisponibilidade?",
+      "resposta": "Fila de reparo por capacidade de equipe.",
+      "explicacao": "Com acesso, materiais e duração individual normais, o atraso adicional vem da serialização das ordens quando a capacidade da equipe é o gargalo.",
+      "resposta_padrao": "Aumento do MTTR de cada reparo.",
+      "por_que_nao": "Isso valeria se cada intervenção tivesse ficado mais lenta; aqui o tempo extra surge da espera entre ordens concorrentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Se a capacidade das equipes for o gargalo, falhas simultâneas podem criar fila e prolongar a indisponibilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na priorização de intervenções, restrições compartilhadas entre subsistemas podem ser o critério decisivo quando criticidade e duração se equivalem.",
+      "pergunta": "Dois reparos têm a mesma criticidade funcional e duração semelhante. Se um deles perder a janela atual, o retorno de outro subsistema ainda degradado também ficará para a próxima janela; o outro afeta apenas a si mesmo. Que critério técnico deve desempatar a prioridade?",
+      "resposta": "Restrição compartilhada entre subsistemas.",
+      "explicacao": "Com criticidade e duração empatadas, deve prevalecer o reparo cuja perda da janela arrasta outro subsistema, sinal de restrição comum no retorno operacional.",
+      "resposta_padrao": "Menor duração da recuperação.",
+      "por_que_nao": "Esse critério vale quando o tempo difere de forma relevante; aqui o decisivo é não perder a oportunidade comum entre subsistemas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A malha de água produzida pode assumir a maior criticidade funcional por limitar separação, tratamento, reinjeção ou descarte e reduzir a vazão total possível.",
+      "pergunta": "A fração de água cresce com a produção, a reinjeção já opera no limite e o descarte não pode aumentar. Na mesma janela, disputa-se restaurar a malha de água produzida ou um sistema redundante sem impacto imediato na separação. Qual subsistema deve ser priorizado?",
+      "resposta": "Malha de água produzida.",
+      "explicacao": "Perda de capacidade nessa malha pode faltar separação, tratamento, reinjeção ou descarte da fase aquosa, impondo redução de vazão total.",
+      "resposta_padrao": "O sistema com maior degradação local.",
+      "por_que_nao": "Degradação local não basta para priorizar quando outro subsistema pode se tornar o limitante direto da produção total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a malha de água produzida perde capacidade, a limitação não afeta apenas esse sistema; ela pode impor redução de vazão total do campo por falta de capacidade de separar, tratar, reinjetar ou descartar a fase aquosa gerada junto com os hidrocarbonetos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para usar MTTR na avaliação de reforço de manutenção, é preciso separar esperas do tempo efetivo de reparo.",
+      "pergunta": "Depois de reforçar a manutenção, quer-se saber se houve ganho real de reparo ou apenas deslocamento da indisponibilidade. Na apuração do MTTR, que parcela temporal precisa ficar fora do tempo de reparo?",
+      "resposta": "Tempos de espera.",
+      "explicacao": "O MTTR deve registrar atividades de reparo; esperas pertencem à indisponibilidade, mas não ao reparo usado para julgar o efeito do reforço.",
+      "resposta_padrao": "Tempo de diagnóstico.",
+      "por_que_nao": "Diagnóstico integra a intervenção; o que precisa ser segregado para esse indicador são as esperas sem reparo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        }
+      ]
+    }
+  ]
+}

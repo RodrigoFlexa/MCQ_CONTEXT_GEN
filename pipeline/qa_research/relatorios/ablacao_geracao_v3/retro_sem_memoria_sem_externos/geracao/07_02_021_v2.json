@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:021:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a camada de controle é heterogênea e não pode ser retrabalhada, a normalização viável mais próxima da fonte migra para o SCADA.",
+      "pergunta": "Controladores de fornecedores diferentes expõem tags e estruturas incompatíveis, e reprogramá-los não é viável. Para padronizar nomenclatura nas telas e permitir comparação entre ativos sem retrabalho em cada controlador, em que camada a normalização deve ser feita?",
+      "resposta": "Na camada SCADA.",
+      "explicacao": "Com pouca padronização na camada de controle, o SCADA passa a ser a camada mais próxima da fonte em que a normalização ainda é viável, atendendo HMI e comparação entre ativos.",
+      "resposta_padrao": "No historiador de dados.",
+      "por_que_nao": "O historiador fica mais a jusante e não é a camada mais próxima da fonte para padronizar HMI e dados operacionais.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a diversidade de modelos de dados entre fornecedores de controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso dificulta convenções de nomenclatura, padronização de interfaces humano-máquina (HMI) e comparação entre ativos sem retrabalho."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Modelos analíticos precisam receber o modo operacional associado ao sinal para não misturar comportamentos normais de regimes distintos.",
+      "pergunta": "Um modelo de anomalia treinado com dados de regime estável passa a alarmar sempre nas partidas e no reciclo de um compressor; pressões, temperaturas e posições de válvula repetem os mesmos perfis nesses períodos em vários ciclos. Que informação deve acompanhar cada amostra?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Partida, reciclo e regime estável são condições operacionais diferentes. Sem o modo operacional associado ao dado, o modelo mistura padrões normais distintos e tende a gerar diagnósticos frágeis e alarmes espúrios.",
+      "resposta_padrao": "Retreinar o modelo com mais histórico.",
+      "por_que_nao": "Sem identificar o modo operacional, mais histórico continua misturando condições normais diferentes e mantém alarmes espúrios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicações que usam sinais de múltiplas fontes para ajustes frequentes dependem criticamente de sincronismo temporal entre essas fontes.",
+      "pergunta": "Uma aplicação recalcula ajustes a cada poucos segundos com sinais de controladores distintos. Cada malha local permanece estável, mas a ordem registrada de mudanças de pressão e resposta de válvulas varia conforme a origem do dado. Que atributo deve ser verificado primeiro?",
+      "resposta": "Qualidade de sincronismo temporal.",
+      "explicacao": "Se a ordem dos eventos muda entre fontes, o problema central é o desalinhamento temporal entre sinais. Em aplicações próximas ao controle, a qualidade de sincronismo é crítica para evitar cálculos sobre instantes diferentes.",
+      "resposta_padrao": "Latência de comunicação.",
+      "por_que_nao": "Atraso comum afeta rapidez, mas a mudança da ordem entre eventos de fontes diferentes denuncia desalinhamento temporal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ]
+    }
+  ]
+}

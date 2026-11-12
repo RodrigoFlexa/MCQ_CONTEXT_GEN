@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:010:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A liberação de acesso remoto em IACS depende da verificação do estado de segurança do dispositivo conectado, não só da VPN.",
+      "pergunta": "Com a VPN atualizada, credenciais válidas e necessidade de suporte remoto em um sistema que permite diagnóstico e configuração, que verificação técnica ainda deve liberar a sessão?",
+      "resposta": "Condição de segurança do dispositivo conectado.",
+      "explicacao": "Mesmo com canal seguro e sessão autorizada, um equipamento remoto desatualizado, infectado ou mal configurado pode introduzir risco ao ambiente de controle.",
+      "resposta_padrao": "Validade do túnel VPN.",
+      "por_que_nao": "O canal protegido não corrige comprometimento, desatualização ou má configuração do equipamento que entra na sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O risco de uma sessão remota também é definido pelas permissões alcançadas durante a conexão e deve ser limitado ao necessário para a tarefa.",
+      "pergunta": "VPN e notebook do fornecedor já foram validados, mas o risco residual ainda muda conforme a conta remota usada na mesma atividade. Que aspecto técnico do acesso deve ser limitado?",
+      "resposta": "Permissões disponíveis durante a sessão.",
+      "explicacao": "Em IACS, a mesma conexão pode alcançar funções de diagnóstico, configuração ou operação; por isso, o risco varia com o que a conta realmente pode fazer.",
+      "resposta_padrao": "Tempo total da sessão.",
+      "por_que_nao": "Duração menor não impede atuação indevida se a conta ainda alcança funções além da necessidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A rastreabilidade de intervenções remotas de terceiros exige registro de sessão suficiente para reconstruir autor, momento e ativo afetado.",
+      "pergunta": "Horas após suporte remoto de um fornecedor, surge comportamento inesperado em um controlador e é preciso identificar autor, horário e ativo atingido. Que registro deve ter sido mantido?",
+      "resposta": "Trilha de auditoria da sessão.",
+      "explicacao": "O monitoramento da intervenção deve permitir reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação, para investigação e contenção.",
+      "resposta_padrao": "Historiador de processo.",
+      "por_que_nao": "O historiador registra variáveis de processo, mas não garante rastreabilidade de usuário, sessão e ativo acessado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse monitoramento ajuda a reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "melhora a investigação de desvios, a responsabilização e a contenção caso a atividade introduza falha, alteração indevida ou comportamento inesperado no sistema."
+        }
+      ]
+    }
+  ]
+}

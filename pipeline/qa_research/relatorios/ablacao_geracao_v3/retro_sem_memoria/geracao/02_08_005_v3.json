@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 5,
+  "visita": 3,
+  "onda": 5,
+  "id": "02_08:005:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para escolher simulação dinâmica em blowdown com acoplamentos transientes relevantes.",
+      "pergunta": "A abertura das BDVs é sequenciada pelo ESD, o fluido muda de fase durante o evento e a contrapressão do header varia com outras descargas. Que método de análise deve ser adotado para estimar a carga de blowdown na tocha?",
+      "resposta": "Simulação dinâmica.",
+      "explicacao": "O cenário reúne efeitos explicitamente transientes de blowdown que um modelo simplificado pode não representar: sequenciamento, mudança de fase, interação entre segmentos e contrapressão variável no flare.",
+      "resposta_padrao": "Simulação estática em regime permanente.",
+      "por_que_nao": "Regime permanente não representa a evolução temporal do blowdown nem os acoplamentos transitórios que governam a carga enviada ao flare.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para blowdown, isso é particularmente importante porque pressão, temperatura, composição e vazão variam no tempo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Identificação de atraso de atuação da BDV a partir da curva de pressão de blowdown.",
+      "pergunta": "No teste controlado, o comando de ESD é registrado no instante previsto, mas a pressão do segmento só começa a cair alguns segundos depois e então segue a curva calculada. Que parcela do evento o modelo omitiu?",
+      "resposta": "Atraso de atuação da BDV.",
+      "explicacao": "Se o comando ocorreu no tempo esperado e a queda de pressão só começa depois, o desvio é um tempo morto de atuação antes do escoamento, não a dinâmica posterior do blowdown.",
+      "resposta_padrao": "Contrapressão variável no flare.",
+      "por_que_nao": "A contrapressão altera a taxa de despressurização após o fluxo começar; ela não explica um patamar inicial sem queda de pressão após o comando.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele também é afetado pelo atraso de atuação, pelas perdas de carga nas linhas, pela contrapressão no sistema de flare"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito da contrapressão variável do flare no tempo real de despressurização.",
+      "pergunta": "Isoladamente, um segmento despressuriza no tempo previsto; quando outros entram em blowdown para o mesmo header, sua queda de pressão desacelera sem mudança de BDV nem de pressão inicial. Qual efeito do sistema receptor explica isso?",
+      "resposta": "Contrapressão variável no flare.",
+      "explicacao": "A piora apenas com descargas simultâneas para o mesmo header caracteriza aumento dinâmico da contrapressão do sistema receptor, reduzindo a força motriz da despressurização.",
+      "resposta_padrao": "Perda de carga nas linhas do próprio segmento.",
+      "por_que_nao": "Perdas fixas da própria linha apareceriam também no caso isolado; o desvio só quando outros segmentos descarregam aponta efeito do header/flare.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Ele também é afetado pelo atraso de atuação, pelas perdas de carga nas linhas, pela contrapressão no sistema de flare"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso de blowdown faseado por ESD para limitar pico de vazão no flare.",
+      "pergunta": "Quando a abertura simultânea de todos os segmentos protegidos excede a capacidade de recebimento do flare e não haverá revamp, que arranjo de atuação do ESD deve ser aplicado?",
+      "resposta": "Blowdown faseado.",
+      "explicacao": "Quando o flare não recebe simultaneamente todo o fluxo, a configuração faseada do ESD é a solução indicada para reduzir o pico de vazão enviado ao sistema.",
+      "resposta_padrao": "Abertura simultânea de todas as BDVs.",
+      "por_que_nao": "Abrir todas as BDVs ao mesmo tempo maximiza a vazão simultânea no flare; o faseamento é justamente a técnica usada para cortar esse pico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um modelo simplificado pode deixar de capturar atraso de atuação de BDV, esvaziamento progressivo do inventário, mudança de fase, interação entre segmentos e contrapressão variável no flare."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando o sistema não consegue receber simultaneamente o fluxo de todos os sistemas protegidos, pode ser necessário blowdown faseado ou escalonado por configuração do ESD."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa solução tende a reduzir o pico de vazão no flare"
+        }
+      ]
+    }
+  ]
+}

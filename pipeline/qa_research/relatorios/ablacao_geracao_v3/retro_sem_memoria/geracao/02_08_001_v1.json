@@ -1,0 +1,95 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_08:001:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da abordagem de análise para avaliar surge em shutdown de compressão.",
+      "pergunta": "Durante o ESD de um trem de compressão, a rotação cai, a válvula antisurge atua e as pressões de sucção e descarga se deslocam em poucos segundos nos volumes conectados. Qual abordagem de estudo deve ser usada para avaliar o risco de surge?",
+      "resposta": "Simulação dinâmica.",
+      "explicacao": "O risco de surge na parada depende do transiente, da atuação de controles, do acoplamento com volumes e da sequência temporal do evento.",
+      "resposta_padrao": "Análise estática do ponto de operação mais severo.",
+      "por_que_nao": "Na desaceleração, o surge é definido pela trajetória temporal do compressor e pela atuação do antisurge, não por um ponto estacionário isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "situações em que a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de volumes comunicantes em modelos dinâmicos de alívio.",
+      "pergunta": "Dois vasos ligados por linha permanentemente aberta se amortecem mutuamente durante o upset, e o pico no header só aparece quando a troca de inventário é capturada. Na montagem do modelo transitório, que aspecto deve ser representado explicitamente?",
+      "resposta": "Volumes comunicantes.",
+      "explicacao": "A equalização de pressão e a transferência de inventário entre equipamentos conectados só aparecem quando os holdups comunicantes entram no modelo.",
+      "resposta_padrao": "Somente as perdas de carga da linha de interligação.",
+      "por_que_nao": "As perdas influenciam o escoamento, mas o amortecimento entre os vasos depende de modelar os volumes conectados.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização das condições iniciais em estudos dinâmicos de blowdown e alívio.",
+      "pergunta": "Após uma parada parcial, um vaso retorna com inventário residual elevado e pressão abaixo da normal. Na nova simulação de blowdown, o pico de alívio muda sem alteração geométrica do sistema. O que do caso precisa ser atualizado para representar essa condição?",
+      "resposta": "Condições iniciais do modelo.",
+      "explicacao": "Em estudos dinâmicos, a trajetória do blowdown e os picos calculados dependem do estado de partida do processo.",
+      "resposta_padrao": "Coeficiente de perda da linha de blowdown.",
+      "por_que_nao": "Sem mudança geométrica, a diferença vem do estado inicial do sistema, que redefine o transiente calculado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A razão física dessa diferença é que a simulação dinâmica representa a evolução temporal do evento"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Efeito da hipótese de simultaneidade na divergência entre análises estática e dinâmica de flare.",
+      "pergunta": "Novas fontes de alívio foram incluídas; a análise estacionária passou a exigir revamp do flare header, mas no estudo transitório as descargas ocorrem em sequência e a carga simultânea cai. Qual hipótese da análise estacionária explicava essa divergência?",
+      "resposta": "Simultaneidade dos alívios.",
+      "explicacao": "A abordagem estática pode assumir descargas simultâneas; a dinâmica capta defasagens e sequenciamento entre as fontes ao longo do evento.",
+      "resposta_padrao": "Contrapressão menor no sistema receptor.",
+      "por_que_nao": "A diferença decorre do tempo relativo de atuação das fontes, não de uma contrapressão intrinsecamente menor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sequência temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas fontes não aliviavam simultaneamente para a tocha."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "hipóteses mais conservadoras de simultaneidade"
+        }
+      ]
+    }
+  ]
+}

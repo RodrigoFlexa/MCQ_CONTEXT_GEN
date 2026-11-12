@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:007:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contas compartilhadas não atendem à rastreabilidade exigida para acessos em ativos capazes de alterar lógica e intertravamentos.",
+      "pergunta": "A atividade está aprovada, a janela é única, a sessão será gravada e o ativo pode alterar permissivos e intertravamentos. A contratada quer executar o serviço com uma credencial comum aos técnicos do turno. Qual controle específico deve ser exigido?",
+      "resposta": "Identidade individual verificável.",
+      "explicacao": "Para ativos com potencial de alterar lógica e intertravamentos, a governança é mais restritiva. Credencial compartilhada impede atribuir cada ação a uma pessoa específica, mesmo com aprovação, janela limitada e gravação da sessão.",
+      "resposta_padrao": "MFA na conta compartilhada do fornecedor.",
+      "por_que_nao": "Autenticação forte valida o acesso, mas não individualiza a autoria das ações quando vários técnicos usam a mesma credencial.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva do que ativos apenas consultivos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Como regra técnica de seleção, convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão e revisão periódica dos acessos ativos."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O rigor do controle de acesso em IACS deve seguir o impacto operacional possível da ação permitida no ativo.",
+      "pergunta": "Dois ativos do mesmo fornecedor estão na mesma zona de rede: um apenas consulta dados; o outro pode alterar permissivos e a disponibilidade de automação. Que critério técnico deve diferenciar o rigor do controle de acesso entre eles?",
+      "resposta": "Efeito potencial da ação permitida.",
+      "explicacao": "A seleção dos controles deve ser proporcional ao risco e ao impacto do que a permissão permite fazer. Capacidade de alterar permissivos ou disponibilidade exige controle mais restritivo que acesso apenas consultivo.",
+      "resposta_padrao": "Aplicar o mesmo pacote de controles por estarem na mesma zona.",
+      "por_que_nao": "Compartilhar fornecedor ou zona de rede não iguala o impacto operacional das ações possíveis em cada ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo e ao efeito potencial da ação permitida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ativos que podem alterar lógica, permissivos, intertravamentos, parâmetros críticos ou disponibilidade de energia e automação exigem governança mais restritiva do que ativos apenas consultivos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento de acesso remoto de terceiros requer evidência que permita reconstruir a sessão executada.",
+      "pergunta": "Durante manutenção remota de terceiro em ativo crítico, depois de um desvio foi preciso reconstituir telas, comandos e alterações executados na conexão. Que controle deve estar habilitado para isso?",
+      "resposta": "Registro de sessão.",
+      "explicacao": "Para terceiros, não basta saber quem acessou e quando. O controle que preserva evidência da atividade executada na conexão é o registro da própria sessão.",
+      "resposta_padrao": "Logs de login e logout da conexão remota.",
+      "por_que_nao": "Eventos de autenticação mostram presença e horário, não as ações executadas durante a intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como regra técnica de seleção, convém distinguir pelo menos: identidade individual verificável, perfil compatível com a função, privilégio mínimo, validade temporal, aprovação da atividade, registro de sessão e revisão periódica dos acessos ativos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para terceiros, o monitoramento precisa confirmar se o acesso ocorreu dentro da janela autorizada e se houve aderência ao escopo previsto."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A autorização de acesso de terceiros deve incluir verificação da integridade do dispositivo temporário usado na conexão.",
+      "pergunta": "Um notebook de manutenção reutilizado em outros contratos será conectado a uma rede de automação; a autenticação e a janela já foram aprovadas. Qual verificação técnica do meio de acesso deve anteceder a conexão?",
+      "resposta": "Integridade do dispositivo temporário.",
+      "explicacao": "Em acessos de terceiros, autenticação não basta. Dispositivo temporário reutilizado pode levar malware, software não autorizado, versões incompatíveis e alterações sem rastreabilidade, exigindo verificação prévia de integridade.",
+      "resposta_padrao": "Antivírus atualizado no notebook.",
+      "por_que_nao": "Atualização antivírus cobre só parte do risco; não garante ausência de software não autorizado, incompatibilidades ou alterações não rastreadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A aplicação de controles de acesso em IACS deve ser proporcional ao risco do ativo e ao efeito potencial da ação permitida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Dispositivos temporários, como notebooks de manutenção, mídias removíveis ou ferramentas de diagnóstico, merecem cuidado porque podem introduzir software não autorizado, versões incompatíveis, malware ou alterações não rastreadas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o risco é maior quando o dispositivo é reutilizado entre múltiplos contratos ou instalações, ou quando sua atualização e integridade não são verificadas antes do uso."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "item": "04_02",
+  "foco": 14,
+  "visita": 1,
+  "onda": 1,
+  "id": "04_02:014:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de escolha do controle multiplexado quando há muitas válvulas e restrição de vias dedicadas, mantendo suprimento hidráulico central.",
+      "pergunta": "Serão adicionadas 18 válvulas a um manifold; o umbilical não comporta uma via dedicada por função, e o suprimento hidráulico central existente será mantido sem unidades locais nos atuadores. Que filosofia de controle tende a atender melhor essa ampliação?",
+      "resposta": "Controle multiplexado",
+      "explicacao": "Com muitas válvulas e limitação de vias dedicadas, o multiplexado usa seleção local da função no módulo submarino e preserva o suprimento hidráulico central.",
+      "resposta_padrao": "Arquitetura eletro-hidráulica descentralizada",
+      "por_que_nao": "A descentralização reduz fluido distribuído com suprimento próprio em cada atuador; aqui a economia vem da seleção local da função mantendo hidráulica central.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas porque a seleção da função ocorre no módulo submarino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que permite comandar muitas válvulas com poucos condutores de sinal combinados com suprimento hidráulico."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de escolha da arquitetura eletro-hidráulica descentralizada para reduzir inventário de fluido e linhas sem abandonar atuação hidráulica.",
+      "pergunta": "O projeto quer reduzir o volume de fluido hidráulico distribuído e o número de linhas no umbilical, mas a movimentação das válvulas deve continuar hidráulica por filosofia do atuador. Qual arquitetura tende a ser mais adequada?",
+      "resposta": "Descentralização eletro-hidráulica",
+      "explicacao": "Nessa arquitetura, cada atuador recebe sua própria unidade de suprimento, reduzindo linhas e inventário de fluido distribuído, sem eliminar a força hidráulica de atuação.",
+      "resposta_padrao": "Controle multiplexado",
+      "por_que_nao": "O multiplex reduz principalmente condutores de sinal ao selecionar funções no módulo; não é a solução específica para cortar o inventário de fluido hidráulico distribuído.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para reduzir inventário de fluido distribuído e número de linhas, pode ser vantajosa a descentralização eletro-hidráulica."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cada atuador recebe sua própria unidade de suprimento, reduzindo número de linhas e volume total de fluido hidráulico distribuído pelo sistema."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mas preserva o uso de potência hidráulica para mover a válvula."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de escolha da atuação all electric para função crítica em grande profundidade e longa distância, removendo dependência da malha hidráulica.",
+      "pergunta": "Uma nova função de isolamento ficará em grande profundidade e longa distância. A equipe quer retirar essa malha dos volumes compressíveis e das perdas por linhas hidráulicas extensas, mantendo fail-safe por mola integrada. Qual filosofia de atuação é a mais indicada?",
+      "resposta": "Atuação all electric",
+      "explicacao": "A atuação elétrica elimina a dependência hidráulica nessa função e evita efeitos de compressibilidade e perdas em linhas longas, mantendo possibilidade de fail-safe com mola integrada.",
+      "resposta_padrao": "Arquitetura eletro-hidráulica descentralizada",
+      "por_que_nao": "Mesmo descentralizada, a atuação continua dependente de potência e fluido hidráulicos; não remove compressibilidade nem perdas da função pela via elétrica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a seleção da solução deve considerar pelo menos: função a ser comandada, necessidade de fail-safe, infraestrutura disponível no umbilical, profundidade e distância"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para eliminar o risco específico associado ao umbilical hidráulico naquela função, a atuação all electric pode ser atrativa."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "inclusive em configuração linear com pacote de mola fail safe integrado, eliminando a necessidade de umbilical hidráulico naquela função."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o acionamento elétrico reduz volumes compressíveis, perdas por linhas hidráulicas extensas e dependência de fluido de controle."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da pressão de controle no atuador para diferenciar falha de acionamento de falha de indicação em válvula eletro-hidráulica.",
+      "pergunta": "Comando de abertura foi recebido pelo módulo submarino de uma válvula eletro-hidráulica, mas a indicação de posição permaneceu fechada. Antes de culpar o sensor, que variável deve ser verificada no atuador?",
+      "resposta": "Pressão de controle no cilindro do atuador",
+      "explicacao": "Em válvula eletro-hidráulica, o cilindro só se desloca se receber pressão de controle. Verificar essa pressão mostra se a energia de atuação chegou ao atuador antes de atribuir o problema à indicação.",
+      "resposta_padrao": "Continuidade do canal de comunicação",
+      "por_que_nao": "Se o comando foi recebido, comunicação não prova acionamento; o deslocamento só ocorre quando o cilindro recebe pressão de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A unidade hidráulica pressuriza o cilindro, e o deslocamento do cilindro abre ou fecha a válvula gaveta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse módulo processa a informação recebida e a converte em sinais elétricos que acionam a unidade hidráulica associada ao atuador."
+        }
+      ]
+    }
+  ]
+}

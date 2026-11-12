@@ -1,0 +1,63 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:012:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicabilidade de um alerta de vulnerabilidade embarcada em OT depende de confirmar o componente afetado no ativo.",
+      "pergunta": "Um boletim cita vulnerabilidades na pilha Treck TCP/IP em vários modelos OT, sem mapear os ativos locais. Antes de discutir patch ou bloqueio, o que deve ser confirmado em cada ativo?",
+      "resposta": "Uso da pilha Treck TCP/IP no ativo.",
+      "explicacao": "O tratamento começa verificando se o ativo realmente usa o componente vulnerável; o alerta não confirma, por si só, que todos os ativos locais estejam afetados.",
+      "resposta_padrao": "Aplicar imediatamente o patch mais recente do fornecedor.",
+      "por_que_nao": "Sem confirmar o componente afetado, a correção pode ser irrelevante e ainda introduzir indisponibilidade ou comportamento não previsto no controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "quando essa pilha estiver presente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "confirmar se o ativo usa o componente afetado"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o patch em OT precisa ser adiado, a compensação imediata preferível é isolar por firewall o ativo crítico de segmentos menos confiáveis.",
+      "pergunta": "Um controlador legado de válvulas confirmou uso do componente vulnerável; o patch só entrará após qualificação, e o acesso remoto necessário já usa VPN atualizada. Como compensação imediata, que arranjo de rede deve separá-lo de um segmento menos confiável?",
+      "resposta": "Segmentação por firewall.",
+      "explicacao": "Com patch adiado, o tratamento favorece isolamento adicional; o firewall cria a barreira entre ambiente menos confiável e a função de processo que a VPN, sozinha, não fornece.",
+      "resposta_padrao": "Manter apenas a VPN atualizada.",
+      "por_que_nao": "A VPN protege o túnel remoto, mas não cria a barreira local entre o segmento menos confiável e o controlador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "cria barreiras adicionais entre falha em ambiente menos confiável e funções de processo"
+        }
+      ]
+    }
+  ]
+}

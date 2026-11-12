@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:012:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O tratamento de vulnerabilidades em OT começa confirmando se o ativo usa o componente afetado.",
+      "pergunta": "Sai um alerta para uma pilha TCP/IP embarcada usada por vários fabricantes. Antes de discutir patch para um controlador em operação, que confirmação técnica deve ser feita no próprio ativo?",
+      "resposta": "Presença da pilha afetada no ativo.",
+      "explicacao": "O alerta não confirma comprometimento geral. Em OT, a primeira etapa é verificar se o ativo realmente contém o componente vulnerável antes de decidir a remediação.",
+      "resposta_padrao": "Aplicar imediatamente a versão mais recente disponível.",
+      "por_que_nao": "Sem confirmar a presença do componente afetado, a mudança pode acrescentar risco operacional sem reduzir a exposição real.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há alerta de que múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar sistemas de controle industrial do setor de energia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualizações em sistemas de controle exigem validação prévia de compatibilidade entre firmware, comunicação e funções de processo.",
+      "pergunta": "O fornecedor liberou novo firmware para um PLC legado; em bancada ele inicializa, mas a planta depende de trocas cíclicas com remotas e intertravamentos já validados. Que verificação técnica ainda falta antes de liberar a mudança?",
+      "resposta": "Validação de compatibilidade firmware-comunicação-funções de processo.",
+      "explicacao": "Inicializar não basta. Em controle industrial, a atualização precisa ser validada quanto à interação entre firmware, comunicações e funções de processo para evitar comportamento não previsto.",
+      "resposta_padrao": "Teste apenas de energização e partida do PLC.",
+      "por_que_nao": "Partida sem falhas não comprova que protocolos, troca de dados e funções de processo permanecerão corretos após a mudança.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando o patch imediato não é viável ou seguro, o tratamento preferível é reduzir a exposição por isolamento adicional.",
+      "pergunta": "Confirmada a presença do componente vulnerável num controlador legado, o patch ainda não é seguro e o ativo permanece acessível a partir da rede corporativa. Qual tratamento deve ser priorizado até haver remediação compatível?",
+      "resposta": "Isolamento adicional da rede corporativa.",
+      "explicacao": "Se o patch não é viável ou seguro, a medida compensatória preferível é reduzir a exposição. Para esse caminho específico, o controle decisivo é o isolamento adicional da rede corporativa.",
+      "resposta_padrao": "Aumentar apenas o monitoramento de eventos e logs.",
+      "por_que_nao": "Monitorar ajuda a detectar, mas não remove o caminho de exploração; aqui a redução efetiva do risco vem do isolamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A segurança do acesso remoto por VPN ainda depende da segurança e da configuração do endpoint conectado.",
+      "pergunta": "Para suporte remoto via VPN atualizada, o notebook do fornecedor é administrado por terceiro e não há confirmação do baseline nem das configurações ativas. Além do túnel, que condição técnica desse acesso ainda precisa ser controlada?",
+      "resposta": "Postura de segurança do endpoint remoto.",
+      "explicacao": "A VPN reduz exposição, mas não elimina o risco. A segurança da conexão ainda depende do dispositivo remoto e do controle das configurações que ele traz para a sessão.",
+      "resposta_padrao": "A largura de banda do enlace satelital.",
+      "por_que_nao": "Banda afeta desempenho; o risco de comprometimento da sessão depende do endpoint remoto e de sua configuração.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco: a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações."
+        }
+      ]
+    }
+  ]
+}

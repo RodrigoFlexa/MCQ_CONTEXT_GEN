@@ -1,0 +1,95 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_12:012:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade da atuação anti-surge sobre a malha de capacidade em transientes com queda rápida de vazão.",
+      "pergunta": "O fechamento inadvertido de uma válvula a jusante derruba rapidamente a vazão, enquanto a malha de capacidade ainda persegue a pressão do processo. Havendo recirculação dedicada, que atuação específica deve prevalecer para manter o compressor fora da instabilidade aerodinâmica?",
+      "resposta": "Abertura da válvula anti-surge.",
+      "explicacao": "A proteção anti-surge é a malha dedicada a impedir que a vazão entre na região instável. Como ela e o controle de capacidade deslocam o mesmo ponto de operação, a proteção deve prevalecer.",
+      "resposta_padrao": "Ajustar o setpoint da malha de capacidade pela pressão do processo.",
+      "por_que_nao": "Essa malha busca atender a demanda do processo; na aproximação do surge, ela não substitui a proteção dedicada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para válvulas críticas de anti-surge, são recomendadas características dinâmicas adequadas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso da realimentação de posição para distinguir degradação da válvula anti-surge de problema de sintonia.",
+      "pergunta": "Durante oscilações próximas ao surge, o comando da válvula crítica varia no sistema, mas o efeito na vazão é errático. Que verificação específica separa degradação do elemento final de um ajuste inadequado da malha?",
+      "resposta": "Comparar comando e posição real da válvula pela realimentação de posição.",
+      "explicacao": "A comparação entre sinal mandado e posição alcançada revela atraso, histerese, degradação ou falha de atuação, distinguindo problema do elemento final de problema algorítmico.",
+      "resposta_padrao": "Revisar apenas a sintonia do controlador.",
+      "por_que_nao": "Se houver atraso ou histerese da válvula, o erro nasce no elemento final; retuning sozinho não o identifica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que ajuda a detectar degradação, atraso, histerese ou falha de atuação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o desempenho da malha depende do elemento final e não apenas do algoritmo."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito do posicionamento das medições na resposta tardia e oscilatória em compressores multistágio.",
+      "pergunta": "Em dois estágios de compressão, pequenas perturbações fazem a malha reagir tarde e oscilar; comando e posição das válvulas coincidem, e os transmissores respondem bem em bancada. Que causa primária de projeto de controle explica melhor o atraso observado em campo?",
+      "resposta": "Localização inadequada dos pontos de medição.",
+      "explicacao": "Em sistemas multistágio, medições mal posicionadas podem representar mal o estado real, introduzir atrasos e mascarar interações entre estágios, levando a reação tardia e oscilação.",
+      "resposta_padrao": "Sintonia agressiva do PID.",
+      "por_que_nao": "Com válvulas seguindo o comando e transmissores saudáveis, o atraso remanescente vem do ponto medido não representar o processo no tempo certo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "flutuações de vazão de entrada, mudanças de composição e interação entre múltiplos estágios tornam essa coordenação mais crítica."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a seleção e a localização da instrumentação também afetam a qualidade do controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo, introduzir atrasos ou mascarar interações entre estágios."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a malha pode reagir tarde, oscilar"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_08:001:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para escolher simulação dinâmica na avaliação de surge durante shutdown de compressão.",
+      "pergunta": "Na parada programada e no ESD de um trem de compressão, deseja-se verificar se o compressor cruza a linha de surge considerando reciclo, inventário das linhas e atuação dos controles. Que abordagem de modelagem deve ser usada?",
+      "resposta": "Simulação dinâmica do sistema de compressão.",
+      "explicacao": "O risco de surge nesse caso depende da evolução temporal do evento, da interação entre volumes e da resposta das malhas de controle durante a parada.",
+      "resposta_padrao": "Análise estática em regime permanente do compressor.",
+      "por_que_nao": "Um ponto estacionário não reproduz a trajetória transitória de vazão e pressão nem a atuação dos controles no shutdown.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "situações em que a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a simulação dinâmica representa a evolução temporal do evento"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de volumes comunicantes em modelo dinâmico de alívio.",
+      "pergunta": "Dois vasos equalizam pressão por uma linha aberta durante o blowdown e descarregam para o mesmo coletor. No modelo dinâmico, que elemento específico deve ser representado corretamente para estimar o pico instantâneo de alívio?",
+      "resposta": "Volumes comunicantes.",
+      "explicacao": "Inventários que permanecem conectados trocam massa e equalizam pressão durante o transiente, alterando a taxa temporal de descarga ao coletor.",
+      "resposta_padrao": "Volumes independentes por equipamento.",
+      "por_que_nao": "Separar inventários conectados elimina a interação hidráulica entre eles e distorce a carga transitória de alívio.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forma de representar dispositivos, volumes comunicantes e controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo de PSVs para cenários de alta e baixa carga com inadequação dinâmica no caso menor.",
+      "pergunta": "No mesmo sistema protegido, há um cenário de alta vazão e outro de baixa vazão. A PSV única escolhida pelo caso governante protege contra sobrepressão, mas permanece inadequada dinamicamente no evento menor. Que arranjo específico deve ser adotado para que, na baixa vazão, apenas o primeiro dispositivo atue?",
+      "resposta": "Duas PSVs com pressões de ajuste diferentes.",
+      "explicacao": "A escalonagem das pressões de abertura permite atuação seletiva no cenário de menor carga, sem perder a cobertura do caso governante.",
+      "resposta_padrao": "Uma única PSV dimensionada pelo pior caso.",
+      "por_que_nao": "Atender só a capacidade do caso governante não garante comportamento dinâmico adequado na condição de menor vazão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma única PSV escolhida para o caso dimensionante pode proteger contra sobrepressão, mas continuar inadequada do ponto de vista dinâmico para a condição de menor carga"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão"
+        }
+      ]
+    }
+  ]
+}

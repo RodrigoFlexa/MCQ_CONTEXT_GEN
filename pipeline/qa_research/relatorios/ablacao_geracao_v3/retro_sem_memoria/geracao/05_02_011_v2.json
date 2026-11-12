@@ -1,0 +1,103 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:011:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério técnico que valida a redundância da alimentação CC dos controles de geração",
+      "pergunta": "Dois conjuntos retificador/carregador com baterias são cada um capazes de suprir toda a carga de 24 Vcc, e existe TIE entre os quadros. Antes de creditar essa arquitetura como proteção contra blackout por falha única, o que precisa ser confirmado?",
+      "resposta": "Segregação real das rotas de alimentação dos controles dos geradores.",
+      "explicacao": "Os blocos dizem que redundância nominal não basta: a prevenção depende da integridade da malha de 24 Vcc e da segregação real, para evitar dependência oculta de um mesmo quadro, UPS ou ponto de distribuição.",
+      "resposta_padrao": "Que cada conjunto tenha capacidade nominal para 100% da demanda.",
+      "por_que_nao": "Capacidade não evita falha comum se os controles dependerem do mesmo quadro CC, UPS ou ponto de distribuição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Primeira trilha de alimentação a rastrear quando a geração cai sem evidência inicial de falha no barramento",
+      "pergunta": "Os prime movers seguem disponíveis e sem trip mecânico, mas os geradores em serviço saem do barramento sem evidência inicial de falta no barramento principal. Na análise imediata, que trilha de alimentação deve ser rastreada primeiro?",
+      "resposta": "Alimentação CC dos painéis de controle dos geradores.",
+      "explicacao": "O foco aponta que o blackout pode começar pela perda de energia de controle, e que a desenergização dos painéis de controle dos geradores em operação derrubou a geração principal.",
+      "resposta_padrao": "As proteções do barramento principal.",
+      "por_que_nao": "Aqui o gatilho é a perda de comando e supervisão dos geradores; o colapso do barramento vem depois.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Bloqueio lógico de recomposição por trip persistente durante reboot",
+      "pergunta": "Durante a recomposição, o gerador de emergência parte e estabiliza, mas o disjuntor não permanece fechado somente enquanto o sistema de controle reinicia, sem o apoio habitual da bateria. Que sinal específico deve ser verificado primeiro?",
+      "resposta": "Trip do VMS no disjuntor do gerador de emergência.",
+      "explicacao": "O bloco de apoio relata tentativas frustradas porque o VMS continuava enviando trip ao disjuntor durante o reboot; essa condição ficava mascarada quando a reinicialização usual tinha alimentação de bateria.",
+      "resposta_padrao": "Permissivo de fechamento do disjuntor.",
+      "por_que_nao": "Mesmo com fechamento permitido, um trip persistente do VMS reabre o disjuntor durante o reboot.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dependência da atuação de válvulas do módulo de saída do CLP sob perda de UPS e energia principal",
+      "pergunta": "Perdida a energia principal e indisponível a UPS que sustentava a atuação, o CLP deixa de comandar válvulas. Que cartão do CLP precisa manter alimentação para preservar essa função?",
+      "resposta": "Cartão-relé de saída do CLP.",
+      "explicacao": "O foco liga diretamente a perda simultânea de UPS e energia principal à desenergização do cartão-relé do CLP, o que inviabilizou o comando de válvulas.",
+      "resposta_padrao": "CPU do CLP.",
+      "por_que_nao": "Processamento sem cartão de saída energizado não aciona válvulas; o ponto decisivo é a etapa de atuação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "desenergizou parte do controle associado às válvulas de tanques"
+        }
+      ]
+    }
+  ]
+}

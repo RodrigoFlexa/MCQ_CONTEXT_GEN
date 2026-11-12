@@ -1,0 +1,83 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_10:015:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do controle por bandas da interface para priorizar estabilidade de alimentação aos hidrociclones.",
+      "pergunta": "Quando a qualidade da água tratada depende da regularidade da alimentação aos hidrociclones, e a concentração de óleo na água muda mais lentamente que a constante de tempo deles, que filosofia de controle da interface água-óleo tende a ser mais adequada?",
+      "resposta": "Controle por bandas da interface água-óleo.",
+      "explicacao": "Nessas condições, tolerar excursão limitada da interface favorece descarga mais estável aos hidrociclones, reduzindo a variabilidade de vazão e split sem perda relevante de desempenho a jusante.",
+      "resposta_padrao": "Controle rígido da interface em um setpoint único.",
+      "por_que_nao": "Nesse arranjo acoplado, perseguir rigidamente um único valor pode piorar a regularidade de vazão e split que governa o desempenho do hidrociclone.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica é coerente com o controle por bandas"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Acoplamento entre malhas de interface e DPR por compartilharem underflow e overflow do mesmo hidrociclone.",
+      "pergunta": "Testadas isoladamente, a malha que corrige a interface pelo underflow e a que mantém o DPR pelo overflow são estáveis; juntas, cada correção de uma perturba a outra. Que elo físico específico explica esse acoplamento?",
+      "resposta": "Balanço de massa comum entre underflow e overflow do hidrociclone.",
+      "explicacao": "As duas malhas atuam em saídas do mesmo equipamento; alterar uma delas muda a condição da outra e, com isso, afeta split e estabilidade da descarga.",
+      "resposta_padrao": "Sintonia excessivamente agressiva dos controladores.",
+      "por_que_nao": "Mesmo com sintonia adequada, as malhas seguem acopladas porque atuam sobre duas correntes do mesmo hidrociclone ligadas pelo mesmo balanço de massa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manipula a vazão de underflow do hidrociclone para controlar a interface no separador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças impostas por uma malha alteram a condição enfrentada pela outra"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério dinâmico para aceitar oscilações de interface sem perda relevante no tratamento por hidrociclones.",
+      "pergunta": "A interface água-óleo oscila durante a operação, e a dúvida é se isso compromete o tratamento por hidrociclones. Que comparação dinâmica específica deve ser feita para julgar se essa oscilação é tolerável?",
+      "resposta": "Relação entre variação de concentração de óleo na água e constante de tempo do hidrociclone.",
+      "explicacao": "A tolerância depende da dinâmica do sistema acoplado: oscilações podem ser aceitáveis se a variação de OIW for lenta frente à resposta do hidrociclone.",
+      "resposta_padrao": "Desvio máximo da interface em relação ao setpoint.",
+      "por_que_nao": "Amplitude isolada não decide o efeito a jusante; o critério decisivo é a escala de tempo da perturbação comparada à dinâmica do hidrociclone.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado e não constitui regra geral para qualquer separador"
+        }
+      ]
+    }
+  ]
+}

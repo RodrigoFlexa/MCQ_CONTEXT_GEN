@@ -1,0 +1,115 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:004:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mapeamento da necessidade operacional ao menor privilégio no IACS.",
+      "pergunta": "Para uma janela de suporte remoto em que o fornecedor deve ajustar setpoints e executar manobras autorizadas, sem carregar lógica, firmware, contas ou proteções, que privilégio é tecnicamente suficiente?",
+      "resposta": "Acesso de operação.",
+      "explicacao": "Esse nível permite atuar no processo. Engenharia excederia a necessidade ao habilitar mudança de configuração, lógica e firmware; administrativo ampliaria ainda mais o risco ao atingir contas e proteções.",
+      "resposta_padrao": "Acesso de engenharia.",
+      "por_que_nao": "Engenharia já permite alterar configuração, lógica e firmware, acima do necessário para manobras e setpoints.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido"
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudança de setpoint"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de operação permite atuar no processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Equivalência operacional entre abuso de privilégio legítimo e ataque externo em IACS.",
+      "pergunta": "Uma conta formal de fornecedor, usada na janela autorizada, consegue carregar nova lógica no controlador e silenciar alarmes sem explorar falha de rede. Que mecanismo torna esse evento equivalente, operacionalmente, a um ataque externo?",
+      "resposta": "Privilégio excessivo em acesso legítimo.",
+      "explicacao": "No IACS, credencial válida com poderes além da necessidade já permite produzir efeitos de ataque externo sobre lógica, alarmes e comportamento do processo.",
+      "resposta_padrao": "Falha de segmentação da rede.",
+      "por_que_nao": "Mesmo com segmentação correta, um caminho autorizado com privilégio além do necessário pode alterar funções críticas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "desabilitação de alarmes"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Identificação da estação de engenharia como ativo crítico no escopo de controle de acesso.",
+      "pergunta": "Na revisão do escopo de acesso, as contas do supervisório foram regularizadas, mas um notebook de manutenção segue na rede operacional com ferramenta de carga de projetos dos controladores. Que ativo específico ainda exige controle de acesso crítico?",
+      "resposta": "Estação de engenharia.",
+      "explicacao": "Em IACS, o escopo de acesso inclui também o ponto capaz de programar controladores. Regularizar contas do supervisório não cobre esse caminho de alteração de lógica.",
+      "resposta_padrao": "Servidor de supervisão.",
+      "por_que_nao": "O servidor supervisiona o processo, mas o host com ferramenta de programação é o elemento que pode modificar controladores diretamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "controle de acesso não se limita a contas de usuário"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Revalidação da necessidade dos fluxos entre domínios após ampliar sistemas conectados ao IACS.",
+      "pergunta": "Um historiador corporativo foi ligado à rede operacional; inventário e credenciais estão corretos, mas a segmentação precisa ser reavaliada sobre o tráfego. Que verificação específica deve ser refeita?",
+      "resposta": "Necessidade dos fluxos entre domínios.",
+      "explicacao": "Monitorar a arquitetura segmentada exige confirmar que os caminhos entre domínios continuam necessários à operação real, mantendo coerente o escopo dos sistemas conectados.",
+      "resposta_padrao": "Hardening do servidor do historiador.",
+      "por_que_nao": "Hardening protege o host, mas não confirma se os caminhos lógicos entre domínios ainda são necessários.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Monitorar a arquitetura segmentada significa verificar se a separação planejada continua compatível com a operação real"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "item": "06_05",
+  "foco": 8,
+  "visita": 2,
+  "onda": 3,
+  "id": "06_05:008:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do encadeamento lógico entre detecção confirmada e ações automáticas por meio da matriz de causa e efeito.",
+      "pergunta": "No comissionamento, que documento deve ser confrontado com os testes para verificar que uma detecção confirmada de gás realmente gera o alarme, o fechamento de SDVs e o corte de energia previstos?",
+      "resposta": "Matriz de causa e efeito.",
+      "explicacao": "Ela define, de forma verificável, quais causas confirmadas liberam cada saída automática. Lista de I/O ou filosofia não demonstram esse encadeamento lógico nos testes.",
+      "resposta_padrao": "Lista de I/O do sistema.",
+      "por_que_nao": "A lista de I/O confirma canais e endereços, mas não a relação lógica entre a causa detectada e cada efeito automático.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A matriz de causa e efeito é o instrumento que transforma essa decisão de engenharia em comandos verificáveis."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "as ações do F&G normalmente não terminam no painel de alarme"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da ação automática do F&G para reduzir rapidamente a massa de gás que continua alimentando a liberação.",
+      "pergunta": "Com gás inflamável confirmado em processo ainda alimentado e sem tempo útil para intervenção manual antes do agravamento da nuvem, que ação automática específica do F&G deve atuar?",
+      "resposta": "Fechamento de válvulas de shutdown.",
+      "explicacao": "Quando é necessária redução rápida da massa liberada, o F&G deve ir além do alarme e isolar automaticamente a fonte de gás que continua alimentando o evento.",
+      "resposta_padrao": "Apenas alarme ao operador.",
+      "por_que_nao": "O aviso não reduz o inventário que continua sendo liberado; a necessidade técnica é o isolamento automático do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "acionamento de válvulas para desligar fontes de gás"
+        },
+        {
+          "bloco": "F",
+          "trecho": "fechamento de válvulas de shutdown"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando o cenário exige redução rápida da massa liberada"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da lógica de votação considerando cobertura real, indisponibilidade de detectores e tempo disponível para a resposta automática.",
+      "pergunta": "Com cobertura espacial limitada numa zona de gás, um detector indisponível e pouco tempo disponível para a ação automática, que lógica de votação se torna menos adequada para confirmar o evento?",
+      "resposta": "2ooN.",
+      "explicacao": "Exigir coincidência de mais sinais aumenta robustez contra atuações indevidas, mas nessas condições reduz a sensibilidade prática e pode impedir a confirmação do evento real.",
+      "resposta_padrao": "1ooN.",
+      "por_que_nao": "1ooN tem o compromisso oposto: confirma com menos sinais, favorecendo rapidez e sensibilidade, embora aumente a suscetibilidade a disparos indevidos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a detecção de gás pode iniciar uma sequência escalonada de respostas"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pode reduzir a sensibilidade prática se a cobertura espacial for limitada ou se parte dos detectores estiver indisponível"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Exigir coincidência de mais sinais tende a aumentar a robustez contra atuações indevidas"
+        }
+      ]
+    }
+  ]
+}

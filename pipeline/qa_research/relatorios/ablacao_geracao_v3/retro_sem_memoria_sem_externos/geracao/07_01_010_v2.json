@@ -1,0 +1,59 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:010:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reconhecer a técnica temporária adequada para manter uma malha com stiction operando sem modelo detalhado.",
+      "pergunta": "Pequenas variações na saída do controlador não iniciam o deslocamento; a pressão do atuador sobe e a válvula só se move aos saltos. Sem parada imediata, que técnica específica deve ser aplicada no comando para manter a malha em automático até o reparo mecânico?",
+      "resposta": "Superposição de pulsos ao sinal de controle.",
+      "explicacao": "A compensação por pulsos vence o atrito quando o comando usual não inicia o movimento. O bloco foco a apresenta como solução temporária, sem exigir modelagem detalhada, até a correção mecânica.",
+      "resposta_padrao": "Retunagem do PID da malha.",
+      "por_que_nao": "Retuning altera a dinâmica do controlador, mas não fornece a energia de ruptura necessária para iniciar o movimento contra o atrito.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O princípio é fornecer energia adicional quando o comando usual não consegue iniciar o movimento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de compensação pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Selecionar o dispositivo de campo capaz de fornecer diagnóstico não invasivo de atrito em válvula durante operação normal.",
+      "pergunta": "Sem abrir a válvula, deseja-se confirmar atrito durante a operação normal antes de usar uma compensação temporária por pulsos. De que dispositivo instalado na própria válvula devem vir os sinais de pressão do atuador e deslocamento do obturador?",
+      "resposta": "Posicionador inteligente.",
+      "explicacao": "O bloco de apoio descreve que a inferência não invasiva usa sinais recebidos de um posicionador inteligente junto à válvula, incluindo pressão do atuador e deslocamento do obturador.",
+      "resposta_padrao": "Chave fim de curso.",
+      "por_que_nao": "A chave só informa posições limite; não fornece pressão do atuador nem deslocamento contínuo para inferir atrito em operação normal.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "os sinais são recebidos de um posicionador inteligente instalado junto à válvula"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Entre os parâmetros citados estão pressão de ar do atuador e deslocamento do obturador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de compensação pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    }
+  ]
+}

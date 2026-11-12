@@ -1,0 +1,75 @@
+{
+  "item": "02_10",
+  "foco": 25,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_10:025:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função do PIC como elemento regulatório da pressão, distinto das proteções.",
+      "pergunta": "Durante um transitório de carga, a pressão se afasta do usual, o PT segue íntegro e nenhuma função de proteção foi demandada. Qual instrumento deve interpretar esse valor para manter a pressão na faixa de operação?",
+      "resposta": "Controlador e indicador de pressão (PIC).",
+      "explicacao": "O PIC recebe a medição do PT e atua na malha para manter a pressão na faixa operacional; ESDV e PSV são proteções, não o elemento regulatório de rotina.",
+      "resposta_padrao": "Transmissor de pressão (PT).",
+      "por_que_nao": "O PT apenas mede e envia o sinal; quem usa esse valor para regular a pressão é o PIC.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O controlador e indicador de pressão, PIC, compara a pressão medida com a condição normal ou necessária para acionar medidas destinadas a reduzir riscos de alta ou baixa pressão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função da PSV como proteção de sobrepressão independente da malha de controle.",
+      "pergunta": "O aumento de pressão supera a capacidade da malha de controle e o vaso precisa se proteger sem depender do controlador. Qual dispositivo montado no equipamento deve limitar a sobrepressão?",
+      "resposta": "Válvula de segurança de pressão (PSV).",
+      "explicacao": "Quando a malha de controle não contém a elevação, a proteção específica do vaso contra sobrepressão é a PSV, instalada no topo do equipamento e distinta da ESDV.",
+      "resposta_padrao": "Válvula de desligamento de emergência (ESDV).",
+      "por_que_nao": "A ESDV isola parte da planta, mas não fornece alívio direto para limitar a pressão do vaso.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A PSV, válvula de segurança de pressão, é mostrada como dispositivo instalado na parte superior do equipamento."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha de controle procura manter a variável na faixa operacional, enquanto a ESDV e a PSV pertencem a funções de proteção com propósitos distintos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Identificação do PT como fonte primária do sinal de pressão para controle e registro.",
+      "pergunta": "Ao analisar um evento de pressão, o mesmo sinal alimentou o registrador e a malha de controle. Que instrumento de campo deve ter calibração e integridade verificadas primeiro?",
+      "resposta": "Transmissor de pressão (PT).",
+      "explicacao": "Se registrador e malha receberam o mesmo valor, a fonte primária comum é o PT, que mede a pressão e a envia ao controlador e ao registro.",
+      "resposta_padrao": "Controlador e indicador de pressão (PIC).",
+      "por_que_nao": "O PIC compara e comanda ações, porém a medição primária compartilhada com o registrador vem do PT.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o transmissor de pressão, PT, mede a pressão e envia o valor ao sistema controlador e registrador."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "degradação de casco, internos, conexões ou pontos de instrumentação pode alterar resposta do processo e confiabilidade da medição."
+        }
+      ]
+    }
+  ]
+}

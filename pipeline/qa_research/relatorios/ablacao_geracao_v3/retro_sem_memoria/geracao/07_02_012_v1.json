@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:012:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Tratamento inicial de alerta de vulnerabilidade em OT pela identificação do componente afetado no ativo.",
+      "pergunta": "Saiu um alerta setorial sobre falhas em uma pilha TCP/IP embarcada usada por vários produtos. Antes de decidir patch ou isolamento para um controlador, qual verificação de composição deve ser feita primeiro no ativo?",
+      "resposta": "Confirmar se o ativo usa o componente afetado.",
+      "explicacao": "Em OT, o tratamento começa por verificar se o componente vulnerável está realmente presente. O alerta sozinho não confirma comprometimento nem torna todos os ativos igualmente afetados.",
+      "resposta_padrao": "Aplicar imediatamente o patch mais recente do fornecedor.",
+      "por_que_nao": "Sem confirmar o componente afetado e a exposição real, a atualização pode ser desnecessária ou introduzir indisponibilidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Isso não confirma comprometimento em todos os ativos; indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Tratamento de vulnerabilidades em OT começa por confirmar se o ativo usa o componente afetado e por avaliar a exposição real."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de resposta a vulnerabilidades em IACS pelo papel funcional do ativo no processo.",
+      "pergunta": "O mesmo CVE aparece em um historiador e em um controlador que abre e fecha válvulas. Na priorização da resposta, qual critério técnico deve sobrepor a severidade publicada?",
+      "resposta": "A função do sistema atingido.",
+      "explicacao": "No IACS, a relevância do efeito depende do que o sistema faz. Em ativos que atuam em válvulas, vazão e pressão, a exploração pode perturbar diretamente o processo.",
+      "resposta_padrao": "A pontuação de severidade do CVE, isoladamente.",
+      "por_que_nao": "Sem considerar a função do ativo, a gravidade cibernética não traduz o impacto operacional sobre processo e funções de serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão, uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Medida compensatória de hardening para dispositivo OT vulnerável exposto à internet.",
+      "pergunta": "Um dispositivo remoto de controle com componente vulnerável responde a conexões vindas da internet pública. Sem patch qualificado disponível, que barreira de rede deve ser interposta entre ele e a internet para reduzir a exposição?",
+      "resposta": "Firewall.",
+      "explicacao": "Para dispositivos de controle conectados, colocá-los atrás de firewall reduz rotas de acesso e exposição imediata até existir remediação compatível.",
+      "resposta_padrao": "VPN atualizada, sem outra barreira.",
+      "por_que_nao": "A VPN reduz exposição, mas não anula o risco e ainda depende da segurança dos dispositivos conectados e de suas configurações.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Há alerta de que múltiplas vulnerabilidades em implementações embarcadas da pilha Treck TCP/IP podem afetar sistemas de controle industrial do setor de energia e muitos dispositivos conectados, inclusive pela internet, quando essa pilha estiver presente."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis até que exista remediação compatível."
+        }
+      ]
+    }
+  ]
+}

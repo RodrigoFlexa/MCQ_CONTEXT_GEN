@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:006:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento de bus tie altera o nível de curto-circuito e a base da coordenação das proteções.",
+      "pergunta": "Com dois transformadores alimentando secundários interligados, o bus tie foi fechado e os ajustes antigos de sobrecorrente perderam seletividade em faltas de alimentador. Que grandeza de base dos ajustes precisa ser recalculada primeiro nessa nova topologia?",
+      "resposta": "Nível de curto-circuito no barramento interligado.",
+      "explicacao": "Ao interligar os barramentos, surgem caminhos adicionais de corrente de falta e mudam sensibilidades e tempos de atuação. A coordenação deixa de se basear no nível de falta do arranjo anterior.",
+      "resposta_padrao": "Corrente nominal de carga dos alimentadores.",
+      "por_que_nao": "A perda de seletividade após fechar o bus tie decorre da corrente de falta disponível e de seus novos caminhos, não da carga normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Interligação de barramentos energizados exige verificação de sincronismo antes do fechamento do bus tie.",
+      "pergunta": "Dois barramentos energizados, cada um suprido por seu próprio gerador, operaram isolados e serão reunidos por bus tie. Que condição deve ser verificada no fechamento para evitar transitórios severos e perda ampla de cargas?",
+      "resposta": "Sincronismo entre os barramentos.",
+      "explicacao": "A interligação entre barramentos energizados só pode ser feita sob condição elétrica compatível. Fechar fora de sincronismo pode gerar transitórios severos e desligamentos extensos.",
+      "resposta_padrao": "Mesmo valor de tensão nominal.",
+      "por_que_nao": "Tensão igual, sozinha, não garante compatibilidade instantânea de fase e frequência no momento do fechamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Retaguarda do primário de transformador deve ser coordenada com as proteções dos alimentadores secundários para manter seletividade.",
+      "pergunta": "Com secundários interligados, uma falta em alimentador está fazendo atuar a retaguarda do lado primário do transformador. Com que proteção essa retaguarda precisa ser coordenada para manter a seletividade?",
+      "resposta": "Relés dos alimentadores do barramento secundário.",
+      "explicacao": "Na arquitetura descrita, a retaguarda de fase e de terra do primário deve temporizar e sensibilizar-se em coordenação com as proteções dos alimentadores, evitando desligar todo o barramento ou o transformador por falta a jusante.",
+      "resposta_padrao": "Proteção diferencial do barramento.",
+      "por_que_nao": "A diferencial protege a zona interna do barramento; ela não é a proteção a jusante com a qual a retaguarda do primário deve se coordenar em falta de alimentador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para cargas grandes ou críticas, o arranjo típico de continuidade com caminhos alternativos usa transformadores em paralelo e secundários interligados.",
+      "pergunta": "Uma subestação de cargas críticas precisa que o mesmo conjunto de consumidores possa ser suprido por dois secundários, sem depender de transferência manual entre seções. Que arranjo de transformação e barramento é típico?",
+      "resposta": "Transformadores em paralelo com secundários interligados.",
+      "explicacao": "Esse arranjo é o citado como típico quando as cargas são grandes ou críticas, pois permite alimentação por caminhos alternativos entre os secundários.",
+      "resposta_padrao": "Dois barramentos totalmente independentes, um por transformador.",
+      "por_que_nao": "Barramentos isolados melhoram segregação, mas não permitem que o mesmo conjunto de cargas receba alimentação alternativa pelos dois secundários.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arranjos com transformadores em paralelo e secundários conectados por barramento interligado, a configuração é típica de subestações com cargas grandes ou críticas"
+        },
+        {
+          "bloco": "F",
+          "trecho": "porque permite alimentar cargas por caminhos alternativos."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_10:015:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da filosofia de controle da interface quando a regularidade da alimentação aos hidrociclones é o objetivo dominante.",
+      "pergunta": "Sem trocar instrumentos nem o arranjo, a qualidade da água piora porque a malha tenta prender a interface em valor fixo e transfere oscilações de vazão ao hidrociclone. Que filosofia deve passar a governar essa malha?",
+      "resposta": "Controle por bandas da interface.",
+      "explicacao": "Quando a estabilidade da descarga ao hidrociclone é mais importante, o objetivo deixa de ser segurar um único valor e passa a limitar a excursão da interface para reduzir a variabilidade a jusante.",
+      "resposta_padrao": "Sintonia mais agressiva para segurar a interface no setpoint.",
+      "por_que_nao": "Perseguir rigidamente o setpoint pela via do underflow pode transferir mais oscilação de vazão e split ao hidrociclone; aqui a filosofia adequada é limitar excursões.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica é coerente com o controle por bandas"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo de acoplamento entre a malha de interface do separador e a malha de controle do hidrociclone.",
+      "pergunta": "Underflow controla a interface e overflow atua para manter o split do mesmo hidrociclone. Que elo físico-operacional faz uma correção numa saída alterar a condição enfrentada pela outra?",
+      "resposta": "Balanço de massa comum da alimentação do hidrociclone.",
+      "explicacao": "As duas saídas pertencem ao mesmo hidrociclone e dividem a mesma alimentação; por isso, atuar em uma delas modifica a condição disponível para a outra malha.",
+      "resposta_padrao": "Acoplamento pela pressão do separador.",
+      "por_que_nao": "O elo decisivo pedido está no próprio hidrociclone: underflow e overflow compartilham a mesma alimentação e o mesmo balanço de massa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério dinâmico para aceitar oscilação de interface sem prejuízo relevante ao tratamento de água por hidrociclones.",
+      "pergunta": "Oscilações da interface apareceram, mas o critério de aceitação é não degradar o hidrociclone a jusante. Que verificação dinâmica específica deve ser feita antes de considerá-las toleráveis?",
+      "resposta": "Relação entre a variação de OIW e a constante de tempo do hidrociclone.",
+      "explicacao": "A tolerância não depende só da interface oscilar, mas de as variações de óleo na água serem lentas frente à resposta dinâmica do hidrociclone.",
+      "resposta_padrao": "Amplitude máxima do desvio da interface.",
+      "por_que_nao": "A amplitude isolada não decide o impacto a jusante; o ponto técnico é se o hidrociclone responde mais rápido que a variação de OIW.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Variável que a malha de overflow deve regular para preservar o split do hidrociclone enquanto o underflow controla a interface.",
+      "pergunta": "Se a interface do separador é ajustada pelo underflow e se quer preservar aproximadamente a partição do hidrociclone, que variável deve ser mantida pela malha do overflow?",
+      "resposta": "Relação de pressão diferencial (DPR).",
+      "explicacao": "No arranjo descrito, a malha do overflow mantém o DPR; com isso, o split do hidrociclone fica aproximadamente constante.",
+      "resposta_padrao": "Pressão de alimentação do hidrociclone.",
+      "por_que_nao": "A partição mencionada nos blocos é vinculada ao controle do DPR pelo overflow; pressão de alimentação, sozinha, não cumpre esse papel.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante."
+        }
+      ]
+    }
+  ]
+}

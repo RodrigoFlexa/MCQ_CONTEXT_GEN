@@ -1,0 +1,103 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:004:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mapeamento entre tarefa técnica em IACS e a classe mínima de privilégio necessária",
+      "pergunta": "Durante suporte remoto, o fornecedor precisa alterar a configuração de um controlador e atualizar firmware, sem criar contas nem mexer em proteções. Qual privilégio mínimo deve ser autorizado?",
+      "resposta": "Acesso de engenharia",
+      "explicacao": "Em IACS, alterar configuração, lógica e firmware é atribuição do privilégio de engenharia. Como não há necessidade de contas ou proteções, o administrativo excederia o escopo técnico da tarefa.",
+      "resposta_padrao": "Acesso administrativo",
+      "por_que_nao": "Privilégio administrativo é voltado a contas, proteções e rastros; configuração e firmware pertencem ao escopo de engenharia",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico da falha primária de controle de acesso quando ações críticas ocorrem com credenciais válidas",
+      "pergunta": "Sem falha de autenticação nem malware, um técnico entrou com suas credenciais habituais e conseguiu alterar setpoint e inibir alarmes. Que deficiência primária do controle de acesso isso evidencia?",
+      "resposta": "Privilégio excessivo",
+      "explicacao": "Os blocos associam efeito operacional equivalente ao de ataque externo ao acesso legítimo porém excessivo. Sem quebra de autenticação, a causa primária é o escopo de permissão concedido além da necessidade da tarefa.",
+      "resposta_padrao": "Invasão externa",
+      "por_que_nao": "As ações ocorreram em sessão legítima; o problema técnico é a permissão autorizada além do necessário, não a origem externa",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica, mudança de setpoint, parada indevida, perda de visibilidade, desabilitação de alarmes"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Exigência de rastreabilidade para acessos administrativos em IACS",
+      "pergunta": "Após suporte remoto com privilégio administrativo, foi preciso apurar quem criou contas temporárias e desabilitou proteções. Que característica do controle de acesso deve permitir essa atribuição?",
+      "resposta": "Rastreabilidade do acesso",
+      "explicacao": "Para privilégios altos, o texto exige rastreabilidade. Sem ela, não se consegue atribuir ações administrativas como criação de contas e desabilitação de proteções a um responsável específico.",
+      "resposta_padrao": "Criptografia do canal",
+      "por_que_nao": "Canal criptografado protege a sessão em trânsito, mas não identifica nem reconstrói quem executou cada ação administrativa",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido, pode produzir o mesmo efeito operacional de um ataque externo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quanto mais alto o privilégio, maior a necessidade de autorização formal, rastreabilidade e validação de necessidade"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Distinção entre continuidade elétrica do SCADA e segmentação lógica para limitar acessos entre domínios",
+      "pergunta": "Uma UPS nova passou a manter SCADA e telecomunicações energizados nas quedas, mas foi aberta uma rota direta com a rede corporativa. Independentemente do equipamento adotado, que medida de arquitetura continua necessária para conter o escopo de acesso ao ambiente operacional?",
+      "resposta": "Segmentação lógica entre os domínios",
+      "explicacao": "A continuidade elétrica sustenta supervisão e comunicação, mas não controla fluxos entre domínios. Com ligação direta à rede corporativa, a medida arquitetural necessária continua sendo a segmentação lógica.",
+      "resposta_padrao": "Mais autonomia de backup de energia",
+      "por_que_nao": "Energia de reserva mantém operação dos sistemas, mas não limita fluxos nem separa logicamente os ambientes conectados",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de informação conectados à infraestrutura de rede do IACS"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "se os fluxos entre domínios continuam necessários"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "backup de energia sustenta continuidade de supervisão e comunicação, mas não substitui segmentação lógica"
+        }
+      ]
+    }
+  ]
+}

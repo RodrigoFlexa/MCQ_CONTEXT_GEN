@@ -1,0 +1,59 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:010:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A liberação de acesso remoto seguro depende da condição do endpoint, além da VPN e das credenciais.",
+      "pergunta": "Uma contratada vai acessar o ambiente de controle por VPN atualizada, com credenciais válidas e perfil já definido para a tarefa. Que verificação técnica ainda deve anteceder a liberação da sessão?",
+      "resposta": "Condição do dispositivo usado na conexão.",
+      "explicacao": "Nos acessos remotos em IACS, a VPN protege o canal, mas não corrige comprometimento, desatualização ou má configuração do endpoint. Por isso, a condição do dispositivo conectado precisa ser verificada antes da sessão.",
+      "resposta_padrao": "Validar apenas o túnel VPN e as credenciais.",
+      "por_que_nao": "Canal protegido e autenticação válida não eliminam o risco de um endpoint comprometido estabelecer sessão tecnicamente legítima.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN."
+        },
+        {
+          "bloco": "F",
+          "trecho": "é tecnicamente importante verificar a condição do dispositivo usado na conexão"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A proteção do canal não corrige comprometimento já existente no equipamento de origem ou de destino."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "As permissões durante a sessão determinam o alcance técnico de um acesso remoto autorizado.",
+      "pergunta": "Para suporte remoto de terceiro só de diagnóstico, com VPN, dispositivo e escopo já validados, qual variável da própria sessão deve ser restringida para limitar o que ela pode alcançar?",
+      "resposta": "Permissões disponíveis durante a sessão.",
+      "explicacao": "O risco do acesso remoto depende também das permissões ativas. Mesmo autorizada e protegida por VPN, a sessão só fica compatível com a tarefa quando o alcance técnico é limitado pelas permissões.",
+      "resposta_padrao": "Tempo de expiração da sessão.",
+      "por_que_nao": "Limitar a duração reduz exposição, mas não define quais funções o terceiro consegue atingir enquanto está conectado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico."
+        },
+        {
+          "bloco": "F",
+          "trecho": "convém tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ele depende da combinação entre meio de acesso, dispositivo utilizado e permissões disponíveis durante a sessão."
+        }
+      ]
+    }
+  ]
+}

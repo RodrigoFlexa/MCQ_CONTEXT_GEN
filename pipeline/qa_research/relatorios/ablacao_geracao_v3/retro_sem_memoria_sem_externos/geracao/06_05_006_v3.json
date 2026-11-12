@@ -1,0 +1,75 @@
+{
+  "item": "06_05",
+  "foco": 6,
+  "visita": 3,
+  "onda": 4,
+  "id": "06_05:006:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "consequencia",
+      "cenario": true,
+      "conhecimento": "Compromisso entre exigência de coincidência na votação e sensibilidade prática com cobertura limitada ou indisponibilidade.",
+      "pergunta": "Cobertura espacial limitada na zona e um detector temporariamente indisponível, mas a lógica automática continua exigindo coincidência de sinais para liberar a ação. Que aspecto de desempenho tende a cair?",
+      "resposta": "Sensibilidade prática da detecção.",
+      "explicacao": "Mais coincidência reduz atuações indevidas, mas com cobertura limitada ou detector indisponível o evento real pode não materializar a combinação exigida.",
+      "resposta_padrao": "Robustez contra atuações indevidas.",
+      "por_que_nao": "Esse ganho existe em outras condições; aqui o limitante é a incapacidade de o evento real satisfazer a coincidência requerida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a lógica é inadequada, mal implementada ou degradada por manutenção deficiente, recomendações não implantadas ou arranjo físico incompatível"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Exigir coincidência de mais sinais tende a aumentar a robustez contra atuações indevidas, mas pode reduzir a sensibilidade prática se a cobertura espacial for limitada ou se parte dos detectores estiver indisponível."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Relação entre arranjo físico dos detectores e materialização em campo das combinações exigidas pela votação.",
+      "pergunta": "Detectores de uma zona foram montados fora das posições usadas no estudo que definiu a votação, e a lógica permaneceu igual. Que elo técnico pode fazer a atuação automática falhar mesmo com detectores íntegros?",
+      "resposta": "Impossibilidade de materializar em campo a combinação lógica exigida.",
+      "explicacao": "A votação depende de combinações específicas de detectores; ao mudar o arranjo físico, um evento real pode não gerar a coincidência exigida.",
+      "resposta_padrao": "Descalibração dos detectores.",
+      "por_que_nao": "Os detectores podem estar íntegros; a falha decorre do desacoplamento entre geometria instalada e combinações exigidas pela lógica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em auditorias pré-operacionais, foram citados casos de planta de F&G instalada fora das coordenadas do estudo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O efeito sistêmico é claro: a barreira perde aderência ao cenário para o qual foi concebida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Uma lógica aparentemente correta pode falhar no campo quando depende de combinações que os detectores instalados não conseguem materializar nas condições reais da zona."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Validação da função automática exige testar a votação, não apenas cada laço individual.",
+      "pergunta": "Cada detector alarmou corretamente no loop-check, mas a atuação automática depende da coincidência entre detectores da zona. Que verificação específica ainda falta para validar a função?",
+      "resposta": "Teste funcional da lógica de votação.",
+      "explicacao": "Loop-check comprova cada entrada; falta provar que a combinação definida realmente confirma o evento e libera a ação automática.",
+      "resposta_padrao": "Repetir calibração e loop-check detector a detector.",
+      "por_que_nao": "Entradas individuais saudáveis não demonstram a implementação correta da combinação lógica nem da liberação associada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Por isso, lógica, votação, documentação, instalação física, testes, gestão de mudanças e manutenção devem ser tratadas como partes inseparáveis de uma mesma função de segurança."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Lógica de votação é a regra que define quais combinações de entradas são suficientes para confirmar um evento e liberar uma ação."
+        }
+      ]
+    }
+  ]
+}

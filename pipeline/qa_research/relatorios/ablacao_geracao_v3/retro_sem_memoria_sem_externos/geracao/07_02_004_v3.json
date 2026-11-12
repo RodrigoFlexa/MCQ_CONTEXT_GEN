@@ -1,0 +1,71 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:004:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escopo do controle de acesso em IACS inclui a estação de engenharia como ponto de introdução de mudanças.",
+      "pergunta": "Na revisão de acessos, cobriram-se contas e servidores, mas não o ponto de manutenção usado pelo integrador para carregar alterações nos controladores. Que ativo específico ainda deve entrar no escopo do controle de acesso?",
+      "resposta": "Estação de engenharia.",
+      "explicacao": "No IACS, o escopo de acesso alcança também o ativo usado para introduzir mudanças. O ponto de manutenção que carrega alterações em controladores é a estação de engenharia.",
+      "resposta_padrao": "O controlador.",
+      "por_que_nao": "O controlador é o alvo da alteração; o ativo omitido no escopo é o ponto de acesso que permite transferi-la.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário. Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "alteração de lógica"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Mapeamento entre ações possíveis na sessão e o tipo de privilégio concedido em IACS.",
+      "pergunta": "Durante suporte remoto autenticado, a sessão conseguiu baixar alteração no controlador e atualizar o firmware, sem criar contas nem mexer nos registros. Que tipo de privilégio estava concedido além do necessário?",
+      "resposta": "Acesso de engenharia.",
+      "explicacao": "Em IACS, o privilégio de engenharia é o que permite alterar configuração, lógica e firmware. O cenário exclui o traço típico do privilégio administrativo.",
+      "resposta_padrao": "Acesso administrativo.",
+      "por_que_nao": "Privilégio administrativo se distingue por gerir contas, proteções e rastros; o conjunto observado aponta para capacidade de engenharia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware; acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Segregação de funções como controle complementar ao menor privilégio em mudanças de IACS.",
+      "pergunta": "Quando a mesma pessoa aprova uma mudança, a implementa no sistema de controle e depois valida o resultado na manutenção, que controle específico deve ser exigido?",
+      "resposta": "Segregação de funções.",
+      "explicacao": "Separar aprovação, implementação e validação reduz erro não detectado em manutenção, resposta a falhas e suporte remoto, complementando o menor privilégio.",
+      "resposta_padrao": "Autorização formal da mudança.",
+      "por_que_nao": "A autorização pode existir e, ainda assim, a mesma pessoa continuar aprovando, executando e validando sem independência entre etapas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "incluindo arranjos organizacionais, competência e efetividade das contramedidas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        }
+      ]
+    }
+  ]
+}

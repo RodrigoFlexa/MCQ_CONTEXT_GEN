@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_01:019:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de dado congelado ou retido em malhas com forcing exige verificar a atualização do sinal.",
+      "pergunta": "Uma variável no DCS fica numericamente estável, sem indicação de mau estado, enquanto pressões e vazões fisicamente acopladas se alteram, e há forcing temporário na malha. Antes de aceitá-la como estado real do processo, o que deve ser verificado no ponto?",
+      "resposta": "Atualização do sinal.",
+      "explicacao": "Com forcing, o valor instantâneo pode permanecer plausível sem representar o processo. Para diagnóstico de arquitetura, o apoio indica que não basta o valor; é preciso confirmar se o ponto continua sendo atualizado.",
+      "resposta_padrao": "Calibração do transmissor.",
+      "por_que_nao": "Calibração trata erro metrológico; aqui o risco é aceitar dado parado ou retido como se refletisse o processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Bypasses podem afetar permissivos e intertravamentos ao retirar temporariamente a lógica normal de atuação ou supervisão.",
+      "pergunta": "Permissivos e intertravamentos deixaram de seguir a condição observada em campo durante um bypass temporário, sem falha de instrumento nem de comunicação. Que mecanismo da automação explica esse desvio?",
+      "resposta": "Supressão temporária da lógica normal de atuação ou supervisão.",
+      "explicacao": "O bloco foco afirma que bypasses, overrides e forcings alteram a automação ao retirar parte da lógica normal. Assim, permissivos e intertravamentos podem deixar de refletir a condição de campo mesmo com instrumentos íntegros.",
+      "resposta_padrao": "Perda de comunicação com o PLC.",
+      "por_que_nao": "Sem falha de instrumento ou rede, o desvio decorre da lógica temporariamente retirada, não do transporte do sinal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "retiram temporariamente parte da lógica normal de atuação ou de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Operação em circuito fechado com N2 é o arranjo de teste para exercitar lógica e comunicação antes do inventário inflamável real.",
+      "pergunta": "Após longo período de inatividade de um circuito de regeneração, quer-se exercitar lógica, comunicação e controladores antes de devolver permissivos ao modo normal, sem introduzir o inventário inflamável da operação. Que arranjo de teste deve ser adotado?",
+      "resposta": "Operação em circuito fechado com nitrogênio.",
+      "explicacao": "O apoio liga essa condição ao teste antecipado da lógica, da comunicação e do desempenho dos controladores, em regime representativo, porém sem o mesmo inventário inflamável da operação normal.",
+      "resposta_padrao": "Partida assistida já com gás natural.",
+      "por_que_nao": "Aqui o objetivo é revelar integração e sintonia sem introduzir o inventário inflamável da operação normal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "consequências de longos períodos de inatividade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem introduzir o mesmo inventário inflamável da operação normal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas de comunicação que poderiam comprometer permissivos ou intertravamentos"
+        }
+      ]
+    }
+  ]
+}

@@ -1,43 +1,43 @@
 # Acurácia dos modelos sem contexto
 
-Atualizado em 2026-11-11T03:29:27.166201+00:00. Questões prontas: 5000 em 40 tópicos. Juiz: `gpt-5-4-petrobras:medium`. GPT-4.1 Nano/Mini/Full, sem effort; até 100 palavras. Juiz GPT-5.4 medium; braços open/closed-book.
+Atualizado em 2026-11-12T03:59:26.622732+00:00. Questões prontas: 7000 em 40 tópicos. Juiz: `gpt-5-4-petrobras:medium`. GPT-4.1 Nano/Mini/Full, sem effort; até 100 palavras. Juiz GPT-5.4 medium; braços open/closed-book.
 Acurácia = % de respostas corretas; "com parcial" conta a parcial como meio acerto.
 
 ## Geral
 
 | Modelo | julgadas | acurácia (%) | com parcial (%) | corretas | parciais |
 |---|---|---|---|---|---|
-| gpt-5 | 4996 | **77.6** | 86.4 | 3876 | 883 |
-| gpt-5-mini | 4997 | **67.0** | 78.4 | 3347 | 1146 |
-| gpt-4-1 | 4985 | **64.4** | 76.6 | 3208 | 1224 |
-| gpt-4-1-mini | 4997 | **56.0** | 69.7 | 2798 | 1366 |
+| gpt-5 | 6996 | **80.4** | 87.7 | 5622 | 1030 |
+| gpt-5-mini | 6997 | **69.8** | 79.7 | 4885 | 1388 |
+| gpt-4-1 | 6985 | **67.8** | 78.4 | 4733 | 1480 |
+| gpt-4-1-mini | 6997 | **59.5** | 71.5 | 4162 | 1686 |
 
 ## Por tipo de questão (acurácia %, julgadas entre parênteses)
 
 | Tipo | questões | gpt-4-1-mini | gpt-4-1 | gpt-5-mini | gpt-5 |
 |---|---|---|---|---|---|
-| conceito | 256 | 50.4 (256) | 59.0 (256) | 61.3 (256) | 68.0 (256) |
-| mecanismo | 518 | 69.5 (518) | 75.2 (516) | 80.3 (518) | 89.4 (518) |
-| consequencia | 190 | 63.2 (190) | 72.1 (190) | 78.4 (190) | 87.9 (190) |
-| diagnostico | 610 | 62.8 (610) | 72.4 (609) | 74.4 (610) | 83.7 (609) |
-| decisao | 1760 | 55.9 (1758) | 65.9 (1752) | 70.8 (1758) | 80.8 (1757) |
-| procedimento | 1664 | 49.4 (1663) | 56.3 (1660) | 55.6 (1663) | 68.5 (1664) |
+| conceito | 346 | 55.8 (346) | 64.7 (346) | 66.5 (346) | 73.7 (346) |
+| mecanismo | 732 | 69.4 (732) | 76.3 (730) | 80.3 (732) | 89.6 (732) |
+| consequencia | 288 | 67.0 (288) | 74.0 (288) | 79.9 (288) | 87.2 (288) |
+| diagnostico | 832 | 64.3 (832) | 74.0 (831) | 76.1 (832) | 85.2 (831) |
+| decisao | 2494 | 60.0 (2492) | 69.3 (2486) | 73.5 (2492) | 83.2 (2491) |
+| procedimento | 2306 | 53.7 (2305) | 60.8 (2302) | 59.5 (2305) | 72.8 (2306) |
 
 ## Por composição (acurácia %)
 
 | Composição | gpt-4-1-mini | gpt-4-1 | gpt-5-mini | gpt-5 |
 |---|---|---|---|---|
-| simples | 56.0 (4997) | 64.4 (4985) | 67.0 (4997) | 77.6 (4996) |
+| simples | 59.5 (6997) | 67.8 (6985) | 69.8 (6997) | 80.4 (6996) |
 | composta | - (0) | - (0) | - (0) | - (0) |
 
 ## Cobertura
 
 | Modelo | Total | Com nota | Sem nota | Cobertura (%) |
 |---|---:|---:|---:|---:|
-| gpt-4-1-mini | 5000 | 4997 | 3 | 99.9 |
-| gpt-4-1 | 5000 | 4985 | 15 | 99.7 |
-| gpt-5-mini | 5000 | 4997 | 3 | 99.9 |
-| gpt-5 | 5000 | 4996 | 4 | 99.9 |
+| gpt-4-1-mini | 7000 | 6997 | 3 | 100.0 |
+| gpt-4-1 | 7000 | 6985 | 15 | 99.8 |
+| gpt-5-mini | 7000 | 6997 | 3 | 100.0 |
+| gpt-5 | 7000 | 6996 | 4 | 99.9 |
 
 Bloqueios terminais sem nota; excluídos da acurácia, reportados na cobertura.
 
@@ -45,11 +45,11 @@ Bloqueios terminais sem nota; excluídos da acurácia, reportados na cobertura.
 
 | Condição | Modelo | Com nota | Corretas | Parciais | Incorretas | Sem nota | Acurácia (%) |
 |---|---|---:|---:|---:|---:|---:|---:|
-| closed_book | gpt-4-1-mini | 2498 | 1141 | 787 | 570 | 2 | 45.68 |
-| closed_book | gpt-4-1 | 2489 | 1397 | 715 | 377 | 11 | 56.13 |
-| closed_book | gpt-5-mini | 2498 | 1526 | 645 | 327 | 2 | 61.09 |
-| closed_book | gpt-5 | 2497 | 1805 | 513 | 179 | 3 | 72.29 |
-| open_book | gpt-4-1-mini | 2499 | 1657 | 579 | 263 | 1 | 66.31 |
-| open_book | gpt-4-1 | 2496 | 1811 | 509 | 176 | 4 | 72.56 |
-| open_book | gpt-5-mini | 2499 | 1821 | 501 | 177 | 1 | 72.87 |
-| open_book | gpt-5 | 2499 | 2071 | 370 | 58 | 1 | 82.87 |
+| closed_book | gpt-4-1-mini | 3498 | 1636 | 1033 | 829 | 2 | 46.77 |
+| closed_book | gpt-4-1 | 3489 | 2014 | 916 | 559 | 11 | 57.72 |
+| closed_book | gpt-5-mini | 3498 | 2192 | 811 | 495 | 2 | 62.66 |
+| closed_book | gpt-5 | 3497 | 2590 | 629 | 278 | 3 | 74.06 |
+| open_book | gpt-4-1-mini | 3499 | 2526 | 653 | 320 | 1 | 72.19 |
+| open_book | gpt-4-1 | 3496 | 2719 | 564 | 213 | 4 | 77.77 |
+| open_book | gpt-5-mini | 3499 | 2693 | 577 | 229 | 1 | 76.96 |
+| open_book | gpt-5 | 3499 | 3032 | 401 | 66 | 1 | 86.65 |

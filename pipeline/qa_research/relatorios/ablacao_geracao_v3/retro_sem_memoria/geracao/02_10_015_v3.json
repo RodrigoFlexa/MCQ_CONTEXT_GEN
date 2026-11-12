@@ -1,0 +1,75 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_10:015:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Influência da filosofia de controle da interface na estabilidade da alimentação aos hidrociclones.",
+      "pergunta": "O controlador da interface movimenta o underflow com correções frequentes; a interface fica próxima do alvo, mas a vazão aos hidrociclones e o teor de óleo na água descartada oscilam. Que filosofia de controle é mais adequada quando a regularidade dessa alimentação domina o desempenho?",
+      "resposta": "Controle por bandas da interface.",
+      "explicacao": "Quando a regularidade da alimentação aos hidrociclones é crítica, a malha pode deixar de fixar rigidamente a interface e passar a limitar sua excursão, reduzindo a variabilidade de vazão, split e óleo na água.",
+      "resposta_padrao": "Manter a interface rigidamente no setpoint com sintonia PI mais suave.",
+      "por_que_nao": "O problema está na filosofia da malha; mesmo mais suave, o controle rígido continua perturbando o underflow para segurar um único valor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Por isso, a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica é coerente com o controle por bandas: a interface pode variar dentro de uma faixa permitida"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo físico de acoplamento entre a malha de interface e a malha de DPR no hidrociclone.",
+      "pergunta": "No arranjo em que a interface usa o underflow e o DPR é mantido no overflow, uma correção de uma malha altera a condição da outra mesmo sem mudar a alimentação ao hidrociclone. Que mecanismo específico produz essa interação?",
+      "resposta": "Balanço de massa compartilhado entre underflow e overflow.",
+      "explicacao": "As duas correntes saem do mesmo equipamento e repartem a mesma alimentação; ao alterar uma delas, a outra necessariamente enfrenta nova condição operacional.",
+      "resposta_padrao": "Acoplamento pela pressão do separador.",
+      "por_que_nao": "O vínculo decisivo descrito é a partilha da mesma alimentação no hidrociclone, não a pressão do separador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma arquitetura descrita para esse tipo de sistema manipula a vazão de underflow do hidrociclone para controlar a interface no separador, enquanto outra malha atua no overflow para manter o Differential Pressure Ratio (DPR)"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério dinâmico para tolerar oscilação de interface sem perda relevante no tratamento por hidrociclones.",
+      "pergunta": "Antes de aceitar alguma oscilação da interface para estabilizar a descarga aos hidrociclones, que relação temporal deve ser confirmada para não esperar perda relevante de desempenho a jusante?",
+      "resposta": "Variações de óleo na água mais lentas que a constante de tempo do hidrociclone.",
+      "explicacao": "A tolerância só existe quando a qualidade da água varia mais devagar do que a resposta do hidrociclone; é um critério de dinâmica relativa do sistema acoplado.",
+      "resposta_padrao": "Usar apenas o tempo de residência do separador como critério.",
+      "por_que_nao": "O texto vincula a tolerância à comparação entre a velocidade da perturbação de qualidade e a dinâmica do hidrociclone, não ao separador isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando as variações de concentração de óleo na água ocorrem lentamente em relação à constante de tempo do hidrociclone, alguma oscilação da interface pode ser tolerável sem perda relevante de desempenho a jusante."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Essa tolerância depende da dinâmica do sistema acoplado e não constitui regra geral para qualquer separador."
+        }
+      ]
+    }
+  ]
+}

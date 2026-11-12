@@ -1,0 +1,95 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:017:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância real de UPS depende de segregação das cargas entre ramos independentes.",
+      "pergunta": "Depois de modificações, os dois UPS mantêm tensão e capacidade para 100% da carga, mas a perda de um ramo derruba a estação principal e a redundante. Que verificação específica faltou no monitoramento?",
+      "resposta": "Distribuição correta das cargas entre ramos redundantes.",
+      "explicacao": "O monitoramento deve confirmar a distribuição entre ramos redundantes; sem segregação real, a arquitetura parece redundante, mas perde independência funcional e uma falha simples derruba ambas as estações.",
+      "resposta_padrao": "Presença de tensão nos dois UPS e capacidade nominal suficiente.",
+      "por_que_nao": "Tensão e capacidade não mostram concentração das cargas no mesmo ramo; sem segregação, a redundância não se materializa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Recomposição após perturbação depende da coerência das lógicas de reboot e de trip.",
+      "pergunta": "No retorno rápido da alimentação, CLP e supervisão permanecem parados, embora baterias, inversor e retificador estejam disponíveis. Que aspecto de configuração deve ser verificado para não impedir a recomposição?",
+      "resposta": "Coerência das lógicas de reboot e de trip.",
+      "explicacao": "O bloco destaca que o monitoramento deve verificar as lógicas de reboot e trip, e que falhas de lógica podem impedir a recomposição mesmo com fonte potencialmente disponível.",
+      "resposta_padrao": "Autonomia do banco de baterias.",
+      "por_que_nao": "Com baterias e conversores disponíveis, o bloqueio está na sequência lógica que não permite retomada ou mantém o sistema tripado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Black start requer alimentação por bateria para circuitos de comando, shutdown e atuação sem CA disponível.",
+      "pergunta": "Na tentativa de black start, existe fonte potencialmente disponível, mas comando, shutdown e atuação de válvulas ficam sem energia enquanto a CA ainda não voltou. Que indisponibilidade específica bloqueia a recomposição?",
+      "resposta": "Alimentação por bateria indisponível.",
+      "explicacao": "O texto liga diretamente a indisponibilidade da alimentação por bateria à impossibilidade de recompor em blackout ou black start, mesmo havendo fonte potencialmente disponível.",
+      "resposta_padrao": "Gerador de emergência indisponível.",
+      "por_que_nao": "A fonte potencial já existe; o impedimento é a ausência de energia nos circuitos de comando e atuação antes do restabelecimento em CA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Continuidade do UPS em contingência interna depende da disponibilidade do bypass.",
+      "pergunta": "Durante teste com retirada intencional do inversor, a carga crítica é perdida mesmo com alimentação de entrada normal e baterias aprovadas. Que disponibilidade do UPS deveria ter sido confirmada antes?",
+      "resposta": "Disponibilidade do bypass.",
+      "explicacao": "Entre os itens de monitoramento do UPS, o texto inclui a disponibilidade do bypass, que é o caminho alternativo relevante quando o inversor sai de serviço.",
+      "resposta_padrao": "Capacidade das baterias para a autonomia requerida.",
+      "por_que_nao": "Com entrada normal e sem depender do modo bateria, a continuidade nessa contingência depende do caminho de bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ]
+    }
+  ]
+}

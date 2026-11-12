@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:011:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Perda da alimentação de controle dos geradores pode disparar blackout mesmo com a máquina motriz disponível.",
+      "pergunta": "As máquinas motrizes seguem em rotação, sem indicação de defeito no alternador, mas os grupos em serviço perdem simultaneamente supervisão e comando e caem do paralelo. Qual alimentação deve ser tratada como crítica contra esse blackout?",
+      "resposta": "Alimentação de controle 24 Vcc dos geradores principais.",
+      "explicacao": "Os blocos mostram que a desenergização dos painéis de controle derruba a geração principal; sem essa alimentação, o gerador pode seguir mecanicamente disponível, porém não permanece conectado nem controlável.",
+      "resposta_padrao": "UPS das cargas vitais em corrente alternada.",
+      "por_que_nao": "A UPS sustenta cargas vitais em CA; aqui a perda decisiva é da alimentação CC de controle dos próprios geradores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "os painéis de controle dos geradores principais eram alimentados por sistema de 24 Vcc de serviços gerais"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância nominal de retificadores, baterias e TIE só vale se as rotas de alimentação de controle forem realmente segregadas.",
+      "pergunta": "Dois retificadores/carregadores com bancos de baterias atendem, cada um, 100% da carga de controle, e há TIE entre os quadros. Antes de creditar tolerância a uma falha, que verificação é decisiva?",
+      "resposta": "Segregação elétrica real das rotas de alimentação de controle.",
+      "explicacao": "Os blocos destacam que capacidade e redundância nominais não bastam; se caminhos convergem na mesma UPS, quadro CC ou ponto de distribuição, uma única falha derrota a resiliência esperada.",
+      "resposta_padrao": "Capacidade individual de cada conjunto para 100% da carga.",
+      "por_que_nao": "Capacidade nominal não impede perda por causa comum quando os canais compartilham o mesmo caminho elétrico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Trip lógico latente durante a reinicialização pode impedir o fechamento sustentado do disjuntor do gerador de emergência na recomposição.",
+      "pergunta": "Durante a recomposição após blackout, o gerador de emergência parte e estabelece tensão, mas o disjuntor abre novamente quando o controle reinicia; nos testes rotineiros com reinício por bateria isso não aparece. Qual a causa primária?",
+      "resposta": "Sinal de trip latente da lógica de controle ao disjuntor.",
+      "explicacao": "O reaparecimento exatamente no reboot e a ausência nos reinícios usuais por bateria caracterizam bloqueio lógico/permissivo mantendo o trip do disjuntor, não falha intrínseca do gerador ou do barramento.",
+      "resposta_padrao": "Falha do disjuntor do gerador de emergência.",
+      "por_que_nao": "A abertura acompanha a reinicialização do controle e some no modo usual por bateria, padrão típico de comando de trip e não de defeito próprio do disjuntor.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa condição ficava normalmente oculta porque o reinício usual ocorria com alimentação de bateria"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        }
+      ]
+    }
+  ]
+}

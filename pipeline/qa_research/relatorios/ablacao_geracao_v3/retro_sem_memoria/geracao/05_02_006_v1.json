@@ -1,0 +1,99 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:006:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechar o bus tie altera os caminhos de corrente de falta e exige recalcular o curto-circuito para recoordenar as proteções.",
+      "pergunta": "Dois secundários antes operando separados passam a ficar com o bus tie fechado. Para refazer a coordenação dos relés, que grandeza elétrica do barramento deve ser recalculada primeiro?",
+      "resposta": "Nível de curto-circuito no barramento.",
+      "explicacao": "O barramento interligado cria caminhos adicionais de corrente de falta e muda sensibilidades e tempos de atuação; a coordenação depende da corrente de falta disponível na zona protegida.",
+      "resposta_padrao": "Corrente de carga nominal do barramento.",
+      "por_que_nao": "Carga normal define demanda térmica; a seletividade dos relés muda com a corrente de falta que passa a chegar por novos caminhos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A escolha entre essas funções depende da zona a proteger, do nível de corrente disponível"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A interligação de barramentos energizados só pode ser executada com sincronismo confirmado.",
+      "pergunta": "Antes de fechar o bus tie entre duas seções já energizadas após operação separada, que condição elétrica específica deve ser confirmada entre elas?",
+      "resposta": "Sincronismo entre os barramentos.",
+      "explicacao": "A interligação entre barramentos energizados exige controle rigoroso da condição elétrica; sem sincronismo, o fechamento pode gerar transitórios severos e perda ampla de cargas.",
+      "resposta_padrao": "Mesma tensão nominal nos dois lados.",
+      "por_que_nao": "Igualdade de tensão, sozinha, não elimina o risco de transitórios; o fechamento seguro depende da condição de sincronismo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manobras de interligação entre barramentos energizados exigem controle rigoroso de condição elétrica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Para preservar a seletividade em falta à terra de alimentador, a proteção de retaguarda de terra a montante deve ser coordenada com o relé do alimentador.",
+      "pergunta": "Num secundário ligado a outro por barramento interligado, uma falta à terra em um alimentador não deve desligar todo o barramento. Que proteção a montante precisa estar coordenada com o relé desse alimentador?",
+      "resposta": "Relé de retaguarda de terra.",
+      "explicacao": "Na arquitetura com transformador e barramento secundário, a retaguarda de terra a montante deve ser coordenada com os alimentadores para evitar desligamento indevido do barramento ou do transformador.",
+      "resposta_padrao": "Proteção diferencial de barramento.",
+      "por_que_nao": "A diferencial cobre a zona do barramento; para falta à terra em alimentador, a seletividade depende da coordenação da retaguarda de terra a montante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Faltas internas do barramento exigem proteção principal própria da zona da barra, com alta seletividade e velocidade.",
+      "pergunta": "No switchgear principal, é preciso distinguir faltas internas da própria barra de faltas externas nos alimentadores e atuar rapidamente só nessa zona. Que função de proteção deve ser aplicada?",
+      "resposta": "Proteção diferencial de barramento.",
+      "explicacao": "Quando a zona a proteger é o próprio barramento e se exige velocidade com seletividade, a proteção diferencial discrimina faltas internas sem depender do retardo coordenado dos alimentadores.",
+      "resposta_padrao": "Relé de sobrecorrente temporizado da entrada.",
+      "por_que_nao": "A sobrecorrente a montante precisa coordenar com os alimentadores e pode ampliar a perda de carga; a diferencial identifica especificamente a zona da barra.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a distribuição costuma ser organizada por barramentos que concentram fontes e cargas"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A função da proteção é eliminar a parte defeituosa com a menor perda possível de continuidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A escolha entre essas funções depende da zona a proteger, do nível de corrente disponível, da velocidade requerida e da tolerância operacional à perda de carga."
+        }
+      ]
+    }
+  ]
+}

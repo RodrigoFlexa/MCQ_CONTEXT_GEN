@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:021:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Camada adequada para normalizar dados heterogêneos de controladores sem substituir a automação básica.",
+      "pergunta": "Controladores de fornecedores distintos expõem tags equivalentes com estruturas incompatíveis. Sem substituir a automação, quer-se padronizar HMI e comparar ativos sem retrabalho. Onde convém centralizar essa normalização?",
+      "resposta": "Na camada SCADA.",
+      "explicacao": "Quando a padronização não é viável no nível de controle, o SCADA é a camada mais próxima da fonte onde essa normalização ainda pode ser feita, sustentando HMI e comparações.",
+      "resposta_padrao": "Na plataforma analítica central.",
+      "por_que_nao": "Ela recebe dados já heterogêneos e fica a jusante; não resolve a padronização da HMI no ponto mais próximo da fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um desafio recorrente no nível de controle é a diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados de monitoramento, medição, Supervisory Control and Data Acquisition (SCADA) e sistemas de controle para execução programada."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Papel do contexto de modo operacional para evitar falso positivo em analytics e alarmes.",
+      "pergunta": "Alarmes analíticos surgem nas partidas e paradas, mas desaparecem em regime. Unidades, identificação do equipamento e tratamento de qualidade dos sinais estão corretos. Que informação faltante deixa o diagnóstico vulnerável a falso positivo?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Mesmo com sinais válidos, sem distinguir partida, parada e regime o sistema mistura transientes normais com anomalias, produzindo diagnósticos frágeis e alarmes espúrios.",
+      "resposta_padrao": "Recalibração dos instrumentos.",
+      "por_que_nao": "Com unidades, identificação e qualidade já consistentes, o erro vem de não separar estados operacionais distintos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Importância do alinhamento temporal entre fontes quando a aplicação influencia ajustes operacionais frequentes.",
+      "pergunta": "Pressão e vazão de redes diferentes alimentam uma aplicação que recomenda ajustes frequentes. O atraso médio é aceitável, mas, nos transientes, as tendências chegam deslocadas entre si e a recomendação oscila. Que aspecto técnico deve ser controlado?",
+      "resposta": "Qualidade de sincronismo.",
+      "explicacao": "Para aplicações próximas do controle, o dado precisa representar o mesmo instante do processo. Se as tendências chegam desalinhadas, o problema decisivo é o sincronismo entre as fontes.",
+      "resposta_padrao": "Aumentar a largura de banda da rede.",
+      "por_que_nao": "Mais banda não corrige o desalinhamento temporal entre sinais usados no mesmo cálculo de ajuste.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ]
+    }
+  ]
+}

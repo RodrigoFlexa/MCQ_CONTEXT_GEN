@@ -1,0 +1,59 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:001:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Migração da integração para a camada supervisória quando a padronização junto à fonte é limitada por modelos de dados heterogêneos.",
+      "pergunta": "Vários controladores de campo de fornecedores distintos precisam expor dados à operação, ao histórico e a consumidores externos. Com a padronização junto à fonte limitada, em que camada a integração tende a se concentrar e deve receber o tratamento arquitetural principal?",
+      "resposta": "Camada supervisória/SCADA.",
+      "explicacao": "Com múltiplos controladores e modelos de dados distintos, a integração deixa de ficar próxima à fonte e migra para o supervisório, que passa a concentrar troca de dados e funções agregadoras.",
+      "resposta_padrao": "Nos próprios controladores de campo.",
+      "por_que_nao": "A heterogeneidade de modelos limita a padronização na origem; por isso a integração se desloca para a camada supervisória, não permanece distribuída nos controladores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Definição do tráfego que pode cruzar fronteiras IT/OT com base na finalidade operacional de cada fluxo em arquiteturas híbridas edge-nuvem-supervisão.",
+      "pergunta": "Em arquitetura híbrida, um controlador de borda envia dados para um broker MQTT em nuvem e também alimenta o SCADA local em tempo real. Que critério técnico deve governar a autorização do tráfego que cruza essa fronteira?",
+      "resposta": "Finalidade operacional explicitamente definida de cada fluxo.",
+      "explicacao": "Com edge, nuvem e supervisão local coexistindo, surgem novas interfaces. O texto destaca que o tráfego que cruza a fronteira deve ser definido conforme sua finalidade operacional.",
+      "resposta_padrao": "Criptografia do canal.",
+      "por_que_nao": "A proteção do transporte não decide se um fluxo deve existir; o critério de cruzamento da fronteira é a necessidade operacional específica daquele tráfego.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ]
+    }
+  ]
+}

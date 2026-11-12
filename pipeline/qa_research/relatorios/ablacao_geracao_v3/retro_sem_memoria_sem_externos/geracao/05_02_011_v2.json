@@ -1,0 +1,103 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:011:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda da alimentação 24 Vcc dos painéis de controle pode derrubar a geração sem falha prévia no barramento.",
+      "pergunta": "Os motores primários seguem estáveis, os geradores em operação caem quase juntos e, ao mesmo tempo, perdem comando local e supervisão; antes disso não houve falta no barramento. Que alimentação específica pode produzir essa perda de geração mesmo com as máquinas mecanicamente disponíveis?",
+      "resposta": "24 Vcc dos painéis de controle dos geradores.",
+      "explicacao": "Os blocos associam a desenergização desses painéis à queda da geração principal; sem alimentação de comando e supervisão, o grupo pode seguir mecanicamente disponível, mas não permanece conectado nem controlável.",
+      "resposta_padrao": "O barramento principal em corrente alternada.",
+      "por_que_nao": "Sem falta prévia no barramento, a perda da alimentação de controle em 24 Vcc basta para derrubar geradores ainda mecanicamente aptos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a desenergização dos painéis de controle de geradores em operação levou à perda da geração principal"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância de retificadores e baterias só previne blackout se houver segregação real dos caminhos de 24 Vcc até o controle.",
+      "pergunta": "Dois conjuntos retificador/bateria de 24 Vcc, cada um capaz de suprir toda a demanda, alimentam o controle dos geradores e podem ser interligados por TIE. Que verificação técnica distingue redundância real de mera redundância nominal nesse arranjo?",
+      "resposta": "Segregação elétrica das rotas de 24 Vcc até os painéis de controle.",
+      "explicacao": "Capacidade integral de cada conjunto e TIE não bastam se houver ponto comum a jusante. A prevenção de blackout depende da independência real dos caminhos que alimentam o controle dos geradores.",
+      "resposta_padrao": "Confirmar apenas a autonomia e a capacidade dos bancos de baterias.",
+      "por_que_nao": "Capacidade N+1 não elimina falha comum quando os caminhos convergem no mesmo quadro, UPS ou ponto de distribuição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda da alimentação do estágio de saída do CLP pode bloquear o comando de válvulas mesmo com o controlador ainda ativo.",
+      "pergunta": "Com perda da energia principal e falha simultânea de uma UPS, a CPU do CLP permanece ativa, mas as válvulas remotas não atuam. Que cartão específico do CLP precisa permanecer energizado para manter esse comando?",
+      "resposta": "Cartão-relé de saída do CLP.",
+      "explicacao": "No evento descrito, a falha da UPS combinada com a perda de energia principal desenergizou o cartão-relé do CLP, inviabilizando o comando das válvulas.",
+      "resposta_padrao": "CPU do CLP.",
+      "por_que_nao": "A CPU pode continuar operante sem que as saídas comutem; sem o cartão-relé energizado, o comando não chega ao campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na recomposição, lógica de trip mantida pelo VMS durante reboot pode impedir o fechamento sustentado do gerador de emergência.",
+      "pergunta": "Durante a recomposição, o gerador de emergência parte e o disjuntor fecha, mas logo recebe comando repetitivo de abertura enquanto o sistema de controle reinicia após perda da bateria. Que causa primária deve ser procurada?",
+      "resposta": "Trip mantido pelo VMS ao disjuntor do gerador de emergência.",
+      "explicacao": "O bloco de apoio relata tentativas fracassadas de restabelecimento porque a lógica do VMS continuava enviando sinal de trip ao disjuntor durante o reboot do controle.",
+      "resposta_padrao": "Incapacidade do gerador de emergência de assumir a carga.",
+      "por_que_nao": "O grupo chega a partir e a fechar; o bloqueio vem de comando lógico de abertura, não de limitação de potência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "várias tentativas de restabelecimento fracassaram"
+        }
+      ]
+    }
+  ]
+}

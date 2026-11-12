@@ -1,0 +1,95 @@
+{
+  "item": "02_01",
+  "foco": 24,
+  "visita": 3,
+  "onda": 5,
+  "id": "02_01:024:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Conversão metrológica de volume observado de óleo para condição de referência exige medir o estado termodinâmico no ponto de medição.",
+      "pergunta": "Na custódia de óleo, qual par de medições deve acompanhar a vazão para que o volume observado seja convertido de forma rastreável para a condição de referência?",
+      "resposta": "Pressão e temperatura do escoamento.",
+      "explicacao": "A conversão de volume e densidade para referência depende do estado termodinâmico do fluido no medidor; por isso, vazão sozinha não basta.",
+      "resposta_padrao": "Apenas a vazão totalizada do medidor.",
+      "por_que_nao": "Sem pressão e temperatura, o volume observado não pode ser convertido de forma tecnicamente rastreável para a condição de referência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pressão e temperatura do escoamento são variáveis relevantes para as conversões de volume e densidade"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a conversão para condições de referência depende de medir o estado do fluido"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Na medição fiscal de gás, a densidade calculada e o volume compensado dependem da composição além de pressão e temperatura.",
+      "pergunta": "Pressão e temperatura do gás estão corretas no medidor, mas a corrente passa a vir de mistura diferente. Que característica do fluido deve alimentar o algoritmo para a densidade calculada continuar válida?",
+      "resposta": "Composição do gás.",
+      "explicacao": "Para gás natural, a densidade não depende só de pressão e temperatura; mudança de mistura altera a composição e precisa entrar no cálculo.",
+      "resposta_padrao": "Somente pressão e temperatura medidas no medidor.",
+      "por_que_nao": "Na mesma pressão e temperatura, a densidade do gás natural ainda varia com a composição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "No caso de fluidos compressíveis, a compressibilidade e a composição influenciam o cálculo do volume compensado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Para gás natural, a necessidade de algoritmo de cálculo decorre justamente da dependência da densidade em relação à pressão, temperatura e composição."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a medição fiscal está a montante da estocagem, a custódia transferida deve ser fechada contra a variação de inventário do armazenamento.",
+      "pergunta": "Com a medição fiscal posicionada antes da estocagem, ocorreu troca de tanque durante o alívio. Que grandeza do armazenamento precisa entrar no fechamento para que o volume transferido represente a custódia?",
+      "resposta": "Variação de inventário nos tanques.",
+      "explicacao": "A medição antes da estocagem não fecha sozinha a transferência; retenção, interface e mudanças operacionais exigem reconciliar o transferido com o inventário.",
+      "resposta_padrao": "A produção medida a montante.",
+      "por_que_nao": "Entre a medição e a transferência há armazenamento e transientes, então a produção fiscalizada não equivale automaticamente ao volume efetivamente aliviado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando a medição fiscal fica a montante da estocagem, o fechamento do balanço da transferência não pode ser inferido apenas pela produção fiscalizada."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "É preciso relacionar o volume transferido ao estado inicial e final do inventário"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Na troca de tanque durante offloading, um pico curto de água indica passagem de interface e torna a vazão isolada não representativa da transferência líquida de óleo.",
+      "pergunta": "Logo após a troca de tanque no offloading, a vazão indicada segue contínua, mas as amostras no manifold mostram um salto breve de água e depois retorno ao teor anterior. Que fenômeno primário explica que a vazão sozinha deixe de representar a transferência líquida de óleo?",
+      "resposta": "Passagem de interface óleo-água.",
+      "explicacao": "A assinatura transitória associada à troca de tanque indica passagem de interface, alterando a composição do que escoa e invalidando a vazão isolada como óleo líquido transferido.",
+      "resposta_padrao": "Deriva do medidor de vazão.",
+      "por_que_nao": "O aumento curto de água sincronizado com a troca de tanque aponta mudança transitória de composição, não erro próprio do medidor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "troca de tanque, presença de gás livre, água arrastada ou interface podem fazer a vazão medida deixar de representar, sozinha, a transferência líquida de óleo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "variação de interface óleo-água"
+        }
+      ]
+    }
+  ]
+}

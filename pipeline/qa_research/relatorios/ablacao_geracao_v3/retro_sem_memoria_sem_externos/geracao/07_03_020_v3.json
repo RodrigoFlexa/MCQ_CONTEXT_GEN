@@ -1,0 +1,75 @@
+{
+  "item": "07_03",
+  "foco": 20,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_03:020:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha da métrica de perda para eventos repetitivos que reduzem produção sem parar totalmente a planta.",
+      "pergunta": "Pequenas perturbações sucessivas reduzem a taxa de produção, mas não chegam a parar a planta. Para acompanhar o impacto acumulado desses eventos recorrentes, qual medida deve ser usada?",
+      "resposta": "LPO",
+      "explicacao": "Quando a recorrência gera perda de produção sem parada total, a medida adequada é a de oportunidade de produção perdida, não apenas de tempo disponível.",
+      "resposta_padrao": "Disponibilidade observada.",
+      "por_que_nao": "Disponibilidade relaciona tempo apto ao tempo total e pode permanecer alta sem refletir a perda acumulada de produção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "LPO, sigla para Lost Production Opportunity, e MTBF, sigla para Mean Time Between Failures, aparecem como medidas associadas ao comportamento de recorrência e à confiabilidade no caso estudado."
+        },
+        {
+          "bloco": "F",
+          "trecho": "pequenas perturbações sucessivas podem acumular perda de produção e manter vulnerabilidades operacionais mesmo sem parada total da planta."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção do indicador usual de confiabilidade para item reparável após redução da frequência de falhas.",
+      "pergunta": "Depois de eliminar um defeito crônico, as ocorrências ficaram menos frequentes, embora a duração média do reparo não tenha mudado. Em item reparável, qual indicador usual evidencia esse ganho de confiabilidade?",
+      "resposta": "MTBF",
+      "explicacao": "Para itens reparáveis, o MTBF expressa o tempo médio de operação entre falhas; se o reparo não mudou e as ocorrências rarearam, ele mostra o ganho de confiabilidade.",
+      "resposta_padrao": "MTTR.",
+      "por_que_nao": "MTTR mede a duração do reparo, não o espaçamento operacional entre falhas sucessivas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "LPO, sigla para Lost Production Opportunity, e MTBF, sigla para Mean Time Between Failures, aparecem como medidas associadas ao comportamento de recorrência e à confiabilidade no caso estudado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para a estimativa usual de MTBF em itens reparáveis, divide-se o tempo de operação acumulado pelo número de falhas no período."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de seleção e classificação de eventos para cálculo consistente de MTBF em falhas repetitivas.",
+      "pergunta": "O histórico de alarmes mistura perda real da função com simples mudanças de estado. Antes de usar esses registros para calcular MTBF de falhas repetitivas, qual critério deve selecionar os eventos válidos?",
+      "resposta": "Mensagens que representem perda e recuperação da função.",
+      "explicacao": "O cálculo de confiabilidade só deve contar eventos que marquem a perda funcional e seu restabelecimento; mudanças de estado sem perda real distorcem o indicador.",
+      "resposta_padrao": "Qualquer alarme ou mudança de estado registrada pelo sistema.",
+      "por_que_nao": "Contar eventos sem perda funcional infla o número de falhas e torna o MTBF inconsistente entre equipamentos e períodos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "LPO, sigla para Lost Production Opportunity, e MTBF, sigla para Mean Time Between Failures, aparecem como medidas associadas ao comportamento de recorrência e à confiabilidade no caso estudado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Mensagens de evento precisam representar perda e recuperação da função, e não apenas mudanças irrelevantes de estado."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Indicadores de confiabilidade exigem registros consistentes de início da falha, atividades de reparo e retorno à função."
+        }
+      ]
+    }
+  ]
+}

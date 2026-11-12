@@ -1,0 +1,103 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "01_01:007:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento correto do evento de falha para cálculo de MTTR e disponibilidade observada.",
+      "pergunta": "Uma bomba falha às 02h, o reparo mecânico termina às 10h e ela só volta a cumprir sua função às 14h. Que momento deve encerrar o evento para calcular MTTR e disponibilidade observada?",
+      "resposta": "Retorno ao estado operacional às 14h.",
+      "explicacao": "O indicador deve refletir a indisponibilidade funcional até a função ser restabelecida, não apenas o fim da intervenção de manutenção.",
+      "resposta_padrao": "Conclusão do reparo às 10h.",
+      "por_que_nao": "MTTR e disponibilidade observada usam o tempo até o retorno ao estado operacional, não o fechamento físico do serviço.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização prioritária de parâmetro RAM quando a indisponibilidade cresce por baixa mantenabilidade local.",
+      "pergunta": "A frequência de falhas observada segue o banco setorial, mas a indisponibilidade real ficou bem maior em um sistema com acesso restrito e dependência de içamento. No modelo RAM, qual parâmetro local deve ser atualizado primeiro?",
+      "resposta": "Tempo de reparo local.",
+      "explicacao": "O desvio está na mantenabilidade da instalação. Acessibilidade e contexto operacional afetam o tempo para restaurar a função, mesmo sem mudar a frequência de falha.",
+      "resposta_padrao": "Taxa de falha do banco setorial.",
+      "por_que_nao": "Se a frequência observada já está coerente, a diferença de disponibilidade vem do tempo de reparo, que varia com acessibilidade e estratégia de manutenção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação correta de gargalo compartilhado em diagrama de blocos de confiabilidade.",
+      "pergunta": "Dois trens de processo aparecem duplicados, mas ambos perdem a função quando falha a mesma descarga comum. Num diagrama de blocos de confiabilidade, como essa condição deve ser representada?",
+      "resposta": "Bloco da descarga comum em série com o paralelo dos trens.",
+      "explicacao": "A descarga comum é uma dependência funcional compartilhada. Se ela falha, o paralelismo dos trens não preserva o serviço.",
+      "resposta_padrao": "Apenas dois blocos dos trens em paralelo independente.",
+      "por_que_nao": "Um gargalo de descarga compartilhado quebra a independência entre os trens e reduz o ganho real frente ao paralelo simples.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modo de falha que precisa entrar no modelo RAM de reserva fria com transferência automática.",
+      "pergunta": "Num arranjo com um equipamento ativo e outro em reserva fria com transferência automática, que modo de falha específico precisa entrar no modelo RAM para estimar corretamente a continuidade logo após a falha do ativo?",
+      "resposta": "Falha de partida/comutação do reserva.",
+      "explicacao": "Na reserva fria, o item poupado de desgaste ainda pode não assumir a função quando acionado ou transferido automaticamente.",
+      "resposta_padrao": "Basta considerar o menor desgaste do reserva em espera.",
+      "por_que_nao": "Reserva fria não elimina falhas em espera nem falhas de partida ou de comutação, decisivas na retomada após a falha do ativo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_08:001:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha de simulação dinâmica quando a simultaneidade real das descargas depende do transiente.",
+      "pergunta": "Novas fontes de alívio foram ligadas ao mesmo header, mas seus eventos têm atrasos e respostas de controle diferentes. Que abordagem de análise é a mais adequada para reavaliar a carga simultânea que realmente chega à tocha?",
+      "resposta": "Simulação dinâmica do processo.",
+      "explicacao": "Com atrasos, controles e não simultaneidade, a carga instantânea na tocha depende da evolução temporal; a soma estática de picos pode superestimar o caso.",
+      "resposta_padrao": "Análise estática somando as vazões máximas das novas fontes.",
+      "por_que_nao": "Esse somatório embute simultaneidade de picos que o transiente com defasagens e controles pode não produzir.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "essas fontes não aliviavam simultaneamente para a tocha."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "permitindo captar defasagens, amortecimento, interação com controles e sequenciamento de respostas."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Avaliação de surge em shutdown exige modelar explicitamente a malha anti-surge.",
+      "pergunta": "Na parada de emergência de compressão, a válvula de reciclo anti-surge modula conforme a margem de surge enquanto o blowdown prossegue. No modelo usado para avaliar esse risco, que parte do sistema precisa ser representada explicitamente?",
+      "resposta": "Malha de controle anti-surge.",
+      "explicacao": "Na parada, a trajetória do ponto do compressor depende da ação modulante da malha anti-surge; tratá-la como abertura fixa pode prever surge erradamente.",
+      "resposta_padrao": "Somente as curvas do compressor e do sistema.",
+      "por_que_nao": "O cruzamento da linha de surge na parada é definido pela atuação temporal do anti-surge, não apenas pelo mapa estático.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Simulação dinâmica de PSV precisa representar o blowdown real para reproduzir o ciclo de abertura e fechamento.",
+      "pergunta": "Na simulação dinâmica do alívio por PSV, qual parâmetro de comportamento da válvula precisa ser coerente com o equipamento real para que o ciclo de abertura e fechamento não seja artificial?",
+      "resposta": "Blowdown da PSV.",
+      "explicacao": "A diferença entre abertura e reassentamento governa o ciclo dinâmico da válvula; usar só a pressão de ajuste distorce o comportamento transitório.",
+      "resposta_padrao": "Apenas a pressão de ajuste.",
+      "por_que_nao": "A pressão de abertura sozinha não define o reassentamento nem a ciclagem dinâmica da PSV.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula; simplificações de simulação não definem o funcionamento real da PSV."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa simplificação é útil para o modelo, mas não representa automaticamente o comportamento real da válvula instalada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Cenários de alta e baixa carga podem exigir PSVs paralelas com pressões de ajuste escalonadas.",
+      "pergunta": "O mesmo vaso tem um cenário de alta vazão e outro de baixa vazão; a PSV única do caso governante protege a sobrepressão, mas permanece inadequada dinamicamente no evento menor. Que arranjo deve ser adotado para que, na baixa carga, só uma válvula abra?",
+      "resposta": "Duas PSVs com pressões de ajuste diferentes.",
+      "explicacao": "Pressões de ajuste escalonadas permitem que a primeira válvula cubra a baixa carga e que o conjunto mantenha cobertura do caso governante.",
+      "resposta_padrao": "Uma única PSV maior ajustada para o cenário governante.",
+      "por_que_nao": "Sob baixa carga, o superdimensionamento pode continuar inadequado dinamicamente, mesmo com proteção contra sobrepressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "estudar o comportamento de PSVs diante de bloqueio de válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma única PSV escolhida para o caso dimensionante pode proteger contra sobrepressão, mas continuar inadequada do ponto de vista dinâmico para a condição de menor carga."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        }
+      ]
+    }
+  ]
+}

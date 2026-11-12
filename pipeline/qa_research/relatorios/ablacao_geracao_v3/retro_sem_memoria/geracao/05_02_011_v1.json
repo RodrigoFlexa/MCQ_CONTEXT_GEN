@@ -1,0 +1,83 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:011:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de alimentação de controle em 24 Vcc pode derrubar a geração mesmo sem falha inicial no barramento de potência.",
+      "pergunta": "Sem atuação prévia de proteção do barramento, os geradores em paralelo abrem disjuntor logo após apagarem seus painéis de controle, embora as máquinas motrizes permaneçam disponíveis. Qual perda primária explica a queda da geração?",
+      "resposta": "Perda do 24 Vcc dos painéis de controle dos geradores.",
+      "explicacao": "Os blocos ligam a desenergização desses painéis à queda da geração principal e destacam que o gerador pode seguir mecanicamente disponível, porém sem conseguir permanecer conectado ou controlável.",
+      "resposta_padrao": "Falha no barramento principal de potência.",
+      "por_que_nao": "Aqui o disparo vem da perda de energia de controle; sem ela, o gerador sai do paralelo mesmo com a parte mecânica disponível.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável se a alimentação de comando, supervisão ou atuação for perdida."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância de fontes 24 Vcc só é efetiva contra falha única quando as rotas de alimentação das cargas de controle são realmente segregadas.",
+      "pergunta": "Dois conjuntos retificador/carregador e baterias podem, cada um, suprir toda a demanda do quadro de 24 Vcc, e ainda existe interligação por TIE. Que verificação define se essa redundância realmente resiste a uma falha única?",
+      "resposta": "Segregação real das rotas de alimentação das cargas de controle.",
+      "explicacao": "Capacidade nominal e TIE não bastam. Os blocos ressaltam que a resiliência depende de independência elétrica real entre canais, fontes e caminhos de comando, sem convergência em um mesmo apoio.",
+      "resposta_padrao": "Comprovar que cada conjunto suporta 100% da carga.",
+      "por_que_nao": "Capacidade instalada não elimina falha comum quando as cargas convergem para a mesma UPS, quadro CC ou ponto de distribuição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância nominal não basta: é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "redundância só produz resiliência se houver segregação elétrica e lógica suficiente entre canais, fontes e caminhos de comando."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A validação da recomposição deve exercitar a reinicialização do controle em estado degradado para revelar bloqueios lógicos ocultos.",
+      "pergunta": "Nos testes de recomposição, o fechamento do gerador de emergência só foi ensaiado com automação íntegra. No evento real, os logs registram trip da própria lógica durante a reinicialização do controle após perda parcial de alimentação. Que condição de validação faltou?",
+      "resposta": "Reinicialização do sistema de controle em modo degradado.",
+      "explicacao": "Os blocos mostram que o bloqueio pode aparecer apenas durante o reboot com perda parcial de UPS, bateria ou controle; ensaios em condição normal não exercitam esse caminho lógico.",
+      "resposta_padrao": "Fechamento do disjuntor com a automação já estabilizada.",
+      "por_que_nao": "Isso prova o fechamento em regime normal, mas não exercita a lógica que pode manter trip durante a reinicialização.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "várias tentativas de restabelecimento fracassaram porque a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais"
+        }
+      ]
+    }
+  ]
+}

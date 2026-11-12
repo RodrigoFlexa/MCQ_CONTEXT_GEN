@@ -1,0 +1,95 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:001:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Localização prática da fronteira IT/OT pelo ponto em que os dados saem do controle.",
+      "pergunta": "Onde a fronteira IT/OT costuma se materializar na prática, mesmo sem conexão direta com a rede corporativa?",
+      "resposta": "Na saída da camada de controle.",
+      "explicacao": "A fronteira funcional aparece quando os dados deixam o controle e passam a alimentar supervisão, historiadores, analytics, telecomunicações ou sistemas corporativos.",
+      "resposta_padrao": "No firewall entre a rede corporativa e a rede industrial.",
+      "por_que_nao": "Esse é só um perímetro possível; a fronteira funcional surge quando os dados deixam o controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "as fronteiras IT/OT aparecem onde os dados deixam a camada de controle"
+        },
+        {
+          "bloco": "F",
+          "trecho": "passam a ser consumidos por supervisão, historiadores, aplicações analíticas, telecomunicações ou sistemas corporativos."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função do SCADA como camada agregadora acima de múltiplos controladores de campo.",
+      "pergunta": "Vários PLCs de campo precisam aparecer numa única interface com alarmes centralizados, histórico e operação consolidada. Que sistema tende a cumprir essa função agregadora?",
+      "resposta": "SCADA.",
+      "explicacao": "Com múltiplos controladores de campo, o SCADA tende a concentrar alarmes, armazenamento histórico e interface operacional.",
+      "resposta_padrao": "Historiador de dados.",
+      "por_que_nao": "O historiador armazena séries temporais, mas não centraliza alarmes nem oferece a interface operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em cenários com múltiplos controladores de campo, o SCADA tende a funcionar como camada agregadora para alarmes, armazenamento histórico e interface operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Deslocamento da integração para a supervisão quando há controladores de fornecedores com modelos de dados distintos.",
+      "pergunta": "Controladores de fornecedores diferentes alimentam supervisão local, historiador e aplicações analíticas externas. Com modelos de dados distintos na origem, qual ponto lógico tende a concentrar a troca e exigir tratamento arquitetural específico?",
+      "resposta": "O ponto de interconexão da camada supervisória.",
+      "explicacao": "Modelos de dados distintos limitam a padronização perto da fonte; por isso a integração migra para a supervisão, onde a troca entre controladores e consumidores externos se concentra.",
+      "resposta_padrao": "A DMZ corporativa.",
+      "por_que_nao": "A DMZ pode proteger um perímetro, mas a concentração lógica da integração descrita ocorre na camada supervisória.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico"
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Elemento central de comunicação publish/subscribe entre edge e nuvem usando MQTT.",
+      "pergunta": "Na comunicação edge-nuvem usando MQTT em modelo publish/subscribe, como se chama o componente que recebe e redistribui mensagens?",
+      "resposta": "Broker MQTT.",
+      "explicacao": "Na arquitetura híbrida descrita, os controladores de borda enviam dados a um broker MQTT em nuvem, que centraliza a distribuição das mensagens.",
+      "resposta_padrao": "Gateway de protocolo.",
+      "por_que_nao": "Gateway converte ou encaminha protocolos; em MQTT quem recebe e redistribui publicações é o broker.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem"
+        },
+        {
+          "bloco": "F",
+          "trecho": "e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        }
+      ]
+    }
+  ]
+}

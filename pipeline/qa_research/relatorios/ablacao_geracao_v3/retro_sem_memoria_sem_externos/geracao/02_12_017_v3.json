@@ -1,0 +1,75 @@
+{
+  "item": "02_12",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_12:017:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função distinta da malha anti-surge em relação ao controle de capacidade quando a demanda do processo cai.",
+      "pergunta": "Durante uma queda brusca de consumo a jusante, a vazão exportada cai e o ponto do compressor se aproxima da linha de surge, enquanto a rotação segue no controle da pressão de sucção. Que atuação automática específica deve aumentar?",
+      "resposta": "Abertura da válvula de reciclo anti-surge.",
+      "explicacao": "A proteção anti-surge afasta o ponto do limite instável aumentando a vazão interna através do compressor por recirculação, sem transferir essa função para a malha de rotação.",
+      "resposta_padrao": "Reduzir a rotação do compressor.",
+      "por_que_nao": "Nesta arquitetura, a rotação controla a pressão de sucção; quem recompõe a vazão mínima através da máquina é o reciclo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rotação da máquina controla a pressão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a malha anti-surge preserva a máquina ao manter vazão suficiente através do compressor"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ferramenta adequada para avaliar transientes e interação entre malhas de capacidade e anti-surge antes da aplicação em campo.",
+      "pergunta": "Antes de colocar em campo novos ajustes das malhas de capacidade e anti-surge, a engenharia quer estudar partida, parada e atuação automática sob perturbações. Que ferramenta deve ser usada para esse teste prévio?",
+      "resposta": "Simulação dinâmica.",
+      "explicacao": "Ela reproduz transientes e a interação entre processo e controle em partida, parada e esquemas automáticos; isso não é capturado adequadamente por análise apenas estacionária.",
+      "resposta_padrao": "Simulação em regime permanente.",
+      "por_que_nao": "O objetivo é avaliar resposta temporal das malhas e dos arranjos; regime permanente não representa esses transitórios.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forte interação entre controle de capacidade e proteção anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a simulação dinâmica é útil para estudar partida, parada, ajuste das malhas de capacidade e anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "teste de esquemas automáticos e avaliação de arranjos"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": false,
+      "conhecimento": "Variável que deve governar a correção do setpoint de vazão na proteção anti-surge por estágio.",
+      "pergunta": "Na lógica anti-surge por estágio, o setpoint de vazão precisa acompanhar o deslocamento do mapa do compressor ao longo da faixa operacional. Qual variável da máquina deve governar essa correção?",
+      "resposta": "Rotação do compressor.",
+      "explicacao": "O texto vincula o setpoint variável das válvulas de reciclo por estágio à rotação; a referência protetiva acompanha a mudança de operação com a velocidade da máquina.",
+      "resposta_padrao": "Pressão de descarga.",
+      "por_que_nao": "A correção do setpoint segue a dependência do limite operacional com a velocidade, não uma pressão isolada de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação"
+        }
+      ]
+    }
+  ]
+}

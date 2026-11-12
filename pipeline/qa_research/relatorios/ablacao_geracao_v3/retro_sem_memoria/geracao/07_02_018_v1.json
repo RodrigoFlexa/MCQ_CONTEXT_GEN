@@ -1,0 +1,107 @@
+{
+  "item": "07_02",
+  "foco": 18,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_02:018:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da topologia de UPS para desacoplar perturbações instantâneas da fonte e preservar a continuidade de sistemas digitais críticos.",
+      "pergunta": "Servidores de supervisão e estações de operação reinicializam em afundamentos curtos da alimentação, embora a carga total esteja dentro da potência prevista. Que topologia de alimentação de suporte deve ser adotada para reduzir o acoplamento dessas perturbações à carga?",
+      "resposta": "UPS-CA on-line de dupla conversão.",
+      "explicacao": "Na dupla conversão, a entrada é retificada para um barramento interno condicionado que alimenta a saída e carrega as baterias, reduzindo o efeito direto de afundamentos e interrupções curtas sobre a carga.",
+      "resposta_padrao": "Estabilizador de tensão na entrada.",
+      "por_que_nao": "Estabilizador não desacopla a carga de interrupções curtas nem de afundamentos como a dupla conversão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A alimentação de suporte também influencia a capacidade de supervisão e resposta."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "UPS-CA são descritas em topologia de dupla conversão on-line"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "isso tende a reduzir o acoplamento direto entre perturbações instantâneas da entrada e a alimentação entregue ao consumidor"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a dupla conversão costuma melhorar a qualidade de energia e a continuidade frente a afundamentos, interrupções curtas e variações da fonte"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mapeamento das interdependências entre controle, proteção e energia antes de isolar ativos digitais suspeitos.",
+      "pergunta": "Há suspeita de atividade maliciosa em um servidor de supervisão que compartilha enlaces e alimentação de suporte com controle e proteção. Antes de autorizar seu isolamento para contenção, que relação técnica precisa estar mapeada para não comprometer funções ainda íntegras?",
+      "resposta": "Interdependências entre controle, proteção e energia.",
+      "explicacao": "A resposta a incidentes melhora quando essas dependências são conhecidas previamente; sem isso, o isolamento pode retirar supervisão, afetar a operação normal ou degradar funções instrumentadas de proteção.",
+      "resposta_padrao": "Avaliar apenas a criticidade do servidor afetado.",
+      "por_que_nao": "Criticidade isolada não mostra os efeitos cruzados do isolamento sobre supervisão, proteção e alimentação de suporte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade, alteração indevida ou perda de alimentação podem degradar tanto a operação normal quanto funções instrumentadas de proteção."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "quem autoriza isolamento ou bypass e como essas decisões se articulam com sala de controle, manutenção, instrumentação, elétrica e liderança operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a qualidade da resposta melhora quando há critérios claros para escalonamento, registros confiáveis dos estados do sistema, capacidade de comparar comportamento atual com referência histórica e entendimento prévio das dependências entre sistemas de controle, proteção e energia"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento do estado de saúde do banco de baterias como indicador da disponibilidade futura do backup de energia.",
+      "pergunta": "Na UPS que mantém a supervisão ativa durante perda da rede principal, a equipe quer um indicador da disponibilidade futura do backup, não só da energia disponível agora. Que estado do banco de baterias deve ser acompanhado?",
+      "resposta": "Estado de saúde do banco de baterias.",
+      "explicacao": "O bloco associa a gestão do estado de saúde das baterias à disponibilidade do backup de energia, que sustenta a continuidade de supervisão quando a fonte principal falha.",
+      "resposta_padrao": "Estado de carga das baterias.",
+      "por_que_nao": "Estado de carga mostra energia momentânea; disponibilidade futura do backup depende da condição de saúde do banco.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a gestão do estado de saúde de bancos de baterias foi associada à disponibilidade do backup de energia."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse vínculo é tecnicamente transferível como princípio de continuidade de supervisão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas em baterias, capacitores, transformador ou seção inversora podem comprometer a capacidade de entrega"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de integrar analytics em edge ou modelos digitais às funções críticas para que apoiem a resposta operacional.",
+      "pergunta": "Os diagnósticos de um modelo digital ficam restritos a dashboards informativos e não chegam aos sistemas que executam a resposta em condição anormal. Do ponto de vista técnico, que ligação falta para isso contribuir de fato para a resposta?",
+      "resposta": "Integração com funções críticas de controle e proteção.",
+      "explicacao": "O bloco afirma que analytics, edge computing e modelos digitais ampliam observação e previsão, mas não garantem resposta adequada sem integração com funções críticas e decisão operacional.",
+      "resposta_padrao": "Dashboard preditivo mais detalhado.",
+      "por_que_nao": "Mais detalhe na visualização não conecta o diagnóstico às funções críticas responsáveis pela resposta em condição anormal.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics em dispositivos, edge computing e modelos digitais podem ampliar observação e previsão de falhas, porém não substituem monitoramento de segurança nem garantem resposta adequada sem integração com funções críticas e decisão operacional."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "quem diferencia falha de processo, falha elétrica e comprometimento digital, quem autoriza isolamento ou bypass e como essas decisões se articulam com sala de controle, manutenção, instrumentação, elétrica e liderança operacional"
+        }
+      ]
+    }
+  ]
+}

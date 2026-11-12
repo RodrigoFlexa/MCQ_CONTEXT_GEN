@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 10,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:010:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "VPN protege o canal, mas a liberação do acesso remoto exige verificar a postura de segurança do endpoint conectado.",
+      "pergunta": "A equipe liberou um túnel VPN para o notebook de um fornecedor acessar um sistema de controle. O tráfego está autenticado e cifrado, mas o equipamento vem de uso externo rotineiro. Que verificação ainda é decisiva antes da sessão?",
+      "resposta": "Condição de segurança do dispositivo conectado.",
+      "explicacao": "Uma sessão remota pode ser tecnicamente válida e ainda introduzir risco se o endpoint estiver comprometido, desatualizado ou mal configurado; a VPN não corrige isso.",
+      "resposta_padrao": "Validar apenas o túnel VPN e as credenciais.",
+      "por_que_nao": "Canal protegido e autenticação não eliminam comprometimento prévio do endpoint que inicia a sessão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a segurança da conexão depende também da condição do dispositivo conectado, e não apenas da existência de VPN"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "um computador desatualizado, infectado, mal configurado ou sob controle indevido pode estabelecer uma sessão tecnicamente válida"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Para rastrear intervenção remota de terceiros em IACS, é necessário registro de sessão, não apenas logs de conectividade de rede.",
+      "pergunta": "Os logs do firewall e da VPN mostram apenas o túnel aberto por um fornecedor. Depois de alteração indevida em automação, que registro específico deveria existir para atribuir a atuação à sessão e ao ativo alcançado?",
+      "resposta": "Registro de sessão suficiente para rastrear a intervenção.",
+      "explicacao": "O registro precisa permitir reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação, base para investigação e contenção.",
+      "resposta_padrao": "Logs do firewall e da VPN.",
+      "por_que_nao": "Esses logs mostram a conectividade do túnel, mas não a intervenção realizada por usuário em ativo específico.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "manter registro de sessão suficiente para rastrear a intervenção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "reconstruir quem acessou, quando a sessão ocorreu e em qual ativo houve atuação"
+        },
+        {
+          "bloco": "F",
+          "trecho": "melhora a investigação de desvios, a responsabilização e a contenção"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Permissões de terceiros em acesso remoto devem ser limitadas à classe de função compatível com a tarefa executada.",
+      "pergunta": "Para um fornecedor que precisa apenas ler eventos, tendências e estados de um controlador, a conta proposta também permitiria alterar parâmetros e lógica. Que função deve permanecer alcançável na sessão?",
+      "resposta": "Funções de diagnóstico.",
+      "explicacao": "Ler eventos, tendências e estados caracteriza diagnóstico; manter alcance a configuração ou impacto operacional amplia desnecessariamente o risco da sessão autorizada.",
+      "resposta_padrao": "Funções de configuração do ativo atendido.",
+      "por_que_nao": "Acesso de configuração só se justifica quando a tarefa exige alteração; aqui ele excede o escopo compatível com a atividade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "uma sessão autorizada pode alcançar funções com impacto operacional, de configuração ou de diagnóstico"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tratar o acesso remoto de terceiros como atividade delimitada por necessidade operacional e por escopo compatível com a tarefa executada"
+        }
+      ]
+    }
+  ]
+}

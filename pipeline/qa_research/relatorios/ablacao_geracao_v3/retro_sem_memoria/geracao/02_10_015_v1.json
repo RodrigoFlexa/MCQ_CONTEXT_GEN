@@ -1,0 +1,95 @@
+{
+  "item": "02_10",
+  "foco": 15,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_10:015:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério para escolher controle por bandas da interface quando a estabilidade da alimentação aos hidrociclones é a variável mais importante.",
+      "pergunta": "Quando a qualidade da água tratada piora com oscilações de alimentação aos hidrociclones, e a interface pode variar dentro da faixa admissível, que filosofia de controle deve ser aplicada à interface?",
+      "resposta": "Controle por bandas da interface.",
+      "explicacao": "Nesse caso, o objetivo deixa de ser manter a interface rigidamente num valor único e passa a limitar sua excursão para obter descarga mais estável ao tratamento de água.",
+      "resposta_padrao": "Controle rígido da interface em um setpoint único.",
+      "por_que_nao": "Quando a regularidade da descarga é o critério dominante, a filosofia adequada é limitar a excursão da interface, não prendê-la rigidamente a um valor.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a escolha da filosofia de controle da interface influencia não só o inventário do separador, mas também a estabilidade da descarga para o tratamento de água"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o objetivo da malha de interface pode deixar de ser manter a interface rigidamente em um único valor e passar a ser limitar sua excursão para obter descarga mais estável"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Essa lógica é coerente com o controle por bandas"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança da variável manipulada mais favorável para controlar a interface quando a camada de emulsão se torna muito espessa.",
+      "pergunta": "Camada de emulsão muito espessa passa a dominar a operação do separador que descarrega água para hidrociclones. Nessa condição, qual variável manipulada tende a ser mais favorável para controlar a interface?",
+      "resposta": "Overflow do hidrociclone.",
+      "explicacao": "Com emulsão muito espessa, a variável manipulada mais adequada pode mudar; o texto indica que a estratégia usando o overflow pode ser mais favorável nesse cenário.",
+      "resposta_padrao": "Underflow do hidrociclone.",
+      "por_que_nao": "Embora o underflow seja usado em outra arquitetura, com camada de emulsão muito espessa há indicação de vantagem para estratégia de controle pelo overflow.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Uma arquitetura descrita para esse tipo de sistema manipula a vazão de underflow do hidrociclone para controlar a interface no separador, enquanto outra malha atua no overflow"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a camada de emulsão se torna muito espessa, a variável manipulada mais adequada pode mudar, havendo indicação de que uma estratégia de controle de overflow pode ser mais favorável nesse cenário específico."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Mecanismo de acoplamento entre a malha de interface do separador e a malha de split do hidrociclone.",
+      "pergunta": "Ajustes da malha de interface passam a desestabilizar a descarga para tratamento de água mesmo sem mudança de carga do separador. Qual mecanismo técnico liga essa malha à malha que mantém o split do hidrociclone?",
+      "resposta": "Balanço de massa compartilhado entre underflow e overflow do hidrociclone.",
+      "explicacao": "As duas correntes pertencem ao mesmo equipamento e compartilham a mesma alimentação; alterar uma pela ação de controle muda a condição enfrentada pela outra malha.",
+      "resposta_padrao": "Variações da pressão global do separador.",
+      "por_que_nao": "O acoplamento decisivo descrito ocorre porque underflow e overflow compartilham o balanço de massa da alimentação do mesmo hidrociclone.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a malha da interface água-óleo não deve ser analisada isoladamente"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Como underflow e overflow pertencem ao mesmo equipamento e compartilham o balanço de massa da alimentação, mudanças impostas por uma malha alteram a condição enfrentada pela outra."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Variável que a malha de overflow deve manter para preservar o split do hidrociclone aproximadamente constante.",
+      "pergunta": "Se o objetivo operacional é manter o split do hidrociclone aproximadamente constante, qual variável a malha do overflow deve manter?",
+      "resposta": "Differential Pressure Ratio (DPR).",
+      "explicacao": "Na arquitetura descrita, a malha de overflow atua para manter o DPR; com isso, o split do hidrociclone permanece aproximadamente constante.",
+      "resposta_padrao": "Pressão de alimentação do hidrociclone.",
+      "por_que_nao": "Nesta arquitetura, o split aproximadamente constante é obtido pela manutenção do DPR, não da pressão de alimentação isoladamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "outra malha atua no overflow para manter o Differential Pressure Ratio (DPR) e, com isso, o split aproximadamente constante"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "menor oscilação de vazão e de split no hidrociclone tende a reduzir a variabilidade da eficiência de separação"
+        }
+      ]
+    }
+  ]
+}

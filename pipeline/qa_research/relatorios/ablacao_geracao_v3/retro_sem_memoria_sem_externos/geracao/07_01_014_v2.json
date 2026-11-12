@@ -1,0 +1,87 @@
+{
+  "item": "07_01",
+  "foco": 14,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_01:014:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comissionamento integrado da arquitetura de automação sob condição representativa e controlada antes da admissão de hidrocarboneto.",
+      "pergunta": "Antes da admissão de gás natural num circuito de regeneração já limpo, inertizado, com instrumentos calibrados e comunicação campo-PLC confirmada, quer-se provar lógica, sequência e estabilidade inicial sob aquecimento, além de expor vazamentos por acomodação térmica. Que arranjo de teste deve ser aplicado?",
+      "resposta": "Operação em circuito fechado com nitrogênio.",
+      "explicacao": "Os blocos associam a circulação fechada de N2, antes do primeiro gás, à prova antecipada da lógica, comunicação e ajustes, além da identificação de vazamentos por acomodação térmica em operação quente.",
+      "resposta_padrao": "Loop checks individuais e energização estática dos equipamentos.",
+      "por_que_nao": "Testes estáticos não exercitam o comportamento integrado e dinâmico da malha nem reproduzem a acomodação térmica que revela vazamentos e erros de sequência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a automação resulta da integração de dispositivos de campo, sistemas controladores e supervisão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o que amplia a importância prática da comunicação e do diagnóstico entre camadas."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "A operação em circuito fechado com nitrogênio (N2) foi usada para confirmar desempenho, testar antecipadamente a lógica de regeneração e permitir ajustes antes do primeiro gás."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em altas temperaturas, a circulação de N2 também favoreceu a identificação de vazamentos associados à acomodação térmica"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Diagnóstico de ação direta/reversa invertida a partir da resposta combinada de medição, controlador e elemento final.",
+      "pergunta": "No teste integrado, a leitura de nível coincide com a medição independente. Quando o nível supera o setpoint, a saída do controlador aumenta e a válvula de entrada abre mais; a relação comando-posição da válvula está correta. Que erro específico explica o desvio aumentar?",
+      "resposta": "Ação do controlador invertida.",
+      "explicacao": "Com medição coerente e válvula obedecendo corretamente ao comando, o agravamento do desvio quando o controlador reage indica sentido de atuação configurado ao contrário.",
+      "resposta_padrao": "Ganho excessivo do controlador.",
+      "por_que_nao": "Ganho alto pode provocar oscilação, mas não faz a correção seguir sistematicamente no sentido físico que amplia o erro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Controladores como PLC (Controlador Lógico Programável) e DCS (Sistema Digital de Controle Distribuído) compõem a camada que recebe informações do processo e coordena ações de controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esses dados alimentam os sistemas controladores, que geram ações de controle executadas por atuadores para modificar estados e condições do processo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "sentido incorreto de atuação"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de coerência temporal em sinais compartilhados entre controle, supervisão e camadas superiores de análise.",
+      "pergunta": "Com HMI, controlador e historian usando a mesma base de sinais, os valores continuam plausíveis na tela, mas correlações entre eventos e tendências ficam inconsistentes após atrasos variáveis de comunicação entre camadas. Que requisito do dado foi perdido?",
+      "resposta": "Coerência temporal dos sinais.",
+      "explicacao": "Os blocos dizem que tendências, comparações e inferências só fazem sentido com sinais temporalmente coerentes; atrasos variáveis podem manter valores visíveis, mas sem representar corretamente a dinâmica física.",
+      "resposta_padrao": "Calibração das medições.",
+      "por_que_nao": "Sinais podem estar calibrados e ainda assim induzir conclusões erradas se chegam com desalinhamento temporal entre as camadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sistemas de supervisão e controle usam os dados coletados para monitorar estados e condições do processo"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Esse arranjo depende de sinais temporalmente coerentes e suficientemente confiáveis"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Se a qualidade do dado se deteriora, a supervisão pode continuar exibindo valores sem representar corretamente o estado físico do processo."
+        }
+      ]
+    }
+  ]
+}

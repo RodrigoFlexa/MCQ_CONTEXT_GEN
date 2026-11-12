@@ -1,0 +1,91 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 1,
+  "onda": 0,
+  "id": "01_01:007:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Impacto da acessibilidade e da estratégia de manutenção no parâmetro de mantenabilidade do modelo RAM.",
+      "pergunta": "Bombas do mesmo fabricante usadas em terra serão instaladas offshore, com reparo dependente de janela meteorológica e equipe embarcada. Ao reaproveitar o modelo RAM anterior, qual parâmetro deve ser recalibrado primeiro para não superestimar a disponibilidade?",
+      "resposta": "Tempos de reparo característicos da instalação",
+      "explicacao": "Janelas meteoceanográficas e equipe embarcada mudam acessibilidade e estratégia de manutenção, fatores que alteram diretamente os tempos de reparo; usar os de terra superestima a disponibilidade prevista.",
+      "resposta_padrao": "Taxa de falha do equipamento.",
+      "por_que_nao": "Aqui o principal desvio vem da logística de acesso e reparo, que alonga o tempo até o retorno operacional mais do que a frequência intrínseca de falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação de dependências funcionais no RAM quando a redundância compartilha gargalo de processo.",
+      "pergunta": "Dois trens redundantes têm máquinas duplicadas, mas descarregam no mesmo coletor. Para o RAM não superestimar a disponibilidade da compressão, que característica deve entrar explicitamente na lógica do modelo?",
+      "resposta": "Dependência por descarga compartilhada",
+      "explicacao": "O coletor comum cria um gargalo funcional. Mesmo com máquinas duplicadas, a função não tem caminhos independentes, e o modelo precisa representar essa dependência para não inflar a disponibilidade.",
+      "resposta_padrao": "Paralelo independente entre os dois trens.",
+      "por_que_nao": "Paralelo simples só vale quando a função permanece disponível com falha de um caminho sem bloqueio comum de utilidade, controle ou descarga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "métodos capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor que o sugerido por uma lógica simplificada série-paralelo."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dado operacional necessário para calcular MTTR observado e atualizar a mantenabilidade no modelo RAM.",
+      "pergunta": "A equipe já registra o instante em que a falha começa e quer atualizar o RAM com mantenabilidade observada. Que marco temporal ainda precisa ser registrado para calcular o MTTR real?",
+      "resposta": "Tempo de retorno ao estado operacional",
+      "explicacao": "MTTR observado é o intervalo entre início da falha e recuperação da função. Fechamento administrativo posterior não representa o tempo real de retorno do item ao serviço.",
+      "resposta_padrao": "Encerramento da ordem de serviço.",
+      "por_que_nao": "A ordem pode ser fechada depois da restauração da função; MTTR mede recuperação operacional, não trâmite administrativo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério técnico para selecionar entre estudos RAM com diferentes níveis de sofisticação e representatividade.",
+      "pergunta": "Um estudo usa simulação RAM sofisticada com dados genéricos; outro é mais simples, mas reproduz a lógica funcional, o regime real e dados locais. Que critério técnico deve prevalecer na escolha do estudo para suportar a decisão?",
+      "resposta": "Aderência do modelo ao regime operacional e aos dados locais",
+      "explicacao": "No RAM, a representatividade do resultado vem da coerência entre lógica, regime operacional e dados usados; mais detalhe computacional com parâmetros genéricos pode piorar a previsão.",
+      "resposta_padrao": "Maior sofisticação da simulação.",
+      "por_que_nao": "Ferramenta detalhada com parâmetros inadequados produz previsão menos representativa que um modelo simples calibrado à função e ao contexto operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o valor da modelagem depende menos da sofisticação isolada e mais da aderência entre lógica do modelo, regime operacional e qualidade dos dados usados."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    }
+  ]
+}

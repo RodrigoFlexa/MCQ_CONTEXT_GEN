@@ -1,0 +1,103 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 2,
+  "onda": 2,
+  "id": "01_01:007:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelagem RAM de reserva fria exige representar a falha na demanda do equipamento reserva.",
+      "pergunta": "Reserva fria foi tratada como paralelo perfeito, embora o equipamento reserva só entre quando o ativo cai. Que evento deve ser incluído no modelo para não superestimar a disponibilidade na transferência?",
+      "resposta": "Falha de partida/comutação do reserva.",
+      "explicacao": "Em reserva fria, o equipamento reserva não sofre a mesma carga do ativo, mas pode falhar justamente quando é demandado. A lógica RAM precisa representar esse modo de operação.",
+      "resposta_padrao": "Mesma taxa de falha em serviço do equipamento ativo.",
+      "por_que_nao": "Reserva fria não opera sob a mesma carga; o erro crítico é ignorar a falha na demanda, não igualar desgaste contínuo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mas não elimina falhas em espera nem falhas de partida ou de comutação."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Redundância em RAM não pode ser tratada como paralela independente quando existe dependência comum de utilidade ou controle.",
+      "pergunta": "Dois trens duplicados perdem a função quando falta a mesma utilidade de controle, embora os equipamentos sejam separados. Se o modelo os tratar como paralelos independentes, que dependência técnica estará faltando?",
+      "resposta": "Falha de causa comum.",
+      "explicacao": "A utilidade de controle compartilhada derruba os dois trens pelo mesmo mecanismo. Sem representar essa dependência, o modelo transforma uma redundância limitada em independência fictícia.",
+      "resposta_padrao": "Paralelo independente dos dois trens.",
+      "por_que_nao": "Compartilhar utilidade e controle rompe a independência; a redundância não elimina indisponibilidade por causa comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "capazes de representar dependências e modos de operação."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "redundância não elimina indisponibilidade causada por manutenção, recursos compartilhados, falhas de causa comum, restrições de utilidades ou lógica de intertravamento."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se dois trens compartilham um mesmo gargalo de utilidades, controle, descarga ou acesso de reparo, o ganho real de desempenho pode ser menor"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Atualização de RAM com dados locais deve recalibrar a mantenabilidade quando acessibilidade e logística alongam reparos.",
+      "pergunta": "As frequências setoriais de falha parecem coerentes, mas os reparos locais são mais longos por acessibilidade restrita e logística offshore. Ao atualizar o RAM, qual parâmetro deve ser calibrado com dados próprios primeiro?",
+      "resposta": "MTTR local.",
+      "explicacao": "A diferença observada vem da mantenabilidade. Tempos de reparo variam com acessibilidade, estratégia de manutenção e contexto operacional, então o modelo deve usar o valor realmente observado na instalação.",
+      "resposta_padrao": "Taxa de falha do banco setorial.",
+      "por_que_nao": "Se a divergência aparece na duração do restabelecimento, o parâmetro errado é o tempo de reparo, não a frequência de ocorrência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O modelo deve ser atualizado com dados característicos da unidade analisada, porque tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Bancos setoriais, como OREDA, Well Master e Subsea Master, podem apoiar padronização e comparação, mas não substituem dados da unidade quando o objetivo é representar condições locais."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Histórico de falhas útil para RAM precisa separar causas e modos de falha para priorização técnica.",
+      "pergunta": "Paradas de um sistema crítico foram registradas por anos sob o código genérico “indisponível”, e a análise RAM não separa os maiores contribuintes. Que característica do histórico está faltando?",
+      "resposta": "Distinguibilidade das causas de falha.",
+      "explicacao": "Sem separar causas e modos de falha, o histórico não permite identificar quais mecanismos realmente derrubam o sistema nem priorizar ações corretivas com base técnica.",
+      "resposta_padrao": "Mais anos de histórico.",
+      "por_que_nao": "Volume sem discriminação causal não mostra quais modos de falha mais contribuem para a perda do sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "levantar modos de falha que geram perda ao sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sua coleta deve ser planejada para que as causas sejam distinguíveis e úteis à priorização de ações corretivas."
+        }
+      ]
+    }
+  ]
+}

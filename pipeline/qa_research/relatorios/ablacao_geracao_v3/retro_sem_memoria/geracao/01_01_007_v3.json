@@ -1,0 +1,79 @@
+{
+  "item": "01_01",
+  "foco": 7,
+  "visita": 3,
+  "onda": 4,
+  "id": "01_01:007:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em reserva fria, a análise RAM deve incluir a falha de partida/comutação do equipamento reserva.",
+      "pergunta": "Em arranjo ativo-reserva fria, o reserva permanece parado e não sofre a mesma carga do ativo. Quando o ativo cai e o reserva precisa assumir, que modo de falha ligado à entrada em serviço deve permanecer na lógica RAM?",
+      "resposta": "Falha de partida ou de comutação do reserva.",
+      "explicacao": "Reserva fria reduz exposição ao desgaste em carga, mas não elimina a possibilidade de o equipamento falhar justamente ao partir ou comutar quando é demandado.",
+      "resposta_padrao": "Desgaste por operação contínua do reserva.",
+      "por_que_nao": "Na reserva fria o item não opera sob a mesma carga; o risco decisivo na transferência é não partir ou não comutar.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Em configuração com reserva fria, o item não opera sob a mesma carga do equipamento ativo."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não elimina falhas em espera nem falhas de partida ou de comutação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "modelando depois a lógica funcional por diagramas de blocos ou outros métodos capazes de representar dependências e modos de operação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "MTTR observado deve ser calculado até o retorno ao estado operacional, e não até o fechamento administrativo.",
+      "pergunta": "Na medição do MTTR observado, a falha teve início registrado, mas a ordem de serviço foi encerrada dias depois de o processo voltar a operar. Que marco temporal deve entrar no cálculo?",
+      "resposta": "Tempo de retorno ao estado operacional.",
+      "explicacao": "Para MTTR e disponibilidade observada, a indisponibilidade termina quando a função volta a operar; o fechamento administrativo pode ocorrer depois e distorcer o indicador.",
+      "resposta_padrao": "Data de fechamento da ordem de serviço.",
+      "por_que_nao": "O indicador usa a recuperação operacional do item, não o encerramento administrativo da manutenção.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "registrar o tempo de início da falha e o tempo de retorno ao estado operacional permite calcular MTTR e disponibilidade observada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "histórico de falhas e tempos de reparo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Mudança de regime operacional exige revisar a frequência de falha usada no modelo RAM.",
+      "pergunta": "Mesmo equipamento, mesma equipe de manutenção e mesma acessibilidade, mas uma linha opera com partidas e paradas frequentes e a outra em regime contínuo. Qual parâmetro do modelo RAM não deve ser copiado sem ajuste entre elas?",
+      "resposta": "Frequência de falha.",
+      "explicacao": "Mantidas as condições de reparo, a diferença relevante entre as linhas é o contexto operacional, que altera a ocorrência de falhas a representar no modelo.",
+      "resposta_padrao": "Tempo de reparo.",
+      "por_que_nao": "Com equipe e acessibilidade equivalentes, o MTTR tende a permanecer semelhante; o que muda é a incidência de falhas pelo regime.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "tempos de reparo e frequências de falha variam com arquitetura, acessibilidade, estratégia de manutenção e contexto operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "comparar modos operacionais"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "não substituem dados da unidade quando o objetivo é representar condições locais."
+        }
+      ]
+    }
+  ]
+}

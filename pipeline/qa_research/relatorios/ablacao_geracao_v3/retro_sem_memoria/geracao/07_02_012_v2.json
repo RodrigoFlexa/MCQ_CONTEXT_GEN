@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:012:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Antes de aplicar patch em OT, deve-se validar a compatibilidade funcional com o processo, além de firmware e comunicação.",
+      "pergunta": "Um controlador afetado tem patch disponível; a versão proposta já foi verificada quanto ao firmware instalado e aos links de comunicação. Antes da aplicação em uma malha crítica, que compatibilidade ainda precisa ser validada?",
+      "resposta": "Compatibilidade com as funções de processo.",
+      "explicacao": "Mesmo com firmware e comunicação cobertos, a atualização pode introduzir comportamento não previsto; em controle crítico, ainda é necessário validar a compatibilidade funcional com o processo.",
+      "resposta_padrao": "Executar backup completo antes da atualização.",
+      "por_que_nao": "Backup ajuda no retorno, mas não verifica se o patch preserva a lógica e o comportamento do controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando patch imediato não é viável em legado OT, a medida compensatória preferível é reduzir exposição com isolamento adicional por firewall.",
+      "pergunta": "Controlador legado usa componente vulnerável; o patch ainda não foi qualificado, uma indisponibilidade pela mudança é inaceitável e o acesso remoto do fornecedor seguirá passando pela rede corporativa. Enquanto não houver remediação compatível, que arranjo técnico deve ser adotado para reduzir a exposição?",
+      "resposta": "Isolamento adicional por firewall entre a rede de controle e a corporativa.",
+      "explicacao": "Quando o patch imediato não é viável ou seguro, o texto prioriza medidas compensatórias de redução de exposição; para esse caminho de acesso, o hardening indicado é isolar a rede de controle atrás de firewall.",
+      "resposta_padrao": "Manter apenas a VPN atualizada para o fornecedor.",
+      "por_que_nao": "A VPN reduz exposição, mas não substitui a segmentação; a rede de controle deve ficar atrás de firewall e isolada da corporativa.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indica necessidade de avaliar exposição caso a caso."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "quando patch imediato não é viável ou seguro, medidas compensatórias como redução de exposição e isolamento adicional podem ser preferíveis"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "posicionar redes de controle e dispositivos remotos atrás de firewalls e isolá-los da rede corporativa."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em acesso remoto por VPN, o risco residual continua dependente da integridade do endpoint remoto.",
+      "pergunta": "Fornecedor acessa a rede de controle por VPN atualizada; o túnel, as regras e as configurações do acesso foram revisados. Mesmo assim, que elo técnico ainda pode permitir a exposição do ambiente?",
+      "resposta": "Comprometimento do endpoint remoto.",
+      "explicacao": "A VPN atualizada reduz exposição, mas não elimina o risco. O texto liga a segurança do acesso remoto também à segurança do dispositivo que se conecta ao ambiente de controle.",
+      "resposta_padrao": "Criptografia insuficiente da VPN.",
+      "por_que_nao": "Com o túnel atualizado e revisado, o fator remanescente destacado é a segurança do dispositivo conectado, não o algoritmo da VPN.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações."
+        }
+      ]
+    }
+  ]
+}

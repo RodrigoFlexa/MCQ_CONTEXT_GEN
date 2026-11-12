@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:021:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Camada adequada para normalizar dados de controladores heterogêneos antes de HMI e analytics.",
+      "pergunta": "Controladores de fornecedores diferentes expõem modelos de dados incompatíveis. Sem alterar suas lógicas, a equipe precisa unificar nomenclatura, telas e base comparável para analytics no ponto mais próximo da fonte em que isso ainda seja viável. Em que camada essa normalização deve ocorrer?",
+      "resposta": "Na camada SCADA.",
+      "explicacao": "Quando a padronização não é viável no nível de controle, a normalização deve subir para o SCADA, que ainda está próximo da fonte e atende HMI e comparação entre ativos.",
+      "resposta_padrao": "Na plataforma analítica em nuvem.",
+      "por_que_nao": "Normalizar só na analytics vem tarde demais para padronizar HMI e deixa a inconsistência persistir a jusante da fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Um desafio recorrente no nível de controle é a diversidade de modelos de dados entre fornecedores de controladores."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de contexto de modo operacional para evitar alarmes espúrios em analytics.",
+      "pergunta": "Pressão, vazão e temperatura chegam com unidade confiável e timestamps coerentes, mas o analítico marca recirculação e partida como anomalia. Que informação precisa acompanhar os sinais para tornar o diagnóstico robusto?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "Com unidade e tempo consistentes, o erro restante é semântico-operacional: o mesmo padrão de processo pode ser normal ou anômalo conforme o modo de operação.",
+      "resposta_padrao": "Recalibração dos instrumentos.",
+      "por_que_nao": "Medições podem estar corretas e ainda assim ser mal interpretadas sem o estado operacional que dá significado aos valores.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Relação entre cronologia confiável de eventos e sincronismo temporal entre sistemas digitais.",
+      "pergunta": "Na reconstrução de uma sequência de trip, comando, pressão e posição de válvula aparecem em ordem diferente entre sistemas, embora cada registro isolado pareça correto. O que deve ser verificado primeiro para confiar na cronologia?",
+      "resposta": "Qualidade de sincronismo dos relógios.",
+      "explicacao": "Quando o problema está na ordem relativa entre fontes e não no valor individual de cada sinal, o ponto decisivo é o alinhamento temporal entre os sistemas.",
+      "resposta_padrao": "Taxa de amostragem mais alta.",
+      "por_que_nao": "Amostragem maior melhora resolução local, mas não corrige relógios desalinhados nem a ordem aparente entre sistemas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito do acoplamento com o controle sobre a tolerância à latência em aplicações digitais.",
+      "pergunta": "Uma aplicação que passou de apoio à decisão para correções automáticas frequentes emite comandos ainda úteis no servidor, mas eles alcançam o controle quando a condição medida já mudou. Que limitação de infraestrutura esse sintoma indica?",
+      "resposta": "Latência de comunicação.",
+      "explicacao": "Ao sair de suporte à decisão para ajuste frequente, a aplicação passa a tolerar muito menos atraso; comandos úteis na origem chegam obsoletos no controle.",
+      "resposta_padrao": "Maior capacidade de processamento do servidor.",
+      "por_que_nao": "Se o comando já sai útil do servidor, o limitante não é cálculo e sim o tempo de trânsito até o controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ]
+    }
+  ]
+}

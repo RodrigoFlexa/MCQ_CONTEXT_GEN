@@ -1,0 +1,103 @@
+{
+  "item": "07_01",
+  "foco": 10,
+  "visita": 1,
+  "onda": 0,
+  "id": "07_01:010:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Sinais de stiction na malha, sem modelo detalhado disponível, indicam compensação por pulsos como mitigação temporária.",
+      "pergunta": "Na malha de pressão, a saída do controlador varia continuamente, mas o obturador só se move em saltos; não há modelo detalhado da válvula e a produção precisa seguir até a parada. Que técnica deve ser aplicada ao sinal de comando?",
+      "resposta": "Compensação de atrito por pulsos",
+      "explicacao": "O método descrito adiciona pulsos ao sinal de controle para fornecer energia extra quando o comando usual não consegue iniciar o movimento, sem exigir modelagem detalhada.",
+      "resposta_padrao": "Retunagem do PID",
+      "por_que_nao": "A sintonia altera a dinâmica do controlador, mas não fornece a energia de ruptura necessária para vencer o atrito estático no atuador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "adicionar pulsos ao sinal de controle para vencer o atrito no atuador"
+        },
+        {
+          "bloco": "F",
+          "trecho": "implementação e parametrização mais simples do que métodos que exigem modelagem detalhada"
+        },
+        {
+          "bloco": "F",
+          "trecho": "pode sustentar a operação até a correção mecânica"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A parametrização da compensação por pulsos deve ser aceita pelo limite formal de erro da malha, não apenas pela redução de movimento.",
+      "pergunta": "Com a compensação ativa, duas parametrizações destravam a válvula; a escolhida deve reduzir curso acumulado sem violar o desempenho exigido da malha. Que critério formal define a parametrização aceitável?",
+      "resposta": "Especificação máxima de erro",
+      "explicacao": "O método citado escolhe os parâmetros com base em dados operacionais e em uma especificação máxima de erro, para conter a movimentação sem perder desempenho relevante.",
+      "resposta_padrao": "Menor curso acumulado da válvula",
+      "por_que_nao": "Reduzir movimento é objetivo de integridade, mas a escolha só é válida se o erro da malha permanecer dentro do limite especificado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pulsos de amplitude variável para reduzir a movimentação sem perda significativa de desempenho"
+        },
+        {
+          "bloco": "F",
+          "trecho": "escolhendo parâmetros com base em dados de operação e em uma especificação máxima de erro"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "O diagnóstico não invasivo de atrito em válvula em serviço usa sinais obtidos no posicionador inteligente.",
+      "pergunta": "Sem parar o processo nem abrir a válvula, a equipe quer confirmar que o comportamento em saltos vem do conjunto da válvula antes de manter a solução temporária. Que acessório deve fornecer os sinais para esse diagnóstico?",
+      "resposta": "Posicionador inteligente",
+      "explicacao": "O arranjo descrito recebe sinais medidos na própria válvula por um posicionador inteligente instalado junto ao conjunto, permitindo diagnóstico durante a operação normal.",
+      "resposta_padrao": "Transmissor da variável de processo",
+      "por_que_nao": "O transmissor mostra o efeito no processo; o posicionador fornece sinais da válvula, como pressão do atuador e deslocamento do obturador.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "pode sustentar a operação até a correção mecânica"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os sinais são recebidos de um posicionador inteligente instalado junto à válvula"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "pressão de ar do atuador e deslocamento do obturador"
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "A inferência de sintomas de válvula a partir de sinais do posicionador pode ser feita por lógica fuzzy.",
+      "pergunta": "Que técnica baseada em regras de especialistas converte sinais do posicionador da válvula em indicações de atrito, vazamento e outros sintomas?",
+      "resposta": "Lógica fuzzy",
+      "explicacao": "A técnica citada interpreta as entradas medidas na válvula por regras escritas por especialistas e as transforma em indicações de estado e sintomas.",
+      "resposta_padrao": "Análise de tendência da variável de processo",
+      "por_que_nao": "Tendências do processo não transformam medições locais da válvula em classes diagnósticas por regras de inferência.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "com base em dados de operação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "regras de lógica fuzzy"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "indicações de estado e sintomas, incluindo falha, vazamento, atrito"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "item": "07_01",
+  "foco": 6,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_01:006:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Diferença entre pressão de suprimento e pressão de carga em atuador pneumático com posicionador.",
+      "pergunta": "Com posicionador instalado, a alimentação pneumática do conjunto está normal, mas o curso segue insuficiente sob carga. Para separar falta de ar disponível de limitação na pressão que o atuador recebe, que pressão deve ser medida no diagnóstico?",
+      "resposta": "Pressão de carga do atuador.",
+      "explicacao": "Com posicionador, a pressão na alimentação indica apenas o ar disponível. A força efetiva no diafragma ou pistão depende da pressão de carga aplicada ao atuador.",
+      "resposta_padrao": "Pressão de suprimento.",
+      "por_que_nao": "A pressão de suprimento é só a disponível na alimentação; com posicionador, ela pode não ser a que está atuando no diafragma ou pistão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a pressão de carga é a pressão efetivamente aplicada ao diafragma ou pistão para deslocá-lo."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já a pressão de suprimento é a pressão disponível na porta de alimentação do dispositivo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação do posicionador para melhorar seguimento de posição sob variação de forças de processo e não linearidades.",
+      "pergunta": "Sob variação do diferencial de pressão no obturador, uma válvula pneumática comandada diretamente pelo sinal do controlador perde repetibilidade nas posições intermediárias, embora em bancada o atuador faça o curso completo e não haja indício de folga ou stiction anormal. Que dispositivo deve ser adicionado?",
+      "resposta": "Posicionador.",
+      "explicacao": "Quando o sinal vai direto ao atuador, a resposta pode variar com as forças de processo. O posicionador ajusta a pressão ao atuador para levar a haste à posição requerida.",
+      "resposta_padrao": "Aumentar o ganho do controlador.",
+      "por_que_nao": "Ganho só altera a agressividade do comando; não corrige localmente a posição modulando a pressão entregue ao atuador frente às forças de processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O posicionador ajusta a pressão entregue ao atuador para levar a haste ou o obturador à posição requerida pelo comando."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Na prática, o posicionador pode melhorar a capacidade de vencer forças de processo e não linearidades"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Reconhecimento do padrão stick-slip de stiction pela relação entre comando, pressão de saída do posicionador e movimento da haste.",
+      "pergunta": "O comando do controlador e a pressão de saída do posicionador sobem gradualmente, a haste fica imóvel e depois muda de posição de uma vez, repetindo o ciclo. Que mecanismo no conjunto válvula-atuador explica esse padrão?",
+      "resposta": "Stiction.",
+      "explicacao": "O atrito estático mantém a válvula parada até a força disponível superar um limiar. A liberação produz salto de posição e pode sustentar ciclos limite.",
+      "resposta_padrao": "Descalibração do posicionador.",
+      "por_que_nao": "Descalibração tende a produzir erro ou offset de posição; permanência seguida de salto após acúmulo de força caracteriza atrito estático.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Stiction é o comportamento associado ao atrito estático que mantém a válvula parada até que a força de atuação vença a resistência ao movimento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O resultado típico é permanência temporária em uma posição seguida de deslocamento abrupto."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma mesma variação do sinal do controlador pode produzir respostas diferentes conforme existam ou não posicionador, folgas mecânicas, atrito, limitação de ar ou problemas no próprio atuador."
+        }
+      ]
+    }
+  ]
+}

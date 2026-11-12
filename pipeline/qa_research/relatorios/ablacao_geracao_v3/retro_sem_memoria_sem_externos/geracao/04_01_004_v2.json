@@ -1,0 +1,87 @@
+{
+  "item": "04_01",
+  "foco": 4,
+  "visita": 2,
+  "onda": 3,
+  "id": "04_01:004:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Atualização da rigidez à flexão quando o perfil térmico é refinado na análise do riser.",
+      "pergunta": "Com ondas, correntes e movimentos do casco mantidos no modelo, o perfil térmico do riser foi refinado antes de recalcular a resposta. Que propriedade da tubulação deve ser reestimada nessa atualização?",
+      "resposta": "Rigidez à flexão da tubulação.",
+      "explicacao": "Os blocos ligam explicitamente a temperatura à estimativa da rigidez à flexão; ao atualizar essa propriedade, muda a resposta calculada do riser.",
+      "resposta_padrao": "Módulo de elasticidade do material.",
+      "por_que_nao": "O ponto decisivo citado é a rigidez à flexão efetiva usada no modelo do riser, não o módulo isolado do material.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a temperatura é relevante porque entra na estimativa da rigidez à flexão da tubulação e, com isso, muda a resposta calculada do riser."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a temperatura é usada na estimativa de rigidez à flexão para cálculos mais realistas da resposta do riser."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do stress-joint como transição de rigidez na conexão superior de linha rígida.",
+      "pergunta": "Na conexão superior de um riser rígido, a solução precisa reduzir a concentração de curvatura com transição progressiva de rigidez junto ao ponto de conexão. Que elemento deve ser adotado?",
+      "resposta": "Stress-joint.",
+      "explicacao": "Para linha rígida, [A2] associa a transição progressiva de rigidez ao stress-joint; [F] trata esse tipo de recurso como parte da configuração estrutural no hang-off.",
+      "resposta_padrao": "Bend stiffener.",
+      "por_que_nao": "Bend stiffener é a solução indicada para riser flexível, não para linha rígida.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Para linha rígida, o stress-joint fornece transição progressiva de rigidez."
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem ser combinados recursos como estrias supressoras de VIV, Vortex Induced Vibration, no trecho superior e elementos de acomodação de rotação e de transição de rigidez no hang-off."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sequência de assentamento do conector no pull-in de SCR para transferência de carga ao receptáculo.",
+      "pergunta": "Durante o pull-in de um SCR, o conector já foi içado além do receptáculo e a carga ainda permanece no sistema de tração. Qual manobra específica transfere essa carga ao suporte definitivo?",
+      "resposta": "Descida para assentamento do conector no receptáculo.",
+      "explicacao": "No arranjo descrito em [A2], o conector é primeiro içado além do receptáculo e depois descido para assentamento; só então a carga do SCR passa ao receptáculo.",
+      "resposta_padrao": "Aumentar a tração no cabo de pull-in.",
+      "por_que_nao": "Mais tração mantém a carga no sistema de pull-in; a transferência ocorre quando o conector assenta no receptáculo.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "o conector é içado até ultrapassar o receptáculo e depois descido para assentamento, de modo que o receptáculo passe a sustentar a carga do SCR."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a posição de hang-off faz parte da configuração estrutural analisada"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Aplicação de estrias supressoras para mitigar oscilações induzidas por corrente no trecho superior do SCR.",
+      "pergunta": "Correntes marinhas estão excitando oscilações transversais repetitivas no trecho superior de um SCR, enquanto o hang-off já possui solução para rotação e transição de rigidez. Que recurso deve ser acrescentado nesse trecho?",
+      "resposta": "Estrias supressoras de VIV.",
+      "explicacao": "[F] cita a combinação, no mesmo arranjo, de estrias supressoras no trecho superior com elementos de rotação e transição de rigidez no hang-off.",
+      "resposta_padrao": "Stress-joint.",
+      "por_que_nao": "Stress-joint faz a transição de rigidez junto à conexão; não mitiga oscilações por desprendimento alternado de vórtices ao longo do trecho superior.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "podem ser combinados recursos como estrias supressoras de VIV, Vortex Induced Vibration, no trecho superior e elementos de acomodação de rotação e de transição de rigidez no hang-off."
+        }
+      ]
+    }
+  ]
+}

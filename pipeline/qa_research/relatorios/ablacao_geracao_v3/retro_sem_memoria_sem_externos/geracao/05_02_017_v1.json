@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:017:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Segregação real das cargas entre ramos redundantes como condição para a redundância funcional.",
+      "pergunta": "Mudanças de cabeamento foram acumuladas por anos; os dois UPS passaram nos testes individuais de autonomia e não há alarme. Que verificação de configuração ainda falta para confirmar a redundância das estações de controle?",
+      "resposta": "Segregação correta entre ramos redundantes.",
+      "explicacao": "Autonomia e ausência de alarme mostram fontes saudáveis, mas não provam independência funcional. A redundância só se confirma se as cargas redundantes estiverem distribuídas corretamente entre ramos independentes.",
+      "resposta_padrao": "Repetir o teste de autonomia dos UPS.",
+      "por_que_nao": "Fontes capazes e saudáveis ainda podem alimentar lados redundantes pelo mesmo ramo; sem segregação, uma falha simples derruba ambos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Papel do bypass do UPS na continuidade da carga quando o inversor falha com a entrada disponível.",
+      "pergunta": "Com a entrada do UPS disponível e o inversor como caminho normal, que caminho precisa estar disponível para que a carga permaneça alimentada se o inversor falhar?",
+      "resposta": "Bypass do UPS.",
+      "explicacao": "Se o inversor falha, o caminho normal de conversão deixa de sustentar a saída. Com alimentação de entrada presente, a continuidade depende da transferência pelo bypass.",
+      "resposta_padrao": "Baterias do UPS.",
+      "por_que_nao": "Bateria cobre perda da fonte de entrada; falha do inversor exige um caminho alternativo de alimentação em CA.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Dependência da recomposição elétrica da alimentação por bateria dos circuitos de comando e controle.",
+      "pergunta": "No black start, existe fonte potencialmente disponível, mas comandos e CLPs essenciais não energizam após o blackout. Que disponibilidade elétrica deve ser checada para permitir a recomposição?",
+      "resposta": "Alimentação por bateria dos comandos e CLPs essenciais.",
+      "explicacao": "Mesmo com fonte potencialmente disponível, a recomposição não avança sem energia de controle para comandos e CLPs. A indisponibilidade da alimentação por bateria bloqueia a sequência.",
+      "resposta_padrao": "Disponibilidade da fonte geradora.",
+      "por_que_nao": "Fonte pronta não recompõe sozinha; sem energia de controle, não há comando, lógica nem sequência de partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Cargas associadas a comando de geradores, CLP, estações de supervisão, comunicação crítica, atuação de válvulas, sistemas de shutdown de emergência e mitigação tendem a exigir maior continuidade ou maior independência de alimentação."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da coerência entre lógicas de reboot e de trip na retomada de alimentação de cargas essenciais.",
+      "pergunta": "Na volta da alimentação, cargas essenciais sob UPS energizam, entram em trip e reiniciam em ciclo, sem perda sustentada de tensão. Que coerência específica o monitoramento deve verificar?",
+      "resposta": "Coerência entre as lógicas de reboot e de trip.",
+      "explicacao": "Com a tensão mantida, o problema não é ausência de suprimento, mas incompatibilidade entre a sequência de reinício e as permissivas ou trips que derrubam a carga novamente.",
+      "resposta_padrao": "Saúde do retificador.",
+      "por_que_nao": "Se a tensão se mantém, o estágio de retificação não explica o ciclo energiza-desarma; o indício aponta para encadeamento lógico no reinício.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ]
+    }
+  ]
+}

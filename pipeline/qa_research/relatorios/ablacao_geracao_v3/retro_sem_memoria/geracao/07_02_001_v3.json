@@ -1,0 +1,71 @@
+{
+  "item": "07_02",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_02:001:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Modelos de dados heterogêneos entre controladores deslocam a integração para a camada supervisória.",
+      "pergunta": "Controladores de fornecedores diferentes expõem dados em modelos incompatíveis, e a padronização em cada controlador ficou limitada. Para qual camada a integração dos dados tende a migrar?",
+      "resposta": "Camada supervisória.",
+      "explicacao": "Com modelos de dados distintos, a padronização próxima à fonte fica limitada; por isso a integração tende a sair dos controladores e subir para a supervisão.",
+      "resposta_padrao": "Camada de controle, junto à fonte.",
+      "por_que_nao": "A incompatibilidade entre modelos de dados limita a padronização nos próprios controladores e desloca a integração para a supervisão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando fornecedores diferentes usam modelos de dados distintos, a padronização próxima à fonte fica limitada e a integração frequentemente migra para a camada supervisória."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a camada supervisória costuma reunir aplicações de SCADA (Supervisory Control and Data Acquisition), historiadores, gestão de alarmes e interfaces homem-máquina."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arquiteturas híbridas com envio simultâneo para nuvem e SCADA criam pontos de interconexão que exigem tratamento arquitetural específico.",
+      "pergunta": "Controladores de borda publicam dados em broker MQTT na nuvem e, ao mesmo tempo, alimentam o SCADA local em tempo real. Que tipo de ponto da arquitetura passa a merecer tratamento arquitetural específico?",
+      "resposta": "Ponto de interconexão.",
+      "explicacao": "Nesse arranjo híbrido, a troca de dados entre controle, supervisão e consumidores externos se concentra em interconexões, que por isso exigem tratamento arquitetural específico.",
+      "resposta_padrao": "Broker MQTT em nuvem.",
+      "por_que_nao": "O tratamento se concentra onde as trocas entre controle, supervisão e consumidores externos convergem; o broker é apenas um dos destinos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em arquiteturas híbridas, controladores de borda podem enviar dados para broker MQTT em nuvem e, ao mesmo tempo, alimentar SCADA local em tempo real."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso cria pontos de interconexão que merecem tratamento arquitetural específico, porque concentram troca de dados entre controladores, supervisão e consumidores externos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Cada nova interface na fronteira IT/OT deve ter o fluxo justificado por sua finalidade operacional.",
+      "pergunta": "Uma nova interface vai ligar controle local, telemetria e software analítico externo. Qual critério deve justificar tecnicamente cada fluxo autorizado a atravessar a fronteira?",
+      "resposta": "Finalidade operacional do tráfego.",
+      "explicacao": "Ao surgir nova interface, o fluxo só deve atravessar a fronteira quando houver função operacional explícita; esse é o critério para definir o tráfego permitido.",
+      "resposta_padrao": "Somente protocolo e portas liberadas.",
+      "por_que_nao": "Na fronteira, o fluxo precisa ter necessidade operacional explícita; identificar o canal, sozinho, não define se ele deve existir.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Cada nova interface aumenta a necessidade de definir claramente que tráfego deve cruzar a fronteira e com qual finalidade operacional."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A segmentação existe para reduzir caminhos de propagação entre domínios com funções e consequências diferentes."
+        }
+      ]
+    }
+  ]
+}

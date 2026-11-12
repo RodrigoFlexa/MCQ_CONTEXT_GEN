@@ -1,0 +1,71 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_08:001:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de simulação dinâmica para avaliar risco de surge em paradas de sistemas de compressão.",
+      "pergunta": "Durante a parada de emergência de um trem de compressão com reciclo antisurge, volumes interligados e fechamento sequenciado de válvulas, que tipo de estudo deve ser usado para verificar risco de surge?",
+      "resposta": "Simulação dinâmica do processo.",
+      "explicacao": "O risco de surge nessa condição depende da evolução temporal do evento, da atuação dos controles e do acoplamento entre equipamentos, o que não é captado adequadamente por abordagem estática.",
+      "resposta_padrao": "Análise estática das cargas de alívio.",
+      "por_que_nao": "Cargas estáticas podem servir para capacidade, mas não reproduzem a trajetória operacional nem a resposta do antisurge durante a parada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação correta do ciclo de abertura e fechamento da PSV em simulação dinâmica com múltiplas válvulas.",
+      "pergunta": "Ao simular duas PSVs em paralelo com pressões de ajuste diferentes, qual pressão da válvula, além da de abertura, precisa ser representada para avaliar a estabilidade de abertura de forma realista?",
+      "resposta": "Pressão de reassentamento da PSV.",
+      "explicacao": "A estabilidade de abertura depende do comportamento real entre abrir e reassentar; usar só a pressão de abertura simplifica demais a dinâmica da válvula.",
+      "resposta_padrao": "Capacidade nominal da PSV na pressão de ajuste.",
+      "por_que_nao": "A capacidade é necessária para dimensionamento, mas não define o ciclo de abrir e reassentar que governa a estabilidade dinâmica.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula"
+        },
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Necessidade de representar volumes comunicantes em modelos dinâmicos de alívio com equipamentos interligados.",
+      "pergunta": "Dois vasos ligados por linha normalmente aberta aliviam para o mesmo header num ESD. Para que o pico de vazão calculado seja confiável em um modelo dinâmico, que aspecto do arranjo deve ser representado explicitamente?",
+      "resposta": "Volumes comunicantes entre os vasos.",
+      "explicacao": "A troca de inventário e a equalização de pressão entre recipientes conectados alteram a evolução do transiente e, portanto, o pico de vazão no sistema receptor.",
+      "resposta_padrao": "Apenas a capacidade total das PSVs.",
+      "por_que_nao": "A soma de capacidades não captura a redistribuição de massa e pressão entre volumes conectados durante o transiente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "da forma de representar dispositivos, volumes comunicantes e controles"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo"
+        }
+      ]
+    }
+  ]
+}

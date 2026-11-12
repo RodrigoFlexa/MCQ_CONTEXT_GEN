@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:017:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Presença de tensão no UPS não comprova retaguarda; a condição do banco de baterias precisa ser verificada.",
+      "pergunta": "Com a alimentação de entrada normal, o UPS entrega 120 Vca estáveis e sem alarme. No teste de perda da rede, a saída cai imediatamente. Que condição específica faltou comprovar?",
+      "resposta": "Condição das baterias.",
+      "explicacao": "Saída normal com entrada presente não demonstra autonomia. A queda imediata quando a rede some indica ausência de sustentação pelo banco, cuja condição deve ser monitorada.",
+      "resposta_padrao": "Presença de tensão na saída do UPS.",
+      "por_que_nao": "A saída pode permanecer normal enquanto há entrada; isso não prova capacidade de retaguarda na perda da fonte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias"
+        },
+        {
+          "bloco": "F",
+          "trecho": "indisponibilidade da alimentação por bateria podem impedir a recomposição"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância funcional só existe com segregação real e distribuição correta das cargas entre ramos independentes.",
+      "pergunta": "Perdido o barramento A, duas estações que deveriam ser redundantes saem juntas, embora os dois UPS tenham capacidade e tensão normais. Que verificação específica faltou no monitoramento periódico?",
+      "resposta": "Distribuição correta das cargas entre ramos redundantes.",
+      "explicacao": "Capacidade e tensão disponíveis não evitam falha comum se as cargas redundantes foram concentradas no mesmo ramo. O monitoramento deve conferir a segregação real da distribuição.",
+      "resposta_padrao": "Capacidade nominal dos UPS.",
+      "por_que_nao": "Duas fontes capazes não formam redundância quando as cargas redundantes compartilham o mesmo barramento ou UPS.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Falhas na lógica de reboot/trip podem bloquear a recomposição após blackout mesmo com alimentação essencial disponível.",
+      "pergunta": "Depois do blackout, a fonte CA e os barramentos essenciais estabilizam, mas CLP e estações retornam e caem repetidamente, impedindo a recomposição. Qual falha primária explica esse comportamento?",
+      "resposta": "Incoerência das lógicas de reboot e de trip.",
+      "explicacao": "Com alimentação essencial restabelecida, a causa principal deixa de ser falta de energia. Falhas nessas lógicas podem impedir a recomposição mesmo com fonte disponível.",
+      "resposta_padrao": "Indisponibilidade da alimentação por bateria.",
+      "por_que_nao": "Se os barramentos essenciais já estabilizaram, a indisponibilidade elétrica não é a causa dominante do ciclo de retorno e desligamento.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    }
+  ]
+}

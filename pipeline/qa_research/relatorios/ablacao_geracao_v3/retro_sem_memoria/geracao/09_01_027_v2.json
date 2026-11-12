@@ -1,0 +1,79 @@
+{
+  "item": "09_01",
+  "foco": 27,
+  "visita": 2,
+  "onda": 3,
+  "id": "09_01:027:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação explícita do ativo de reabastecimento intermediário em simulações logísticas offshore.",
+      "pergunta": "Uma alternativa de programação só é viável se o apoio reabasteça entre missões sem regressar ao porto. Para testar essa política de forma realista, que ativo deve ser representado explicitamente no modelo?",
+      "resposta": "Navio-tanque de reabastecimento.",
+      "explicacao": "O bloco foco atribui utilidade ao modelo por representar, além de porto e unidades marítimas, os navios-tanque de reabastecimento; sem esse ativo, a política com abastecimento intermediário não é reproduzida.",
+      "resposta_padrao": "Maior capacidade de tanque do PSV.",
+      "por_que_nao": "Mais combustível a bordo amplia autonomia, mas não representa a fonte externa nem sua disponibilidade na programação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "representar porto, unidades marítimas, navios-tanque de reabastecimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "necessidade de reabastecimento intermediário"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Primazia do indicador de ruptura de diesel na avaliação de políticas logísticas com frota enxuta.",
+      "pergunta": "Depois de enxugar a frota, o percentual de viagens no prazo segue bom, mas os tanques de diesel chegam repetidamente à faixa em que qualquer espera adicional interromperia a continuidade operacional. Entre os indicadores de desempenho, qual passa a ser decisivo?",
+      "resposta": "Stockout de diesel.",
+      "explicacao": "O acompanhamento deve ler os indicadores em conjunto; menor frota e bom prazo não validam a política quando a autonomia de diesel se aproxima repetidamente de ruptura.",
+      "resposta_padrao": "Atendimento no prazo.",
+      "por_que_nao": "Prazos médios podem permanecer bons enquanto o insumo crítico entra em zona de ruptura, comprometendo a continuidade operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "indicadores tecnicamente úteis incluem atendimento no prazo, atrasos, stockout de insumos críticos"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Uma política pode reduzir consumo ou frota contratada e ainda assim ser inadequada se aumentar ruptura de suprimento"
+        },
+        {
+          "bloco": "F",
+          "trecho": "baixo stockout de diesel"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Necessidade de representar a sequência de atendimento para tornar executável a solução otimizada de estiva.",
+      "pergunta": "Num plano otimizado, há espaço de pega para todos os volumes, mas a carga do primeiro destino ficou estibada atrás da do último e só sairia após remanejamento no convés. Que restrição operacional não foi respeitada?",
+      "resposta": "Sequência de atendimento.",
+      "explicacao": "Se a primeira entrega só sai após remanejamento de volumes de destinos posteriores, a ordem de descarga não foi respeitada; o plano otimizado deixa de ser executável.",
+      "resposta_padrao": "Acessibilidade para içamento.",
+      "por_que_nao": "A pega existe; o problema técnico é a ordem de descarga compatível com a rota planejada.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "comparar alternativas antes da aplicação operacional"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Arrumar a carga exige considerar segregação, amarração, sequência de atendimento e acesso para içamento."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A solução programada deve permanecer executável nas condições reais da embarcação e do FPSO."
+        }
+      ]
+    }
+  ]
+}

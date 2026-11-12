@@ -1,0 +1,67 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_12:012:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso da realimentação de posição para detectar degradação dinâmica de válvula anti-surge durante transientes",
+      "pergunta": "Durante perturbações rápidas, a válvula anti-surge parece atuar pior do que o controlador indica. Que recurso do sistema de controle permite evidenciar degradação, atraso ou histerese desse elemento final em operação?",
+      "resposta": "Realimentação de posição da válvula anti-surge.",
+      "explicacao": "Sem a posição real no sistema de controle, o comando pode parecer correto mesmo com atraso, histerese ou falha de atuação da válvula, o que compromete a coordenação com a malha de capacidade.",
+      "resposta_padrao": "Tendência de pressão de descarga.",
+      "por_que_nao": "A pressão mostra a resposta do processo, mas não revela se a válvula realmente se moveu como comandado nem se houve atraso ou histerese.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula, o que ajuda a detectar degradação, atraso, histerese ou falha de atuação."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de controle de repartição de carga em trens paralelos para evitar sobrecarga localizada",
+      "pergunta": "Dois trens centrífugos paralelos, ambos sem limitação mecânica, atendem a vazão total, mas nas transferências um se aproxima do surge enquanto o outro sobra capacidade. Que função de controle deve corrigir esse desequilíbrio?",
+      "resposta": "Controle de repartição de carga entre os trens.",
+      "explicacao": "Nos trens paralelos, o problema é a distribuição inadequada da carga. A função correta redistribui a demanda entre máquinas e evita sobrecarga localizada durante partidas, paradas e transferências.",
+      "resposta_padrao": "Abrir mais a recirculação do trem crítico.",
+      "por_que_nao": "A recirculação só alivia o trem já desequilibrado e sacrifica capacidade; ela não corrige a divisão de carga que causa a aproximação ao surge.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia: o sistema de controle precisa repartir carga, evitar sobrecarga localizada e manter partidas, paradas e transferências de trem com segurança e confiabilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Acoplamento entre malha de capacidade e proteção anti-surge pelo ponto de operação comum do compressor",
+      "pergunta": "Depois de retunar a malha de capacidade, a frequência de intervenção do anti-surge mudou sem qualquer alteração na proteção. Que elo técnico entre as duas malhas explica esse efeito?",
+      "resposta": "Mesmo ponto de operação do compressor.",
+      "explicacao": "A malha de capacidade e a proteção anti-surge influenciam o mesmo ponto de operação da máquina. Alterar a primeira muda a condição em que a segunda precisa atuar.",
+      "resposta_padrao": "Uso das mesmas medições de pressão.",
+      "por_que_nao": "O acoplamento permanece mesmo com sinais diferentes; ele nasce do fato de as duas malhas deslocarem o mesmo ponto de operação da máquina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa interação existe porque ambas as malhas atuam sobre a mesma máquina e influenciam o ponto de operação:"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Por isso, o ajuste do controle de capacidade não deve ser tratado como independente da proteção."
+        }
+      ]
+    }
+  ]
+}

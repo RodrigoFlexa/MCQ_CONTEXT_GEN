@@ -1,0 +1,79 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:015:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Distinção entre comprometimento do controle e falha da alimentação ininterrupta por sinais físicos e perda simultânea de sistemas.",
+      "pergunta": "DCS, shutdown de emergência e mitigação de emergência ficam indisponíveis juntos; localmente há fumaça, arco elétrico e atuação de proteções na seção inversora. Qual causa primária explica melhor o quadro?",
+      "resposta": "Falha da UPS na infraestrutura de alimentação ininterrupta.",
+      "explicacao": "Sinais elétricos locais na inversora, combinados com perda simultânea de sistemas alimentados em comum, caracterizam falha do suporte de energia, não alteração indevida do controle.",
+      "resposta_padrao": "Comprometimento do sistema de controle industrial.",
+      "por_que_nao": "Comprometimento do controle se evidencia por alterações não autorizadas de lógica, setpoints ou comandos; fumaça, arco e perda simultânea apontam para falha elétrica comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sinais físicos locais, como fumaça, arco elétrico e atuação de proteções, associados à perda simultânea de sistemas que compartilham a mesma alimentação, apontam para falha da infraestrutura de energia"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "alteração de lógica, de setpoints ou comandos não autorizados é que caracterizaria comprometimento do controle"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Sequência segura de resposta a falha elétrica em alimentação ininterrupta sem perder cargas críticas.",
+      "pergunta": "Diante de fumaça e arco elétrico na seção inversora da alimentação ininterrupta de cargas críticas, que etapa deve anteceder a transferência dessas cargas para bypass seguro?",
+      "resposta": "Isolamento seguro da parte com falha e bloqueio das fontes.",
+      "explicacao": "Antes do bypass, a seção defeituosa precisa ser segregada e desenergizada; só então as cargas críticas podem ser mantidas alimentadas sem sustentar o defeito energizado.",
+      "resposta_padrao": "Desenergização completa da alimentação ininterrupta.",
+      "por_que_nao": "A ação correta retira apenas a parte com falha e bloqueia suas fontes; desligar tudo elimina também a alimentação das cargas críticas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "nesse caso, a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contenção preferencial em OT para controladores legados vulneráveis sem correção validada e sem janela segura de parada.",
+      "pergunta": "Uma vulnerabilidade em pilha TCP/IP embarcada foi confirmada em controladores legados críticos, sem correção validada pelo fornecedor e sem janela segura para parada. Que contenção de rede deve prevalecer para reduzir a exposição?",
+      "resposta": "Isolamento de rede com restrição de conectividade.",
+      "explicacao": "Sem patch aplicável e com risco de indisponibilidade, a contenção em OT deve reduzir a superfície de ataque preservando funções essenciais de controle e proteção.",
+      "resposta_padrao": "Aplicação imediata de patch ou atualização.",
+      "por_que_nao": "Em sistemas embarcados ou legados, atualização imediata pode não estar disponível ou comprometer a disponibilidade; o caminho técnico é isolar e restringir conectividade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o foco precisa migrar de análise detalhada do evento para preservação imediata das funções críticas e do estado seguro da planta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ]
+    }
+  ]
+}

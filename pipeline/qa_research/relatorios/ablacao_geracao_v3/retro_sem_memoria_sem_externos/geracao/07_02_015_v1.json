@@ -1,0 +1,75 @@
+{
+  "item": "07_02",
+  "foco": 15,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:015:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Reconhecimento de modo de falha comum entre barreiras distintas que compartilham a mesma UPS.",
+      "pergunta": "Na análise de barreiras, como se chama a relação em que controle, ESD e mitigação dependem da mesma UPS e podem falhar pela mesma causa?",
+      "resposta": "Modo de falha comum.",
+      "explicacao": "Quando barreiras distintas compartilham a mesma alimentação ininterrupta, uma única falha da UPS pode indisponibilizá-las simultaneamente.",
+      "resposta_padrao": "Ponto único de falha.",
+      "por_que_nao": "Ponto único de falha descreve o componente vulnerável; aqui o essencial é a mesma causa derrubar barreiras diferentes ao mesmo tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "falhas na infraestrutura de alimentação ininterrupta podem retirar energia de sistemas de controle industrial, sistemas de shutdown de emergência e sistemas de mitigação de emergência"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a UPS torna-se, assim, um modo de falha comum para barreiras distintas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso do bypass seguro da UPS para manter cargas críticas alimentadas durante falha na seção inversora.",
+      "pergunta": "Fumaça e arco elétrico surgem na seção inversora da UPS que alimenta cargas críticas, e o bypass está disponível. Que caminho de alimentação deve ser selecionado enquanto a parte com falha é isolada?",
+      "resposta": "Bypass seguro da UPS.",
+      "explicacao": "Com defeito físico no inversor, o bypass seguro mantém energizadas as cargas críticas durante o isolamento e a inspeção do dano.",
+      "resposta_padrao": "Saída normal do inversor da UPS.",
+      "por_que_nao": "O inversor é justamente o trecho com falha; mantê-lo no circuito preserva a anomalia no caminho da carga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "diante de fumaça e arco elétrico em UPS, o isolamento seguro das partes com falha e a transferência para bypass seguro permitem manter a alimentação de equipamentos críticos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a resposta passa por isolar e bloquear as fontes antes de colocar as cargas críticas em bypass seguro"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Contenção de vulnerabilidade em controlador legado crítico por isolamento de rede quando o patch não está validado.",
+      "pergunta": "Um controlador legado em serviço crítico tem vulnerabilidade conhecida na pilha TCP/IP, mas o fornecedor ainda não validou o patch. Que estratégia de contenção de rede deve prevalecer para reduzir a exposição remota sem arriscar a função?",
+      "resposta": "Isolamento de rede do controlador.",
+      "explicacao": "Em sistemas legados críticos, a contenção prioriza isolamento e restrição de conectividade quando a atualização imediata pode comprometer disponibilidade e proteção.",
+      "resposta_padrao": "Aplicação imediata do patch disponível.",
+      "por_que_nao": "Sem validação do fornecedor, a atualização pode introduzir indisponibilidade maior; em OT crítico, a contenção deve preservar controle e proteção.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "preservação imediata das funções críticas e do estado seguro da planta"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em sistemas embarcados ou legados, a contenção pode depender mais de isolamento, supervisão reforçada e restrição de conectividade do que de atualização imediata"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "contenção em OT deve preservar funções essenciais de controle e proteção"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "item": "07_03",
+  "foco": 24,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_03:024:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Disponibilidade pode ser limitada por MTTR alto mesmo quando os intervalos entre falhas são longos.",
+      "pergunta": "O histórico mostra intervalos longos entre falhas, porém cada ocorrência concentra grande parte da produção perdida por demora no restabelecimento. Que indicador está limitando a disponibilidade?",
+      "resposta": "MTTR",
+      "explicacao": "Os blocos separam comportamento de falha e capacidade de restauração. Com falhas relativamente raras, a perda de disponibilidade vem do tempo para recuperar a função após cada evento.",
+      "resposta_padrao": "MTBF",
+      "por_que_nao": "Intervalos longos entre falhas mostram que a ocorrência não é o limitante principal; o problema está na recuperação lenta.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "Um sistema pode apresentar intervalos médios longos entre falhas e ainda assim perder muita produção se a recuperação for lenta"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Já o MTTR muda quando mudam as condições de recuperação do item após a falha."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Quando a indisponibilidade pós-falha é dominada pela espera de peça vinda de terra, a ação direta é posicionar o sobressalente no local.",
+      "pergunta": "O reparo ativo de um atuador leva poucas horas, mas o equipamento permanece indisponível por dias aguardando a peça crítica embarcada de terra. Que medida técnica ataca diretamente esse atraso?",
+      "resposta": "Estoque offshore de sobressalente crítico",
+      "explicacao": "O gargalo descrito é pós-falha e logístico. O bloco F liga estoque de peças e dependência de apoio em terra ao aumento do tempo indisponível e, portanto, ao MTTR.",
+      "resposta_padrao": "Aumentar a frequência da manutenção preventiva",
+      "por_que_nao": "Preventiva atua sobre a ocorrência da falha; aqui o atraso vem da recuperação após falhar, pela espera do sobressalente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O tempo de reparo é influenciado por projeto, gestão de recursos, treinamento, estoque de peças, procedimentos e agilidade de deslocamento até a unidade."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A distância da costa e a dependência de apoio em terra podem prolongar o tempo total indisponível por logística e mobilização"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparações de MTTR só são válidas quando o escopo temporal do indicador está alinhado entre os cálculos.",
+      "pergunta": "Dois relatórios de MTTR para o mesmo equipamento divergem: um conta da falha ao retorno, outro apenas a intervenção ativa. Antes de comparar os valores, o que precisa estar explicitado?",
+      "resposta": "As atividades incluídas na base do MTTR",
+      "explicacao": "O bloco F exige explicitar o que entra no indicador. Se um cálculo inclui esperas e mobilização e o outro não, os valores não medem a mesma coisa.",
+      "resposta_padrao": "A quantidade de falhas usada na média",
+      "por_que_nao": "Mesmo com a mesma amostra, MTTRs calculados com escopos temporais diferentes permanecem incomparáveis.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A base do MTTR deve explicitar quais atividades de reparo inclui."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A distância da costa e a dependência de apoio em terra podem prolongar o tempo total indisponível por logística e mobilização, mesmo sem alterar o tempo de reparo ativo."
+        }
+      ]
+    }
+  ]
+}

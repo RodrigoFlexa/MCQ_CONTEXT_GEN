@@ -1,0 +1,83 @@
+{
+  "item": "02_08",
+  "foco": 1,
+  "visita": 3,
+  "onda": 4,
+  "id": "02_08:001:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção de simulação dinâmica para avaliar surge de compressores durante shutdowns com atuação de controle e inventário dos volumes.",
+      "pergunta": "Durante uma ESD de compressão, o ponto no mapa pode cruzar a linha de surge à medida que o recycle abre e os volumes de sucção e descarga se esvaziam. Qual abordagem de análise deve ser usada para verificar esse risco?",
+      "resposta": "Simulação dinâmica do processo.",
+      "explicacao": "O risco de surge na parada depende do transiente, da atuação dos controles e do acoplamento entre compressor e volumes comunicantes; a trajetória do evento não é capturada por regime permanente.",
+      "resposta_padrao": "Verificação em regime permanente do ponto mais severo no mapa do compressor.",
+      "por_que_nao": "Na parada, o surge depende da trajetória transitória com abertura de recycle e esvaziamento dos volumes, não de um ponto estático isolado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "investigar risco de surge em sistemas de compressão durante paradas programadas e de emergência."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Quanto maior a interação entre equipamentos, volumes e malhas de controle, maior tende a ser a relevância de uma representação dinâmica do processo."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Arranjo com PSVs escalonadas para cobrir cenários de alta e baixa carga quando uma PSV única é dinamicamente inadequada no caso menor.",
+      "pergunta": "O mesmo vaso tem um cenário de sobrepressão de alta vazão e outro bem menor. A PSV única dimensionada pelo caso maior limita a pressão, mas fica inadequada no evento de baixa carga. Sem perder a cobertura do caso governante, que arranjo de proteção deve ser adotado?",
+      "resposta": "Duas PSVs com pressões de ajuste diferentes.",
+      "explicacao": "Quando a válvula escolhida pelo caso governante continua inadequada dinamicamente na menor carga, o escalonamento permite que só a primeira abra no evento menor e mantém cobertura do maior.",
+      "resposta_padrao": "Uma única PSV dimensionada pelo caso de maior vazão.",
+      "por_que_nao": "Atender ao cenário governante de sobrepressão não garante comportamento dinâmico adequado no caso de menor carga.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "uma única PSV escolhida para o caso dimensionante pode proteger contra sobrepressão, mas continuar inadequada do ponto de vista dinâmico para a condição de menor carga."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "foi sugerida a instalação de duas PSVs com pressões de ajuste diferentes, de modo que apenas a primeira abrisse no evento de menor vazão."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a resposta do sistema depende do transiente, da atuação de controles, do acoplamento entre equipamentos e da sequência temporal dos eventos."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Representação da pressão de reassentamento para modelar corretamente o fechamento real da PSV em estudos dinâmicos.",
+      "pergunta": "Na simulação, a PSV abre e o modelo a fecha assim que a pressão retorna ao valor de ajuste. Para representar a pressão em que a válvula realmente volta a fechar, que parâmetro deve ser modelado corretamente?",
+      "resposta": "Pressão de reassentamento.",
+      "explicacao": "O fechamento real da PSV não ocorre automaticamente na pressão de abertura; a modelagem precisa representar a pressão de reassentamento para refletir o comportamento da válvula.",
+      "resposta_padrao": "Pressão de abertura.",
+      "por_que_nao": "A pressão de abertura define o início da descarga; o fechamento depende do reassentamento da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A pressão de reassentamento e a diferença em relação à pressão de abertura devem ser representadas conforme o comportamento da válvula;"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "simplificações de simulação não definem o funcionamento real da PSV."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a utilidade da abordagem depende da qualidade das hipóteses do modelo, das condições iniciais e da forma de representar dispositivos, volumes comunicantes e controles."
+        }
+      ]
+    }
+  ]
+}

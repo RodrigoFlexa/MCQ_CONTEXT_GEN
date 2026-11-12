@@ -1,0 +1,107 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 1,
+  "onda": 1,
+  "id": "07_02:021:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Ausência de contexto de modo operacional como causa de alarmes espúrios em analytics.",
+      "pergunta": "Partidas, recirculações e paradas previstas fazem um analítico de anomalia disparar, embora unidades, timestamps e identificação dos equipamentos estejam corretos. Que informação de dados está faltando para separar regime normal de desvio?",
+      "resposta": "Contexto de modo operacional.",
+      "explicacao": "O comportamento esperado muda com o regime. Sem esse contexto, o analítico compara estados transitórios e permanentes como se fossem equivalentes e gera alarmes indevidos.",
+      "resposta_padrao": "Filtragem adicional de ruído dos sensores.",
+      "por_que_nao": "Ruído de medição não explica alarmes concentrados em mudanças legítimas de regime; o problema é a falta de contexto operacional.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "sem contexto de modo operacional"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tendem a produzir diagnósticos frágeis, alarmes espúrios"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "interpretar qualidade de dados"
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Coerência semântica entre fontes como requisito para interpretar corretamente estados operacionais.",
+      "pergunta": "Estados de uma mesma bomba chegam de duas fontes e ambos são válidos em sintaxe; ainda assim, o analytics trata disponibilidade em uma delas como falha na outra. Unidades, tempos e identificação do equipamento estão corretos. Que propriedade dos dados está rompida?",
+      "resposta": "Coerência semântica.",
+      "explicacao": "As fontes representam estados com significados operacionais diferentes. Sem alinhamento semântico, a aplicação interpreta códigos formalmente válidos como condição errada.",
+      "resposta_padrao": "Frequência de amostragem insuficiente.",
+      "por_que_nao": "Granularidade temporal não muda o significado de um estado; o erro nasce da interpretação inconsistente entre fontes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência semântica, temporal e operacional dos dados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "diversidade de modelos de dados entre fornecedores de controladores"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "entendam o significado operacional dos dados e dos alertas produzidos"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Qualidade de sincronismo como requisito crítico para aplicações multifuente próximas ao controle.",
+      "pergunta": "Ao combinar medições de várias fontes para corrigir setpoints em ciclos curtos, a rede segue disponível, mas eventos simultâneos aparecem em ordens diferentes entre servidores e o ajuste usa amostras de instantes distintos. Que aspecto deve ser tratado como crítico antes de aproximar essa aplicação do controle?",
+      "resposta": "Qualidade de sincronismo.",
+      "explicacao": "A aplicação passa a agir sobre dados temporalmente desalinhados. Próximo ao controle, o alinhamento entre fontes é decisivo mesmo sem perda de conectividade.",
+      "resposta_padrao": "Largura de banda da rede.",
+      "por_que_nao": "Mais banda reduz contenção, mas não garante alinhamento temporal entre fontes nem corrige ordenação inconsistente de eventos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "aplicações que influenciam ajustes operacionais frequentes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "protocolos e brokers distribuem esses dados"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Latência de comunicação como limitante quando uma aplicação deixa de ser apenas consultiva e passa a ajustar o processo.",
+      "pergunta": "Uma aplicação antes consultiva passa a enviar correções frequentes de setpoint. Após mover o processamento para fora da rede local, os ajustes perdem aderência à dinâmica de campo, embora usem uma única variável e os relógios estejam alinhados. Que variável da infraestrutura deve ser tratada como crítica nesse arranjo?",
+      "resposta": "Latência de comunicação.",
+      "explicacao": "Quando a função influencia ajustes frequentes, o atraso no caminho dado-comando passa a afetar diretamente a aderência da ação à dinâmica do processo.",
+      "resposta_padrao": "Capacidade de processamento do modelo.",
+      "por_que_nao": "Se o problema surge ao deslocar a aplicação para fora da rede local, o limitante passa a ser o atraso de comunicação, não o cálculo do modelo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "maior deve ser o cuidado com atraso de comunicação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "No modo online, modelos e aplicações passam a receber dados"
+        }
+      ]
+    }
+  ]
+}

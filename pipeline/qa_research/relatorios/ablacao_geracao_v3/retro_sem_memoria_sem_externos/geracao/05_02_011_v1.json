@@ -1,0 +1,79 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:011:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância efetiva do 24 Vcc depende de segregação real, não só de capacidade instalada.",
+      "pergunta": "Dois sistemas de 24 Vcc com retificador/carregador e baterias são ambos capazes de atender toda a carga, e existe TIE entre eles. Antes de considerar protegidos os painéis de controle dos geradores, que verificação técnica específica deve ser feita?",
+      "resposta": "Segregação real das rotas de alimentação, sem causa comum.",
+      "explicacao": "Capacidade total e duplicação nominal não evitam blackout se os painéis convergirem para o mesmo quadro, UPS, TIE ou outro ponto comum; a proteção real vem da independência elétrica.",
+      "resposta_padrao": "Confirmar apenas a capacidade e a autonomia dos retificadores e baterias.",
+      "por_que_nao": "Dimensionamento N+1 não impede que uma única falha derrube ambos os controles quando existe dependência comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "cada um capaz de suprir toda a demanda e com possibilidade de interligação por disjuntor TIE."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando elementos que deveriam ser independentes passam a depender de uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição, uma única falha pode derrubar funções que deveriam sobreviver ao evento inicial."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Continuidade do comando remoto de válvulas depende da alimentação ininterrupta do estágio de saída do CLP.",
+      "pergunta": "Com a perda da energia principal somada à falha da UPS, o comando remoto das válvulas torna-se inviável. Que elemento específico do CLP deve ser mantido na alimentação ininterrupta para converter a ordem lógica em atuação no campo?",
+      "resposta": "Cartão-relé de saída do CLP.",
+      "explicacao": "Sem o cartão-relé energizado, a lógica pode existir, mas a ordem não se transforma em sinal elétrico para atuar válvulas.",
+      "resposta_padrao": "A CPU do CLP.",
+      "por_que_nao": "A CPU processa a lógica, porém a atuação sai pelo módulo de saída; sem ele energizado não há comando no campo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "F",
+          "trecho": "inviabilizando o comando de válvulas via ECOS."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Lógicas de recomposição precisam ser testadas no reboot em estado degradado para revelar trips latentes.",
+      "pergunta": "Nas tentativas de recomposição após blackout, o disjuntor do gerador de emergência volta a receber trip enquanto o sistema de controle reinicia. Em que condição de teste essa lógica deve ser validada para não ficar mascarada?",
+      "resposta": "Reboot em modo degradado, sem UPS ou bateria disponíveis.",
+      "explicacao": "O trip persistente pode ficar oculto na reinicialização usual; a validação precisa reproduzir a perda parcial de fontes auxiliares e controle.",
+      "resposta_padrao": "Partida normal com a alimentação de bateria disponível.",
+      "por_que_nao": "A reinicialização habitual mascara o defeito; o bloqueio aparece quando o controle retorna sem as fontes auxiliares esperadas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sequências de abandono, shutdown, permissivos de fechamento e scripts de reinicialização precisam ser verificados também em modos anormais, com perda parcial de UPS, bateria ou controle."
+        }
+      ]
+    }
+  ]
+}

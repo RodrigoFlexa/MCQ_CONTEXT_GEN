@@ -1,0 +1,91 @@
+{
+  "item": "07_01",
+  "foco": 19,
+  "visita": 3,
+  "onda": 4,
+  "id": "07_01:019:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Julgamento do estado real do equipamento quando um forcing mantém o ponto aparentemente válido no sistema.",
+      "pergunta": "Com um forcing ativo no status de uma bomba, a tela indica \"em operação\"; o ponto segue válido e atualizado, mas corrente do motor e pressão de descarga ficam em zero. Que verificação deve prevalecer para julgar o estado real do equipamento?",
+      "resposta": "Coerência entre variáveis relacionadas.",
+      "explicacao": "Forcing pode distorcer a supervisão sem invalidar o ponto. Nessa condição, o estado real é inferido pela coerência entre o status exibido e variáveis físicas correlatas, não pelo valor isolado do ponto.",
+      "resposta_padrao": "A validade do dado mostrada no ponto.",
+      "por_que_nao": "Um ponto pode permanecer válido e atualizado mesmo sem representar o equipamento; a inconsistência aparece na relação com corrente e pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes e a interpretação do estado real da planta"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "não basta olhar o valor instantâneo do processo: também importa observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escolha do arranjo de teste integrado que reduz incertezas antes da admissão de gás inflamável.",
+      "pergunta": "Antes da admissão de gás natural no circuito de regeneração, quer-se retirar incertezas que poderiam comprometer permissivos e intertravamentos, testando lógica, comunicação PLC-campo, sopradores, aquecedores e instrumentos em condição representativa sem o inventário inflamável normal. Que arranjo de teste deve ser usado?",
+      "resposta": "Operação em circuito fechado com nitrogênio.",
+      "explicacao": "Esse arranjo submete o subsistema a uma condição operacional representativa sem o inventário inflamável da operação normal, permitindo revelar integração, sintonia, vazamentos por acomodação térmica e falhas de comunicação.",
+      "resposta_padrao": "Loop checks e calibração individual dos instrumentos.",
+      "por_que_nao": "Esses testes verificam pontos e malhas isoladamente, mas não reproduzem a condição integrada que expõe falhas de atuação, comunicação e sintonia.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "ainda podem permanecer incertezas sobre manutenção, condições operacionais e consequências de longos períodos de inatividade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a operação em circuito fechado com nitrogênio (N2) permite testar antecipadamente a lógica"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "sem introduzir o mesmo inventário inflamável da operação normal"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "falhas de comunicação que poderiam comprometer permissivos ou intertravamentos"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Determinação do alcance de um forcing, bypass ou override pela arquitetura lógica da função afetada.",
+      "pergunta": "Um forcing será aplicado em uma entrada reutilizada em permissivo de partida, intertravamento de parada e alarme. Antes da intervenção, que elemento técnico precisa ser identificado para prever se o efeito ficará local ou se alcançará outras respostas automáticas?",
+      "resposta": "Arquitetura lógica da função afetada.",
+      "explicacao": "O efeito de forcing, bypass ou override não se limita ao ponto isolado; seu alcance depende de como a função está distribuída na arquitetura e em quais caminhos lógicos o sinal participa.",
+      "resposta_padrao": "A criticidade do instrumento associado.",
+      "por_que_nao": "Criticidade indica consequência da falha, não os caminhos lógicos pelos quais a intervenção se propaga.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "essas intervenções podem alterar o comportamento esperado da automação porque retiram temporariamente parte da lógica normal de atuação ou de supervisão"
+        },
+        {
+          "bloco": "F",
+          "trecho": "seus efeitos podem alcançar permissivos, intertravamentos, alarmes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o alcance concreto depende da arquitetura e da função afetada"
+        }
+      ]
+    }
+  ]
+}

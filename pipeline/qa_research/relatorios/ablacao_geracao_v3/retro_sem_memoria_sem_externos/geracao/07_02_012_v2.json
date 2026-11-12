@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 12,
+  "visita": 2,
+  "onda": 2,
+  "id": "07_02:012:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "VPN em OT reduz exposição, mas a liberação do acesso remoto ainda depende da postura do dispositivo remoto.",
+      "pergunta": "Acesso remoto a um controlador passou a usar VPN atualizada, mas o notebook do fornecedor também se conecta a outros ambientes. Antes de liberar a sessão, que condição técnica precisa ser confirmada além da VPN?",
+      "resposta": "Segurança do dispositivo remoto e de sua configuração.",
+      "explicacao": "A VPN só reduz exposição. Se o dispositivo remoto ou suas configurações estiverem comprometidos, a conexão continua sendo vetor de exploração por configuração e integração.",
+      "resposta_padrao": "Criptografia da VPN.",
+      "por_que_nao": "O túnel seguro não neutraliza comprometimento do notebook nem configurações inseguras no acesso remoto.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "vulnerabilidade é uma fraqueza explorável em software, firmware, componente de comunicação, configuração ou integração."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "métodos seguros como Rede Privada Virtual (VPN) atualizada reduzem exposição, mas não anulam o risco"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a segurança da VPN depende também da segurança dos dispositivos conectados e do controle de suas configurações."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Aplicação de patch em OT exige validação prévia de compatibilidade com o ambiente de controle, não só liberação do fornecedor.",
+      "pergunta": "Confirmada a vulnerabilidade em um controlador legado, o fornecedor liberou correção. Antes de instalá-la em produção, que compatibilidade específica precisa ser validada?",
+      "resposta": "Compatibilidade entre firmware, comunicação e funções de processo.",
+      "explicacao": "Em controle industrial, atualização sem essa validação pode causar indisponibilidade ou comportamento não previsto; a qualificação precisa cobrir a interação com firmware, rede e lógica de processo.",
+      "resposta_padrao": "Homologação do patch pelo fornecedor.",
+      "por_que_nao": "Liberação do fornecedor não substitui a validação local das interfaces e funções efetivamente usadas no controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas que abrem e fecham válvulas ou controlam vazão e pressão"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Aplicar a versão mais recente sem validar sua compatibilidade pode introduzir indisponibilidade ou comportamento não previsto no controle."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "uma atualização pode exigir validação prévia de compatibilidade entre firmware, comunicação e funções de processo"
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Em IACS, a mesma vulnerabilidade produz consequências diferentes conforme a função exercida pelo sistema no processo.",
+      "pergunta": "A mesma exploração bem-sucedida tira apenas o histórico de dados em um ativo, mas muda vazão e pressão em outro, com conectividade semelhante. Que fator do sistema explica essa diferença de efeito?",
+      "resposta": "Função operacional do sistema atingido.",
+      "explicacao": "Em IACS, o efeito relevante não vem só da falha em si; depende do que o sistema faz no processo. Quem atua sobre válvulas, vazão ou pressão pode alterar o comportamento do processo.",
+      "resposta_padrao": "Severidade CVSS da vulnerabilidade.",
+      "por_que_nao": "A mesma falha pode ter consequências operacionais distintas; aqui o diferencial é a função exercida no processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Seu efeito relevante depende da função do sistema atingido."
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma exploração bem-sucedida pode alterar o comportamento do processo ou retirar funções de serviço."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "O tratamento correto depende do papel operacional do ativo"
+        }
+      ]
+    }
+  ]
+}

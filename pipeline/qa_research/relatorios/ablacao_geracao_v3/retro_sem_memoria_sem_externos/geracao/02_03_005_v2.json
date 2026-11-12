@@ -1,0 +1,87 @@
+{
+  "item": "02_03",
+  "foco": 5,
+  "visita": 2,
+  "onda": 3,
+  "id": "02_03:005:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Uso do DPR como variável de controle hidráulico do hidrociclone",
+      "pergunta": "A pressão de alimentação varia com a carga e as pressões nas duas saídas também mudam; para manter o ponto hidráulico do hidrociclone na curva do liner, que variável deve ser controlada?",
+      "resposta": "DPR",
+      "explicacao": "O DPR é a variável de controle hidráulico do hidrociclone. Pressão de entrada ou ΔP isolados não capturam o efeito acoplado das pressões de saída sobre o ponto operacional.",
+      "resposta_padrao": "ΔP total no hidrociclone.",
+      "por_que_nao": "A perda de carga total não representa sozinha o balanço hidráulico entre as saídas; o controle usa uma razão entre diferenciais de pressão.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "DPR é a razão entre diferenciais de pressão usada no controle hidráulico do hidrociclone."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Geometria do overflow, vazões e pressões nas saídas influenciam esses parâmetros de forma acoplada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Reajuste após troca de liner deve seguir a faixa validada do próprio liner",
+      "pergunta": "Trocou-se o liner por outro de geometria diferente, mas o operador quer reaplicar o mesmo DPR anterior. Que referência técnica deve definir o novo ajuste hidráulico?",
+      "resposta": "Faixa validada do novo liner.",
+      "explicacao": "Como geometria do overflow, vazões e pressões nas saídas afetam DPR e split de forma acoplada, o ajuste não pode ser herdado de outro liner; deve seguir a faixa validada daquele equipamento.",
+      "resposta_padrao": "O mesmo DPR do liner anterior.",
+      "por_que_nao": "Não existe valor universal de DPR ou split transferível entre liners com geometrias diferentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Geometria do overflow, vazões e pressões nas saídas influenciam esses parâmetros de forma acoplada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "O ajuste deve seguir a curva e os limites do equipamento, evitando atribuir um valor universal de DPR ou split a qualquer liner."
+        }
+      ]
+    },
+    {
+      "tipo": "mecanismo",
+      "cenario": true,
+      "conhecimento": "Piora de eficiência fora da faixa validada por enfraquecimento do campo centrífugo",
+      "pergunta": "Operando bem abaixo da faixa validada do liner, o teor de óleo na água tratada subiu. Que mecanismo interno, responsável pela migração radial das gotas, perdeu intensidade?",
+      "resposta": "Campo centrífugo.",
+      "explicacao": "No hidrociclone, as gotas precisam migrar radialmente no curto tempo de residência. Fora da faixa validada, o campo centrífugo pode ser comprometido, elevando o óleo residual na água.",
+      "resposta_padrao": "Tempo de residência.",
+      "por_que_nao": "Mais ou menos residência, isoladamente, não separa; sem campo centrífugo suficientemente intenso, as gotas não migram radialmente a tempo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A operação fora da faixa validada pode comprometer o campo centrífugo e aumentar óleo residual na água."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Como o tempo de residência é muito curto, o campo centrífugo precisa ser suficientemente intenso para que as gotas de óleo migrem radialmente antes de sair do equipamento."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Comparabilidade do split depende da convenção de cálculo declarada",
+      "pergunta": "Dois sistemas indicam split de 3% para o mesmo liner, mas a aderência à curva parece impossível. Que detalhe técnico do indicador deve ser checado antes de suspeitar do equipamento?",
+      "resposta": "Convenção de cálculo do split.",
+      "explicacao": "O mesmo valor numérico de split pode representar razões diferentes. Sem confirmar a convenção adotada, a comparação entre sistemas ou com a curva do liner pode ser inválida.",
+      "resposta_padrao": "Calibração dos medidores de vazão.",
+      "por_que_nao": "Mesmo com vazões bem medidas, dois splits numericamente iguais podem não ser equivalentes se cada sistema usa uma razão diferente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O split caracteriza a divisão da vazão entre a corrente rejeitada, rica em óleo, e a corrente tratada; sua convenção precisa ser declarada, pois pode ser expresso como vazão de rejeito dividida pela alimentação ou por outra razão definida no sistema."
+        }
+      ]
+    }
+  ]
+}

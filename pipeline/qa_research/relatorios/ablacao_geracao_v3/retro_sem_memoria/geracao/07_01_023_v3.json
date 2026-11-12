@@ -1,0 +1,83 @@
+{
+  "item": "07_01",
+  "foco": 23,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_01:023:v3",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Retorno ao serviço de intertravamento em partida exige verificar a condição do processo contra a lógica aprovada.",
+      "pergunta": "A lógica carregada confere com a revisão aprovada e o intertravamento respondeu no teste, mas a partida segue com parte do sistema ainda isolada por sequência operacional. Antes de retirar a inibição, que verificação técnica é decisiva?",
+      "resposta": "Compatibilidade da condição do processo com a lógica operacional.",
+      "explicacao": "No retorno ao serviço, teste aprovado e lógica correta não bastam. Com isolamento durante partida, a função só deve voltar se o estado real do processo estiver coerente com a lógica prevista.",
+      "resposta_padrao": "Somente remover a inibição após o teste bem-sucedido.",
+      "por_que_nao": "O teste confirma atuação, mas não garante que o processo esteja em estado compatível para reintroduzir o intertravamento sem transferir risco na partida.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ele envolve verificar se procedimento, lógica operacional, condição do processo e evidência de saneamento estão alinhados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças mal avaliadas podem transferir risco para outra etapa da operação, especialmente em partidas e paradas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Partidas, paradas, isolamento de sistemas, comissionamento, regeneração, indisponibilidade simultânea de equipes ou de equipamentos críticos e execução de serviços concorrentes tendem a aumentar a dependência de sequências corretas"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Operação temporária com função instrumentada degradada só é defensável se houver redundância independente, não apenas vigilância.",
+      "pergunta": "Um canal de uma função instrumentada está indisponível; o tempo de exposição já foi limitado, e a única compensação proposta é ronda adicional. Que característica da arquitetura precisa existir para sustentar tecnicamente a operação temporária?",
+      "resposta": "Redundância independente.",
+      "explicacao": "Quando a função está degradada, vigilância reforçada só observa. A convivência temporária depende de existir outro caminho de proteção independente da parte indisponível.",
+      "resposta_padrao": "Monitoramento reforçado pela operação.",
+      "por_que_nao": "Rondas aumentam vigilância, mas não reduzem a probabilidade nem substituem uma camada de proteção independente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O retorno ao serviço após teste, manutenção, falha ou compensação temporária"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "existe redundância independente"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a compensação reduz probabilidade, consequência ou apenas aumenta vigilância"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A criticidade de atrasos de manutenção e teste aumenta quando eles se concentram nos elementos da mesma barreira.",
+      "pergunta": "Há o mesmo backlog total de testes vencidos em duas carteiras de segurança. Em uma, os itens pertencem a proteções independentes; na outra, são o sensor iniciador, o solver e a válvula final que atuam contra a mesma sobrepressão. Que critério torna a segunda carteira mais crítica?",
+      "resposta": "Postergação acumulada na mesma barreira.",
+      "explicacao": "Com backlog global semelhante, o agravante é concentrar postergações em elementos que compõem a mesma função de proteção, enfraquecendo a barreira de forma combinada.",
+      "resposta_padrao": "Maior atraso individual do item mais vencido.",
+      "por_que_nao": "O ponto decisivo não é o pior item isolado, e sim o acúmulo de postergações nos componentes da mesma barreira protetiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "avaliar impactos do atraso sequencial de manutenções e testes sobre a segurança operacional."
+        },
+        {
+          "bloco": "F",
+          "trecho": "A criticidade cresce quando a postergação se acumula em elementos que compõem a mesma barreira."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "testes e compensações não devem ser avaliados como eventos isolados"
+        }
+      ]
+    }
+  ]
+}

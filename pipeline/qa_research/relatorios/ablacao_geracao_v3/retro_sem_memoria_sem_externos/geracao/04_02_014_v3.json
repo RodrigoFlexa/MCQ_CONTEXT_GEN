@@ -1,0 +1,103 @@
+{
+  "item": "04_02",
+  "foco": 14,
+  "visita": 3,
+  "onda": 5,
+  "id": "04_02:014:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Integração de expansão distribuída em sistema subsea legado requer compatibilidade funcional da arquitetura de controle.",
+      "pergunta": "Há energia, espaço no módulo e fibras disponíveis para acrescentar sensores e comunicação a um arranjo subsea legado, sem refazer todo o controle. Qual condição técnica ainda precisa ser atendida para viabilizar a integração?",
+      "resposta": "Compatibilidade funcional da arquitetura de controle.",
+      "explicacao": "A ampliação por sistemas distribuídos só é viável em instalação existente quando a arquitetura do controle legado permanece funcionalmente compatível com a nova integração.",
+      "resposta_padrao": "Disponibilidade de canais livres no umbilical.",
+      "por_que_nao": "Canais sobrando não garantem que lógica, interfaces e funções do controle legado aceitem a expansão distribuída.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sistemas distribuídos de potência e controle podem ser integrados a instalações subsea já existentes para ampliar instrumentação e comunicação, desde que a compatibilidade funcional da arquitetura seja atendida."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Esse tipo de expansão é relevante quando se busca adicionar monitoramento sem reconstruir todo o sistema de controle."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Multiplexação reduz linhas dedicadas de comando quando muitas válvulas precisam ser controladas com poucos condutores de sinal.",
+      "pergunta": "Um manifold precisa comandar muitas válvulas, o umbilical tem poucos condutores de sinal e o suprimento hidráulico será mantido. Que arranjo de controle melhor reduz linhas dedicadas nessa condição?",
+      "resposta": "Controle multiplexado.",
+      "explicacao": "Com muitas válvulas, a seleção local da função no módulo submarino permite comandá-las com poucos condutores de sinal e suprimento hidráulico comum.",
+      "resposta_padrao": "Arquitetura eletro-hidráulica descentralizada.",
+      "por_que_nao": "A descentralização reduz inventário hidráulico e algumas linhas, mas a economia de linhas dedicadas por seleção local da função é do multiplexado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para múltiplas válvulas, controle multiplexado tende a reduzir a quantidade de linhas dedicadas porque a seleção da função ocorre no módulo submarino."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em controle multiplexado, a seleção da função ocorre localmente no módulo submarino por meio da eletrônica submarina e de válvulas solenóides"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que permite comandar muitas válvulas com poucos condutores de sinal combinados com suprimento hidráulico."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Descentralização eletro-hidráulica é a arquitetura adequada para manter atuação hidráulica reduzindo fluido distribuído e linhas longas.",
+      "pergunta": "A meta é manter atuação hidráulica nas válvulas, mas reduzir o inventário de fluido distribuído e o número de linhas longas até os atuadores. Que arquitetura atende melhor esse objetivo?",
+      "resposta": "Eletro-hidráulica descentralizada.",
+      "explicacao": "Nessa arquitetura, cada atuador recebe suprimento próprio, preservando a força hidráulica e diminuindo o volume total de fluido e as linhas distribuídas.",
+      "resposta_padrao": "Controle multiplexado.",
+      "por_que_nao": "Multiplexação reduz linhas de comando, mas não é o mecanismo que minimiza o volume hidráulico distribuído pelo sistema.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Para reduzir inventário de fluido distribuído e número de linhas, pode ser vantajosa a descentralização eletro-hidráulica."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "nas quais cada atuador recebe sua própria unidade de suprimento, reduzindo número de linhas e volume total de fluido hidráulico distribuído pelo sistema."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "mas preserva o uso de potência hidráulica para mover a válvula."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em válvula fail-safe close, a despressurização do atuador precede a mudança de posição e confirma o início do fechamento.",
+      "pergunta": "Numa válvula com filosofia fail-safe close, o comando para ir ao estado seguro foi enviado e a posição ainda não mudou. Que verificação no circuito de atuação deve ser confirmada primeiro?",
+      "resposta": "Despressurização do atuador.",
+      "explicacao": "Nesse arranjo, o fechamento começa com a perda da pressão de controle; só depois a mola desloca a válvula e a posição passa a responder.",
+      "resposta_padrao": "Confirmação do comando pela estação mestra.",
+      "por_que_nao": "O reconhecimento lógico não prova que a força hidráulica de abertura foi removida do atuador para liberar a mola fail-safe.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o monitoramento deve buscar coerência entre comando, pressão, posição e condição do equipamento"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em válvulas com filosofia fail safe close, a perda intencional ou não da pressão de controle permite a atuação da mola"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "e leva a válvula ao estado seguro fechado."
+        }
+      ]
+    }
+  ]
+}

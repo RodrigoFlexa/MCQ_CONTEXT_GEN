@@ -1,0 +1,83 @@
+{
+  "item": "06_05",
+  "foco": 18,
+  "visita": 1,
+  "onda": 1,
+  "id": "06_05:018:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda da atuação automática por indisponibilidade do mínimo de detectores exigido pela votação da zona.",
+      "pergunta": "Um detector remanescente alarmou, mas não houve isolamento automático. Em teste posterior, a lógica atuou normalmente com dois sinais válidos; os demais detectores da área estavam inibidos. Qual causa primária explica a não atuação?",
+      "resposta": "Ausência do mínimo de detectores disponíveis para a votação requerida.",
+      "explicacao": "A área ainda detectava o evento, mas ficou sem entradas suficientes para satisfazer confirmação e votação exigidas pela matriz de causa e efeito.",
+      "resposta_padrao": "Falha de lógica do controlador.",
+      "por_que_nao": "A lógica respondeu corretamente quando recebeu os sinais requeridos; a limitação estava na quantidade de detectores ativos na zona.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "ausência de um mínimo de detectores para cumprir a matriz de causa e efeito"
+        },
+        {
+          "bloco": "F",
+          "trecho": "uma área pode permanecer parcialmente instrumentada e, ainda assim, não satisfazer confirmação de evento, lógica de votação ou disparo automático requerido"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a sequência temporal é relevante para verificar se a lógica configurada foi realmente executada"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Critério de análise da disponibilidade do F&G em operação degradada com inibições concentradas.",
+      "pergunta": "O painel mostra alta disponibilidade global, mas as inibições recentes se concentram numa mesma área protegida. Que recorte técnico deve ser usado para julgar a proteção remanescente?",
+      "resposta": "Análise por zona e por função.",
+      "explicacao": "A contagem global pode ocultar perda local de cobertura; o que importa é se cada zona ainda mantém a função de detecção e atuação prevista.",
+      "resposta_padrao": "Percentual total de detectores disponíveis no sistema.",
+      "por_que_nao": "Disponibilidade global não mostra se uma zona específica perdeu confirmação de evento, votação ou disparo automático.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a cobertura não é preservada apenas pelo número total de detectores instalados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a disponibilidade relevante deve ser analisada por zona e por função"
+        },
+        {
+          "bloco": "F",
+          "trecho": "possibilidade de redução significante de cobertura"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação funcional necessária para confirmar a restauração da cobertura e da atuação lógica após manutenção.",
+      "pergunta": "Após retirar inibições e recolocar detectores em serviço, a calibração individual está aprovada. Que verificação específica ainda confirma que a zona recuperou a atuação prevista?",
+      "resposta": "Teste funcional da cadeia campo-lógica-supervisório.",
+      "explicacao": "Calibração aprova o sensor, mas a cobertura só está restaurada quando a cadeia executa a lógica prevista e registra corretamente a atuação.",
+      "resposta_padrao": "Bump test ou calibração dos detectores.",
+      "por_que_nao": "Esses testes validam o elemento sensor, não a execução da causa e efeito ao longo da cadeia de processamento e registro.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "preservar cobertura significa manter capacidade suficiente para detectar o cenário perigoso e permitir a atuação lógica prevista"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a integridade funcional inclui o caminho do sinal, a coerência entre campo, controlador e supervisório"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "monitorar disponibilidade exige observar não só o sensor, mas também a cadeia de processamento e registro dos comandos"
+        }
+      ]
+    }
+  ]
+}

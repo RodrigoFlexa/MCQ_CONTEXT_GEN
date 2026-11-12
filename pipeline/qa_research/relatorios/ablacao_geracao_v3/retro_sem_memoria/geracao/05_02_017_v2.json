@@ -1,0 +1,99 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:017:v2",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A redundância de UPS só se materializa quando cargas paralelas da mesma função são segregadas entre ramos independentes.",
+      "pergunta": "Dois UPS separados, ambos dimensionados para 100% da carga, alimentam um sistema com duas estações paralelas da mesma função. Na perda simples de um UPS, as duas somem juntas. Que falha de arquitetura explica melhor esse efeito?",
+      "resposta": "Concentração das duas estações no mesmo barramento/UPS.",
+      "explicacao": "Se os dois caminhos da mesma função ficam no mesmo ramo, uma falha simples derruba ambos. Capacidade instalada suficiente não substitui independência funcional entre os ramos.",
+      "resposta_padrao": "Subdimensionamento do UPS remanescente.",
+      "por_que_nao": "Cada UPS suporta integralmente a carga; a perda simultânea do par aponta falta de segregação funcional, não falta de capacidade.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "perde independência funcional"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Na recomposição após blackout, religamento seguido de nova abertura sem anomalia elétrica aponta para verificação da lógica de trip.",
+      "pergunta": "Na recomposição após blackout, 24 Vcc, UPS e fonte de emergência retornam, CLP e supervisão inicializam, mas um barramento essencial abre de novo logo após energizar sem nova anomalia elétrica. Que coerência de lógica deve ser verificada primeiro?",
+      "resposta": "Lógica de trip.",
+      "explicacao": "Como o sistema inicializa e só depois abre novamente, o bloqueio está na lógica que comanda o desarme, não na lógica de partida do sistema.",
+      "resposta_padrao": "Lógica de reboot.",
+      "por_que_nao": "Falha de reboot impediria a volta inicial; aqui os sistemas sobem e a queda ocorre depois, por comando de trip.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "podem impedir a recomposição"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A continuidade de cargas essenciais durante indisponibilidade do inversor depende da disponibilidade do bypass do UPS.",
+      "pergunta": "Na transferência para manutenção, cargas de shutdown e comunicação caem quando o inversor do UPS é retirado de serviço, embora entrada, retificador e banco de baterias estejam normais. Que disponibilidade deveria ter sido confirmada no monitoramento?",
+      "resposta": "Disponibilidade do bypass.",
+      "explicacao": "Com o caminho do inversor indisponível, a continuidade das cargas depende do trajeto alternativo de bypass, que precisa estar disponível e apto à transferência.",
+      "resposta_padrao": "Estado de carga das baterias.",
+      "por_que_nao": "Com o inversor fora de serviço, a autonomia da bateria não substitui o caminho CA alternativo exigido para manter a saída.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "saúde do inversor e do retificador"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Presença de tensão em 24 Vcc não comprova a capacidade de retaguarda; é necessário monitorar a condição real das baterias.",
+      "pergunta": "Com a demanda do quadro inalterada desde o último teste aprovado, o 24 Vcc permanece normal em operação; num teste de perda de CA, porém, comandos e automação desaparecem após curto intervalo. Além da presença de tensão, que condição precisava estar sendo monitorada?",
+      "resposta": "Condição das baterias.",
+      "explicacao": "Tensão presente em regime normal não garante sustentação sem CA. A manutenção do 24 Vcc durante a contingência depende do estado real do banco de baterias.",
+      "resposta_padrao": "Saúde do retificador.",
+      "por_que_nao": "Na perda de CA, o retificador deixa de sustentar o quadro; a retaguarda passa a depender diretamente da bateria.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "não só presença de tensão, mas também"
+        },
+        {
+          "bloco": "F",
+          "trecho": "condição de baterias"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "item": "07_02",
+  "foco": 4,
+  "visita": 2,
+  "onda": 3,
+  "id": "07_02:004:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Escopo do controle de acesso em IACS inclui ativos técnicos como estações de engenharia, não só identidades.",
+      "pergunta": "As contas pessoais de uma contratada foram bloqueadas, mas permaneceu no local um notebook com software de configuração e conexões salvas para PLCs e SIS. Que ativo deve entrar imediatamente no tratamento de controle de acesso?",
+      "resposta": "Estação de engenharia.",
+      "explicacao": "No IACS, o controle de acesso alcança também estações de engenharia; elas podem manter ferramentas e caminhos efetivos até controladores e funções de segurança mesmo após o bloqueio de contas.",
+      "resposta_padrao": "As contas de usuário.",
+      "por_que_nao": "Bloquear identidades não elimina o caminho de acesso representado pelo equipamento que hospeda software de engenharia e credenciais persistentes.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o controle de acesso não se limita a contas de usuário."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Ele alcança estações de engenharia, servidores, controladores"
+        },
+        {
+          "bloco": "F",
+          "trecho": "funções instrumentadas de segurança"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "O privilégio mínimo para restaurar projeto e parametrização de controlador é o de engenharia, não o administrativo.",
+      "pergunta": "Durante a substituição de uma CPU de controle, o suporte remoto precisa carregar o projeto validado e parametrizar os módulos para recolocar a malha em serviço, sem criar contas nem mexer nas proteções do host. Qual privilégio mínimo deve ser liberado?",
+      "resposta": "Acesso de engenharia.",
+      "explicacao": "Restaurar projeto e parametrizar o controlador exige capacidade de alterar configuração aplicada ao sistema; isso é privilégio de engenharia, mais restrito que o administrativo.",
+      "resposta_padrao": "Acesso administrativo.",
+      "por_que_nao": "Privilégio administrativo é voltado a contas e proteções; liberar esse nível amplia o alcance sem ser o mínimo necessário para a intervenção.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "acesso de engenharia pode alterar configuração, lógica e firmware"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "acesso administrativo pode criar contas, desabilitar proteções e apagar rastros"
+        },
+        {
+          "bloco": "F",
+          "trecho": "um acesso legítimo, porém excessivo ou mal protegido"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A segregação de funções deve separar aprovação, implementação e validação de mudanças em IACS.",
+      "pergunta": "No suporte remoto a uma alteração corretiva, o mesmo fornecedor aprovou a necessidade, implementou a mudança e executou o teste final no controlador. Que controle específico falta nesse arranjo?",
+      "resposta": "Segregação de funções.",
+      "explicacao": "Separar aprovação, implementação e validação reduz erros não detectados e abuso durante manutenção, resposta a falhas e suporte remoto.",
+      "resposta_padrao": "Registro detalhado em log.",
+      "por_que_nao": "Logs dão rastreabilidade posterior, mas não impedem que a mesma pessoa valide a própria mudança sem revisão independente.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Quem aprova uma mudança não deveria, por padrão, ser a mesma pessoa que a implementa e a valida."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "essa separação ajuda a reduzir erros não detectados"
+        },
+        {
+          "bloco": "F",
+          "trecho": "incluindo arranjos organizacionais, competência e efetividade das contramedidas"
+        }
+      ]
+    }
+  ]
+}

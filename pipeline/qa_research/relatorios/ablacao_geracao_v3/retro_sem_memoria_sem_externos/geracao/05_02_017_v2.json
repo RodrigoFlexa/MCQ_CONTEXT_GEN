@@ -1,0 +1,91 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 2,
+  "onda": 2,
+  "id": "05_02:017:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Monitoramento de alimentação essencial deve incluir a saúde do retificador/carregador, não apenas a tensão presente no barramento.",
+      "pergunta": "Mesmo com alimentação CA disponível e 24 Vcc estável, o banco de baterias entra em descarga contínua durante a operação normal. Que subsistema da alimentação essencial precisa ter sua saúde monitorada para que essa condição não passe despercebida?",
+      "resposta": "Saúde do retificador/carregador.",
+      "explicacao": "O barramento pode permanecer energizado pelas baterias e mascarar a perda da função normal de recarga. Por isso, o monitoramento deve incluir a saúde do retificador, não só a presença de tensão.",
+      "resposta_padrao": "Tensão do barramento 24 Vcc.",
+      "por_que_nao": "Barramento energizado não prova que o caminho de retificação e recarga esteja disponível; as baterias podem estar sustentando a carga sozinhas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "os sistemas de 24 Vcc de serviços gerais usam dois conjuntos independentes de retificador/carregador e banco de baterias"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A continuidade do UPS diante de falha do inversor depende da disponibilidade do bypass, que deve ser monitorada separadamente.",
+      "pergunta": "Com 120 Vca estável na saída do UPS em operação normal, uma falha do inversor derrubou a carga em vez de transferi-la. Que condição específica faltou ser acompanhada no monitoramento?",
+      "resposta": "Disponibilidade do bypass.",
+      "explicacao": "Saída normal do UPS não garante continuidade na contingência. Quando o inversor falha, a manutenção da carga depende de o bypass estar disponível para assumir a alimentação.",
+      "resposta_padrao": "Saúde do inversor.",
+      "por_que_nao": "Monitorar o inversor é importante, mas isso não assegura caminho alternativo de alimentação quando ele falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão, mas também distribuição correta entre ramos redundantes, condição de baterias, saúde do inversor e do retificador, disponibilidade do bypass"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Falhas de recomposição após retorno de energia podem decorrer de incoerência entre lógicas de reboot e de trip.",
+      "pergunta": "Durante teste de recomposição, as baterias sustentam os controles no blackout, mas ao retorno da alimentação os controladores reinicializam e permissivos caem, bloqueando a sequência automática. Que aspecto específico do sistema deve ser verificado?",
+      "resposta": "Coerência das lógicas de reboot e de trip.",
+      "explicacao": "A alimentação por bateria cumpriu sua função no blackout. O bloqueio apareceu no retorno da energia, indicando conflito entre reinicialização dos controles e lógica de trip/permissivos.",
+      "resposta_padrao": "Autonomia das baterias.",
+      "por_que_nao": "Se a bateria sustentou os controles durante a perda de energia, o problema passa a ser lógico na retomada, não de tempo de retaguarda.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em eventos de blackout ou black start, falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "A redundância funcional de UPS e 24 Vcc só se confirma com a distribuição correta das cargas entre ramos independentes.",
+      "pergunta": "Depois de ampliações sucessivas, há tensão normal em todos os quadros e ambos os UPS suportam a carga total. Que verificação específica da distribuição das cargas confirma se a redundância funcional ainda existe?",
+      "resposta": "Distribuição correta entre ramos redundantes.",
+      "explicacao": "Capacidade disponível e tensão presente não bastam. A redundância só é real quando as cargas redundantes permanecem segregadas em ramos independentes, evitando perda comum por falha simples.",
+      "resposta_padrao": "Capacidade nominal remanescente dos UPS.",
+      "por_que_nao": "Capacidade sem segregação pode deixar funções redundantes concentradas no mesmo ramo e expostas à mesma falha.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "F",
+          "trecho": "efeitos de modificações acumuladas ao longo da vida operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento, a arquitetura continua parecendo redundante no diagrama, mas perde independência funcional."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_12:012:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Seleção da pressão de referência da malha de capacidade conforme a restrição dominante do processo.",
+      "pergunta": "Na mudança para um modo em que o gargalo passa a ser a coleta de gás dos separadores, e não a exportação, qual pressão a malha de capacidade deve priorizar?",
+      "resposta": "Pressão de sucção.",
+      "explicacao": "Quando a necessidade principal é estabilizar a coleta e proteger a etapa a montante, a sucção representa melhor a demanda do processo do que a descarga.",
+      "resposta_padrao": "Pressão de descarga.",
+      "por_que_nao": "A descarga é a referência adequada quando a exigência dominante vem do sistema a jusante, como exportação; isso não estabiliza diretamente a coleta a montante.",
+      "fundamentos": [
+        {
+          "bloco": "A1",
+          "trecho": "se precisa estabilizar a coleta de gás de separadores ou proteger a etapa a montante, a pressão de sucção pode ganhar prioridade."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Se a unidade precisa sustentar exportação, por exemplo, o compressor tende a responder à condição exigida na descarga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo, enquanto a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Uso da realimentação de posição para verificar a resposta da válvula anti-surge.",
+      "pergunta": "A válvula de reciclo anti-surge recebe comandos rápidos, mas há suspeita de atraso ou histerese do atuador. Como verificar se o elemento final está acompanhando a malha?",
+      "resposta": "Comparando o comando com a posição real da válvula.",
+      "explicacao": "A realimentação de posição permite detectar degradação, atraso, histerese ou falha de atuação e separar problema do elemento final de problema do algoritmo.",
+      "resposta_padrao": "Observando a variação da pressão de sucção.",
+      "por_que_nao": "A sucção reflete o comportamento do processo inteiro; só comando versus posição real mostra diretamente atraso ou histerese da válvula.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que ajuda a detectar degradação, atraso, histerese ou falha de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "o controle de capacidade interage fortemente com a proteção anti-surge."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função de load sharing necessária em trens paralelos para evitar sobrecarga localizada.",
+      "pergunta": "Durante a partida de um segundo centrífugo em paralelo, o primeiro se aproxima da sobrecarga enquanto o recém-partido permanece aliviado. Que função de controle precisa coordenar os dois trens?",
+      "resposta": "Malha de repartição de carga entre trens paralelos.",
+      "explicacao": "Em paralelo, o controle deve dividir a carga para evitar sobrecarga localizada e manter partidas, paradas e transferências com segurança e confiabilidade.",
+      "resposta_padrao": "Reciclo anti-surge individual de cada compressor.",
+      "por_que_nao": "O anti-surge individual evita instabilidade por baixa vazão, mas não distribui duty nem impede que um trem absorva carga excessiva.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia: o sistema de controle precisa repartir carga"
+        },
+        {
+          "bloco": "F",
+          "trecho": "evitar sobrecarga localizada e manter partidas, paradas e transferências de trem com segurança e confiabilidade."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Em compressores em paralelo e em sistemas com múltiplos estágios, a seleção e a localização da instrumentação também afetam a qualidade do controle."
+        }
+      ]
+    },
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Efeito do posicionamento das medições sobre atraso de malha e má distribuição de carga.",
+      "pergunta": "Em múltiplos estágios, as malhas reagem tarde e a carga se distribui mal mesmo com válvulas íntegras e transmissores calibrados. Que causa de instrumentação é mais provável?",
+      "resposta": "Medições mal posicionadas.",
+      "explicacao": "Pontos de medição inadequados representam mal o processo, introduzem atraso e mascaram interações entre estágios, levando a reação tardia e distribuição de carga inadequada.",
+      "resposta_padrao": "Ganho excessivo do controlador.",
+      "por_que_nao": "Ajuste de ganho pode gerar oscilação, mas não cria a falsa representação do processo nem o atraso sistemático causados por ponto de medição inadequado.",
+      "fundamentos": [
+        {
+          "bloco": "A2",
+          "trecho": "Medições mal posicionadas podem representar mal o estado real do processo, introduzir atrasos ou mascarar interações entre estágios."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada."
+        },
+        {
+          "bloco": "F",
+          "trecho": "mudanças de composição e interação entre múltiplos estágios tornam essa coordenação mais crítica."
+        }
+      ]
+    }
+  ]
+}

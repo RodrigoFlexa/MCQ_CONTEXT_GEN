@@ -1,0 +1,75 @@
+{
+  "item": "05_02",
+  "foco": 17,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:017:v1",
+  "config": "retro_sem_memoria",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "A redundância de UPS só é efetiva quando as cargas redundantes ficam segregadas em ramos independentes.",
+      "pergunta": "No teste de contingência, o UPS A é isolado; o UPS B permanece disponível e capaz de assumir a demanda, mas duas estações de controle redundantes caem juntas. Qual causa primária isso indica?",
+      "resposta": "Falta de segregação das estações redundantes entre os ramos A e B.",
+      "explicacao": "Se o outro UPS segue disponível e dimensionado, a queda simultânea das duas estações aponta concentração no mesmo ramo. A redundância aparente não se materializa sem segregação funcional real das cargas.",
+      "resposta_padrao": "Capacidade insuficiente do UPS remanescente para absorver a carga.",
+      "por_que_nao": "Com as estações corretamente distribuídas, a perda de um ramo não derruba ambas ao mesmo tempo; o sintoma aponta causa comum de alimentação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "distribuição correta entre ramos redundantes"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "a redundância só se materializa se houver segregação real das cargas entre os ramos"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Quando cargas principais ou estações redundantes são concentradas no mesmo UPS ou no mesmo barramento"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Em black start, a retomada da automação depende da coerência entre lógicas de reboot e de trip, não só da presença de alimentação.",
+      "pergunta": "Blackout total: a barra essencial segue energizada por bateria e há fonte disponível para recomposição, mas a automação não retorna ao estado operativo. Que verificação específica deve ser feita para não bloquear o black start?",
+      "resposta": "Coerência das lógicas de reboot e de trip.",
+      "explicacao": "Os blocos indicam que, em blackout ou black start, falhas de lógica podem impedir a recomposição mesmo com fonte disponível. Por isso, monitoramento adequado inclui validar a coerência de reboot e trip.",
+      "resposta_padrao": "Presença de tensão no barramento de 24 Vcc.",
+      "por_que_nao": "Ter tensão não prova que a automação reinicializa corretamente nem que os trips são liberados para a sequência de recomposição.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "coerência das lógicas de reboot e de trip"
+        },
+        {
+          "bloco": "F",
+          "trecho": "falhas de lógica e indisponibilidade da alimentação por bateria podem impedir a recomposição mesmo quando há fonte potencialmente disponível"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "A continuidade das cargas de UPS durante indisponibilidade do inversor, com entrada CA disponível, depende do bypass.",
+      "pergunta": "Durante a retirada do inversor de um UPS para intervenção, a entrada CA permanece disponível e as cargas essenciais não podem ser interrompidas. Que caminho de alimentação deve estar confirmado antes da manobra?",
+      "resposta": "Bypass do UPS.",
+      "explicacao": "Com a fonte CA disponível, a continuidade durante indisponibilidade do inversor depende do bypass. O bloco foco cita sua disponibilidade como item obrigatório de monitoramento.",
+      "resposta_padrao": "Banco de baterias do UPS.",
+      "por_que_nao": "A bateria cobre perda de entrada ou transientes; para manter a alimentação com CA disponível e inversor fora, o caminho decisivo é o bypass.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "disponibilidade do bypass"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O monitoramento deve verificar não só presença de tensão"
+        }
+      ]
+    }
+  ]
+}

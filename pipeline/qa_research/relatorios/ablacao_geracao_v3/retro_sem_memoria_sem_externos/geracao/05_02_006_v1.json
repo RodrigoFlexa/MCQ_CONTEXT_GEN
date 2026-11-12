@@ -1,0 +1,71 @@
+{
+  "item": "05_02",
+  "foco": 6,
+  "visita": 1,
+  "onda": 0,
+  "id": "05_02:006:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Interligação segura de barramentos energizados por bus tie exige verificação prévia de sincronismo.",
+      "pergunta": "Dois barramentos seguem energizados por fontes próprias e será feito o fechamento do bus tie para transferência sem interrupção. Que verificação específica deve liberar essa manobra?",
+      "resposta": "Sincronismo entre os barramentos.",
+      "explicacao": "Com ambos os lados energizados, a interligação segura depende de sincronização; sem isso, o fechamento pode gerar transitórios severos e perda ampla de cargas.",
+      "resposta_padrao": "Ausência de tensão em um dos lados.",
+      "por_que_nao": "Verificar barramento morto serve para energização de seção desenergizada; com dois lados vivos, o risco crítico é o fechamento fora de sincronismo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "podem ser operados seccionados ou interligados por bus tie"
+        },
+        {
+          "bloco": "F",
+          "trecho": "tentativa de fechamento sem sincronização pode produzir transitórios severos e perda ampla de cargas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Fechamento do bus tie em secundários paralelos exige refazer o estudo de curto-circuito antes de recoordenar proteções.",
+      "pergunta": "A operação passará a manter fechado o bus tie entre secundários de transformadores em paralelo. Antes de revisar sensibilidades e tempos dos relés, que estudo deve ser refeito?",
+      "resposta": "Estudo de curto-circuito.",
+      "explicacao": "O bus tie fechado cria caminhos adicionais de corrente de falta e altera os níveis de curto-circuito, base para sensibilidades e tempos de atuação.",
+      "resposta_padrao": "Estudo de fluxo de carga.",
+      "por_que_nao": "Fluxo de carga trata o regime normal; a coordenação dos relés muda com a corrente de falta disponível pelos novos caminhos.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Essa mesma flexibilidade pode introduzir caminhos adicionais de corrente de falta e alterar níveis de curto-circuito, sensibilidades e tempos de atuação."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a decisão de manter bus tie aberto ou fechado não é apenas operacional: ela muda o comportamento elétrico do sistema e a base de coordenação das proteções"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Em falta à terra em alimentador secundário, a seletividade depende da coordenação da retaguarda de terra do transformador com o jusante.",
+      "pergunta": "Num barramento secundário alimentado por transformador com disjuntor primário, uma falta à terra em um alimentador não deve desligar todo o barramento. Qual proteção a montante precisa ter retaguarda coordenada com esse alimentador?",
+      "resposta": "Relé de retaguarda de terra do transformador.",
+      "explicacao": "Nessa arquitetura, a seletividade para falta à terra no alimentador depende de coordenar a retaguarda de terra do transformador com a proteção do circuito a jusante.",
+      "resposta_padrao": "Proteção diferencial de barramento.",
+      "por_que_nao": "A diferencial cobre a zona do barramento; para falta no alimentador, quem deve aguardar a atuação jusante é a retaguarda de terra a montante.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a interligação por bus tie amplia flexibilidade operacional, transferência de carga e recomposição, mas aumenta a necessidade de coordenação entre proteção, sincronismo e filosofia de operação"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "relés de retaguarda de fase e de terra precisam ser coordenados com os relés dos alimentadores do barramento secundário, para que uma falta em alimentador não desligue indevidamente todo o barramento ou o transformador"
+        }
+      ]
+    }
+  ]
+}

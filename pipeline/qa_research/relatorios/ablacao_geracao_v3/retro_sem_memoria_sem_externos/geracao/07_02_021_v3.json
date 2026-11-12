@@ -1,0 +1,91 @@
+{
+  "item": "07_02",
+  "foco": 21,
+  "visita": 3,
+  "onda": 5,
+  "id": "07_02:021:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Definição da camada arquitetural mais adequada para normalização de dados quando a heterogeneidade dos controladores impede padronização no nível de controle.",
+      "pergunta": "Controladores de fornecedores distintos expõem modelos de dados incompatíveis, a HMI perdeu convenção comum e a comparação entre ativos exige retrabalho. Sem substituir a automação instalada, em que camada a normalização deve ser implementada mais perto da fonte?",
+      "resposta": "SCADA",
+      "explicacao": "O bloco focal afirma que, quando a camada de controle não padroniza suficientemente, o SCADA passa a ser a camada mais próxima da fonte em que a normalização é viável.",
+      "resposta_padrao": "Na nuvem",
+      "por_que_nao": "Camadas remotas servem à integração e análise, mas não são o ponto mais próximo da fonte para padronizar dados e HMI sem trocar a automação.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Quando a camada de controle não oferece padronização suficiente, o SCADA pode se tornar a camada mais próxima da fonte na qual essa normalização é viável."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Esse arranjo é mais valioso quando preserva sistemas existentes e adiciona capacidade sem exigir substituição integral da automação instalada."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Necessidade de incluir contexto de modo operacional nos dados para evitar diagnósticos frágeis e alarmes espúrios em analytics.",
+      "pergunta": "Um analytics com unidades confiáveis e tags consistentes dispara alertas espúrios apenas em partidas e paradas, mas se comporta bem em regime estável. Que informação específica deve acompanhar os sinais para evitar esse erro?",
+      "resposta": "Contexto de modo operacional",
+      "explicacao": "O bloco focal destaca que sinais sem contexto de modo operacional tendem a gerar diagnósticos frágeis e alarmes espúrios, mesmo quando outros atributos do dado estão corretos.",
+      "resposta_padrao": "Ajuste dos limiares de alarme",
+      "por_que_nao": "Limiares não distinguem transientes esperados de desvios reais quando o dado não carrega o estado operacional do processo.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Sinais sem unidade confiável, sem contexto de modo operacional, sem identificação consistente do equipamento ou sem tratamento de qualidade tendem a produzir diagnósticos frágeis, alarmes espúrios e comparações enganosas."
+        },
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação da qualidade de sincronismo entre fontes antes de usar dados em aplicações mais próximas do controle.",
+      "pergunta": "Eventos fisicamente simultâneos aparecem defasados entre tags de fontes diferentes, embora unidades e identificação estejam corretas. Que verificação técnica deve preceder o uso desses sinais numa aplicação próxima ao controle?",
+      "resposta": "Qualidade de sincronismo",
+      "explicacao": "Para aplicações próximas ao controle, o bloco focal exige cuidado com sincronismo; sem isso, a aplicação combina dados temporalmente desalinhados entre fontes.",
+      "resposta_padrao": "Mesma frequência de amostragem",
+      "por_que_nao": "Amostras no mesmo ritmo podem continuar desalinhadas se as fontes não compartilham uma base de tempo confiável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "analytics, modelos preditivos e qualquer aplicação de inteligência artificial dependem menos da mera existência de sensores e mais da coerência semântica, temporal e operacional dos dados."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Critério de projeto decisivo para aplicações que influenciam ajustes frequentes quando há risco de perda intermitente do enlace.",
+      "pergunta": "Uma aplicação deixou de apenas apoiar decisões e passou a influenciar ajustes operacionais frequentes por um enlace com quedas intermitentes. Que comportamento precisa ser definido como critério principal de projeto?",
+      "resposta": "Comportamento em perda de conectividade",
+      "explicacao": "O bloco focal diferencia aplicações de apoio daquelas acopladas a ajustes frequentes e, para as mais próximas do controle, destaca o comportamento diante da perda de conectividade.",
+      "resposta_padrao": "Latência de comunicação",
+      "por_que_nao": "Atraso importa, mas não define a reação segura da aplicação quando o enlace desaparece temporariamente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Aplicações de apoio à decisão toleram mais latência e indisponibilidade do que aplicações que influenciam ajustes operacionais frequentes."
+        },
+        {
+          "bloco": "F",
+          "trecho": "Em sistemas críticos, quanto mais próxima a aplicação estiver do controle do processo, maior deve ser o cuidado com atraso de comunicação, qualidade de sincronismo e comportamento em perda de conectividade."
+        }
+      ]
+    }
+  ]
+}

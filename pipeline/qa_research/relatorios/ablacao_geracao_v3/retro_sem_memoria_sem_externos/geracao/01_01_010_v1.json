@@ -1,0 +1,71 @@
+{
+  "item": "01_01",
+  "foco": 10,
+  "visita": 1,
+  "onda": 1,
+  "id": "01_01:010:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Apuração correta do MTTR para separar tempo de reparo de atrasos de suporte ao retorno operacional.",
+      "pergunta": "Antes de ampliar o efetivo de manutenção, o histórico de falhas será usado para calcular o MTTR de um sistema. Que parcela do tempo parado deve ficar fora desse indicador para que o gargalo do retorno operacional não seja confundido com o tempo de reparo?",
+      "resposta": "Esperas e outros tempos de indisponibilidade.",
+      "explicacao": "O MTTR mede o tempo médio de reparo. Incluir esperas mistura atrasos de suporte com a execução do reparo e pode mascarar se mais equipes realmente atacam o gargalo.",
+      "resposta_padrao": "Todo o intervalo entre a falha e o retorno ao serviço.",
+      "por_que_nao": "Tempo total parado incorpora atrasos fora do reparo e impede separar limitação de equipe de restrições de suporte.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "mais equipes têm efeito limitado quando a espera dominante é por acesso, sobressalente, liberação ou logística."
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Sua apuração exige registrar os intervalos correspondentes às atividades de reparo e distingui-los de esperas e outros tempos de indisponibilidade."
+        }
+      ]
+    },
+    {
+      "tipo": "conceito",
+      "cenario": false,
+      "conhecimento": "Distinção entre propriedade de restaurabilidade do sistema e a ação física de manutenção.",
+      "pergunta": "Quando se discute elevar a disponibilidade com mais recursos de manutenção, que propriedade do sistema, distinta da ação física executada, expressa a probabilidade de restabelecimento dentro de um tempo desejado?",
+      "resposta": "Mantenabilidade.",
+      "explicacao": "Mantenabilidade é uma propriedade do sistema e do suporte de manutenção; manutenção é a intervenção física usada para efetivar o retorno ao serviço.",
+      "resposta_padrao": "Manutenção.",
+      "por_que_nao": "Manutenção é a ação realizada; não descreve a probabilidade intrínseca de restauração dentro do tempo desejado.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "O efeito de recursos adicionais de manutenção depende do gargalo efetivo do retorno operacional"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "Ela descreve uma propriedade do sistema e de seu arranjo de suporte à manutenção, enquanto a manutenção é a ação física realizada para efetivar o retorno ao serviço."
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Priorização de recuperação por criticidade funcional quando subsistemas compartilham restrições e um deles limita a vazão total.",
+      "pergunta": "Com uma única equipe e a mesma liberação compartilhada, falharam a malha de água produzida, já sem folga de reinjeção ou descarte, e um aquecedor de um trem redundante que voltaria mais rápido. Qual recuperação deve ser priorizada?",
+      "resposta": "Malha de água produzida.",
+      "explicacao": "Sem capacidade aquosa disponível, a vazão total pode ter de cair para manter separação, reinjeção ou descarte. Isso lhe dá maior criticidade funcional que um aquecedor redundante, mesmo com reparo mais curto.",
+      "resposta_padrao": "O aquecedor do trem redundante.",
+      "por_que_nao": "Escolher só pelo menor tempo de reparo ignora que a limitação da malha aquosa pode estrangular a produção total.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "A priorização deve considerar criticidade funcional, duração da recuperação e restrições compartilhadas entre subsistemas."
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Quando a malha de água produzida perde capacidade, a limitação não afeta apenas esse sistema; ela pode impor redução de vazão total do campo"
+        }
+      ]
+    }
+  ]
+}

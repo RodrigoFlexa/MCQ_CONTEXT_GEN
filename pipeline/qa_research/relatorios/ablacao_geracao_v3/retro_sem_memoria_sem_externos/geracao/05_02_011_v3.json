@@ -1,0 +1,87 @@
+{
+  "item": "05_02",
+  "foco": 11,
+  "visita": 3,
+  "onda": 4,
+  "id": "05_02:011:v3",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "diagnostico",
+      "cenario": true,
+      "conhecimento": "Perda de alimentação de controle 24 Vcc como gatilho de blackout sem falha primária no barramento.",
+      "pergunta": "Os motores primários seguem em rotação normal, mas dois geradores em paralelo perdem simultaneamente supervisão e comando locais e remotos e saem do barramento; sem atuação prévia das proteções do barramento principal, qual falha primária mais provavelmente disparou o evento?",
+      "resposta": "Perda da alimentação 24 Vcc dos painéis de controle dos geradores.",
+      "explicacao": "O texto liga a queda da geração à desenergização dos painéis de controle, destacando que o gerador pode permanecer mecanicamente disponível e ainda assim perder conexão e controle.",
+      "resposta_padrao": "Curto-circuito no barramento principal.",
+      "por_que_nao": "Sem atuação prévia das proteções do barramento e com perda simultânea de supervisão e comando, o indício dominante é perda de energia de controle comum.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Blackout nem sempre começa por uma falha no barramento de potência; ele pode ser disparado pela perda de energia de controle."
+        },
+        {
+          "bloco": "F",
+          "trecho": "a desenergização dos painéis de controle dos geradores em operação levou à queda da geração principal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o gerador pode continuar mecanicamente disponível, mas torna-se incapaz de permanecer conectado ou controlável"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Redundância elétrica só é real se os caminhos de alimentação de controle não convergirem em ponto comum.",
+      "pergunta": "Dois arranjos de 24 Vcc e duas UPS aparecem 100% redundantes no unifilar. Antes de creditar essa arquitetura contra blackout por perda de controle, que condição específica dos caminhos de alimentação deve ser confirmada?",
+      "resposta": "Ausência de ponto único comum de alimentação.",
+      "explicacao": "Cada fonte pode ter capacidade total e ainda assim a redundância falhar se ambos os caminhos dependerem da mesma UPS, quadro CC ou ponto de distribuição.",
+      "resposta_padrao": "Capacidade individual de cada retificador e banco de baterias para atender 100% da carga.",
+      "por_que_nao": "Capacidade integral não elimina causa comum; um ponto compartilhado pode derrubar simultaneamente os dois caminhos de controle.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Apesar dessa redundância nominal"
+        },
+        {
+          "bloco": "F",
+          "trecho": "a integridade funcional da malha de 24 Vcc, das UPS e da segregação de cargas de controle é parte da prevenção de blackout"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "é necessário verificar segregação real, independência das rotas de alimentação"
+        },
+        {
+          "bloco": "A1",
+          "trecho": "uma mesma UPS, de um mesmo quadro CC ou de um mesmo ponto de distribuição"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Recomposição após blackout pode ser bloqueada por trip persistente do disjuntor do gerador de emergência durante o reboot.",
+      "pergunta": "Após blackout total, o gerador de emergência parte, atinge rotação e tensão, mas o barramento permanece desenergizado porque o disjuntor abre de novo enquanto o controle reinicia. Que comando lógico deve ser verificado primeiro?",
+      "resposta": "Sinal de trip ao disjuntor do gerador de emergência.",
+      "explicacao": "No caso de apoio, a lógica de controle mantinha trip no disjuntor durante o reboot, impedindo a energização mesmo com o gerador de emergência disponível.",
+      "resposta_padrao": "Permissivo de fechamento do disjuntor.",
+      "por_que_nao": "Falta de permissivo impede fechar; aqui o disjuntor fecha e volta a abrir no reboot, sinal típico de trip persistente.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a falha da UPS A combinada com a perda de energia principal desenergizou o cartão-relé do CLP"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a lógica do VMS continuava enviando sinal de trip ao disjuntor do gerador de emergência durante o reboot do sistema de controle"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o sistema pode impedir a energização exatamente quando a emergência exige recomposição rápida e previsível"
+        }
+      ]
+    }
+  ]
+}

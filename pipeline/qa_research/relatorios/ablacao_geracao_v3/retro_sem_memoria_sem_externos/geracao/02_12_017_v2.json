@@ -1,0 +1,75 @@
+{
+  "item": "02_12",
+  "foco": 17,
+  "visita": 2,
+  "onda": 2,
+  "id": "02_12:017:v2",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Agendamento do setpoint de reciclo por estágio pela rotação da máquina em arquitetura com controle de sucção por velocidade.",
+      "pergunta": "Na sintonia de um trem em que a rotação da máquina controla a pressão de sucção, como deve ser definido o setpoint usado pelas válvulas de reciclo por estágio para ajustar a vazão de sucção?",
+      "resposta": "Setpoint variável em função da rotação.",
+      "explicacao": "Na arquitetura descrita, a sucção é controlada pela rotação e o reciclo por estágio ajusta a vazão de sucção com setpoint dependente da rotação, não fixo.",
+      "resposta_padrao": "Setpoint fixo de vazão de sucção definido na condição de projeto.",
+      "por_que_nao": "A vazão protetiva requerida varia com a rotação; um valor fixo não acompanha a condição operacional da máquina.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a rotação da máquina controla a pressão de sucção"
+        },
+        {
+          "bloco": "F",
+          "trecho": "válvulas de reciclo por estágio ajustam a vazão de sucção conforme setpoint variável dependente da rotação"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prevalência da ação de reciclo sobre a redução de carga quando o ponto operacional se aproxima do surge.",
+      "pergunta": "Com a demanda do processo caindo, a rotação já foi reduzida para controlar a sucção e o ponto se aproxima do limite instável do compressor. Qual ação automática específica deve entrar para proteger a máquina?",
+      "resposta": "Abrir a válvula de reciclo.",
+      "explicacao": "Perto do limite instável, a proteção atua abrindo reciclo para manter vazão suficiente através do compressor, mesmo com queda da demanda externa.",
+      "resposta_padrao": "Reduzir ainda mais a rotação da máquina.",
+      "por_que_nao": "A proteção contra surge exige elevar a vazão interna através do compressor; reduzir mais a carga pode aproximar ainda mais do limite instável.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a malha anti-surge preserva a máquina ao manter vazão suficiente através do compressor quando o ponto de operação se aproxima do limite instável"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Isso normalmente é feito abrindo reciclo"
+        },
+        {
+          "bloco": "F",
+          "trecho": "O efeito é aumentar a vazão interna atravessando a máquina, mesmo quando a demanda externa cai."
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Ferramenta adequada para antecipar interações transientes entre malhas de capacidade e anti-surge antes da validação operacional.",
+      "pergunta": "Planeja-se alterar simultaneamente os ajustes das malhas de capacidade e anti-surge de um trem ainda sem histórico nessa configuração. Que ferramenta de engenharia deve ser usada para antecipar as interações antes da validação em campo?",
+      "resposta": "Simulação dinâmica.",
+      "explicacao": "Ela permite estudar partida, parada, ajustes das malhas e esquemas automáticos sob perturbações, capturando a interação temporal entre processo e controle.",
+      "resposta_padrao": "Simulação em regime estacionário.",
+      "por_que_nao": "Modelos estacionários não representam transientes nem a resposta temporal acoplada das malhas automáticas.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "forte interação entre controle de capacidade e proteção anti-surge"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a simulação dinâmica é útil para estudar partida, parada, ajuste das malhas de capacidade e anti-surge, teste de esquemas automáticos e avaliação de arranjos"
+        }
+      ]
+    }
+  ]
+}

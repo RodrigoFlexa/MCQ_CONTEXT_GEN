@@ -1,0 +1,83 @@
+{
+  "item": "02_12",
+  "foco": 12,
+  "visita": 1,
+  "onda": 0,
+  "id": "02_12:012:v1",
+  "config": "retro_sem_memoria_sem_externos",
+  "motivo": "",
+  "questoes": [
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Prioridade da atuação da proteção anti-surge sobre o controle de capacidade em transientes rápidos.",
+      "pergunta": "Uma válvula a jusante fecha inadvertidamente e a vazão do compressor centrífugo despenca; as pressões se alteram em cascata. Qual ação automática específica deve prevalecer para manter a máquina na região estável?",
+      "resposta": "Abertura rápida da válvula de recirculação anti-surge.",
+      "explicacao": "O fechamento a jusante reduz a vazão e desloca rapidamente o ponto de operação. A malha anti-surge é a proteção destinada a afastar a máquina da instabilidade, enquanto o controle de capacidade segue a demanda do processo.",
+      "resposta_padrao": "Reduzir o setpoint da pressão de descarga pelo controle de capacidade.",
+      "por_que_nao": "Essa malha atende a demanda do processo e pode não restaurar vazão com a rapidez necessária para evitar a instabilidade aerodinâmica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "a primeira tenta atender a demanda do processo, enquanto a segunda impede que a vazão caia para uma região de instabilidade aerodinâmica"
+        },
+        {
+          "bloco": "F",
+          "trecho": "Perturbações como fechamento inadvertido de válvulas ou trips podem se propagar rapidamente pelo sistema"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "Para válvulas críticas de anti-surge, são recomendadas características dinâmicas adequadas"
+        }
+      ]
+    },
+    {
+      "tipo": "procedimento",
+      "cenario": true,
+      "conhecimento": "Verificação do elemento final da malha anti-surge pela comparação entre comando e posição real.",
+      "pergunta": "Durante perturbações, o controlador anti-surge emite comandos de abertura coerentes, mas o compressor continua reagindo tarde e oscila. Como verificar se a falha está no elemento final, e não no algoritmo?",
+      "resposta": "Comparar comando e posição real da válvula pela realimentação de posição.",
+      "explicacao": "Se o comando sai corretamente do controlador, a prova decisiva do elemento final é confrontá-lo com a posição real. Isso evidencia atraso, histerese, degradação ou falha de atuação da válvula.",
+      "resposta_padrao": "Analisar apenas as tendências de pressão, vazão e rotação.",
+      "por_que_nao": "Essas variáveis mostram o efeito no processo, mas não confirmam se a válvula seguiu o comando nem revelam sua degradação dinâmica.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "o ajuste do controle de capacidade não deve ser tratado como independente da proteção"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "A realimentação de posição permite comparar o comando emitido com a posição real da válvula"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "o que ajuda a detectar degradação, atraso, histerese ou falha de atuação"
+        }
+      ]
+    },
+    {
+      "tipo": "decisao",
+      "cenario": true,
+      "conhecimento": "Função de load sharing para evitar desequilíbrio e sobrecarga localizada em trens paralelos.",
+      "pergunta": "Na transferência entre dois trens centrífugos em paralelo, um assume quase toda a vazão enquanto o outro permanece com ampla margem. Que função de controle deve coordenar os dois para eliminar esse desequilíbrio?",
+      "resposta": "Repartição de carga entre os trens.",
+      "explicacao": "Em trens paralelos, o controle deve distribuir a carga para evitar sobrecarga localizada e manter transferências seguras. Proteger só o trem mais carregado não corrige a divisão de capacidade entre as máquinas.",
+      "resposta_padrao": "Abrir mais a recirculação do trem que está mais carregado.",
+      "por_que_nao": "A recirculação só alivia esse trem e reduz eficiência; ela não transfere carga ao outro nem corrige o desequilíbrio entre os trens.",
+      "fundamentos": [
+        {
+          "bloco": "F",
+          "trecho": "Em trens paralelos, essa necessidade se amplia"
+        },
+        {
+          "bloco": "F",
+          "trecho": "o sistema de controle precisa repartir carga, evitar sobrecarga localizada e manter partidas, paradas e transferências de trem com segurança e confiabilidade"
+        },
+        {
+          "bloco": "A2",
+          "trecho": "a malha pode reagir tarde, oscilar ou distribuir carga de forma inadequada"
+        }
+      ]
+    }
+  ]
+}
