@@ -130,6 +130,20 @@ def validade(r):
     return _salvar(fig, "figV1_validade")
 
 
+def self_bleu(r):
+    """Self-BLEU por tópico das geradas (amostras do mesmo tamanho), em barras; menor = redação mais variada."""
+    fig, ax = plt.subplots(figsize=(15 * W, 7))
+    x = np.arange(len(ORDEM))
+    v = np.array([r["configs"][c]["vocabulario_geradas"]["self_bleu_por_topico"] for c in ORDEM])
+    ax.bar(x, v, 0.62, color=[COR[c] for c in ORDEM], zorder=2)
+    for xi, vi in zip(x, v):
+        ax.text(xi, vi + 0.012, _n(vi, 2), ha="center", va="bottom", fontsize=23, fontweight="semibold", color=F.TINTA)
+    _xt(ax, x)
+    _eixo(ax, "Self-BLEU")
+    ax.set_ylim(0, max(v) * 1.18)
+    return _salvar(fig, "figV9_self_bleu")
+
+
 def funil(r, qs):
     """Geradas, aprovadas pelo auditor, válidas e conhecimentos válidos distintos, com o mesmo orçamento de chamadas."""
     etapas = [("Geradas", lambda c: len(qs[c]), F.RAMPA[1]),
@@ -365,7 +379,7 @@ def gerar() -> list:
     FIG.mkdir(parents=True, exist_ok=True)
     (FIG / "distintos.json").write_text(json.dumps(resumo, indent=1), encoding="utf-8")
     return (validade(r) + funil(r, qs) + acumulado(qs) + diversidade(r) + dificuldade(r) + motivos(r, qs)
-            + novidade(qs) + vendi_curva(qs))
+            + novidade(qs) + vendi_curva(qs) + self_bleu(r))
 
 
 if __name__ == "__main__":
