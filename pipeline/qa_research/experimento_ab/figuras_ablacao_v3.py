@@ -163,34 +163,58 @@ def distintos_por_onda(c: str, qs: list[dict]) -> list[int]:
 
 
 # ------------------------------------------------------------------ figuras
+# figuras compactas (meia largura de slide): tamanho menor e fontes fixas grandes
+COMPACTA = (11.5, 6.6)
+CF = {"xt": 21, "yt": 22, "yl": 26, "val": 25, "leg": 21, "fim": 24}
+
+
+def _eixo_c(ax, ylabel):
+    ax.set_ylabel(T(ylabel), fontsize=CF["yl"])
+    ax.tick_params(axis="y", labelsize=CF["yt"])
+    ax.tick_params(axis="x", length=0, pad=8)
+    ax.yaxis.set_major_formatter(VIRG)
+    ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(5))
+    ax.yaxis.grid(True, color=F.GRADE)
+    ax.set_axisbelow(True)
+
+
+def _xt_c(ax, x):
+    ax.set_xticks(x, [ROT[c] for c in ORDEM], fontsize=CF["xt"])
+    ax.set_xlim(-0.55, len(ORDEM) - 0.45)
+    for t_, c in zip(ax.get_xticklabels(), ORDEM):
+        t_.set_color(COR[c])
+
+
 def validade(r):
     """% de válidas (auditor + resposta curta + sustentação) com IC 95%, por configuração."""
-    fig, ax = plt.subplots(figsize=(15 * W, 7))
+    fig, ax = plt.subplots(figsize=COMPACTA)
     x = np.arange(len(ORDEM))
     v = np.array([r["configs"][c]["validas"]["pct"] for c in ORDEM])
     lo = np.array([r["configs"][c]["validas"]["ic95"][0] for c in ORDEM])
     hi = np.array([r["configs"][c]["validas"]["ic95"][1] for c in ORDEM])
-    ax.bar(x, v, 0.62, color=[COR[c] for c in ORDEM], zorder=2)
-    ax.errorbar(x, v, yerr=[v - lo, hi - v], fmt="none", ecolor=F.TINTA2, elinewidth=1.8, capsize=7, zorder=3)
+    ax.bar(x, v, 0.68, color=[COR[c] for c in ORDEM], zorder=2)
+    ax.errorbar(x, v, yerr=[v - lo, hi - v], fmt="none", ecolor=F.TINTA2, elinewidth=1.8, capsize=6, zorder=3)
     for xi, vi, h in zip(x, v, hi):
-        ax.text(xi, h + 0.8, f"{_n(vi)}%", ha="center", va="bottom", fontsize=fs(23), fontweight="semibold", color=F.TINTA)
-    _xt(ax, x)
-    _eixo(ax, "Questões válidas (%)")
-    ax.set_ylim(0, max(hi) * 1.22)
+        ax.text(xi, h + 0.8, f"{_n(vi)}%", ha="center", va="bottom", fontsize=CF["val"], fontweight="semibold",
+                color=F.TINTA)
+    _xt_c(ax, x)
+    _eixo_c(ax, "Questões válidas (%)")
+    ax.set_ylim(0, max(hi) * 1.2)
     return _salvar(fig, "figV1_validade")
 
 
 def self_bleu(r):
-    """Self-BLEU por tópico das geradas (amostras do mesmo tamanho), em barras; menor = redação mais variada."""
-    fig, ax = plt.subplots(figsize=(15 * W, 7))
+    """Self-BLEU por tópico das geradas, em barras; menor = redação mais variada."""
+    fig, ax = plt.subplots(figsize=COMPACTA)
     x = np.arange(len(ORDEM))
     v = np.array([r["configs"][c]["vocabulario_geradas"]["self_bleu_por_topico"] for c in ORDEM])
-    ax.bar(x, v, 0.62, color=[COR[c] for c in ORDEM], zorder=2)
+    ax.bar(x, v, 0.68, color=[COR[c] for c in ORDEM], zorder=2)
     for xi, vi in zip(x, v):
-        ax.text(xi, vi + 0.012, _n(vi, 2), ha="center", va="bottom", fontsize=fs(23), fontweight="semibold", color=F.TINTA)
-    _xt(ax, x)
-    _eixo(ax, "Self-BLEU")
-    ax.set_ylim(0, max(v) * 1.18)
+        ax.text(xi, vi + 0.012, _n(vi, 2), ha="center", va="bottom", fontsize=CF["val"], fontweight="semibold",
+                color=F.TINTA)
+    _xt_c(ax, x)
+    _eixo_c(ax, "Self-BLEU")
+    ax.set_ylim(0, max(v) * 1.16)
     return _salvar(fig, "figV9_self_bleu")
 
 
@@ -252,11 +276,11 @@ def _x_chamadas(ax, ondas=6, fonte=19):
     ax.set_xlabel(T("Chamadas de geração"), fontsize=fs(21))
 
 
-def _linhas(ax, series, casas=0, sufixo="", folga=0.072):
+def _linhas(ax, series, casas=0, sufixo="", folga=0.072, fonte=None, lw=3.4, ms=10):
     """Curvas com o valor final à direita; rótulos próximos são afastados para não se sobreporem."""
     for c in ORDEM:
         y = series[c]
-        ax.plot(range(1, len(y) + 1), y, color=COR[c], linewidth=3.4, marker="o", markersize=10, label=NOME[c])
+        ax.plot(range(1, len(y) + 1), y, color=COR[c], linewidth=lw, marker="o", markersize=ms, label=NOME[c])
     fim = sorted((series[c][-1], c) for c in ORDEM)
     vals = [v for s in series.values() for v in s]
     passo = folga * (max(vals) - min(min(vals), 0))
@@ -274,7 +298,8 @@ def _linhas(ax, series, casas=0, sufixo="", folga=0.072):
         pos += [base + passo * k for k in range(len(g))]
     for (v, c), yp in zip(fim, pos):
         n = len(series[c])
-        ax.text(n + 0.12, yp, _n(v, casas) + sufixo, va="center", fontsize=fs(18), color=COR[c], fontweight="semibold")
+        ax.text(n + 0.14, yp, _n(v, casas) + sufixo, va="center", fontsize=fonte or fs(18), color=COR[c],
+                fontweight="semibold")
 
 
 def _legenda_barras(fig, ncol=5):
@@ -303,16 +328,27 @@ def taxa_novidade(c: str, qs: list[dict]) -> list[float]:
     return out
 
 
+def _curva_compacta(series, ylabel, nome, sufixo="", ylim=None, legenda="upper left"):
+    fig, ax = plt.subplots(figsize=(10.5, 7.2))
+    _linhas(ax, series, sufixo=sufixo, folga=0.085, fonte=CF["fim"], lw=4, ms=11)
+    ax.set_xticks(range(1, 7), [str(CHAMADAS * w) for w in range(1, 7)], fontsize=CF["xt"])
+    ax.set_xlim(0.75, 7.05)
+    ax.set_xlabel(T("Chamadas de geração"), fontsize=CF["yl"])
+    _eixo_c(ax, ylabel)
+    if ylim:
+        ax.set_ylim(*ylim)
+        ax.set_yticks([0, 25, 50, 75, 100])
+    alcas = [plt.Line2D([], [], color=COR[c], linewidth=4, marker="o", markersize=10) for c in ORDEM]
+    ax.legend(alcas, [NOME[c] for c in ORDEM], loc=legenda, fontsize=CF["leg"] - 1, frameon=False,
+              handlelength=1.5, borderaxespad=0.2, labelspacing=0.35)
+    fig.tight_layout()
+    return _salvar(fig, nome)
+
+
 def novidade(qs):
     """Taxa de novidade por fatia de 160 chamadas."""
-    fig, ax = plt.subplots(figsize=(14, 7.6))
-    _linhas(ax, {c: taxa_novidade(c, qs[c]) for c in ORDEM}, sufixo="%")
-    _x_chamadas(ax)
-    ax.set_ylim(0, 105)
-    _eixo(ax, "Taxa de novidade (%)")
-    _legenda(fig, ncol=3)
-    fig.tight_layout()
-    return _salvar(fig, "figV7_novidade")
+    return _curva_compacta({c: taxa_novidade(c, qs[c]) for c in ORDEM}, "Taxa de novidade (%)", "figV7_novidade",
+                           sufixo="%", ylim=(0, 132), legenda="upper right")
 
 
 def _e5(qs) -> dict:
@@ -355,13 +391,7 @@ def vendi_curva(qs):
     """Vendi Score acumulado das válidas por chamadas de geração."""
     E = _e5(qs)
     media = np.mean(np.array(list(E.values())), axis=0)
-    fig, ax = plt.subplots(figsize=(14, 7.6))
-    _linhas(ax, {c: vendi_por_onda(c, qs[c], E, media) for c in ORDEM})
-    _x_chamadas(ax)
-    _eixo(ax, "Vendi Score")
-    _legenda(fig, ncol=3)
-    fig.tight_layout()
-    return _salvar(fig, "figV8_vendi")
+    return _curva_compacta({c: vendi_por_onda(c, qs[c], E, media) for c in ORDEM}, "Vendi Score", "figV8_vendi")
 
 
 def diversidade(r):
@@ -390,20 +420,21 @@ def diversidade(r):
 
 def dificuldade(r):
     """Acerto médio do painel sem e com contexto, na amostra de 500 por configuração (válidas e inválidas)."""
-    fig, ax = plt.subplots(figsize=(16 * W, 7.2))
+    fig, ax = plt.subplots(figsize=COMPACTA)
     x = np.arange(len(ORDEM))
-    w = 0.36
+    w = 0.4
     for k, (cond, nome, cor) in enumerate((("acerto_sem_contexto", "Closed Book", F.AZUL),
                                             ("acerto_com_contexto", "Open Book", F.LARANJA))):
         v = [r["configs"][c]["dificuldade"]["todas"][cond] for c in ORDEM]
         pos = x + (k - 0.5) * w
         ax.bar(pos, v, w * 0.94, color=cor, label=T(nome), zorder=2)
         for p, n in zip(pos, v):
-            ax.text(p, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=fs(20), fontweight="semibold", color=F.TINTA)
-    _xt(ax, x)
-    _eixo(ax, "Acurácia do painel (%)")
+            ax.text(p, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=CF["val"] - 3, fontweight="semibold",
+                    color=F.TINTA)
+    _xt_c(ax, x)
+    _eixo_c(ax, "Acurácia do painel (%)")
     ax.set_ylim(0, 108)
-    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), fontsize=fs(19), ncol=2, handlelength=1.2,
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), fontsize=CF["leg"], ncol=2, handlelength=1.2,
               frameon=False)
     return _salvar(fig, "figV5_dificuldade")
 
