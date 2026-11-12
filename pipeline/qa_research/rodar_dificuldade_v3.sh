@@ -16,7 +16,7 @@ if [[ ! -x "$py" ]]; then
     if [[ ! -x "$py" ]]; then py="$(command -v python3)"; fi
 fi
 
-pasta="pipeline/qa_research/relatorios/petroquest_banco_v1/dificuldade_v3"
+pasta="pipeline/qa_research/relatorios/petroquest_banco_v1/dificuldade_v3_1"
 args=("$@")
 for ((i = 0; i < ${#args[@]}; i++)); do
     if [[ "${args[$i]}" == "--amostra" && -n "${args[$((i + 1))]:-}" && "${args[$((i + 1))]}" != "0" ]]; then

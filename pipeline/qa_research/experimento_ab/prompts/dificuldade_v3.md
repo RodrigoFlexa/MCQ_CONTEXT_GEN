@@ -8,8 +8,9 @@ Julgue o que a questão exige para chegar à resposta, não o assunto, não o ta
 
 ## conhecimento: quão especializado é o que a pessoa precisa saber
 - 0: vocabulário ou função que qualquer engenheiro ou técnico de indústria conhece (para que serve uma válvula de alívio, o que é vazão, o que faz uma bomba).
-- 1: conhecimento próprio de óleo e gás offshore, que todo profissional de FPSO deveria ter (função de um hidrociclone, do bend stiffener, das bactérias redutoras de sulfato, do sistema de gás inerte).
-- 2: conhecimento de quem trabalha com aquele sistema específico; um profissional competente de outra área da unidade provavelmente não saberia (por que o ângulo de fase escorrega no sincronismo, qual via de exposição domina na remoção de TENORM, qual grandeza o teste de anular com nitrogênio compara).
+- 1: conhecimento próprio de óleo e gás offshore, que todo profissional de FPSO deveria ter, mesmo fora do sistema da questão. Inclui a função e o comportamento usual dos equipamentos principais de cada sistema: separador trifásico, tratador eletrostático, hidrociclone, compressor e antissurge, PSV e flare, gás inerte, lastro e estabilidade, bend stiffener, ESD e fogo e gás, bactérias redutoras de sulfato. Esta é a nota mais comum.
+- 2: conhecimento que um profissional competente de outra área da unidade provavelmente NÃO teria: detalhe de projeto, mecanismo de falha específico, ensaio ou procedimento especializado, critério que só quem trabalha com aquele sistema conhece (por que o ângulo de fase escorrega no sincronismo, qual via de exposição domina na remoção de TENORM, qual grandeza o teste de anular com nitrogênio compara).
+Na dúvida entre 1 e 2, use 1.
 
 ## inferencia: quantos passos separam o enunciado da resposta
 - 0: recordação direta; a pergunta pede o que algo é, para que serve ou como se chama.
@@ -22,10 +23,11 @@ Julgue o que a questão exige para chegar à resposta, não o assunto, não o ta
 - 2: vários sistemas ou disciplinas ao mesmo tempo (processo e integridade, operação e segurança, lastro e carga).
 
 ## generalista: quão convincente é a resposta errada que um não especialista daria
-Use a `resposta_padrao` e o `por_que_nao` quando existirem; se não existirem, pense na resposta que um profissional competente de outra área daria.
-- 0: não há resposta errada atraente, ou ela é fácil de descartar.
-- 1: a resposta do generalista é plausível, mas errada no domínio.
-- 2: a resposta do generalista é tecnicamente correta em outra condição, e só um detalhe do cenário a exclui.
+Use a `resposta_padrao` e o `por_que_nao` quando existirem; se não existirem, pense na resposta que um profissional competente de outra área daria. Todas as questões foram escritas com uma resposta do generalista e uma justificativa de por que ela falha; a existência desses campos não basta para dar nota alta.
+- 0: não há resposta errada atraente; um profissional competente não cogitaria outra resposta, ou a errada é descartada de forma óbvia pelo próprio enunciado.
+- 1: há uma resposta errada plausível, típica de quem confunde termos, componentes ou causas parecidas. Esta é a nota mais comum.
+- 2: a resposta do generalista é a resposta CORRETA numa situação vizinha e frequente (a causa, a ação ou o controle usual), e só um detalhe específico do cenário a torna errada; quem a dá estaria certo na maior parte das vezes.
+Na dúvida entre 1 e 2, use 1.
 
 # Nível profissional
 
@@ -41,9 +43,9 @@ Independentemente das notas, diga como um colega experiente de bordo classificar
 2. Mecanismo. "Por que o sincronismo exige frequência muito próxima à do barramento antes do fechamento do disjuntor?" Resposta: escorregamento rápido do ângulo de fase. Generalista: evitar corrente reativa excessiva (que depende da diferença de tensão, não de frequência).
    conhecimento 2, inferencia 1, sistemas 0, generalista 1; nivel_profissional media.
 3. Diagnóstico. "Com estoque baixo, a condição de calado e estabilidade só fecha mantendo água oleosa em tanque de carga; quando o estoque sobe, a necessidade desaparece e não há sinal de alagamento. Qual a causa primária?" Resposta: capacidade insuficiente de tanques de lastro dedicados. Generalista: alagamento de compartimento.
-   conhecimento 1, inferencia 2, sistemas 1, generalista 2; nivel_profissional dificil.
+   conhecimento 1, inferencia 2, sistemas 1, generalista 1 (alagamento é uma hipótese plausível, mas o enunciado a descarta); nivel_profissional media.
 4. Decisão. "Depósito suspeito de TENORM, seco e fragmentável, será removido por jateamento abrasivo; a taxa de dose externa medida é baixa. Para definir a aceitabilidade do arranjo de trabalho, qual meio deve ser monitorado como via crítica?" Resposta: particulado respirável no ar. Generalista: taxa de dose externa.
-   conhecimento 2, inferencia 1, sistemas 1, generalista 2; nivel_profissional dificil.
+   conhecimento 2, inferencia 1, sistemas 1, generalista 2 (monitorar a dose externa é o controle usual na maioria dos trabalhos com material radioativo); nivel_profissional dificil.
 
 # Saída
 

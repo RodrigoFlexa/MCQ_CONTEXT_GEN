@@ -7,7 +7,7 @@ O nível pelas dimensões vem da soma: 0 a 2 fácil, 3 a 5 média, 6 a 8 difíci
 Uso (na raiz do repositório):
     python -m pipeline.qa_research.experimento_ab.dificuldade_v3 [--amostra N] [--workers N] [--modelo M]
 
-Saída em relatorios/petroquest_banco_v1/dificuldade_v3/ (ou dificuldade_v3_amostraN/): classificacoes/<id>.json,
+Saída em relatorios/petroquest_banco_v1/dificuldade_<VERSAO>/ (ou dificuldade_<VERSAO>_amostraN/): classificacoes/<id>.json,
 dificuldade_v3.jsonl, resumo.json e DIFICULDADE_V3.md. Retomável: repetir o comando só classifica o que falta.
 O relatório compara os dois níveis entre si, com a rubrica antiga e com a dificuldade empírica (painel de quatro
 modelos sem contexto: critério atual ancorado no GPT-5 e critério de proporção).
@@ -32,6 +32,7 @@ from .banco import SAIDA as BANCO
 
 MODELO = "gpt-5-4-petrobras:low"
 PROMPT = "dificuldade_v3"
+VERSAO = "v3_1"   # muda a cada ajuste do prompt; cada versão grava na própria pasta
 NIVEIS = ("facil", "media", "dificil")
 DIMENSOES = ("conhecimento", "inferencia", "sistemas", "generalista")
 PAINEL = ("gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5")   # independentes; o GPT-5.4 gerou as questões
@@ -98,7 +99,7 @@ class DificuldadeV3:
                  workers: int = 12, cliente=None, progress=print):
         self.banco = Path(banco)
         self.amostra, self.semente = int(amostra or 0), semente
-        nome = f"dificuldade_v3_amostra{self.amostra}" if self.amostra else "dificuldade_v3"
+        nome = f"dificuldade_{VERSAO}" + (f"_amostra{self.amostra}" if self.amostra else "")
         self.saida = self.banco / nome
         self.modelo, self.workers, self.progress = modelo, max(1, int(workers)), progress
         self._cliente = cliente
@@ -129,7 +130,7 @@ class DificuldadeV3:
     def classificar(self) -> int:
         qs = self.questoes()
         sistema = C.prompt(PROMPT)
-        cfg = {"schema": "petroquest-dificuldade-v3", "modelo": self.modelo, "prompt_sha256": C.sha(sistema),
+        cfg = {"schema": f"petroquest-dificuldade-{VERSAO}", "modelo": self.modelo, "prompt_sha256": C.sha(sistema),
                "amostra": self.amostra, "semente": self.semente if self.amostra else None}
         with output_lock(self.saida):
             old = read_json(self.saida / "config.json")
