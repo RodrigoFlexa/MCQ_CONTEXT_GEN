@@ -44,10 +44,10 @@ CURTO = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Docs.", "exter
 CHAMADAS = 160                    # chamadas de geração por onda (40 documentos x 4 focos)
 # versão em inglês (artigo): nomes das configurações e rótulos traduzidos, ponto decimal, pasta figuras_en/
 EN = False
-NOMES_EN = {"naive": "Naive", "regras": "Fine Tuned Prompt", "documentos": "Domain Dataset",
-            "externos": "+ External Datasets", "retro_sem_memoria": "Example Bank"}
-ROT_EN = {"naive": "Naive", "regras": "Fine Tuned\nPrompt", "documentos": "Domain\nDataset",
-          "externos": "+ External\nDatasets", "retro_sem_memoria": "Example\nBank"}
+NOMES_EN = {"naive": "Naive", "regras": "+ Fine Tuned Prompt", "documentos": "+ Domain Dataset",
+            "externos": "+ External Datasets", "retro_sem_memoria": "+ Example Bank"}
+ROT_EN = {"naive": "Naive", "regras": "+ Fine Tuned\nPrompt", "documentos": "+ Domain\nDataset",
+          "externos": "+ External\nDatasets", "retro_sem_memoria": "+ Example\nBank"}
 TRAD = {
     "Questões válidas (%)": "Acceptance Ratio (%)",
     "Questões (960 chamadas)": "Questions (960 calls)",
@@ -64,11 +64,11 @@ TRAD = {
     "Vendi relativo por tópico\n(maior = mais variado)": "Relative Vendi per topic\n(higher = more varied)",
     "Sem documento": "Closed-book", "Com documento": "With evidence",
     "Acurácia do painel (%)": "Panel accuracy (%)",
-    "Atalho (resposta sai do enunciado)": "Shortcut (answer follows from the question)",
+    "Atalho\n(resposta sai do enunciado)": "Shortcut\n(answer follows from the question)",
     "Mais de uma resposta válida": "More than one valid answer",
     "Fora da fonte": "Not grounded in the source",
     "Depende do documento": "Depends on the document",
-    "Reprovadas pelo auditor (% das geradas)": "Rejected by the auditor (% of generated)",
+    "Reprovadas pelo auditor\n(% das geradas)": "Rejected by the auditor\n(% of generated)",
 }
 
 
@@ -83,6 +83,13 @@ def usar_ingles() -> None:
         d.update(novo)
     FIG = SAIDA / "figuras_en"
     VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}")
+
+
+ESCALA_FONTE = 1.3                # todas as fontes passam por fs(); aumentar aqui aumenta tudo
+
+
+def fs(n: float) -> float:
+    return round(n * ESCALA_FONTE, 1)
 
 
 W = max(1.0, len(ORDEM) / 5)      # largura proporcional ao número de configurações
@@ -105,8 +112,8 @@ def _n(x, casas=1):
 
 
 def _eixo(ax, ylabel, fonte=21):
-    ax.set_ylabel(T(ylabel), fontsize=fonte)
-    ax.tick_params(axis="y", labelsize=fonte - 3)
+    ax.set_ylabel(T(ylabel), fontsize=fs(fonte))
+    ax.tick_params(axis="y", labelsize=fs(fonte - 3))
     ax.tick_params(axis="x", length=0, pad=10)
     ax.yaxis.set_major_formatter(VIRG)
     ax.yaxis.grid(True, color=F.GRADE)
@@ -114,7 +121,7 @@ def _eixo(ax, ylabel, fonte=21):
 
 
 def _xt(ax, x, fonte=20):
-    ax.set_xticks(x, [ROT[c] for c in ORDEM], fontsize=fonte)
+    ax.set_xticks(x, [ROT[c] for c in ORDEM], fontsize=fs(fonte))
     for t, c in zip(ax.get_xticklabels(), ORDEM):
         t.set_color(COR[c])
 
@@ -168,7 +175,7 @@ def validade(r):
     ax.bar(x, v, 0.62, color=[COR[c] for c in ORDEM], zorder=2)
     ax.errorbar(x, v, yerr=[v - lo, hi - v], fmt="none", ecolor=F.TINTA2, elinewidth=1.8, capsize=7, zorder=3)
     for xi, vi, h in zip(x, v, hi):
-        ax.text(xi, h + 0.8, f"{_n(vi)}%", ha="center", va="bottom", fontsize=23, fontweight="semibold", color=F.TINTA)
+        ax.text(xi, h + 0.8, f"{_n(vi)}%", ha="center", va="bottom", fontsize=fs(23), fontweight="semibold", color=F.TINTA)
     _xt(ax, x)
     _eixo(ax, "Questões válidas (%)")
     ax.set_ylim(0, max(hi) * 1.22)
@@ -182,7 +189,7 @@ def self_bleu(r):
     v = np.array([r["configs"][c]["vocabulario_geradas"]["self_bleu_por_topico"] for c in ORDEM])
     ax.bar(x, v, 0.62, color=[COR[c] for c in ORDEM], zorder=2)
     for xi, vi in zip(x, v):
-        ax.text(xi, vi + 0.012, _n(vi, 2), ha="center", va="bottom", fontsize=23, fontweight="semibold", color=F.TINTA)
+        ax.text(xi, vi + 0.012, _n(vi, 2), ha="center", va="bottom", fontsize=fs(23), fontweight="semibold", color=F.TINTA)
     _xt(ax, x)
     _eixo(ax, "Self-BLEU")
     ax.set_ylim(0, max(v) * 1.18)
@@ -203,11 +210,12 @@ def funil(r, qs):
         pos = x + (k - 1.5) * w
         ax.bar(pos, vals, w * 0.94, color=cor, label=T(nome), zorder=2)
         for p, n in zip(pos, vals):
-            ax.text(p, n + 40, str(n), ha="center", va="bottom", fontsize=15, color=F.TINTA, rotation=0)
+            ax.text(p, n + 40, str(n), ha="center", va="bottom", fontsize=fs(15), color=F.TINTA, rotation=0)
     _xt(ax, x)
     _eixo(ax, "Questões (960 chamadas)")
     ax.set_ylim(0, 4600)
-    ax.legend(loc="upper right", fontsize=18, ncol=2, handlelength=1.2, columnspacing=1.4)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), fontsize=fs(18), ncol=4, handlelength=1.2,
+              columnspacing=1.4, frameon=False)
     return _salvar(fig, "figV2_funil")
 
 
@@ -218,7 +226,7 @@ def acumulado(qs):
     for c in ORDEM:
         y = distintos_por_onda(c, qs[c])
         ax.plot(range(1, len(y) + 1), y, color=COR[c], linewidth=3.4, marker="o", markersize=10, label=NOME[c])
-        ax.text(len(y) + 0.12, y[-1], str(y[-1]), va="center", fontsize=18, color=COR[c], fontweight="semibold")
+        ax.text(len(y) + 0.12, y[-1], str(y[-1]), va="center", fontsize=fs(18), color=COR[c], fontweight="semibold")
     _x_chamadas(ax)
     _eixo(ax, "Conhecimentos válidos distintos\n(acumulado)")
     ax = axs[1]
@@ -229,24 +237,24 @@ def acumulado(qs):
             v[q["visita"]][1] += 1
         y = [100 * v[k][0] / v[k][1] for k in sorted(v)]
         ax.plot(sorted(v), y, color=COR[c], linewidth=3.4, marker="o", markersize=10)
-    ax.set_xticks([1, 2, 3], ["1", "2", "3"], fontsize=19)
+    ax.set_xticks([1, 2, 3], ["1", "2", "3"], fontsize=fs(19))
     ax.set_xlim(0.8, 3.2)
-    ax.set_xlabel(T("Visita ao bloco foco"), fontsize=21)
+    ax.set_xlabel(T("Visita ao bloco foco"), fontsize=fs(21))
     _eixo(ax, "Questões válidas (%)")
     alcas = [plt.Line2D([], [], color=COR[c], linewidth=3.4, marker="o", markersize=10) for c in ORDEM]
-    fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=min(len(ORDEM), 4), fontsize=19,
+    fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=3, fontsize=fs(19),
                frameon=False, handlelength=1.8, columnspacing=1.6)
     fig.tight_layout(w_pad=4)
     return _salvar(fig, "figV3_acumulado_e_visitas")
 
 
 def _x_chamadas(ax, ondas=6, fonte=19):
-    ax.set_xticks(range(1, ondas + 1), [str(CHAMADAS * w) for w in range(1, ondas + 1)], fontsize=fonte)
+    ax.set_xticks(range(1, ondas + 1), [str(CHAMADAS * w) for w in range(1, ondas + 1)], fontsize=fs(fonte))
     ax.set_xlim(0.7, ondas + 0.8)
-    ax.set_xlabel(T("Chamadas de geração"), fontsize=21)
+    ax.set_xlabel(T("Chamadas de geração"), fontsize=fs(21))
 
 
-def _linhas(ax, series, casas=0, sufixo="", folga=0.055):
+def _linhas(ax, series, casas=0, sufixo="", folga=0.072):
     """Curvas com o valor final à direita; rótulos próximos são afastados para não se sobreporem."""
     for c in ORDEM:
         y = series[c]
@@ -268,13 +276,20 @@ def _linhas(ax, series, casas=0, sufixo="", folga=0.055):
         pos += [base + passo * k for k in range(len(g))]
     for (v, c), yp in zip(fim, pos):
         n = len(series[c])
-        ax.text(n + 0.12, yp, _n(v, casas) + sufixo, va="center", fontsize=18, color=COR[c], fontweight="semibold")
+        ax.text(n + 0.12, yp, _n(v, casas) + sufixo, va="center", fontsize=fs(18), color=COR[c], fontweight="semibold")
+
+
+def _legenda_barras(fig, ncol=5):
+    from matplotlib.patches import Patch
+    alcas = [Patch(facecolor=COR[c]) for c in ORDEM]
+    fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=ncol,
+               fontsize=fs(19), frameon=False, handlelength=1.4, columnspacing=1.8)
 
 
 def _legenda(fig, ncol=5):
     alcas = [plt.Line2D([], [], color=COR[c], linewidth=3.4, marker="o", markersize=10) for c in ORDEM]
     fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=ncol,
-               fontsize=19, frameon=False, handlelength=1.8, columnspacing=1.6)
+               fontsize=fs(19), frameon=False, handlelength=1.8, columnspacing=1.6)
 
 
 def taxa_novidade(c: str, qs: list[dict]) -> list[float]:
@@ -357,20 +372,20 @@ def diversidade(r):
             ("self_bleu_por_topico", "vocabulario_geradas", "Self-BLEU por tópico\n(menor = mais variado)", 2),
             ("mtld", "vocabulario_geradas", "MTLD\n(maior = mais variado)", 0),
             ("vendi_relativo_por_topico", "vocabulario_geradas", "Vendi relativo por tópico\n(maior = mais variado)", 2))
-    fig, axs = plt.subplots(1, 4, figsize=(28 * W, 7.4))
+    fig, axs = plt.subplots(2, 2, figsize=(18 * W, 12.5))
+    axs = axs.ravel()
     x = np.arange(len(ORDEM))
     for ax, (k, bloco, ylabel, casas) in zip(axs, metr):
         v = [(r["configs"][c][bloco][k] if bloco else r["configs"][c][k]) for c in ORDEM]
         ax.bar(x, v, 0.68, color=[COR[c] for c in ORDEM], zorder=2)
         topo = max(v)
         for xi, n in zip(x, v):
-            ax.text(xi, n + topo * 0.015, _n(n, casas), ha="center", va="bottom", fontsize=17, fontweight="semibold",
+            ax.text(xi, n + topo * 0.015, _n(n, casas), ha="center", va="bottom", fontsize=fs(17), fontweight="semibold",
                     color=F.TINTA)
-        ax.set_xticks(x, [CURTO[c] for c in ORDEM], fontsize=17, rotation=0)
-        for t, c in zip(ax.get_xticklabels(), ORDEM):
-            t.set_color(COR[c])
+        ax.set_xticks([])
         _eixo(ax, ylabel, fonte=19)
         ax.set_ylim(0, topo * 1.16)
+    _legenda_barras(fig)
     fig.tight_layout(w_pad=3)
     return _salvar(fig, "figV4_diversidade")
 
@@ -386,33 +401,34 @@ def dificuldade(r):
         pos = x + (k - 0.5) * w
         ax.bar(pos, v, w * 0.94, color=cor, label=T(nome), zorder=2)
         for p, n in zip(pos, v):
-            ax.text(p, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=20, fontweight="semibold", color=F.TINTA)
+            ax.text(p, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=fs(20), fontweight="semibold", color=F.TINTA)
     _xt(ax, x)
     _eixo(ax, "Acurácia do painel (%)")
     ax.set_ylim(0, 108)
-    ax.legend(loc="upper left", fontsize=19, ncol=2, handlelength=1.2)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), fontsize=fs(19), ncol=2, handlelength=1.2,
+              frameon=False)
     return _salvar(fig, "figV5_dificuldade")
 
 
 def motivos(r, qs):
     """Reprovações do auditor por motivo, em % das geradas (uma questão pode ter mais de um motivo)."""
-    grupos_ = (("atalho", ("atalho",), F.RAMPA[6], "Atalho (resposta sai do enunciado)"),
+    grupos_ = (("atalho", ("atalho",), F.RAMPA[6], "Atalho\n(resposta sai do enunciado)"),
                ("varias", ("varias_respostas", "nao_unico"), F.RAMPA[4], "Mais de uma resposta válida"),
                ("fonte", ("fora_da_fonte",), F.RAMPA[2], "Fora da fonte"),
                ("doc", ("depende_do_documento",), "#c9c8c3", "Depende do documento"))
-    fig, axs = plt.subplots(1, 4, figsize=(28 * W, 7.4), sharey=True)
+    fig, axs = plt.subplots(2, 2, figsize=(18 * W, 12.5), sharey=True)
+    axs = axs.ravel()
     x = np.arange(len(ORDEM))
     for ax, (_, ks, cor, nome) in zip(axs, grupos_):
         v = [100 * sum(any(f in ks for f in q["auditoria"].get("falhas", [])) for q in qs[c]) / len(qs[c]) for c in ORDEM]
         ax.bar(x, v, 0.68, color=[COR[c] for c in ORDEM], zorder=2)
         for xi, n in zip(x, v):
-            ax.text(xi, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=18, fontweight="semibold", color=F.TINTA)
-        ax.set_xticks(x, [CURTO[c] for c in ORDEM], fontsize=17)
-        for t, c in zip(ax.get_xticklabels(), ORDEM):
-            t.set_color(COR[c])
-        ax.set_xlabel(T(nome), fontsize=20, labelpad=12)
-        _eixo(ax, "Reprovadas pelo auditor (% das geradas)" if ax is axs[0] else "", fonte=19)
+            ax.text(xi, n + 1.2, _n(n, 0), ha="center", va="bottom", fontsize=fs(18), fontweight="semibold", color=F.TINTA)
+        ax.set_xticks([])
+        ax.set_xlabel(T(nome), fontsize=fs(20), labelpad=12)
+        _eixo(ax, "Reprovadas pelo auditor\n(% das geradas)" if ax in (axs[0], axs[2]) else "", fonte=19)
     axs[0].set_ylim(0, 100)
+    _legenda_barras(fig)
     fig.tight_layout(w_pad=2)
     return _salvar(fig, "figV6_motivos")
 
