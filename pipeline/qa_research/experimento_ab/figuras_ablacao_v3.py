@@ -1,6 +1,12 @@
 """Figuras da ablação v3 (relatorios/ablacao_geracao_v3/figuras), no estilo dos slides: sem título, fontes grandes,
 uma cor por configuração da escada (naive azul, + regras laranja, + documentos verde, + externos roxo, + retro vermelho).
 
+Eixo x das curvas: chamadas de geração acumuladas (cada onda = 160 chamadas; 960 por configuração).
+Taxa de novidade: % das questões de cada fatia de chamadas que a deduplicação não liga a uma questão anterior do
+mesmo documento. Vendi Score: número efetivo de questões válidas distintas (Friedman e Dieng, 2023), soma por
+documento das válidas acumuladas, com embeddings locais intfloat/multilingual-e5-base (pergunta + resposta)
+centrados pela média; cache em .local/.
+
 Conhecimentos válidos distintos: as questões redundantes apontam para a que ficou (deduplicação calibrada, só medida);
 cada grupo de questões equivalentes conta uma vez se tiver ao menos uma questão válida.
 
@@ -34,6 +40,7 @@ NOME = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Documentos", "e
         "retro_sem_memoria": "+ Retroalimentação"}
 CURTO = {"naive": "Naive", "regras": "+ Regras", "documentos": "+ Docs.", "externos": "+ Ext.",
          "retro_sem_memoria": "+ Retro"}
+CHAMADAS = 160                    # chamadas de geração por onda (40 documentos x 4 focos)
 W = max(1.0, len(ORDEM) / 5)      # largura proporcional ao número de configurações
 FIG = SAIDA / "figuras"
 VIRG = matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}".replace(".", ","))
@@ -153,9 +160,7 @@ def acumulado(qs):
         y = distintos_por_onda(c, qs[c])
         ax.plot(range(1, len(y) + 1), y, color=COR[c], linewidth=3.4, marker="o", markersize=10, label=NOME[c])
         ax.text(len(y) + 0.12, y[-1], str(y[-1]), va="center", fontsize=18, color=COR[c], fontweight="semibold")
-    ax.set_xticks(range(1, 7), [str(i) for i in range(1, 7)], fontsize=19)
-    ax.set_xlim(0.7, 6.8)
-    ax.set_xlabel("Onda de geração", fontsize=21)
+    _x_chamadas(ax)
     _eixo(ax, "Conhecimentos válidos distintos\n(acumulado)")
     ax = axs[1]
     for c in ORDEM:
@@ -174,6 +179,117 @@ def acumulado(qs):
                frameon=False, handlelength=1.8, columnspacing=1.6)
     fig.tight_layout(w_pad=4)
     return _salvar(fig, "figV3_acumulado_e_visitas")
+
+
+def _x_chamadas(ax, ondas=6, fonte=19):
+    ax.set_xticks(range(1, ondas + 1), [str(CHAMADAS * w) for w in range(1, ondas + 1)], fontsize=fonte)
+    ax.set_xlim(0.7, ondas + 0.8)
+    ax.set_xlabel("Chamadas de geração", fontsize=21)
+
+
+def _linhas(ax, series, casas=0, sufixo="", folga=0.055):
+    """Curvas com o valor final à direita; rótulos próximos são afastados para não se sobreporem."""
+    for c in ORDEM:
+        y = series[c]
+        ax.plot(range(1, len(y) + 1), y, color=COR[c], linewidth=3.4, marker="o", markersize=10, label=NOME[c])
+    fim = sorted((series[c][-1], c) for c in ORDEM)
+    vals = [v for s in series.values() for v in s]
+    passo = folga * (max(vals) - min(min(vals), 0))
+    grupos = []                                    # rótulos próximos formam um bloco espaçado e centrado nos valores
+    for v, _ in fim:
+        if grupos and v - grupos[-1][-1] < passo:
+            grupos[-1].append(v)
+        else:
+            grupos.append([v])
+    pos = []
+    for g in grupos:
+        base = (g[0] + g[-1]) / 2 - passo * (len(g) - 1) / 2
+        if pos:
+            base = max(base, pos[-1] + passo)
+        pos += [base + passo * k for k in range(len(g))]
+    for (v, c), yp in zip(fim, pos):
+        n = len(series[c])
+        ax.text(n + 0.12, yp, _n(v, casas) + sufixo, va="center", fontsize=18, color=COR[c], fontweight="semibold")
+
+
+def _legenda(fig, ncol=5):
+    alcas = [plt.Line2D([], [], color=COR[c], linewidth=3.4, marker="o", markersize=10) for c in ORDEM]
+    fig.legend(alcas, [NOME[c] for c in ORDEM], loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=ncol,
+               fontsize=19, frameon=False, handlelength=1.8, columnspacing=1.6)
+
+
+def taxa_novidade(c: str, qs: list[dict]) -> list[float]:
+    """% das questões de cada onda que trazem conhecimento novo no documento (decisão nova ou substitui do dedup)."""
+    dec = {}
+    for p in (SAIDA / c / "dedup").glob("*/*.json"):
+        d = read_json(p)
+        dec[d["uid"]] = d["decisao"]
+    out = []
+    for w in range(1, max(q["onda"] for q in qs) + 1):
+        wq = [q for q in qs if q["onda"] == w]
+        out.append(100 * sum(dec.get(q["uid"]) in ("nova", "substitui") for q in wq) / len(wq))
+    return out
+
+
+def novidade(qs):
+    """Taxa de novidade por fatia de 160 chamadas."""
+    fig, ax = plt.subplots(figsize=(14, 7.6))
+    _linhas(ax, {c: taxa_novidade(c, qs[c]) for c in ORDEM}, sufixo="%")
+    _x_chamadas(ax)
+    ax.set_ylim(0, 105)
+    _eixo(ax, "Taxa de novidade (%)")
+    _legenda(fig, ncol=3)
+    fig.tight_layout()
+    return _salvar(fig, "figV7_novidade")
+
+
+def _e5(qs) -> dict:
+    """uid -> vetor e5 normalizado (pergunta + resposta) das válidas; cache local."""
+    arq = SAIDA / ".local" / "e5_validas.npz"
+    val = sorted({q["uid"]: q for c in ORDEM for q in qs[c] if q["valida"]}.values(), key=lambda q: q["uid"])
+    txt = [f"query: {q['pergunta']} {q['resposta']}" for q in val]
+    chave = C.sha("\n".join(txt))
+    if arq.exists():
+        z = np.load(arq, allow_pickle=False)
+        if str(z["chave"]) == chave:
+            return dict(zip(z["uid"].tolist(), z["E"].astype(np.float64)))
+    from sentence_transformers import SentenceTransformer
+    E = SentenceTransformer("intfloat/multilingual-e5-base", device="cpu").encode(
+        txt, batch_size=64, normalize_embeddings=True, show_progress_bar=False)
+    arq.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(arq, E=E.astype(np.float16), uid=np.array([q["uid"] for q in val]), chave=chave)
+    return dict(zip([q["uid"] for q in val], np.asarray(E, dtype=np.float64)))
+
+
+def vendi_por_onda(c: str, qs: list[dict], E: dict, media: np.ndarray) -> list[float]:
+    """Vendi Score das válidas acumuladas até cada onda: soma, por documento, do número efetivo de questões distintas
+    (núcleo cosseno sobre embeddings centrados)."""
+    from .ablacao import vendi
+    out = []
+    for w in range(1, max(q["onda"] for q in qs) + 1):
+        por_item = defaultdict(list)
+        for q in qs:
+            if q["valida"] and q["onda"] <= w:
+                por_item[q["item"]].append(E[q["uid"]] - media)
+        tot = 0.0
+        for vs in por_item.values():
+            V = np.array(vs)
+            tot += vendi(V / np.clip(np.linalg.norm(V, axis=1, keepdims=True), 1e-12, None))
+        out.append(tot)
+    return out
+
+
+def vendi_curva(qs):
+    """Vendi Score acumulado das válidas por chamadas de geração."""
+    E = _e5(qs)
+    media = np.mean(np.array(list(E.values())), axis=0)
+    fig, ax = plt.subplots(figsize=(14, 7.6))
+    _linhas(ax, {c: vendi_por_onda(c, qs[c], E, media) for c in ORDEM})
+    _x_chamadas(ax)
+    _eixo(ax, "Vendi Score das válidas\n(acumulado)")
+    _legenda(fig, ncol=3)
+    fig.tight_layout()
+    return _salvar(fig, "figV8_vendi")
 
 
 def diversidade(r):
@@ -248,7 +364,8 @@ def gerar() -> list:
     resumo = {c: {"conhecimentos_validos_distintos_por_onda": distintos_por_onda(c, qs[c])} for c in ORDEM}
     FIG.mkdir(parents=True, exist_ok=True)
     (FIG / "distintos.json").write_text(json.dumps(resumo, indent=1), encoding="utf-8")
-    return (validade(r) + funil(r, qs) + acumulado(qs) + diversidade(r) + dificuldade(r) + motivos(r, qs))
+    return (validade(r) + funil(r, qs) + acumulado(qs) + diversidade(r) + dificuldade(r) + motivos(r, qs)
+            + novidade(qs) + vendi_curva(qs))
 
 
 if __name__ == "__main__":
