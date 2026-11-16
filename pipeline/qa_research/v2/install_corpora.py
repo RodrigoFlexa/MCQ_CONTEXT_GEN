@@ -9,7 +9,7 @@ import importlib.util
 from collections import deque
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urljoin, urlsplit, urldefrag
+from urllib.parse import quote, urljoin, urlsplit, urldefrag
 
 from pipeline.domain_corpora.io_utils import HTTP, atomic_json, file_hash
 from pipeline.domain_corpora.extract import pdf_pages, accepted_pages
@@ -96,6 +96,49 @@ CATALOG = {
  'iogp': {'seeds':['https://www.iogp.org/workstreams/safety/safety/process-safety/fundamentals/'],
          'hosts':['www.iogp.org'], 'scope':['/workstreams/safety/safety/process-safety/','/bookstore/wp-content/uploads/'],
          'kind':'guia_profissional','jurisdiction':'not_specified','rights':'IOGP: atribuição e condições no documento'},
+ # Coleções acrescentadas para o refino dos contextos (regulação brasileira e referência
+ # técnica geral). Falhas de URL ficam no install_report.json e não bloqueiam as demais.
+ 'mte_nr': {'seeds':['https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes',
+                     'https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/inspecao-do-trabalho/seguranca-e-saude-no-trabalho/ctpp-nrs/norma-regulamentadora-no-37-nr-37'],
+         'hosts':['www.gov.br'],
+         'scope':['/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/',
+                  '/trabalho-e-emprego/pt-br/assuntos/inspecao-do-trabalho/seguranca-e-saude-no-trabalho/ctpp-nrs/'],
+         'kind':'norma_regulamentadora','jurisdiction':'BR',
+         'rights':'Ato oficial do MTE (Lei 9.610/1998, art. 8º, IV); conferir vigência e portaria de atualização no texto'},
+ 'anp_regulacao': {'seeds':[
+        'https://www.gov.br/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2026/arquivos/cp-ap-21-2026/minuta_regulamento_sgso_cp_21-2026.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2026/arquivos/cp-ap-21-2026/minuta_resolucao_sgso_cp_21-2026.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2026/arquivos/cp-ap-21-2026/sei_5020525_nota_tecnica_11.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2026/arquivos/cp-ap-21-2026/sei_6160214_nota-tecnica_12.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2026/arquivos/cp-ap-21-2026/sei_6178199_nota-tecnica_13.pdf',
+        'https://www.gov.br/anp/pt-br/centrais-de-conteudo/apresentacoes-palestras/2026/arquivos/roge/seguranca-operacional-passado-presente-e-futuro-da-regulacao.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/analise-de-impacto-regulatorio-air/arquivos/2416611-relatorio-de-air.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/exploracao-e-producao-de-oleo-e-gas/seguranca-operacional/workshop-soma/soma-vi-2018/revisao-sgso-ibp.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/exploracao-e-producao-de-oleo-e-gas/seguranca-operacional/arq/raso/2019-relatorio-anual-seguranca-operacional.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2021/copy_of_2021/cp-4-2021/cap-04-2021-nota-tecnica-7-2021-ssm-anp.pdf',
+        'https://www.gov.br/anp/pt-br/centrais-de-conteudo/publicacoes/folderes/arquivos-folders/folderssm.pdf',
+        'https://www.gov.br/anp/pt-br/assuntos/exploracao-e-producao-de-oleo-e-gas/seguranca-operacional'],
+         'hosts':['www.gov.br'],
+         'scope':['/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2026/arquivos/cp-ap-21-2026/',
+                  '/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2021/copy_of_2021/cp-4-2021/',
+                  '/anp/pt-br/centrais-de-conteudo/', '/anp/pt-br/assuntos/analise-de-impacto-regulatorio-air/',
+                  '/anp/pt-br/assuntos/exploracao-e-producao-de-oleo-e-gas/seguranca-operacional'],
+         'kind':'regulacao','jurisdiction':'BR',
+         'rights':'Documentos oficiais da ANP; minutas de consulta pública não são norma vigente'},
+ 'conama': {'seeds':['https://lamorh.ufes.br/sites/lamorh.ufes.br/files/field/anexo/resolucao_conama_no_393-2007.pdf'],
+         'hosts':['lamorh.ufes.br'], 'scope':['/sites/lamorh.ufes.br/files/field/anexo/resolucao_conama_no_393'],
+         'kind':'resolucao_ambiental','jurisdiction':'BR','depth':0,
+         'rights':'Ato oficial (CONAMA 393/2007) em cópia hospedada pela UFES; conferir no DOU'},
+ 'marinha_dpc': {'seeds':['https://www.marinha.mil.br/dpc/normas-autoridade-maritima-brasileira',
+                          'https://www.marinha.mil.br/sites/default/files/atos-normativos/dpc/portaria-187-normam-201.html'],
+         'hosts':['www.marinha.mil.br'],
+         'scope':['/dpc/normas', '/sites/default/files/atos-normativos/dpc/', '/dpc/sites/www.marinha.mil.br.dpc/files/'],
+         'kind':'norma_autoridade_maritima','jurisdiction':'BR',
+         'rights':'Ato oficial da Autoridade Marítima; conferir vigência (NORMAM reorganizadas em 2023)'},
+ 'wikipedia_en': {'seeds':['https://en.wikipedia.org/wiki/'+quote(t, safe="_(),'") for t in ['Floating_production_storage_and_offloading', 'Single_buoy_mooring', 'Suction_caisson', 'Gas_flare', 'Gas_compressor', 'Centrifugal_compressor', 'Reciprocating_compressor', 'Rotary-screw_compressor', 'Glycol_dehydration', 'Molecular_sieve', 'Membrane_gas_separation', 'Clathrate_hydrate', 'Hydrocyclone', 'Induced_gas_flotation', 'Produced_water', 'Water_injection_(oil_production)', 'Christmas_tree_(oil_well)', 'Subsea_(technology)', 'Pipeline_pigging', 'Gas_lift', 'Oil–water_separator', 'Desalter', 'Crude_oil_washing', 'Ballast_tank', 'Cathodic_protection', 'Variable-frequency_drive', 'Distributed_control_system', 'Programmable_logic_controller', 'SCADA', 'Control_valve', 'Safety_instrumented_system', 'Lifeboat_(shipboard)', 'Hazard_and_operability_study', 'Lockout–tagout', 'Confined_space', 'Naturally_occurring_radioactive_material', 'Anchor_handling_tug_supply_vessel', 'Platform_supply_vessel', 'Dynamic_positioning', 'Shuttle_tanker', 'Custody_transfer', 'Flow_measurement', 'Ultrasonic_flow_meter', 'Mass_flow_meter', 'Orifice_plate', 'Corrosion_inhibitor', 'Scale_inhibitor', 'Demulsifier', 'Paraffin_wax', 'Asphaltene', 'Amine_gas_treating', 'Hydrogen_sulfide', 'Pressure_relief_valve', 'Rupture_disc', 'Inert_gas', 'Fire_protection', 'Deluge_system', 'Gas_detector', 'Flame_detector', 'Risk_assessment', 'Fault_tree_analysis', 'Failure_mode_and_effects_analysis', 'Reliability-centered_maintenance', 'Risk-based_inspection', 'Non-destructive_testing', 'Electric_generator', 'Gas_turbine', 'Uninterruptible_power_supply', 'Heat_exchanger', 'Plate_heat_exchanger', 'Shell-and-tube_heat_exchanger', 'Reverse_osmosis', 'Seawater_desalination', 'Heating,_ventilation,_and_air_conditioning', 'Crane_(machine)', 'Sling_(lifting)', 'Shackle', 'Wire_rope', 'Helideck', 'Simultaneous_operations', 'Decommissioning_of_offshore_installations', 'Key_performance_indicator', 'Overall_equipment_effectiveness', 'Mean_time_between_failures', 'Mean_time_to_repair']],
+         'hosts':['en.wikipedia.org'], 'scope':['/wiki/'], 'depth':0,
+         'kind':'enciclopedia','jurisdiction':'not_specified',
+         'rights':'CC BY-SA 4.0; referência geral, não substitui norma nem manual técnico'},
 }
 
 
@@ -148,6 +191,7 @@ def permitted(url, spec):
 
 def collect(source, root, http, limit=30, max_pages=100, depth=2, retry_urls=None):
     spec = CATALOG[source]
+    depth = spec.get('depth', depth)  # algumas coleções são listas fechadas de documentos
     old=existing_records(root,source)
     quarantined=[r for r in old if navigation_reason(r)]
     previous=[r for r in old if not navigation_reason(r)]
