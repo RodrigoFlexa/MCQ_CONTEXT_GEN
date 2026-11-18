@@ -101,7 +101,9 @@ CATALOG = {
  'mte_nr': {'seeds':['https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes',
                      'https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/inspecao-do-trabalho/seguranca-e-saude-no-trabalho/ctpp-nrs/norma-regulamentadora-no-37-nr-37'],
          'hosts':['www.gov.br'],
-         'scope':['/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/',
+         # Só NRs vigentes, seus PDFs e manuais; atas da CTPP e subcomissões ficam fora.
+         'scope':['/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes',
+                  '/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/arquivos/normas-regulamentadoras/',
                   '/trabalho-e-emprego/pt-br/assuntos/inspecao-do-trabalho/seguranca-e-saude-no-trabalho/ctpp-nrs/'],
          'kind':'norma_regulamentadora','jurisdiction':'BR',
          'rights':'Ato oficial do MTE (Lei 9.610/1998, art. 8º, IV); conferir vigência e portaria de atualização no texto'},
@@ -121,7 +123,9 @@ CATALOG = {
          'hosts':['www.gov.br'],
          'scope':['/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2026/arquivos/cp-ap-21-2026/',
                   '/anp/pt-br/assuntos/consultas-e-audiencias-publicas/consulta-audiencia-publica/2021/copy_of_2021/cp-4-2021/',
-                  '/anp/pt-br/centrais-de-conteudo/', '/anp/pt-br/assuntos/analise-de-impacto-regulatorio-air/',
+                  '/anp/pt-br/centrais-de-conteudo/apresentacoes-palestras/2026/arquivos/roge/',
+                  '/anp/pt-br/centrais-de-conteudo/publicacoes/folderes/arquivos-folders/folderssm',
+                  '/anp/pt-br/assuntos/analise-de-impacto-regulatorio-air/arquivos/2416611-relatorio-de-air',
                   '/anp/pt-br/assuntos/exploracao-e-producao-de-oleo-e-gas/seguranca-operacional'],
          'kind':'regulacao','jurisdiction':'BR',
          'rights':'Documentos oficiais da ANP; minutas de consulta pública não são norma vigente'},
@@ -129,13 +133,8 @@ CATALOG = {
          'hosts':['lamorh.ufes.br'], 'scope':['/sites/lamorh.ufes.br/files/field/anexo/resolucao_conama_no_393'],
          'kind':'resolucao_ambiental','jurisdiction':'BR','depth':0,
          'rights':'Ato oficial (CONAMA 393/2007) em cópia hospedada pela UFES; conferir no DOU'},
- 'marinha_dpc': {'seeds':['https://www.marinha.mil.br/dpc/normas-autoridade-maritima-brasileira',
-                          'https://www.marinha.mil.br/sites/default/files/atos-normativos/dpc/portaria-187-normam-201.html'],
-         'hosts':['www.marinha.mil.br'],
-         'scope':['/dpc/normas', '/sites/default/files/atos-normativos/dpc/', '/dpc/sites/www.marinha.mil.br.dpc/files/'],
-         'kind':'norma_autoridade_maritima','jurisdiction':'BR',
-         'rights':'Ato oficial da Autoridade Marítima; conferir vigência (NORMAM reorganizadas em 2023)'},
- 'wikipedia_en': {'seeds':['https://en.wikipedia.org/wiki/'+quote(t, safe="_(),'") for t in ['Floating_production_storage_and_offloading', 'Single_buoy_mooring', 'Suction_caisson', 'Gas_flare', 'Gas_compressor', 'Centrifugal_compressor', 'Reciprocating_compressor', 'Rotary-screw_compressor', 'Glycol_dehydration', 'Molecular_sieve', 'Membrane_gas_separation', 'Clathrate_hydrate', 'Hydrocyclone', 'Induced_gas_flotation', 'Produced_water', 'Water_injection_(oil_production)', 'Christmas_tree_(oil_well)', 'Subsea_(technology)', 'Pipeline_pigging', 'Gas_lift', 'Oil–water_separator', 'Desalter', 'Crude_oil_washing', 'Ballast_tank', 'Cathodic_protection', 'Variable-frequency_drive', 'Distributed_control_system', 'Programmable_logic_controller', 'SCADA', 'Control_valve', 'Safety_instrumented_system', 'Lifeboat_(shipboard)', 'Hazard_and_operability_study', 'Lockout–tagout', 'Confined_space', 'Naturally_occurring_radioactive_material', 'Anchor_handling_tug_supply_vessel', 'Platform_supply_vessel', 'Dynamic_positioning', 'Shuttle_tanker', 'Custody_transfer', 'Flow_measurement', 'Ultrasonic_flow_meter', 'Mass_flow_meter', 'Orifice_plate', 'Corrosion_inhibitor', 'Scale_inhibitor', 'Demulsifier', 'Paraffin_wax', 'Asphaltene', 'Amine_gas_treating', 'Hydrogen_sulfide', 'Pressure_relief_valve', 'Rupture_disc', 'Inert_gas', 'Fire_protection', 'Deluge_system', 'Gas_detector', 'Flame_detector', 'Risk_assessment', 'Fault_tree_analysis', 'Failure_mode_and_effects_analysis', 'Reliability-centered_maintenance', 'Risk-based_inspection', 'Non-destructive_testing', 'Electric_generator', 'Gas_turbine', 'Uninterruptible_power_supply', 'Heat_exchanger', 'Plate_heat_exchanger', 'Shell-and-tube_heat_exchanger', 'Reverse_osmosis', 'Seawater_desalination', 'Heating,_ventilation,_and_air_conditioning', 'Crane_(machine)', 'Sling_(lifting)', 'Shackle', 'Wire_rope', 'Helideck', 'Simultaneous_operations', 'Decommissioning_of_offshore_installations', 'Key_performance_indicator', 'Overall_equipment_effectiveness', 'Mean_time_between_failures', 'Mean_time_to_repair']],
+ # marinha_dpc retirada: o portal da DPC responde 403 (Forbidden) à coleta automática.
+ 'wikipedia_en': {'seeds':['https://en.wikipedia.org/wiki/'+quote(t, safe="_(),'") for t in ['Floating_production_storage_and_offloading', 'Single_buoy_mooring', 'Suction_caisson', 'Gas_flare', 'Gas_compressor', 'Centrifugal_compressor', 'Reciprocating_compressor', 'Rotary-screw_compressor', 'Glycol_dehydration', 'Molecular_sieve', 'Membrane_gas_separation', 'Clathrate_hydrate', 'Hydrocyclone', 'Induced_gas_flotation', 'Produced_water', 'Water_injection_(oil_production)', 'Christmas_tree_(oil_well)', 'Subsea_(technology)', 'Pigging', 'Gas_lift', 'Oil–water_separator', 'Desalter', 'Crude_oil_washing', 'Ballast_tank', 'Cathodic_protection', 'Variable-frequency_drive', 'Distributed_control_system', 'Programmable_logic_controller', 'SCADA', 'Control_valve', 'Safety_instrumented_system', 'Lifeboat_(shipboard)', 'Hazard_and_operability_study', 'Lockout–tagout', 'Confined_space', 'Naturally_occurring_radioactive_material', 'Anchor_handling_tug_supply_vessel', 'Platform_supply_vessel', 'Dynamic_positioning', 'Shuttle_tanker', 'Custody_transfer', 'Flow_measurement', 'Ultrasonic_flow_meter', 'Mass_flow_meter', 'Orifice_plate', 'Corrosion_inhibitor', 'Scale_inhibitor', 'Demulsifier', 'Paraffin_wax', 'Asphaltene', 'Amine_gas_treating', 'Hydrogen_sulfide', 'Pressure_relief_valve', 'Rupture_disc', 'Inert_gas', 'Fire_protection', 'Deluge_system', 'Gas_detector', 'Flame_detector', 'Risk_assessment', 'Fault_tree_analysis', 'Failure_mode_and_effects_analysis', 'Reliability-centered_maintenance', 'Risk-based_inspection', 'Non-destructive_testing', 'Electric_generator', 'Gas_turbine', 'Uninterruptible_power_supply', 'Heat_exchanger', 'Plate_heat_exchanger', 'Shell-and-tube_heat_exchanger', 'Reverse_osmosis', 'Seawater_desalination', 'Heating,_ventilation,_and_air_conditioning', 'Crane_(machine)', 'Shackle', 'Wire_rope', 'Helideck', 'Key_performance_indicator', 'Overall_equipment_effectiveness', 'Mean_time_between_failures', 'Mean_time_to_repair']],
          'hosts':['en.wikipedia.org'], 'scope':['/wiki/'], 'depth':0,
          'kind':'enciclopedia','jurisdiction':'not_specified',
          'rights':'CC BY-SA 4.0; referência geral, não substitui norma nem manual técnico'},
@@ -331,7 +330,8 @@ def install(root, sources, http, limit=30, max_pages=100, depth=2, base=None, al
             if all((root/f['path']).is_file() and file_hash(root/f['path'])==f['sha256'] for f in collection_files(c)):collections.append(c)
             else:raise ValueError('Coleção anterior mudou; preserve o acervo e instale em outro destino: '+c['id'])
         processed=set(sources)
-        errors.extend(e for e in prior.get('errors',[]) if e.get('source') not in processed)
+        errors.extend(e for e in prior.get('errors',[]) if e.get('source') not in processed
+                      and (e.get('source') in CATALOG or e.get('source')=='force'))
         # Invalida uma instalação anterior ANTES de alterar arquivos.
         atomic_json(root/'manifest.json',{'schema':'petroquest-professional-corpora-v1','ready':False})
         for source in sources:
@@ -368,7 +368,7 @@ def install(root, sources, http, limit=30, max_pages=100, depth=2, base=None, al
                     c['files']=[{**{k:v for k,v in f.items() if k!='resolved_path'},
                         'path':os.path.relpath(f['resolved_path'],root).replace(os.sep,'/')} for f in c['files']]
                 collections.append(c)
-        expected=set(prior.get('selected_sources',[]))|set(sources)
+        expected={s for s in prior.get('selected_sources',[]) if s in CATALOG}|set(sources)
         if with_force:expected.add('force')
         missing=sorted(expected-{c['id'] for c in collections})
         blocking=[e for e in errors if e.get('category')=='missing_dependency']

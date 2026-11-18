@@ -81,7 +81,7 @@ async def execute(entradas, items, manifests, output, config, cache, legacy, map
         C.require(previous is None or previous == identity, 'Entradas mudaram; escolha nova saída')
         atomic_json(output / 'identidade.json', identity)
         print('[preparação] verificando e indexando os corpora (o índice fica em cache)', flush=True)
-        acervo = await asyncio.to_thread(Acervo.from_manifests, manifests, cache)
+        acervo = await asyncio.to_thread(Acervo.from_manifests, manifests, cache, config.get('index_workers'))
         atomic_json(output / 'preparacao_corpus.json', dict(indices=acervo.info))
         cfg = dict(config, verbose=config.get('verbose', False))
         try:
@@ -226,6 +226,8 @@ def main(argv=None):
     parser.add_argument('--plan', action='store_true')
     parser.add_argument('--collect', type=Path)
     parser.add_argument('--max-calls', type=int, help='Teto de chamadas por documento')
+    parser.add_argument('--workers', type=int, help='Chamadas simultâneas ao modelo (sobrepõe a configuração)')
+    parser.add_argument('--index-workers', type=int, help='Processos para construir os índices (padrão: núcleos - 1, até 16)')
     parser.add_argument('--verbose', action='store_true')
     args = parser.parse_args(argv)
     if args.collect:
@@ -237,6 +239,12 @@ def main(argv=None):
         C.require(args.max_calls > 0, 'Orçamento positivo obrigatório')
         config['max_calls'] = args.max_calls
     config['verbose'] = args.verbose
+    if args.workers is not None:
+        C.require(args.workers > 0, '--workers positivo')
+        config['workers'] = args.workers
+    if args.index_workers is not None:
+        C.require(args.index_workers > 0, '--index-workers positivo')
+        config['index_workers'] = args.index_workers
     entradas = load_entradas(args.entradas)
     items = args.items or config['items']
     if items == ['all']:

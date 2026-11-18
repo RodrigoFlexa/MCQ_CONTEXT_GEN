@@ -88,9 +88,9 @@ Os pesquisadores usam todos os manifestos prontos entre `dataset/domain_corpora`
 `dataset/professional_corpora_v3` e `dataset/professional_corpora_v2`. Para ampliar ao
 máximo, instale a v3 com todas as coleções profissionais, inclusive as novas: NRs do MTE
 (`mte_nr`), regulação de segurança operacional da ANP (`anp_regulacao`, inclusive a minuta
-do novo SGSO em consulta pública), CONAMA 393/2007 (`conama`), normas da Autoridade
-Marítima (`marinha_dpc`) e uma lista fechada de verbetes técnicos da Wikipedia em inglês
-(`wikipedia_en`), além das já existentes.
+do novo SGSO em consulta pública), CONAMA 393/2007 (`conama`) e uma lista fechada de
+verbetes técnicos da Wikipedia em inglês (`wikipedia_en`), além das já existentes. As normas
+da Marinha ficaram de fora: o portal da DPC responde 403 à coleta automática.
 
 ```bash
 git pull --ff-only origin codex/qa-evidencias-verificadas
@@ -105,7 +105,25 @@ Sem `--sources`, o instalador coleta todas as coleções do catálogo. `--allow-
 fontes que falharem (o relatório registra quais); `--retry-failed` tenta de novo só as URLs
 com erro. O `domain_corpora` (Petrolês, ANP, HSE, BSEE, REGIS) continua como está.
 
-### 2. Conferir e rodar o piloto
+### 2. Construir os índices de busca (uma vez, em paralelo)
+
+```bash
+"$DOCUMENT_PYTHON" -m pipeline.qa_research.refino.indexar --manifest auto
+```
+
+Constrói o índice BM25 de cada corpus pronto em `dataset/indices_refino`, com vários
+processos preparando os trechos (os JSONL grandes, como o REGIS, são divididos em faixas
+que respeitam a fronteira de documento) e um escritor com cache grande, sem journal, que
+monta os índices secundários e o FTS5 de uma vez no fim. O banco é idêntico ao do
+`CorpusIndex` (mesmo fingerprint, mesmas linhas e mesma busca; ver `tests/test_indexar.py`),
+então o refino e os outros fluxos o reaproveitam. Mostra progresso e tempo restante.
+`--workers` define os processos (padrão: núcleos − 1, até 16) e `--cache-mb` o cache
+do SQLite (padrão: ¼ da RAM, até 4 GB). Se a pasta do projeto estiver em disco de rede,
+use `--index-cache` num disco local com espaço (o índice do `domain_corpora` ocupa
+dezenas de GB) e passe o mesmo `--index-cache` ao refino. O refino também chama este
+construtor sozinho se o índice não existir.
+
+### 3. Conferir e rodar o piloto
 
 ```bash
 "$DOCUMENT_PYTHON" -m pip install -r pipeline/qa_research/refino/requirements.txt
@@ -124,11 +142,12 @@ Para outros documentos: `--items 02_02 03_03` ou `--items all`.
 Para manter os mesmos donos de conceito entre execuções:
 `--mapa pipeline/qa_research/saida_refino/piloto_01/mapa_conceitos.json`.
 
-Modelo: `gpt-5-4-petrobras` em todos os papéis (esforço em `config_piloto.json`). O teto é
+Modelo: `gpt-5-4-petrobras` em todos os papéis (esforço em `config_piloto.json`). `--workers N` muda o
+número de chamadas simultâneas ao modelo (padrão 3). O teto é
 de 180 tentativas por documento (`--max-calls`), cumulativo com as retomadas. Repetir o
 comando retoma: chamadas com a mesma entrada vêm do cache.
 
-### 3. Coletar e devolver
+### 4. Coletar e devolver
 
 O terminal mostra "O código acabou de rodar no terminal 🙂" e os comandos. Padrão:
 

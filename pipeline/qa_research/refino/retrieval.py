@@ -52,15 +52,19 @@ class Acervo:
         self.lock = threading.Lock()
 
     @classmethod
-    def from_manifests(cls, manifests, cache):
+    def from_manifests(cls, manifests, cache, workers=None):
+        """Índices construídos em paralelo (indexar.py) e reaproveitados entre execuções."""
+        from . import indexar
+        workers = workers or indexar.default_workers()
         indexes, info = [], []
-        for path in manifests:
-            name = Path(path).parent.name
-            index = CorpusIndex(Path(cache) / name, manifest=path)
-            built = index.build()
-            indexes.append((name, index))
-            info.append(dict(origem=name, manifesto=str(path), manifesto_sha256=file_hash(path),
-                             trechos=built['chunks'], colecoes=built['collections'], completo=built['complete_corpus']))
+        with indexar.make_pool(workers) as pool:
+            for path in manifests:
+                name = Path(path).parent.name
+                built, db_path = indexar.build(path, Path(cache) / name, workers, executor=pool)
+                indexes.append((name, indexar.attach(path, Path(cache) / name, built, db_path)))
+                info.append(dict(origem=name, manifesto=str(path), manifesto_sha256=file_hash(path),
+                                 trechos=built['chunks'], colecoes=built['collections'], completo=built['complete_corpus'],
+                                 construcao=built.get('construcao')))
         return cls(indexes, info)
 
     def with_inherited(self, evidence_file, cache):
