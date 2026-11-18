@@ -26,6 +26,7 @@ import tempfile
 import time
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from pathlib import Path
 
 from pipeline.domain_corpora.io_utils import file_hash
@@ -54,16 +55,31 @@ def make_pool(workers):
     return ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('spawn'))
 
 
+def ram_mb():
+    try:
+        return os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') // (1024 * 1024)
+    except (ValueError, OSError, AttributeError):
+        return 8192
+
+
+def free_mb():
+    """Memória disponível (Linux); None em outros sistemas."""
+    try:
+        for line in Path('/proc/meminfo').read_text().splitlines():
+            if line.startswith('MemAvailable:'):
+                return int(line.split()[1]) // 1024
+    except OSError:
+        pass
+    return None
+
+
 def default_workers():
-    return max(1, min(16, (os.cpu_count() or 2) - 1))
+    # Um processo a menos que os núcleos e no máximo um processo a cada 4 GB de RAM.
+    return max(1, min(16, (os.cpu_count() or 2) - 1, ram_mb() // 4096))
 
 
 def default_cache_mb():
-    try:
-        total = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') // (1024 * 1024)
-    except (ValueError, OSError, AttributeError):
-        total = 8192
-    return int(max(256, min(4096, total // 4)))
+    return int(max(256, min(2048, ram_mb() // 8)))
 
 
 # ---------------------------------------------------------------- planejamento
@@ -155,14 +171,16 @@ def _range_units(collection, start, end):
 
 
 def _chunks(task, collection):
+    """Gera os trechos sem acumular a faixa inteira em memória."""
     if task['kind'] == 'txt':
         # Cada TXT é um documento próprio do Petrolês: a janela recomeça em cada arquivo.
-        return K._manifest_chunks([dict(collection, files=[collection['files'][task['file']]])])
+        yield from K._manifest_chunks([dict(collection, files=[collection['files'][task['file']]])])
+        return
     import pipeline.domain_corpora.manifest as M
     original = M.iter_units
     M.iter_units = lambda cols: _range_units(cols[0], task['start'], task['end'])
     try:
-        return list(K._manifest_chunks([collection]))
+        yield from K._manifest_chunks([collection])
     finally:
         M.iter_units = original
 
@@ -265,11 +283,21 @@ def build(manifest, directory, workers=None, cache_mb=None, target_mb=64, progre
             def submit():
                 while queue and len(pending) < window:
                     t = queue.pop(0)
-                    pending.append(pool.submit(prepare, t, snap['collections'][t['collection']], str(folder)))
+                    pending.append((t, pool.submit(prepare, t, snap['collections'][t['collection']], str(folder))))
 
             submit()
             while pending:
-                result = pending.pop(0).result()
+                task, future = pending.pop(0)
+                while True:
+                    try:
+                        result = future.result(timeout=60)
+                        break
+                    except FutureTimeout:
+                        # A escrita segue a ordem original; mostra que está viva e em quê.
+                        mem = free_mb()
+                        progress(f'[índice:{name}] aguardando tarefa {tasks.index(task) + 1}/{len(tasks)} '
+                                 f'({snap["collections"][task["collection"]]["id"]}, {task["size"] / 2**20:.0f} MB)'
+                                 + (f' | memória livre {mem / 1024:.1f} GB' if mem is not None else ''), flush=True)
                 submit()
                 for batch in _read(result['path']):
                     chunk_rows, source_rows = [], []
@@ -295,8 +323,10 @@ def build(manifest, directory, workers=None, cache_mb=None, target_mb=64, progre
                     last_report = now
                     elapsed = now - started
                     rest = elapsed * (total - done_bytes) / max(done_bytes, 1)
+                    mem = free_mb()
                     progress(f'[índice:{name}] {done_bytes / total:.0%} lido | {count:,} trechos | '
-                             f'{elapsed / 60:.1f} min | restante da leitura ~{_eta(rest)}', flush=True)
+                             f'{elapsed / 60:.1f} min | restante da leitura ~{_eta(rest)}'
+                             + (f' | memória livre {mem / 1024:.1f} GB' if mem is not None else ''), flush=True)
             if not count:
                 raise ValueError('As fontes informadas não contêm trechos originais válidos')
             progress(f'[índice:{name}] criando índices secundários', flush=True)

@@ -117,8 +117,11 @@ que respeitam a fronteira de documento) e um escritor com cache grande, sem jour
 monta os índices secundários e o FTS5 de uma vez no fim. O banco é idêntico ao do
 `CorpusIndex` (mesmo fingerprint, mesmas linhas e mesma busca; ver `tests/test_indexar.py`),
 então o refino e os outros fluxos o reaproveitam. Mostra progresso e tempo restante.
-`--workers` define os processos (padrão: núcleos − 1, até 16) e `--cache-mb` o cache
-do SQLite (padrão: ¼ da RAM, até 4 GB). Se a pasta do projeto estiver em disco de rede,
+`--workers` define os processos (padrão: o menor entre núcleos − 1 e RAM/4 GB, até 16) e
+`--cache-mb` o cache do SQLite (padrão: RAM/8, até 2 GB). Os trechos são gerados em fluxo,
+sem carregar a faixa inteira na memória. A cada minuto sem tarefa concluída, o terminal
+mostra qual tarefa está sendo esperada e a memória livre. Uma execução interrompida deixa
+arquivos `*.build.sqlite3` e `prep-*.pkl.gz`; a seguinte os apaga sozinha. Se a pasta do projeto estiver em disco de rede,
 use `--index-cache` num disco local com espaço (o índice do `domain_corpora` ocupa
 dezenas de GB) e passe o mesmo `--index-cache` ao refino. O refino também chama este
 construtor sozinho se o índice não existir.
