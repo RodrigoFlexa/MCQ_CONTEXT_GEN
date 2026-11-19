@@ -126,6 +126,13 @@ use `--index-cache` num disco local com espaço (o índice do `domain_corpora` o
 dezenas de GB) e passe o mesmo `--index-cache` ao refino. O refino também chama este
 construtor sozinho se o índice não existir.
 
+Antes de construir, o `indexar` procura em `pipeline/qa_research/.local/index` um índice
+pronto de fluxos anteriores feito dos mesmos arquivos de dados, na mesma ordem e com a
+mesma janela (350 palavras, passo 250). Se achar, move o banco para `dataset/indices_refino`
+(mesmo disco, instantâneo), grava o fingerprint atual e não reconstrói. O conteúdo é o mesmo;
+só o fingerprint mudou (a fórmula ganhou a chave "complete" em 31/10/2026). `--sem-adotar`
+desliga essa busca e `--adotar-de` aponta outras pastas.
+
 ### 3. Conferir e rodar o piloto
 
 ```bash

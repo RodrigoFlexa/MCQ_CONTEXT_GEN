@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from pipeline.qa_research import corpus as K
 from pipeline.qa_research.corpus import CorpusIndex
 from pipeline.qa_research.refino import indexar
 
@@ -83,6 +84,59 @@ class IndexarTest(unittest.TestCase):
             again, _ = indexar.build(manifest, tmp / 'par', workers=2, progress=lambda *a, **k: None)
             self.assertEqual(again['fingerprint'], info_par['fingerprint'])
             self.assertFalse(list((tmp / 'par').rglob('prep-*')))
+
+    def _legacy(self, manifest, root, corrupt_data=False):
+        """Simula o índice de 19/10: fórmula sem "complete" e manifesto regravado depois."""
+        info = CorpusIndex(root, manifest=manifest).build()
+        folder = Path(info['index_path']).parent
+        sources = [dict(info['sources'][0], sha256='0' * 64)] + info['sources'][1:]
+        if corrupt_data:
+            sources[-1] = dict(sources[-1], sha256='f' * 64)
+        old = K._digest(K._json(dict(version=K._VERSION, files=sources, chunk_words=K._CHUNK_WORDS,
+                                     stride=K._STRIDE)))
+        with contextlib.closing(sqlite3.connect(folder / 'corpus.sqlite3')) as db:
+            db.execute("UPDATE metadata SET value=? WHERE key='fingerprint'", (old,))
+            db.commit()
+        info = dict(info, fingerprint=old, signature=old, sources=sources)
+        info.pop('complete_corpus')
+        (folder / 'indice.json').write_text(json.dumps(info), encoding='utf-8')
+        folder.rename(Path(root) / old)
+        return Path(root) / old
+
+    def test_adopts_identical_legacy_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            manifest = corpus(tmp / 'corpus')
+            reference = CorpusIndex(tmp / 'seq', manifest=manifest)
+            reference.build()
+            old = self._legacy(manifest, tmp / 'legado')
+            calls = []
+            info, path = indexar.build(manifest, tmp / 'novo', workers=2, adopt_from=[tmp / 'legado'],
+                                       progress=lambda *a, **k: calls.append(a[0]))
+            self.assertIn('adotado', info)
+            self.assertEqual(info['adotado']['de'], str(old.resolve()))
+            self.assertFalse((old / 'corpus.sqlite3').exists())
+            self.assertTrue((old / 'MOVIDO.txt').is_file())
+            self.assertFalse(any('tarefas' in c for c in calls), calls)
+            self.assertEqual(dump(reference.path), dump(path))
+            self.assertEqual(info['fingerprint'], reference.info['fingerprint'])
+            again = CorpusIndex(tmp / 'novo', manifest=manifest).build()
+            self.assertIn('adotado', again)  # reconhecido pelo CorpusIndex, sem reconstruir
+            for query in ('header flare piloto', 'eslinga guindaste'):
+                a = reference.search(query, limit=10, neighbors=True)
+                b = indexar.attach(manifest, tmp / 'novo', info, path).search(query, limit=10, neighbors=True)
+                self.assertEqual(json.dumps(a, sort_keys=True), json.dumps(b, sort_keys=True), query)
+
+    def test_does_not_adopt_index_of_other_data(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            manifest = corpus(tmp / 'corpus')
+            old = self._legacy(manifest, tmp / 'legado', corrupt_data=True)
+            info, path = indexar.build(manifest, tmp / 'novo', workers=2, adopt_from=[tmp / 'legado'],
+                                       progress=lambda *a, **k: None)
+            self.assertNotIn('adotado', info)
+            self.assertIn('construcao', info)
+            self.assertTrue((old / 'corpus.sqlite3').is_file())
 
 
 if __name__ == '__main__':

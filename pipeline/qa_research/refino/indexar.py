@@ -10,11 +10,18 @@ fingerprint, mesmas linhas, mesma ordem e mesma busca), mas:
 
 Depois de construído, `CorpusIndex(...).build()` reconhece o fingerprint e só reaproveita.
 
+Antes de construir, procura um índice já pronto de fluxos anteriores (por padrão em
+`pipeline/qa_research/.local/index`) feito dos mesmos arquivos de dados, na mesma ordem e
+com os mesmos parâmetros de janela. O conteúdo é idêntico; muda só o fingerprint (a fórmula
+ganhou a chave "complete" em 31/10/2026, e o manifesto pode ter sido regravado). O banco é
+movido (mesmo disco, instantâneo), recebe o fingerprint novo e não é reconstruído.
+
 Uso, na raiz do repositório (no servidor, onde estão os corpora):
 
     python -m pipeline.qa_research.refino.indexar --manifest auto --workers 8
 """
 import argparse
+import contextlib
 import gzip
 import multiprocessing
 import json
@@ -48,6 +55,9 @@ CREATE INDEX source_chunks ON sources(chunk);
 """
 DOC_ID = re.compile(rb'"document_id":\s*"((?:[^"\\]|\\.)*)"')
 BATCH = 2000
+# Onde os fluxos anteriores guardam o CorpusIndex (config.index_dir do qa_research).
+LEGACY = ('pipeline/qa_research/.local/index',)
+TABLES = {'metadata', 'chunks', 'sources', 'search', 'original_ids', 'positions', 'source_chunks'}
 
 
 def make_pool(workers):
@@ -124,6 +134,95 @@ def ready(snap):
                 return info
     except (FileNotFoundError, json.JSONDecodeError, sqlite3.DatabaseError):
         pass
+    return None
+
+
+def legacy_roots():
+    from pipeline.qa_research.v3.runtime import ROOT
+    return [ROOT / r for r in LEGACY]
+
+
+def _same_params(info, name):
+    """O nome da pasta prova versão, arquivos e janela (fórmula antiga ou atual)."""
+    base = dict(version=K._VERSION, files=info.get('sources'), chunk_words=K._CHUNK_WORDS, stride=K._STRIDE)
+    options = {K._digest(K._json(base))}
+    options |= {K._digest(K._json(dict(base, complete=c))) for c in (True, False)}
+    return name in options
+
+
+def find_compatible(snap, roots):
+    """Índices prontos com os mesmos arquivos de dados, na mesma ordem: (pasta, info, problemas)."""
+    found, examined = [], 0
+    for root in roots:
+        root = Path(root).resolve()
+        if not root.is_dir():
+            continue
+        for old in sorted(p for p in root.iterdir() if p.is_dir() and p != snap['folder']):
+            try:
+                info = json.loads((old / 'indice.json').read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                continue
+            examined += 1
+            sources = info.get('sources') or []
+            if len(sources) != len(snap['files']) or sources[1:] != snap['files'][1:]:
+                continue  # outro corpus (o primeiro item é o próprio manifesto)
+            problems = []
+            if info.get('version') != K._VERSION or info.get('fingerprint') != old.name or not _same_params(info, old.name):
+                problems.append('versão ou parâmetros diferentes')
+            db_path = old / 'corpus.sqlite3'
+            if not db_path.is_file():
+                problems.append('banco ausente')
+            else:
+                try:
+                    with contextlib.closing(sqlite3.connect(db_path.as_uri() + '?mode=ro', uri=True)) as db:
+                        stored = db.execute("SELECT value FROM metadata WHERE key='fingerprint'").fetchone()
+                        tables = {r[0] for r in db.execute('SELECT name FROM sqlite_master')}
+                    if not stored or stored[0] != old.name:
+                        problems.append('fingerprint do banco não confere')
+                    if not TABLES <= tables:
+                        problems.append('esquema incompleto')
+                except sqlite3.DatabaseError as exc:
+                    problems.append('banco ilegível: ' + str(exc))
+                if db_path.stat().st_dev != snap['folder'].stat().st_dev:
+                    problems.append('está em outro disco (mover copiaria o banco inteiro)')
+            found.append((old, info, problems))
+    return found, examined
+
+
+def adopt(snap, roots, progress=print):
+    """Move para cá um índice idêntico já construído. Retorna (info, caminho) ou None."""
+    name = snap['folder'].parent.name
+    found, examined = find_compatible(snap, roots)
+    if examined and not found:
+        progress(f'[índice:{name}] {examined} índice(s) pronto(s) de outros fluxos examinado(s); '
+                 'nenhum feito destes mesmos arquivos', flush=True)
+    for old, info, problems in found:
+        if problems:
+            progress(f'[índice:{name}] índice anterior em {old} não reaproveitado: {"; ".join(problems)}', flush=True)
+            continue
+        target = snap['folder'] / 'corpus.sqlite3'
+        os.replace(old / 'corpus.sqlite3', target)
+        with contextlib.closing(sqlite3.connect(target)) as db:
+            db.execute("UPDATE metadata SET value=? WHERE key='fingerprint'", (snap['fingerprint'],))
+            db.commit()
+        new = dict(info, fingerprint=snap['fingerprint'], signature=snap['fingerprint'],
+                   complete_corpus=snap['complete'], corpus_bruto_completo=snap['complete'],
+                   sources=snap['files'], index_path=str(target),
+                   warnings=([] if snap['complete'] else [
+                       'Cobertura parcial dos materiais originais disponíveis; ausência de resultados não demonstra ausência no corpus completo.']),
+                   adotado=dict(de=str(old), fingerprint_anterior=old.name,
+                                manifesto_anterior_sha256=info['sources'][0].get('sha256'),
+                                em=time.strftime('%Y-%m-%d %H:%M:%S')))
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', prefix='indice-', suffix='.json',
+                                         dir=snap['folder'], delete=False) as stream:
+            stream.write(json.dumps(new, ensure_ascii=False, indent=2) + '\n')
+            temporary = Path(stream.name)
+        temporary.replace(snap['folder'] / 'indice.json')
+        (old / 'indice.json').unlink(missing_ok=True)
+        (old / 'MOVIDO.txt').write_text(f'Banco movido em {new["adotado"]["em"]} para {target}\n', encoding='utf-8')
+        progress(f'[índice:{name}] reaproveitado o índice já construído em {old} '
+                 f'({info.get("chunks", 0):,} trechos); movido para cá, sem reconstruir', flush=True)
+        return new, target
     return None
 
 
@@ -236,8 +335,12 @@ def _eta(seconds):
     return f'{seconds // 3600}h{(seconds % 3600) // 60:02d}m' if seconds >= 3600 else f'{seconds // 60}m{seconds % 60:02d}s'
 
 
-def build(manifest, directory, workers=None, cache_mb=None, target_mb=64, progress=print, executor=None):
-    """Constrói (ou reaproveita) o índice de um manifesto. Retorna (info, caminho do banco)."""
+def build(manifest, directory, workers=None, cache_mb=None, target_mb=64, progress=print, executor=None,
+          adopt_from=None):
+    """Constrói (ou reaproveita) o índice de um manifesto. Retorna (info, caminho do banco).
+
+    `adopt_from`: pastas onde procurar um índice idêntico já pronto (None: as dos fluxos
+    anteriores; lista vazia: não procurar)."""
     workers = workers or default_workers()
     cache_mb = cache_mb or default_cache_mb()
     name = Path(directory).name
@@ -258,6 +361,9 @@ def build(manifest, directory, workers=None, cache_mb=None, target_mb=64, progre
             stale.unlink()
         for stale in folder.glob('prep-*.pkl.gz'):
             stale.unlink()
+        adopted = adopt(snap, legacy_roots() if adopt_from is None else adopt_from, progress)
+        if adopted:
+            return adopted
         tasks = plan(snap, target_mb * 1024 * 1024)
         total = sum(t['size'] for t in tasks) or 1
         progress(f'[índice:{name}] {len(tasks)} tarefas, {total / 2**30:.2f} GB, {workers} processos, cache {cache_mb} MB',
@@ -384,7 +490,11 @@ def main(argv=None):
     parser.add_argument('--workers', type=int, default=default_workers())
     parser.add_argument('--cache-mb', type=int, default=default_cache_mb())
     parser.add_argument('--target-mb', type=int, default=64, help='Tamanho de cada faixa de JSONL por tarefa')
+    parser.add_argument('--adotar-de', nargs='*', type=Path, default=None,
+                        help='Pastas com índices prontos de outros fluxos (padrão: pipeline/qa_research/.local/index)')
+    parser.add_argument('--sem-adotar', action='store_true', help='Não procurar índices prontos; sempre construir')
     args = parser.parse_args(argv)
+    adopt_from = [] if args.sem_adotar else args.adotar_de
     manifests, notes = discover(ROOT, args.manifest)
     for n in notes:
         print('[manifesto]', n['manifesto'], '|', n['estado'], flush=True)
@@ -394,7 +504,7 @@ def main(argv=None):
     with make_pool(args.workers) as pool:
         for manifest in manifests:
             build(manifest, args.index_cache / Path(manifest).parent.name, args.workers, args.cache_mb,
-                  args.target_mb, executor=pool)
+                  args.target_mb, executor=pool, adopt_from=adopt_from)
     print('Índices prontos. O refino reaproveita estes índices automaticamente.')
     return 0
 
