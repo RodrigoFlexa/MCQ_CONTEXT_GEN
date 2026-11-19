@@ -15,6 +15,7 @@ Chamadas repetidas com a mesma entrada são reaproveitadas do cache (retomada).
 """
 import asyncio
 import json
+import re
 from pathlib import Path
 
 from pipeline.inventario.llm import BudgetExceeded
@@ -407,6 +408,7 @@ class Refino:
             except Exception as exc:
                 self.summary['avisos'].append(f"polimento de {c['secao']} não aplicado: {type(exc).__name__}: {str(exc)[:300]}")
                 continue
+            known_before = set(glossary)
             for s in data.get('siglas_expandidas', []):
                 glossary.setdefault(s['sigla'], s['expansao'])
             filler += data.get('enchimento_removido', [])
@@ -422,6 +424,15 @@ class Refino:
                 b['subtitulo'], b['texto'] = new['subtitulo'], T.TRAVESSAO.sub(', ', new['texto'])
                 keep.append(b)
             c['blocos'] = keep
+            # Siglas ainda sem expansão na primeira ocorrência: o código insere a expansão informada.
+            pending, _ = T.acronyms(dict(capitulos=[c]), known=known_before)
+            expansions = {s['sigla']: s['expansao'] for s in data.get('siglas_expandidas', [])
+                          if s['sigla'] not in known_before}
+            for bid, items in pending.items():
+                for sigla in items:
+                    if sigla in expansions:
+                        b = next(x for x in c['blocos'] if x['id'] == bid)
+                        b['texto'] = re.sub(r'\b' + re.escape(sigla) + r'\b', f'{expansions[sigla]} ({sigla})', b['texto'], count=1)
         document['capitulos'] = [c for c in document['capitulos'] if c['blocos']]
         self.glossary = glossary
         return dict(antes=before, depois=T.style_report(document), blocos_alterados=len(changes),

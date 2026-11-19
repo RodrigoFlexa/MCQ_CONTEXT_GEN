@@ -273,8 +273,10 @@ def polimento(data, originals, known=()):
     kept = [dict(id=b['id'], subtitulo=b.get('subtitulo', ''), texto=b.get('texto', '')) for b in blocks
             if b.get('remover') is not True]
     pending, _ = T.acronyms(dict(capitulos=[dict(blocos=kept)]), known=set(known))
-    left = sorted({s for v in pending.values() for s in v})
-    require(not left, 'siglas sem expansão na primeira ocorrência no documento: ' + ', '.join(left[:12]))
+    given = {s['sigla'] for s in siglas}
+    # Sigla com expansão informada é completada no texto pelo código; sem expansão, volta ao modelo.
+    left = sorted({s for v in pending.values() for s in v} - given)
+    require(not left, 'siglas sem expansão (expanda no texto ou informe em siglas_expandidas): ' + ', '.join(left[:12]))
     final = ' '.join(b['texto'] for b in kept)
     unknown = [s['sigla'] for s in siglas if s['sigla'] not in final]
     require(not unknown, 'siglas_expandidas: siglas que não aparecem no capítulo: ' + ', '.join(unknown[:8]))
