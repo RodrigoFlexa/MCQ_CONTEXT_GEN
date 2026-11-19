@@ -9,7 +9,7 @@ TIPOS_AFIRMACAO = ('conceito', 'componente', 'funcao', 'mecanismo', 'procediment
 MOTIVOS_BLOCO = ('casuistico', 'fora_fpso', 'fora_escopo', 'redundante')
 MOTIVOS_DESCARTE = ('duplicada', 'contradita', 'casuistica', 'fora_fpso', 'fora_escopo', 'valor_sem_fonte', 'irrelevante')
 ESTADOS = ('atendido', 'parcial', 'ausente')
-PROBLEMAS = ('erro_tecnico', 'fora_fpso', 'casuistico', 'relato_fonte', 'terminologia', 'valor_sem_fonte',
+PROBLEMAS = ('vago', 'erro_tecnico', 'fora_fpso', 'casuistico', 'relato_fonte', 'terminologia', 'valor_sem_fonte',
              'redundancia', 'superficial', 'estrutura', 'pt_br')
 
 
@@ -222,3 +222,35 @@ def reparo(data, expected):
     for b in blocks:
         require(text(b.get('subtitulo')) and text(b.get('texto'), 25), b['id'] + ': subtítulo e texto')
         lint_or_fail(b['subtitulo'] + ' ' + b['texto'], b['id'])
+
+
+def polimento(data, originals):
+    """Mesmos blocos, sem perder conteúdo: nenhum número novo e texto de tamanho comparável."""
+    blocks = rows(data.get('blocos'), 'blocos', 1)
+    expected = {b['id']: b for b in originals}
+    require({b.get('id') for b in blocks} == set(expected) and len(blocks) == len(expected),
+            'blocos: devolva exatamente os blocos recebidos, na mesma ordem')
+    kept_old = kept_new = 0
+    for b in blocks:
+        old = expected[b['id']]
+        if b.get('remover') is True:
+            require(len(T.words(old['texto'])) <= 150, b['id'] + ': só remova bloco curto que descreve o documento')
+            continue
+        require(text(b.get('subtitulo')) and text(b.get('texto'), 15), b['id'] + ': subtítulo e texto')
+        new_numbers = T.numbers(b['texto']) - T.numbers(old['subtitulo'] + ' ' + old['texto'])
+        require(not new_numbers, b['id'] + ': números novos não permitidos: ' + ', '.join(sorted(new_numbers)[:5]))
+        lint_or_fail(b['subtitulo'] + ' ' + b['texto'], b['id'])
+        kept_old += len(T.words(old['texto']))
+        kept_new += len(T.words(b['texto']))
+    require(kept_new >= 0.8 * kept_old, 'texto encurtado demais: o polimento não resume nem corta conteúdo')
+    siglas = rows(data.get('siglas_expandidas', []), 'siglas_expandidas')
+    require(all(isinstance(s.get('sigla'), str) and text(s.get('expansao')) for s in siglas),
+            'siglas_expandidas: sigla e expansao')
+    final = ' '.join(b.get('texto', '') for b in blocks if b.get('remover') is not True)
+    pending, _ = T.acronyms(dict(capitulos=[dict(blocos=[dict(id=b['id'], subtitulo=b.get('subtitulo', ''),
+                                                              texto=b.get('texto', '')) for b in blocks
+                                                         if b.get('remover') is not True])]))
+    left = sorted({s for v in pending.values() for s in v})
+    require(not left, 'siglas sem expansão na primeira ocorrência do capítulo: ' + ', '.join(left[:12]))
+    unknown = [s['sigla'] for s in siglas if s['sigla'] not in final]
+    require(not unknown, 'siglas_expandidas: siglas que não aparecem no capítulo: ' + ', '.join(unknown[:8]))

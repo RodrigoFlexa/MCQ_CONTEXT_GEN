@@ -99,6 +99,11 @@ async def execute(entradas, items, manifests, output, config, cache, legacy, map
                 item = entrada['id']
                 folder = output / item
                 print(f'\n[documento:{item}] {entrada["titulo"]}', flush=True)
+                previous_doc = read_json(folder / 'resumo.json')
+                if previous_doc and previous_doc.get('status') == 'concluido' and (folder / 'documento.json').is_file():
+                    print(f'[documento:{item}] já concluído nesta saída; mantido', flush=True)
+                    result['documentos'][item] = previous_doc
+                    continue
                 local = await asyncio.to_thread(acervo.with_inherited, Path(legacy) / item / 'evidencias_citadas.jsonl', cache)
                 calls = Calls(folder, cfg, transport=transport)
                 try:
@@ -118,6 +123,9 @@ async def execute(entradas, items, manifests, output, config, cache, legacy, map
                     atomic_json(folder / 'resumo.json', summary)
                 finally:
                     await calls.close()
+                if summary.get('status') == 'concluido' and config.get('limpar_local', True):
+                    freed = clean_local(folder)
+                    print(f'[documento:{item}] cache local apagado ({freed / 2**20:.0f} MB)', flush=True)
                 result['documentos'][item] = summary
                 atomic_json(output / 'resumo_lote.json', result)
             result['status'] = 'concluido' if all(r.get('status') == 'concluido' for r in result['documentos'].values()) else 'parcial'
@@ -192,7 +200,17 @@ def batch_report(result):
     return '\n'.join(lines) + '\n'
 
 
-def collect(output, destination):
+def clean_local(folder):
+    """Apaga .local (respostas brutas, cache de chamadas e embeddings) de um documento concluído."""
+    local = Path(folder) / '.local'
+    if not local.is_dir():
+        return 0
+    size = sum(p.stat().st_size for p in local.rglob('*') if p.is_file())
+    shutil.rmtree(local, ignore_errors=True)
+    return size
+
+
+def collect(output, destination, remove=False):
     output, destination = Path(output).resolve(), Path(destination).resolve()
     C.require(output != destination and output not in destination.parents and destination not in output.parents,
               'Origem e destino da coleta devem ser separados')
@@ -210,6 +228,9 @@ def collect(output, destination):
             shutil.copyfile(source, target)
         atomic_json(destination / 'manifest_resultados.json', dict(schema=VERSION,
             files={p.relative_to(destination).as_posix(): file_hash(p) for p in destination.rglob('*') if p.is_file()}))
+    if remove:
+        C.require(summary['status'] == 'concluido', 'Só apago a saída de um lote concluído (a retomada precisa dela)')
+        shutil.rmtree(output)
 
 
 def main(argv=None):
@@ -225,20 +246,26 @@ def main(argv=None):
     parser.add_argument('--output', type=Path, default=Path('pipeline/qa_research/saida_refino/piloto_01'))
     parser.add_argument('--plan', action='store_true')
     parser.add_argument('--collect', type=Path)
+    parser.add_argument('--apagar-saida', action='store_true',
+                        help='Com --collect: apaga a pasta de saída depois da coleta (só lote concluído)')
+    parser.add_argument('--manter-local', action='store_true',
+                        help='Não apagar o cache .local dos documentos concluídos')
     parser.add_argument('--max-calls', type=int, help='Teto de chamadas por documento')
     parser.add_argument('--workers', type=int, help='Chamadas simultâneas ao modelo (sobrepõe a configuração)')
     parser.add_argument('--index-workers', type=int, help='Processos para construir os índices (padrão: núcleos - 1, até 16)')
     parser.add_argument('--verbose', action='store_true')
     args = parser.parse_args(argv)
     if args.collect:
-        collect(args.output, args.collect)
-        print('Coleta:', args.collect)
+        collect(args.output, args.collect, args.apagar_saida)
+        print(f'Coleta: {args.collect}' + (' | saída apagada' if args.apagar_saida else ''))
         return 0
     config = configuration(args.config)
     if args.max_calls is not None:
         C.require(args.max_calls > 0, 'Orçamento positivo obrigatório')
         config['max_calls'] = args.max_calls
     config['verbose'] = args.verbose
+    if args.manter_local:
+        config['limpar_local'] = False
     if args.workers is not None:
         C.require(args.workers > 0, '--workers positivo')
         config['workers'] = args.workers
@@ -267,7 +294,8 @@ def main(argv=None):
     destination = Path('pipeline/qa_research/relatorios') / ('refino_contextos_' + stamp().split('.')[0].replace(':', '').replace('-', ''))
     path = shlex.quote(destination.as_posix())
     print('Comandos de coleta, commit e push:')
-    print('"${DOCUMENT_PYTHON:-python3}" -m pipeline.qa_research.refino --output ' + shlex.quote(args.output.as_posix()) + ' --collect ' + path)
+    print('"${DOCUMENT_PYTHON:-python3}" -m pipeline.qa_research.refino --output ' + shlex.quote(args.output.as_posix()) + ' --collect ' + path
+          + (' --apagar-saida' if result['status'] == 'concluido' else ''))
     print('git add -- ' + path)
     print('git commit -m "Resultados do refino dos contextos"')
     print('git push origin codex/qa-evidencias-verificadas')

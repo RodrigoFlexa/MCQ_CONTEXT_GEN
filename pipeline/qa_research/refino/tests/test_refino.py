@@ -11,6 +11,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
+from pipeline.qa_research.refino.para_questoes import carregar, contexto
 from pipeline.qa_research.refino import contracts as C, textos as T
 from pipeline.qa_research.refino import prompts as P, semantica as S
 from pipeline.qa_research.refino.__main__ import configuration, execute, collect, HERE
@@ -29,6 +30,7 @@ class Fake:
     """Modelo simulado que respeita os contratos a partir da própria entrada."""
     def __init__(self):
         self.calls = 0
+        self.polish_payloads = []
 
     async def __call__(self, role, messages, tokens):
         self.calls += 1
@@ -112,6 +114,17 @@ class Fake:
             return response(dict(blocos=[dict(id=b['id'], subtitulo=b['subtitulo'],
                                               texto=b['texto'] + ' O vaso knock out separa líquidos arrastados antes da queima no flare.')
                                          for b in payload['blocos']]))
+        if system == P.POLIMENTO:
+            self.polish_payloads.append(payload)
+            out, first = [], True
+            for b in payload['blocos']:
+                text = b['texto'].replace(' — ', ', ').replace('Nesta seção, ', '')
+                if first and 'FPSO' in text:
+                    text, first = text.replace('FPSO', 'FPSO (unidade flutuante de produção)', 1), False
+                out.append(dict(id=b['id'], subtitulo=b['subtitulo'], texto=text, remover=False))
+            return response(dict(blocos=out,
+                                 siglas_expandidas=[dict(sigla='FPSO', expansao='unidade flutuante de produção')]
+                                 if any('FPSO' in b['texto'] for b in payload['blocos']) else []))
         raise AssertionError('Prompt inesperado para o papel ' + role)
 
 
@@ -190,16 +203,33 @@ class RefinoTest(unittest.TestCase):
                 self.assertGreater(metrics['cobertura']['depois']['atendido'], metrics['cobertura']['antes']['atendido'])
                 prov = json.loads((folder / 'proveniencia.json').read_text(encoding='utf-8'))
                 self.assertTrue(all(not re.search(r'texto', json.dumps(v)) for v in prov['fontes'].values()))
-                self.assertIn('Refino:', (folder / 'RELATORIO.md').read_text(encoding='utf-8'))
+                report = (folder / 'RELATORIO.md').read_text(encoding='utf-8')
+                self.assertIn('Refino:', report)
+                self.assertIn('**Estado:** concluido', report)
+                self.assertIn('Polimento de estilo', report)
+                self.assertIsNotNone(metrics['estilo'])
+                self.assertTrue((folder / 'polimento.json').is_file())
+                self.assertFalse((folder / '.local').exists())  # cache apagado ao concluir
+                self.assertFalse(any('polimento' in a for a in json.loads((folder / 'resumo.json').read_text())['avisos']))
+                self.assertIn('testabilidade', metrics)
+                blocos, glossario = carregar(folder)
+                self.assertTrue(blocos and all('siglas' in b and 'estatuto' in b for b in blocos))
+                trecho = T.sentences(blocos[1]['texto'])[0]
+                cabecalho = contexto(trecho, blocos, glossario)
+                self.assertIn('Documento:', cabecalho)
+                self.assertIn(blocos[1]['subtitulo'], cabecalho)
+            # As expansões de siglas de um capítulo seguem para os seguintes (mesma expansão).
+            self.assertTrue(any('FPSO' in p['siglas_conhecidas'] for p in fake.polish_payloads))
             used = fake.calls
             # Retomada: mesma saída, nenhuma chamada nova ao modelo.
             again = asyncio.run(execute(data, ['02_08', '09_01'], [manifest], tmp / 'saida', config, tmp / 'cache',
                                         tmp / 'sem_legado', transport=fake))
             self.assertEqual(again['status'], 'concluido')
             self.assertEqual(fake.calls, used)
-            collect(tmp / 'saida', tmp / 'coleta')
+            collect(tmp / 'saida', tmp / 'coleta', remove=True)
             self.assertTrue((tmp / 'coleta' / '02_08' / 'documento.md').is_file())
             self.assertFalse(any('.local' in p.parts for p in (tmp / 'coleta').rglob('*')))
+            self.assertFalse((tmp / 'saida').exists())
 
 
 if __name__ == '__main__':

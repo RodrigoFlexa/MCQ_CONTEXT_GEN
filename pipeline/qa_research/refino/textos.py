@@ -93,6 +93,116 @@ def has_value(text):
     return bool(VALOR.search(text or ''))
 
 
+# ---------------------------------------------------------------- estilo (polimento)
+
+META = [
+    r'\b(?:est[ea]|ness[ea]|nest[ea]|dest[ea]|o present[e]|a present[e]) (?:se[çc][ãa]o|documento|cap[íi]tulo|texto|parte)\b',
+    r'\bse[çc](?:[ãa]o|[õo]es) \d+\b', r'\bestrutura do documento\b',
+    r'\bo documento (?:segue|apresenta|trata|aborda|organiza|descreve|parte)\b',
+    r'\b(?:como|conforme) (?:visto|descrito|mencionado|discutido|detalhado) (?:acima|anteriormente|adiante|mais adiante)\b',
+    r'\b(?:ser[áa]o?|s[ãa]o) (?:tratad|abordad|detalhad|discutid)[oa]s? (?:adiante|a seguir|mais adiante|na se[çc][ãa]o)',
+]
+TRAVESSAO = re.compile(r'\s[—–]\s|—')
+SIGLA = re.compile(r'\b[A-Z][A-Z0-9]*[A-Z](?:-\d+)?s?\b')
+ROMANOS = frozenset('II III IV VI VII VIII IX XI XII XIII XIV XV XX'.split())
+
+
+def style_issues(text):
+    """Texto que fala do próprio documento e travessões."""
+    issues = []
+    for pattern in META:
+        for m in re.finditer(pattern, text, re.I):
+            issues.append(dict(tipo='metatexto', trecho=text[max(0, m.start() - 30):m.end() + 30]))
+    for m in TRAVESSAO.finditer(text):
+        issues.append(dict(tipo='travessao', trecho=text[max(0, m.start() - 30):m.end() + 30]))
+    return issues
+
+
+def _base_sigla(token):
+    return token[:-1] if token.endswith('s') and token[:-1].isupper() else token
+
+
+def _defined_here(text, m):
+    """SIGLA (expansão) ou expansão (SIGLA)."""
+    after, before = text[m.end():m.end() + 3], text[max(0, m.start() - 1):m.start()]
+    return after.lstrip().startswith('(') or before == '('
+
+
+def acronyms(document, known=()):
+    """Primeira ocorrência de cada sigla no documento, na ordem; sem expansão = pendente.
+
+    Retorna ({bloco: [siglas pendentes]}, conjunto de siglas definidas)."""
+    defined, seen, pending = set(known), set(known), {}
+    for bid, subtitle, text in blocks_of(document):
+        for m in SIGLA.finditer(text):
+            token = _base_sigla(m.group(0))
+            if token in ROMANOS or token in seen:
+                continue
+            seen.add(token)
+            if _defined_here(text, m):
+                defined.add(token)
+            else:
+                pending.setdefault(bid, []).append(token)
+    return pending, defined
+
+
+DEPENDENTE = re.compile(r'^\s*(?:ess[ea]s?|isso|isto|nesse contexto|nesse caso|por isso|al[ée]m disso|da mesma forma|'
+                        r'o mesmo|a mesma|tal (?:sistema|equipamento|condi[çc][ãa]o)|esses? (?:sistemas?|equipamentos?|indicadores?))\b', re.I)
+
+
+def dependent_opening(text):
+    """Bloco que começa apoiado em algo dito em outro bloco (ruim quando o texto é recortado)."""
+    m = DEPENDENTE.match(text or '')
+    return [dict(tipo='abertura_dependente', trecho=(text or '')[:80])] if m else []
+
+
+def style_report(document):
+    """Contagem dos problemas de estilo (siglas contadas por capítulo), antes e depois do polimento."""
+    pending = {}
+    for chapter in document.get('capitulos', []):
+        pending.update(acronyms(dict(capitulos=[chapter]))[0])
+    counts = Counter(i['tipo'] for _, s, t in blocks_of(document) for i in style_issues(s + ' ' + t))
+    return dict(metatexto=counts.get('metatexto', 0), travessao=counts.get('travessao', 0),
+                siglas_sem_expansao=sum(len(v) for v in pending.values()),
+                aberturas_dependentes=sum(1 for _, _, t in blocks_of(document) if dependent_opening(t)))
+
+
+# ---------------------------------------------------------------- uso como fonte de questões
+
+TESTAVEL = {
+    'definicao': r'\b(?:[ée] (?:o|a|um|uma) [\wÀ-ÿ-]+|consiste em|define-se|denomina-se|chama-se|corresponde a|refere-se a)\b',
+    'funcao': r'\b(?:serve para|tem (?:a|como) fun[çc][ãa]o|destina-se a|permite|impede|evita|protege|garante que)\b',
+    'causa': r'\b(?:porque|devido a|provoca|causa|resulta em|leva a|em consequ[êe]ncia|por causa de|reduz|aumenta|eleva)\b',
+    'condicao': r'\b(?:quando|caso|somente|s[óo] (?:quando|se)|desde que|exceto|a menos que|se (?:o|a|os|as|houver))\b',
+    'contraste': r'\b(?:diferentemente|ao contr[áa]rio|enquanto|difere|em vez de|por outro lado|j[áa] (?:o|a))\b',
+    'sequencia': r'\b(?:primeiro|em seguida|depois de|antes de|ap[óo]s|por fim|na sequ[êe]ncia)\b',
+}
+VAGO = re.compile(r'\b(?:[ée] (?:fundamental|essencial|importante|crucial) (?:que|considerar|garantir|manter)|contribui para|'
+                  r'de forma integrada|de maneira integrada|papel (?:relevante|central|fundamental)|vis[ãa]o hol[íi]stica|'
+                  r'agrega valor|de modo sist[êe]mico)\b', re.I)
+
+
+def testability(document):
+    """Fração de sentenças com ao menos uma relação verificável (definição, função, causa, condição,
+    contraste, sequência) e fração com marcadores de prosa vaga. Heurística, para comparar versões."""
+    rows = [s for _, _, t in blocks_of(document) for s in sentences(t)]
+    if not rows:
+        return dict(sentencas=0, testaveis=0.0, vagas=0.0, por_tipo={})
+    kinds = Counter()
+    hits = 0
+    for s in rows:
+        found = [k for k, pattern in TESTAVEL.items() if re.search(pattern, s, re.I)]
+        kinds.update(found)
+        hits += bool(found)
+    vague = sum(1 for s in rows if VAGO.search(s))
+    return dict(sentencas=len(rows), testaveis=round(hits / len(rows), 4), vagas=round(vague / len(rows), 4),
+                por_tipo={k: round(v / len(rows), 4) for k, v in sorted(kinds.items())})
+
+
+def numbers(text):
+    return set(re.findall(r'\d+(?:[.,]\d+)?', text or ''))
+
+
 class Vectors:
     """TF-IDF por sentença; IDF estimado no conjunto comparado."""
     def __init__(self, texts):

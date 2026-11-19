@@ -8,7 +8,9 @@ Agentes (todos com o deployment configurado em `models`):
 - consolidador da seção: funde afirmações, achados e blocos revisados em unidades únicas;
 - redator da seção: escreve os blocos usando cada unidade exatamente uma vez;
 - consolidador do documento: elimina redundância entre seções e entre documentos;
-- revisor: cobertura das lacunas e problemas por bloco; um reparo dirigido.
+- revisor: cobertura das lacunas e problemas por bloco; um reparo dirigido;
+- editor de estilo: percorre os capítulos em ordem, expande cada sigla na primeira ocorrência,
+  tira o texto que fala do próprio documento e os travessões, sem mudar o conteúdo.
 Chamadas repetidas com a mesma entrada são reaproveitadas do cache (retomada).
 """
 import asyncio
@@ -363,6 +365,47 @@ class Refino:
                 b['subtitulo'], b['texto'] = fixed[b['id']]['subtitulo'], fixed[b['id']]['texto']
         return review, repairs
 
+    async def polish(self, document):
+        """Editor final, capítulo a capítulo: siglas por capítulo, blocos legíveis sozinhos, sem metatexto.
+
+        Falha num capítulo vira aviso (o capítulo fica como estava): é ajuste de forma."""
+        before = T.style_report(document)
+        changes, removed, glossary = [], [], {}
+        for c in document['capitulos']:
+            pending, _ = T.acronyms(dict(capitulos=[c]))
+            alerts = [dict(bloco=b['id'], **i) for b in c['blocos']
+                      for i in T.style_issues(b['subtitulo'] + ' ' + b['texto']) + T.dependent_opening(b['texto'])]
+            alerts += [dict(bloco=b, tipo='sigla_sem_expansao', trecho=s) for b, v in pending.items() for s in v]
+            originals = [dict(id=b['id'], subtitulo=b['subtitulo'], texto=b['texto']) for b in c['blocos']]
+            payload = dict(documento=meta(self.e), capitulo=c['titulo'], blocos=originals,
+                           siglas_conhecidas={k: glossary[k] for k in sorted(glossary)}, alertas=alerts)
+            try:
+                data = await self.call('edit', f"{c['secao']}_polimento", payload,
+                                       lambda d: C.polimento(d, originals), P.POLIMENTO)
+            except (Fatal, BudgetExceeded):
+                raise
+            except Exception as exc:
+                self.summary['avisos'].append(f"polimento de {c['secao']} não aplicado: {type(exc).__name__}: {str(exc)[:300]}")
+                continue
+            for s in data.get('siglas_expandidas', []):
+                glossary.setdefault(s['sigla'], s['expansao'])
+            fixed = {b['id']: b for b in data['blocos']}
+            keep = []
+            for b in c['blocos']:
+                new = fixed[b['id']]
+                if new.get('remover') is True:
+                    removed.append(dict(bloco=b['id'], subtitulo=b['subtitulo'], texto=b['texto']))
+                    continue
+                if (new['subtitulo'], new['texto']) != (b['subtitulo'], b['texto']):
+                    changes.append(dict(bloco=b['id'], antes=b['texto'], depois=new['texto']))
+                b['subtitulo'], b['texto'] = new['subtitulo'], T.TRAVESSAO.sub(', ', new['texto'])
+                keep.append(b)
+            c['blocos'] = keep
+        document['capitulos'] = [c for c in document['capitulos'] if c['blocos']]
+        self.glossary = glossary
+        return dict(antes=before, depois=T.style_report(document), blocos_alterados=len(changes),
+                    blocos_removidos=removed, glossario=glossary, alteracoes=changes)
+
     # ---------------------------------------------------------------- execução
     async def run(self):
         self.save('entrada.json', dict(id=self.e['id'], origem=self.e['origem'], lacunas=self.gaps,
@@ -422,6 +465,18 @@ class Refino:
             raise
         except Exception as exc:
             self.fail('revisao', exc)
+        polish = None
+        if self.cfg.get('polish', True):
+            try:
+                polish = await self.polish(document)
+                self.save('polimento.json', polish)
+                self.stage('polimento', **{k: polish[k] for k in ('antes', 'depois', 'blocos_alterados')})
+            except (Fatal, BudgetExceeded):
+                raise
+            except Exception as exc:
+                self.summary['avisos'].append('polimento não aplicado: ' + type(exc).__name__ + ': ' + str(exc)[:300])
+        self.polish_info = polish and {k: polish[k] for k in ('antes', 'depois', 'blocos_alterados')} | dict(
+            blocos_removidos=len(polish['blocos_removidos']))
         final_cov = None
         try:
             final_cov = await self.coverage(self.block_list(document), 'cobertura_final')
@@ -437,6 +492,7 @@ class Refino:
                 cache = self.folder / '.local' / 'embeddings.json'
                 semantic = dict(antes=await S.redundancy(self.calls, T.clean(base_doc), spec, cache),
                                 depois=await S.redundancy(self.calls, T.clean(document), spec, cache))
+                S.compact(self.folder, spec, cache, {'antes': T.clean(base_doc), 'depois': T.clean(document)})
             except Exception as exc:  # medida auxiliar: não torna o documento parcial
                 self.summary['avisos'].append('redundância semântica indisponível: ' + type(exc).__name__ + ': ' + str(exc)[:300])
         self.export(plan, done, document, units, history, review, repairs, base_doc, base_cov, final_cov, semantic)
@@ -444,7 +500,32 @@ class Refino:
         complete = len(done) == planned and review is not None and final_cov is not None
         self.summary.update(status='concluido' if complete and not self.summary['falhas'] else 'parcial', fim=stamp())
         self.save('resumo.json', self.summary)
+        (self.folder / 'RELATORIO.md').write_text(report(self.e, self.metrics, self.summary), encoding='utf-8')
         return self.summary
+
+    def export_for_questions(self, document, units):
+        """Blocos prontos para recorte: caminho, siglas do bloco expandidas e origem do conteúdo.
+
+        Quem gerar questões a partir de qualquer recorte usa `para_questoes.contexto` para pôr
+        à frente do trecho o documento, a seção e as siglas que aparecem nele."""
+        glossary = getattr(self, 'glossary', None) or {}
+        by_unit = {u['id']: u for u in units}
+        rows = []
+        for c in document['capitulos']:
+            for b in c['blocos']:
+                status = {}
+                for u in b.get('unidades', []):
+                    if u in by_unit:
+                        status[by_unit[u]['estatuto']] = status.get(by_unit[u]['estatuto'], 0) + 1
+                rows.append(dict(documento=self.e['id'], titulo_documento=self.e['titulo'], capitulo=c['titulo'],
+                                 bloco=b['id'], subtitulo=b['subtitulo'], texto=b['texto'],
+                                 siglas=_glossary_for(b['subtitulo'] + ' ' + b['texto'], glossary),
+                                 unidades=b.get('unidades', []), estatuto=status,
+                                 sem_evidencia=bool(status) and not set(status) & {'evidencia', 'base_revisada'},
+                                 testabilidade=T.testability(dict(capitulos=[dict(blocos=[b])]))))
+        (self.folder / 'blocos_questoes.jsonl').write_text(
+            ''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in rows), encoding='utf-8')
+        self.save('glossario.json', dict(sorted(glossary.items())))
 
     def export(self, plan, done, document, units, history, review, repairs, base_doc, base_cov, final_cov, semantic=None):
         final = T.clean(document)
@@ -462,9 +543,18 @@ class Refino:
         metrics = measure(self.e, plan, done, base_doc, document, units, history, review, repairs, base_cov, final_cov,
                           self.cfg['redundancy_threshold'], self.calls.budget.used)
         metrics['semantica'] = semantic
+        metrics['estilo'] = getattr(self, 'polish_info', None)
+        metrics['testabilidade'] = dict(antes=T.testability(T.clean(base_doc)), depois=T.testability(final))
+        self.export_for_questions(document, units)
+        self.metrics = metrics
         self.save('metricas.json', metrics)
         (self.folder / 'RELATORIO.md').write_text(report(self.e, metrics, self.summary), encoding='utf-8')
         self.summary['metricas'] = {k: metrics[k] for k in ('antes', 'depois', 'cobertura', 'proveniencia')}
+
+
+def _glossary_for(text, glossary):
+    found = {T._base_sigla(m.group(0)) for m in T.SIGLA.finditer(text or '')}
+    return {s: glossary[s] for s in sorted(found) if s in glossary}
 
 
 def coverage_counts(cov, gaps):
@@ -556,6 +646,14 @@ def report(entrada, m, summary):
              f"{m['pesquisa']['passagens_citadas']} citadas, por coleção {m['pesquisa']['colecoes_citadas']}.",
              f"Revisão: {m['revisao']['problemas']} problemas, {m['revisao']['reparos']} blocos reparados; "
              f"alertas locais finais: {m['alertas_locais_finais']}. Chamadas reservadas: {m['chamadas_reservadas']}.", '']
+    if m.get('testabilidade'):
+        ta, td = m['testabilidade']['antes'], m['testabilidade']['depois']
+        lines[-1:-1] = [f"Uso como fonte de questões: sentenças com relação verificável {ta['testaveis']:.0%} → {td['testaveis']:.0%}; "
+                        f"sentenças vagas {ta['vagas']:.0%} → {td['vagas']:.0%}."]
+    if m.get('estilo'):
+        e = m['estilo']
+        lines[-1:-1] = [f"Polimento de estilo: {e['blocos_alterados']} blocos ajustados, {e['blocos_removidos']} removidos; "
+                        f"antes {e['antes']}, depois {e['depois']}."]
     if summary['falhas']:
         lines += ['## Falhas', ''] + [f"- {f['etapa']}: {f['erro']}" for f in summary['falhas']] + ['']
     lines += ['Arquivos: documento.md (nova versão), documento_base.md (base revisada), roteiro.json, rascunhos.json,',

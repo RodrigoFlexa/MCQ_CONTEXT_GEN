@@ -19,7 +19,19 @@ ESTILO = '''Padrão do documento final (critérios do especialista que revisou a
   falha segura, distúrbio, teste de poço, golpe de aríete, intertravamento, amarra (linha de
   ancoragem), eslinga, olhal, guindasteiro, homem de área, sinaleiro, supervisor/sinalizador,
   biocida, planicidade, água doce, capacidade de pouso, boca de sino.
-- Siglas expandidas na primeira ocorrência, com o nome em português quando houver.
+- Siglas expandidas na primeira ocorrência de cada capítulo, com o nome em português quando houver
+  (ex.: "teor de óleo e graxa (TOG)"). Norma também: "Norma Regulamentadora nº 13 (NR-13)".
+- O texto fala do assunto, nunca de si mesmo: nada de "este documento", "esta seção", "a seguir
+  veremos", "estrutura do documento" ou remissões numeradas ("ver Seção 4"). Se for preciso ligar
+  assuntos, nomeie o conceito ("nos indicadores de manutenção, ...").
+- Não use travessão (—). Use vírgula, dois-pontos, parênteses ou frases separadas.
+- O texto será recortado em trechos para gerar e responder questões, como um livro didático. Por isso:
+  cada parágrafo se entende sozinho (nomeie o sujeito em vez de "esse sistema", "isso", "o mesmo");
+  prefira afirmações explícitas e verificáveis: definição ("X é ..."), função ("X serve para ..."),
+  causa e efeito ("A provoca B porque ..."), condição ("só quando ..."), contraste entre conceitos
+  parecidos ("diferentemente de Y, X ..."), sequência de passos; use um único termo para cada conceito
+  (o sinônimo aparece uma vez, com a equivalência); evite frases genéricas que não afirmam nada
+  verificável ("é fundamental considerar", "contribui para", "de forma integrada").
 - Regulação brasileira (ANP, NRs do MTE, Marinha/NORMAM, IBAMA/CONAMA) é citada quando pertinente.
   Não afirme vigência, versão ou número de item de norma sem evidência.
 - Números, limites, dosagens, tempos e valores de norma só com evidência ou quando já constam do
@@ -128,7 +140,8 @@ REDACAO = '''Responda apenas JSON. Redija UMA seção do documento a partir das 
 blocos com subtítulo. Use todas as unidades, cada uma exatamente uma vez, na ordem que favorecer a
 explicação. Pode acrescentar ligações, transições e explicações didáticas, mas não fatos novos.
 Parágrafos densos e claros; nada de listas soltas sem explicação. Para a introdução, situe o tópico
-no FPSO e apresente o que as seções seguintes tratam, sem antecipar o desenvolvimento delas.
+no FPSO, defina o objeto e diga por que importa a bordo, sem descrever a organização do texto e sem
+antecipar o desenvolvimento das outras seções.
 ''' + ESTILO + '''
 JSON {"blocos":[{"id":"S02B01","subtitulo":"...","texto":"parágrafo 1\\n\\nparágrafo 2","unidades":["U01","U02"]}]}
 '''
@@ -136,19 +149,24 @@ JSON {"blocos":[{"id":"S02B01","subtitulo":"...","texto":"parágrafo 1\\n\\npar�
 CONSOLIDA_DOC = '''Responda apenas JSON. Você é o consolidador final do documento. Recebe o documento
 completo (blocos com IDs), pares de sentenças quase repetidas detectados automaticamente e os
 conceitos de que outros documentos são donos. Elimine a redundância: cada ideia fica no bloco mais
-adequado; nos demais, remova ou troque por uma remissão curta à seção correspondente. Não perca
+adequado; nos demais, remova (sem remissão a seções numeradas). Não perca
 informação: toda informação distinta permanece em algum bloco. Similaridade automática é pista,
 não ordem: repetição necessária para a compreensão local pode ficar, em forma curta.
-Corrija também ligações quebradas entre seções. Altere só os blocos necessários.
+Altere só os blocos necessários.
 ''' + ESTILO + '''
 JSON {"operacoes":[{"bloco":"S04B02","novo_texto":"...","motivo":"...","informacao_preservada_em":["S02B01"]}]}
 '''
 
 REVISAO = '''Responda apenas JSON. Revise o documento como o especialista de FPSO revisaria.
 1) Cobertura: para cada lacuna recebida (IDs G.. e L..), estado atendido, parcial ou ausente, e os
-   blocos que a atendem.
+   blocos que a atendem. Atendido exige que cada item pedido seja EXPLICADO (o que é e como se
+   aplica, se mede ou se controla no FPSO); item só citado, em lista ou de passagem, é parcial.
+   Para cada lacuna parcial ou ausente, aponte também um problema "superficial" no bloco que
+   deveria explicá-la, dizendo exatamente o que falta.
 2) Problemas por bloco: erro_tecnico, fora_fpso, casuistico, relato_fonte, terminologia,
-   valor_sem_fonte, redundancia, superficial, estrutura, pt_br. Descreva e diga a correção.
+   valor_sem_fonte, redundancia, superficial, estrutura, pt_br, vago (prosa genérica da qual não sai
+   nenhuma pergunta com resposta única: diga qual definição, causa, condição ou contraste falta).
+   Descreva e diga a correção.
    Alertas locais recebidos são pistas: confirme ou descarte.
 3) Parecer geral curto.
 Não aponte problema sem localização. Não peça para alongar o que já está completo.
@@ -160,7 +178,9 @@ JSON {"cobertura":[{"id":"G01","estado":"atendido","blocos":["S02B01"],"nota":".
 
 COBERTURA_BASE = '''Responda apenas JSON. Avalie se o texto recebido atende cada lacuna listada pelo
 especialista (IDs G.. e L..): atendido, parcial ou ausente, com os blocos que a atendem. Seja
-rigoroso e use o mesmo critério para qualquer versão do documento.
+rigoroso e use o mesmo critério para qualquer versão do documento. Atendido exige que cada item
+pedido na lacuna seja explicado (o que é e como se aplica, se mede ou se controla no FPSO); item
+apenas citado, em lista ou de passagem, conta como parcial. Na nota, diga o que falta.
 JSON {"cobertura":[{"id":"G01","estado":"parcial","blocos":["B003"],"nota":"..."}]}
 '''
 
@@ -170,4 +190,26 @@ cobrado, use as unidades e achados fornecidos e, quando eles não bastarem, o se
 como complemento (sem números sem evidência).
 ''' + ESTILO + '''
 JSON {"blocos":[{"id":"S03B02","subtitulo":"...","texto":"..."}]}
+'''
+
+POLIMENTO = '''Responda apenas JSON. Você é o editor de estilo final. Recebe UM capítulo do documento
+(blocos com IDs), as expansões de siglas já usadas nos capítulos anteriores ("siglas_conhecidas": use
+a mesma expansão) e alertas automáticos (pistas, confirme antes de agir). O documento será recortado
+em trechos para gerar questões, então cada capítulo e cada bloco devem se sustentar sozinhos.
+Faça só ajustes de forma, sem mudar o conteúdo técnico:
+- Expanda cada sigla na sua primeira ocorrência NESTE capítulo; depois disso use só a sigla. Não invente expansão: se não souber, reescreva
+  sem a sigla. Informe em "siglas_expandidas" todas as siglas usadas no capítulo, com a expansão.
+- Torne cada bloco legível sozinho: se ele começa ou depende de "esse", "isso", "nesse contexto",
+  "por isso", "o mesmo" referindo-se a algo de outro bloco, nomeie o sujeito.
+- Uniformize os termos: um conceito, um nome.
+- Remova o texto que fala do próprio documento ("este documento", "esta seção", "Estrutura do
+  documento", "ver Seção 4", "como visto acima", "será tratado adiante"), mantendo a informação
+  técnica da frase. Um bloco que só descreve a organização do documento pode ser removido
+  ("remover": true).
+- Troque travessões (—) por vírgula, dois-pontos, parênteses ou frases separadas.
+- Corrija português (pt-BR), concordância, frases longas demais e repetições de palavra.
+- Não acrescente nem retire informação técnica, números, normas ou exemplos. Não resuma.
+''' + ESTILO + '''
+JSON {"blocos":[{"id":"S02B01","subtitulo":"...","texto":"...","remover":false}],
+"siglas_expandidas":[{"sigla":"TOG","expansao":"teor de óleo e graxa"}]}
 '''

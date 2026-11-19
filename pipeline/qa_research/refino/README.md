@@ -173,6 +173,37 @@ git push origin codex/qa-evidencias-verificadas
 A coleta exclui `.local/` (cache, respostas brutas, embeddings) e não leva texto original
 dos corpora: `proveniencia.json` guarda só metadados das passagens.
 
+## Polimento de estilo e limpeza
+
+Depois da revisão, um editor de estilo percorre o documento capítulo a capítulo, em ordem, levando
+adiante as siglas já apresentadas: expande cada sigla na primeira ocorrência, tira o texto que fala
+do próprio documento ("esta seção", "Estrutura do documento", "ver Seção 4") e os travessões, sem
+mudar o conteúdo técnico (o contrato recusa números novos e cortes acima de 20%). `polimento.json`
+guarda as alterações e o relatório traz a contagem antes e depois. A cobertura das lacunas só conta
+"atendido" quando o item é explicado; menção de passagem conta como parcial.
+
+Ao concluir um documento, o cache `.local` (respostas brutas, chamadas e embeddings) é apagado; só
+os vetores finais ficam em `vetores_semanticos.npz` (float16) para a medida entre documentos.
+`--manter-local` desliga a limpeza. Documento já concluído na mesma saída não é refeito. Na coleta,
+`--apagar-saida` remove a pasta de saída depois de copiar os resultados (só lote concluído).
+
+## Texto pronto para ser recortado em questões
+
+Os documentos serão recortados de várias formas para gerar questões. A solução tem duas camadas:
+
+1. No texto: cada bloco se sustenta sozinho (sujeito nomeado, sem "esse sistema" apontando para outro
+   bloco), siglas expandidas na primeira ocorrência de cada capítulo, um termo por conceito e
+   afirmações verificáveis (definição, função, causa, condição, contraste, sequência). Redator,
+   revisor (problema "vago") e editor final cobram isso.
+2. Fora do texto: `blocos_questoes.jsonl` (um bloco por linha, com documento, capítulo, subtítulo,
+   siglas do bloco já expandidas, unidades de conteúdo e se o bloco tem conteúdo sem evidência) e
+   `glossario.json`. Para qualquer recorte, `para_questoes.contexto(trecho, blocos, glossario)`
+   devolve um cabeçalho com documento, seção e as siglas do trecho, para pôr à frente dele na
+   geração e na resposta das questões (o texto do trecho não muda).
+
+O relatório mede a fração de sentenças com relação verificável e a de prosa vaga (heurística, para
+comparar versões). No 1.1: 38% → 49% de sentenças verificáveis.
+
 ## Saídas por documento
 
 - `documento.md` / `documento.json`: nova versão, no formato da v2 (consumível pela QA).

@@ -80,9 +80,37 @@ def cross(vectors_by_doc, threshold):
 
 def load_vectors(folder, spec, name):
     """Vetores das sentenças de um documento já medido (para a medida entre documentos)."""
+    packed = Path(folder) / 'vetores_semanticos.npz'
+    if packed.is_file():
+        import numpy as np
+        key = 'antes' if name == 'documento_base.json' else 'depois'
+        with np.load(packed) as data:
+            return data[key].astype(np.float32).tolist() if key in data.files else []
     cache = read_json(Path(folder) / '.local' / 'embeddings.json') or {}
     doc = read_json(Path(folder) / name)
     if not doc:
         return []
     texts = [s for _, _, t in T.blocks_of(doc) for s in T.sentences(t)]
     return [cache[_key(t, spec)] for t in texts if _key(t, spec) in cache]
+
+
+def compact(folder, spec, cache_path, documents):
+    """Guarda só os vetores das sentenças finais (float16, npz) para a medida entre documentos.
+
+    O cache JSON em .local pode ser apagado depois; sem numpy, nada é gravado."""
+    try:
+        import numpy as np
+    except ImportError:
+        return None
+    cache = read_json(cache_path) or {}
+    arrays = {}
+    for name, doc in documents.items():
+        texts = [s for _, _, t in T.blocks_of(doc) for s in T.sentences(t)]
+        rows = [cache[_key(t, spec)] for t in texts if _key(t, spec) in cache]
+        if rows:
+            arrays[name] = np.asarray(rows, dtype=np.float16)
+    if not arrays:
+        return None
+    path = Path(folder) / 'vetores_semanticos.npz'
+    np.savez_compressed(path, **arrays)
+    return path
