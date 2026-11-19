@@ -19,14 +19,17 @@ ESTILO = '''Padrão do documento final (critérios do especialista que revisou a
   falha segura, distúrbio, teste de poço, golpe de aríete, intertravamento, amarra (linha de
   ancoragem), eslinga, olhal, guindasteiro, homem de área, sinaleiro, supervisor/sinalizador,
   biocida, planicidade, água doce, capacidade de pouso, boca de sino.
-- Siglas expandidas na primeira ocorrência de cada capítulo, com o nome em português quando houver
+- Siglas expandidas na primeira ocorrência no documento, com o nome em português quando houver
   (ex.: "teor de óleo e graxa (TOG)"). Norma também: "Norma Regulamentadora nº 13 (NR-13)".
 - O texto fala do assunto, nunca de si mesmo: nada de "este documento", "esta seção", "a seguir
   veremos", "estrutura do documento" ou remissões numeradas ("ver Seção 4"). Se for preciso ligar
   assuntos, nomeie o conceito ("nos indicadores de manutenção, ...").
 - Não use travessão (—). Use vírgula, dois-pontos, parênteses ou frases separadas.
 - O texto será recortado em trechos para gerar e responder questões, como um livro didático. Por isso:
-  cada parágrafo se entende sozinho (nomeie o sujeito em vez de "esse sistema", "isso", "o mesmo");
+  sem enchimento: toda frase traz informação técnica (componente, função, mecanismo, condição,
+  procedimento, consequência concreta); frases que só reafirmam importância, resumem o que acabou de
+  ser dito ou concluem o óbvio ("isso importa a bordo porque...", "portanto, operar bem significa...")
+  não entram; não redefina o que já foi definido;
   prefira afirmações explícitas e verificáveis: definição ("X é ..."), função ("X serve para ..."),
   causa e efeito ("A provoca B porque ..."), condição ("só quando ..."), contraste entre conceitos
   parecidos ("diferentemente de Y, X ..."), sequência de passos; use um único termo para cada conceito
@@ -192,24 +195,28 @@ como complemento (sem números sem evidência).
 JSON {"blocos":[{"id":"S03B02","subtitulo":"...","texto":"..."}]}
 '''
 
-POLIMENTO = '''Responda apenas JSON. Você é o editor de estilo final. Recebe UM capítulo do documento
-(blocos com IDs), as expansões de siglas já usadas nos capítulos anteriores ("siglas_conhecidas": use
-a mesma expansão) e alertas automáticos (pistas, confirme antes de agir). O documento será recortado
-em trechos para gerar questões, então cada capítulo e cada bloco devem se sustentar sozinhos.
-Faça só ajustes de forma, sem mudar o conteúdo técnico:
-- Expanda cada sigla na sua primeira ocorrência NESTE capítulo; depois disso use só a sigla. Não invente expansão: se não souber, reescreva
-  sem a sigla. Informe em "siglas_expandidas" todas as siglas usadas no capítulo, com a expansão.
-- Torne cada bloco legível sozinho: se ele começa ou depende de "esse", "isso", "nesse contexto",
-  "por isso", "o mesmo" referindo-se a algo de outro bloco, nomeie o sujeito.
+POLIMENTO = '''Responda apenas JSON. Você é o editor final. Recebe UM capítulo do documento (blocos com
+IDs), as siglas já expandidas nos capítulos anteriores ("siglas_conhecidas": não expanda de novo, use
+só a sigla) e alertas automáticos (pistas, confirme antes de agir). O texto será recortado para gerar
+questões: o que importa é que cada frase traga conteúdo técnico. Ajuste a forma, sem mudar o conteúdo:
+- Corte enchimento: frases que só reafirmam importância, repetem o que o bloco já disse, concluem o
+  óbvio ou redefinem algo já definido em capítulo anterior (ex.: definir de novo o que é um FPSO).
+  Liste cada frase cortada em "enchimento_removido". Nunca corte frase com informação técnica.
+- Expanda cada sigla na sua primeira ocorrência no documento (as de "siglas_conhecidas" já foram);
+  depois use só a sigla. Prefira o nome em português, com o original em inglês só se for o usual a
+  bordo. Não invente expansão: se não souber, reescreva sem a sigla. Informe em "siglas_expandidas" as
+  siglas que você expandiu neste capítulo.
+- Quando um bloco começa apoiado em outro ("esse sistema", "isso") de modo que o assunto fique
+  obscuro, nomeie o sujeito. Não é preciso repetir contexto em todo parágrafo.
 - Uniformize os termos: um conceito, um nome.
 - Remova o texto que fala do próprio documento ("este documento", "esta seção", "Estrutura do
-  documento", "ver Seção 4", "como visto acima", "será tratado adiante"), mantendo a informação
-  técnica da frase. Um bloco que só descreve a organização do documento pode ser removido
-  ("remover": true).
+  documento", "ver Seção 4", "como visto acima", "será tratado adiante"). Um bloco que só descreve a
+  organização do documento pode ser removido ("remover": true).
 - Troque travessões (—) por vírgula, dois-pontos, parênteses ou frases separadas.
-- Corrija português (pt-BR), concordância, frases longas demais e repetições de palavra.
-- Não acrescente nem retire informação técnica, números, normas ou exemplos. Não resuma.
+- Corrija português (pt-BR), concordância e frases longas demais.
+- Não acrescente informação técnica, números, normas ou exemplos.
 ''' + ESTILO + '''
 JSON {"blocos":[{"id":"S02B01","subtitulo":"...","texto":"...","remover":false}],
-"siglas_expandidas":[{"sigla":"TOG","expansao":"teor de óleo e graxa"}]}
+"siglas_expandidas":[{"sigla":"TOG","expansao":"teor de óleo e graxa"}],
+"enchimento_removido":[{"bloco":"S02B01","frase":"..."}]}
 '''

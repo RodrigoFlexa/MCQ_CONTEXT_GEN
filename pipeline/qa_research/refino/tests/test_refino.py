@@ -158,6 +158,14 @@ class RefinoTest(unittest.TestCase):
     def test_contracts_and_text(self):
         self.assertTrue(T.lint('O cabeçalho de gás inerte e a linga'))
         self.assertFalse(T.lint('O header de gás inerte e a eslinga'))
+        self.assertFalse(T.lint('isolar o trecho de linha antes da intervenção'))
+        self.assertTrue(T.lint('o trecho citado afirma que a válvula abre'))
+        self.assertEqual(T.fix_terms('Um upset no header'), 'Um distúrbio no header')
+        leitura = dict(achados=[], novas_consultas=[dict(pt='flare knock out drum', en='flare knock out drum'),
+                                                     dict(pt=' '.join(['vaso'] * 20), en=' '.join(['drum'] * 20)),
+                                                     dict(pt='vaso do flare', en='flare system drum')])
+        C.leitura(leitura, ['E1'], ['K1'], ['A1'])
+        self.assertEqual(len(leitura['novas_consultas']), 2)
         self.assertTrue(T.has_value('ajuste de 10 bar'))
         self.assertFalse(T.has_value('conforme a NR-13 e a API 754'))
         with self.assertRaises(ValueError):

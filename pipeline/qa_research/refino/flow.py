@@ -366,13 +366,13 @@ class Refino:
         return review, repairs
 
     async def polish(self, document):
-        """Editor final, capítulo a capítulo: siglas por capítulo, blocos legíveis sozinhos, sem metatexto.
+        """Editor final, capítulo a capítulo: siglas na 1ª ocorrência do documento, sem metatexto nem enchimento.
 
         Falha num capítulo vira aviso (o capítulo fica como estava): é ajuste de forma."""
         before = T.style_report(document)
-        changes, removed, glossary = [], [], {}
+        changes, removed, glossary, filler = [], [], {}, []
         for c in document['capitulos']:
-            pending, _ = T.acronyms(dict(capitulos=[c]))
+            pending, _ = T.acronyms(dict(capitulos=[c]), known=set(glossary))
             alerts = [dict(bloco=b['id'], **i) for b in c['blocos']
                       for i in T.style_issues(b['subtitulo'] + ' ' + b['texto']) + T.dependent_opening(b['texto'])]
             alerts += [dict(bloco=b, tipo='sigla_sem_expansao', trecho=s) for b, v in pending.items() for s in v]
@@ -381,7 +381,7 @@ class Refino:
                            siglas_conhecidas={k: glossary[k] for k in sorted(glossary)}, alertas=alerts)
             try:
                 data = await self.call('edit', f"{c['secao']}_polimento", payload,
-                                       lambda d: C.polimento(d, originals), P.POLIMENTO)
+                                       lambda d: C.polimento(d, originals, set(glossary)), P.POLIMENTO)
             except (Fatal, BudgetExceeded):
                 raise
             except Exception as exc:
@@ -389,6 +389,7 @@ class Refino:
                 continue
             for s in data.get('siglas_expandidas', []):
                 glossary.setdefault(s['sigla'], s['expansao'])
+            filler += data.get('enchimento_removido', [])
             fixed = {b['id']: b for b in data['blocos']}
             keep = []
             for b in c['blocos']:
@@ -404,7 +405,7 @@ class Refino:
         document['capitulos'] = [c for c in document['capitulos'] if c['blocos']]
         self.glossary = glossary
         return dict(antes=before, depois=T.style_report(document), blocos_alterados=len(changes),
-                    blocos_removidos=removed, glossario=glossary, alteracoes=changes)
+                    blocos_removidos=removed, enchimento_removido=filler, glossario=glossary, alteracoes=changes)
 
     # ---------------------------------------------------------------- execução
     async def run(self):
@@ -428,13 +429,23 @@ class Refino:
         done = {}
         development = [s for s in plan['secoes'] if s['tipo'] != 'introducao']
         results = await asyncio.gather(*(self.section(plan, s) for s in development), return_exceptions=True)
+        retry = []
         for s, result in zip(development, results):
             if isinstance(result, (Fatal, BudgetExceeded)):
                 raise result
             if isinstance(result, BaseException):
-                self.fail(s['id'], result)
+                retry.append(s)
+                self.summary['avisos'].append(f"{s['id']}: primeira tentativa falhou ({type(result).__name__}: {str(result)[:300]}); refazendo")
             else:
                 done[s['id']] = result
+        # Uma segunda passada para seções que falharam (as chamadas bem-sucedidas vêm do cache).
+        for s in retry:
+            try:
+                done[s['id']] = await self.section(plan, s)
+            except (Fatal, BudgetExceeded):
+                raise
+            except Exception as exc:
+                self.fail(s['id'], exc)
         intro = plan['secoes'][0]
         neighbours = [dict(id=d['secao']['id'], titulo=d['secao']['titulo'],
                            subtitulos=[b['subtitulo'] for b in d['blocos']]) for d in done.values()]
@@ -476,7 +487,7 @@ class Refino:
             except Exception as exc:
                 self.summary['avisos'].append('polimento não aplicado: ' + type(exc).__name__ + ': ' + str(exc)[:300])
         self.polish_info = polish and {k: polish[k] for k in ('antes', 'depois', 'blocos_alterados')} | dict(
-            blocos_removidos=len(polish['blocos_removidos']))
+            blocos_removidos=len(polish['blocos_removidos']), frases_de_enchimento_removidas=len(polish['enchimento_removido']))
         final_cov = None
         try:
             final_cov = await self.coverage(self.block_list(document), 'cobertura_final')
@@ -652,7 +663,8 @@ def report(entrada, m, summary):
                         f"sentenças vagas {ta['vagas']:.0%} → {td['vagas']:.0%}."]
     if m.get('estilo'):
         e = m['estilo']
-        lines[-1:-1] = [f"Polimento de estilo: {e['blocos_alterados']} blocos ajustados, {e['blocos_removidos']} removidos; "
+        lines[-1:-1] = [f"Polimento de estilo: {e['blocos_alterados']} blocos ajustados, {e['blocos_removidos']} removidos, "
+                        f"{e.get('frases_de_enchimento_removidas', 0)} frases de enchimento cortadas; "
                         f"antes {e['antes']}, depois {e['depois']}."]
     if summary['falhas']:
         lines += ['## Falhas', ''] + [f"- {f['etapa']}: {f['erro']}" for f in summary['falhas']] + ['']

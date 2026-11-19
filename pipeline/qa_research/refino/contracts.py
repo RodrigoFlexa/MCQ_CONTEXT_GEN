@@ -129,9 +129,17 @@ def leitura(data, passages, knowledge, claims):
         require(v.get('afirmacao') in claims and v.get('estado') in ('apoia', 'contradiz'), 'verificacoes: afirmação conhecida e estado apoia|contradiz')
         ids(v.get('fontes'), 'verificacoes.fontes', passages, empty=False)
     ids(data.get('lacunas', []), 'lacunas', knowledge)
-    queries = data.get('novas_consultas', [])
-    if queries:
-        pairs(queries, 'novas_consultas')
+    # Consultas novas são sugestão para a próxima rodada: as inválidas são descartadas, não reprovam a leitura.
+    clean, seen = [], set()
+    for q in data.get('novas_consultas', []) or []:
+        if not (isinstance(q, dict) and text(q.get('pt'), 3) and text(q.get('en'), 3)):
+            continue
+        pt, en = ' '.join(q['pt'].split()[:16]), ' '.join(q['en'].split()[:16])
+        key = (pt.casefold(), en.casefold())
+        if key[0] != key[1] and key not in seen:
+            seen.add(key)
+            clean.append(dict(pt=pt, en=en))
+    data['novas_consultas'] = clean[:4]
 
 
 def consolidacao(data, claims, findings, blocks, knowledge, contradicted, specific, allow_values=False):
@@ -151,6 +159,7 @@ def consolidacao(data, claims, findings, blocks, knowledge, contradicted, specif
         require(not (set(a) & contradicted) or f, u['id'] + ': afirmação contradita só entra corrigida por achado')
         if not allow_values and not f and not b:
             require(not T.has_value(u['texto']), u['id'] + ': valor numérico sem achado nem bloco revisado; descreva qualitativamente')
+        u['texto'] = T.fix_terms(u['texto'])
         lint_or_fail(u['texto'], u['id'])
         accounted += a + f + b
     discarded = []
@@ -180,6 +189,7 @@ def redacao(data, units, section_id):
     for i, b in enumerate(blocks, 1):
         require(b.get('id') == f'{section_id}B{i:02d}', f'blocos: IDs {section_id}B01, {section_id}B02...')
         require(text(b.get('subtitulo')) and text(b.get('texto'), 25), b['id'] + ': subtítulo e texto (25+ palavras)')
+        b['subtitulo'], b['texto'] = T.fix_terms(b['subtitulo']), T.fix_terms(b['texto'])
         ids(b.get('unidades'), b['id'] + '.unidades', units, empty=False)
         lint_or_fail(b['subtitulo'] + ' ' + b['texto'], b['id'])
         used += b['unidades']
@@ -221,11 +231,12 @@ def reparo(data, expected):
     require({b.get('id') for b in blocks} == set(expected) and len(blocks) == len(expected), 'blocos: devolva exatamente os blocos pedidos')
     for b in blocks:
         require(text(b.get('subtitulo')) and text(b.get('texto'), 25), b['id'] + ': subtítulo e texto')
+        b['subtitulo'], b['texto'] = T.fix_terms(b['subtitulo']), T.fix_terms(b['texto'])
         lint_or_fail(b['subtitulo'] + ' ' + b['texto'], b['id'])
 
 
-def polimento(data, originals):
-    """Mesmos blocos, sem perder conteúdo: nenhum número novo e texto de tamanho comparável."""
+def polimento(data, originals, known=()):
+    """Mesmos blocos; nenhum número novo; corte só de enchimento declarado (até 30%)."""
     blocks = rows(data.get('blocos'), 'blocos', 1)
     expected = {b['id']: b for b in originals}
     require({b.get('id') for b in blocks} == set(expected) and len(blocks) == len(expected),
@@ -237,20 +248,26 @@ def polimento(data, originals):
             require(len(T.words(old['texto'])) <= 150, b['id'] + ': só remova bloco curto que descreve o documento')
             continue
         require(text(b.get('subtitulo')) and text(b.get('texto'), 15), b['id'] + ': subtítulo e texto')
+        b['subtitulo'], b['texto'] = T.fix_terms(b['subtitulo']), T.fix_terms(b['texto'])
         new_numbers = T.numbers(b['texto']) - T.numbers(old['subtitulo'] + ' ' + old['texto'])
         require(not new_numbers, b['id'] + ': números novos não permitidos: ' + ', '.join(sorted(new_numbers)[:5]))
         lint_or_fail(b['subtitulo'] + ' ' + b['texto'], b['id'])
         kept_old += len(T.words(old['texto']))
         kept_new += len(T.words(b['texto']))
-    require(kept_new >= 0.8 * kept_old, 'texto encurtado demais: o polimento não resume nem corta conteúdo')
+    cut = rows(data.get('enchimento_removido', []), 'enchimento_removido')
+    require(all(text(x.get('frase'), 3) and x.get('bloco') in expected for x in cut),
+            'enchimento_removido: bloco e frase removida')
+    floor = 0.7 if cut else 0.85
+    require(kept_new >= floor * kept_old,
+            'texto encurtado demais: só corte enchimento e declare cada frase em "enchimento_removido"')
     siglas = rows(data.get('siglas_expandidas', []), 'siglas_expandidas')
     require(all(isinstance(s.get('sigla'), str) and text(s.get('expansao')) for s in siglas),
             'siglas_expandidas: sigla e expansao')
-    final = ' '.join(b.get('texto', '') for b in blocks if b.get('remover') is not True)
-    pending, _ = T.acronyms(dict(capitulos=[dict(blocos=[dict(id=b['id'], subtitulo=b.get('subtitulo', ''),
-                                                              texto=b.get('texto', '')) for b in blocks
-                                                         if b.get('remover') is not True])]))
+    kept = [dict(id=b['id'], subtitulo=b.get('subtitulo', ''), texto=b.get('texto', '')) for b in blocks
+            if b.get('remover') is not True]
+    pending, _ = T.acronyms(dict(capitulos=[dict(blocos=kept)]), known=set(known))
     left = sorted({s for v in pending.values() for s in v})
-    require(not left, 'siglas sem expansão na primeira ocorrência do capítulo: ' + ', '.join(left[:12]))
+    require(not left, 'siglas sem expansão na primeira ocorrência no documento: ' + ', '.join(left[:12]))
+    final = ' '.join(b['texto'] for b in kept)
     unknown = [s['sigla'] for s in siglas if s['sigla'] not in final]
     require(not unknown, 'siglas_expandidas: siglas que não aparecem no capítulo: ' + ', '.join(unknown[:8]))

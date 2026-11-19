@@ -43,7 +43,8 @@ DESACONSELHADOS = [
 ]
 RELATO_FONTE = [
     r'\b(a|as|esta|essa|uma) fontes? (afirma|afirmam|indica|indicam|relata|relatam|descreve|descrevem|mostra|mostram|cita)\b',
-    r'\bo trecho\b', r'\bos trechos\b', r'\bsegundo (o|a|os|as) (documento|fonte|relat[óo]rio|estudo|autor)',
+    r'\b(?:o|os|este|esse|neste|nesse|no) trechos? (?:citad|recuperad|analisad|consultad|selecionad|afirma|indica|mostra|descreve|relata)',
+    r'\bsegundo (o|a|os|as) (documento|fonte|relat[óo]rio|estudo|autor)',
     r'\bnos ensaios relatados\b', r'\bo documento (analisado|consultado|examinado)\b',
     r'\bo relat[óo]rio (analisado|examinado|de investiga[çc][ãa]o)\b', r'\bconforme (a|as) passage',
     r'\bpassagens? (recuperad|consultad|selecionad)', r'\bno caso (analisado|examinado|investigado)\b',
@@ -87,6 +88,23 @@ def lint(text, desaconselhados=True):
                 # "eslinga" contém "linga"; o \b do padrão já impede esse caso.
                 issues.append(dict(tipo='terminologia', trecho=text[m.start():m.end()], sugestao=suggestion))
     return issues
+
+
+# Trocas sem ambiguidade (o especialista já indicou o termo de bordo); aplicadas antes da checagem.
+TROCAS = [
+    (r'\bupsets\b', 'distúrbios'), (r'\bupset\b', 'distúrbio'), (r'\bfail-safe\b', 'falha segura'),
+    (r'\bwell tests?\b', 'teste de poço'), (r'\bpadeyes\b', 'olhais'), (r'\bpadeye\b', 'olhal'),
+    (r'\bplaneza\b', 'planicidade'), (r'\bpousabilidade\b', 'capacidade de pouso'),
+    (r'\bmicrobicidas\b', 'biocidas'), (r'\bmicrobicida\b', 'biocida'), (r'\bintertravagem\b', 'intertravamento'),
+    (r'\bintertravagens\b', 'intertravamentos'), (r'\b[áa]gua fresca\b', 'água doce'), (r'\btrumpet\b', 'boca de sino'),
+    (r'\bcabe[çc]alhos\b', 'headers'), (r'\bcabe[çc]alho\b', 'header'),
+]
+
+
+def fix_terms(text):
+    for pattern, replacement in TROCAS:
+        text = re.sub(pattern, replacement, text, flags=re.I)
+    return text
 
 
 def has_value(text):
@@ -157,10 +175,8 @@ def dependent_opening(text):
 
 
 def style_report(document):
-    """Contagem dos problemas de estilo (siglas contadas por capítulo), antes e depois do polimento."""
-    pending = {}
-    for chapter in document.get('capitulos', []):
-        pending.update(acronyms(dict(capitulos=[chapter]))[0])
+    """Contagem dos problemas de estilo, antes e depois do polimento."""
+    pending, _ = acronyms(document)
     counts = Counter(i['tipo'] for _, s, t in blocks_of(document) for i in style_issues(s + ' ' + t))
     return dict(metatexto=counts.get('metatexto', 0), travessao=counts.get('travessao', 0),
                 siglas_sem_expansao=sum(len(v) for v in pending.values()),

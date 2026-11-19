@@ -178,7 +178,8 @@ dos corpora: `proveniencia.json` guarda só metadados das passagens.
 Depois da revisão, um editor de estilo percorre o documento capítulo a capítulo, em ordem, levando
 adiante as siglas já apresentadas: expande cada sigla na primeira ocorrência, tira o texto que fala
 do próprio documento ("esta seção", "Estrutura do documento", "ver Seção 4") e os travessões, sem
-mudar o conteúdo técnico (o contrato recusa números novos e cortes acima de 20%). `polimento.json`
+mudar o conteúdo técnico (o contrato recusa números novos; cortes acima de 15% só com as frases de
+enchimento declaradas, até 30%). `polimento.json`
 guarda as alterações e o relatório traz a contagem antes e depois. A cobertura das lacunas só conta
 "atendido" quando o item é explicado; menção de passagem conta como parcial.
 
@@ -191,10 +192,11 @@ os vetores finais ficam em `vetores_semanticos.npz` (float16) para a medida entr
 
 Os documentos serão recortados de várias formas para gerar questões. A solução tem duas camadas:
 
-1. No texto: cada bloco se sustenta sozinho (sujeito nomeado, sem "esse sistema" apontando para outro
-   bloco), siglas expandidas na primeira ocorrência de cada capítulo, um termo por conceito e
-   afirmações verificáveis (definição, função, causa, condição, contraste, sequência). Redator,
-   revisor (problema "vago") e editor final cobram isso.
+1. No texto: nenhuma frase de enchimento (o editor final corta e lista em `polimento.json` as frases
+   que só reafirmam importância, repetem ou redefinem), siglas expandidas na primeira ocorrência no
+   documento, um termo por conceito e afirmações verificáveis (definição, função, causa, condição,
+   contraste, sequência). Redator, revisor (problema "vago") e editor final cobram isso. Não se exige
+   que todo parágrafo seja autossuficiente: o contexto do recorte vem da camada 2.
 2. Fora do texto: `blocos_questoes.jsonl` (um bloco por linha, com documento, capítulo, subtítulo,
    siglas do bloco já expandidas, unidades de conteúdo e se o bloco tem conteúdo sem evidência) e
    `glossario.json`. Para qualquer recorte, `para_questoes.contexto(trecho, blocos, glossario)`
