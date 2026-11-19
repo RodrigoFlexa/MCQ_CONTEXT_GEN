@@ -86,8 +86,8 @@ class Refino:
         self.save('resumo.json', self.summary)
         self.progress(f'[{self.e["id"]}] falha em {where}: {type(exc).__name__}', flush=True)
 
-    async def call(self, role, tag, payload, validate, system):
-        return await self.calls.call(role, tag, payload, validate, system=system)
+    async def call(self, role, tag, payload, validate, system, tokens=None):
+        return await self.calls.call(role, tag, payload, validate, system=system, tokens=tokens)
 
     # ---------------------------------------------------------------- roteiro
     async def plan(self):
@@ -101,8 +101,18 @@ class Refino:
             conceitos=self.conceitos,
             limites=dict(min_secoes=self.cfg['min_sections'], max_secoes=self.cfg['max_sections']))
         gap_ids, block_ids = [g['id'] for g in self.gaps], [b['id'] for b in self.base]
-        plan = await self.call('plan', 'roteiro', payload,
-            lambda d: C.plano(d, gap_ids, block_ids, self.cfg['min_sections'], self.cfg['max_sections']), P.PLANO)
+        check = lambda d: C.plano(d, gap_ids, block_ids, self.cfg['min_sections'], self.cfg['max_sections'],
+                                  default_title=self.e['titulo'])
+        # O roteiro é a etapa da qual tudo depende: mais espaço de saída (o raciocínio também conta)
+        # e uma segunda rodada de tentativas antes de desistir do documento.
+        tokens = self.cfg.get('plan_tokens', 32000)
+        try:
+            plan = await self.call('plan', 'roteiro', payload, check, P.PLANO, tokens=tokens)
+        except (Fatal, BudgetExceeded):
+            raise
+        except Exception as exc:
+            self.summary['avisos'].append('roteiro: primeira rodada falhou (' + str(exc)[:300] + '); repetindo')
+            plan = await self.call('plan', 'roteiro_2', payload, check, P.PLANO, tokens=tokens)
         self.save('roteiro.json', plan)
         self.stage('roteiro', secoes=len(plan['secoes']), blocos_descartados=len(plan.get('blocos_descartados', [])),
                    lacunas_fora_de_escopo=len(plan.get('lacunas_fora_de_escopo', [])))
@@ -165,8 +175,18 @@ class Refino:
                            achados_anteriores=[dict(id=f['id'], texto=f['texto']) for f in findings],
                            consultas_anteriores=asked, conhecimentos_sem_suporte=missing)
             pids = [p['id'] for p in packed]
-            data = await self.call('read', f"{s['id']}_leitura_{r}", payload,
-                                   lambda d: C.leitura(d, pids, k_ids, claim_ids), P.LEITURA)
+            try:
+                data = await self.call('read', f"{s['id']}_leitura_{r}", payload,
+                                       lambda d: C.leitura(d, pids, k_ids, claim_ids), P.LEITURA)
+            except (Fatal, BudgetExceeded):
+                raise
+            except Exception as exc:
+                # A pesquisa para aqui; a seção segue com o que já foi achado e com o conhecimento dos
+                # redatores (estatuto "modelo"/"consenso_modelos"), em vez de ficar vazia.
+                self.summary['avisos'].append(f"{s['id']}: leitura {r} falhou ({type(exc).__name__}); "
+                                              'seção completada com o achado até aqui e o conhecimento dos redatores')
+                rounds.append(dict(rodada=r, consultas=queries, busca=trace, falha=type(exc).__name__ + ': ' + str(exc)[:300]))
+                break
             for n, f in enumerate(data['achados'], 1):
                 findings.append(dict(f, id=f"R{r}F{n:02d}", id_modelo=f['id']))
             for v in data.get('verificacoes', []):

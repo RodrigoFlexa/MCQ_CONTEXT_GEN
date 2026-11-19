@@ -70,8 +70,15 @@ def mapa(data, documents):
             require(text(m.get('enfoque'), 2), c['conceito'] + ': enfoque obrigatório na menção')
 
 
-def plano(data, gaps, blocks, min_sections, max_sections):
+def plano(data, gaps, blocks, min_sections, max_sections, default_title=None):
     sections = rows(data.get('secoes'), 'secoes', min_sections)
+    if default_title and sections and sections[0].get('tipo') == 'introducao':
+        # A introdução às vezes vem sem título/objetivo; não vale perder o roteiro por isso.
+        sections[0].setdefault('titulo', None)
+        if not text(sections[0].get('titulo')):
+            sections[0]['titulo'] = default_title
+        if not text(sections[0].get('objetivo'), 3):
+            sections[0]['objetivo'] = 'situar o assunto no FPSO, definir o objeto e explicar por que importa a bordo'
     require(len(sections) <= max_sections, f'secoes: no máximo {max_sections}')
     seen_ids, used_gaps, used_blocks, knowledge = set(), set(), [], set()
     for i, s in enumerate(sections, 1):
