@@ -432,7 +432,8 @@ class Refino:
                 for sigla in items:
                     if sigla in expansions:
                         b = next(x for x in c['blocos'] if x['id'] == bid)
-                        b['texto'] = re.sub(r'\b' + re.escape(sigla) + r'\b', f'{expansions[sigla]} ({sigla})', b['texto'], count=1)
+                        # "SIGLA (expansão)": o artigo da frase continua concordando com a sigla ("do FPSO (...)").
+                        b['texto'] = re.sub(r'\b' + re.escape(sigla) + r'\b', f'{sigla} ({expansions[sigla]})', b['texto'], count=1)
         document['capitulos'] = [c for c in document['capitulos'] if c['blocos']]
         self.glossary = glossary
         return dict(antes=before, depois=T.style_report(document), blocos_alterados=len(changes),

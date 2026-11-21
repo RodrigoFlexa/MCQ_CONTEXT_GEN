@@ -1875,6 +1875,51 @@ class RetroV2Tests(unittest.TestCase):
         self.assertEqual(codigo_semente("Gabarito em lista: cobra itens."), "nao_unico")
 
 
+class FinalV3Tests(unittest.TestCase):
+    """Geração final v3: retroalimentação sem memória em todos os blocos, convertidas em metade das chamadas."""
+    def setUp(self):
+        RetroV2Tests.setUp(self)
+
+    def g(self, f, **kw):
+        from pipeline.qa_research.experimento_ab.final_v3 import GeracaoFinalV3
+        cl = {"geracao": f, "auditoria": f, "sustentacao": f, "dedup_juiz": NuncaRedundante()}
+        return GeracaoFinalV3(self.exp / "final3", exp=self.exp, docs=self.exp / "docs" / "antigo", itens=[ITEM, "07_01"],
+                              visitas=2, externos=self.ext, convertidas=self.conv, clientes=cl, embedder=Emb(),
+                              workers=4, **{**SILENCIO, **kw})
+
+    def test_todos_os_blocos_convertidas_alternadas_e_banco(self):
+        from pipeline.qa_research.experimento_ab.final_v3 import CONFIG, GeracaoFinalV3
+        f = FalsoV3()
+        g = self.g(f)
+        blocos_ = sum(len(v) for v in g.docs.values())
+        self.assertEqual(len(g.unidades), 2 * blocos_)                    # todo bloco é foco, 2 visitas
+        self.assertEqual(g.executar(), 0)
+        us = f.usuarios[f"abl3_{CONFIG}"]
+        self.assertEqual(len(us), len(g.unidades))
+        com = [u for u in us if "Pergunta convertida" in u]
+        self.assertTrue(0 < len(com) < len(us))
+        for u in us:
+            item, foco, v = re.search(r"Pedido: (\S+?):(\d+):v(\d)", u).groups()
+            self.assertEqual("Pergunta convertida" in u, GeracaoFinalV3.com_convertidas({"foco": int(foco), "visita": int(v)}))
+            self.assertIn("<exemplos_de_forma>", u)
+            self.assertNotIn("<conhecimentos_cobertos>", u)
+        d = self.exp / "final3"
+        banco, resumo = C.linhas(d / "banco.jsonl"), read_json(d / "banco_resumo.json")
+        self.assertEqual(resumo["geradas"], 2 * len(g.unidades))
+        self.assertEqual(resumo["validas"], int(0.75 * resumo["geradas"]))   # a 2ª questão das visitas ímpares falha
+        self.assertEqual(len(banco), resumo["unicas"])
+        self.assertEqual(resumo["unicas"], resumo["validas"])               # o juiz falso nunca junta
+        self.assertTrue(all(b["id"].startswith("PQ3-") and "texto" not in b["blocos_contexto"][0] for b in banco))
+        q = C.linhas(d / f"questoes_{CONFIG}.jsonl")[0]
+        self.assertNotIn("fonte_texto", q)
+        aud = next((d / CONFIG / "auditoria").glob("*.json"))
+        self.assertTrue(all("texto" not in b for b in read_json(aud)["contexto"]))   # só a referência fica gravada
+        self.assertIn("*/geracao/", (d / ".gitignore").read_text())
+        antes = sum(f.chamadas.values())
+        self.assertEqual(self.g(f).executar(), 0)
+        self.assertEqual(sum(f.chamadas.values()), antes)                  # retomada: nada é refeito
+
+
 class ExternosTests(unittest.TestCase):
     """Respostas do vLLM (Llama) julgadas no servidor pelo motor padrão, só nas questões do banco."""
     def setUp(self):

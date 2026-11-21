@@ -108,6 +108,21 @@ Uma trava fora da pasta do braço (`<experimento>/.travas/`) impede duas execuç
 seja apagada no meio de uma execução. Na v22 e na v23, as questões de uma unidade são auditadas em paralelo, com teto
 de 2 x `--workers` auditorias simultâneas no total. O filtro do banco antigo usa 16 workers por padrão no script.
 
+## Geração final v3 (`final_v3.py`)
+
+Banco definitivo sobre os 40 contextos finais (`relatorios/contextos_finais_v1`, gerados por
+`python -m pipeline.qa_research.refino.finalizar`). Usa a melhor configuração da ablação v3, a retroalimentação
+sem memória (`retro_sem_memoria`): regras, janela de 3 blocos, datasets externos (Pirá, MMMLU PT-BR, ARC, QASC) e
+exemplos julgados de outros documentos (4 boas e 4 ruins fixas, 10 boas totalmente válidas e 8 ruins com o defeito
+por extenso por chamada). As 2 questões convertidas do dataset de múltipla escolha entram em metade das chamadas,
+em xadrez por foco e visita. Todos os blocos são foco, com 3 visitas (`--visitas`), em ondas; a sustentação roda a
+cada onda. Válida = auditor v23 + gabarito de até 20 palavras + totalmente sustentada. A deduplicação calibrada roda
+só entre as válidas e o banco (`geracao_final_v3/banco.jsonl`, `BANCO.md`) guarda uma por grupo de equivalentes.
+O que é só para retomada (respostas brutas, um arquivo por chamada) fica fora do Git (`.gitignore` na pasta).
+
+    bash pipeline/qa_research/rodar_experimento_ab.sh final3            # retomável
+    python -m pipeline.qa_research.experimento_ab final-v3 --etapas plano   # só mostra o tamanho
+
 ## Robustez
 
 Toda unidade (bloco, encadeamento, foco, lote de auditoria, questão na deduplicação ou na sustentação, par da

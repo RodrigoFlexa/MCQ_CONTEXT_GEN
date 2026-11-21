@@ -30,6 +30,10 @@
 #                        documentos + regras, sem retroalimentação, sem datasets externos, completo); naive e regras
 #                        geram uma questão por chamada (as versões em lote por tópico ficam como referência);
 #                        taxa de aceite e vocabulário (ablacao_geracao_v2)
+#   final3               geração final v3 nos 40 contextos finais (relatorios/contextos_finais_v1): retroalimentação
+#                        sem memória + datasets externos + convertidas em metade das chamadas, todos os blocos como
+#                        foco x 3 visitas (--visitas N), auditor, sustentação, deduplicação entre as válidas, banco
+#                        (geracao_final_v3/BANCO.md e banco.jsonl); retomável
 #   ablacao3             ablação v3: escada cumulativa (naive, + regras, + documentos, + externos, + retro), sem
 #                        poda; validade, quase-duplicatas, diversidade e dificuldade (ablacao_geracao_v3)
 #   ablacao3retro        ablação v3, só as duas variantes da retroalimentação sem memória (com e sem datasets
@@ -72,6 +76,7 @@ while [[ $# -gt 0 ]]; do
         --paciencia) comuns+=(--paciencia "$2"); shift 2 ;;
         --onda) comuns+=(--onda "$2"); shift 2 ;;
         --docs-simultaneos) comuns+=(--docs-simultaneos "$2"); shift 2 ;;
+        --visitas) comuns+=(--visitas "$2"); shift 2 ;;
         *) echo "Opção desconhecida: $1"; exit 1 ;;
     esac
 done
@@ -115,7 +120,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|externos) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|final3|externos) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -195,6 +200,10 @@ if [[ "$etapa" == "ablacao3" ]]; then
     # configuração em 6 ondas, auditoria e sustentação, quase-duplicatas, dificuldade numa amostra; retomável
     rodar "ablação v3: escada cumulativa de módulos" ablacao-v3 --workers 24 || fim_erro ablacao3
 fi
+if [[ "$etapa" == "final3" ]]; then
+    # 1 chamada do gerador por bloco foco e visita, em ondas (geração, auditoria e sustentação por onda); retomável
+    rodar "geração final v3 nos 40 contextos finais" final-v3 --workers 24 || fim_erro final3
+fi
 if [[ "$etapa" == "ablacao3retro" ]]; then
     # retroalimentação v2 sem memória do documento, com e sem datasets externos: 960 chamadas cada, em 6 ondas
     # (geração, auditoria e sustentação por onda); retomável
@@ -224,6 +233,9 @@ if [[ "$etapa" == "limite" ]]; then
 elif [[ "$etapa" == "externos" ]]; then
     echo "  cat pipeline/qa_research/relatorios/avaliacao_externos/QUALIDADE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/avaliacao_externos \"Resultados: juiz nos modelos Llama\""
+elif [[ "$etapa" == "final3" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/BANCO.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_final_v3 \"Resultados: geração final v3\""
 elif [[ "$etapa" == "ablacao3" || "$etapa" == "ablacao3retro" ]]; then
     echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v3/ABLACAO.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v3 \"Resultados: ablação v3\""

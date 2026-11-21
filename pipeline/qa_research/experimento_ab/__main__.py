@@ -39,6 +39,10 @@
                         uma questão por chamada), documentos, documentos_regras, sem_retro, sem_externos e completo
                         (naive e regras em lote ficam como referência), mesma aceitação (auditor,
                         sustentação, dedup), taxa de aceite e vocabulário -> ablacao_geracao_v2/ABLACAO.md
+  final-v3              geração final v3 sobre os 40 contextos finais (relatorios/contextos_finais_v1): melhor
+                        mecanismo da ablação v3 (retroalimentação sem memória + datasets externos + convertidas em
+                        metade das chamadas), todos os blocos como foco x --visitas (3); auditor, sustentação,
+                        deduplicação entre as válidas e banco -> geracao_final_v3/BANCO.md
   ablacao-v3            ablação v3: escada cumulativa naive -> + regras -> + documentos -> + datasets externos ->
                         + retroalimentação, sem poda (0 a 4 questões por chamada, focos x visitas em ondas); auditor,
                         sustentação, quase-duplicatas, diversidade e dificuldade (amostra) -> ablacao_geracao_v3/ABLACAO.md
@@ -151,7 +155,7 @@ def main(argv=None) -> int:
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
                                         "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
-                                        "final-v2", "ablacao", "ablacao-v3", "avaliar-externos"])
+                                        "final-v2", "ablacao", "ablacao-v3", "final-v3", "avaliar-externos"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -180,6 +184,7 @@ def main(argv=None) -> int:
     ap.add_argument("--palavras", type=int, default=20, help="limite: palavras máximas na resposta dos modelos")
     ap.add_argument("--amostra", type=int, default=300, help="limite: questões na amostra estratificada")
     ap.add_argument("--avaliacao", type=Path, help="painel: pasta de avaliação (padrão: avaliacao/<braço>)")
+    ap.add_argument("--visitas", type=int, default=3, help="final-v3: visitas por bloco foco")
     a = ap.parse_args(argv)
     exp = a.experimento if a.experimento.is_absolute() else C.ROOT / a.experimento
 
@@ -331,6 +336,24 @@ def main(argv=None) -> int:
                 raise SystemExit(f"[ablacao-v3] {exc}") from exc
         print(f"[ablacao-v3] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
               f"{C.relativo(SAIDA_V3 / 'ABLACAO.md')}")
+        return st
+    if a.comando == "final-v3":
+        from .final_v3 import ETAPAS as ETAPAS_F3, SAIDA as SAIDA_F3, GeracaoFinalV3, plano as plano_f3
+        etapas = [e for e in a.etapas.split(",") if e]
+        if a.etapas == ap.get_default("etapas"):
+            etapas = list(ETAPAS_F3)
+        if etapas == ["plano"]:
+            print(plano_f3(a.visitas))
+            return 0
+        with _trava(exp, "final_v3"):
+            try:
+                g = GeracaoFinalV3(visitas=a.visitas, workers=a.workers, exp=exp)
+                print(f"[final-v3] {plano_f3(a.visitas)}", flush=True)
+                st = g.executar(etapas)
+            except ValueError as exc:
+                raise SystemExit(f"[final-v3] {exc}") from exc
+        print(f"[final-v3] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_F3 / 'BANCO.md')}")
         return st
     if a.comando == "banco":
         from .banco import Banco, SAIDA as SAIDA_BANCO

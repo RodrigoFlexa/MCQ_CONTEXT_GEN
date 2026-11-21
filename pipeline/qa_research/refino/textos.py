@@ -141,9 +141,17 @@ def _base_sigla(token):
 
 
 def _defined_here(text, m):
-    """SIGLA (expansão) ou expansão (SIGLA)."""
+    """SIGLA (expansão), expansão (SIGLA) ou sigla dentro de um parêntese já aberto ("(Multiphase Flow Meter, MPFM)",
+    "(Código IMDG)"): nos três casos o leitor tem a expansão ali."""
     after, before = text[m.end():m.end() + 3], text[max(0, m.start() - 1):m.start()]
-    return after.lstrip().startswith('(') or before == '('
+    if after.lstrip().startswith('(') or before == '(':
+        return True
+    head = text[max(0, m.start() - 200):m.start()]
+    if head.count('(') > head.count(')'):
+        return True
+    # A sigla faz parte do nome expandido logo adiante: "ASTM International (ASTM)", "No FPSO, unidade ... (FPSO, ...)".
+    sigla = _base_sigla(m.group(0))
+    return bool(re.match(r'[^.;()]{0,100}\(' + re.escape(sigla) + r'\b', text[m.end():m.end() + 120]))
 
 
 def acronyms(document, known=()):
