@@ -1,0 +1,1856 @@
+{
+  "S02": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Em um FPSO ancorado, com turret ou spread mooring, a automação é organizada em camadas distribuídas do campo à supervisão porque equipamentos de processo, utilidades, serviços marinhos e offloading ficam espalhados entre topside, casco, praça de máquinas e áreas remotas. Sensoriamento, aquisição de sinais, execução de controle, interface operacional e registro histórico não precisam ficar no mesmo equipamento físico. A distribuição reduz cabeamento longo entre módulos, facilita a expansão por áreas funcionais e limita o impacto de falhas a segmentos da arquitetura. Quando a unidade exige alta disponibilidade, a robustez depende de eliminar pontos únicos de falha em alimentação, rede, I/O, lógica e interface de operação, e não apenas de duplicar equipamentos.",
+        "conhecimentos": [
+          "S02K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W2A01",
+            "W3A01",
+            "W3A20"
+          ],
+          "achados": [
+            "R1F01",
+            "R3F01"
+          ],
+          "blocos": [
+            "B015"
+          ]
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "A camada de campo reúne sensores, transmissores e chaves discretas que convertem pressão, temperatura, nível, vazão, posição e outras condições das correntes de óleo, gás, água produzida, água de injeção e utilidades em sinais utilizáveis pela automação. Nessa mesma camada, válvulas de controle, motores, bombas e outros elementos finais materializam a ação física de comando sobre o processo. As remotas de entrada e saída, ou remotas de I/O, fazem a interface entre esses dispositivos e os controladores, concentrando sinais analógicos e discretos perto dos equipamentos para reduzir trechos de cabo e organizar a instalação por módulo ou área. As redes industriais interligam remotas, controladores, servidores e estações, transportando medições, estados, comandos e diagnósticos. A segregação lógica entre redes de controle, proteção e interfaces com pacotes ajuda a conter a propagação de distúrbios e a localizar a camada afetada. Falhas locais de remota tendem a afetar vários pontos do mesmo segmento ao mesmo tempo.",
+        "conhecimentos": [
+          "S02K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A02",
+            "W1A03",
+            "W1A04",
+            "W2A02",
+            "W2A03",
+            "W2A04",
+            "W3A02",
+            "W3A03",
+            "W3A04"
+          ],
+          "achados": [
+            "R1F02"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "O DCS (Sistema Digital de Controle Distribuído) é a plataforma típica das malhas contínuas do processo, onde pressão, nível, vazão e temperatura precisam de ajuste permanente e coordenado entre separação, compressão, tratamento, injeção e utilidades. O PLC (Controlador Lógico Programável) aparece com frequência em funções discretas e sequenciais, como partidas, permissivos e lógicas de skids, máquinas e sistemas auxiliares, muitas vezes com autonomia local do pacote. O SIS (Sistema Instrumentado de Segurança) executa funções de proteção que precisam permanecer independentes do controle básico. Ele pode trocar sinais e estados com a parada de emergência, com o sistema de fogo e gás (F&G) e com a supervisão, mas sua atuação não deve depender do DCS. Na prática de bordo, controle contínuo, sequência discreta, supervisão operacional e proteção instrumentada podem aparecer na mesma HMI (Interface Homem-Máquina), porém cumprem responsabilidades diferentes: controlar, sequenciar, mostrar o estado da planta ou levar o processo a condição segura. Nas interfaces com pacotes e utilidades, a fronteira entre comando central, supervisão e proteção local precisa ser explícita. Essa integração pode usar sinais cabeados ponto a ponto, comunicação digital ou combinação dos dois, conforme a criticidade e a filosofia do pacote. Mesmo com convergência tecnológica entre plataformas, a divisão prática continua sendo definida pela função executada e pelo grau de independência exigido. Essa divisão também permite que pacotes mantenham o controle local essencial quando a comunicação com a supervisão central fica indisponível.",
+        "conhecimentos": [
+          "S02K01",
+          "S02K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A05",
+            "W1A06",
+            "W1A07",
+            "W1A09",
+            "W1A15",
+            "W1A16",
+            "W2A05",
+            "W2A06",
+            "W2A07",
+            "W2A16",
+            "W2A18",
+            "W2A21",
+            "W3A05",
+            "W3A06",
+            "W3A07",
+            "W3A08",
+            "W3A15",
+            "W3A16",
+            "W3A21"
+          ],
+          "achados": [
+            "R1F04",
+            "R1F05",
+            "R2F01",
+            "R2F02",
+            "R2F03",
+            "R2F05",
+            "R3F06"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "Servidores de automação, estações de operação, estação de engenharia e historiador compõem a camada de supervisão e gestão de dados. Os servidores mantêm a base operacional de telas, alarmes, tendências e registro histórico. As estações de operação são a interface da sala de controle para visualizar variáveis, mudar modos autorizados e emitir comandos. A estação de engenharia é usada para configuração e manutenção autorizada do sistema. O historiador armazena séries temporais, eventos e estados para análise operacional e técnica. Essa camada usa os dados produzidos pelo controle em tempo real, mas não precisa executar o controle regulatório para que as malhas continuem estáveis. Por isso, falha de servidor, estação ou historiador tende a afetar primeiro visibilidade, rastreabilidade e análise de desempenho, não a ação do controlador que permanece em sua própria cadeia de I/O e lógica. Para reconstituir distúrbios e correlacionar eventos entre controladores, pacotes e supervisão, os registros precisam manter coerência temporal e qualidade mínima de sinal.",
+        "conhecimentos": [
+          "S02K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A08",
+            "W2A08",
+            "W2A09",
+            "W2A10",
+            "W2A17",
+            "W3A09",
+            "W3A22"
+          ],
+          "achados": [
+            "R2F04",
+            "R3F02"
+          ],
+          "blocos": [
+            "B016"
+          ]
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "Uma malha de controle é o arranjo em que a variável medida no processo é comparada com um valor de referência, o setpoint, para que o controlador calcule uma saída ao elemento final. A variável controlada é a condição que se deseja manter, como nível de um vaso, pressão de um header, temperatura de aquecimento ou vazão de uma corrente. A variável manipulada é a grandeza que o sistema altera para produzir esse efeito, como abertura de válvula, rotação de bomba ou referência de velocidade de um acionamento. Em malha fechada, a medição retorna continuamente ao controlador como realimentação. O erro entre medição e setpoint alimenta o algoritmo, que ajusta a saída para rejeitar distúrbios do processo. Sem realimentação, a ação fica em malha aberta e passa a depender de comando fixo ou ajuste manual. No modo automático, o controlador calcula a própria saída. No modo manual, o operador fixa essa saída diretamente. A transferência entre manual e automático deve preservar a continuidade do comando para evitar degrau indevido na variável manipulada. A direção de ação do controlador precisa ser compatível com a resposta do processo, porque uma configuração invertida amplia o desvio em vez de corrigi-lo.",
+        "conhecimentos": [
+          "S02K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A10",
+            "W1A11",
+            "W1A12",
+            "W1A13",
+            "W1A14",
+            "W2A11",
+            "W2A12",
+            "W2A13",
+            "W2A14",
+            "W2A15",
+            "W3A10",
+            "W3A11",
+            "W3A12",
+            "W3A13"
+          ],
+          "achados": [
+            "R1F03",
+            "R3F03",
+            "R3F04",
+            "R3F05"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "Os sintomas de falha precisam ser lidos pela camada em que surgem: campo, remota de I/O, rede, controlador, supervisão ou interface com pacote. Perda de comunicação indica problema no caminho entre camadas e costuma atingir vários sinais que compartilham a mesma rede, remota ou interface. Valor congelado, quando a indicação permanece parada enquanto o processo e variáveis relacionadas continuam mudando, aponta mais para interrupção da atualização, travamento do transmissor ou falha específica de aquisição daquele sinal. Perda de visibilidade na estação de operação não prova parada do pacote nem falha do controlador, porque a lógica local pode continuar ativa com perda apenas da HMI, do servidor ou do canal de comunicação até a sala de controle. Já perda de comando com leitura ainda atualizada sugere defeito na cadeia de saída, bloqueio lógico, perda de autorização de comando, modo local do pacote ou indisponibilidade do elemento final. Quando comando e leitura desaparecem juntos em um mesmo segmento, a investigação deve priorizar falha comum de alimentação, remota, comunicação ou controlador daquele conjunto. O diagnóstico por camadas reduz intervenção desnecessária em campo e direciona mais rápido a disciplina responsável.",
+        "conhecimentos": [
+          "S02K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A17",
+            "W1A18",
+            "W1A19",
+            "W1A20",
+            "W2A19",
+            "W2A20",
+            "W3A17",
+            "W3A18",
+            "W3A19",
+            "W3A24"
+          ],
+          "achados": [
+            "R1F06",
+            "R2F07",
+            "R2F08",
+            "R3F07"
+          ],
+          "blocos": [
+            "B017"
+          ]
+        }
+      }
+    ],
+    "descartadas": [
+      {
+        "ref": "W3A14",
+        "motivo": "fora_escopo"
+      },
+      {
+        "ref": "W3A23",
+        "motivo": "fora_escopo"
+      },
+      {
+        "ref": "R2F06",
+        "motivo": "fora_escopo"
+      }
+    ],
+    "conflitos": [],
+    "nao_contabilizadas": []
+  },
+  "S03": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Em FPSO ancorado por turret ou spread mooring, instrumentos de campo fazem a interface entre as correntes de óleo, gás, água produzida, água de injeção, químicos e utilidades e os sistemas de operação, controle e proteção. O valor do dado depende do princípio de medição e do arranjo real de instalação, porque vibração, umidade, salinidade, pulsação e variações operacionais do topside alteram a resposta do conjunto.",
+        "conhecimentos": [
+          "S03K02",
+          "S03K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W2A01",
+            "W3A01"
+          ],
+          "achados": [],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "Na cadeia de medição, o elemento primário é a parte que interage com o processo e produz o efeito físico mensurável, o sensor percebe esse efeito, o transdutor o converte em outro domínio físico e o transmissor entrega um sinal padronizado, analógico ou digital, para indicação, registro ou controle. Em instrumentos compactos, sensor, transdutor e transmissor podem estar no mesmo corpo, mas exercem funções diferentes. O indicador local serve para conferência em campo e pode existir sem envio contínuo ao sistema. Switches de processo, como pressostatos, termostatos, chaves de nível e fim de curso, mudam de estado quando um limiar é atingido e não substituem uma medição contínua. Em medição de vazão com placa de orifício, transmissores de pressão estática, pressão diferencial e temperatura alimentam um computador de vazão, que aplica as compensações e totalizações configuradas, mas não corrige seleção inadequada do princípio nem instalação deficiente.",
+        "conhecimentos": [
+          "S03K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A02",
+            "W1A03",
+            "W1A04",
+            "W2A02",
+            "W2A03",
+            "W2A14",
+            "W3A02",
+            "W3A03",
+            "W3A31",
+            "W3A32"
+          ],
+          "achados": [
+            "R1F01",
+            "R1F02",
+            "R1F05",
+            "R1F10"
+          ],
+          "blocos": [
+            "B004"
+          ]
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "A seleção do princípio de medição começa pela função do dado: indicação local, controle em malha fechada, balanço, estimativa de desempenho ou proteção não aceitam o mesmo nível de atraso, incerteza e capacidade de diagnóstico. Faixa de operação, regime de escoamento, propriedades do fluido, agressividade química, necessidade de rastreabilidade e consequência da falha entram na mesma decisão. Em funções instrumentadas de segurança, a independência do sinal pode exigir sensores dedicados e tomadas de processo separadas da instrumentação normal.",
+        "conhecimentos": [
+          "S03K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A17"
+          ],
+          "achados": [
+            "R1F06",
+            "R1F07"
+          ],
+          "blocos": [
+            "B006"
+          ]
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "Na pressão, é preciso distinguir pressão manométrica, absoluta e diferencial, porque a referência adotada muda a interpretação do processo. Isso é especialmente importante em serviços com vácuo, gás compressível ou avaliação de perda de carga. Transmissores de pressão diferencial são usados para inferir vazão, medir queda de pressão em filtros e acompanhar nível por coluna hidrostática. Nesses usos, o instrumento mede uma diferença de pressão, e a variável final só é válida se a relação física adotada, como densidade da coluna ou correlação do elemento deprimogênico, permanecer compatível com o processo.",
+        "conhecimentos": [
+          "S03K01",
+          "S03K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A05",
+            "W1A06",
+            "W2A04",
+            "W2A05",
+            "W3A04",
+            "W3A05"
+          ],
+          "achados": [],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "Na temperatura, os sensores mais usuais são o Detector de Temperatura por Resistência, RTD (Resistance Temperature Detector), incluindo o Pt-100, e o termopar. Em geral, o RTD oferece melhor estabilidade e repetibilidade em faixas moderadas, enquanto o termopar é escolhido quando a aplicação exige maior robustez térmica ou construção mais simples. O poço de temperatura protege o sensor e permite sua retirada para manutenção ou calibração sem abrir a linha ou o vaso, mas acrescenta atraso térmico. A leitura passa a depender do contato térmico entre sensor e poço, da imersão, do ponto de instalação, da mistura do fluido e da resistência mecânica do conjunto à vibração induzida pelo escoamento.",
+        "conhecimentos": [
+          "S03K01",
+          "S03K02",
+          "S03K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A07",
+            "W1A08",
+            "W1A22",
+            "W2A09",
+            "W2A10",
+            "W2A11",
+            "W3A06",
+            "W3A07"
+          ],
+          "achados": [
+            "R1F03"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "Na medição de nível em FPSO, são comuns pressão hidrostática por pressão diferencial, deslocador, radar guiado, radar sem contato, ultrassom e chaves de ponto. A escolha depende se o dado serve para inventário, controle contínuo, interface entre fases ou alarme pontual, e também das condições da superfície, como espuma, vapor, emulsão, turbulência, internos do vaso e constante dielétrica do fluido. Em nível inferido por pressão, variações de densidade, temperatura, composição ou gás arrastado afastam o valor indicado do nível geométrico real. Em tanques e vasos, movimento do casco, trim, banda e sloshing introduzem oscilação aparente de nível, exigindo bocal, guia, tubo de calma ou filtragem compatíveis com o fenômeno a acompanhar.",
+        "conhecimentos": [
+          "S03K01",
+          "S03K02",
+          "S03K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A09",
+            "W1A10",
+            "W1A11",
+            "W2A12",
+            "W2A13",
+            "W3A08",
+            "W3A09",
+            "W3A10",
+            "W3A11"
+          ],
+          "achados": [],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U07",
+        "texto": "Na vazão, não existe medidor universal para todas as correntes do FPSO. Elementos deprimogênicos com transmissor diferencial, Coriolis, magnético, ultrassônico, vórtex, turbina, deslocamento positivo e rotâmetro atendem serviços diferentes. A seleção depende da fase do fluido, faixa operacional, viscosidade, variação de densidade, perfil de escoamento, presença de bolhas ou gás livre, sujeira do serviço e finalidade do dado. Em medições por pressão diferencial, o desempenho depende do conjunto formado por elemento primário, tomadas e transmissor, e desgaste, incrustação ou distorção do perfil a montante alteram a vazão calculada mesmo com eletrônica calibrada. Coriolis mede vazão mássica e densidade, mas perde estabilidade com duas fases, slugging severo, cavitação ou vibração. Magnético exige fluido condutivo e tubo cheio, por isso não serve para hidrocarbonetos não condutivos. Ultrassônico e vórtex são sensíveis à instalação e às condições do escoamento.",
+        "conhecimentos": [
+          "S03K01",
+          "S03K02",
+          "S03K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A12",
+            "W1A13",
+            "W1A14",
+            "W2A15",
+            "W2A16",
+            "W2A17",
+            "W3A12",
+            "W3A13",
+            "W3A14",
+            "W3A15",
+            "W3A16"
+          ],
+          "achados": [
+            "R1F04"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U08",
+        "texto": "Transmissores de posição e chaves de fim de curso acompanham o deslocamento de válvulas, dampers e outros acionamentos, mas entregam informações diferentes. A chave confirma apenas que um ponto definido foi atingido. O transmissor mostra o curso ao longo da faixa e ajuda a identificar perda de deslocamento, atrito excessivo, desvio de calibração ou travamento parcial. Mesmo assim, a indicação de posição confirma o estado mecânico do atuado, não a consequência de processo, como estanqueidade efetiva ou vazão estabelecida.",
+        "conhecimentos": [
+          "S03K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A15",
+            "W2A20",
+            "W3A17"
+          ],
+          "achados": [],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U09",
+        "texto": "Instrumentos analíticos medem composição ou qualidade do fluido, como pH, condutividade, oxigênio, água em óleo e teor de óleo e graxa (TOG). O valor só representa o processo quando a amostra é retirada em ponto representativo e chega ao analisador com pressão, temperatura, fase, limpeza e tempo de trânsito compatíveis com o princípio de análise. Linhas de amostragem longas, mal aquecidas ou com pontos mortos podem causar condensação, degaseificação, separação de fases, contaminação cruzada, deposição e atraso excessivo, produzindo um resultado tecnicamente correto para uma amostra que já não representa a corrente real.",
+        "conhecimentos": [
+          "S03K01",
+          "S03K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A16",
+            "W1A32",
+            "W2A18",
+            "W2A19",
+            "W3A18",
+            "W3A19"
+          ],
+          "achados": [],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U10",
+        "texto": "A montagem mecânica e a interface com o processo alteram a dinâmica e a confiabilidade da medição. Tomadas de impulso precisam manter fase de referência estável entre processo e transmissor. Em serviço líquido, bolsa de gás cria erro e amortecimento, em serviço gasoso, condensado ou líquido aprisionado desloca o zero e aumenta o atraso. Entupimento parcial costuma aparecer como sinal com menor amplitude e resposta lenta, e bloqueio total pode congelar a variável. Selos remotos e capilares protegem o sensor em fluidos quentes, viscosos, corrosivos ou incrustantes, mas acrescentam sensibilidade térmica e tempo de resposta ao conjunto. O ponto de medição, o suporte mecânico e a orientação também importam: vibração do topside, pulsação de bombas ou compressores, corrosão marinha, parafina, areia, ferrugem, incrustação e biofilme degradam tomadas, capilares, poços e superfícies molhadas, causando atraso, desvio de zero, perda de sensibilidade ou leitura errática.",
+        "conhecimentos": [
+          "S03K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A18",
+            "W1A19",
+            "W1A20",
+            "W1A21",
+            "W1A23",
+            "W1A26",
+            "W1A27",
+            "W2A06",
+            "W2A07",
+            "W2A08",
+            "W2A22",
+            "W2A23",
+            "W2A24",
+            "W3A20",
+            "W3A21",
+            "W3A22",
+            "W3A25",
+            "W3A26"
+          ],
+          "achados": [],
+          "blocos": [
+            "B001"
+          ]
+        }
+      },
+      {
+        "id": "U11",
+        "texto": "A cadeia elétrica e de comunicação também condiciona a qualidade do dado. Integridade do cabeamento, blindagem, aterramento funcional, segregação em relação a cabos de potência e estabilidade da alimentação influenciam ruído, resolução e continuidade da medição. Em cabos longos, o sinal em corrente tolera melhor queda de tensão e interferência do que sinal puramente em tensão, mas alimentação insuficiente, resistência excessiva do loop, terminação inadequada e umidade em borneiras podem gerar leitura serrilhada, valor congelado, intermitência ou perda de diagnóstico. Em convés aberto, névoa salina, água e corrosão externa degradam conectores, prensa-cabos e caixas de junção. O valor medido deve chegar à operação acompanhado de status confiável de falha, saturação, manutenção ou perda de comunicação, e sua coerência com outras variáveis ajuda a separar defeito de medição de distúrbio real do processo.",
+        "conhecimentos": [
+          "S03K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A24",
+            "W1A25",
+            "W1A31",
+            "W1A33",
+            "W2A21",
+            "W3A23",
+            "W3A24"
+          ],
+          "achados": [],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U12",
+        "texto": "Erro de medição é a diferença entre indicação e referência sob condições definidas. Deriva é a mudança gradual desse desvio ao longo do tempo. Repetibilidade é a capacidade de reproduzir a mesma leitura quando a condição é reaplicada, e histerese é a diferença de indicação para o mesmo ponto quando a variável vem em subida ou descida. Em sinais dinâmicos, faixa e resposta em frequência também precisam ser compatíveis com o fenômeno medido. A incerteza aplicada ao dado não depende só do certificado do instrumento, ela inclui instalação, medições auxiliares, resolução da cadeia, conversões matemáticas e influência do fluido. Esses critérios orientam aceitação do instrumento, investigação de desvio, diagnóstico de anomalias e planejamento de calibração e verificação. Um instrumento pode sair dentro da tolerância em bancada e ainda não atender a função a bordo se a incerteza total, a deriva ou a resposta dinâmica comprometerem controle, balanço ou proteção.",
+        "conhecimentos": [
+          "S03K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A28",
+            "W1A29",
+            "W1A30",
+            "W2A25",
+            "W2A26",
+            "W3A27",
+            "W3A28",
+            "W3A29",
+            "W3A30"
+          ],
+          "achados": [
+            "R1F08",
+            "R1F09"
+          ],
+          "blocos": [
+            "B005"
+          ]
+        }
+      }
+    ],
+    "descartadas": [],
+    "conflitos": [
+      {
+        "descricao": "W1A02 e W3A02 exemplificaram poço de temperatura como elemento primário.",
+        "resolucao": "Adotou-se poço de temperatura como acessório de instalação e proteção do sensor. Na medição de temperatura, o elemento sensível é o RTD ou o termopar, e o poço altera proteção e resposta dinâmica do conjunto."
+      }
+    ],
+    "nao_contabilizadas": []
+  },
+  "S04": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Elemento final de controle é o dispositivo que transforma a saída do controlador em ação física no processo. Em FPSO, a válvula de controle é o elemento final mais comum no topside, porque a maior parte das malhas manipula a vazão de óleo, gás, água produzida e utilidades para influenciar pressão, nível, temperatura e composição. O conceito não se limita à válvula de processo: damper atua como elemento final em ventilação, exaustão e ar de combustão, e o inversor de frequência exerce essa função quando o controle é feito pela rotação de bombas, ventiladores ou compressores. Em funções de proteção e trips de máquinas, o elemento final deve ser entendido segundo a ação física que leva o equipamento ao estado exigido pela proteção, podendo inclusive existir redundância.",
+        "conhecimentos": [
+          "S04K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W1A04",
+            "W2A01",
+            "W2A04",
+            "W2A05",
+            "W3A01",
+            "W3A03"
+          ],
+          "achados": [
+            "R2F01",
+            "R1F08",
+            "R2F10",
+            "R3F06"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "Válvula modulante trabalha em posições intermediárias para variar continuamente a capacidade de passagem e sustentar a malha de controle. Válvula abre-fecha de processo opera essencialmente entre aberta e fechada para bloqueio, comutação ou sequência operacional. A válvula de desligamento de emergência, ESDV (Emergency Shutdown Valve), é uma válvula abre-fecha de segurança, selecionada para levar o trecho protegido ao estado seguro definido, normalmente por isolamento rápido e confiável. Nessa função, contam o conjunto válvula, atuador e solenóide, e podem existir requisitos de tempo de fechamento e de vazamento interno quando especificados pelo serviço. Válvula modulante e ESDV podem coexistir na mesma linha ou no mesmo sistema, mas não exercem a mesma função. Mudanças de lógica, acessórios ou comissionamento não podem degradar uma válvula prevista para controle de posição a mero abre-fecha sem validação completa da malha.",
+        "conhecimentos": [
+          "S04K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A02",
+            "W1A03",
+            "W1A25",
+            "W2A02",
+            "W2A03",
+            "W3A02"
+          ],
+          "achados": [
+            "R1F01",
+            "R1F06",
+            "R2F07",
+            "R3F05"
+          ],
+          "blocos": [
+            "B012"
+          ]
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "O conjunto da válvula de controle normalmente reúne corpo, internos, haste ou eixo, castelo (bonnet), quando aplicável, gaxetas, atuador e acessórios. O corpo faz a ligação com a tubulação e constitui a fronteira de pressão. Os internos, ou trim, definem como a área de passagem varia com o curso e concentram os componentes mais expostos a erosão, cavitação, flashing, corrosão e desgaste de vedação. O castelo guia o movimento da haste, retém pressão em uma extremidade do corpo e normalmente acomoda a caixa de gaxetas; em muitas válvulas rotativas ele não aparece como peça separada. As gaxetas vedam a passagem da haste para evitar vazamento externo: aperto excessivo aumenta atrito e prejudica pequenos movimentos, e aperto insuficiente reduz a contenção do fluido. A seleção do corpo e do trim deve considerar fluido, pressão e temperatura, queda de pressão, sólidos, corrosividade, erosão, tendência a incrustação, cavitação ou flashing, necessidade de estanqueidade e restrições de espaço e peso a bordo.",
+        "conhecimentos": [
+          "S04K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A05",
+            "W1A06",
+            "W1A07",
+            "W2A06",
+            "W2A07",
+            "W3A04",
+            "W3A05"
+          ],
+          "achados": [
+            "R1F02",
+            "R2F02"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "O atuador fornece a força ou o torque necessários para deslocar a válvula contra atrito, forças hidrodinâmicas, diferencial de pressão e esforço de assentamento. Atuadores manual, pneumático, hidráulico e elétrico são usados em serviço offshore, sendo o pneumático o mais comum nas malhas de processo. Em conjuntos pneumáticos, a pressão de carga é a pressão efetivamente aplicada ao diafragma ou pistão; sem posicionador, ela pode coincidir com a pressão de instrumento. Atuador com mola de retorno facilita obter uma direção definida de falha. Atuador de dupla ação depende de energia externa nos dois sentidos, de modo que a posição final na perda de suprimento depende da arquitetura associada, como trip valve, válvula comutadora e, quando aplicável, tanque de volume. O dimensionamento do atuador deve cobrir a condição mais severa de processo e de degradação esperada: falta de força produz curso incompleto, hunting, lentidão ou falha de ir à posição segura, e excesso de força também pode danificar haste, sede ou internos.",
+        "conhecimentos": [
+          "S04K02",
+          "S04K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A08",
+            "W1A21",
+            "W2A08",
+            "W3A06",
+            "W3A08",
+            "W3A21"
+          ],
+          "achados": [
+            "R1F03",
+            "R2F06",
+            "R3F04"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "O posicionador compara o comando recebido com a posição real da haste ou do eixo e ajusta a pressão enviada ao atuador até atingir a abertura requerida. Por usar realimentação de posição, ele reduz histerese e banda morta, melhora precisão, repetibilidade e capacidade de vencer atrito e forças do processo, embora também possa participar de instabilidade quando mal ajustado ou degradado. O conversor corrente-pressão, I/P, transforma o sinal elétrico do sistema de controle em sinal pneumático para o posicionador ou, em algumas arquiteturas, para o atuador. O regulador com filtro, chamado a bordo de airset, condiciona o ar de instrumentos; água, óleo, partículas ou oscilação de suprimento aparecem como resposta lenta, instável ou curso incompleto. A válvula solenóide comuta, exaure ou retém o ar do atuador conforme a filosofia do conjunto. Chaves de fim de curso e transmissores de posição fornecem realimentação discreta ou contínua para supervisão, permissivos e diagnóstico, mas confirmação de curso não comprova estanqueidade nem interrupção efetiva da vazão. Operador manual ou override local só deve existir quando compatível com a filosofia do projeto e precisa de controle rigoroso de retorno ao modo normal. O desempenho do elemento final depende da cadeia completa, comando, realimentação, suprimento pneumático e mecânica da válvula, não apenas do controlador.",
+        "conhecimentos": [
+          "S04K02",
+          "S04K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A09",
+            "W1A10",
+            "W1A11",
+            "W1A12",
+            "W2A09",
+            "W2A10",
+            "W2A11",
+            "W2A22",
+            "W2A24",
+            "W3A09",
+            "W3A10",
+            "W3A11",
+            "W3A12",
+            "W3A13"
+          ],
+          "achados": [
+            "R1F04",
+            "R2F03",
+            "R2F04",
+            "R2F05",
+            "R3F01"
+          ],
+          "blocos": [
+            "B007"
+          ]
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "Ação de falha segura é a posição para a qual o elemento final vai quando perde sinal de comando, energia elétrica, ar de instrumentos, óleo hidráulico ou outra utilidade motriz relevante. Ar para abrir e ar para fechar descrevem o sentido em que a pressão pneumática move a válvula na operação normal; mola ou energia de reserva definem o movimento quando essa pressão desaparece. A posição segura não é universal: pode ser aberta, fechada, mantida na última posição ou levada a posição intermediária predeterminada, conforme a consequência de bloquear inventário, manter resfriamento, preservar reciclo mínimo, dosar químico ou evitar sobrepressão. As forças do fluido e a construção da válvula também influenciam o comportamento final, por isso a filosofia de falha deve ser definida pelo risco de processo e verificada no conjunto completo, e não presumida pelo hábito de montagem.",
+        "conhecimentos": [
+          "S04K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A19",
+            "W1A20",
+            "W2A19",
+            "W2A20",
+            "W2A21",
+            "W3A07"
+          ],
+          "achados": [
+            "R3F02",
+            "R3F03"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U07",
+        "texto": "Os tipos usuais de válvula de controle se distribuem em duas famílias principais, de haste deslizante e rotativas. Entre as de haste deslizante, a globo e a angle body são referências para controle modulante e admitem grande variedade de trims para serviços severos. A globo oferece comportamento previsível de posicionamento e ampla disponibilidade de internos, mas impõe caminho de escoamento mais tortuoso e perda de carga maior. A esfera segmentada, ou V-notch, combina corpo compacto, alta capacidade, baixa perda de carga e boa rangeabilidade, com tolerância melhor a fluidos sujos, viscosos ou com sólidos finos do que muitos arranjos de globo. A borboleta é leve e compacta, especialmente em grandes diâmetros, o que favorece água, gás e utilidades, mas seu desempenho de controle depende fortemente do desenho do disco, da sede e do atuador, principalmente perto do fechamento ou sob grande diferencial de pressão. A plug privilegia robustez e tolerância a fluidos viscosos ou contaminados, com avaliação cuidadosa de torque e desgaste das superfícies de vedação. A válvula diafragma isola o mecanismo do fluido por meio de uma membrana flexível, útil em correntes corrosivas ou com sólidos, mas limitada pelo envelope de pressão, temperatura e capacidade.",
+        "conhecimentos": [
+          "S04K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A13",
+            "W1A14",
+            "W1A15",
+            "W1A16",
+            "W2A12",
+            "W2A13",
+            "W2A14",
+            "W2A15",
+            "W2A16",
+            "W3A14",
+            "W3A15",
+            "W3A16",
+            "W3A17",
+            "W3A18"
+          ],
+          "achados": [
+            "R1F05"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U08",
+        "texto": "A escolha e o dimensionamento da válvula não podem seguir apenas o diâmetro da linha. Devem considerar vazão mínima e máxima, fase do fluido, viscosidade, presença de areia ou outros sólidos, queda de pressão disponível, necessidade de estanqueidade, ruído, vibração, risco de cavitação ou flashing e posição de falha requerida. Rangeabilidade é a faixa prática em que a válvula ainda controla com estabilidade, sensibilidade e repetibilidade aceitáveis. A característica inerente do trim, como linear ou igual porcentagem, muda quando instalada, porque a hidráulica real do sistema altera a parcela de perda de carga que efetivamente fica na válvula. Válvula superdimensionada tende a operar quase fechada, perde resolução e autoridade; válvula subdimensionada vai ao fim de curso e deixa de acompanhar a demanda. Em gás com alta perda de carga, e em líquidos próximos da vaporização, o trim pode exigir soluções de atenuação de ruído, distribuição de energia em estágios ou desenho anticavitação. A direção de escoamento pelo trim também influencia esforço na haste, estabilidade, capacidade de fechamento e suscetibilidade a desgaste. O desempenho instalado resulta da interação entre corpo, internos, atuador, suprimento motriz, sinal de automação e a própria linha.",
+        "conhecimentos": [
+          "S04K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A17",
+            "W1A18",
+            "W1A22",
+            "W1A23",
+            "W1A24",
+            "W2A17",
+            "W2A18",
+            "W2A23",
+            "W3A19",
+            "W3A20"
+          ],
+          "achados": [
+            "R2F09"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U09",
+        "texto": "O comportamento dinâmico da válvula pode limitar a qualidade da malha mesmo com sinal correto. Stiction, histerese e folgas mecânicas fazem o conjunto responder em saltos ou com atraso, gerando baixa repetibilidade e, muitas vezes, ciclos limite; hunting é a oscilação prolongada e indesejada associada a instabilidade do sistema de controle ou do posicionador. Vazamento pela sede, erosão do trim, corrosão interna, incrustação, parafina e arraste de areia alteram a curva de controle, reduzem a capacidade de isolamento e podem levar a travamento, perda de curso e aumento anormal de consumo de ar. A velocidade de abertura e fechamento também precisa ser compatível com a dinâmica da linha, porque atuação rápida demais pode provocar golpe de aríete em líquidos, distúrbios bruscos de pressão em gás e sobrecarga em tubulação e suportes. Em funções de proteção, a confirmação de curso deve ser interpretada junto com o efeito de processo, porque válvula em posição comandada não garante, por si só, estanqueidade da sede nem isolamento efetivo.",
+        "conhecimentos": [
+          "S04K02",
+          "S04K03",
+          "S04K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W3A22",
+            "W3A23",
+            "W3A24",
+            "W3A25"
+          ],
+          "achados": [
+            "R1F07"
+          ],
+          "blocos": []
+        }
+      }
+    ],
+    "descartadas": [
+      {
+        "ref": "R2F08",
+        "motivo": "fora_escopo"
+      },
+      {
+        "ref": "R3F07",
+        "motivo": "fora_escopo"
+      }
+    ],
+    "conflitos": [
+      {
+        "descricao": "W2A06 tratava o posicionador como parte funcional obrigatória do conjunto da válvula, enquanto R1F03, R1F04 e R2F02 mostram que o posicionador é acessório frequente, mas não universal.",
+        "resolucao": "O texto final descreve o conjunto básico com corpo, internos, atuador e acessórios, tratando o posicionador como acessório comum e decisivo em muitas aplicações modulantes, sem torná-lo obrigatório em toda válvula."
+      },
+      {
+        "descricao": "R2F07 apresenta ESDV de-energised-to-safe com fechamento, enquanto R3F03 e W2A21 mostram que nem todo elemento final deve falhar fechado.",
+        "resolucao": "O texto final restringe o fechamento por desenergização ao caso em que essa é a posição segura da função de proteção e mantém que a filosofia geral de falha pode ser aberta, fechada, última posição ou posição intermediária, conforme o risco do processo."
+      }
+    ],
+    "nao_contabilizadas": []
+  },
+  "S05": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Em um FPSO, a automação integra a sala de controle às correntes de óleo, gás, água produzida e utilidades, combinando controle contínuo, sequenciamento operacional e camadas de proteção. O sistema digital de controle distribuído (DCS) é a plataforma normalmente usada para controle regulatório e supervisão integrada da planta, com múltiplos controladores em rede, grande quantidade de sinais analógicos, alarmes, tendências, históricos e comando centralizado. O controlador lógico programável (PLC) é muito usado em lógica discreta, sequências e automação de pacotes, como compressores, geração e skids auxiliares. Essa distinção não é absoluta: a fronteira entre DCS, PLC e controle local depende da aplicação, da criticidade, do tipo de sinais, da integração requerida e da filosofia operacional. Em pacotes com PLC próprio, a lógica local e as proteções básicas não devem depender da comunicação com o DCS para permanecerem eficazes; o DCS supervisa, recebe estados e permissivos e envia os comandos previstos na arquitetura. A arquitetura de automação organiza instrumentos e elementos finais de campo, remotas de entrada e saída (I/O), controladores, redes industriais, servidores e estações, com segregação dos caminhos de controle, supervisão e proteção conforme a criticidade do serviço.",
+        "conhecimentos": [
+          "S05K01",
+          "S05K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W1A02",
+            "W1A03",
+            "W1A04",
+            "W2A01",
+            "W2A02",
+            "W2A03",
+            "W2A04",
+            "W2A05",
+            "W2A11",
+            "W2A12",
+            "W2A14",
+            "W3A01",
+            "W3A02",
+            "W3A03",
+            "W3A04"
+          ],
+          "achados": [
+            "R1F01",
+            "R1F02",
+            "R2F01",
+            "R2F02",
+            "R3F07"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "A camada de supervisão reúne interface homem-máquina (IHM), estações de operação, estações de engenharia, servidores e historiador. Na IHM, o operador acompanha variáveis de processo, estados de equipamentos, permissivos, intertravamentos, modos de controle, tendências e alarmes, e precisa enxergar com clareza se o comando foi solicitado, aceito e confirmado no campo. Comando emitido na tela não é, por si só, evidência de ação executada: para diagnóstico confiável, convém distinguir comando enviado, saída energizada, confirmação de campo e retorno de posição. As estações de operação são voltadas à condução da planta, enquanto as estações de engenharia devem permanecer segregadas por função e acesso, para configuração, manutenção e diagnóstico aprofundado. Os servidores sustentam a apresentação de dados, o processamento de alarmes e eventos, os históricos e as funções de engenharia; o historiador registra séries temporais para análise operacional e reconstrução de comportamento da planta, sem substituir a lógica de controle em tempo real. As remotas de I/O aproximam a aquisição de sinais dos módulos de processo e reduzem cabeamento até a sala de controle, mas sua disponibilidade passa a depender também de alimentação, comunicação e condições locais de instalação. Em pacotes com PLC próprio, a supervisão central precisa receber estados suficientes para diferenciar limitação de processo, falta de permissivo local, intertravamento atuado e falha do pacote, e a mudança entre modos como automático, manual, remoto e local deve ficar inequívoca ao operador.",
+        "conhecimentos": [
+          "S05K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A05",
+            "W1A06",
+            "W1A07",
+            "W1A08",
+            "W1A09",
+            "W2A06",
+            "W2A07",
+            "W2A08",
+            "W2A09",
+            "W2A31",
+            "W2A32",
+            "W3A05",
+            "W3A06",
+            "W3A07",
+            "W3A24"
+          ],
+          "achados": [
+            "R1F03",
+            "R1F04",
+            "R2F03",
+            "R3F01",
+            "R3F02",
+            "R3F06"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "Alarme e evento têm funções diferentes no sistema de supervisão. Alarme é um anúncio que exige ação do operador em tempo compatível com a consequência; evento é uma mudança de estado registrada para rastreabilidade e diagnóstico, sem exigir resposta imediata por si só. Quando eventos, falhas passageiras de comunicação ou desvios sem ação útil são configurados como alarmes, surgem pseudo-alarmes, aumenta a carga cognitiva da sala de controle e cresce o tempo de resposta à anormalidade relevante. A racionalização de alarmes define, para cada anúncio, a causa provável, a consequência, a resposta esperada, a prioridade e, quando aplicável, a lógica de supressão por estado operacional. A prioridade deve refletir a severidade da consequência combinada com o tempo disponível para resposta, e não apenas a criticidade genérica do equipamento ou a frequência do anúncio. Alarmes oscilantes, ou chattering, tendem a estar associados a sinal instável, histerese insuficiente, atraso inadequado ou contato intermitente, e a correção deve atuar na causa física ou na filosofia de geração do alarme. Em partidas, paradas e outros regimes transitórios do FPSO, a supressão por estado pode reduzir ruído operacional, desde que não esconda degradação relevante. Alarme de processo não substitui trip de proteção: o alarme dá oportunidade de correção pela operação, enquanto a proteção automática atua quando a condição já não deve depender da intervenção humana.",
+        "conhecimentos": [
+          "S05K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A10",
+            "W1A11",
+            "W1A12",
+            "W1A13",
+            "W1A14",
+            "W2A15",
+            "W2A16",
+            "W2A17",
+            "W2A18",
+            "W2A19",
+            "W2A20",
+            "W3A11",
+            "W3A12",
+            "W3A13",
+            "W3A14",
+            "W3A15"
+          ],
+          "achados": [
+            "R1F05",
+            "R2F04",
+            "R2F05",
+            "R3F04"
+          ],
+          "blocos": [
+            "B032"
+          ]
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "Permissivo é a condição que precisa estar satisfeita antes de liberar uma partida, uma transferência de modo ou o avanço de uma etapa automática. Intertravamento é a lógica que bloqueia uma ação, interrompe uma sequência ou força resposta automática quando a condição segura deixa de existir. Controle regulatório, sequenciamento e proteção são funções relacionadas, mas não equivalentes: o controle mantém a variável próxima do alvo, a sequência coordena etapas e confirmações, e a proteção atua quando a operação normal já não basta para conter o risco. Sequências automáticas em PLC ou DCS usam permissivos, confirmações de campo, temporizações, timeouts e critérios de transição para evitar partidas com utilidades, alinhamentos ou condições de processo inadequados. Na operação, é importante distinguir comando solicitado, comando aceito e etapa efetivamente executada, porque uma transição pode ser recusada pela lógica sem que exista falha de comunicação ou defeito de campo. Comando manual não elimina permissivos, intertravamentos nem funções de segurança, e, após retorno de energia ou de utilidades, equipamento energizado não significa equipamento liberado para partir. A matriz de causa e efeito traduz a filosofia de proteção em relações explícitas entre iniciadores, eventual lógica de votação e ações automáticas. Testes funcionais da matriz, dos intertravamentos e das sequências verificam o encadeamento entre detecção, processamento lógico e resposta de saída nos cenários exercitados.",
+        "conhecimentos": [
+          "S05K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A15",
+            "W1A16",
+            "W1A17",
+            "W1A18",
+            "W1A25",
+            "W1A26",
+            "W2A21",
+            "W2A22",
+            "W2A23",
+            "W2A30",
+            "W3A16",
+            "W3A17",
+            "W3A18",
+            "W3A23",
+            "W3A27"
+          ],
+          "achados": [
+            "R1F08",
+            "R2F06",
+            "R2F07"
+          ],
+          "blocos": [
+            "B026"
+          ]
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "O sistema instrumentado de segurança (SIS) executa funções instrumentadas de segurança independentes do controle normal, combinando sensores, solucionador lógico e elemento final para reduzir a probabilidade de uma condição perigosa evoluir sem resposta automática. No FPSO, a parada de emergência (ESD, emergency shutdown) organiza as ações de shutdown conforme a filosofia da unidade, como bloqueio de partidas, parada de equipamentos, isolamento de trechos de processo e outras respostas automáticas compatíveis com o cenário. O sistema de fire and gas (F&G, fogo e gás) detecta condições de incêndio, presença de gás e falhas dos seus próprios dispositivos e entrega ao SIS, ao ESD e à supervisão os sinais necessários às ações definidas na matriz de causa e efeito. Na Norma Regulamentadora nº 37 (NR-37), os sistemas fixos de detecção e alarme em plataformas de produção devem ter interface com outros sistemas de segurança, como combate a incêndio, parada de emergência e despressurização, permitindo atuações conforme suas lógicas. A integração com o DCS deve dar visibilidade de estados, alarmes, causas de atuação, inibições e indisponibilidades, sem descaracterizar a independência funcional da proteção. Nas funções instrumentadas de segurança, a integridade depende tanto da lógica quanto da capacidade real do elemento final de executar o estado exigido; quando houver redundância ou votação de iniciadores, essa filosofia faz parte da definição e do teste da função. Sinais de indicação, alarme e atuação automática precisam ser inequívocos, e falhas de interface ou estados degradados não devem ser mascarados como condição normal.",
+        "conhecimentos": [
+          "S05K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A19",
+            "W1A20",
+            "W1A21",
+            "W2A24",
+            "W2A25",
+            "W2A26",
+            "W2A27",
+            "W2A28",
+            "W3A19",
+            "W3A20",
+            "W3A21",
+            "W3A22"
+          ],
+          "achados": [
+            "R1F06",
+            "R1F07",
+            "R2F09"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "No diagnóstico de distúrbios, não basta olhar o valor instantâneo da variável: também é preciso observar atualização do sinal, coerência entre variáveis relacionadas, validade do dado e sinais de indisponibilidade do sistema que o transporta ou processa. Falhas de remotas de I/O, cartões, bornes ou comunicação podem aparecer como valor congelado, indicação inválida, mudança abrupta de estado ou simples perda de visibilidade na supervisão. A perda de comunicação entre um PLC de pacote e o DCS normalmente degrada supervisão e comando remoto, mas não deve eliminar a lógica local nem provocar movimentação insegura apenas pela perda do enlace; o comportamento esperado precisa seguir a filosofia de falha segura e ser claramente indicado na IHM. O historiador, o registro cronológico de eventos e a informação de first-out ajudam a separar a causa iniciadora dos alarmes secundários produzidos pela propagação do shutdown. Para isso, DCS, PLC, SIS, ESD, servidores e registradores precisam manter base de tempo coerente; sem sincronismo temporal confiável, a reconstrução do distúrbio pode inverter causa e consequência.",
+        "conhecimentos": [
+          "S05K02",
+          "S05K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A22",
+            "W1A23",
+            "W1A24",
+            "W2A10",
+            "W2A13",
+            "W2A29",
+            "W3A08",
+            "W3A09",
+            "W3A10",
+            "W3A25",
+            "W3A28"
+          ],
+          "achados": [
+            "R3F03"
+          ],
+          "blocos": [
+            "B019"
+          ]
+        }
+      },
+      {
+        "id": "U07",
+        "texto": "Bypasses, overrides e inibições temporárias em alarmes, intertravamentos e shutdown alteram o desempenho das barreiras instrumentadas e precisam ficar visíveis para a operação, com registro individual, justificativa, autorização, condição de retorno e medida compensatória compatível com o risco residual. Quando uma função crítica fica indisponível, a decisão técnica envolve avaliar contingenciamento, restrição operacional ou retirada de serviço do sistema afetado, considerando simultaneidade de outras degradações e o tempo de permanência da condição. Alterações de setpoints, máscaras, lógicas, versões de software e configuração de alarmes devem ser controladas e rastreáveis. Quando a mudança afeta o encadeamento entre iniciador, lógica e atuador, o teste posterior precisa cobrir a malha completa, e não apenas um ponto isolado. Redundância de controladores, redes, servidores e fontes aumenta a disponibilidade, mas não elimina falhas por causa comum, como erro de configuração, alimentação compartilhada, atualização inadequada ou perda de ambiente. A documentação precisa permanecer coerente entre filosofia, matriz de causa e efeito, telas, procedimentos e registros de teste, para que operação, manutenção e resposta a emergência trabalhem com a mesma referência.",
+        "conhecimentos": [
+          "S05K03",
+          "S05K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W3A26",
+            "W3A29",
+            "W3A30",
+            "W3A31"
+          ],
+          "achados": [
+            "R2F08",
+            "R3F05"
+          ],
+          "blocos": [
+            "B022"
+          ]
+        }
+      }
+    ],
+    "descartadas": [
+      {
+        "ref": "R2F10",
+        "motivo": "fora_escopo"
+      },
+      {
+        "ref": "R2F11",
+        "motivo": "fora_escopo"
+      }
+    ],
+    "conflitos": [
+      {
+        "descricao": "As entradas tratavam PLC e DCS ora como categorias rigidamente separadas, ora como plataformas com convergência funcional.",
+        "resolucao": "A consolidação adotou distinção prática por função e arquitetura: DCS como solução usual de controle contínuo e supervisão integrada, PLC como solução frequente para lógica discreta e pacotes, sem apresentar essa diferença como regra absoluta de fornecedor ou tecnologia."
+      },
+      {
+        "descricao": "Parte das formulações aproximava excessivamente supervisão central e proteção, sugerindo dependência do DCS para respostas que precisam permanecer disponíveis localmente ou em sistema de segurança.",
+        "resolucao": "O texto consolidado separou controle operacional e proteção: o DCS supervisiona e coordena, enquanto SIS, ESD e proteções locais de pacote mantêm independência funcional para levar o sistema ao estado seguro quando requerido."
+      }
+    ],
+    "nao_contabilizadas": []
+  },
+  "S06": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Em manutenção e diagnóstico, malha é a cadeia que liga o ponto de medição e o instrumento de campo à alimentação, interligações, remotas de entrada e saída, rede, controlador e supervisão, chegando, quando aplicável, ao elemento final. Em FPSO, essa cadeia pode atravessar painel local, sistema distribuído de controle (DCS), controlador lógico programável (PLC), sistema instrumentado de segurança (SIS), sistema de parada de emergência (ESD) e interfaces hardwired ou por rede. Organizar a automação por camadas permite separar perda de medição, perda de comando e perda de visibilidade, direcionando a equipe certa para a correção. A comprovação de desempenho da função não pode considerar apenas sensor, lógica e elemento final de forma abstrata, porque alimentação, barreiras, junction boxes, cabos, remotas e demais interligações também influenciam a disponibilidade real.",
+        "conhecimentos": [
+          "S06K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W2A01",
+            "W3A01"
+          ],
+          "achados": [
+            "R1F06",
+            "R1F08",
+            "R2F06",
+            "R3F08"
+          ],
+          "blocos": [
+            "B018"
+          ]
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "Calibração, verificação em malha, loop check e teste funcional produzem evidências diferentes. Calibração compara o instrumento ou transmissor com valores conhecidos de um padrão, ao longo da faixa e, quando aplicável, em subida e descida, caracterizando erro, histerese, repetibilidade e deriva do dispositivo isolado. Verificação em malha confirma se o valor gerado ou simulado no campo chega corretamente ao sistema usado pela operação, com unidade, faixa, sentido e indicação coerentes. Loop check verifica a continuidade ponta a ponta entre campo, bornes, cartão de entrada ou saída, configuração e tela, confirmando que o ponto certo está no canal certo e reage no sentido esperado. Teste funcional comprova que a função executa a resposta prevista quando recebe as condições de entrada definidas, incluindo comunicação, sequência e comando dentro do escopo ensaiado. Testes integrados em condições representativas porém controladas revelam erro de configuração, falha de comunicação, associação incorreta de alarmes e sentido errado de atuação, mas não substituem, por si sós, a calibração metrológica. Uma malha pode passar em verificação ou loop check e ainda assim esconder deriva pequena do sensor ou falha latente de proteção.",
+        "conhecimentos": [
+          "S06K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W1A02",
+            "W1A03",
+            "W1A04",
+            "W1A05",
+            "W2A02",
+            "W2A03",
+            "W2A04",
+            "W2A05",
+            "W3A02",
+            "W3A03",
+            "W3A04",
+            "W3A05"
+          ],
+          "achados": [
+            "R2F02",
+            "R3F01",
+            "R3F11"
+          ],
+          "blocos": [
+            "B002",
+            "B014"
+          ]
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "Teste de intertravamento e proof test têm foco em proteção. O teste de intertravamento verifica a cadeia causa e efeito entre condição iniciadora, permissivos, bloqueios, alarmes, trip, saídas comandadas e condições de rearme, sem se confundir com avaliação de regulagem de controle contínuo. O proof test é o ensaio periódico de uma função instrumentada de segurança do sistema instrumentado de segurança (SIS) para revelar falhas perigosas ocultas que não aparecem na operação normal nem nos autotestes. A frequência do proof test deve ser coerente com a especificação de requisitos de segurança (SRS), a verificação SIL e as restrições operacionais vigentes; se a taxa observada de falhas supera a meta, intervalos e medidas compensatórias precisam ser revistos. O ensaio preferencial é integral, ponta a ponta, cobrindo sensor, solver lógico e elemento final. Quando restrições operacionais ou de segurança exigem testes parciais por subsistema, o procedimento deve declarar exatamente o que foi provado, garantir sobreposição entre etapas e refletir a cobertura incompleta na probabilidade de falha sob demanda (PFD). Em interfaces com fire and gas (F&G) e sistema de parada de emergência (ESD), o escopo do teste precisa explicitar se a comprovação termina na recepção do sinal ou se inclui a atuação física observável em campo. Para elementos finais, o ensaio periódico deve incluir inspeção visual e, quando aplicável, curso completo, tempo de segurança, vazamento e uso controlado de partial stroke testing (PST). Testes de proteção precisam ter critérios de desempenho observáveis, permissões e inibições controladas, avaliação de risco e contingenciamento quando a função permanecer degradada.",
+        "conhecimentos": [
+          "S06K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A06",
+            "W1A07",
+            "W1A22",
+            "W2A06",
+            "W2A07",
+            "W2A26",
+            "W3A06",
+            "W3A07"
+          ],
+          "achados": [
+            "R1F01",
+            "R1F02",
+            "R1F03",
+            "R1F04",
+            "R2F01",
+            "R3F02",
+            "R3F04",
+            "R3F06"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "O planejamento da manutenção de instrumentação e automação parte da criticidade da função, não apenas do tipo do instrumento. A estratégia e a periodicidade devem considerar consequência da falha para segurança, produção, meio ambiente e estabilidade operacional, histórico de deriva ou falha recorrente, agressividade do serviço, acessibilidade, detectabilidade da degradação e redundância realmente disponível. Intervalo fixo por família de instrumento tende a desperdiçar intervenção em pontos estáveis e a subtratar pontos que degradam mais rápido. Manutenção preventiva se aplica melhor a itens com desgaste ou envelhecimento conhecido, como filtros, conexões, ventilação de painéis, relés, tubing, acessórios de ar de instrumentos e componentes sujeitos a contaminação, corrosão, salinidade, vibração e condensação. Manutenção preditiva ou baseada em condição ganha prioridade quando há monitoramento on-line, tendência confiável ou diagnóstico interno capaz de antecipar perda de desempenho. Em FPSO, a janela de intervenção precisa ser combinada com operação e processo, privilegiando condição estável da planta, utilidades disponíveis, contingência operacional e momentos de menor sensibilidade, inclusive frente a inventário de processo, offloading, condição meteorológica e efetivo. Antes de retirar um canal de serviço, deve ser definido como a variável será acompanhada, qual proteção ficará degradada e quais restrições temporárias passam a valer. Em arquiteturas redundantes, uma retirada pode degradar uma votação 2oo2 para 1oo1, de modo que a proteção remanescente precisa ser entendida antes do início do serviço. A perda de redundância precisa ser detectável e tratada antes que uma segunda falha elimine o serviço. Planejamento e backlog devem priorizar primeiro o que combina alta criticidade com janela de manutenção limitada.",
+        "conhecimentos": [
+          "S06K02",
+          "S06K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A08",
+            "W1A09",
+            "W1A10",
+            "W1A11",
+            "W2A08",
+            "W2A09",
+            "W2A10",
+            "W2A11",
+            "W2A12",
+            "W3A08",
+            "W3A09",
+            "W3A10",
+            "W3A11",
+            "W3A23"
+          ],
+          "achados": [
+            "R1F05",
+            "R2F04",
+            "R2F05",
+            "R2F07",
+            "R2F08"
+          ],
+          "blocos": [
+            "B003",
+            "B030"
+          ]
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "Rastreabilidade é parte da integridade da malha. Todo serviço de calibração, teste ou reparo deve registrar procedimento aplicado, padrão ou instrumento de teste utilizado, condição as found, condição as left, desvios observados, ajustes executados, critérios de aceitação e pendências para retorno ao serviço. O padrão de teste precisa ter calibração válida e incerteza compatível com o erro admissível da função avaliada. Após troca de cartão de entrada e saída, reparo de cabo, mudança de borne, alteração de configuração ou recombinação de subsistemas, o loop check e o teste aplicável devem ser repetidos mesmo que o instrumento mantenha calibração válida. Após falha ou atuação inesperada, eventos, tendências e diagnósticos devem ser preservados antes de reset, reinicialização ou substituição de componentes. No retorno à operação, é necessário remover simulações, jumpers, forçamentos, bypasses e inibições temporárias, recompor a instalação física e confirmar unidade de engenharia, range, sentido de ação, indicação em tela e coerência com o processo. Equipamento ensaiado e depois armazenado, ou sistema remontado em combinação diferente, exige nova verificação funcional e, quando aplicável, proof test completo antes do uso.",
+        "conhecimentos": [
+          "S06K01",
+          "S06K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A12",
+            "W1A13",
+            "W1A23",
+            "W2A13",
+            "W2A15",
+            "W2A22",
+            "W2A24",
+            "W3A12",
+            "W3A24",
+            "W3A25"
+          ],
+          "achados": [
+            "R2F03",
+            "R3F03"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "O diagnóstico começa separando distúrbio real de processo de defeito de automação. A primeira checagem é de plausibilidade, comparando a indicação suspeita com indicação local ou independente, tendências históricas, balanço operacional, resposta de variáveis correlatas e observação de campo. Ruído aleatório, degraus fisicamente impossíveis, saturação fixa, congelamento de valor e perda intermitente de atualização costumam apontar para problema de instrumentação ou automação, enquanto variações coerentes com vazão, pressão, carga e estado do equipamento apontam para mudança real do processo. Tendências de longo prazo e dados validados de historiador ajudam a enxergar deriva lenta, aumento de ruído e mudança de tempo de resposta. Esse diagnóstico inicial precisa integrar instrumentação, automação, elétrica, processo e operação, porque a evidência da falha costuma ficar distribuída entre campo, eventos, telas e comportamento da planta.",
+        "conhecimentos": [
+          "S06K03",
+          "S06K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A14",
+            "W1A20",
+            "W2A16",
+            "W2A19",
+            "W2A25",
+            "W3A15"
+          ],
+          "achados": [
+            "R3F10"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U07",
+        "texto": "Depois da checagem de plausibilidade, a investigação avança por camadas. Na conexão ao processo e no campo, devem ser avaliados tomada de impulso, manifold, selo remoto, capilar, termopoço, poço de tranquilização, aquecimento traço, tubing, suportação, estanqueidade, corrosão, vibração, umidade e condição da alimentação elétrica, pneumática ou hidráulica, porque atraso, oscilação, erro estático e perda de atuação podem nascer nessa interface. Em cabeamento e interligação, a inspeção deve abranger bornes, blindagens, emendas, junction boxes, marshalling e qualidade da alimentação, e falhas intermitentes nessa camada aparecem como ruído, serrilhado, saturação esporádica ou perda momentânea de sinal. Quando vários pontos da mesma remota, painel ou área apresentam bad quality ou falha simultânea, a hipótese principal passa a ser causa comum em alimentação, aterramento, barreira, cartão ou comunicação. Na camada de entrada e saída, comparar valor bruto, valor escalonado e indicação ao operador separa defeito de hardware de erro de configuração. Se o controlador recebe a variável corretamente e a estação de operação ou o historiador mostram valor congelado ou incoerente, o problema tende a estar em rede, base de dados, supervisão ou configuração, e não no instrumento de campo. Em elementos finais com solenóide ou atuador pneumático, é preciso confirmar também pressão e qualidade do ar de instrumentos, integridade da tubing, energização da bobina e movimento real do atuador.",
+        "conhecimentos": [
+          "S06K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A15",
+            "W1A16",
+            "W1A17",
+            "W1A18",
+            "W2A14",
+            "W2A17",
+            "W2A18",
+            "W3A13",
+            "W3A16",
+            "W3A17",
+            "W3A18",
+            "W3A19",
+            "W3A20"
+          ],
+          "achados": [
+            "R3F05",
+            "R3F12"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U08",
+        "texto": "Monitoramento de condição complementa calibração e testes periódicos. Diagnósticos internos de transmissores inteligentes, posicionadores, remotas de entrada e saída, fontes redundantes e servidores de automação devem ser analisados junto com alarmes técnicos, logs, históricos de falha, registros de inibições e comportamento do processo, porque essa combinação permite antecipar degradação antes da perda total da função. Desvio persistente entre canais redundantes e recalibrações frequentes do mesmo ponto indicam investigar causa externa, como contaminação do ponto de tomada, erro de configuração, umidade, vibração ou alimentação instável, em vez de apenas repetir ajuste de bancada. Em válvulas de controle, posicionadores inteligentes e análise não invasiva ajudam a detectar atrito estático, perda de curso, vazamento e degradação do atuador durante operação normal. Em instrumentos analíticos, a manutenção precisa tratar analisador e sistema de amostragem como uma única cadeia de medição, incluindo transporte da amostra, filtros, pressão, temperatura e condicionamento. Em áreas classificadas, equipamentos elétricos, de instrumentação, automação e telecomunicações devem manter os requisitos de certificação e de proteção Ex, e os serviços de instalação, inspeção, manutenção e recuperação precisam atender à Norma Regulamentadora nº 10 (NR-10) e às partes aplicáveis da ABNT NBR IEC 60079.",
+        "conhecimentos": [
+          "S06K04",
+          "S06K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A19",
+            "W1A21",
+            "W2A20",
+            "W2A21",
+            "W2A23",
+            "W3A14",
+            "W3A21",
+            "W3A22",
+            "W3A26"
+          ],
+          "achados": [
+            "R1F07",
+            "R2F09",
+            "R3F09"
+          ],
+          "blocos": []
+        }
+      }
+    ],
+    "descartadas": [
+      {
+        "ref": "R3F07",
+        "motivo": "fora_escopo"
+      }
+    ],
+    "conflitos": [
+      {
+        "descricao": "Os redatores usaram \"verificação em malha\" e \"loop check\" com sobreposição parcial.",
+        "resolucao": "Os termos foram separados por escopo: verificação em malha confirma coerência do valor usado na operação; loop check confirma continuidade, mapeamento e correspondência ponta a ponta entre campo e sistema."
+      },
+      {
+        "descricao": "Parte das formulações sugeria que teste parcial de SIS, ESD ou F&G poderia equivaler à prova completa da função.",
+        "resolucao": "Foi adotado que o proof test integral, ponta a ponta, é a referência; teste parcial só vale para o trecho efetivamente desafiado, com cobertura explicitada e sem equivaler à comprovação integral da função."
+      }
+    ],
+    "nao_contabilizadas": []
+  },
+  "S07": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Malha de controle por realimentação é o arranjo em que sensor ou transmissor mede a variável de processo, o controlador compara a medição com o valor desejado e o elemento final executa a correção. Em FPSO, o elemento final mais comum é a válvula de controle modulante, formada por corpo, trim, atuador e acessórios como posicionador e solenóide; os desenhos usuais são sliding-stem e rotary. Controladores locais, inclusive pneumáticos, também podem participar da malha, por isso um sintoma visto na sala de controle nem sempre nasce no controlador principal. Válvula de controle não se confunde com válvula de shutdown nem com válvula de segurança, porque sua função é modular continuamente a variável. No diagnóstico, convém primeiro classificar o comportamento anormal como falha de medição, falha de switch, falha de atuação do elemento final ou limitação do próprio processo.",
+        "conhecimentos": [
+          "S07K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W2A01",
+            "W3A01"
+          ],
+          "achados": [
+            "R1F05",
+            "R2F10",
+            "R3F01",
+            "R3F07"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "Falhas de instrumentos de medição costumam aparecer como perda total de sinal, desvio persistente, ruído, intermitência ou congelamento de valor. Perda total de sinal leva a valor inválido, ausente, saturado ou ao estado de falha definido na lógica de entrada; a separação inicial é entre defeito do sensor ou transmissor, perda de alimentação, rompimento ou curto de cabo, borne, barreira, remota de entrada e saída ou cartão de entrada. Desvio persistente ocorre quando a leitura segue estável e aparentemente crível, mas não fecha com indicador local, balanço de massa, pressão hidrostática esperada ou outras variáveis relacionadas. Ruído aparece como serrilhado ou flutuação rápida incompatível com a inércia do processo e costuma apontar para aterramento, blindagem, umidade, vibração, interferência elétrica ou problema no caminho do sinal; em transmissão por corrente, a imunidade ao ruído tende a ser maior do que em arranjos mais sensíveis. Intermitência deixa quedas e retornos espontâneos associados a vibração, temperatura, umidade ou mau contato; congelamento é a repetição artificial do mesmo valor enquanto o processo muda. Quando vários instrumentos falham juntos, a causa comum tende a estar em fonte, barreira, borne comum, cabo multipar, comunicação ou remota. Em switches de pressão, nível, temperatura, vazão ou posição, o defeito típico aparece como chatter, atuação espúria, não atuação ou ponto de comutação errático; a distinção entre problema do switch e processo operando no limiar vem da comparação com a variável analógica associada e com a sequência de eventos.",
+        "conhecimentos": [
+          "S07K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W1A02",
+            "W1A03",
+            "W1A04",
+            "W1A05",
+            "W1A09",
+            "W2A02",
+            "W2A03",
+            "W2A04",
+            "W2A05",
+            "W3A02",
+            "W3A04",
+            "W3A05",
+            "W3A06",
+            "W3A07",
+            "W3A08"
+          ],
+          "achados": [
+            "R2F02",
+            "R3F02",
+            "R3F03"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "Em medição de pressão por tomada de impulso, bloqueio parcial, vazamento, bolsão de gás em linha de líquido ou acúmulo de líquido em linha de gás alteram a resposta dinâmica e deslocam o zero aparente, mesmo com transmissor eletricamente íntegro. O resultado na tendência é leitura lenta, amortecida ou enviesada em relação ao manômetro local e às demais variáveis do equipamento. Em temperatura, o poço termométrico protege o sensor e permite sua retirada sem parar o processo, mas a resposta rápida depende de bom contato térmico entre sensor e poço; mau acoplamento, infiltração em cabeçote, emenda ruim ou cabo degradado produzem leitura errática, saltos ou atraso excessivo. Em nível, espuma, emulsão, arraste de gás, sloshing do casco, incrustação, sujeira em câmara externa e variação de densidade podem distorcer a referência física medida sem haver falha eletrônica. Por isso, nível incoerente com vazões de entrada e saída, ou pressão diferencial incompatível com a hidrostática esperada, pede confronto com balanço, pressão, vazão e comportamento do vaso antes de condenar o instrumento.",
+        "conhecimentos": [
+          "S07K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A06",
+            "W1A07",
+            "W1A08",
+            "W2A07",
+            "W2A08",
+            "W2A09",
+            "W3A03"
+          ],
+          "achados": [
+            "R2F03"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "Em solenóides, atuadores e circuitos de acionamento, o sintoma central é a divergência entre comando e movimento real do elemento final. Se o comando lógico muda e não há movimento, a investigação se concentra em solenóide, bobina, linha piloto, energia do atuador, restrição pneumática ou hidráulica, travamento mecânico e integridade do caminho de atuação, não apenas no comando elétrico. Se há movimento com atraso ou retorno incompleto, ganham peso o atrito elevado, a pressão de suprimento insuficiente, a contaminação do ar de instrumento, vazamentos e obstruções nas linhas de acionamento. Em arranjos pneumáticos, pressão de suprimento fora da condição requerida altera a força disponível e pode mudar o comportamento de falha segura do atuador. Água, óleo e partículas no header de ar degradam repetibilidade, velocidade e curso antes de aparecer a falha total. Também é preciso separar defeito físico de erro de configuração, intertravamento ou comissionamento inadequado, porque uma válvula modulante mal configurada pode se comportar como abre e fecha ou deixar de obedecer ao comando da estação de operação.",
+        "conhecimentos": [
+          "S07K01",
+          "S07K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A10",
+            "W1A11",
+            "W2A06",
+            "W2A14",
+            "W3A09",
+            "W3A15"
+          ],
+          "achados": [
+            "R1F06",
+            "R2F07",
+            "R3F04"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "Nos elementos finais modulantes, os modos de falha mais típicos são stiction, hunting, vazamento pela sede, perda de curso, folga mecânica, suprimento de ar degradado e instabilidade de posicionador. Stiction é o atrito estático que mantém a válvula parada até a força de atuação vencer um limiar, liberando o movimento em salto; isso introduz atraso, movimento descontínuo e ciclos limite. Hunting é a oscilação persistente da válvula ou da variável controlada perto do limite de estabilidade, causada por instabilidade da malha, do posicionador ou da interação entre ambos; em campo, pode aparecer também como oscilação da pressão de carga do atuador. Diferentemente do stiction, no hunting a válvula tende a se mover continuamente, com reversões frequentes. Vazamento pela sede é perda de estanqueidade perto do fechamento, por detrito, força de fechamento insuficiente ou desgaste das superfícies, e aparece como vazão residual ou incapacidade de segurar pressão, nível ou carga térmica. Perda de curso, desencaixe de linkagem, histerese e folga mecânica criam banda morta, baixa repetibilidade e saturação prematura, como se a válvula tivesse menos autoridade do que deveria. Posicionador instável ou mal ajustado faz a haste caçar posição mesmo com comando externo estável e aumenta consumo de ar e desgaste. Em válvulas com posicionador inteligente, diagnósticos em serviço e assinatura eletrônica ajudam a identificar atrito, banda morta, restrição de suprimento, vazamento de ar, desvio de curso e vazamento interno sem intervenção invasiva imediata.",
+        "conhecimentos": [
+          "S07K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A12",
+            "W1A13",
+            "W1A14",
+            "W1A15",
+            "W1A16",
+            "W2A10",
+            "W2A11",
+            "W2A12",
+            "W2A13",
+            "W3A10",
+            "W3A11",
+            "W3A12",
+            "W3A13",
+            "W3A14",
+            "W3A16"
+          ],
+          "achados": [
+            "R1F01",
+            "R1F02",
+            "R1F04",
+            "R2F05",
+            "R2F06"
+          ],
+          "blocos": [
+            "B008",
+            "B009",
+            "B010"
+          ]
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "Para diferenciar sintonia ruim de malha, defeito mecânico e limitação de processo, a referência mais útil é o conjunto formado por variável medida, saída do controlador e posição real da válvula. Colocar a malha em manual, quando a condição operacional permite, e aplicar pequenos degraus de comando ajuda a separar as causas: resposta da válvula irregular, aos saltos ou com atraso já em manual aponta para medição ou elemento final; resposta suave da válvula com oscilação persistente da variável aponta para sintonia, tempo morto, interação com outra malha ou perturbação de processo. Saturação prolongada da saída do controlador com erro persistente indica limite físico, como capacidade insuficiente da válvula, diferencial de pressão inadequado, troca térmica insuficiente, utilidade degradada ou restrição a montante ou jusante. Em pressão e vazão, a dinâmica curta faz stiction, folga e perda de autoridade aparecerem rapidamente. Em nível, stiction costuma gerar ciclos lentos de enchimento e esvaziamento com padrão de dente de serra; em temperatura, a inércia térmica pode mascarar defeitos do elemento final e alongar o diagnóstico. Em FPSO, o confronto com indicação local, histórico, balanço do equipamento e variáveis relacionadas é indispensável para não confundir falha de malha com slugging, regime bifásico, mudança de composição do gás ou oscilação de utilidades.",
+        "conhecimentos": [
+          "S07K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A17",
+            "W1A18",
+            "W1A19",
+            "W1A20",
+            "W1A21",
+            "W2A15",
+            "W2A16",
+            "W2A17",
+            "W2A18",
+            "W2A19",
+            "W3A17",
+            "W3A18",
+            "W3A19",
+            "W3A20",
+            "W3A23"
+          ],
+          "achados": [
+            "R2F08"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U07",
+        "texto": "Medidas de contorno, como operar temporariamente em manual, reduzir agressividade do controlador, limitar rampa ou faixa de carga, usar medição redundante já validada, aplicar filtragem ou restrição de velocidade e, no caso de stiction, usar compensação por pulsos, servem apenas para manter a planta controlada até o reparo físico. Saída fixa, cascata aberta e seletor forçado entram na mesma categoria de contingência transitória. Essas medidas não restauram a integridade do sensor, da válvula ou do atuador, e podem mascarar sintomas, transferir vigilância para a sala de controle e o homem de área e, em alguns casos, acelerar o desgaste do elemento final. O uso temporário precisa definir condição operacional permitida, variável substituta confiável, frequência de acompanhamento e critério claro de parada ou de retorno ao modo normal. A decisão depende da criticidade da malha e da configuração do sistema. Em funções simples e críticas, a indisponibilidade pode exigir parada em vez de bypass prolongado.",
+        "conhecimentos": [
+          "S07K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A22",
+            "W1A23",
+            "W1A25",
+            "W2A20",
+            "W3A21",
+            "W3A22"
+          ],
+          "achados": [
+            "R1F03",
+            "R3F05",
+            "R3F06"
+          ],
+          "blocos": [
+            "B011"
+          ]
+        }
+      },
+      {
+        "id": "U08",
+        "texto": "Falha recorrente no mesmo ponto da malha raramente se resolve com troca rápida de componente quando a causa básica está na instalação ou no ambiente de bordo. Em FPSO, vibração contínua, umidade, atmosfera salina, corrosão em prensa-cabos e conectores, tubing mal suportado, contaminação do ar de instrumento e especificação incompatível com o regime do processo favorecem repetição de ruído, intermitência, travamento e perda de atuação. Se o sintoma retorna após manutenção, a causa raiz deve ser procurada na montagem, no suporte mecânico, nas utilidades e na condição real do processo. O monitoramento on-line de condição de sensores e válvulas ajuda a programar intervenção em janela oportuna e reduz substituição sem diagnóstico.",
+        "conhecimentos": [
+          "S07K01",
+          "S07K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A24",
+            "W3A24"
+          ],
+          "achados": [
+            "R2F01"
+          ],
+          "blocos": []
+        }
+      }
+    ],
+    "descartadas": [
+      {
+        "ref": "R2F04",
+        "motivo": "fora_escopo"
+      },
+      {
+        "ref": "R2F09",
+        "motivo": "fora_escopo"
+      }
+    ],
+    "conflitos": [
+      {
+        "descricao": "Parte das afirmações associava hunting principalmente à sintonia agressiva da malha, enquanto os achados mostram que a instabilidade também pode nascer no posicionador e aparecer na pressão de carga do atuador.",
+        "resolucao": "O texto consolidado trata hunting como oscilação persistente que pode ter origem na malha, no posicionador ou na interação entre ambos, distinguindo-o do stiction pelo padrão de movimento."
+      },
+      {
+        "descricao": "As afirmações descreviam perda total de sinal como valor inválido, extremo de escala ou estado de falha, sem uma única resposta observável.",
+        "resolucao": "Foi mantido que o sintoma depende da configuração do canal, da lógica de entrada e da filosofia de falha segura, ficando a descrição em termos condicionais."
+      },
+      {
+        "descricao": "As afirmações sobre contornos operacionais sugeriam várias formas de estabilizar a malha, enquanto os achados alertam que compensações para stiction e indisponibilidades mantêm a operação, mas podem acelerar desgaste ou não ser aceitáveis em itens críticos.",
+        "resolucao": "O texto consolidado aceita compensações e algoritmos de contorno apenas como medida transitória, condicionada à criticidade, com limites operacionais, acompanhamento e reparo físico programado."
+      }
+    ],
+    "nao_contabilizadas": []
+  },
+  "S08": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Em um FPSO, a automação reúne sensores e transmissores de processo, elementos finais, remotas de entrada e saída, redes industriais, Controlador Lógico Programável (PLC), Sistema Distribuído de Controle (DCS), Sistema Instrumentado de Segurança (SIS), parada de emergência (ESD), Interface Homem-Máquina (IHM), servidores, estações de engenharia e as interfaces com fogo e gás (F&G). A integridade dessa arquitetura é a coerência entre filosofia aprovada de controle e proteção, hardware, software, parametrização, documentação e condição instalada em campo, para que correntes de óleo, gás, água produzida e utilidades sejam medidas, controladas e protegidas como previsto. Em arquitetura distribuída e fortemente integrada, a simples presença de indicação ou comando na IHM não comprova que a função esteja disponível no campo. A disponibilidade real depende da correspondência entre modo local ou remoto, mapeamento de sinais, lógica carregada, resposta do atuador, realimentação de posição e condição física instalada.",
+        "conhecimentos": [
+          "S08K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W2A01",
+            "W3A01"
+          ],
+          "achados": [
+            "R3F01",
+            "R3F02"
+          ],
+          "blocos": [
+            "B013",
+            "B028"
+          ]
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "Setpoints, limites de alarme, classificação entre alarme e evento, permissivos, intertravamentos, matrizes de causa e efeito, mapeamento de entradas e saídas, parâmetros de controladores e instrumentos inteligentes, versões de firmware e arquivos de configuração são itens de integridade. Alterações nesses itens exigem segregação de perfis de acesso entre operação, manutenção e engenharia, autorização formal, registro rastreável, atualização da documentação de referência e controle de alterações compatível com a criticidade da função. Backup só atende à recuperação confiável quando representa a configuração efetivamente em serviço e permanece compatível com o hardware, o firmware e as bases instaladas a bordo. Após mudança de lógica, troca de cartão ou remota de entrada e saída, restauração de base ou intervenção equivalente, a liberação depende de comparação com a baseline aprovada, revisão da lógica aplicável e teste de ponta a ponta, incluindo loop test e prova funcional, porque carregamento de software, energização ou restabelecimento aparente da comunicação não demonstram por si sós que a função voltou correta. A filosofia de alarmes também faz parte dessa integridade, porque parametrização deficiente gera pseudoalarmes, mascara desvios reais e degrada a resposta operacional.",
+        "conhecimentos": [
+          "S08K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A02",
+            "W1A03",
+            "W1A04",
+            "W1A05",
+            "W2A02",
+            "W2A03",
+            "W2A04",
+            "W2A05",
+            "W2A06",
+            "W3A02",
+            "W3A03",
+            "W3A04",
+            "W3A05",
+            "W3A20"
+          ],
+          "achados": [
+            "R1F01",
+            "R1F02",
+            "R1F07",
+            "R3F04",
+            "R3F09",
+            "R3F10"
+          ],
+          "blocos": [
+            "B029"
+          ]
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "Bypass, override e inibição reduzem de formas diferentes a cobertura original de controle ou proteção, por isso precisam ser identificados pela função afetada e não apenas pelo recurso usado no sistema. A gestão dessas desativações deve definir motivo técnico, responsável, aprovações, condição de entrada, prazo ou condição de revisão, critério de retirada e registro individual visível para sala de controle e manutenção. Em SIS e ESD, a avaliação precisa ser feita pela barreira automática perdida e pelo efeito acumulado de desativações simultâneas, inclusive quando a função degradada participa de cadeias integradas com F&G, ventilação, dampers, parada de equipamentos ou permissivos de processo. A perda de redundância em sensor votado, controlador, fonte, rede ou remota de entrada e saída pode não retirar imediatamente a função, mas reduz a tolerância a falha, altera a votação remanescente e expõe a planta a falha simples. Enquanto a recomposição não ocorre, as medidas compensatórias devem ser definidas pela função perdida, com restrições operacionais, reforço de vigilância, adiamento de manobras sensíveis ou retirada de operação quando o risco residual não for aceitável.",
+        "conhecimentos": [
+          "S08K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A07",
+            "W1A08",
+            "W1A09",
+            "W1A10",
+            "W1A11",
+            "W1A12",
+            "W1A23",
+            "W2A07",
+            "W2A08",
+            "W2A09",
+            "W2A10",
+            "W2A11",
+            "W3A06",
+            "W3A07",
+            "W3A08",
+            "W3A09"
+          ],
+          "achados": [
+            "R1F03",
+            "R1F04",
+            "R1F05",
+            "R1F06"
+          ],
+          "blocos": [
+            "B020",
+            "B023",
+            "B025"
+          ]
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "Em área classificada, a integridade Ex pertence ao conjunto instalado e não apenas ao instrumento isolado. Instrumentos, solenóides, caixas, invólucros, prensa-cabos, tampões, vedações, bornes, cabos, blindagens, aterramento e modo de montagem precisam permanecer compatíveis com o tipo de proteção e com a classificação da área. Projeto, seleção, instalação, inspeção, manutenção e recuperação devem atender à Norma Regulamentadora nº 10 (NR-10), à Norma Regulamentadora nº 37 (NR-37) e às partes aplicáveis da série ABNT NBR IEC 60079, com pessoal autorizado e capacitado para trabalho em atmosferas explosivas. Em Ex d, roscas danificadas, parafusos inadequados, tampa mal assentada, corrosão em superfícies de junta ou usinagem não controlada comprometem o caminho de chama, em Ex i, a compatibilidade do laço depende do conjunto formado por barreira ou isolador, instrumento de campo, cabo, blindagem, aterramento funcional e parâmetros elétricos permitidos. No ambiente marítimo do FPSO, salinidade, condensação, vibração, lavagem e ciclos térmicos aceleram corrosão, afrouxamento e perda de vedação, por isso a inspeção deve verificar o estado físico real e a marcação compatível do conjunto, sem improvisos com acessórios apenas mecanicamente semelhantes ou com ferramentas inadequadas para a zona.",
+        "conhecimentos": [
+          "S08K03"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A13",
+            "W1A14",
+            "W1A15",
+            "W1A16",
+            "W1A24",
+            "W2A12",
+            "W2A13",
+            "W2A14",
+            "W2A15",
+            "W3A10",
+            "W3A11",
+            "W3A12",
+            "W3A13",
+            "W3A19"
+          ],
+          "achados": [
+            "R1F08",
+            "R2F01",
+            "R2F02",
+            "R2F03",
+            "R2F04",
+            "R3F08"
+          ],
+          "blocos": [
+            "B034"
+          ]
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "Após manutenção, teste, falha, substituição ou compensação temporária, o retorno ao serviço de equipamento Ex e de sistema crítico de automação exige confirmar que a função protegida voltou à configuração pretendida e que as alterações temporárias foram removidas. A liberação deve verificar fechamento mecânico, integridade de cabos, prensa-cabos, vedações e aterramento, coerência entre campo, controlador e supervisão, estabilidade do diagnóstico, ausência de alarmes espúrios, registro correto de alarmes e eventos, ação de falha segura e atuação do elemento final compatível com a lógica esperada. Em intervenções com desenergização, a reenergização precisa seguir sequência formal de inspeção geral, retirada de bloqueios e proteções temporárias, afastamento de pessoal não envolvido e autorização para energizar. O aceite deve ser baseado em critérios previamente definidos, com loop test, prova funcional e verificação documental compatíveis com a função afetada, porque comunicação restabelecida ou tela sem falha não bastam para liberar a operação. Quando a intervenção sair da cobertura documental existente, é necessária análise de engenharia e aprovação por profissional habilitado. A recomposição segura depende de handover e sign-off entre instrumentação, automação, elétrica, processo e operação, com entendimento comum do que voltou ao normal e do que permanece degradado.",
+        "conhecimentos": [
+          "S08K03",
+          "S08K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A17",
+            "W1A18",
+            "W1A22",
+            "W2A16",
+            "W2A20",
+            "W3A14",
+            "W3A17"
+          ],
+          "achados": [
+            "R1F10",
+            "R2F05",
+            "R2F06",
+            "R3F03",
+            "R3F05",
+            "R3F06",
+            "R3F07"
+          ],
+          "blocos": [
+            "B024",
+            "B027"
+          ]
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "A integridade da automação ao longo do ciclo de vida depende de rastreabilidade contínua de falhas, alterações, testes, bypasses, ações corretivas e condição de entrega após o reparo. O registro técnico precisa ligar defeito encontrado, intervenção executada, peças aplicadas, versão carregada, testes realizados, evidência de saneamento e pendências remanescentes, para que recorrências sejam tratadas por causa comum e não como eventos isolados. Sobressalentes de automação crítica precisam ser controlados por compatibilidade funcional, protocolar, ambiental e Ex, incluindo revisão de hardware, firmware, licenças, acessórios de montagem e condição de armazenamento, e não apenas por código de compra ou encaixe físico. A obsolescência de controladores, estações de engenharia, redes industriais, remotas de entrada e saída, cartões, instrumentos inteligentes e softwares deve ser tratada como tema de envelhecimento e integridade, porque eleva o tempo de reparo e aumenta o risco de restauração com diferenças não validadas. Repetição de trips espúrios, bypasses recorrentes, trocas repetidas de cartões ou falhas intermitentes de comunicação costuma apontar problemas de alimentação, aterramento, ambiente, vibração, instalação, utilidades ou disciplina de configuração, exigindo análise de causa raiz e plano de substituição ou correção estruturante.",
+        "conhecimentos": [
+          "S08K01",
+          "S08K04"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A06",
+            "W1A19",
+            "W1A20",
+            "W1A21",
+            "W2A17",
+            "W2A18",
+            "W2A19",
+            "W3A15",
+            "W3A16",
+            "W3A18"
+          ],
+          "achados": [
+            "R1F09",
+            "R2F07"
+          ],
+          "blocos": [
+            "B031"
+          ]
+        }
+      }
+    ],
+    "descartadas": [],
+    "conflitos": [],
+    "nao_contabilizadas": []
+  },
+  "S01": {
+    "unidades": [
+      {
+        "id": "U01",
+        "texto": "Em um FPSO, a instrumentação, o controle e a automação formam a cadeia que liga medição, decisão e atuação entre o campo e a sala de controle. Sensores e instrumentos convertem o estado do processo em sinais, controladores e lógicas tratam esses sinais, e elementos finais executam a resposta sobre a planta. Essa mesma cadeia sustenta produção, estabilidade operacional, alarmes, intertravamentos e proteção. Quando há perda de coerência ponta a ponta entre campo, lógica e supervisão, a indicação ao operador e a resposta automática deixam de representar a condição real do processo.",
+        "conhecimentos": [
+          "S01K01"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A01",
+            "W1A04",
+            "W1A10",
+            "W2A01",
+            "W2A04",
+            "W3A01",
+            "W3A02"
+          ],
+          "achados": [
+            "R1F01",
+            "R2F01",
+            "R3F01",
+            "R3F04"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U02",
+        "texto": "No FPSO ancorado, seja por turret ou spread mooring, a automação atua em uma planta embarcada em que processamento, utilidades, armazenamento e offloading estão integrados. O recorte inclui as correntes de óleo, gás, água produzida, água de injeção, flare, ventilação de tanques, utilidades, armazenamento e exportação, sempre pelo ponto de vista de medir, decidir e atuar. Como essas correntes são acopladas, variações de alimentação dos poços, utilidades, compressão ou exportação tendem a repercutir em outras áreas e exigem resposta coordenada das malhas e das proteções.",
+        "conhecimentos": [
+          "S01K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A02",
+            "W1A03",
+            "W2A02",
+            "W3A03",
+            "W3A08"
+          ],
+          "achados": [
+            "R1F02",
+            "R1F03"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U03",
+        "texto": "Controle normal de processo, alarme, evento, intertravamento e parada de emergência não são a mesma função. O controle automático mantém variáveis dentro da faixa operacional; o alarme sinaliza desvio que requer resposta da operação; o evento registra mudança de estado; o intertravamento executa ação automática prevista na lógica; e o sistema instrumentado de segurança (SIS) com funções de parada de emergência (ESD, Emergency Shutdown) leva equipamento, pacote ou parte da planta a estado seguro quando limites predefinidos são violados ou a continuidade do controle deixa de ser confiável. Essa separação evita tratar malha regulatória como se fosse barreira de segurança.",
+        "conhecimentos": [
+          "S01K01",
+          "S01K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A05",
+            "W2A03",
+            "W3A04",
+            "W3A05"
+          ],
+          "achados": [
+            "R1F05",
+            "R3F02"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U04",
+        "texto": "O escopo da disciplina começa nos instrumentos de campo, transmissores e switches que medem pressão, temperatura, nível, vazão, composição e estados discretos do processo, incluindo instrumentos analíticos aplicados à operação. Também inclui os elementos finais de controle, como válvulas de controle e on-off, posicionadores, atuadores, solenoides e seus circuitos pneumáticos, hidráulicos ou eletroeletrônicos associados. O valor operacional de uma medição ou de um comando depende do conjunto completo, alimentação, condicionamento, comunicação, lógica, apresentação ao operador e realimentação de posição, por isso instrumento e válvula devem ser entendidos como partes de um sistema e não como itens isolados.",
+        "conhecimentos": [
+          "S01K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W2A05",
+            "W2A06",
+            "W3A07"
+          ],
+          "achados": [
+            "R3F05"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U05",
+        "texto": "Na camada de sistemas, a arquitetura de automação reúne controlador lógico programável (PLC, Programmable Logic Controller), sistema de controle distribuído (DCS, Distributed Control System), sistema instrumentado de segurança (SIS), funções de ESD, remotas de entrada e saída, redes industriais, painéis locais, servidores, estações de operação e estações de engenharia. Em geral, o DCS distribui funções de controle pelos nós conectados à planta e centraliza supervisão, alarmes e interface do operador; PLCs são comuns em pacotes e funções dedicadas; o SIS permanece separado da malha básica de controle para executar proteção. A camada de supervisão consolida dados, telas, históricos, relatórios e comandos, garantindo visibilidade operacional e rastreabilidade.",
+        "conhecimentos": [
+          "S01K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A06",
+            "W2A07",
+            "W2A08",
+            "W3A06"
+          ],
+          "achados": [
+            "R1F04",
+            "R2F02",
+            "R2F03",
+            "R3F03",
+            "R3F06"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U06",
+        "texto": "Metrologia entra no recorte da automação porque calibração, verificação e deriva determinam se o valor usado em controle, alarmes e proteções representa a variável de processo. A interface com o sistema de fogo e gás (F&G) interessa pela troca de sinais, permissivos, diagnósticos, by-pass e respostas automáticas integradas ao controle e ao ESD, sem redefinir a disciplina de detecção. Barreiras de processo e cibersegurança de tecnologia operacional (OT) aparecem pelo mesmo enfoque: preservar disponibilidade, integridade funcional, controle de acesso, rastreabilidade de alterações e coerência com a filosofia de segurança.",
+        "conhecimentos": [
+          "S01K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A07",
+            "W1A08",
+            "W2A09",
+            "W2A10",
+            "W2A11",
+            "W3A09",
+            "W3A10",
+            "W3A11",
+            "W3A12"
+          ],
+          "achados": [
+            "R2F04",
+            "R2F05",
+            "R2F06",
+            "R3F07",
+            "R3F09"
+          ],
+          "blocos": []
+        }
+      },
+      {
+        "id": "U07",
+        "texto": "A automação trabalha de forma complementar à operação de painel e ao homem de área. A sala de controle acompanha tendências, estados, permissivos e alarmes, enquanto a área confirma a condição física do processo e a resposta real dos equipamentos; históricos, eventos, alarmes e trips formam a base para diagnóstico de falhas, comprovação de testes, análise de desvios e manutenção baseada em condição. Por isso, falhas de sensores, comunicação, fontes, cartões de entrada e saída ou elementos finais podem reduzir visibilidade, limitar carga, impedir partidas ou provocar shutdown de sistemas e pacotes, afetando simultaneamente segurança e continuidade operacional.",
+        "conhecimentos": [
+          "S01K01",
+          "S01K02"
+        ],
+        "origem": {
+          "afirmacoes": [
+            "W1A09",
+            "W2A12",
+            "W3A13",
+            "W3A14"
+          ],
+          "achados": [
+            "R1F06",
+            "R2F07",
+            "R3F08"
+          ],
+          "blocos": []
+        }
+      }
+    ],
+    "descartadas": [
+      {
+        "ref": "R1F07",
+        "motivo": "fora_escopo"
+      }
+    ],
+    "conflitos": [
+      {
+        "descricao": "As afirmações sobre distúrbios típicos do FPSO detalhavam exemplos como slugging, oscilações de compressores e transientes de offloading, mas os achados trazem suporte apenas indireto para a ideia de planta embarcada integrada e acoplada.",
+        "resolucao": "A redação foi generalizada para variações de alimentação, utilidades, compressão e exportação, sem listar mecanismos específicos sem evidência direta."
+      },
+      {
+        "descricao": "Os achados sobre F&G, gestão de alarmes e cibersegurança OT incluem referências técnicas estrangeiras.",
+        "resolucao": "Esses achados foram usados apenas para delimitar interfaces técnicas da automação e da integridade funcional, sem tratá-los como requisito regulatório brasileiro."
+      }
+    ],
+    "nao_contabilizadas": []
+  }
+}
