@@ -115,8 +115,9 @@ Banco definitivo sobre os 40 contextos finais (`relatorios/contextos_finais_v1`,
 sem memória (`retro_sem_memoria`): regras, janela de 3 blocos, datasets externos (Pirá, MMMLU PT-BR, ARC, QASC) e
 exemplos julgados de outros documentos (4 boas e 4 ruins fixas, 10 boas totalmente válidas e 8 ruins com o defeito
 por extenso por chamada). As 2 questões convertidas do dataset de múltipla escolha entram em metade das chamadas,
-em xadrez por foco e visita. Todos os blocos são foco, com 3 visitas (`--visitas`), em ondas; a sustentação roda a
-cada onda. Válida = auditor v23 + gabarito de até 20 palavras + totalmente sustentada. A deduplicação calibrada roda
+em xadrez por foco e visita. Todos os blocos são foco e cada um é visitado até saturar: depois de cada visita as
+válidas são deduplicadas, e o foco só volta se a visita trouxe ao menos uma válida nova (`--paciencia 1`, teto
+`--visitas 8`). Cada visita roda em 2 ondas; a sustentação roda a cada onda. Válida = auditor v23 + gabarito de até 20 palavras + totalmente sustentada. A deduplicação calibrada roda
 só entre as válidas e o banco (`geracao_final_v3/banco.jsonl`, `BANCO.md`) guarda uma por grupo de equivalentes.
 O que é só para retomada (respostas brutas, um arquivo por chamada) fica fora do Git (`.gitignore` na pasta).
 

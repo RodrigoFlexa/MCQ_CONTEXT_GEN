@@ -11,13 +11,16 @@ Usa o melhor mecanismo medido na ablação v3: a retroalimentação sem memória
     defeitos; teste de cada defeito antes de entregar. Nada do mesmo documento entra no prompt.
 
 Diferenças em relação à ablação (que media a escada com 8 focos por documento):
-  - todos os blocos de cada documento são foco, com VISITAS visitas (padrão 3), em ondas;
+  - todos os blocos de cada documento são foco e cada foco é visitado até saturar: depois de cada visita, as
+    válidas são deduplicadas e o foco só volta na visita seguinte se a última trouxe ao menos uma válida nova
+    (não equivalente a nenhuma anterior do documento); com PACIENCIA visitas seguidas sem nada novo, ele fecha.
+    Teto de MAX_VISITAS visitas. Cada visita roda em 2 ondas (focos pares e ímpares);
   - a deduplicação calibrada roda só entre as questões válidas, para o banco (a da ablação era medida sobre todas);
   - etapa "banco": uma questão por grupo de equivalentes, só válidas.
 
 Válida = aprovada pelo auditor v23 + gabarito de até 20 palavras + gabarito totalmente sustentado pelos blocos.
 
-python -m pipeline.qa_research.experimento_ab final-v3 [--visitas 3] [--etapas geracao,sustentacao,dedup,banco]
+python -m pipeline.qa_research.experimento_ab final-v3 [--visitas 8] [--paciencia 1] [--etapas ...]
 """
 from __future__ import annotations
 
@@ -34,7 +37,8 @@ from .variada import bloco_forma
 SAIDA = C.QA / "relatorios" / "geracao_final_v3"
 DOCS_FINAIS = C.QA / "relatorios" / "contextos_finais_v1"
 CONFIG = "retro_sem_memoria"
-VISITAS = 3
+MAX_VISITAS = 8
+PACIENCIA = 1
 TODOS_OS_BLOCOS = 10 ** 6
 ETAPAS = ("geracao", "sustentacao", "dedup", "banco")
 # O que fica só no servidor (retomada): respostas brutas, caches e um arquivo por chamada. Vai ao GitHub o banco,
@@ -50,12 +54,103 @@ sustentacao/
 
 
 class GeracaoFinalV3(AblacaoV3):
-    def __init__(self, saida: Path = SAIDA, *, docs: Path = DOCS_FINAIS, visitas: int = VISITAS, **kw):
+    def __init__(self, saida: Path = SAIDA, *, docs: Path = DOCS_FINAIS, visitas: int = MAX_VISITAS,
+                 paciencia: int = PACIENCIA, **kw):
         if not any((p / "documento.json").exists() for p in Path(docs).iterdir() if p.is_dir()) if Path(docs).is_dir() else True:
             raise ValueError(f"Contextos finais ausentes em {C.relativo(Path(docs))}; rode antes "
                              "python -m pipeline.qa_research.refino.finalizar")
+        self.paciencia = max(1, int(paciencia))
         super().__init__(saida, docs=docs, configs=[CONFIG], focos_por_topico=TODOS_OS_BLOCOS, visitas=visitas, **kw)
         (self.saida / ".gitignore").write_text(GITIGNORE, encoding="utf-8")
+
+    def _config(self) -> None:
+        """O teto de visitas pode mudar entre execuções (ex.: versão com 3 visitas fixas interrompida): as unidades da
+        visita 1 são as mesmas, então a pasta é reaproveitada e só o teto registrado é atualizado."""
+        arq = self.saida / "config.json"
+        if arq.exists():
+            d = json.loads(arq.read_text(encoding="utf-8"))
+            if d.get("visitas") != self.visitas:
+                d["visitas"] = self.visitas
+                atomic_json(arq, d)
+        super()._config()
+
+    # -------------------------------------------------------------- saturação por foco
+    @staticmethod
+    def _unidade(item: str, foco: int, visita: int) -> dict:
+        return {"item": item, "foco": foco, "visita": visita, "onda": (visita - 1) * 2 + foco % 2,
+                "id": f"{item}:{foco:03d}:v{visita}"}
+
+    def _estado(self, u: dict) -> tuple[bool, int]:
+        """(visita concluída para a decisão, válidas novas): tudo gerado, auditado, sustentado e deduplicado."""
+        if not self._arq_ger(CONFIG, u).exists():
+            return False, 0
+        novas = 0
+        for q in self._questoes_unidade(CONFIG, u):
+            a = q.get("auditoria")
+            if a is None:
+                return False, 0
+            if not (a.get("aprovada") and len(str(q["resposta"]).split()) <= TETO_RESPOSTA):
+                continue
+            s = self._arq_sust(q["uid"])
+            if not s.exists():
+                return False, 0
+            if json.loads(s.read_text(encoding="utf-8")).get("status") != "totalmente_sustentado":
+                continue
+            d = self.saida / CONFIG / "dedup_validas" / u["item"] / (q["uid"].replace(":", "_") + ".json")
+            if not d.exists():
+                return False, 0
+            novas += json.loads(d.read_text(encoding="utf-8"))["decisao"] in ("nova", "substitui")
+        return True, novas
+
+    def _unidades(self) -> list[dict]:
+        """Visita 1 de todos os blocos; a visita v+1 só para os focos ainda abertos depois da visita v concluída."""
+        out, self.fechados = [], {}
+        for i in self.itens:
+            abertos = {f: 0 for f in range(len(self.docs[i]))}       # foco -> visitas seguidas sem nada novo
+            for v in range(1, self.visitas + 1):
+                if not abertos:
+                    break
+                us = [self._unidade(i, f, v) for f in sorted(abertos)]
+                out += us
+                estados = [self._estado(u) for u in us]
+                if not all(ok for ok, _ in estados):
+                    break                                            # visita em andamento: decide depois
+                for u, (_, novas) in zip(us, estados):
+                    abertos[u["foco"]] = 0 if novas else abertos[u["foco"]] + 1
+                    if abertos[u["foco"]] >= self.paciencia:
+                        self.fechados[(i, u["foco"])] = v
+                        del abertos[u["foco"]]
+        return out
+
+    def gerar(self) -> int:
+        """Visita a visita (2 ondas cada); depois de cada visita, deduplica as válidas e reabre só os focos com novidade."""
+        from .ablacao_v3 import ONDAS_POR_VISITA
+        falhas = 0
+        for v in range(1, self.visitas + 1):
+            if not any(u["visita"] == v for u in self.unidades):
+                break
+            for w in range((v - 1) * ONDAS_POR_VISITA, v * ONDAS_POR_VISITA):
+                us = [u for u in self.unidades if u["onda"] == w]
+                julg = self._julgadas(CONFIG, w)
+                falhas += self._paralelo([u for u in us if not self._arq_ger(CONFIG, u).exists()],
+                                         lambda u: self._gerar(CONFIG, u, julg), f"onda {w + 1}: geração")
+                tarefas = [(CONFIG, u, q) for u in us for q in self._questoes_unidade(CONFIG, u) if q["auditoria"] is None]
+                falhas += self._paralelo(tarefas, lambda x: self._auditar(*x), f"onda {w + 1}: auditoria")
+                if not falhas:
+                    qs = [q for q in self.finais(CONFIG, us) if q["aprovada_auditor"] and q["resposta_curta"]
+                          and not self._arq_sust(q["uid"]).exists()]
+                    falhas += self._paralelo(qs, self._sustentar_um, f"onda {w + 1}: sustentação")
+                if falhas:
+                    return falhas
+            falhas += self.deduplicar()
+            if falhas:
+                return falhas
+            antes = len(self.unidades)
+            self.unidades = self._unidades()
+            abertos = sum(u["visita"] == v + 1 for u in self.unidades)
+            self.progress(f"[final v3] visita {v} concluída; {abertos} focos seguem para a visita {v + 1} "
+                          f"({len(self.unidades) - antes} chamadas novas)", flush=True)
+        return falhas
 
     # -------------------------------------------------------------- auditoria guarda só a referência dos blocos
     def _auditar(self, c: str, u: dict, q: dict) -> bool:
@@ -148,7 +243,9 @@ class GeracaoFinalV3(AblacaoV3):
                "taxa_validas": 100 * len(validas) / max(1, len(qs)),
                "por_visita": {v: {"geradas": sum(q["visita"] == v for q in qs),
                                   "validas": sum(q["visita"] == v for q in validas),
-                                  "unicas": sum(q["visita"] == v for q in unicas)} for v in range(1, self.visitas + 1)},
+                                  "unicas": sum(q["visita"] == v for q in unicas)}
+                              for v in range(1, max([u["visita"] for u in self.unidades] or [1]) + 1)},
+               "focos_fechados_na_visita": dict(Counter(self.fechados.values()).most_common()),
                "convertidas": {"com" if k else "sem": v for k, v in alt.items()},
                "tipos_unicas": dict(Counter(q["tipo"] or "?" for q in unicas).most_common()),
                "motivos_auditor": dict(motivos.most_common()), "sustentacao": dict(sust.most_common()),
@@ -182,7 +279,8 @@ def markdown(r: dict) -> str:
     linhas = ["# Geração final v3: banco de questões", "",
               f"Mecanismo: retroalimentação sem memória (melhor configuração da ablação v3), datasets externos e "
               f"convertidas do dataset de múltipla escolha em metade das chamadas. {r['documentos']} documentos, "
-              f"{r['blocos']} blocos foco, {r['visitas']} visitas, {r['chamadas']} chamadas do gerador.", "",
+              f"{r['blocos']} blocos foco, visitados até saturar (teto de {r['visitas']} visitas), "
+              f"{r['chamadas']} chamadas do gerador.", "",
               "Válida = aprovada pelo auditor v23, gabarito de até 20 palavras e totalmente sustentada pelos blocos. "
               "Única = uma por grupo de questões equivalentes (deduplicação calibrada entre as válidas).", "",
               "| Etapa | Questões | % das geradas |", "|---|---|---|",
@@ -207,10 +305,10 @@ def markdown(r: dict) -> str:
     return "\n".join(linhas) + "\n"
 
 
-def plano(visitas: int = VISITAS, docs: Path = DOCS_FINAIS) -> str:
+def plano(visitas: int = MAX_VISITAS, docs: Path = DOCS_FINAIS) -> str:
     from pipeline.qa_research.piloto_janela.core import blocos
     itens = sorted(p.name for p in Path(docs).iterdir() if (p / "documento.json").exists())
     n = sum(len(blocos(i, Path(docs))[1]) for i in itens)
-    return (f"{len(itens)} documentos, {n} blocos foco, {visitas} visitas: {n * visitas} chamadas do gerador "
-            f"(GPT-5.4 high), em {2 * visitas} ondas; cada questão passa pelo auditor v23 e, se aprovada e curta, pela "
-            f"sustentação; depois deduplicação entre as válidas.")
+    return (f"{len(itens)} documentos, {n} blocos foco: visita 1 em todos ({n} chamadas do gerador, GPT-5.4 high); "
+            f"cada foco volta enquanto a visita anterior trouxer ao menos uma válida nova (teto de {visitas} visitas, "
+            f"no máximo {n * visitas} chamadas); auditor v23, sustentação e deduplicação das válidas a cada visita.")

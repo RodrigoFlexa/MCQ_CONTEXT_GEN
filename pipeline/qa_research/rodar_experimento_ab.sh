@@ -32,7 +32,8 @@
 #                        taxa de aceite e vocabulário (ablacao_geracao_v2)
 #   final3               geração final v3 nos 40 contextos finais (relatorios/contextos_finais_v1): retroalimentação
 #                        sem memória + datasets externos + convertidas em metade das chamadas, todos os blocos como
-#                        foco x 3 visitas (--visitas N), auditor, sustentação, deduplicação entre as válidas, banco
+#                        foco, cada um visitado até saturar (teto --visitas 8, --paciencia 1), auditor, sustentação,
+#                        deduplicação entre as válidas a cada visita, banco
 #                        (geracao_final_v3/BANCO.md e banco.jsonl); retomável
 #   ablacao3             ablação v3: escada cumulativa (naive, + regras, + documentos, + externos, + retro), sem
 #                        poda; validade, quase-duplicatas, diversidade e dificuldade (ablacao_geracao_v3)

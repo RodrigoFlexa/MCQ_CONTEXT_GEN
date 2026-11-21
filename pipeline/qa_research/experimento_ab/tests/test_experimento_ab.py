@@ -1884,16 +1884,17 @@ class FinalV3Tests(unittest.TestCase):
         from pipeline.qa_research.experimento_ab.final_v3 import GeracaoFinalV3
         cl = {"geracao": f, "auditoria": f, "sustentacao": f, "dedup_juiz": NuncaRedundante()}
         return GeracaoFinalV3(self.exp / "final3", exp=self.exp, docs=self.exp / "docs" / "antigo", itens=[ITEM, "07_01"],
-                              visitas=2, externos=self.ext, convertidas=self.conv, clientes=cl, embedder=Emb(),
-                              workers=4, **{**SILENCIO, **kw})
+                              externos=self.ext, convertidas=self.conv, clientes=cl, embedder=Emb(),
+                              workers=4, **{**SILENCIO, "visitas": 2, **kw})
 
     def test_todos_os_blocos_convertidas_alternadas_e_banco(self):
         from pipeline.qa_research.experimento_ab.final_v3 import CONFIG, GeracaoFinalV3
         f = FalsoV3()
         g = self.g(f)
         blocos_ = sum(len(v) for v in g.docs.values())
-        self.assertEqual(len(g.unidades), 2 * blocos_)                    # todo bloco é foco, 2 visitas
+        self.assertEqual(len(g.unidades), blocos_)                        # todo bloco é foco; a visita 2 vem depois
         self.assertEqual(g.executar(), 0)
+        self.assertEqual(len(g.unidades), 2 * blocos_)                    # sempre houve novidade: até o teto
         us = f.usuarios[f"abl3_{CONFIG}"]
         self.assertEqual(len(us), len(g.unidades))
         com = [u for u in us if "Pergunta convertida" in u]
@@ -1918,6 +1919,42 @@ class FinalV3Tests(unittest.TestCase):
         antes = sum(f.chamadas.values())
         self.assertEqual(self.g(f).executar(), 0)
         self.assertEqual(sum(f.chamadas.values()), antes)                  # retomada: nada é refeito
+
+    def test_foco_fecha_quando_satura(self):
+        class SoRuinsDepois(FalsoV3):
+            """Da visita 2 em diante o gerador só traz questões que o auditor reprova: nada novo, o foco fecha."""
+            def json(self, system, user, tag="", **kw):
+                if tag.startswith("abl3_") and tag not in ("abl3_auditoria", "abl3_faithfulness") \
+                        and not re.search(r"Pedido: \S+:v1\b", user):
+                    self.chamadas[tag] += 1
+                    pid = re.search(r"Pedido: (\S+)", user).group(1)
+                    q = {"pergunta": f"Qual DEFEITO no caso {pid}?", "resposta": "Nada.", "tipo": "mecanismo",
+                         "cenario": False, "conhecimento": f"r {pid}", "explicacao": "e", "resposta_padrao": "p",
+                         "por_que_nao": "q", "fundamentos": [{"bloco": "F", "trecho": "x"}]}
+                    d = {"questoes": [q], "motivo": ""}
+                    if kw.get("validate"):
+                        kw["validate"](d)
+                    return d
+                return super().json(system, user, tag=tag, **kw)
+        from pipeline.qa_research.experimento_ab.final_v3 import CONFIG
+        f = SoRuinsDepois()
+        g = self.g(f, visitas=5)
+        blocos_ = sum(len(v) for v in g.docs.values())
+        self.assertEqual(g.executar(), 0)
+        self.assertEqual(f.chamadas[f"abl3_{CONFIG}"], 2 * blocos_)       # visita 2 sem novidade: nenhuma visita 3
+        self.assertEqual(set(g.fechados.values()), {2})
+        self.assertEqual(read_json(self.exp / "final3" / "banco_resumo.json")["focos_fechados_na_visita"], {"2": blocos_})
+        antes = sum(f.chamadas.values())
+        self.assertEqual(self.g(f, visitas=5).executar(), 0)
+        self.assertEqual(sum(f.chamadas.values()), antes)
+
+    def test_teto_de_visitas_muda_e_a_pasta_e_reaproveitada(self):
+        from pipeline.qa_research.experimento_ab.final_v3 import CONFIG
+        f = FalsoV3()
+        self.assertEqual(self.g(f, visitas=1).executar(), 0)
+        n1 = f.chamadas[f"abl3_{CONFIG}"]
+        self.assertEqual(self.g(f, visitas=2).executar(), 0)              # sem "configuração diferente"
+        self.assertEqual(f.chamadas[f"abl3_{CONFIG}"], 2 * n1)             # a visita 1 não é refeita
 
 
 class ExternosTests(unittest.TestCase):

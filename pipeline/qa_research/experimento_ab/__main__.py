@@ -41,8 +41,9 @@
                         sustentação, dedup), taxa de aceite e vocabulário -> ablacao_geracao_v2/ABLACAO.md
   final-v3              geração final v3 sobre os 40 contextos finais (relatorios/contextos_finais_v1): melhor
                         mecanismo da ablação v3 (retroalimentação sem memória + datasets externos + convertidas em
-                        metade das chamadas), todos os blocos como foco x --visitas (3); auditor, sustentação,
-                        deduplicação entre as válidas e banco -> geracao_final_v3/BANCO.md
+                        metade das chamadas); todos os blocos como foco, cada um visitado até saturar (volta só se
+                        a visita anterior trouxe válida nova; --paciencia 1, teto --visitas 8); auditor, sustentação,
+                        deduplicação entre as válidas a cada visita e banco -> geracao_final_v3/BANCO.md
   ablacao-v3            ablação v3: escada cumulativa naive -> + regras -> + documentos -> + datasets externos ->
                         + retroalimentação, sem poda (0 a 4 questões por chamada, focos x visitas em ondas); auditor,
                         sustentação, quase-duplicatas, diversidade e dificuldade (amostra) -> ablacao_geracao_v3/ABLACAO.md
@@ -184,7 +185,7 @@ def main(argv=None) -> int:
     ap.add_argument("--palavras", type=int, default=20, help="limite: palavras máximas na resposta dos modelos")
     ap.add_argument("--amostra", type=int, default=300, help="limite: questões na amostra estratificada")
     ap.add_argument("--avaliacao", type=Path, help="painel: pasta de avaliação (padrão: avaliacao/<braço>)")
-    ap.add_argument("--visitas", type=int, default=3, help="final-v3: visitas por bloco foco")
+    ap.add_argument("--visitas", type=int, default=8, help="final-v3: teto de visitas por bloco foco (fecha antes ao saturar)")
     a = ap.parse_args(argv)
     exp = a.experimento if a.experimento.is_absolute() else C.ROOT / a.experimento
 
@@ -347,7 +348,7 @@ def main(argv=None) -> int:
             return 0
         with _trava(exp, "final_v3"):
             try:
-                g = GeracaoFinalV3(visitas=a.visitas, workers=a.workers, exp=exp)
+                g = GeracaoFinalV3(visitas=a.visitas, paciencia=a.paciencia, workers=a.workers, exp=exp)
                 print(f"[final-v3] {plano_f3(a.visitas)}", flush=True)
                 st = g.executar(etapas)
             except ValueError as exc:
