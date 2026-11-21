@@ -114,6 +114,15 @@ def plano(data, gaps, blocks, min_sections, max_sections, default_title=None):
 
 
 def rascunho(data, knowledge, min_claims=4, max_claims=40):
+    # Afirmação mal formada é descartada; IDs são renumerados. Só reprova se sobrar pouco.
+    raw = data.get('afirmacoes')
+    if isinstance(raw, list):
+        good = [a for a in raw if isinstance(a, dict) and text(a.get('texto'), 6) and a.get('tipo') in TIPOS_AFIRMACAO
+                and type(a.get('especifico')) is bool and isinstance(a.get('conhecimentos'), list)
+                and a['conhecimentos'] and set(a['conhecimentos']) <= set(knowledge)]
+        for i, a in enumerate(good[:max_claims], 1):
+            a['id'] = f'A{i:02d}'
+        data['afirmacoes'] = good[:max_claims]
     claims = rows(data.get('afirmacoes'), 'afirmacoes', min_claims)
     require(len(claims) <= max_claims, f'afirmacoes: no máximo {max_claims}')
     for i, a in enumerate(claims, 1):
@@ -151,6 +160,26 @@ def leitura(data, passages, knowledge, claims):
 
 def consolidacao(data, claims, findings, blocks, knowledge, contradicted, specific, allow_values=False):
     units = rows(data.get('unidades'), 'unidades', 1)
+    if not allow_values:
+        # Unidade com número sem achado nem bloco revisado sai inteira (AGENTS.md) e suas afirmações
+        # vão para descartadas como valor_sem_fonte; a seção segue com o restante.
+        def unsourced(u):
+            o = u.get('origem') if isinstance(u.get('origem'), dict) else {}
+            return not o.get('achados') and not o.get('blocos') and T.has_value(u.get('texto') or '')
+        drop = [u for u in units if unsourced(u)]
+        keep = [u for u in units if not unsourced(u)]
+        if drop and keep:
+            extra = data.setdefault('descartadas', [])
+            known = {d.get('ref') for d in extra if isinstance(d, dict)}
+            kept = {x for k in keep for x in (k.get('origem') or {}).get('afirmacoes', [])}
+            for u in drop:
+                for r in (u.get('origem') or {}).get('afirmacoes', []):
+                    if r in set(claims) and r not in known and r not in kept:
+                        extra.append(dict(ref=r, motivo='valor_sem_fonte', justificativa='unidade com valor numérico sem fonte, retirada'))
+                        known.add(r)
+            for i, k in enumerate(keep, 1):
+                k['id'] = f'U{i:02d}'
+            data['unidades'] = units = keep
     accounted = []
     for i, u in enumerate(units, 1):
         require(u.get('id') == f'U{i:02d}', 'unidades: IDs sequenciais U01, U02...')
