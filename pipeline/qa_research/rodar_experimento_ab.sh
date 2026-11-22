@@ -32,9 +32,16 @@
 #                        taxa de aceite e vocabulário (ablacao_geracao_v2)
 #   final3               geração final v3 nos 40 contextos finais (relatorios/contextos_finais_v1): retroalimentação
 #                        sem memória + datasets externos + convertidas em metade das chamadas, todos os blocos como
-#                        foco, cada um visitado até saturar (teto --visitas 8, --paciencia 1), auditor, sustentação,
+#                        foco, cada um visitado até saturar (teto --visitas 10, --paciencia 3), auditor, sustentação,
 #                        deduplicação entre as válidas a cada visita, banco
 #                        (geracao_final_v3/BANCO.md e banco.jsonl); retomável
+#   loops3               loops que completam a geração final v3 na mesma deduplicação: um tipo por loop (conceito,
+#                        mecanismo, consequência, diagnóstico), questões manuais e loop de gestão (1.1 e 8.4);
+#                        --loops escolhe quais, ex.: --loops procedimento,decisao (geracao_final_v3/LOOPS.md)
+#   banco3               banco final v3: um representante por conhecimento, avaliação com e sem contexto (5 modelos),
+#                        revisão de unicidade de todas e substituição do reprovado (--rodadas 3)
+#                        (petroquest_banco_v3/BANCO.md e banco.jsonl)
+#   completo3            final3 -> loops3 -> banco3, em sequência
 #   ablacao3             ablação v3: escada cumulativa (naive, + regras, + documentos, + externos, + retro), sem
 #                        poda; validade, quase-duplicatas, diversidade e dificuldade (ablacao_geracao_v3)
 #   ablacao3retro        ablação v3, só as duas variantes da retroalimentação sem memória (com e sem datasets
@@ -78,6 +85,8 @@ while [[ $# -gt 0 ]]; do
         --onda) comuns+=(--onda "$2"); shift 2 ;;
         --docs-simultaneos) comuns+=(--docs-simultaneos "$2"); shift 2 ;;
         --visitas) comuns+=(--visitas "$2"); shift 2 ;;
+        --loops) comuns+=(--loops "$2"); shift 2 ;;
+        --rodadas) comuns+=(--rodadas "$2"); shift 2 ;;
         *) echo "Opção desconhecida: $1"; exit 1 ;;
     esac
 done
@@ -121,7 +130,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|final3|externos) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|final3|loops3|banco3|completo3|externos) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -201,9 +210,17 @@ if [[ "$etapa" == "ablacao3" ]]; then
     # configuração em 6 ondas, auditoria e sustentação, quase-duplicatas, dificuldade numa amostra; retomável
     rodar "ablação v3: escada cumulativa de módulos" ablacao-v3 --workers 24 || fim_erro ablacao3
 fi
-if [[ "$etapa" == "final3" ]]; then
+if [[ "$etapa" == "final3" || "$etapa" == "completo3" ]]; then
     # 1 chamada do gerador por bloco foco e visita, em ondas (geração, auditoria e sustentação por onda); retomável
     rodar "geração final v3 nos 40 contextos finais" final-v3 --workers 24 || fim_erro final3
+fi
+if [[ "$etapa" == "loops3" || "$etapa" == "completo3" ]]; then
+    # loops em sequência, cada um com a deduplicação deixada pelos anteriores; retomável
+    rodar "geração final v3: loops por tipo, manuais e gestão" final-v3-loops --workers 24 || fim_erro loops3
+fi
+if [[ "$etapa" == "banco3" || "$etapa" == "completo3" ]]; then
+    # respostas e juiz por questão (5 modelos x 2 condições) e uma revisão por questão; retomável e incremental
+    rodar "banco final v3: avaliação e revisão de unicidade de todas as questões" banco-v3 --workers 16 || fim_erro banco3
 fi
 if [[ "$etapa" == "ablacao3retro" ]]; then
     # retroalimentação v2 sem memória do documento, com e sem datasets externos: 960 chamadas cada, em 6 ondas
@@ -234,9 +251,15 @@ if [[ "$etapa" == "limite" ]]; then
 elif [[ "$etapa" == "externos" ]]; then
     echo "  cat pipeline/qa_research/relatorios/avaliacao_externos/QUALIDADE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/avaliacao_externos \"Resultados: juiz nos modelos Llama\""
-elif [[ "$etapa" == "final3" ]]; then
+elif [[ "$etapa" == "final3" || "$etapa" == "loops3" ]]; then
     echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/BANCO.md"
-    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_final_v3 \"Resultados: geração final v3\""
+    echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/LOOPS.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_final_v3 \"Resultados: geração final v3 ($etapa)\""
+elif [[ "$etapa" == "banco3" || "$etapa" == "completo3" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/LOOPS.md"
+    echo "  cat pipeline/qa_research/relatorios/petroquest_banco_v3/BANCO.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_final_v3 \"Resultados: geração final v3 e loops\""
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_banco_v3 \"Resultados: banco final v3\""
 elif [[ "$etapa" == "ablacao3" || "$etapa" == "ablacao3retro" ]]; then
     echo "  cat pipeline/qa_research/relatorios/ablacao_geracao_v3/ABLACAO.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/ablacao_geracao_v3 \"Resultados: ablação v3\""

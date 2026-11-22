@@ -116,13 +116,47 @@ sem memória (`retro_sem_memoria`): regras, janela de 3 blocos, datasets externo
 exemplos julgados de outros documentos (4 boas e 4 ruins fixas, 10 boas totalmente válidas e 8 ruins com o defeito
 por extenso por chamada). As 2 questões convertidas do dataset de múltipla escolha entram em metade das chamadas,
 em xadrez por foco e visita. Todos os blocos são foco e cada um é visitado até saturar: depois de cada visita as
-válidas são deduplicadas, e o foco só volta se a visita trouxe ao menos uma válida nova (`--paciencia 1`, teto
-`--visitas 8`). Cada visita roda em 2 ondas; a sustentação roda a cada onda. Válida = auditor v23 + gabarito de até 20 palavras + totalmente sustentada. A deduplicação calibrada roda
+válidas são deduplicadas, e o foco só volta se a visita trouxe ao menos uma válida nova; ele fecha depois de
+`--paciencia` visitas seguidas sem válida nova (padrão 3, teto `--visitas 10`). A 1ª execução, com paciência 1 e teto
+8, fechou 450 dos 1450 focos já na 1ª visita, embora o rendimento ficasse perto de 0,5 válida única por chamada até a
+8ª visita; retomar com o padrão novo reabre esses focos. Cada visita roda em 2 ondas; a sustentação roda a cada onda. Válida = auditor v23 + gabarito de até 20 palavras + totalmente sustentada. A deduplicação calibrada roda
 só entre as válidas e o banco (`geracao_final_v3/banco.jsonl`, `BANCO.md`) guarda uma por grupo de equivalentes.
 O que é só para retomada (respostas brutas, um arquivo por chamada) fica fora do Git (`.gitignore` na pasta).
 
     bash pipeline/qa_research/rodar_experimento_ab.sh final3            # retomável
     python -m pipeline.qa_research.experimento_ab final-v3 --etapas plano   # só mostra o tamanho
+
+### Loops (`loops_v3.py`)
+
+Gerações dirigidas na mesma pasta e na **mesma deduplicação** da principal (`retro_sem_memoria/dedup_validas`): toda
+válida de um loop é comparada com todas as válidas já aceitas do documento, de qualquer origem, e uma visita só é
+produtiva se trouxe válida nova. Mesmo mecanismo da principal (retroalimentação sem memória, externos, convertidas em
+xadrez, auditor v23, 20 palavras, sustentação).
+
+| Loop | O que muda | Visitas / paciência |
+|---|---|---|
+| `conceito`, `mecanismo`, `consequencia`, `diagnostico` (padrão); `procedimento`, `decisao` (se pedidos) | `prompts/final3_tipo.md` com definição, modo de fazer e defeitos do tipo (`loops_v3.json`); 0 a 3 questões só do tipo (as de outro tipo são descartadas); 4 boas e 4 ruins fixas do tipo (conceito: `exemplos_conceito.json`); sorteadas e convertidas só do tipo | 6 / 2; fecha na visita sem nenhuma questão |
+| `manual` | 23 questões escritas à mão para 1.1 e 8.4 (`gestao_manuais.json`), sem gerador; mesmo auditor, sustentação e deduplicação | 1 |
+| `gestao` | 1.1 e 8.4 com `prompts/final3_gestao.md` (o que tem conteúdo técnico nesses temas, atalhos típicos, teste de apagar do enunciado a falha, o objetivo e a categoria); boas fixas do outro documento (inclusive manuais) e ruins de atalho reais; sorteio com metade dos documentos de gestão vizinhos | 12 / 3 |
+
+    bash pipeline/qa_research/rodar_experimento_ab.sh loops3                                # os do padrão
+    bash pipeline/qa_research/rodar_experimento_ab.sh loops3 --loops procedimento,decisao    # outros
+
+Cada loop grava `loop_<nome>/banco.jsonl`, `banco_resumo.json` e `BANCO.md`; `LOOPS.md` resume o que cada um
+acrescentou.
+
+## Banco final v3 (`banco_v3.py`)
+
+Roda depois de todas as gerações, sobre o banco já deduplicado (avaliação e revisão são pagas por questão; tudo é
+incremental). Cada grupo de equivalentes vira um representante; regras locais (R2 gabarito no enunciado, R3 "por que
+X não basta", R9 enunciado que remete ao texto); avaliação de GPT-4.1 Mini, GPT-4.1, GPT-5 mini, GPT-5 e GPT-5.4
+(referência) com e sem contexto, resposta de até 20 palavras; revisão de **todas** as questões (`prompts/unicidade_v3.md`:
+alternativa válida, gabarito vago, depende do documento, enunciado autocontido, trivial). Quando o representante cai,
+o próximo equivalente do grupo entra na rodada seguinte (até 3 por grupo, `--rodadas 3`). Saída em
+`relatorios/petroquest_banco_v3` (`banco.jsonl`, `poda.jsonl`, `revisoes.jsonl`, `resumo.json`, `BANCO.md`).
+
+    bash pipeline/qa_research/rodar_experimento_ab.sh banco3
+    bash pipeline/qa_research/rodar_experimento_ab.sh completo3     # final3 -> loops3 -> banco3
 
 ## Robustez
 

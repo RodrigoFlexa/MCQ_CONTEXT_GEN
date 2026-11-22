@@ -14,13 +14,17 @@ Diferenças em relação à ablação (que media a escada com 8 focos por docume
   - todos os blocos de cada documento são foco e cada foco é visitado até saturar: depois de cada visita, as
     válidas são deduplicadas e o foco só volta na visita seguinte se a última trouxe ao menos uma válida nova
     (não equivalente a nenhuma anterior do documento); com PACIENCIA visitas seguidas sem nada novo, ele fecha.
-    Teto de MAX_VISITAS visitas. Cada visita roda em 2 ondas (focos pares e ímpares);
-  - a deduplicação calibrada roda só entre as questões válidas, para o banco (a da ablação era medida sobre todas);
+    Teto de MAX_VISITAS visitas. Cada visita roda em 2 ondas (focos pares e ímpares). A 1ª execução usou paciência
+    1 e teto 8: 450 dos 1450 focos fecharam já na 1ª visita, mas o rendimento por chamada ficou perto de 0,5 válida
+    única até a 8ª visita; o padrão passou a paciência 3 e teto 10 (retomar reabre os focos fechados cedo);
+  - a deduplicação calibrada roda só entre as questões válidas, para o banco (a da ablação era medida sobre todas),
+    e é única para a pasta: os loops (loops_v3.py) escrevem na mesma deduplicação, e toda válida é comparada com
+    todas as válidas já aceitas do documento, venham da principal ou de um loop;
   - etapa "banco": uma questão por grupo de equivalentes, só válidas.
 
 Válida = aprovada pelo auditor v23 + gabarito de até 20 palavras + gabarito totalmente sustentado pelos blocos.
 
-python -m pipeline.qa_research.experimento_ab final-v3 [--visitas 8] [--paciencia 1] [--etapas ...]
+python -m pipeline.qa_research.experimento_ab final-v3 [--visitas 10] [--paciencia 3] [--etapas ...]
 """
 from __future__ import annotations
 
@@ -37,8 +41,8 @@ from .variada import bloco_forma
 SAIDA = C.QA / "relatorios" / "geracao_final_v3"
 DOCS_FINAIS = C.QA / "relatorios" / "contextos_finais_v1"
 CONFIG = "retro_sem_memoria"
-MAX_VISITAS = 8
-PACIENCIA = 1
+MAX_VISITAS = 10
+PACIENCIA = 3
 TODOS_OS_BLOCOS = 10 ** 6
 ETAPAS = ("geracao", "sustentacao", "dedup", "banco")
 # O que fica só no servidor (retomada): respostas brutas, caches e um arquivo por chamada. Vai ao GitHub o banco,
@@ -53,14 +57,27 @@ sustentacao/
 """
 
 
+def ler_unidades(pasta: Path) -> list[dict]:
+    """Unidades já geradas de uma configuração (cada arquivo de geração guarda a sua unidade)."""
+    chaves = ("item", "foco", "visita", "onda", "id")
+    out = []
+    for arq in sorted((Path(pasta) / "geracao").glob("*.json")):
+        d = json.loads(arq.read_text(encoding="utf-8"))
+        out.append({k: d[k] for k in chaves})
+    return out
+
+
 class GeracaoFinalV3(AblacaoV3):
+    c = CONFIG                   # configuração (pasta) desta geração; os loops (loops_v3.py) usam loop_<nome>
+    FECHA_SEM_QUESTAO = False    # loops por tipo: visita em que o gerador não propõe nenhuma questão fecha o foco
+
     def __init__(self, saida: Path = SAIDA, *, docs: Path = DOCS_FINAIS, visitas: int = MAX_VISITAS,
                  paciencia: int = PACIENCIA, **kw):
         if not any((p / "documento.json").exists() for p in Path(docs).iterdir() if p.is_dir()) if Path(docs).is_dir() else True:
             raise ValueError(f"Contextos finais ausentes em {C.relativo(Path(docs))}; rode antes "
                              "python -m pipeline.qa_research.refino.finalizar")
         self.paciencia = max(1, int(paciencia))
-        super().__init__(saida, docs=docs, configs=[CONFIG], focos_por_topico=TODOS_OS_BLOCOS, visitas=visitas, **kw)
+        super().__init__(saida, docs=docs, configs=[self.c], focos_por_topico=TODOS_OS_BLOCOS, visitas=visitas, **kw)
         (self.saida / ".gitignore").write_text(GITIGNORE, encoding="utf-8")
 
     def _config(self) -> None:
@@ -74,33 +91,47 @@ class GeracaoFinalV3(AblacaoV3):
                 atomic_json(arq, d)
         super()._config()
 
+    def _cfg(self, c: str) -> dict:
+        """Os loops têm as mesmas flags da retroalimentação sem memória; mudam o prompt, os exemplos e os focos."""
+        return CONFIGS[CONFIG] if c.startswith("loop_") else super()._cfg(c)
+
     # -------------------------------------------------------------- saturação por foco
     @staticmethod
     def _unidade(item: str, foco: int, visita: int) -> dict:
         return {"item": item, "foco": foco, "visita": visita, "onda": (visita - 1) * 2 + foco % 2,
                 "id": f"{item}:{foco:03d}:v{visita}"}
 
-    def _estado(self, u: dict) -> tuple[bool, int]:
-        """(visita concluída para a decisão, válidas novas): tudo gerado, auditado, sustentado e deduplicado."""
-        if not self._arq_ger(CONFIG, u).exists():
-            return False, 0
+    def _arq_dedup(self, item: str, uid: str) -> Path:
+        return self.pasta_dedup() / item / (uid.replace(":", "_") + ".json")
+
+    def pasta_dedup(self) -> Path:
+        """Uma única deduplicação para o banco inteiro (geração principal e loops): toda válida é comparada com todas
+        as válidas já aceitas do mesmo documento, venham de onde vierem."""
+        return self.saida / CONFIG / "dedup_validas"
+
+    def _estado(self, u: dict) -> tuple[bool, int, int]:
+        """(visita concluída para a decisão, válidas novas, questões geradas): tudo gerado, auditado, sustentado e
+        deduplicado."""
+        if not self._arq_ger(self.c, u).exists():
+            return False, 0, 0
         novas = 0
-        for q in self._questoes_unidade(CONFIG, u):
+        qs = self._questoes_unidade(self.c, u)
+        for q in qs:
             a = q.get("auditoria")
             if a is None:
-                return False, 0
+                return False, 0, 0
             if not (a.get("aprovada") and len(str(q["resposta"]).split()) <= TETO_RESPOSTA):
                 continue
             s = self._arq_sust(q["uid"])
             if not s.exists():
-                return False, 0
+                return False, 0, 0
             if json.loads(s.read_text(encoding="utf-8")).get("status") != "totalmente_sustentado":
                 continue
-            d = self.saida / CONFIG / "dedup_validas" / u["item"] / (q["uid"].replace(":", "_") + ".json")
+            d = self._arq_dedup(u["item"], q["uid"])
             if not d.exists():
-                return False, 0
+                return False, 0, 0
             novas += json.loads(d.read_text(encoding="utf-8"))["decisao"] in ("nova", "substitui")
-        return True, novas
+        return True, novas, len(qs)
 
     def _unidades(self) -> list[dict]:
         """Visita 1 de todos os blocos; a visita v+1 só para os focos ainda abertos depois da visita v concluída."""
@@ -113,11 +144,11 @@ class GeracaoFinalV3(AblacaoV3):
                 us = [self._unidade(i, f, v) for f in sorted(abertos)]
                 out += us
                 estados = [self._estado(u) for u in us]
-                if not all(ok for ok, _ in estados):
+                if not all(e[0] for e in estados):
                     break                                            # visita em andamento: decide depois
-                for u, (_, novas) in zip(us, estados):
+                for u, (_, novas, geradas) in zip(us, estados):
                     abertos[u["foco"]] = 0 if novas else abertos[u["foco"]] + 1
-                    if abertos[u["foco"]] >= self.paciencia:
+                    if abertos[u["foco"]] >= self.paciencia or (self.FECHA_SEM_QUESTAO and not geradas):
                         self.fechados[(i, u["foco"])] = v
                         del abertos[u["foco"]]
         return out
@@ -131,13 +162,13 @@ class GeracaoFinalV3(AblacaoV3):
                 break
             for w in range((v - 1) * ONDAS_POR_VISITA, v * ONDAS_POR_VISITA):
                 us = [u for u in self.unidades if u["onda"] == w]
-                julg = self._julgadas(CONFIG, w)
-                falhas += self._paralelo([u for u in us if not self._arq_ger(CONFIG, u).exists()],
-                                         lambda u: self._gerar(CONFIG, u, julg), f"onda {w + 1}: geração")
-                tarefas = [(CONFIG, u, q) for u in us for q in self._questoes_unidade(CONFIG, u) if q["auditoria"] is None]
+                julg = self._julgadas(self.c, w)
+                falhas += self._paralelo([u for u in us if not self._arq_ger(self.c, u).exists()],
+                                         lambda u: self._gerar(self.c, u, julg), f"onda {w + 1}: geração")
+                tarefas = [(self.c, u, q) for u in us for q in self._questoes_unidade(self.c, u) if q["auditoria"] is None]
                 falhas += self._paralelo(tarefas, lambda x: self._auditar(*x), f"onda {w + 1}: auditoria")
                 if not falhas:
-                    qs = [q for q in self.finais(CONFIG, us) if q["aprovada_auditor"] and q["resposta_curta"]
+                    qs = [q for q in self.finais(self.c, us) if q["aprovada_auditor"] and q["resposta_curta"]
                           and not self._arq_sust(q["uid"]).exists()]
                     falhas += self._paralelo(qs, self._sustentar_um, f"onda {w + 1}: sustentação")
                 if falhas:
@@ -148,7 +179,7 @@ class GeracaoFinalV3(AblacaoV3):
             antes = len(self.unidades)
             self.unidades = self._unidades()
             abertos = sum(u["visita"] == v + 1 for u in self.unidades)
-            self.progress(f"[final v3] visita {v} concluída; {abertos} focos seguem para a visita {v + 1} "
+            self.progress(f"[{self.c}] visita {v} concluída; {abertos} focos seguem para a visita {v + 1} "
                           f"({len(self.unidades) - antes} chamadas novas)", flush=True)
         return falhas
 
@@ -188,48 +219,86 @@ class GeracaoFinalV3(AblacaoV3):
         rng.shuffle(ex)
         return bloco_forma(ex)
 
-    # -------------------------------------------------------------- deduplicação só entre as válidas
-    def _dedup(self, c: str):
+    # -------------------------------------------------------------- deduplicação só entre as válidas, banco inteiro
+    def _dedup(self, c: str = CONFIG):
         from .dedup import DedupIncremental
         from .geracao import _Preguicoso
-        return DedupIncremental(self.saida / c / "dedup_validas", self.embedder, self.media, self.cal["limiar_auto"],
+        return DedupIncremental(self.pasta_dedup(), self.embedder, self.media, self.cal["limiar_auto"],
                                 self.cal["limiar_juiz"], _Preguicoso(lambda: self.cliente("dedup_juiz")),
                                 progress=self.progress)
 
-    def deduplicar(self) -> int:
-        falhas = 0
-        for c in self.configs:
-            dd = self._dedup(c)
-            por_item = defaultdict(list)
-            for q in sorted(self.finais(c), key=lambda q: (q["onda"], q["foco"], q["k"])):
+    def configs_em_disco(self) -> list[str]:
+        """A geração principal e os loops que já têm questões nesta pasta, na ordem de prioridade do banco."""
+        loops = sorted(p.name for p in self.saida.glob("loop_*") if (p / "geracao").is_dir())
+        return [c for c in dict.fromkeys([CONFIG, *loops, self.c]) if c == self.c or (self.saida / c / "geracao").is_dir()]
+
+    def unidades_em_disco(self, c: str) -> list[dict]:
+        """Unidades de outra configuração, lidas dos arquivos de geração (cada um guarda a sua unidade)."""
+        if c == self.c and hasattr(self, "unidades"):
+            return self.unidades
+        return [u for u in ler_unidades(self.saida / c) if u["item"] in self.todos]
+
+    def validas_banco(self) -> list[dict]:
+        """Todas as válidas da pasta (geração principal e loops), na ordem em que entram na deduplicação."""
+        out = []
+        for ordem, c in enumerate(self.configs_em_disco()):
+            for q in self.finais(c, self.unidades_em_disco(c)):
                 if q["valida"]:
-                    por_item[q["item"]].append({**q, "conhecimento": q.get("conhecimento") or q["pergunta"],
-                                                "explicacao": q.get("explicacao") or ""})
-            for item, lst in sorted(por_item.items()):
+                    out.append({**q, "ordem_config": ordem})
+        out.sort(key=lambda q: (q["ordem_config"], q["onda"], q["foco"], q["k"]))
+        return out
+
+    def deduplicar(self) -> int:
+        """As válidas desta geração contra todas as válidas já aceitas do documento, inclusive as dos loops."""
+        falhas = 0
+        dd = self._dedup()
+        por_item = defaultdict(list)
+        for q in self.validas_banco():
+            por_item[q["item"]].append({**q, "conhecimento": q.get("conhecimento") or q["pergunta"],
+                                        "explicacao": q.get("explicacao") or ""})
+        for item, lst in sorted(por_item.items()):
+            if item in self.itens:
                 falhas += dd.processar(item, lst, falha=self._falha, ok=self._ok)
         return falhas
 
+    def redundantes(self, c: str = CONFIG) -> dict:
+        dd = self._dedup()
+        out = {}
+        for item in self.itens:
+            out.update(dd.redundantes(item))
+        return out
+
     # -------------------------------------------------------------- banco
+    PREFIXO = "PQ3"
+
+    def pasta_banco(self) -> Path:
+        return self.saida
+
+    @staticmethod
+    def markdown(res: dict) -> str:
+        return markdown(res)
+
     def banco(self) -> dict:
-        qs = self.finais(CONFIG)
-        red = self.redundantes(CONFIG) if (self.saida / CONFIG / "dedup_validas").exists() else {}
+        qs = self.finais(self.c)
+        destino = self.pasta_banco()
+        red = self.redundantes() if self.pasta_dedup().exists() else {}
         validas = [q for q in qs if q["valida"]]
         unicas = [q for q in validas if q["uid"] not in red]
         unicas.sort(key=lambda q: (q["item"], q["foco"], q["visita"], q["k"]))
         linhas = []
         for n, q in enumerate(unicas, 1):
-            linhas.append({"id": f"PQ3-{n:05d}", "uid": q["uid"], "item": q["item"], "tema": self.temas[q["item"]]["tema"],
+            linhas.append({"id": f"{self.PREFIXO}-{n:05d}", "uid": q["uid"], "item": q["item"], "tema": self.temas[q["item"]]["tema"],
                            "area": self.temas[q["item"]]["area"], "tipo": q["tipo"], "pergunta": q["pergunta"],
                            "resposta": q["resposta"], "explicacao": q["explicacao"], "conhecimento": q["conhecimento"],
                            "resposta_padrao": q["resposta_padrao"], "foco": q["foco"], "visita": q["visita"],
                            "com_convertidas": self.com_convertidas({"foco": q["foco"], "visita": q["visita"]}),
                            "blocos_contexto": [{k: b[k] for k in ("id", "item", "indice_documento")}
                                                for b in q["blocos_contexto"]]})
-        C.gravar_jsonl(self.saida / "banco.jsonl", linhas)
-        C.gravar_jsonl(self.saida / f"questoes_{CONFIG}.jsonl",
+        C.gravar_jsonl(destino / "banco.jsonl", linhas)
+        C.gravar_jsonl(destino / f"questoes_{self.c}.jsonl",
                        [{**{k: v for k, v in q.items() if k not in ("blocos_contexto", "fonte_texto")},
                          "blocos": [b["indice_documento"] for b in q["blocos_contexto"]]} for q in qs])
-        chamadas = sum(1 for u in self.unidades if self._arq_ger(CONFIG, u).exists())
+        chamadas = sum(1 for u in self.unidades if self._arq_ger(self.c, u).exists())
         motivos = Counter(f for q in qs for f in q["auditoria"].get("falhas", []))
         sust = Counter(q["sustentacao"] for q in qs if q["aprovada_auditor"] and q["resposta_curta"])
         por_item = {i: {"blocos": len(self.docs[i]), "geradas": sum(q["item"] == i for q in qs),
@@ -250,8 +319,8 @@ class GeracaoFinalV3(AblacaoV3):
                "tipos_unicas": dict(Counter(q["tipo"] or "?" for q in unicas).most_common()),
                "motivos_auditor": dict(motivos.most_common()), "sustentacao": dict(sust.most_common()),
                "por_documento": por_item}
-        atomic_json(self.saida / "banco_resumo.json", res)
-        (self.saida / "BANCO.md").write_text(markdown(res), encoding="utf-8")
+        atomic_json(destino / "banco_resumo.json", res)
+        (destino / "BANCO.md").write_text(self.markdown(res), encoding="utf-8")
         return res
 
     def executar(self, etapas=ETAPAS, **_) -> int:
@@ -264,13 +333,13 @@ class GeracaoFinalV3(AblacaoV3):
         if "dedup" in etapas and not falhas:
             falhas += self.deduplicar()
         if falhas:
-            self.progress(f"[final v3] {falhas} unidades com falha (em {C.relativo(self.saida / 'falhas')}); repita o "
+            self.progress(f"[{self.c}] {falhas} unidades com falha (em {C.relativo(self.saida / 'falhas')}); repita o "
                           "mesmo comando", flush=True)
             return 2
         if "banco" in etapas:
             r = self.banco()
-            self.progress(f"[final v3] {r['geradas']} geradas, {r['validas']} válidas, {r['unicas']} únicas "
-                          f"({C.relativo(self.saida / 'BANCO.md')})", flush=True)
+            self.progress(f"[{self.c}] {r['geradas']} geradas, {r['validas']} válidas, {r['unicas']} únicas "
+                          f"({C.relativo(self.pasta_banco() / 'BANCO.md')})", flush=True)
         return 0
 
 

@@ -238,6 +238,8 @@ class Busca:
 
 # ------------------------------------------------------------------ estudo
 class AblacaoV3:
+    EXTRA_CONFIGS: dict = {}     # configurações de subclasses (loops da geração final v3), fora da escada
+
     def __init__(self, saida: Path = SAIDA, *, exp: Path = C.EXPERIMENTO, docs: Path = DOCS, configs=None,
                  itens=None, focos_por_topico: int = FOCOS_POR_TOPICO, visitas: int = VISITAS,
                  externos: Path | None = None, convertidas: Path = CONVERTIDAS, workers: int = 8,
@@ -245,8 +247,8 @@ class AblacaoV3:
         self.saida, self.docs_dir = Path(saida), Path(docs)
         self.workers, self.progress = max(1, int(workers)), progress
         self.configs = list(configs or BASE)
-        if any(c not in CONFIGS for c in self.configs):
-            raise ValueError(f"configurações válidas: {', '.join(CONFIGS)}")
+        if any(c not in CONFIGS and c not in self.EXTRA_CONFIGS for c in self.configs):
+            raise ValueError(f"configurações válidas: {', '.join([*CONFIGS, *self.EXTRA_CONFIGS])}")
         cal_arq = Path(exp) / "calibracao" / "calibracao.json"
         if not cal_arq.exists():
             raise ValueError(f"Falta a calibração da deduplicação ({C.relativo(cal_arq)})")
@@ -269,6 +271,10 @@ class AblacaoV3:
         self._areas: dict = {}
         self.saida.mkdir(parents=True, exist_ok=True)
         self._config()
+
+    def _cfg(self, c: str) -> dict:
+        """Flags da configuração: as da escada e das variantes, ou as acrescentadas por uma subclasse (loops)."""
+        return CONFIGS[c] if c in CONFIGS else self.EXTRA_CONFIGS[c]
 
     def _unidades(self) -> list[dict]:
         """(documento, foco, visita, onda): focos espaçados no documento; a onda alterna a metade dos focos."""
@@ -392,7 +398,7 @@ class AblacaoV3:
 
     def _contexto(self, c: str, u: dict, q: dict) -> list[dict]:
         """Blocos com que a questão é auditada e sustentada: a janela da geração ou, sem documento, a busca no corpus."""
-        if CONFIGS[c]["documento"]:
+        if self._cfg(c)["documento"]:
             jan, _ = self._janela(u)
             return [{"id": r, "item": u["item"], "texto": b["texto"], "titulo": f"{b['titulo_capitulo']} / {b['subtitulo']}",
                      "indice_documento": b["indice"]} for r, b in jan]
@@ -457,7 +463,7 @@ class AblacaoV3:
                                          f"nos blocos para {sem} de {s.get('afirmacoes')} afirmações do gabarito.")
 
     def _julgadas(self, c: str, ate_onda: int) -> list[dict]:
-        v2 = bool(CONFIGS[c].get("exemplos"))
+        v2 = bool(self._cfg(c).get("exemplos"))
         out = []
         for u in self.unidades:
             if u["onda"] < ate_onda:
@@ -478,10 +484,10 @@ class AblacaoV3:
         return boas[:FIXAS[0]], ruins[:FIXAS[1]], resto_b, ruins[FIXAS[1]:]
 
     def sistema(self, c: str, item: str) -> str:
-        s = sistema_base(CONFIGS[c])
-        if CONFIGS[c].get("exemplos"):
+        s = sistema_base(self._cfg(c))
+        if self._cfg(c).get("exemplos"):
             s += "\n\n" + C.prompt("abl3_retro_v2")
-        if com_retro(CONFIGS[c]):
+        if com_retro(self._cfg(c)):
             fb, fr, _, _ = self._semente(item)
             s += "\n\n" + bloco_fixas(fb, fr)
         return s
@@ -557,7 +563,7 @@ class AblacaoV3:
         return bloco_forma(ex)
 
     def usuario(self, c: str, u: dict, julgadas: list[dict] | None = None) -> str:
-        cfg = CONFIGS[c]
+        cfg = self._cfg(c)
         partes = [self._tema(u["item"])]
         if com_retro(cfg):
             julgadas = julgadas if julgadas is not None else self._julgadas(c, u["onda"])
@@ -574,7 +580,7 @@ class AblacaoV3:
         arq, nome = self._arq_ger(c, u), f"geracao_{c}_{u['item']}_{u['foco']:03d}_v{u['visita']}"
         if arq.exists():
             return True
-        cfg = CONFIGS[c]
+        cfg = self._cfg(c)
         chaves = CHAVES_REGRAS if cfg["regras"] else CHAVES_NAIVE
         try:
             d = self.cliente("geracao").json(self.sistema(c, u["item"]), self.usuario(c, u, julgadas), tag=f"abl3_{c}",
@@ -594,7 +600,7 @@ class AblacaoV3:
             return True
         nome = f"auditoria_{_nome_arq(q['uid'])}"
         ctx = self._contexto(c, u, q)
-        tipo = q.get("tipo") if CONFIGS[c]["regras"] and q.get("tipo") in TIPOS else "nao_declarado"
+        tipo = q.get("tipo") if self._cfg(c)["regras"] and q.get("tipo") in TIPOS else "nao_declarado"
         user = json.dumps({"tipo_declarado": tipo, "pergunta": q["pergunta"], "resposta_referencia": q["resposta"],
                            "explicacao_do_autor": q.get("explicacao") or "(não informada)",
                            "blocos": self._blocos_txt(ctx)}, ensure_ascii=False)
@@ -616,19 +622,19 @@ class AblacaoV3:
         falhas = 0
         for w in range(self.visitas * ONDAS_POR_VISITA):
             us = [u for u in self.unidades if u["onda"] == w]
-            julg = {c: self._julgadas(c, w) for c in self.configs if com_retro(CONFIGS[c])}
+            julg = {c: self._julgadas(c, w) for c in self.configs if com_retro(self._cfg(c))}
             falhas += self._paralelo([(c, u) for c in self.configs for u in us if not self._arq_ger(c, u).exists()],
                                      lambda x: self._gerar(x[0], x[1], julg.get(x[0])), f"onda {w + 1}: geração")
             tarefas = [(c, u, q) for c in self.configs for u in us for q in self._questoes_unidade(c, u)
                        if q["auditoria"] is None]
             falhas += self._paralelo(tarefas, lambda x: self._auditar(*x), f"onda {w + 1}: auditoria")
             # retroalimentação v2: só é boa a questão totalmente válida, então a sustentação entra a cada onda
-            v2 = [c for c in self.configs if CONFIGS[c].get("exemplos")]
+            v2 = [c for c in self.configs if self._cfg(c).get("exemplos")]
             if v2 and not falhas:
                 qs = [q for c in v2 for q in self.finais(c, us) if q["aprovada_auditor"] and q["resposta_curta"]
                       and not self._arq_sust(q["uid"]).exists()]
                 falhas += self._paralelo(qs, self._sustentar_um, f"onda {w + 1}: sustentação")
-            if falhas and any(com_retro(CONFIGS[c]) for c in self.configs):
+            if falhas and any(com_retro(self._cfg(c)) for c in self.configs):
                 return falhas         # a próxima onda depende desta estar completa
         return falhas
 
@@ -646,10 +652,11 @@ class AblacaoV3:
                 ctx = a.get("contexto", [])
                 out.append({"uid": q["uid"], "config": c, "item": u["item"], "foco": u["foco"], "visita": u["visita"],
                             "onda": u["onda"] + 1, "k": q["k"],
-                            "tipo": q.get("tipo") if CONFIGS[c]["regras"] else a.get("tipo_sugerido"),
+                            "tipo": q.get("tipo") if self._cfg(c)["regras"] else a.get("tipo_sugerido"),
                             "pergunta": q["pergunta"], "resposta": q["resposta"], "explicacao": q.get("explicacao"),
                             "conhecimento": q.get("conhecimento"), "resposta_padrao": q.get("resposta_padrao"),
-                            "formato_ok": formato_ok(q, CONFIGS[c]), "auditoria": {k: v for k, v in a.items() if k != "contexto"},
+                            "por_que_nao": q.get("por_que_nao"), "cenario": q.get("cenario"),
+                            "formato_ok": formato_ok(q, self._cfg(c)), "auditoria": {k: v for k, v in a.items() if k != "contexto"},
                             "aprovada_auditor": aprov, "valida_intrinseca": intr and curta, "resposta_curta": curta,
                             "sustentacao": s, "valida": aprov and curta and s == "totalmente_sustentado",
                             "blocos_contexto": [{"id": b["id"], "texto": b["texto"], "indice_documento": b["indice_documento"],
@@ -820,12 +827,12 @@ class AblacaoV3:
                  "motivos_auditor": dict(Counter(f for q in qs for f in q["auditoria"].get("falhas", []))),
                  "tipos": dict(Counter(q["tipo"] or "?" for q in qs)),
                  "tipo_confere": _pct(sum(bool(q["auditoria"].get("tipo_confere")) for q in qs if q["aprovada_auditor"]),
-                                      sum(q["aprovada_auditor"] for q in qs)) if CONFIGS[c]["regras"] else None,
+                                      sum(q["aprovada_auditor"] for q in qs)) if self._cfg(c)["regras"] else None,
                  "quase_duplicatas": _pct(sum(q["uid"] in red for q in qs), n),
                  "validas_unicas": sum(q["uid"] not in red for q in val),
                  "cobertura_focos_validos": _pct(len({(q["item"], q["foco"]) for q in val}),
                                                  len({(u["item"], u["foco"]) for u in self.unidades}))
-                 if CONFIGS[c]["documento"] else None,
+                 if self._cfg(c)["documento"] else None,
                  "palavras_pergunta": float(np.mean([len(q["pergunta"].split()) for q in qs])) if qs else None,
                  "palavras_resposta": float(np.mean([len(q["resposta"].split()) for q in qs])) if qs else None,
                  "vocabulario_geradas": vocabulario(qs, m_ger, df, len(self.todos), emb) if qs else {},
@@ -971,6 +978,6 @@ def exemplos_prompts(ab: AblacaoV3, pasta: Path | None = None) -> Path:
     for c in ab.configs:
         (pasta / f"{c}_sistema.md").write_text(ab.sistema(c, u["item"]) + "\n", encoding="utf-8")
         (pasta / f"{c}_usuario_onda1.md").write_text(ab.usuario(c, u, []) + "\n", encoding="utf-8")
-        if com_retro(CONFIGS[c]):
+        if com_retro(ab._cfg(c)):
             (pasta / f"{c}_usuario_visita2.md").write_text(ab.usuario(c, u2) + "\n", encoding="utf-8")
     return pasta

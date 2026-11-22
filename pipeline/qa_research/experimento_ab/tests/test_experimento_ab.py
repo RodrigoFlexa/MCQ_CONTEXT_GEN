@@ -1938,14 +1938,14 @@ class FinalV3Tests(unittest.TestCase):
                 return super().json(system, user, tag=tag, **kw)
         from pipeline.qa_research.experimento_ab.final_v3 import CONFIG
         f = SoRuinsDepois()
-        g = self.g(f, visitas=5)
+        g = self.g(f, visitas=5, paciencia=1)
         blocos_ = sum(len(v) for v in g.docs.values())
         self.assertEqual(g.executar(), 0)
         self.assertEqual(f.chamadas[f"abl3_{CONFIG}"], 2 * blocos_)       # visita 2 sem novidade: nenhuma visita 3
         self.assertEqual(set(g.fechados.values()), {2})
         self.assertEqual(read_json(self.exp / "final3" / "banco_resumo.json")["focos_fechados_na_visita"], {"2": blocos_})
         antes = sum(f.chamadas.values())
-        self.assertEqual(self.g(f, visitas=5).executar(), 0)
+        self.assertEqual(self.g(f, visitas=5, paciencia=1).executar(), 0)
         self.assertEqual(sum(f.chamadas.values()), antes)
 
     def test_teto_de_visitas_muda_e_a_pasta_e_reaproveitada(self):
@@ -1955,6 +1955,259 @@ class FinalV3Tests(unittest.TestCase):
         n1 = f.chamadas[f"abl3_{CONFIG}"]
         self.assertEqual(self.g(f, visitas=2).executar(), 0)              # sem "configuração diferente"
         self.assertEqual(f.chamadas[f"abl3_{CONFIG}"], 2 * n1)             # a visita 1 não é refeita
+
+
+class MesmoCaso(Juiz):
+    """Deduplicação: redundante só quando as duas perguntas falam do mesmo "caso <id> número <k>"."""
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        self.chamadas += 1
+        d = json.loads(user)
+        chave = lambda t: re.search(r"caso (\S+) número (\d)", t).groups() if re.search(r"caso (\S+) número (\d)", t) else None  # noqa: E731
+        alvo = next((e for e in d["existentes"] if chave(d["nova"]["pergunta"]) and
+                     chave(e["pergunta"]) == chave(d["nova"]["pergunta"])), None)
+        r = ({"redundante": True, "com": alvo["id"], "manter": "existente", "motivo": "mesmo caso"} if alvo else
+             {"redundante": False, "com": None, "manter": None, "motivo": "outro conhecimento"})
+        if validate:
+            validate(r)
+        return r
+
+
+class FalsoLoop(FalsoV3):
+    """Gerador dos loops (tag final3_loop_<nome>): uma questão do tipo do loop e uma de outro tipo (descartada); no
+    foco 0 da visita 1, outra forma de uma questão da principal (equivalente na deduplicação); no foco 1 da visita 1,
+    uma questão que remete ao texto; focos >= 3 não sustentam o tipo (nenhuma questão)."""
+    def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+        if not tag.startswith("final3_loop_"):
+            return super().json(system, user, tag=tag, max_tokens=max_tokens, validate=validate, item=item)
+        self.chamadas[tag] += 1
+        self.usuarios[tag].append(user)
+        self.sistemas[tag].append(system)
+        nome = tag[len("final3_loop_"):]
+        tipo = nome if nome in ("conceito", "mecanismo", "consequencia", "diagnostico", "procedimento", "decisao") \
+            else "conceito"
+        pid = re.search(r"Pedido: (\S+)", user).group(1)
+        item, foco, v = re.match(r"(\S+?):(\d+):v(\d+)", pid).groups()
+        base = dict(cenario=False, explicacao="e", resposta_padrao="p", por_que_nao="q",
+                    fundamentos=[{"bloco": "F", "trecho": "x"}])
+        if int(foco) >= 3:
+            d = {"questoes": [], "motivo": "o bloco não sustenta o tipo"}
+        else:
+            qs = [{**base, "tipo": tipo, "conhecimento": f"loop {pid}", "pergunta": f"Qual {tipo} do loop no {pid}?",
+                   "resposta": f"Loop {pid}."},
+                  {**base, "tipo": "decisao" if tipo != "decisao" else "conceito", "conhecimento": "fora",
+                   "pergunta": f"Que decisão fora do tipo no {pid}?", "resposta": "Fora."}]
+            if foco == "000" and v == "1":
+                qs.append({**base, "tipo": tipo, "conhecimento": "dup", "resposta": "Mecanismo 1.",
+                           "pergunta": f"Qual elo explica, de outro modo, o caso {item}:000:v1 número 1?"})
+            if foco == "001" and v == "1":
+                qs.append({**base, "tipo": tipo, "conhecimento": "dep", "resposta": "Dependente.",
+                           "pergunta": f"Segundo o procedimento descrito, o que vale no {pid}?"})
+            d = {"questoes": qs, "motivo": ""}
+        if validate:
+            validate(d)
+        return d
+
+
+class LoopsV3Tests(unittest.TestCase):
+    """Loops da geração final v3: mesma pasta, mesma deduplicação, prompts e exemplos por tipo, gestão e manuais."""
+    def setUp(self):
+        RetroV2Tests.setUp(self)
+        self.f = FalsoLoop()
+        self.juiz = MesmoCaso()
+        self.cl = {"geracao": self.f, "auditoria": self.f, "sustentacao": self.f, "dedup_juiz": self.juiz}
+        self.kw = dict(exp=self.exp, docs=self.exp / "docs" / "antigo", externos=self.ext, convertidas=self.conv,
+                       clientes=self.cl, embedder=Emb(), workers=4, **SILENCIO)
+        from pipeline.qa_research.experimento_ab.final_v3 import GeracaoFinalV3
+        self.saida = self.exp / "final3"
+        self.principal = lambda **k: GeracaoFinalV3(self.saida, itens=[ITEM, "07_01"], visitas=1, **{**self.kw, **k})
+        self.assertEqual(self.principal().executar(), 0)
+
+    def loop(self, nome, **k):
+        from pipeline.qa_research.experimento_ab.loops_v3 import LoopFinalV3
+        return LoopFinalV3(nome, self.saida, **{"itens": [ITEM, "07_01"], "visitas": 3, "paciencia": 1, **self.kw, **k})
+
+    def test_loop_por_tipo_no_banco_unico(self):
+        from pipeline.qa_research.experimento_ab.final_v3 import CONFIG
+        g = self.loop("mecanismo")
+        self.assertEqual(g.executar(), 0)
+        tag = "final3_loop_mecanismo"
+        sis = dict(zip([re.search(r"Pedido: (\S+?):", u).group(1) for u in self.f.usuarios[tag]], self.f.sistemas[tag]))
+        self.assertIn("# O tipo `mecanismo`", sis[ITEM])
+        self.assertNotIn("<<", sis[ITEM])
+        self.assertNotIn("Vórtice na boca de sucção", sis[ITEM])          # boa fixa de 03_03 não entra em 03_03
+        self.assertIn("Vórtice na boca de sucção", sis["07_01"])
+        self.assertIn("Frente úmida", sis[ITEM])
+        # visita 1 em todos os focos; os que não sustentam o tipo fecham na visita 1; os demais vão até o teto
+        blocos_ = {i: len(v) for i, v in g.docs.items()}
+        self.assertEqual(self.f.chamadas[tag], sum(blocos_.values()) + 2 * 3 * len(blocos_))
+        self.assertEqual({v for (i, f), v in g.fechados.items() if f >= 3}, {1})
+        ger = read_json(self.saida / "loop_mecanismo" / "geracao" / f"{ITEM}_000_v1.json")
+        self.assertEqual(ger["descartadas_tipo"], 1)
+        self.assertTrue(all(q["tipo"] == "mecanismo" for q in ger["questoes"]))
+        # deduplicação única: a outra forma da questão da principal é redundante com ela
+        red = g.redundantes()
+        self.assertEqual(red[f"loop_mecanismo:{ITEM}:000:v1:2"], f"{CONFIG}:{ITEM}:000:v1:1")
+        r = read_json(self.saida / "loop_mecanismo" / "banco_resumo.json")
+        self.assertEqual(r["unicas"], r["validas"] - 2)                    # uma por documento é a redundante
+        antes = sum(self.f.chamadas.values())
+        self.assertEqual(self.loop("mecanismo").executar(), 0)              # retomada: nada é refeito
+        self.assertEqual(self.principal().executar(), 0)                    # a principal vê os loops e não refaz nada
+        self.assertEqual(sum(self.f.chamadas.values()), antes)
+        # exemplos sorteados de outro tipo não entram num loop de conceito
+        self.assertEqual(self.loop("conceito", visitas=1).executar(), 0)
+        u = self.f.usuarios["final3_loop_conceito"][0]
+        boas = u.split("<boas_ja_avaliadas>")[1].split("</boas_ja_avaliadas>")[0]
+        self.assertNotIn("[mecanismo]", boas)
+        self.assertIn("[conceito]", boas)                                   # reservas do exemplos_conceito.json
+
+    def test_manuais_e_gestao(self):
+        from pipeline.qa_research.experimento_ab.loops_v3 import executar_loops
+        man = self.tmp / "manuais.json"
+        q = {"tipo": "conceito", "cenario": False, "conhecimento": "c", "explicacao": "e", "resposta_padrao": "p",
+             "por_que_nao": "q", "fundamentos": [{"bloco": "F", "trecho": "x"}]}
+        man.write_text(json.dumps({"schema": "gestao-manuais-v1", "questoes": [
+            {**q, "item": ITEM, "foco": 0, "pergunta": "Como se chama o termo manual zero?", "resposta": "Termo zero."},
+            {**q, "item": ITEM, "foco": 0, "pergunta": "Como se chama o termo manual um?", "resposta": "Termo um."},
+            {**q, "item": ITEM, "foco": 2, "pergunta": "Como se chama o termo manual dois?", "resposta": "Termo dois."}]},
+            ensure_ascii=False), encoding="utf-8")
+        st = executar_loops(("manual", "gestao"), saida=self.saida, visitas=2, paciencia=1, itens=[ITEM], manuais=man,
+                            **self.kw)
+        self.assertEqual(st, 0)
+        self.assertEqual(self.f.chamadas["final3_loop_manual"], 0)          # sem gerador
+        rm = read_json(self.saida / "loop_manual" / "banco_resumo.json")
+        self.assertEqual((rm["geradas"], rm["validas"], rm["unicas"]), (3, 3, 3))
+        s = self.f.sistemas["final3_loop_gestao"][0]
+        self.assertIn("Atalhos típicos destes temas", s)
+        self.assertIn("Bump test", s)                                      # boas fixas de 1.1 e 8.4
+        self.assertNotIn("termo manual", s)                                 # manuais do mesmo documento não entram
+        self.assertIn("loop_gestao", (self.saida / "LOOPS.md").read_text())
+
+
+class BancoV3Tests(unittest.TestCase):
+    """Banco final v3: representantes por grupo, regras locais, revisão de todas e substituição do reprovado."""
+    def setUp(self):
+        LoopsV3Tests.setUp(self)
+        self.assertEqual(LoopsV3Tests.loop(self, "mecanismo", visitas=1).executar(), 0)
+
+    def pares(self, b):
+        rows = C.linhas(b.saida / "dataset.jsonl")
+        with (b.saida / "pares.csv").open("w", newline="", encoding="utf-8-sig") as fh:
+            w = csv.DictWriter(fh, fieldnames=["uid", "modelo", "pergunta", "resposta_closed_book", "veredito_closed_book",
+                                               "resposta_open_book", "veredito_open_book"])
+            w.writeheader()
+            for q in rows:
+                for m in ("gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5", "gpt-5-4"):
+                    w.writerow(dict(uid=q["uid"], modelo=m, pergunta=q["pergunta"], resposta_closed_book=f"resp {m}",
+                                    veredito_closed_book="incorreta" if m == "gpt-5" else "correta",
+                                    resposta_open_book=q["resposta"], veredito_open_book="correta"))
+
+    def test_revisao_de_todas_e_substituicao(self):
+        from pipeline.qa_research.experimento_ab.banco_v3 import BancoV3, Leitor
+        from pipeline.qa_research.experimento_ab.final_v3 import CONFIG
+        dup = f"Qual elo explica, de outro modo, o caso {ITEM}:000:v1 número 1?"
+
+        class Revisor:
+            def __init__(self):
+                self.vistos = []
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                d = json.loads(user)
+                self.vistos.append(d["pergunta"])
+                r = {"respostas": [{"id": x["id"], "avaliacao": "equivalente"} for x in d["respostas"]],
+                     "gabarito_especifico": d["pergunta"] != dup, "gabarito_unico": True,
+                     "depende_documento": False, "enunciado_autocontido": True, "trivial": False,
+                     "justificativa": "j"}
+                if validate:
+                    validate(r)
+                return r
+
+        rev = Revisor()
+        lt = Leitor(self.saida, **{k: v for k, v in self.kw.items() if k != "workers"})
+        b = BancoV3(self.saida, self.tmp / "banco3", leitor=lt, cliente_unicidade=rev, exp=self.exp, workers=2,
+                    **SILENCIO)
+        m1 = b.montar()
+        ds = C.linhas(b.saida / "dataset.jsonl")
+        poda = {p["uid"]: p for p in C.linhas(b.saida / "poda.jsonl")}
+        self.assertTrue(any(p["regra"] == "R9" for p in poda.values()))    # "Segundo o procedimento descrito"
+        self.assertEqual(poda[f"{CONFIG}:{ITEM}:000:v1:1"]["regra"], "R2")  # o gabarito está no enunciado
+        self.assertEqual(m1["grupos"], m1["representantes"] + m1["grupos_esgotados"])
+        sub = next(q for q in ds if q["pergunta"] == dup)                    # o equivalente entra no lugar
+        self.assertEqual((sub["grupo"], sub["tentativa"], sub["tamanho_grupo"]),
+                         (f"{CONFIG}:{ITEM}:000:v1:1", 2, 2))
+        self.pares(b)
+        self.assertEqual(b.unicidade(), 0)
+        self.assertEqual(len(rev.vistos), len(ds))                         # todas as questões são revisadas
+        m2 = b.montar()                                                     # reprovado e sem outro equivalente
+        self.assertEqual(m2["grupos_esgotados"], m1["grupos_esgotados"] + 1)
+        self.assertEqual(b.unicidade(), 0)
+        self.assertEqual(len(rev.vistos), len(ds))                         # nada novo a revisar
+        res = b.banco()
+        banco = C.linhas(b.saida / "banco.jsonl")
+        self.assertEqual(res["n"], len(ds) - 1)
+        self.assertFalse(res["provisorio"])
+        self.assertEqual(res["poda"]["R6"], 1)
+        self.assertTrue(all(x["dificuldade"]["sem_contexto"]["gpt-5"] == "correta" for x in banco))   # corrigido
+        self.assertTrue(all(x["dificuldade"]["veredito_corrigido"]["closed_book"] == ["gpt-5"] for x in banco))
+        self.assertTrue(all(x["id"].startswith("PQ3B-") for x in banco))
+        self.assertIn("Banco PetroQuest v3", (b.saida / "BANCO.md").read_text())
+
+    def test_executar_com_avaliacao_real_dos_modelos(self):
+        """Motor de avaliação real (respostas curtas e juiz por lote), modelos e revisor simulados."""
+        from pipeline.qa_research.experimento_ab.banco_v3 import BancoV3, Leitor
+        from pipeline.qa_research.experimento_ab.completo import MODELOS
+        from pipeline.qa_research.tests.test_especialista_finalizacao import Juiz as JuizResp
+
+        class Resp:
+            def __init__(self):
+                self.chamadas = 0
+
+            def json(self, system, user, validate=None, **kw):
+                self.chamadas += 1
+                d = {"resposta": "Resposta curta."}
+                if validate:
+                    validate(d)
+                return d
+
+        class Revisor:
+            def __init__(self):
+                self.chamadas = 0
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                self.chamadas += 1
+                d = json.loads(user)
+                r = {"respostas": [{"id": x["id"], "avaliacao": "incorreta"} for x in d["respostas"]],
+                     "gabarito_especifico": True, "gabarito_unico": True, "depende_documento": False,
+                     "enunciado_autocontido": True, "trivial": False, "justificativa": "j"}
+                if validate:
+                    validate(r)
+                return r
+
+        resp = {m: Resp() for m in MODELOS}
+        cl = {"juiz": JuizResp(), **{f"resp_{m}": r for m, r in resp.items()}}
+        rev = Revisor()
+        lt = Leitor(self.saida, **{k: v for k, v in self.kw.items() if k != "workers"})
+        b = BancoV3(self.saida, self.tmp / "banco3", leitor=lt, clientes=cl, cliente_unicidade=rev, exp=self.exp,
+                    workers=2, judge_workers=1, **SILENCIO)
+        self.assertEqual(b.executar(), 0)
+        res = read_json(b.saida / "resumo.json")
+        n = len(C.linhas(b.saida / "dataset.jsonl"))
+        self.assertEqual(res["n"], n)
+        self.assertEqual(rev.chamadas, n)
+        self.assertEqual(set(res["acuracia"]), set(MODELOS))
+        self.assertEqual(res["acuracia"]["gpt-5"]["sem_contexto"], 100.0)   # o juiz simulado aceita tudo
+        self.assertIn("avaliacao/respostas/", (b.saida / ".gitignore").read_text())
+        antes = (sum(r.chamadas for r in resp.values()), rev.chamadas)
+        self.assertEqual(BancoV3(self.saida, self.tmp / "banco3", leitor=lt, clientes=cl, cliente_unicidade=rev,
+                                 exp=self.exp, workers=2, judge_workers=1, **SILENCIO).executar(), 0)
+        self.assertEqual((sum(r.chamadas for r in resp.values()), rev.chamadas), antes)   # retomada sem custo
+
+    def test_regra_local_de_enunciado_dependente(self):
+        from pipeline.qa_research.experimento_ab.banco_v3 import regra_local
+        q = lambda p, r="Hidrato.": {"pergunta": p, "resposta": r}  # noqa: E731
+        self.assertEqual(regra_local(q("Segundo o procedimento descrito, qual o próximo passo?"))[0], "R9")
+        self.assertEqual(regra_local(q("No cenário descrito, que causa explica a queda?"))[0], "R9")
+        self.assertIsNone(regra_local(q("Que fase sólida bloqueia a linha fria com gás úmido?")))
+        self.assertEqual(regra_local(q("O hidrato bloqueia a linha?", "Hidrato."))[0], "R2")
 
 
 class ExternosTests(unittest.TestCase):

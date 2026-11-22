@@ -44,6 +44,14 @@
                         metade das chamadas); todos os blocos como foco, cada um visitado até saturar (volta só se
                         a visita anterior trouxe válida nova; --paciencia 1, teto --visitas 8); auditor, sustentação,
                         deduplicação entre as válidas a cada visita e banco -> geracao_final_v3/BANCO.md
+  final-v3-loops        loops que completam a geração final v3 na mesma pasta e na mesma deduplicação: um tipo
+                        por loop (conceito, mecanismo, consequencia, diagnostico; procedimento e decisao se pedidos),
+                        questões manuais e loop dedicado a 1.1 e 8.4 (gestao) -> geracao_final_v3/LOOPS.md;
+                        --loops escolhe quais (padrão conceito,mecanismo,consequencia,diagnostico,manual,gestao)
+  banco-v3              banco final v3: um representante por grupo de equivalentes (principal + loops), regras
+                        locais, avaliação com e sem contexto (5 modelos, 20 palavras), revisão de unicidade de TODAS
+                        as questões e substituição do representante reprovado pelo próximo equivalente
+                        (--rodadas 3) -> petroquest_banco_v3/BANCO.md
   ablacao-v3            ablação v3: escada cumulativa naive -> + regras -> + documentos -> + datasets externos ->
                         + retroalimentação, sem poda (0 a 4 questões por chamada, focos x visitas em ondas); auditor,
                         sustentação, quase-duplicatas, diversidade e dificuldade (amostra) -> ablacao_geracao_v3/ABLACAO.md
@@ -156,7 +164,8 @@ def main(argv=None) -> int:
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
                                         "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
-                                        "final-v2", "ablacao", "ablacao-v3", "final-v3", "avaliar-externos"])
+                                        "final-v2", "ablacao", "ablacao-v3", "final-v3", "final-v3-loops", "banco-v3",
+                                        "avaliar-externos"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
     ap.add_argument("--workers", type=int, default=8)
@@ -166,7 +175,9 @@ def main(argv=None) -> int:
     ap.add_argument("--recalcular", action="store_true", help="calibração: só recalcula (usa rotulos_humanos.csv)")
     ap.add_argument("--mini-deployment", default="gpt-4-1-mini-petrobras")
     ap.add_argument("--max-rodadas", type=int, default=5, help="saturação: visitas máximas por foco (inclui a 1ª)")
-    ap.add_argument("--paciencia", type=int, default=1, help="saturação: rodadas seguidas sem conhecimento novo para fechar")
+    ap.add_argument("--paciencia", type=int, default=None,
+                    help="saturação: rodadas seguidas sem conhecimento novo para fechar (padrão 1; final-v3: 3; "
+                         "loops: 2 nos tipos e 3 na gestão)")
     ap.add_argument("--onda", type=int, default=4, help="v22/v23: focos gerados ao mesmo tempo em cada documento")
     ap.add_argument("--tipos", default="decisao,diagnostico,procedimento",
                     help="tipos: quais gerações por tipo rodar, separados por vírgula")
@@ -185,9 +196,15 @@ def main(argv=None) -> int:
     ap.add_argument("--palavras", type=int, default=20, help="limite: palavras máximas na resposta dos modelos")
     ap.add_argument("--amostra", type=int, default=300, help="limite: questões na amostra estratificada")
     ap.add_argument("--avaliacao", type=Path, help="painel: pasta de avaliação (padrão: avaliacao/<braço>)")
-    ap.add_argument("--visitas", type=int, default=8, help="final-v3: teto de visitas por bloco foco (fecha antes ao saturar)")
+    ap.add_argument("--visitas", type=int, default=None,
+                    help="final-v3: teto de visitas por bloco foco, fecha antes ao saturar (padrão 10; loops: 6 nos "
+                         "tipos e 12 na gestão)")
+    ap.add_argument("--loops", default=None, help="final-v3-loops: loops em sequência, separados por vírgula")
+    ap.add_argument("--rodadas", type=int, default=3, help="banco-v3: rodadas de substituição de representantes")
     a = ap.parse_args(argv)
     exp = a.experimento if a.experimento.is_absolute() else C.ROOT / a.experimento
+    if a.comando not in ("final-v3", "final-v3-loops") and a.paciencia is None:
+        a.paciencia = 1
 
     if a.comando == "plano":
         plano(exp)
@@ -343,18 +360,46 @@ def main(argv=None) -> int:
         etapas = [e for e in a.etapas.split(",") if e]
         if a.etapas == ap.get_default("etapas"):
             etapas = list(ETAPAS_F3)
+        from .final_v3 import MAX_VISITAS, PACIENCIA
+        visitas, paciencia = a.visitas or MAX_VISITAS, a.paciencia or PACIENCIA
         if etapas == ["plano"]:
-            print(plano_f3(a.visitas))
+            print(plano_f3(visitas))
             return 0
         with _trava(exp, "final_v3"):
             try:
-                g = GeracaoFinalV3(visitas=a.visitas, paciencia=a.paciencia, workers=a.workers, exp=exp)
-                print(f"[final-v3] {plano_f3(a.visitas)}", flush=True)
+                g = GeracaoFinalV3(visitas=visitas, paciencia=paciencia, workers=a.workers, exp=exp)
+                print(f"[final-v3] {plano_f3(visitas)} Paciência {paciencia}.", flush=True)
                 st = g.executar(etapas)
             except ValueError as exc:
                 raise SystemExit(f"[final-v3] {exc}") from exc
         print(f"[final-v3] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
               f"{C.relativo(SAIDA_F3 / 'BANCO.md')}")
+        return st
+    if a.comando == "final-v3-loops":
+        from .final_v3 import ETAPAS as ETAPAS_F3, SAIDA as SAIDA_F3
+        from .loops_v3 import LOOPS, PADRAO, executar_loops
+        loops = [x for x in (a.loops or ",".join(PADRAO)).split(",") if x]
+        if any(x not in LOOPS for x in loops):
+            raise SystemExit(f"[loops] loops válidos: {', '.join(LOOPS)}")
+        etapas = list(ETAPAS_F3) if a.etapas == ap.get_default("etapas") else [e for e in a.etapas.split(",") if e]
+        with _trava(exp, "final_v3"):        # a mesma trava da principal: as duas escrevem na mesma deduplicação
+            try:
+                st = executar_loops(loops, etapas, visitas=a.visitas, paciencia=a.paciencia, workers=a.workers, exp=exp)
+            except ValueError as exc:
+                raise SystemExit(f"[loops] {exc}") from exc
+        print(f"[loops] {'concluídos' if st == 0 else 'incompletos; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_F3 / 'LOOPS.md')}")
+        return st
+    if a.comando == "banco-v3":
+        from .banco_v3 import ETAPAS as ETAPAS_B3, SAIDA as SAIDA_B3, BancoV3
+        etapas = list(ETAPAS_B3) if a.etapas == ap.get_default("etapas") else [e for e in a.etapas.split(",") if e]
+        with _trava(exp, "final_v3"):        # lê a deduplicação da geração: não roda junto com ela
+            try:
+                st = BancoV3(workers=a.workers, judge_workers=a.judge_workers, exp=exp).executar(etapas, rodadas=a.rodadas)
+            except ValueError as exc:
+                raise SystemExit(f"[banco-v3] {exc}") from exc
+        print(f"[banco-v3] {'concluído' if st == 0 else 'incompleto; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_B3 / 'BANCO.md')}")
         return st
     if a.comando == "banco":
         from .banco import Banco, SAIDA as SAIDA_BANCO
