@@ -124,12 +124,35 @@ def resumir(rows: list[dict], vereditos: dict, populacao: dict) -> dict:
                               for t in sorted({r["tipo"] for r in rs})
                               for rt in [[r for r in rs if r["tipo"] == t]]}
     dif = {m: acc[m]["atalho"]["pct"] - acc[m]["validas"]["pct"] for m in MODELOS}
-    leitura = ("O atalho apontado pelo auditor é real: as reprovadas por ele são bem mais fáceis para os modelos menores; "
-               "o conserto deve tirar do enunciado o que entrega a resposta." if min(dif.values()) >= 15 else
-               "O atalho apontado pelo auditor separa pouco: as reprovadas por ele não são muito mais fáceis que as válidas "
-               "para os modelos menores; boa parte é ruído de julgamento e merece conserto ou reavaliação, não descarte.")
+    p = {m: teste_proporcoes(acc[m]["atalho"], acc[m]["validas"]) for m in MODELOS}
+    leitura = ler(acc, dif, p)
     return {"populacao": populacao, "amostra": dict(Counter(r["grupo"] for r in rows)), "acuracia": acc,
-            "por_tipo": por_tipo, "diferenca_pp": dif, "leitura": leitura}
+            "por_tipo": por_tipo, "diferenca_pp": dif, "p_valor": p, "leitura": leitura}
+
+
+def teste_proporcoes(a: dict, b: dict) -> float:
+    """p-valor bilateral do teste z de duas proporções (acerto nas reprovadas por atalho x nas válidas)."""
+    if not a["n"] or not b["n"]:
+        return float("nan")
+    pa, pb = a["corretas"] / a["n"], b["corretas"] / b["n"]
+    se = math.sqrt(pa * (1 - pa) / a["n"] + pb * (1 - pb) / b["n"])
+    return math.erfc(abs(pa - pb) / se / math.sqrt(2)) if se else float("nan")
+
+
+def ler(acc: dict, dif: dict, p: dict) -> str:
+    sig = {m for m in dif if p[m] == p[m] and p[m] < 0.05 and dif[m] > 0}
+    erradas = {m: 100 - acc[m]["atalho"]["pct"] for m in dif}
+    detalhe = "; ".join(f"{m}: {dif[m]:+.1f} pontos (p = {p[m]:.3f}), erra {erradas[m]:.0f}% das reprovadas por atalho"
+                        for m in dif)
+    if sig == set(dif) and min(dif.values()) >= 15:
+        return (f"O atalho apontado pelo auditor é real: as reprovadas por ele são bem mais fáceis para todos os modelos "
+                f"menores ({detalhe}). O conserto deve tirar do enunciado o que entrega a resposta.")
+    if sig:
+        return (f"O atalho é real só em parte ({detalhe}). As reprovadas por ele são mais fáceis para o modelo mais fraco, "
+                f"mas pouco ou nada para o mais forte, e uma fração grande delas não é trivial na prática. Elas têm "
+                f"conhecimento aproveitável: conserto, não descarte.")
+    return (f"O atalho apontado pelo auditor não separa questões mais fáceis ({detalhe}); boa parte é ruído de julgamento "
+            f"e as reprovadas por ele merecem conserto ou reavaliação, não descarte.")
 
 
 def markdown(r: dict) -> str:
@@ -138,11 +161,12 @@ def markdown(r: dict) -> str:
            f"Amostra estratificada por tipo: {r['amostra'].get('atalho', 0)} reprovadas só por atalho (de "
            f"{r['populacao']['atalho']}) e {r['amostra'].get('validas', 0)} válidas (de {r['populacao']['validas']}), "
            "respondidas sem contexto, resposta de até 20 palavras, juiz padrão.", "",
-           "| Modelo | Acerto nas reprovadas por atalho | Acerto nas válidas | Diferença (pontos) |", "|---|---|---|---|"]
+           "| Modelo | Acerto nas reprovadas por atalho | Acerto nas válidas | Diferença (pontos) | p |",
+           "|---|---|---|---|---|"]
     for m, a in r["acuracia"].items():
         out.append(f"| {m} | {f(a['atalho']['pct'])}% (IC {f(a['atalho']['ic95'][0])} a {f(a['atalho']['ic95'][1])}) | "
                    f"{f(a['validas']['pct'])}% (IC {f(a['validas']['ic95'][0])} a {f(a['validas']['ic95'][1])}) | "
-                   f"{f(r['diferenca_pp'][m])} |")
+                   f"{f(r['diferenca_pp'][m])} | {r.get('p_valor', {}).get(m, float('nan')):.3f} |")
     out += ["", f"Leitura: {r['leitura']}", "", "## Por tipo (acerto, %)", ""]
     for m, g in r["por_tipo"].items():
         out.append(f"- {m}: atalho {g['atalho']}; válidas {g['validas']}")
