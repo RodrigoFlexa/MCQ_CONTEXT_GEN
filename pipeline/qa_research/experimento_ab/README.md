@@ -136,11 +136,16 @@ xadrez, auditor v23, 20 palavras, sustentação).
 | Loop | O que muda | Visitas / paciência |
 |---|---|---|
 | `conceito`, `mecanismo`, `consequencia`, `diagnostico` (padrão); `procedimento`, `decisao` (se pedidos) | `prompts/final3_tipo.md` com definição, modo de fazer e defeitos do tipo (`loops_v3.json`); 0 a 3 questões só do tipo (as de outro tipo são descartadas); 4 boas e 4 ruins fixas do tipo (conceito: `exemplos_conceito.json`); sorteadas e convertidas só do tipo | 6 / 2; fecha na visita sem nenhuma questão |
+| `composta` (padrão) | dois blocos distantes ([F1] e [F2], a 3 ou mais blocos um do outro; o par de cada bloco é o mais parecido pelos embeddings, gravado em `loop_composta/pares.json`); `prompts/final3_composta.md`; só ficam as que citam os dois blocos nos fundamentos | 3 / 1 |
+| `reparo` (etapa `reparo3`) | conserta as reprovadas por um único defeito (só atalho, só várias respostas, ou gabarito não sustentado), de todas as origens: questão, parecer do revisor e questões já aceitas nos mesmos blocos; `prompts/final3_reparo.md`; a consertada volta ao auditor, à sustentação e à deduplicação; a seleção fica em `loop_reparo/selecao.jsonl` e só cresce | 1 tentativa |
 | `manual` | 23 questões escritas à mão para 1.1 e 8.4 (`gestao_manuais.json`), sem gerador; mesmo auditor, sustentação e deduplicação | 1 |
 | `gestao` | 1.1 e 8.4 com `prompts/final3_gestao.md` (o que tem conteúdo técnico nesses temas, atalhos típicos, teste de apagar do enunciado a falha, o objetivo e a categoria); boas fixas do outro documento (inclusive manuais) e ruins de atalho reais; sorteio com metade dos documentos de gestão vizinhos | 12 / 3 |
 
     bash pipeline/qa_research/rodar_experimento_ab.sh loops3                                # os do padrão
     bash pipeline/qa_research/rodar_experimento_ab.sh loops3 --loops procedimento,decisao    # outros
+
+Quando o banco v3 já tem revisões, os exemplos sorteados dos loops usam o julgamento final: válidas reprovadas na
+revisão de unicidade viram ruins com o motivo (cota própria), e metade das boas é das que o GPT-5 erra sem contexto.
 
 Cada loop grava `loop_<nome>/banco.jsonl`, `banco_resumo.json` e `BANCO.md`; `LOOPS.md` resume o que cada um
 acrescentou.
@@ -153,10 +158,22 @@ X não basta", R9 enunciado que remete ao texto); avaliação de GPT-4.1 Mini, G
 (referência) com e sem contexto, resposta de até 20 palavras; revisão de **todas** as questões (`prompts/unicidade_v3.md`:
 alternativa válida, gabarito vago, depende do documento, enunciado autocontido, trivial). Quando o representante cai,
 o próximo equivalente do grupo entra na rodada seguinte (até 3 por grupo, `--rodadas 3`). Saída em
-`relatorios/petroquest_banco_v3` (`banco.jsonl`, `poda.jsonl`, `revisoes.jsonl`, `resumo.json`, `BANCO.md`).
+`relatorios/petroquest_banco_v3` (`banco.jsonl`, `poda.jsonl`, `revisoes.jsonl`, `resumo.json`, `BANCO.md`). Cada
+questão do banco traz `evidencia`: os blocos e os trechos literais que sustentam o gabarito (da verificação de
+sustentação), o gabarito de recuperação para avaliar RAG e memória, e `composicao` (simples ou composta).
+
+## Calibração do atalho (`atalho_v3.py`)
+
+300 reprovadas só por atalho e 300 válidas da principal, respondidas sem contexto por GPT-4.1 Mini e GPT-5 mini (20
+palavras, juiz padrão): mede se o atalho do auditor corresponde a questões de fato mais fáceis
+(`relatorios/calibracao_atalho_v3/ATALHO.md`).
+
+## Ordem recomendada
+
+    bash pipeline/qa_research/rodar_experimento_ab.sh atalho3       # minutos; informa a leitura do conserto
+    bash pipeline/qa_research/rodar_experimento_ab.sh completo3     # final3 -> reparo3 -> banco3 -> loops3 -> reparo3 -> banco3
 
     bash pipeline/qa_research/rodar_experimento_ab.sh banco3
-    bash pipeline/qa_research/rodar_experimento_ab.sh completo3     # final3 -> loops3 -> banco3
 
 ## Robustez
 

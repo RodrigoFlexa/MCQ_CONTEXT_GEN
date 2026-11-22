@@ -84,7 +84,7 @@ avaliacao/.local/
 unicidade/
 """
 CAMPOS = ("uid", "item", "tipo", "cenario", "pergunta", "resposta", "explicacao", "conhecimento", "resposta_padrao",
-          "por_que_nao", "foco", "visita", "config")
+          "por_que_nao", "foco", "par", "visita", "config", "origem_uid", "origem_defeito")
 
 
 def validar_revisao(d: dict, ids: list[str]) -> None:
@@ -204,7 +204,9 @@ class BancoV3:
             if escolhido is None:
                 esgotados += 1
                 continue
-            reps.append({**{k: escolhido.get(k) for k in CAMPOS}, "composicao": "simples", "fonte": escolhido["config"],
+            reps.append({**{k: escolhido.get(k) for k in CAMPOS},
+                         "composicao": "composta" if escolhido["config"] == "loop_composta" else "simples",
+                         "fonte": escolhido["config"],
                          "grupo": g[0]["uid"],
                          "tamanho_grupo": len(g), "tentativa": g.index(escolhido) + 1,
                          "contexto_tecnico": self._contexto(escolhido),
@@ -310,7 +312,41 @@ class BancoV3:
                         self.progress(f"[banco v3] unicidade {k}/{len(faltam)}", flush=True)
             return (len(faltam) - ok) + (len(qs) - len(prontas))
 
-    # ---------------------------------------------------------------- 4. banco
+    # ---------------------------------------------------------------- 4. evidência (gabarito de recuperação)
+    def evidencia(self, q: dict) -> dict | None:
+        """Blocos e trechos literais que sustentam o gabarito, da verificação de sustentação. Registros antigos não
+        guardavam as evidências: a mesma chamada é refeita e lida do cache do cliente (sem custo), e o registro é
+        completado."""
+        from .ablacao_v3 import evidencias
+        lt = self.leitor
+        arq = lt._arq_sust(q["uid"])
+        rec = read_json(arq) if arq.exists() else None
+        if rec is None or rec.get("status") != "totalmente_sustentado":
+            return None
+        if "evidencias" not in rec:
+            try:
+                rec["evidencias"] = evidencias(lt.chamar_sustentacao(q))
+            except Exception as exc:  # noqa: BLE001
+                if not _filtrado(exc):
+                    raise
+                return None
+            atomic_json(arq, rec)
+        idx = {b["id"]: b["indice_documento"] for b in q["blocos_contexto"]}
+        trechos = [{"indice_documento": idx[t["bloco"]], "trecho": t["trecho"]}
+                   for e in rec["evidencias"] for t in e["trechos"] if t["bloco"] in idx]
+        return {"blocos": sorted({t["indice_documento"] for t in trechos}), "trechos": trechos}
+
+    def evidencias(self, qs: list[dict]) -> dict:
+        def um(q):
+            try:
+                return q["uid"], self.evidencia(q)
+            except Exception as exc:  # noqa: BLE001
+                self.progress(f"[banco v3] evidência de {q['uid']}: {type(exc).__name__}", flush=True)
+                return q["uid"], None
+        with ThreadPoolExecutor(max_workers=self.workers) as pool:
+            return dict(pool.map(um, qs))
+
+    # ---------------------------------------------------------------- 5. banco
     def banco(self) -> dict:
         from pipeline.qa_research.piloto_janela.core import tema
         qs = C.linhas(self.saida / "dataset.jsonl")
@@ -318,6 +354,7 @@ class BancoV3:
         poda = C.linhas(self.saida / "poda.jsonl")
         temas = {i: tema(i) for i in sorted({q["item"] for q in qs} | {p["item"] for p in poda})}
         banco, sem_revisao, novas_podas, corrigidas = [], 0, [], 0
+        ev = self.evidencias([q for q in qs if self._arq_u(q["uid"]).exists()])
         for q in qs:
             u, v = q["uid"], vs.get(q["uid"], {})
             rev = read_json(self._arq_u(u)) if self._arq_u(u).exists() else None
@@ -340,9 +377,11 @@ class BancoV3:
                           "tipo": q["tipo"], "cenario": q.get("cenario"), "pergunta": q["pergunta"],
                           "resposta": q["resposta"], "explicacao": q.get("explicacao"),
                           "resposta_padrao": q.get("resposta_padrao"), "por_que_nao": q.get("por_que_nao"),
-                          "fonte": q["fonte"], "grupo": q["grupo"], "tamanho_grupo": q["tamanho_grupo"],
+                          "fonte": q["fonte"], "composicao": q.get("composicao", "simples"),
+                          "origem_uid": q.get("origem_uid"), "grupo": q["grupo"], "tamanho_grupo": q["tamanho_grupo"],
                           "blocos_contexto": [{"item": q["item"], "indice_documento": b["indice_documento"]}
                                               for b in q["blocos_contexto"]],
+                          "evidencia": ev.get(u),
                           "dificuldade": {"estrato": estrato({m: fech.get(m) for m in INDEPENDENTES})
                                           if all(fech.get(m) for m in INDEPENDENTES) else None,
                                           "sem_contexto": fech, "com_contexto": aberto,
@@ -378,6 +417,10 @@ class BancoV3:
                 "substituidos": sum(b["tamanho_grupo"] > 1 and b["uid"] != b["grupo"] for b in banco),
                 "por_tipo": dict(Counter(b["tipo"] for b in banco).most_common()),
                 "por_fonte": dict(Counter(b["fonte"] for b in banco).most_common()),
+                "por_composicao": dict(Counter(b["composicao"] for b in banco).most_common()),
+                "consertadas": sum(bool(b.get("origem_uid")) for b in banco),
+                "com_evidencia": sum(bool(b.get("evidencia") and b["evidencia"]["blocos"]) for b in banco),
+                "evidencia_em_2_blocos_ou_mais": sum(len((b.get("evidencia") or {}).get("blocos", [])) >= 2 for b in banco),
                 "por_area": dict(Counter(b["area"] for b in banco).most_common()),
                 "por_documento": dict(sorted(Counter(b["item"] for b in banco).items())),
                 "acuracia": acc, "estratos_pct": {e: pct(est.get(e, 0), n) for e in ESTRATOS},
@@ -439,6 +482,10 @@ def markdown(r: dict) -> str:
            "## Poda", "", "| Regra | Motivo | Questões |", "|---|---|---|"]
     out += [f"| {k} | {DESCRICAO[k]} | {v} |" for k, v in r["poda"].items()]
     out += ["", "## Composição", "", f"Por tipo: {r['por_tipo']}.", "", f"Por origem: {r['por_fonte']}.", "",
+            f"Simples e compostas: {r['por_composicao']}. Consertadas (vindas de uma reprovada): {r['consertadas']}.", "",
+            f"Com evidência rotulada (blocos e trechos que sustentam o gabarito, gabarito de recuperação para avaliar "
+            f"RAG e memória): {r['com_evidencia']}; com evidência em 2 blocos ou mais: "
+            f"{r['evidencia_em_2_blocos_ou_mais']}.", "",
             f"Por área: {r['por_area']}.", "", f"Por documento: {r['por_documento']}.", "",
             "## Modelos (resposta de até 20 palavras)", "",
             "| Modelo | Sem contexto | Com contexto | Ganho com contexto |", "|---|---|---|---|"]

@@ -35,13 +35,18 @@
 #                        foco, cada um visitado até saturar (teto --visitas 10, --paciencia 3), auditor, sustentação,
 #                        deduplicação entre as válidas a cada visita, banco
 #                        (geracao_final_v3/BANCO.md e banco.jsonl); retomável
+#   atalho3              calibração do atalho do auditor (300 reprovadas por atalho x 300 válidas, sem contexto,
+#                        GPT-4.1 Mini e GPT-5 mini), poucos minutos (calibracao_atalho_v3/ATALHO.md)
+#   reparo3              conserto das reprovadas por um único defeito (atalho, várias respostas ou gabarito não
+#                        sustentado), de todas as origens; só as ainda não consertadas
 #   loops3               loops que completam a geração final v3 na mesma deduplicação: um tipo por loop (conceito,
-#                        mecanismo, consequência, diagnóstico), questões manuais e loop de gestão (1.1 e 8.4);
-#                        --loops escolhe quais, ex.: --loops procedimento,decisao (geracao_final_v3/LOOPS.md)
+#                        mecanismo, consequência, diagnóstico), compostas (dois blocos distantes), questões manuais
+#                        e loop de gestão (1.1 e 8.4); --loops escolhe quais, ex.: --loops procedimento,decisao
+#                        (geracao_final_v3/LOOPS.md); se o banco3 já rodou, os exemplos usam a revisão final
 #   banco3               banco final v3: um representante por conhecimento, avaliação com e sem contexto (5 modelos),
 #                        revisão de unicidade de todas e substituição do reprovado (--rodadas 3)
 #                        (petroquest_banco_v3/BANCO.md e banco.jsonl)
-#   completo3            final3 -> loops3 -> banco3, em sequência
+#   completo3            final3 -> reparo3 -> banco3 -> loops3 -> reparo3 -> banco3, em sequência
 #   ablacao3             ablação v3: escada cumulativa (naive, + regras, + documentos, + externos, + retro), sem
 #                        poda; validade, quase-duplicatas, diversidade e dificuldade (ablacao_geracao_v3)
 #   ablacao3retro        ablação v3, só as duas variantes da retroalimentação sem memória (com e sem datasets
@@ -130,7 +135,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|final3|loops3|banco3|completo3|externos) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|final3|atalho3|reparo3|loops3|banco3|completo3|externos) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -210,17 +215,27 @@ if [[ "$etapa" == "ablacao3" ]]; then
     # configuração em 6 ondas, auditoria e sustentação, quase-duplicatas, dificuldade numa amostra; retomável
     rodar "ablação v3: escada cumulativa de módulos" ablacao-v3 --workers 24 || fim_erro ablacao3
 fi
+if [[ "$etapa" == "atalho3" ]]; then
+    rodar "calibração do atalho do auditor" atalho-v3 --workers 16 || fim_erro atalho3
+fi
 if [[ "$etapa" == "final3" || "$etapa" == "completo3" ]]; then
     # 1 chamada do gerador por bloco foco e visita, em ondas (geração, auditoria e sustentação por onda); retomável
     rodar "geração final v3 nos 40 contextos finais" final-v3 --workers 24 || fim_erro final3
 fi
-if [[ "$etapa" == "loops3" || "$etapa" == "completo3" ]]; then
-    # loops em sequência, cada um com a deduplicação deixada pelos anteriores; retomável
-    rodar "geração final v3: loops por tipo, manuais e gestão" final-v3-loops --workers 24 || fim_erro loops3
+if [[ "$etapa" == "reparo3" || "$etapa" == "completo3" ]]; then
+    rodar "conserto das reprovadas por um único defeito" final-v3-loops --loops reparo --workers 24 || fim_erro reparo3
 fi
 if [[ "$etapa" == "banco3" || "$etapa" == "completo3" ]]; then
     # respostas e juiz por questão (5 modelos x 2 condições) e uma revisão por questão; retomável e incremental
     rodar "banco final v3: avaliação e revisão de unicidade de todas as questões" banco-v3 --workers 16 || fim_erro banco3
+fi
+if [[ "$etapa" == "loops3" || "$etapa" == "completo3" ]]; then
+    # loops em sequência, cada um com a deduplicação deixada pelos anteriores; exemplos com a revisão final; retomável
+    rodar "geração final v3: loops por tipo, compostas, manuais e gestão" final-v3-loops --workers 24 || fim_erro loops3
+fi
+if [[ "$etapa" == "completo3" ]]; then
+    rodar "conserto das reprovadas dos loops" final-v3-loops --loops reparo --workers 24 || fim_erro reparo3
+    rodar "banco final v3 com os loops (só as novas são pagas)" banco-v3 --workers 16 || fim_erro banco3
 fi
 if [[ "$etapa" == "ablacao3retro" ]]; then
     # retroalimentação v2 sem memória do documento, com e sem datasets externos: 960 chamadas cada, em 6 ondas
@@ -251,7 +266,10 @@ if [[ "$etapa" == "limite" ]]; then
 elif [[ "$etapa" == "externos" ]]; then
     echo "  cat pipeline/qa_research/relatorios/avaliacao_externos/QUALIDADE.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/avaliacao_externos \"Resultados: juiz nos modelos Llama\""
-elif [[ "$etapa" == "final3" || "$etapa" == "loops3" ]]; then
+elif [[ "$etapa" == "atalho3" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/calibracao_atalho_v3/ATALHO.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/calibracao_atalho_v3 \"Resultados: calibração do atalho\""
+elif [[ "$etapa" == "final3" || "$etapa" == "loops3" || "$etapa" == "reparo3" ]]; then
     echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/BANCO.md"
     echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/LOOPS.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_final_v3 \"Resultados: geração final v3 ($etapa)\""

@@ -1986,6 +1986,28 @@ class FalsoLoop(FalsoV3):
         tipo = nome if nome in ("conceito", "mecanismo", "consequencia", "diagnostico", "procedimento", "decisao") \
             else "conceito"
         pid = re.search(r"Pedido: (\S+)", user).group(1)
+        base = dict(cenario=True, explicacao="e", resposta_padrao="p", por_que_nao="q")
+        if nome == "reparo":        # conserta a primeira de cada lote, descarta as demais
+            qs = json.loads(user.split("<questoes_a_consertar>")[1].split("</questoes_a_consertar>")[0])
+            d = {"reparos": [{"id": q["id"], "acao": "reparada" if k == 0 else "descartada", "motivo": "m",
+                              "questao": {**base, "tipo": q["tipo"], "conhecimento": "consertada",
+                                          "pergunta": f"Qual elo consertado no {pid} {q['id']}?",
+                                          "resposta": f"Consertada {pid}.",
+                                          "fundamentos": [{"bloco": "F", "trecho": "x"}]} if k == 0 else None}
+                             for k, q in enumerate(qs)]}
+            if validate:
+                validate(d)
+            return d
+        if nome == "composta":      # uma composta de verdade e uma que só usa [F1] (descartada)
+            d = {"questoes": [{**base, "tipo": "consequencia", "conhecimento": "elo", "resposta": f"Composta {pid}.",
+                               "pergunta": f"Que efeito composto no {pid}?",
+                               "fundamentos": [{"bloco": "F1", "trecho": "x"}, {"bloco": "F2", "trecho": "y"}]},
+                              {**base, "tipo": "consequencia", "conhecimento": "so um", "resposta": "Um bloco.",
+                               "pergunta": f"Que efeito simples no {pid}?",
+                               "fundamentos": [{"bloco": "F1", "trecho": "x"}]}], "motivo": ""}
+            if validate:
+                validate(d)
+            return d
         item, foco, v = re.match(r"(\S+?):(\d+):v(\d+)", pid).groups()
         base = dict(cenario=False, explicacao="e", resposta_padrao="p", por_que_nao="q",
                     fundamentos=[{"bloco": "F", "trecho": "x"}])
@@ -2059,6 +2081,61 @@ class LoopsV3Tests(unittest.TestCase):
         boas = u.split("<boas_ja_avaliadas>")[1].split("</boas_ja_avaliadas>")[0]
         self.assertNotIn("[mecanismo]", boas)
         self.assertIn("[conceito]", boas)                                   # reservas do exemplos_conceito.json
+
+    def test_compostas_de_dois_blocos_distantes(self):
+        g = self.loop("composta", visitas=2)
+        self.assertEqual(g.executar(), 0)
+        pares = read_json(self.saida / "loop_composta" / "pares.json")
+        self.assertTrue(all(abs(a - b) >= 3 for v in pares.values() for a, b in v))
+        u = self.f.usuarios["final3_loop_composta"][0]
+        self.assertIn("[F1]", u)
+        self.assertIn("[F2]", u)
+        arq = next((self.saida / "loop_composta" / "geracao").glob("*x*_v1.json"))
+        ger = read_json(arq)
+        self.assertEqual((len(ger["questoes"]), ger["descartadas_composicao"]), (1, 1))
+        aud = next((self.saida / "loop_composta" / "auditoria").glob("*.json"))
+        self.assertEqual([b["id"] for b in read_json(aud)["contexto"]], ["F1", "F2"])
+        r = read_json(self.saida / "loop_composta" / "banco_resumo.json")
+        self.assertEqual(r["validas"], r["geradas"])
+        self.assertEqual(self.loop("composta", visitas=2).unidades, g.unidades)   # pares gravados: mesma seleção
+
+    def test_reparo_das_reprovadas(self):
+        from pipeline.qa_research.experimento_ab.final_v3 import CONFIG
+        g = self.loop("reparo")
+        sel = C.linhas(self.saida / "loop_reparo" / "selecao.jsonl")
+        self.assertTrue(sel and all(x["codigo"] == "varias_respostas" for x in sel))   # a DEFEITO de cada visita ímpar
+        self.assertTrue(all(x["uid"].startswith(CONFIG) for x in sel))
+        self.assertEqual(g.executar(), 0)
+        u = self.f.usuarios["final3_loop_reparo"][0]
+        self.assertIn("<ja_no_banco>", u)
+        self.assertIn("resposta_alternativa", u)
+        ger = read_json(next((self.saida / "loop_reparo" / "geracao").glob("*.json")))
+        self.assertTrue(all(q["origem_uid"] in {x["uid"] for x in sel} for q in ger["questoes"]))
+        self.assertEqual(len(ger["reparos"]), len([x for x in sel if (x["item"], x["foco"], x["lote"]) ==
+                                                    (ger["item"], ger["foco"], ger["visita"])]))
+        r = read_json(self.saida / "loop_reparo" / "banco_resumo.json")
+        self.assertEqual(r["validas"], r["geradas"])                       # as consertadas passaram
+        antes = sum(self.f.chamadas.values())
+        self.assertEqual(self.loop("reparo").executar(), 0)                 # nada novo a consertar
+        self.assertEqual(sum(self.f.chamadas.values()), antes)
+        self.assertEqual(self.loop("mecanismo", visitas=1).executar(), 0)   # questões novas (sem defeito)
+        self.assertEqual(len(C.linhas(self.saida / "loop_reparo" / "selecao.jsonl")), len(sel))
+
+    def test_exemplos_com_a_revisao_final(self):
+        from pipeline.qa_research.experimento_ab.final_v3 import CONFIG
+        rev = self.tmp / "banco3"
+        rev.mkdir()
+        ruim, dificil = f"{CONFIG}:07_01:000:v1:1", f"{CONFIG}:07_01:001:v1:1"
+        C.gravar_jsonl(rev / "revisoes.jsonl", [
+            {"uid": ruim, "status": "revisada", "ids": {}, "respostas": [], "gabarito_especifico": False,
+             "gabarito_unico": True, "depende_documento": False, "enunciado_autocontido": True, "trivial": False,
+             "justificativa": "gabarito vago de propósito"}])
+        C.gravar_jsonl(rev / "banco.jsonl", [{"uid": dificil, "dificuldade": {"sem_contexto": {"gpt-5": "incorreta"}}}])
+        self.assertEqual(self.loop("mecanismo", visitas=1, itens=[ITEM], revisao=rev).executar(), 0)
+        us = self.f.usuarios["final3_loop_mecanismo"]
+        self.assertTrue(any("Reprovada na revisão final (gabarito vago). gabarito vago de propósito" in u for u in us))
+        self.assertTrue(any("difícil: o GPT-5 errou sem contexto" in u for u in us))
+        self.assertTrue(read_json(self.saida / "loop_mecanismo" / "config.json")["usa_revisao_final"])
 
     def test_manuais_e_gestao(self):
         from pipeline.qa_research.experimento_ab.loops_v3 import executar_loops
@@ -2150,6 +2227,14 @@ class BancoV3Tests(unittest.TestCase):
         self.assertTrue(all(x["dificuldade"]["veredito_corrigido"]["closed_book"] == ["gpt-5"] for x in banco))
         self.assertTrue(all(x["id"].startswith("PQ3B-") for x in banco))
         self.assertIn("Banco PetroQuest v3", (b.saida / "BANCO.md").read_text())
+        self.assertTrue(all(x["evidencia"]["blocos"] for x in banco))      # gabarito de recuperação
+        # registro antigo, sem as evidências: a mesma chamada de sustentação é refeita e o registro é completado
+        alvo = lt._arq_sust(banco[0]["uid"])
+        rec = read_json(alvo)
+        del rec["evidencias"]
+        alvo.write_text(json.dumps(rec), encoding="utf-8")
+        b.banco()
+        self.assertIn("evidencias", read_json(alvo))
 
     def test_executar_com_avaliacao_real_dos_modelos(self):
         """Motor de avaliação real (respostas curtas e juiz por lote), modelos e revisor simulados."""
@@ -2200,6 +2285,29 @@ class BancoV3Tests(unittest.TestCase):
         self.assertEqual(BancoV3(self.saida, self.tmp / "banco3", leitor=lt, clientes=cl, cliente_unicidade=rev,
                                  exp=self.exp, workers=2, judge_workers=1, **SILENCIO).executar(), 0)
         self.assertEqual((sum(r.chamadas for r in resp.values()), rev.chamadas), antes)   # retomada sem custo
+
+    def test_calibracao_do_atalho(self):
+        from pipeline.qa_research.experimento_ab import atalho_v3 as A
+        from pipeline.qa_research.experimento_ab.banco_v3 import Leitor
+        from pipeline.qa_research.tests.test_especialista_finalizacao import Juiz as JuizResp
+
+        class Resp:
+            def json(self, system, user, validate=None, **kw):
+                d = {"resposta": "Resposta curta."}
+                if validate:
+                    validate(d)
+                return d
+
+        cl = {"juiz": JuizResp(), **{f"resp_{m}": Resp() for m in A.MODELOS}}
+        lt = Leitor(self.saida, **{k: v for k, v in self.kw.items() if k != "workers"})
+        # a principal simulada não tem reprovadas por atalho: grupo vazio, controle com 6 válidas
+        st = A.executar(self.saida, self.tmp / "atalho", n=6, clientes=cl, leitor=lt, exp=self.exp, workers=2,
+                        judge_workers=1, **SILENCIO)
+        self.assertEqual(st, 0)
+        r = read_json(self.tmp / "atalho" / "resumo.json")
+        self.assertEqual(r["amostra"], {"validas": 6})
+        self.assertEqual(r["acuracia"]["gpt-5-mini"]["validas"]["pct"], 100.0)
+        self.assertTrue((self.tmp / "atalho" / "ATALHO.md").exists())
 
     def test_regra_local_de_enunciado_dependente(self):
         from pipeline.qa_research.experimento_ab.banco_v3 import regra_local

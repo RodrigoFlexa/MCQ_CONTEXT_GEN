@@ -118,6 +118,13 @@ def _rng(*p) -> random.Random:
     return random.Random(C.sha("|".join(map(str, p)))[:16])
 
 
+def evidencias(d: dict) -> list[dict]:
+    """Por afirmação do gabarito: o veredito e os blocos (rótulos da janela) com o trecho literal que a sustenta."""
+    return [{"afirmacao": a["afirmacao"], "veredito": a["veredito"],
+             "blocos": sorted({e["bloco"] for e in a["evidencias"]}),
+             "trechos": [{"bloco": e["bloco"], "trecho": e["trecho"]} for e in a["evidencias"]]} for a in d["afirmacoes"]]
+
+
 def com_retro(cfg: dict) -> bool:
     """A configuração usa o que já foi julgado (retroalimentação v1 ou v2): as ondas dependem das anteriores."""
     return bool(cfg["retro"] or cfg.get("exemplos"))
@@ -670,17 +677,22 @@ class AblacaoV3:
               and not self._arq_sust(q["uid"]).exists()]
         return self._paralelo(qs, self._sustentar_um, "sustentação")
 
-    def _sustentar_um(self, q: dict) -> bool:
-        arq, nome = self._arq_sust(q["uid"]), "sustentacao_" + _nome_arq(q["uid"])
+    def chamar_sustentacao(self, q: dict) -> dict:
+        """A chamada de sustentação de uma questão (o cliente guarda a resposta por conteúdo: repetir a mesma chamada
+        lê do cache, sem custo)."""
         blocos_ = [{"id": b["id"], "texto": b["texto"]} for b in q["blocos_contexto"]]
         bmap = {b["id"]: b["texto"] for b in blocos_}
+        return self.cliente("sustentacao").json(
+            C.prompt_gap("faithfulness"), json.dumps(dict(pergunta=q["pergunta"], gabarito=q["resposta"],
+                                                         blocos=blocos_), ensure_ascii=False),
+            tag="abl3_faithfulness", max_tokens=12000, item=q["item"],
+            validate=lambda d: validar_faithfulness(d, bmap))
+
+    def _sustentar_um(self, q: dict) -> bool:
+        arq, nome = self._arq_sust(q["uid"]), "sustentacao_" + _nome_arq(q["uid"])
         try:
-            d = self.cliente("sustentacao").json(
-                C.prompt_gap("faithfulness"), json.dumps(dict(pergunta=q["pergunta"], gabarito=q["resposta"],
-                                                             blocos=blocos_), ensure_ascii=False),
-                tag="abl3_faithfulness", max_tokens=12000, item=q["item"],
-                validate=lambda d: validar_faithfulness(d, bmap))
-            rec = {"uid": q["uid"], **resumo_faithfulness(d)}
+            d = self.chamar_sustentacao(q)
+            rec = {"uid": q["uid"], **resumo_faithfulness(d), "evidencias": evidencias(d)}
         except Exception as exc:  # noqa: BLE001
             if not _filtrado(exc):
                 self._falha(nome, exc)

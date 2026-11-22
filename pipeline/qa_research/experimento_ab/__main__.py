@@ -48,6 +48,8 @@
                         por loop (conceito, mecanismo, consequencia, diagnostico; procedimento e decisao se pedidos),
                         questões manuais e loop dedicado a 1.1 e 8.4 (gestao) -> geracao_final_v3/LOOPS.md;
                         --loops escolhe quais (padrão conceito,mecanismo,consequencia,diagnostico,manual,gestao)
+  atalho-v3             calibração do atalho do auditor: 300 reprovadas só por atalho e 300 válidas, sem contexto,
+                        GPT-4.1 Mini e GPT-5 mini -> calibracao_atalho_v3/ATALHO.md (--amostra muda o tamanho)
   banco-v3              banco final v3: um representante por grupo de equivalentes (principal + loops), regras
                         locais, avaliação com e sem contexto (5 modelos, 20 palavras), revisão de unicidade de TODAS
                         as questões e substituição do representante reprovado pelo próximo equivalente
@@ -164,7 +166,7 @@ def main(argv=None) -> int:
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
                                         "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
-                                        "final-v2", "ablacao", "ablacao-v3", "final-v3", "final-v3-loops", "banco-v3",
+                                        "final-v2", "ablacao", "ablacao-v3", "final-v3", "final-v3-loops", "banco-v3", "atalho-v3",
                                         "avaliar-externos"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
@@ -389,6 +391,16 @@ def main(argv=None) -> int:
                 raise SystemExit(f"[loops] {exc}") from exc
         print(f"[loops] {'concluídos' if st == 0 else 'incompletos; repita o mesmo comando'}: "
               f"{C.relativo(SAIDA_F3 / 'LOOPS.md')}")
+        return st
+    if a.comando == "atalho-v3":
+        from .atalho_v3 import SAIDA as SAIDA_AT, executar as atalho
+        with _trava(exp, "atalho_v3"):
+            try:
+                st = atalho(n=a.amostra, workers=a.workers, judge_workers=a.judge_workers, exp=exp)
+            except ValueError as exc:
+                raise SystemExit(f"[atalho-v3] {exc}") from exc
+        print(f"[atalho-v3] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
+              f"{C.relativo(SAIDA_AT / 'ATALHO.md')}")
         return st
     if a.comando == "banco-v3":
         from .banco_v3 import ETAPAS as ETAPAS_B3, SAIDA as SAIDA_B3, BancoV3

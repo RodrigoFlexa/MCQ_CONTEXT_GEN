@@ -63,7 +63,7 @@ def ler_unidades(pasta: Path) -> list[dict]:
     out = []
     for arq in sorted((Path(pasta) / "geracao").glob("*.json")):
         d = json.loads(arq.read_text(encoding="utf-8"))
-        out.append({k: d[k] for k in chaves})
+        out.append({k: d[k] for k in chaves} | ({"par": d["par"]} if d.get("par") is not None else {}))
     return out
 
 
@@ -94,6 +94,21 @@ class GeracaoFinalV3(AblacaoV3):
     def _cfg(self, c: str) -> dict:
         """Os loops têm as mesmas flags da retroalimentação sem memória; mudam o prompt, os exemplos e os focos."""
         return CONFIGS[CONFIG] if c.startswith("loop_") else super()._cfg(c)
+
+    # -------------------------------------------------------------- unidades de dois blocos (loop de compostas)
+    def _arq_ger(self, c: str, u: dict) -> Path:
+        if u.get("par") is None:
+            return super()._arq_ger(c, u)
+        return self.saida / c / "geracao" / f"{u['item']}_{u['foco']:03d}x{u['par']:03d}_v{u['visita']}.json"
+
+    def _janela(self, u: dict):
+        """Unidade com `par`: os dois blocos, [F1] (o foco) e [F2] (o par), distantes no documento."""
+        if u.get("par") is None:
+            return super()._janela(u)
+        bs = self.docs.get(u["item"]) or self.todos[u["item"]]
+        jan = [("F1", bs[u["foco"]]), ("F2", bs[u["par"]])]
+        txt = "\n\n".join(f"[{r}] {b['titulo_capitulo']} / {b['subtitulo']}\n{b['texto']}" for r, b in jan)
+        return jan, txt
 
     # -------------------------------------------------------------- saturação por foco
     @staticmethod
