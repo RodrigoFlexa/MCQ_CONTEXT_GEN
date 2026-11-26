@@ -97,13 +97,42 @@ while [[ $# -gt 0 ]]; do
 done
 comuns+=(--experimento "$exp")
 
+# Disco do Windows (C:), onde fica o disco virtual do WSL: com ele cheio o desktop trava e arquivos se corrompem.
+# Abaixo de MIN_LIVRE_GB a execução é interrompida (as unidades concluídas ficam salvas; basta repetir o comando).
+MIN_LIVRE_GB="${MIN_LIVRE_GB:-2}"
+livre_c_gb() {
+    [[ -d /mnt/c ]] || { echo 999; return; }
+    local v; v=$(df --output=avail -B1G /mnt/c 2>/dev/null | tail -1 | tr -d ' ')
+    [[ "$v" =~ ^[0-9]+$ ]] && echo "$v" || echo 999
+}
+espaco_ok() {
+    local l; l=$(livre_c_gb)
+    if (( l < MIN_LIVRE_GB )); then
+        echo "[disco] C: com ${l} GB livres (mínimo ${MIN_LIVRE_GB} GB): libere espaço no Windows antes de continuar."
+        return 1
+    fi
+}
+
 rodar() {   # rodar <rótulo> <comando python...>; status 2 = falhas isoladas -> tenta de novo
     local rotulo="$1"; shift
     local st=0
+    espaco_ok || return 3
     for t in 1 2 3; do
-        echo "[$(date +%H:%M:%S)] $rotulo (tentativa $t)"
+        echo "[$(date +%H:%M:%S)] $rotulo (tentativa $t; C: com $(livre_c_gb) GB livres)"
+        # vigia: encerra o processo se o C: ficar abaixo do mínimo durante a execução (o Python segue em primeiro
+        # plano, então Ctrl+C continua funcionando)
+        ( while sleep 60; do
+              if ! espaco_ok >/dev/null; then
+                  echo "[disco] C: abaixo de ${MIN_LIVRE_GB} GB livres: interrompendo para não corromper arquivos."
+                  pkill -TERM -f "pipeline.qa_research.experimento_ab" 2>/dev/null
+                  break
+              fi
+          done ) &
+        local vigia=$!
         "$py" -u -m pipeline.qa_research.experimento_ab "$@" "${comuns[@]}"
         st=$?
+        kill "$vigia" 2>/dev/null; wait "$vigia" 2>/dev/null
+        espaco_ok || return 3
         [[ $st -eq 0 ]] && return 0
         [[ $st -eq 2 ]] || return $st
         sleep 20
