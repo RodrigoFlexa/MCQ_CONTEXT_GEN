@@ -2212,7 +2212,11 @@ class BancoV3Tests(unittest.TestCase):
         self.assertEqual((sub["grupo"], sub["tentativa"], sub["tamanho_grupo"]),
                          (f"{CONFIG}:{ITEM}:000:v1:1", 2, 2))
         self.pares(b)
-        self.assertEqual(b.unicidade(), 0)
+        linhas = (b.saida / "pares.csv").read_text(encoding="utf-8-sig").splitlines()
+        sem_nota = ds[0]["uid"]                                             # o juiz não deu nota ao GPT-5 nesta
+        linhas = [l.replace(",incorreta,", ",,", 1) if l.startswith(sem_nota + ",gpt-5,") else l for l in linhas]
+        (b.saida / "pares.csv").write_text("\n".join(linhas) + "\n", encoding="utf-8-sig")
+        self.assertEqual(b.unicidade(), 0)                                  # não trava por falta de nota
         self.assertEqual(len(rev.vistos), len(ds))                         # todas as questões são revisadas
         m2 = b.montar()                                                     # reprovado e sem outro equivalente
         self.assertEqual(m2["grupos_esgotados"], m1["grupos_esgotados"] + 1)

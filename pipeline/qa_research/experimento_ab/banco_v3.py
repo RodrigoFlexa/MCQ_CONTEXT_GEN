@@ -280,8 +280,10 @@ class BancoV3:
                 raise ValueError(f"Revisão com outro juiz ou prompt em {C.relativo(pasta)}; apague a pasta unicidade/")
             atomic_json(pasta / "config.json", cfg)
             (pasta / "falhas").mkdir(parents=True, exist_ok=True)
-            # só questões já respondidas por todos os modelos mostrados (a revisão usa as respostas sem contexto)
-            prontas = [q for q in qs if all(vs.get(q["uid"], {}).get(m, {}).get("veredito_closed_book") for m in REVISADOS)]
+            # questões que já passaram pela avaliação (a revisão usa as respostas sem contexto). Basta estarem nos pares:
+            # uma resposta sem nota do juiz (ou bloqueada pelo provedor) não volta numa nova execução, e exigir a nota de
+            # todos os modelos travava a etapa para sempre; a revisão mostra só as respostas que existem.
+            prontas = [q for q in qs if any(vs.get(q["uid"], {}).get(m) for m in REVISADOS)]
             faltam = [q for q in prontas if not self._arq_u(q["uid"]).exists()]
             self.progress(f"[banco v3] unicidade: {len(prontas) - len(faltam)}/{len(qs)} revisadas; {len(faltam)} a revisar"
                           + (f"; {len(qs) - len(prontas)} ainda sem avaliação" if len(prontas) < len(qs) else ""),
