@@ -663,6 +663,7 @@ class AblacaoV3:
                             "pergunta": q["pergunta"], "resposta": q["resposta"], "explicacao": q.get("explicacao"),
                             "conhecimento": q.get("conhecimento"), "resposta_padrao": q.get("resposta_padrao"),
                             "por_que_nao": q.get("por_que_nao"), "cenario": q.get("cenario"),
+                            "origem_uid": q.get("origem_uid"), "origem_defeito": q.get("origem_defeito"),
                             "formato_ok": formato_ok(q, self._cfg(c)), "auditoria": {k: v for k, v in a.items() if k != "contexto"},
                             "aprovada_auditor": aprov, "valida_intrinseca": intr and curta, "resposta_curta": curta,
                             "sustentacao": s, "valida": aprov and curta and s == "totalmente_sustentado",

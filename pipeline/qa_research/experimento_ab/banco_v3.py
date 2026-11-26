@@ -63,7 +63,8 @@ JUIZ_UNICIDADE = "gpt-5-4-petrobras:high"
 DEPENDENTE = re.compile(
     r"\b(segundo|conforme|de acordo com) (o|a) (texto|documento|procedimento descrito|trecho|material|bloco)|"
     r"\b(no|do|neste|deste) (texto|documento|trecho)\b|descrit[oa]s? (acima|anteriormente)|"
-    r"\b(cen[aá]rio|situa[cç][aã]o|caso) (descrit|apresentad)[oa]|mencionad[oa]s? (acima|no texto)", re.I)
+    r"\b(cen[aá]rio|situa[cç][aã]o|caso) (descrit|apresentad)[oa]|mencionad[oa]s? (acima|no texto)|"
+    r"\b(é|são|foi|foram) (citad|mencionad|listad)[oa]s?\b", re.I)
 REGRAS = {"R2": "resposta_no_enunciado", "R3": "forma_por_que_nao_basta", "R5": "gabarito_nao_unico",
           "R6": "gabarito_vago", "R7": "depende_documento", "R9": "enunciado_dependente", "R10": "trivial"}
 DESCRICAO = {"R2": "o gabarito já está no enunciado", "R3": "forma \"por que X não basta/garante\"",
