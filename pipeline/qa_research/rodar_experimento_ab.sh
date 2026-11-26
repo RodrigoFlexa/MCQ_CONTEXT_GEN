@@ -47,6 +47,9 @@
 #                        revisão de unicidade de todas e substituição do reprovado (--rodadas 3)
 #                        (petroquest_banco_v3/BANCO.md e banco.jsonl)
 #   completo3            final3 -> reparo3 -> banco3 -> loops3 -> reparo3 -> banco3, em sequência
+#   verif3               verificação final do banco v3 (depois do completo3): respostas alternativas sem gabarito,
+#                        busca nos corpora técnicos, decisão (manter, aceitar até 3 respostas, reescrever,
+#                        descartar), reescritas de volta à avaliação e à revisão, rejulgamento (--rodadas 4)
 #   ablacao3             ablação v3: escada cumulativa (naive, + regras, + documentos, + externos, + retro), sem
 #                        poda; validade, quase-duplicatas, diversidade e dificuldade (ablacao_geracao_v3)
 #   ablacao3retro        ablação v3, só as duas variantes da retroalimentação sem memória (com e sem datasets
@@ -164,7 +167,7 @@ set -o pipefail
 case "$etapa" in
     plano)
         "$py" -m pipeline.qa_research.experimento_ab plano "${comuns[@]}"; exit $? ;;
-    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|final3|atalho3|reparo3|loops3|banco3|completo3|externos) ;;
+    tudo|calibracao|geracao|avaliacao|comparacao|sustentacao|saturacao|v22|v23|painel|antigo|final|limite|completo|v23c|conceitos|variada|final2|tipos|rubrica|banco|ablacao|ablacao3|ablacao3retro|final3|atalho3|reparo3|loops3|banco3|completo3|verif3|externos) ;;
     *) echo "Etapa desconhecida: $etapa"; exit 1 ;;
 esac
 
@@ -266,6 +269,11 @@ if [[ "$etapa" == "completo3" ]]; then
     rodar "conserto das reprovadas dos loops" final-v3-loops --loops reparo --workers 24 || fim_erro reparo3
     rodar "banco final v3 com os loops (só as novas são pagas)" banco-v3 --workers 16 || fim_erro banco3
 fi
+if [[ "$etapa" == "verif3" ]]; then
+    # 3 chamadas por questão (alternativas, decisão, juiz) e busca local nos índices; reescritas pagam auditor,
+    # sustentação, avaliação e revisão; retomável e incremental
+    rodar "verificação final do banco v3: gabarito, respostas aceitas e reescritas" verificacao-v3 --workers 16 || fim_erro verif3
+fi
 if [[ "$etapa" == "ablacao3retro" ]]; then
     # retroalimentação v2 sem memória do documento, com e sem datasets externos: 960 chamadas cada, em 6 ondas
     # (geração, auditoria e sustentação por onda); retomável
@@ -302,6 +310,9 @@ elif [[ "$etapa" == "final3" || "$etapa" == "loops3" || "$etapa" == "reparo3" ]]
     echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/BANCO.md"
     echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/LOOPS.md"
     echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/geracao_final_v3 \"Resultados: geração final v3 ($etapa)\""
+elif [[ "$etapa" == "verif3" ]]; then
+    echo "  cat pipeline/qa_research/relatorios/petroquest_banco_v3/BANCO.md"
+    echo "  bash pipeline/qa_research/enviar_resultados.sh pipeline/qa_research/relatorios/petroquest_banco_v3 \"Resultados: verificação final do banco v3\""
 elif [[ "$etapa" == "banco3" || "$etapa" == "completo3" ]]; then
     echo "  cat pipeline/qa_research/relatorios/geracao_final_v3/LOOPS.md"
     echo "  cat pipeline/qa_research/relatorios/petroquest_banco_v3/BANCO.md"

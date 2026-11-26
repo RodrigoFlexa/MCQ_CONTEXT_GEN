@@ -53,8 +53,10 @@ from .final_v3 import CONFIG, DOCS_FINAIS, SAIDA as ORIGEM, GeracaoFinalV3, ler_
 from .painel import ESTRATOS, estrato
 
 SAIDA = C.QA / "relatorios" / "petroquest_banco_v3"
-ETAPAS = ("montar", "avaliar", "unicidade", "banco")
+ETAPAS = ("montar", "avaliar", "unicidade", "banco")          # banco-v3: durante a geração
+ETAPAS_VERIF = ("montar", "avaliar", "unicidade", "verificar", "rejulgar", "banco")   # verificacao-v3: no fim
 RODADAS = 3
+RODADAS_VERIF = 4
 MAX_TENTATIVAS = 3          # questões de um mesmo grupo de equivalentes que podem ser tentadas como representante
 INDEPENDENTES = ("gpt-4-1-mini", "gpt-4-1", "gpt-5-mini", "gpt-5")
 REVISADOS = ("gpt-5", "gpt-5-mini", "gpt-4-1")
@@ -65,9 +67,13 @@ DEPENDENTE = re.compile(
     r"\b(no|do|neste|deste) (texto|documento|trecho)\b|descrit[oa]s? (acima|anteriormente)|"
     r"\b(cen[aá]rio|situa[cç][aã]o|caso) (descrit|apresentad)[oa]|mencionad[oa]s? (acima|no texto)|"
     r"\b(é|são|foi|foram) (citad|mencionad|listad)[oa]s?\b", re.I)
-REGRAS = {"R2": "resposta_no_enunciado", "R3": "forma_por_que_nao_basta", "R5": "gabarito_nao_unico",
+REGRAS = {"R11": "verificacao_descartada", "R12": "gabarito_incorreto", "R13": "reescrita_reprovada",
+          "R2": "resposta_no_enunciado", "R3": "forma_por_que_nao_basta", "R5": "gabarito_nao_unico",
           "R6": "gabarito_vago", "R7": "depende_documento", "R9": "enunciado_dependente", "R10": "trivial"}
-DESCRICAO = {"R2": "o gabarito já está no enunciado", "R3": "forma \"por que X não basta/garante\"",
+DESCRICAO = {"R11": "verificação: conjunto de respostas aberto, gabarito abstrato ou dependente do documento",
+             "R12": "verificação: gabarito incorreto ou discutível",
+             "R13": "verificação: a reescrita não passou no auditor ou na sustentação",
+             "R2": "o gabarito já está no enunciado", "R3": "forma \"por que X não basta/garante\"",
              "R5": "revisão: outra resposta também é correta", "R6": "revisão: gabarito vago",
              "R7": "revisão: depende do documento", "R9": "o enunciado precisa do documento",
              "R10": "revisão: trivial (resposta no enunciado ou por bom senso)"}
@@ -83,6 +89,9 @@ avaliacao/juiz/
 avaliacao/falhas/
 avaliacao/.local/
 unicidade/
+verificacao/
+reescritas/
+rejulgamento/
 """
 CAMPOS = ("uid", "item", "tipo", "cenario", "pergunta", "resposta", "explicacao", "conhecimento", "resposta_padrao",
           "por_que_nao", "foco", "par", "visita", "config", "origem_uid", "origem_defeito")
@@ -144,12 +153,14 @@ class Leitor(GeracaoFinalV3):
 class BancoV3:
     def __init__(self, origem: Path = ORIGEM, saida: Path = SAIDA, *, docs: Path = DOCS_FINAIS, exp: Path = C.EXPERIMENTO,
                  workers: int = 8, judge_workers: int = 2, clientes: dict | None = None, cliente_unicidade=None,
-                 leitor=None, progress=print):
+                 leitor=None, clientes_verif: dict | None = None, acervo=None, progress=print):
+        from .verificacao_v3 import Verificador
         self.origem, self.saida, self.docs, self.exp = Path(origem), Path(saida), Path(docs), Path(exp)
         self.workers, self.judge_workers, self.progress = max(1, int(workers)), int(judge_workers), progress
         self._clientes, self._cliente_u, self._leitor = clientes, cliente_unicidade, leitor
         self.saida.mkdir(parents=True, exist_ok=True)
         (self.saida / ".gitignore").write_text(GITIGNORE, encoding="utf-8")
+        self.verif = Verificador(self, clientes_verif, acervo)
 
     @property
     def leitor(self) -> Leitor:
@@ -183,33 +194,57 @@ class BancoV3:
         return self.saida / "unicidade" / f"{_nome_arq(uid)}.json"
 
     def rejeicao(self, q: dict) -> tuple[str, str] | None:
-        """Regra que tira esta questão (local ou de uma revisão já feita), ou None."""
+        """Regra que tira esta questão (local, da revisão ou da verificação final), ou None. A verificação pode resgatar
+        uma questão cortada por "outra resposta também correta" (R5), aceitando as duas no gabarito."""
         r = regra_local(q)
         if r:
             return r
+        d = self.verif.decisao(q["uid"])
         rev = read_json(self._arq_u(q["uid"])) if self._arq_u(q["uid"]).exists() else None
-        return regra_revisao(rev) if rev and rev.get("status") == "revisada" else None
+        rj = regra_revisao(rev) if rev and rev.get("status") == "revisada" else None
+        if rj and not (rj[0] == "R5" and d and d["decisao"] in ("manter", "aceitar")):
+            return rj
+        if d and d["decisao"] == "descartar":
+            return ("R12" if d["gabarito"] != "correto" else "R11"), d["motivo"]
+        return None
+
+    def candidata(self, q: dict) -> tuple[dict | None, tuple[str, str] | None]:
+        """A questão que concorre pelo grupo: ela mesma ou a sua reescrita aprovada pela verificação."""
+        d = self.verif.decisao(q["uid"])
+        if d and d["decisao"] == "reescrever":
+            rw = self.verif.reescrita(q["uid"])
+            if rw and rw["status"] == "aprovada":
+                return rw["questao"], None
+            if rw:
+                return None, ("R13", rw["motivo"])
+        return q, None
 
     def montar(self) -> dict:
         grupos, pendentes = self.grupos()
         reps, poda, esgotados = [], [], 0
         for g in grupos:
             escolhido = None
-            for tent, q in enumerate(g[:MAX_TENTATIVAS]):
-                rj = self.rejeicao(q)
+            for tent, q0 in enumerate(g[:MAX_TENTATIVAS]):
+                q, rj = self.candidata(q0)
+                rj = rj or self.rejeicao(q)
                 if rj is None:
                     escolhido = q
                     break
+                q = q or q0
                 poda.append({"uid": q["uid"], "regra": rj[0], "nome": REGRAS[rj[0]], "detalhe": rj[1],
                              "tentativa": tent + 1, "grupo": g[0]["uid"], **{k: q.get(k) for k in CAMPOS}})
             if escolhido is None:
                 esgotados += 1
                 continue
             reps.append({**{k: escolhido.get(k) for k in CAMPOS},
+                         "gabarito": self.gabarito(escolhido["uid"]),
+                         "reescrita_de": escolhido.get("reescrita_de"),
                          "composicao": "composta" if escolhido["config"] == "loop_composta" else "simples",
                          "fonte": escolhido["config"],
                          "grupo": g[0]["uid"],
-                         "tamanho_grupo": len(g), "tentativa": g.index(escolhido) + 1,
+                         "tamanho_grupo": len(g),
+                         "tentativa": next(k for k, m in enumerate(g, 1)
+                                           if m["uid"] in (escolhido["uid"], escolhido.get("reescrita_de"))),
                          "contexto_tecnico": self._contexto(escolhido),
                          "blocos_contexto": [{"id": b["id"], "texto": b["texto"], "indice_documento": b["indice_documento"]}
                                              for b in escolhido["blocos_contexto"]]})
@@ -315,15 +350,91 @@ class BancoV3:
                         self.progress(f"[banco v3] unicidade {k}/{len(faltam)}", flush=True)
             return (len(faltam) - ok) + (len(qs) - len(prontas))
 
-    # ---------------------------------------------------------------- 4. evidência (gabarito de recuperação)
+    # ---------------------------------------------------------------- 4. verificação final e rejulgamento
+    def a_verificar(self) -> list[tuple[dict, dict | None, bool]]:
+        """(questão, revisão, pode reescrever): os representantes já revisados que a revisão manteve ou cortou por
+        outra resposta correta (R5), e as cortadas por R5 em grupos que ficaram sem representante (podem voltar com
+        mais de uma resposta aceita). Grupos que têm representante não gastam verificação com os membros podados."""
+        vs = self.vereditos()
+        rep = {q["uid"]: q for q in C.linhas(self.saida / "dataset.jsonl")}
+        com_rep = {q["grupo"] for q in rep.values()}
+        poda_r5 = {p["uid"] for p in C.linhas(self.saida / "poda.jsonl")
+                   if p["regra"] == "R5" and p["grupo"] not in com_rep} \
+            if (self.saida / "poda.jsonl").exists() else set()
+        faltam_poda = [u for u in poda_r5 if u not in rep and not self.verif.registro(u)]
+        completas = {}
+        if faltam_poda:
+            for g in self.grupos()[0]:
+                for q in g:
+                    if q["uid"] in faltam_poda:
+                        completas[q["uid"]] = {**{k: q.get(k) for k in CAMPOS}, "contexto_tecnico": self._contexto(q),
+                                               "blocos_contexto": q["blocos_contexto"]}
+        out = []
+        for u, q in [*rep.items(), *completas.items()]:
+            if self.verif.registro(u) or not any(vs.get(u, {}).get(m) for m in REVISADOS):
+                continue
+            rev = read_json(self._arq_u(u)) if self._arq_u(u).exists() else None
+            if not rev or rev.get("status") != "revisada":
+                continue
+            rj = regra_revisao(rev)
+            if rj and rj[0] != "R5":
+                continue
+            out.append((q, rev if rj else None, not u.startswith("verif:")))
+        # as mais difíceis primeiro: são as que dependem só do documento
+        acertos = lambda q: sum(vs.get(q["uid"], {}).get(m, {}).get("veredito_closed_book") == "correta"  # noqa: E731
+                                for m in INDEPENDENTES)
+        out.sort(key=lambda x: (acertos(x[0]), x[0]["uid"]))
+        return out
+
+    def verificar(self) -> int:
+        vs = self.vereditos()
+        fila = self.a_verificar()
+        self.progress(f"[banco v3] verificação: {len(fila)} questões a verificar", flush=True)
+
+        def um(x):
+            q, rev, pode = x
+            resp = [r.get("resposta_closed_book") for r in vs.get(q["uid"], {}).values()]
+            return self.verif.verificar_um(q, resp, rev, pode)
+
+        ok = 0
+        with ThreadPoolExecutor(max_workers=self.workers) as pool:
+            for k, r in enumerate(pool.map(um, fila), 1):
+                ok += r
+                if k % 200 == 0:
+                    self.progress(f"[banco v3] verificação {k}/{len(fila)}", flush=True)
+        return len(fila) - ok
+
+    def gabarito(self, uid: str) -> dict | None:
+        """O gabarito final da verificação (respostas aceitas, sinônimos e modo), quando a questão foi mantida ou
+        aceita com mais de uma resposta."""
+        d = self.verif.decisao(uid)
+        return d["gabarito_final"] if d and d["decisao"] in ("manter", "aceitar") else None
+
+    def rejulgar(self) -> int:
+        vs = self.vereditos()
+        fila = [(q, g) for q in C.linhas(self.saida / "dataset.jsonl") if (g := self.gabarito(q["uid"]))
+                and vs.get(q["uid"]) and not self.verif.rejulgamento(q["uid"], g)]
+        self.progress(f"[banco v3] rejulgamento: {len(fila)} questões", flush=True)
+        ok = 0
+        with ThreadPoolExecutor(max_workers=self.workers) as pool:
+            for r in pool.map(lambda x: self.verif.rejulgar_um(x[0], x[1], vs[x[0]["uid"]]), fila):
+                ok += r
+        return len(fila) - ok
+
+    # ---------------------------------------------------------------- 5. evidência (gabarito de recuperação)
     def evidencia(self, q: dict) -> dict | None:
         """Blocos e trechos literais que sustentam o gabarito, da verificação de sustentação. Registros antigos não
         guardavam as evidências: a mesma chamada é refeita e lida do cache do cliente (sem custo), e o registro é
         completado."""
         from .ablacao_v3 import evidencias
         lt = self.leitor
-        arq = lt._arq_sust(q["uid"])
-        rec = read_json(arq) if arq.exists() else None
+        if q.get("reescrita_de"):         # reescrita da verificação: a sustentação ficou no registro da reescrita
+            rw = self.verif.reescrita(q["reescrita_de"]) or {}
+            rec = {"status": rw.get("sustentacao"), "evidencias": rw.get("evidencias") or []}
+            arq = None
+        else:
+            arq = lt._arq_sust(q["uid"])
+            rec = read_json(arq) if arq.exists() else None
         if rec is None or rec.get("status") != "totalmente_sustentado":
             return None
         if "evidencias" not in rec:
@@ -349,14 +460,15 @@ class BancoV3:
         with ThreadPoolExecutor(max_workers=self.workers) as pool:
             return dict(pool.map(um, qs))
 
-    # ---------------------------------------------------------------- 5. banco
+    # ---------------------------------------------------------------- 6. banco
     def banco(self) -> dict:
         from pipeline.qa_research.piloto_janela.core import tema
         qs = C.linhas(self.saida / "dataset.jsonl")
         vs = self.vereditos()
         poda = C.linhas(self.saida / "poda.jsonl")
         temas = {i: tema(i) for i in sorted({q["item"] for q in qs} | {p["item"] for p in poda})}
-        banco, sem_revisao, novas_podas, corrigidas = [], 0, [], 0
+        banco, sem_revisao, novas_podas, corrigidas, sem_verificacao = [], 0, [], 0, 0
+        verificando = self.verif.pasta.exists()
         ev = self.evidencias([q for q in qs if self._arq_u(q["uid"]).exists()])
         for q in qs:
             u, v = q["uid"], vs.get(q["uid"], {})
@@ -364,8 +476,13 @@ class BancoV3:
             if not rev or rev.get("status") != "revisada":
                 sem_revisao += 1
                 continue
-            rj = regra_revisao(rev)
-            if rj:      # reprovada nesta rodada: o próximo equivalente entra na próxima montagem
+            if self.rejeicao(q):      # reprovada nesta rodada: o próximo equivalente entra na próxima montagem
+                novas_podas.append(u)
+                continue
+            if verificando and not self.verif.registro(u):
+                sem_verificacao += 1
+                continue
+            if (self.verif.decisao(u) or {}).get("decisao") == "reescrever":   # a reescrita entra na próxima montagem
                 novas_podas.append(u)
                 continue
             corr = {}
@@ -376,15 +493,31 @@ class BancoV3:
             corrigidas += bool(corr)
             fech = {m: r["veredito_closed_book"] for m, r in v.items()} | corr.get("closed_book", {})
             aberto = {m: r["veredito_open_book"] for m, r in v.items()} | corr.get("open_book", {})
+            gab = self.gabarito(u)
+            rj = self.verif.rejulgamento(u, gab) if gab else None
+            if rj:                    # vereditos contra o gabarito final (aceitas, sinônimos, modo)
+                fech = {m: rj["vereditos"]["closed_book"].get(m, fech.get(m)) for m in fech}
+                aberto = {m: rj["vereditos"]["open_book"].get(m, aberto.get(m)) for m in aberto}
+                corr = {}
+            ver = self.verif.registro(u)
+            dv = ver.get("decisao") if ver else None
             banco.append({"uid": u, "item": q["item"], "area": temas[q["item"]]["area"], "tema": temas[q["item"]]["tema"],
                           "tipo": q["tipo"], "cenario": q.get("cenario"), "pergunta": q["pergunta"],
-                          "resposta": q["resposta"], "explicacao": q.get("explicacao"),
+                          "resposta": q["resposta"], "gabarito": gab or {"modo": "qualquer", "itens": [
+                              {"resposta": q["resposta"], "sinonimos": []}]},
+                          "explicacao": q.get("explicacao"),
                           "resposta_padrao": q.get("resposta_padrao"), "por_que_nao": q.get("por_que_nao"),
                           "fonte": q["fonte"], "composicao": q.get("composicao", "simples"),
                           "origem_uid": q.get("origem_uid"), "grupo": q["grupo"], "tamanho_grupo": q["tamanho_grupo"],
                           "blocos_contexto": [{"item": q["item"], "indice_documento": b["indice_documento"]}
                                               for b in q["blocos_contexto"]],
-                          "evidencia": ev.get(u),
+                          "evidencia": ev.get(u), "reescrita_de": q.get("reescrita_de"),
+                          "verificacao": {"status": ver.get("status"), "gabarito": dv["gabarito"],
+                                          "apoio_externo": dv["apoio_externo"], "decisao": dv["decisao"],
+                                          "motivo": dv["motivo"],
+                                          "fontes": [{k: f.get(k) for k in ("id", "colecao", "titulo", "url")}
+                                                     for f in ver.get("fontes", []) if f["id"] in dv["fontes"]]}
+                          if dv else ({"status": ver["status"]} if ver else None),
                           "dificuldade": {"estrato": estrato({m: fech.get(m) for m in INDEPENDENTES})
                                           if all(fech.get(m) for m in INDEPENDENTES) else None,
                                           "sem_contexto": fech, "com_contexto": aberto,
@@ -396,12 +529,41 @@ class BancoV3:
                                                      for b in banco])
         C.gravar_jsonl(self.saida / "revisoes.jsonl", [read_json(p) for p in sorted((self.saida / "unicidade").glob("*.json"))
                                                        if p.name != "config.json"])
+        if verificando:               # registros sem o texto das fontes (as pastas ficam fora do git)
+            rws = {r["uid_origem"]: r for r in (read_json(p) for p in sorted(self.verif.pasta_reescritas.glob("*.json")))
+                   if r}
+            C.gravar_jsonl(self.saida / "verificacao.jsonl", [
+                {**{k: r.get(k) for k in ("uid", "status", "alternativas_propostas", "consultas", "decisao")},
+                 "fontes": [{k: f.get(k) for k in ("id", "colecao", "titulo", "url")} for f in r.get("fontes", [])],
+                 "reescrita": {k: rws[r["uid"]].get(k) for k in ("status", "motivo", "auditoria", "sustentacao")}
+                 if r["uid"] in rws else None}
+                for r in (read_json(p) for p in sorted(self.verif.pasta.glob("*.json"))) if r])
         res = self.resumo(banco, poda, sem_revisao, len(novas_podas), corrigidas, temas)
+        res["sem_verificacao"] = sem_verificacao
+        res["provisorio"] = res["provisorio"] or bool(sem_verificacao)
+        res["verificacao"] = self.resumo_verificacao(banco) if verificando else None
         atomic_json(self.saida / "resumo.json", res)
         (self.saida / "BANCO.md").write_text(markdown(res), encoding="utf-8")
         self.progress(f"[banco v3] {res['n']} questões ({'provisório' if res['provisorio'] else 'final'}): "
                       f"{C.relativo(self.saida / 'BANCO.md')}", flush=True)
         return res
+
+    def resumo_verificacao(self, banco: list[dict]) -> dict:
+        regs = [r for r in (read_json(p) for p in sorted(self.verif.pasta.glob("*.json"))) if r]
+        ds = [r["decisao"] for r in regs if r.get("status") == "verificada"]
+        rws = [r for r in (read_json(p) for p in sorted(self.verif.pasta_reescritas.glob("*.json"))) if r]
+        return {"verificadas": len(regs), "bloqueadas": sum(r.get("status") != "verificada" for r in regs),
+                "decisoes": dict(Counter(d["decisao"] for d in ds)), "gabarito": dict(Counter(d["gabarito"] for d in ds)),
+                "apoio_externo": dict(Counter(d["apoio_externo"] for d in ds)),
+                "reescritas": {"aprovadas": sum(r["status"] == "aprovada" for r in rws),
+                               "reprovadas": sum(r["status"] != "aprovada" for r in rws)},
+                "no_banco": {"com_mais_de_uma_resposta": sum(len(b["gabarito"]["itens"]) > 1 for b in banco),
+                             "modo_todas": sum(b["gabarito"]["modo"] == "todas" for b in banco),
+                             "com_sinonimos": sum(any(it["sinonimos"] for it in b["gabarito"]["itens"]) for b in banco),
+                             "reescritas": sum(bool(b.get("reescrita_de")) for b in banco),
+                             "resgatadas_da_poda_r5": sum(
+                                 1 for b in banco if (read_json(self._arq_u(b["uid"])) or {}).get("status") == "revisada"
+                                 and (regra_revisao(read_json(self._arq_u(b["uid"]))) or ("",))[0] == "R5")}}
 
     def resumo(self, banco, poda, sem_revisao, reprovadas_rodada, corrigidas, temas) -> dict:
         n = len(banco)
@@ -458,10 +620,20 @@ class BancoV3:
                 if st:
                     self.progress(f"[banco v3] {st} revisões pendentes; repita o comando", flush=True)
                     break
-            if not ({"avaliar", "unicidade"} & set(etapas)):
+            if "verificar" in etapas:
+                st = self.verificar()
+                if st:
+                    self.progress(f"[banco v3] {st} verificações pendentes; repita o comando", flush=True)
+                    break
+            if "rejulgar" in etapas:
+                st = self.rejulgar()
+                if st:
+                    self.progress(f"[banco v3] {st} rejulgamentos pendentes; repita o comando", flush=True)
+                    break
+            if not ({"avaliar", "unicidade", "verificar"} & set(etapas)):
                 break
         if "banco" in etapas:
-            if "montar" in etapas and {"unicidade"} & set(etapas):
+            if "montar" in etapas and {"unicidade", "verificar"} & set(etapas):
                 self.montar()         # aplica as revisões da última rodada (sem API): reprovadas vão à poda
             res = self.banco()
             return 2 if res["provisorio"] and st else 0
@@ -502,4 +674,17 @@ def markdown(r: dict) -> str:
             f"Difícil para o GPT-5 por tipo: {r['dificil_por_tipo']}.", "",
             f"Palavras na pergunta: {f(r['palavras_pergunta'])}; no gabarito: {f(r['palavras_resposta'])}; "
             f"perguntas que abrem com \"Em um/Num\": {f(r['abertura_em_um_pct'])}%."]
+    v = r.get("verificacao")
+    if v:
+        nb = v["no_banco"]
+        out += ["", "## Verificação final", "",
+                f"Questões verificadas: {v['verificadas']} ({v['bloqueadas']} bloqueadas pelo filtro do provedor); "
+                f"{r.get('sem_verificacao', 0)} representantes ainda sem verificação.", "",
+                f"Gabarito: {v['gabarito']}. Fontes externas: {v['apoio_externo']}.", "",
+                f"Decisões: {v['decisoes']}. Reescritas: {v['reescritas']['aprovadas']} aprovadas pelo auditor e pela "
+                f"sustentação, {v['reescritas']['reprovadas']} reprovadas.", "",
+                f"No banco: {nb['com_mais_de_uma_resposta']} com mais de uma resposta aceita ({nb['modo_todas']} exigem "
+                f"todos os itens), {nb['com_sinonimos']} com sinônimos, {nb['reescritas']} reescritas, "
+                f"{nb['resgatadas_da_poda_r5']} resgatadas de \"outra resposta também correta\". A dificuldade usa os "
+                f"vereditos refeitos contra o gabarito final."]
     return "\n".join(out) + "\n"

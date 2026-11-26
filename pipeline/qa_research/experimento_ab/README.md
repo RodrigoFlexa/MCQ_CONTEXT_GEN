@@ -162,6 +162,36 @@ o próximo equivalente do grupo entra na rodada seguinte (até 3 por grupo, `--r
 questão do banco traz `evidencia`: os blocos e os trechos literais que sustentam o gabarito (da verificação de
 sustentação), o gabarito de recuperação para avaliar RAG e memória, e `composicao` (simples ou composta).
 
+## Verificação final (`verificacao_v3.py`, comando `verificacao-v3`, etapa `verif3`)
+
+Roda no fim, depois da geração completa, sobre o banco v3: os representantes que a revisão manteve e os que ela cortou
+por "outra resposta também correta" (R5) em grupos que ficaram sem representante. Por questão, das mais difíceis às
+mais fáceis:
+
+1. **alternativas** (`prompts/verif_alternativas.md`, GPT-5 high): um especialista vê SÓ a pergunta, sem gabarito nem
+   documento, propõe de 1 a 3 respostas defensáveis e escreve consultas de busca em português e inglês;
+2. **fontes**: busca nos corpora técnicos do refino (índices BM25 em `dataset/indices_refino`), independentes do
+   documento de origem; até 6 trechos;
+3. **decisão** (`prompts/verif_decisao.md`, GPT-5.4 high): o gabarito é correto, discutível ou incorreto (fonte externa
+   confiável prevalece sobre o documento); cada resposta diferente é equivalente, válida e diferente, ou incorreta; e a
+   decisão:
+   - `manter`: um item, com os equivalentes como sinônimos;
+   - `aceitar`: conjunto fechado de até 3 respostas certas (modo `qualquer`), cada uma com sinônimos;
+   - `reescrever`: nova versão com a condição técnica que separa as respostas (ou com o elemento concreto no lugar de
+     um gabarito abstrato). A reescrita passa pelo auditor v23 e pela sustentação; aprovada, substitui a original no
+     grupo e volta à avaliação dos modelos, à revisão de unicidade e a esta verificação (sem nova reescrita);
+   - `descartar`: gabarito incorreto ou discutível (R12), conjunto aberto, gabarito abstrato ou dependente do documento
+     (R11).
+   Perguntas que pedem mais de um elemento ("Quais...") usam o modo `todas`: 2 ou 3 itens, todos exigidos. A resposta
+   padrão nunca entra no gabarito;
+4. **rejulgamento** (`prompts/juiz_aceitas.md`): as respostas dos 5 modelos, com e sem contexto, são julgadas de novo
+   contra o gabarito final, e a dificuldade do banco passa a usar esses vereditos.
+
+Cada questão do banco ganha `gabarito` (`{"modo", "itens": [{"resposta", "sinonimos"}]}`), `verificacao` (decisão,
+gabarito, apoio externo, motivo e fontes usadas) e, se for o caso, `reescrita_de`. `verificacao.jsonl` guarda os
+registros sem o texto das fontes; as pastas `verificacao/`, `reescritas/` e `rejulgamento/` ficam fora do git. Três
+chamadas por questão; retomável e incremental (`--rodadas 4`).
+
 ## Calibração do atalho (`atalho_v3.py`)
 
 300 reprovadas só por atalho e 300 válidas da principal, respondidas sem contexto por GPT-4.1 Mini e GPT-5 mini (20
@@ -172,6 +202,7 @@ palavras, juiz padrão): mede se o atalho do auditor corresponde a questões de 
 
     bash pipeline/qa_research/rodar_experimento_ab.sh atalho3       # minutos; informa a leitura do conserto
     bash pipeline/qa_research/rodar_experimento_ab.sh completo3     # final3 -> reparo3 -> banco3 -> loops3 -> reparo3 -> banco3
+    bash pipeline/qa_research/rodar_experimento_ab.sh verif3        # verificação final do banco v3
 
     bash pipeline/qa_research/rodar_experimento_ab.sh banco3
 

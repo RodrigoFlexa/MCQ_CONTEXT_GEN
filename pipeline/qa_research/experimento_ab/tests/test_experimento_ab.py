@@ -2290,6 +2290,200 @@ class BancoV3Tests(unittest.TestCase):
                                  exp=self.exp, workers=2, judge_workers=1, **SILENCIO).executar(), 0)
         self.assertEqual((sum(r.chamadas for r in resp.values()), rev.chamadas), antes)   # retomada sem custo
 
+    def test_verificacao_final(self):
+        """Respostas alternativas, fontes externas, decisão (manter, aceitar, reescrever, descartar), resgate de R5,
+        reescrita de volta ao auditor, à sustentação, à avaliação e à revisão, e rejulgamento contra o gabarito final."""
+        from pipeline.qa_research.experimento_ab.banco_v3 import ETAPAS_VERIF, BancoV3, Leitor
+
+        teste = self
+
+        class Revisor:      # reprova por "outra resposta também correta" a 2ª questão
+            def __init__(self):
+                self.vistos = []
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                d = json.loads(user)
+                self.vistos.append(d["pergunta"])
+                r = {"respostas": [{"id": x["id"], "avaliacao": "incorreta"} for x in d["respostas"]],
+                     "gabarito_especifico": True, "gabarito_unico": d["pergunta"] != teste.r5,
+                     "depende_documento": False, "enunciado_autocontido": True, "trivial": False,
+                     "justificativa": "também vale outra"}
+                if validate:
+                    validate(r)
+                return r
+
+        class Alternativas:
+            def __init__(self):
+                self.entradas = []
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                self.entradas.append(json.loads(user))
+                d = {"respostas": [{"resposta": "Outra coisa", "justificativa": "j"}],
+                     "consultas": [{"pt": "termo técnico", "en": "technical term"}]}
+                validate(d)
+                return d
+
+        class Decisao:
+            def __init__(self):
+                self.entradas = []
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                e = json.loads(user)
+                self.entradas.append(e)
+                p, g = e["pergunta"], e["gabarito"]
+                base = {"gabarito": "correto", "apoio_externo": "confirma", "fontes": ["S1"], "alternativas": [],
+                        "gabarito_final": None, "reescrita": None, "motivo": "m"}
+                item = lambda r, *s: {"resposta": r, "sinonimos": list(s)}  # noqa: E731
+                if p == teste.r5:
+                    d = {**base, "decisao": "aceitar", "alternativas": [{"resposta": "Outra coisa",
+                                                                         "classe": "valida_diferente"}],
+                         "gabarito_final": {"modo": "qualquer", "itens": [item(g, "sinônimo"), item("Outra coisa")]}}
+                elif p == teste.reescrever:
+                    d = {**base, "decisao": "reescrever", "reescrita": {
+                        "pergunta": "Qual elo reescrito, com a condição que separa as respostas, explica o caso?",
+                        "resposta": "Elo reescrito.", "explicacao": "e", "resposta_padrao": "p", "por_que_nao": "q"}}
+                elif p == teste.descartar:
+                    d = {**base, "gabarito": "incorreto", "apoio_externo": "contradiz", "decisao": "descartar"}
+                else:
+                    d = {**base, "decisao": "manter", "gabarito_final": {"modo": "qualquer", "itens": [item(g, "sin")]}}
+                validate(d)
+                return d
+
+        class Juiz:
+            def __init__(self):
+                self.entradas = []
+
+            def json(self, system, user, tag="", max_tokens=0, validate=None, item=None):
+                e = json.loads(user)
+                self.entradas.append(e)
+                d = {"avaliacoes": [{"id": c["id"], "veredito": "correta", "justificativa": "j"}
+                                    for c in e["candidatas"]]}
+                validate(d)
+                return d
+
+        class Acervo:
+            def __init__(self):
+                self.consultas = []
+
+            def query(self, pairs, limit, keep=6):
+                self.consultas.append(pairs)
+                return [{"id": "S1", "texto": "fonte técnica " * 5, "collection": "api", "title": "Guia", "url": "u"}], {}
+
+        class Proxy:        # o auditor simulado responde pela tag da auditoria da geração
+            def __init__(self, f):
+                self.f = f
+
+            def json(self, system, user, tag="", **kw):
+                return self.f.json(system, user, tag={"verif_auditoria": "abl3_auditoria"}.get(tag, tag), **kw)
+
+        from unittest import mock
+        from pipeline.qa_research.experimento_ab import banco_v3 as B3
+        p = mock.patch.object(B3, "sobreposicao", lambda q: 0.0)   # as simuladas repetem o enunciado no gabarito
+        p.start()
+        self.addCleanup(p.stop)
+        rev, alt, dec, jz, ac = Revisor(), Alternativas(), Decisao(), Juiz(), Acervo()
+        kw = {k: v for k, v in self.kw.items() if k != "workers"}
+        kw["clientes"] = {k: Proxy(v) if k == "auditoria" else v for k, v in kw["clientes"].items()}
+        lt = Leitor(self.saida, **kw)
+        b = BancoV3(self.saida, self.tmp / "banco3", leitor=lt, cliente_unicidade=rev, exp=self.exp, workers=2,
+                    clientes_verif={"alternativas": alt, "decisao": dec, "juiz": jz}, acervo=ac, **SILENCIO)
+        b.montar()
+        ds = C.linhas(b.saida / "dataset.jsonl")
+        self.assertGreaterEqual(len(ds), 4)
+        self.r5, self.reescrever, self.descartar = ds[1]["pergunta"], ds[2]["pergunta"], ds[3]["pergunta"]
+        self.pares(b)
+        self.assertEqual(b.unicidade(), 0)
+        b.montar()                                       # a R5 vai à poda; grupo sem representante
+        poda = {p["uid"]: p for p in C.linhas(b.saida / "poda.jsonl")}
+        self.assertEqual(poda[ds[1]["uid"]]["regra"], "R5")
+        self.assertEqual(b.verificar(), 0)
+        self.assertEqual(len(dec.entradas), len(ds))     # as mantidas e a R5 da poda (resgatável)
+        self.assertNotIn("gabarito", alt.entradas[0])    # o especialista não vê o gabarito
+        self.assertNotIn("documento", alt.entradas[0])
+        e5 = next(e for e in dec.entradas if e["pergunta"] == self.r5)
+        self.assertEqual(e5["revisao_anterior"], "também vale outra")
+        self.assertEqual(e5["fontes_externas"][0]["id"], "S1")
+        self.assertIn("resp gpt-4-1", e5["respostas_dos_modelos"])
+        rw = b.verif.reescrita(ds[2]["uid"])
+        self.assertEqual(rw["status"], "aprovada")       # passou no auditor e na sustentação
+        self.assertEqual(rw["questao"]["uid"], f"verif:{ds[2]['uid']}")
+        m = b.montar()
+        ds2 = {q["uid"]: q for q in C.linhas(b.saida / "dataset.jsonl")}
+        self.assertIn(ds[1]["uid"], ds2)                  # resgatada da poda com duas respostas aceitas
+        self.assertEqual(len(ds2[ds[1]["uid"]]["gabarito"]["itens"]), 2)
+        self.assertIn(f"verif:{ds[2]['uid']}", ds2)       # a reescrita no lugar da original
+        self.assertNotIn(ds[2]["uid"], ds2)
+        self.assertNotIn(ds[3]["uid"], ds2)               # descartada: gabarito incorreto
+        poda = {p["uid"]: p for p in C.linhas(b.saida / "poda.jsonl")}
+        self.assertEqual(poda[ds[3]["uid"]]["regra"], "R12")
+        self.assertEqual(m["podadas"].get("R5"), None)
+        # a reescrita volta: avaliação, revisão e verificação (sem nova reescrita)
+        self.pares(b)
+        self.assertEqual(b.unicidade(), 0)
+        self.assertIn("Qual elo reescrito, com a condição que separa as respostas, explica o caso?", rev.vistos)
+        n_dec = len(dec.entradas)
+        self.assertEqual(b.verificar(), 0)
+        self.assertEqual(len(dec.entradas), n_dec + 1)
+        self.assertFalse(dec.entradas[-1]["pode_reescrever"])
+        self.assertEqual(b.rejulgar(), 0)
+        cand = next(e for e in jz.entradas if e["pergunta"] == self.r5)
+        self.assertEqual(len(cand["gabarito"]["itens"]), 2)
+        self.assertEqual(len(cand["candidatas"]), 10)    # 5 modelos x com e sem contexto
+        res = b.banco()
+        self.assertFalse(res["provisorio"])
+        banco = {x["uid"]: x for x in C.linhas(b.saida / "banco.jsonl")}
+        x5 = banco[ds[1]["uid"]]
+        self.assertEqual(x5["dificuldade"]["sem_contexto"]["gpt-5"], "correta")   # rejulgada contra as aceitas
+        self.assertEqual(x5["verificacao"]["decisao"], "aceitar")
+        self.assertEqual(x5["verificacao"]["fontes"][0]["titulo"], "Guia")
+        xr = banco[f"verif:{ds[2]['uid']}"]
+        self.assertEqual(xr["reescrita_de"], ds[2]["uid"])
+        self.assertTrue(xr["evidencia"]["blocos"])        # evidência da sustentação da reescrita
+        v = res["verificacao"]
+        self.assertEqual(v["no_banco"]["com_mais_de_uma_resposta"], 1)
+        self.assertEqual(v["no_banco"]["reescritas"], 1)
+        self.assertEqual(v["no_banco"]["resgatadas_da_poda_r5"], 1)
+        self.assertEqual(v["decisoes"]["descartar"], 1)
+        self.assertIn("## Verificação final", (b.saida / "BANCO.md").read_text())
+        ver = C.linhas(b.saida / "verificacao.jsonl")
+        self.assertTrue(all("texto" not in f for r in ver for f in r["fontes"]))
+        self.assertIn("verificacao/", (b.saida / ".gitignore").read_text())
+        # retomada sem custo
+        antes = (len(alt.entradas), len(dec.entradas), len(jz.entradas))
+        self.assertEqual(b.verificar(), 0)
+        self.assertEqual(b.rejulgar(), 0)
+        self.assertEqual((len(alt.entradas), len(dec.entradas), len(jz.entradas)), antes)
+        self.assertIn("verificar", ETAPAS_VERIF)
+
+    def test_validacao_da_decisao(self):
+        from pipeline.qa_research.experimento_ab.verificacao_v3 import texto_gabarito, validar_decisao
+        it = lambda r, *s: {"resposta": r, "sinonimos": list(s)}  # noqa: E731
+        base = {"gabarito": "correto", "apoio_externo": "confirma", "fontes": [], "alternativas": [],
+                "reescrita": None, "motivo": "m"}
+        ok = {**base, "decisao": "aceitar", "gabarito_final": {"modo": "qualquer", "itens": [
+            it("Stress Joint", "junta de transição de rigidez"), it("Bend Stiffener")]}}
+        validar_decisao(ok, True, "Flex Joint")
+        self.assertEqual(texto_gabarito(ok["gabarito_final"]),
+                         "Qualquer um de: Stress Joint (ou junta de transição de rigidez); Bend Stiffener")
+        ruins = [
+            {**ok, "gabarito_final": {"modo": "qualquer", "itens": [it("a"), it("b"), it("c"), it("d")]}},  # > 3
+            {**ok, "gabarito_final": {"modo": "todas", "itens": [it("a")]}},          # "todas" com 1 item
+            {**ok, "gabarito": "incorreto"},                                           # incorreto não é aceito
+            {**base, "decisao": "manter", "gabarito_final": {"modo": "qualquer", "itens": [it("a"), it("b")]}},
+            {**base, "decisao": "reescrever", "gabarito_final": None, "reescrita": None},
+            {**base, "decisao": "descartar", "gabarito_final": ok["gabarito_final"]}]
+        for d in ruins:
+            with self.assertRaises(ValueError):
+                validar_decisao(d, True, "Flex Joint")
+        with self.assertRaises(ValueError):           # a resposta padrão nunca é aceita
+            validar_decisao({**ok, "gabarito_final": {"modo": "qualquer", "itens": [it("Stress Joint", "flex joint")]},
+                             "decisao": "manter"}, True, "Flex Joint")
+        with self.assertRaises(ValueError):           # reescrita de uma reescrita
+            validar_decisao({**base, "decisao": "reescrever", "gabarito_final": None, "reescrita": {
+                k: "x" for k in ("pergunta", "resposta", "explicacao", "resposta_padrao", "por_que_nao")}}, False)
+        validar_decisao({**base, "decisao": "manter", "gabarito_final": {"modo": "todas", "itens": [it("a"), it("b")]}},
+                        True)
+
     def test_calibracao_do_atalho(self):
         from pipeline.qa_research.experimento_ab import atalho_v3 as A
         from pipeline.qa_research.experimento_ab.banco_v3 import Leitor

@@ -54,6 +54,11 @@
                         locais, avaliação com e sem contexto (5 modelos, 20 palavras), revisão de unicidade de TODAS
                         as questões e substituição do representante reprovado pelo próximo equivalente
                         (--rodadas 3) -> petroquest_banco_v3/BANCO.md
+  verificacao-v3        verificação final do banco v3 (depois da geração): para cada questão revisada, respostas
+                        alternativas de um especialista sem gabarito, busca nos corpora técnicos, decisão (manter,
+                        aceitar até 3 respostas, reescrever, descartar), reescritas de volta ao auditor, à sustentação,
+                        à avaliação e à revisão, e rejulgamento contra o gabarito final (--rodadas 4)
+                        -> petroquest_banco_v3/BANCO.md
   ablacao-v3            ablação v3: escada cumulativa naive -> + regras -> + documentos -> + datasets externos ->
                         + retroalimentação, sem poda (0 a 4 questões por chamada, focos x visitas em ondas); auditor,
                         sustentação, quase-duplicatas, diversidade e dificuldade (amostra) -> ablacao_geracao_v3/ABLACAO.md
@@ -166,7 +171,7 @@ def main(argv=None) -> int:
     ap.add_argument("comando", choices=["plano", "preparar", "calibrar", "gerar", "avaliar", "comparar", "sustentacao",
                                         "saturar", "v22", "v23", "painel", "antigo", "avaliar-antigo", "final", "limite",
                                         "v23-completo", "conceitos", "variada", "tipos", "rubrica", "banco", "splits", "figuras",
-                                        "final-v2", "ablacao", "ablacao-v3", "final-v3", "final-v3-loops", "banco-v3", "atalho-v3",
+                                        "final-v2", "ablacao", "ablacao-v3", "final-v3", "final-v3-loops", "banco-v3", "verificacao-v3", "atalho-v3",
                                         "avaliar-externos"])
     ap.add_argument("--experimento", type=Path, default=C.EXPERIMENTO)
     ap.add_argument("--braco")
@@ -202,7 +207,8 @@ def main(argv=None) -> int:
                     help="final-v3: teto de visitas por bloco foco, fecha antes ao saturar (padrão 10; loops: 6 nos "
                          "tipos e 12 na gestão)")
     ap.add_argument("--loops", default=None, help="final-v3-loops: loops em sequência, separados por vírgula")
-    ap.add_argument("--rodadas", type=int, default=3, help="banco-v3: rodadas de substituição de representantes")
+    ap.add_argument("--rodadas", type=int, default=None,
+                    help="banco-v3 (3) e verificacao-v3 (4): rodadas de substituição de representantes")
     a = ap.parse_args(argv)
     exp = a.experimento if a.experimento.is_absolute() else C.ROOT / a.experimento
     if a.comando not in ("final-v3", "final-v3-loops") and a.paciencia is None:
@@ -402,15 +408,18 @@ def main(argv=None) -> int:
         print(f"[atalho-v3] {'concluída' if st == 0 else 'incompleta; repita o mesmo comando'}: "
               f"{C.relativo(SAIDA_AT / 'ATALHO.md')}")
         return st
-    if a.comando == "banco-v3":
-        from .banco_v3 import ETAPAS as ETAPAS_B3, SAIDA as SAIDA_B3, BancoV3
-        etapas = list(ETAPAS_B3) if a.etapas == ap.get_default("etapas") else [e for e in a.etapas.split(",") if e]
+    if a.comando in ("banco-v3", "verificacao-v3"):
+        from .banco_v3 import ETAPAS, ETAPAS_VERIF, RODADAS, RODADAS_VERIF, SAIDA as SAIDA_B3, BancoV3
+        verif = a.comando == "verificacao-v3"
+        padrao = ETAPAS_VERIF if verif else ETAPAS
+        etapas = list(padrao) if a.etapas == ap.get_default("etapas") else [e for e in a.etapas.split(",") if e]
+        rodadas = a.rodadas if a.rodadas is not None else (RODADAS_VERIF if verif else RODADAS)
         with _trava(exp, "final_v3"):        # lê a deduplicação da geração: não roda junto com ela
             try:
-                st = BancoV3(workers=a.workers, judge_workers=a.judge_workers, exp=exp).executar(etapas, rodadas=a.rodadas)
+                st = BancoV3(workers=a.workers, judge_workers=a.judge_workers, exp=exp).executar(etapas, rodadas=rodadas)
             except ValueError as exc:
-                raise SystemExit(f"[banco-v3] {exc}") from exc
-        print(f"[banco-v3] {'concluído' if st == 0 else 'incompleto; repita o mesmo comando'}: "
+                raise SystemExit(f"[{a.comando}] {exc}") from exc
+        print(f"[{a.comando}] {'concluído' if st == 0 else 'incompleto; repita o mesmo comando'}: "
               f"{C.relativo(SAIDA_B3 / 'BANCO.md')}")
         return st
     if a.comando == "banco":
